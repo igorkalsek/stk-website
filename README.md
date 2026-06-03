@@ -103,10 +103,9 @@ Each live section includes graceful fallback content if an API request fails or 
 - First usable Iskalnik tekov page with client-side search and filters.
 - First usable Družinam prijazni teki page with client-side search and filters based on `opombe_javne`.
 - Placeholder pages for:
-  - Najbolj glasovani teki
   - Dodaj ali popravi tek
-  - STK Tekobot
   - English
+- Informational landing page for `/stk-tekobot/`, with a CTA ready for the external STK Tekobot URL.
 - GitHub Codespaces support with Node 20 and forwarded port 4321.
 - Project rules in `AGENTS.md`.
 - Manual review checklist in `REVIEW_CHECKLIST.md`.
@@ -116,7 +115,7 @@ Each live section includes graceful fallback content if an API request fails or 
 - Use the master event endpoint for event listing pages.
 - Replace placeholder pages with full content and interactions.
 - Add the final “Dodaj ali popravi tek” destination once the process is confirmed.
-- Integrate STK Tekobot when requested.
+- Replace the temporary `/stk-tekobot/` CTA placeholder with the public STK Tekobot URL when it is available.
 - Improve structured data, SEO metadata, and social preview images.
 - Add automated tests once the data display components stabilize.
 
