@@ -1,0 +1,25 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  note: string;
+}
+
+const { title, description, note } = Astro.props;
+---
+
+<main>
+  <section class="container page-hero">
+    <span class="eyebrow">MVP stran</span>
+    <h1>{title}</h1>
+    <p>{description}</p>
+  </section>
+  <section class="container placeholder-panel" aria-label="Status strani">
+    <h2>Stran je pripravljena kot osnova.</h2>
+    <p>{note}</p>
+    <div class="cta-row">
+      <a class="button button-primary" href="/">Nazaj na naslovnico</a>
+      <a class="button button-secondary" href="/dodaj-ali-popravi-tek/">Predlagaj popravek</a>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,40 @@
+---
+const navItems = [
+  { href: '/', label: 'Domov' },
+  { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
+  { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni' },
+  { href: '/najbolj-glasovani-teki/', label: 'Glasovani teki' },
+  { href: '/stk-tekobot/', label: 'Tekobot' }
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Slovenski Tekaški Koledar">
+      <span class="brand-mark">STK</span>
+      <span>Slovenski Tekaški Koledar</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+      Meni
+    </button>
+    <nav id="site-navigation" class="site-nav" data-open="false" aria-label="Glavna navigacija">
+      {navItems.map((item) => (
+        <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.site-nav');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = nav?.getAttribute('data-open') === 'true';
+    nav?.setAttribute('data-open', String(!isOpen));
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+</script>
