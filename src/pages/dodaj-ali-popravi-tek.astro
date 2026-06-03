@@ -1,12 +1,31 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+const proposalFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
+const guidanceUrl = 'https://sites.google.com/view/slovenski-tekaski-koledar/popravek-nov-tek';
 ---
 
 <BaseLayout title="Dodaj ali popravi tek" description="Predlagajte dodatek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
-  <PlaceholderPage
-    title="Dodaj ali popravi tek"
-    description="Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek."
-    note="V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov."
-  />
+  <main>
+    <section class="container page-hero">
+      <span class="eyebrow">MVP stran</span>
+      <h1>Dodaj ali popravi tek</h1>
+      <p>Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek.</p>
+      <div class="cta-row">
+        <a class="button button-primary" href={proposalFormUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+    </section>
+    <section class="container placeholder-panel" aria-label="Status strani">
+      <h2>Stran je pripravljena kot osnova.</h2>
+      <p>V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov.</p>
+      <p class="data-note">
+        <a href={guidanceUrl} target="_blank" rel="noopener noreferrer">Več navodil na STK strani</a>
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={proposalFormUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
