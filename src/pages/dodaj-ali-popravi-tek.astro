@@ -1,12 +1,74 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
+const guidanceUrl = 'https://sites.google.com/view/slovenski-tekaski-koledar/popravek-nov-tek';
 ---
 
 <BaseLayout title="Dodaj ali popravi tek" description="Predlagajte dodatek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
-  <PlaceholderPage
-    title="Dodaj ali popravi tek"
-    description="Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek."
-    note="V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov."
-  />
+  <main>
+    <section class="container page-hero add-event-hero" aria-labelledby="add-event-title">
+      <span class="eyebrow">Dodaj ali popravi tek</span>
+      <h1 id="add-event-title">Pomagaj ohranjati koledar uporaben</h1>
+      <p>
+        Če organiziraš tek, opaziš manjkajoč dogodek ali napačen podatek, nam pošlji predlog ali popravek.
+        Najprej preveri, ali je tek že v koledarju.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={googleFormUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+      <a class="guidance-link" href={guidanceUrl} target="_blank" rel="noopener noreferrer">Več navodil na STK strani</a>
+    </section>
+
+    <section class="container placeholder-panel add-event-panel" aria-labelledby="add-event-how-title">
+      <h2 id="add-event-how-title">Kaj lahko sporočiš?</h2>
+      <p>
+        Pošlji nov tek, popravek datuma, kraja, povezave do razpisa ali prijave, spremembo kategorije
+        ali drug podatek, ki pomaga tekačem pri izbiri prireditve.
+      </p>
+    </section>
+
+    <section class="container placeholder-panel add-event-panel" aria-labelledby="add-event-cta-title">
+      <h2 id="add-event-cta-title">Imaš pripravljen predlog?</h2>
+      <p>
+        Obrazec odpre neposredno Google Form. Podatki se preverijo pred objavo v Slovenskem Tekaškem Koledarju.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={googleFormUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+      <a class="guidance-link" href={guidanceUrl} target="_blank" rel="noopener noreferrer">Več navodil na STK strani</a>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .add-event-hero {
+    max-width: 900px;
+  }
+
+  .add-event-hero .eyebrow {
+    background: rgba(16, 64, 80, 0.1);
+    color: var(--deep-teal);
+  }
+
+  .add-event-hero .cta-row,
+  .add-event-panel .cta-row {
+    margin-top: 6px;
+  }
+
+  .add-event-panel {
+    min-height: unset;
+  }
+
+  .guidance-link {
+    width: fit-content;
+    color: var(--deep-teal);
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+</style>
