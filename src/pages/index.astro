@@ -221,6 +221,81 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return entries.length ? entries.join(', ') : 'brez ključev';
   };
 
+  const rawValueText = (value: unknown) =>
+    value === undefined || value === null || String(value) === '' ? 'not detected' : String(value);
+
+  const compactJsonPreview = (value: unknown) => {
+    try {
+      return JSON.stringify(value, null, 2).slice(0, 1600);
+    } catch (error) {
+      return 'JSON preview ni na voljo.';
+    }
+  };
+
+  const isMissing = (value: unknown) =>
+    value === undefined || value === null || String(value).trim() === '';
+
+  const rowKey = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '';
+    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
+    return row === undefined || row === null ? '' : String(row).trim();
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key]) || isMissing(source[key])) return false;
+    target[key] = String(source[key]).trim();
+    return true;
+  };
+
+  const findYearRows = (payload: unknown, year: string): ApiRecord[] => {
+    const record = asRecord(payload);
+    if (record) {
+      for (const [key, value] of Object.entries(record)) {
+        if (normalizeKey(key).includes(year)) {
+          const rows = toArray(value);
+          if (rows.length) return rows;
+        }
+      }
+
+      for (const value of Object.values(record)) {
+        const rows = findYearRows(value, year);
+        if (rows.length) return rows;
+      }
+    }
+
+    return [];
+  };
+
+  const masterRowMap = (rows: ApiRecord[]) => {
+    const map = new Map<string, ApiRecord>();
+    for (const row of rows) {
+      const key = rowKey(row);
+      if (key) map.set(key, row);
+    }
+    return map;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => {
+    const rowsByKey = masterRowMap(masterRows);
+    return events.map((event) => {
+      const enriched = { ...event };
+      const match = rowsByKey.get(rowKey(event));
+      enriched.__master_matched = Boolean(match);
+      enriched.__title_source = getTopEventTitle(event) === 'Naziv teka ni na voljo' ? 'not detected' : 'top';
+      if (!match) return enriched;
+
+      const filledTitle = copyIfMissing(enriched, match, 'naziv_prireditve');
+      copyIfMissing(enriched, match, 'datum');
+      copyIfMissing(enriched, match, 'kraj');
+      copyIfMissing(enriched, match, 'regija');
+      copyIfMissing(enriched, match, 'tip_podlage');
+      copyIfMissing(enriched, match, 'razdalje_km');
+      if (filledTitle) enriched.__title_source = 'master fallback';
+      return enriched;
+    });
+  };
+
   const createDebugPanel = () => {
     if (!debugEnabled) return;
     const main = document.querySelector('main');
@@ -234,10 +309,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <p><strong>/top loaded:</strong> <span data-debug-top>no</span></p>
             <p><strong>/top item count:</strong> <span data-debug-top-count>0</span></p>
             <p><strong>First top item keys:</strong> <code data-debug-top-keys>—</code></p>
+            <div><strong>First top raw JSON:</strong> <pre class="debug-json" data-debug-top-json>—</pre></div>
+            <p><strong>First top raw row:</strong> <code data-debug-top-row>not detected</code></p>
             <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
             <p><strong>Raw naziv_prireditve:</strong> <code data-debug-top-title-raw>not detected</code></p>
             <p><strong>Raw votes_total:</strong> <code data-debug-top-votes-raw>not detected</code></p>
+            <p><strong>Master fallback loaded:</strong> <span data-debug-master>no</span></p>
+            <p><strong>Matched master row:</strong> <span data-debug-master-match>no</span></p>
             <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
+            <p><strong>Detected title source:</strong> <code data-debug-top-title-source>not detected</code></p>
             <p><strong>Detected top votes:</strong> <code data-debug-top-votes>not detected</code></p>
             <p><strong>/recent_updates loaded:</strong> <span data-debug-recent>no</span></p>
             <p><strong>/recent_updates item count:</strong> <span data-debug-recent-count>0</span></p>
@@ -271,15 +351,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return parts.length ? parts.join(' | ') : '—';
   };
 
-  const setDebugTopDetails = (items: ApiRecord[]) => {
+  const setDebugTopDetails = (items: ApiRecord[], rawItems = items) => {
     if (!debugEnabled) return;
-    setDebug('top-count', String(items.length));
-    setDebugKeys('top', items[0]);
-    setDebug('top-nested', nestedKeySummary(items[0]));
-    setDebug('top-title-raw', items[0]?.naziv_prireditve === undefined ? 'not detected' : String(items[0].naziv_prireditve));
-    setDebug('top-votes-raw', items[0]?.votes_total === undefined ? 'not detected' : String(items[0].votes_total));
-    setDebug('top-title', items[0] ? getTopEventTitle(items[0]) : 'not detected');
-    setDebug('top-votes', items[0] ? formatVoteCount(getTopEventVotes(items[0])) : 'not detected');
+    const first = items[0];
+    const rawFirst = rawItems[0];
+    setDebug('top-count', String(rawItems.length));
+    setDebugKeys('top', rawFirst);
+    setDebug('top-json', rawFirst ? compactJsonPreview(rawFirst) : '—');
+    setDebug('top-row', rowKey(rawFirst) || 'not detected');
+    setDebug('top-nested', nestedKeySummary(rawFirst));
+    setDebug('top-title-raw', rawValueText(rawFirst?.naziv_prireditve));
+    setDebug('top-votes-raw', rawValueText(rawFirst?.votes_total));
+    setDebug('master-match', first?.__master_matched ? 'yes' : 'no');
+    setDebug('top-title', first ? getTopEventTitle(first) : 'not detected');
+    setDebug('top-title-source', first?.__title_source ? String(first.__title_source) : 'not detected');
+    setDebug('top-votes', first ? formatVoteCount(getTopEventVotes(first)) : 'not detected');
   };
 
   const setDebugRecentDetails = (items: ApiRecord[]) => {
@@ -422,13 +508,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
-      const events = toArray(payload).slice(0, 6);
+      const topEvents = toArray(payload).slice(0, 6);
       setDebug('top', 'yes');
-      setDebugTopDetails(events);
-      if (!events.length) {
+      if (!topEvents.length) {
+        setDebugTopDetails(topEvents);
         setStatus('top', 'API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
         return;
       }
+
+      let events = topEvents;
+      try {
+        const masterPayload = await loadJson('/');
+        const masterRows = findYearRows(masterPayload, '2026');
+        setDebug('master', masterRows.length ? `yes (${masterRows.length} rows)` : 'yes (2026 list empty)');
+        events = enrichTopEventsFromMaster(topEvents, masterRows);
+      } catch (error) {
+        setDebug('master', 'no');
+      }
+      setDebugTopDetails(events, topEvents);
 
       container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);

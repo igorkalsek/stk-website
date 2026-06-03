@@ -517,3 +517,9 @@ main {
   overflow-wrap: anywhere;
   white-space: normal;
 }
+
+.debug-json {
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
