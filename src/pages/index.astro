@@ -128,7 +128,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     'race_name'
   ];
   const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
-  const VOTE_PATHS = ['glasovi', 'votes', 'vote_count', 'votes_total', 'total_votes', 'voting.votes'];
   const debugEnabled = new URLSearchParams(window.location.search).get('debug') === '1';
 
   const setStatus = (name: string, message: string) => {
@@ -186,16 +185,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return fallback;
   };
 
-  const pickPathNumber = (item: ApiRecord, paths: string[]): number | null => {
-    for (const path of paths) {
-      const value = valueAtPath(item, path);
-      if (value === undefined || value === null || String(value).trim() === '') continue;
-      const numberValue = Number(value);
-      if (Number.isFinite(numberValue)) return numberValue;
-    }
-    return null;
-  };
-
   const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
 
   const findByNormalizedKey = (item: ApiRecord, keys: string[]) => {
@@ -219,10 +208,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return '';
   };
 
-  const findTitle = (event: ApiRecord) =>
-    findByNormalizedKey(event, TITLE_KEYS)
+  const valueAsText = (value: unknown) => {
+    if (typeof value !== 'string') return '';
+    const text = value.trim();
+    return text.length ? text : '';
+  };
+
+  const findTitle = (event: ApiRecord) => {
+    const directTitle = valueAsText(event.naziv_prireditve)
+      || valueAsText(event.naziv)
+      || valueAsText(event.ime)
+      || valueAsText(event.title)
+      || valueAsText(event.name);
+    if (directTitle) return directTitle;
+
+    return pickPath(event, [
+      'event.naziv_prireditve',
+      'event.naziv',
+      'race.naziv_prireditve',
+      'race.naziv',
+      'data.naziv_prireditve',
+      'data.naziv'
+    ])
+    || findByNormalizedKey(event, TITLE_KEYS)
     || findNestedByNormalizedKey(event, TITLE_CONTAINERS, TITLE_KEYS)
     || pickPath(event, TITLE_PATHS);
+  };
 
   const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
 
@@ -251,6 +262,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <p><strong>First top item keys:</strong> <code data-debug-top-keys>—</code></p>
             <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
             <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
+            <p><strong>Detected top votes:</strong> <code data-debug-top-votes>not detected</code></p>
             <p><strong>/recent_updates loaded:</strong> <span data-debug-recent>no</span></p>
             <p><strong>/recent_updates item count:</strong> <span data-debug-recent-count>0</span></p>
             <p><strong>First recent item keys:</strong> <code data-debug-recent-keys>—</code></p>
@@ -289,12 +301,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setDebugKeys('top', items[0]);
     setDebug('top-nested', nestedKeySummary(items[0]));
     setDebug('top-title', items[0] ? (findTitle(items[0]) || 'not detected') : 'not detected');
+    setDebug('top-votes', items[0] ? formatVoteCount(detectVoteCount(items[0])) : 'not detected');
   };
 
   const setDebugRecentDetails = (items: ApiRecord[]) => {
     if (!debugEnabled) return;
     setDebug('recent-count', String(items.length));
     setDebugKeys('recent', items[0]);
+  };
+
+  const parsePositiveNumber = (value: unknown) => {
+    if (value === undefined || value === null || String(value).trim() === '') return null;
+    const parsed = Number(String(value).trim().replace(',', '.'));
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const detectVoteCount = (event: ApiRecord) =>
+    parsePositiveNumber(event.votes_total)
+    ?? parsePositiveNumber(event.votes_last_7_days)
+    ?? parsePositiveNumber(event.glasovi)
+    ?? parsePositiveNumber(event.votes)
+    ?? parsePositiveNumber(event.vote_count)
+    ?? parsePositiveNumber(event.total_votes)
+    ?? parsePositiveNumber(valueAtPath(event, 'voting.votes'));
+
+  const formatVoteCount = (votes: number | null) => {
+    if (votes === null) return 'not detected';
+    const formattedVotes = numberFormatter.format(votes);
+    return votes === 1 ? `${formattedVotes} glas` : `${formattedVotes} glasov`;
   };
 
   const titleForEvent = (event: ApiRecord) => {
@@ -424,7 +458,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
         const date = formatDate(pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']));
-        const votes = pickPathNumber(event, VOTE_PATHS);
+        const votes = detectVoteCount(event);
         const distance = pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], '');
         const surface = pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], '');
         const meta = joinParts([location, region && region !== location ? region : '', date]);
@@ -434,7 +468,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <h3>${escapeHtml(title)}</h3>
             <p>${escapeHtml(meta || 'Podrobnosti še niso navedene.')}</p>
             <div class="event-meta">
-              ${votes !== null ? `<span class="pill pill-orange">${escapeHtml(numberFormatter.format(votes))} glasov</span>` : '<span class="pill pill-orange">Glasovanje odprto</span>'}
+              ${votes !== null ? `<span class="pill pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="pill pill-orange">Glasovanje odprto</span>'}
               ${distance ? `<span class="pill">${escapeHtml(distance)} km</span>` : '<span class="pill">prihajajoči tek</span>'}
               ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
             </div>
