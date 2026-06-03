@@ -90,18 +90,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="data-note" data-status="updates">Vir: /recent_updates?days=7</p>
     </section>
 
-    <section class="section container api-debug" data-api-debug hidden aria-label="API debug">
-      <details>
-        <summary>API debug</summary>
-        <div class="debug-grid">
-          <p><strong>/stats:</strong> <span data-debug-stats>ni naloženo</span></p>
-          <p><strong>/top:</strong> <span data-debug-top>ni naloženo</span></p>
-          <p><strong>Prvi top item:</strong> <code data-debug-top-keys>—</code></p>
-          <p><strong>/recent_updates:</strong> <span data-debug-recent>ni naloženo</span></p>
-          <p><strong>Prvi recent item:</strong> <code data-debug-recent-keys>—</code></p>
-        </div>
-      </details>
-    </section>
   </main>
 </BaseLayout>
 
@@ -114,18 +102,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const ARRAY_KEYS = ['events', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
   const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
+  const TITLE_KEYS = ['naziv_prireditve', 'naziv', 'ime', 'title', 'name', 'event_name', 'race_name'];
   const TITLE_PATHS = [
     'naziv_prireditve',
     'naziv',
+    'ime',
     'event.naziv_prireditve',
     'event.naziv',
+    'event.ime',
     'race.naziv_prireditve',
     'race.naziv',
+    'race.ime',
     'data.naziv_prireditve',
     'data.naziv',
+    'data.ime',
+    'item.naziv_prireditve',
+    'item.naziv',
+    'row.naziv_prireditve',
+    'row.naziv',
+    'fields.naziv_prireditve',
+    'fields.naziv',
     'title',
-    'name'
+    'name',
+    'event_name',
+    'race_name'
   ];
+  const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
   const VOTE_PATHS = ['glasovi', 'votes', 'vote_count', 'votes_total', 'total_votes', 'voting.votes'];
   const debugEnabled = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -194,6 +196,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return null;
   };
 
+  const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
+
+  const findByNormalizedKey = (item: ApiRecord, keys: string[]) => {
+    const wanted = new Set(keys.map(normalizeKey));
+    for (const [key, value] of Object.entries(item)) {
+      if (!wanted.has(normalizeKey(key))) continue;
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return '';
+  };
+
+  const findNestedByNormalizedKey = (item: ApiRecord, containers: string[], keys: string[]) => {
+    for (const container of containers) {
+      const nested = asRecord(valueAtPath(item, container))
+        ?? Object.entries(item).find(([key]) => normalizeKey(key) === normalizeKey(container))?.[1];
+      const nestedRecord = asRecord(nested);
+      if (!nestedRecord) continue;
+      const value = findByNormalizedKey(nestedRecord, keys);
+      if (value) return value;
+    }
+    return '';
+  };
+
+  const findTitle = (event: ApiRecord) =>
+    findByNormalizedKey(event, TITLE_KEYS)
+    || findNestedByNormalizedKey(event, TITLE_CONTAINERS, TITLE_KEYS)
+    || pickPath(event, TITLE_PATHS);
+
   const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
 
   const describeKeys = (value: unknown) => {
@@ -204,6 +234,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return `${key}:${type}`;
     });
     return entries.length ? entries.join(', ') : 'brez ključev';
+  };
+
+  const createDebugPanel = () => {
+    if (!debugEnabled) return;
+    const main = document.querySelector('main');
+    if (!main) return;
+    main.insertAdjacentHTML('beforeend', `
+      <section class="section container api-debug" data-api-debug aria-label="API debug">
+        <details>
+          <summary>API debug</summary>
+          <div class="debug-grid">
+            <p><strong>/stats loaded:</strong> <span data-debug-stats>no</span></p>
+            <p><strong>/top loaded:</strong> <span data-debug-top>no</span></p>
+            <p><strong>/top item count:</strong> <span data-debug-top-count>0</span></p>
+            <p><strong>First top item keys:</strong> <code data-debug-top-keys>—</code></p>
+            <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
+            <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
+            <p><strong>/recent_updates loaded:</strong> <span data-debug-recent>no</span></p>
+            <p><strong>/recent_updates item count:</strong> <span data-debug-recent-count>0</span></p>
+            <p><strong>First recent item keys:</strong> <code data-debug-recent-keys>—</code></p>
+          </div>
+        </details>
+      </section>
+    `);
   };
 
   const setDebug = (target: string, text: string) => {
@@ -218,13 +272,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (element) element.textContent = describeKeys(value);
   };
 
-  const showDebugPanel = () => {
+  const nestedKeySummary = (item: unknown) => {
+    const record = asRecord(item);
+    if (!record) return '—';
+    const parts = TITLE_CONTAINERS.map((container) => {
+      const nested = asRecord(valueAtPath(record, container))
+        ?? asRecord(Object.entries(record).find(([key]) => normalizeKey(key) === normalizeKey(container))?.[1]);
+      return nested ? `${container}: ${describeKeys(nested)}` : '';
+    }).filter(Boolean);
+    return parts.length ? parts.join(' | ') : '—';
+  };
+
+  const setDebugTopDetails = (items: ApiRecord[]) => {
     if (!debugEnabled) return;
-    document.querySelector('[data-api-debug]')?.removeAttribute('hidden');
+    setDebug('top-count', String(items.length));
+    setDebugKeys('top', items[0]);
+    setDebug('top-nested', nestedKeySummary(items[0]));
+    setDebug('top-title', items[0] ? (findTitle(items[0]) || 'not detected') : 'not detected');
+  };
+
+  const setDebugRecentDetails = (items: ApiRecord[]) => {
+    if (!debugEnabled) return;
+    setDebug('recent-count', String(items.length));
+    setDebugKeys('recent', items[0]);
   };
 
   const titleForEvent = (event: ApiRecord) => {
-    const title = pickPath(event, TITLE_PATHS);
+    const title = findTitle(event);
     if (title) return title;
 
     if (import.meta.env.DEV) {
@@ -318,7 +392,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (element) element.textContent = value === null ? 'Ni podatka' : numberFormatter.format(value);
       }
 
-      setDebug('stats', `naloženo (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed manjka'}, ${familyTotal !== null ? 'family ok' : 'family manjka'})`);
+      setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
 
       if (confirmedTotal !== null && familyTotal !== null) {
         setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
@@ -326,7 +400,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         setStatus('stats', 'API je odgovoril, vendar ena ali več statističnih vrednosti manjka.');
       }
     } catch (error) {
-      setDebug('stats', 'napaka');
+      setDebug('stats', 'no');
       setStatus('stats', 'Statistika trenutno ni dosegljiva, zato prikazujemo osnovni pogled.');
     }
   }
@@ -338,9 +412,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
       const events = toArray(payload).slice(0, 6);
-      setDebug('top', events.length ? `naloženo (${events.length} prikazanih)` : 'naloženo (prazen seznam)');
-      setDebugKeys('top', events[0]);
-      if (!events.length) throw new Error('No top events returned');
+      setDebug('top', 'yes');
+      setDebugTopDetails(events);
+      if (!events.length) {
+        setStatus('top', 'API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
+        return;
+      }
 
       container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);
@@ -366,7 +443,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }).join('');
       setStatus('top', 'Najbolj glasovani teki so naloženi iz STK API-ja.');
     } catch (error) {
-      setDebug('top', 'napaka');
+      setDebug('top', 'no');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
     }
   }
@@ -378,8 +455,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     try {
       const payload = await loadJson('/recent_updates?days=7');
       const updates = toArray(payload).slice(0, 6);
-      setDebug('recent', updates.length ? `naloženo (${updates.length} prikazanih)` : 'naloženo (prazen seznam)');
-      setDebugKeys('recent', updates[0]);
+      setDebug('recent', 'yes');
+      setDebugRecentDetails(updates);
 
       if (!updates.length) {
         container.innerHTML = `
@@ -421,12 +498,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }).join('');
       setStatus('updates', 'Zadnje posodobitve so naložene iz STK API-ja.');
     } catch (error) {
-      setDebug('recent', 'napaka');
+      setDebug('recent', 'no');
       setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
     }
   }
 
-  showDebugPanel();
+  createDebugPanel();
   loadStats();
   loadTopEvents();
   loadRecentUpdates();
