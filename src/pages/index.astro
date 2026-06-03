@@ -99,34 +99,94 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const numberFormatter = new Intl.NumberFormat('sl-SI');
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
 
+  const ARRAY_KEYS = ['events', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
+  const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
+
   const setStatus = (name: string, message: string) => {
     const element = document.querySelector(`[data-status="${name}"]`);
     if (element) element.textContent = message;
   };
 
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
   const toArray = (payload: unknown): ApiRecord[] => {
-    if (!payload || typeof payload !== 'object') return [];
-    const record = payload as Record<string, unknown>;
-    if (Array.isArray(payload)) return payload as ApiRecord[];
-    if (Array.isArray(record.data)) return record.data as ApiRecord[];
-    if (Array.isArray(record.events)) return record.events as ApiRecord[];
-    if (Array.isArray(record.items)) return record.items as ApiRecord[];
-    if (Array.isArray(record.updates)) return record.updates as ApiRecord[];
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    for (const key of ARRAY_KEYS) {
+      const nested = asRecord(record[key]);
+      if (!nested) continue;
+      const nestedArray = toArray(nested);
+      if (nestedArray.length) return nestedArray;
+    }
+
     return [];
   };
 
-  const pick = (item: ApiRecord, keys: string[], fallback = ''): string | number => {
+  const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
     for (const key of keys) {
-      const value = item?.[key];
-      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value);
+      const value = item[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
     }
     return fallback;
   };
 
-  const formatDate = (value: string | number) => {
+  const pickNumber = (item: ApiRecord, keys: string[]): number | null => {
+    for (const key of keys) {
+      const value = item[key];
+      if (value === undefined || value === null || String(value).trim() === '') continue;
+      const numberValue = Number(value);
+      if (Number.isFinite(numberValue)) return numberValue;
+    }
+    return null;
+  };
+
+
+  const numberFromStatArray = (items: ApiRecord[], keys: string[]): number | null => {
+    for (const item of items) {
+      const statName = pick(item, ['key', 'name', 'metric', 'field', 'id']);
+      if (!keys.includes(statName)) continue;
+      const value = pickNumber(item, ['value', 'count', 'total', 'amount']);
+      if (value !== null) return value;
+    }
+    return null;
+  };
+
+  const pickNestedNumber = (payload: unknown, keys: string[]): number | null => {
+    const root = asRecord(payload);
+    if (!root) return null;
+
+    const direct = pickNumber(root, keys);
+    if (direct !== null) return direct;
+
+    const rootArrayValue = numberFromStatArray(toArray(root), keys);
+    if (rootArrayValue !== null) return rootArrayValue;
+
+    for (const containerKey of STATS_CONTAINERS) {
+      const nested = asRecord(root[containerKey]);
+      if (!nested) continue;
+      const nestedValue = pickNumber(nested, keys);
+      if (nestedValue !== null) return nestedValue;
+
+      const nestedArrayValue = numberFromStatArray(toArray(nested), keys);
+      if (nestedArrayValue !== null) return nestedArrayValue;
+    }
+
+    return null;
+  };
+
+  const formatDate = (value: string) => {
     if (!value) return '';
     const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? String(value) : dateFormatter.format(date);
+    return Number.isNaN(date.getTime()) ? value : dateFormatter.format(date);
   };
 
   const escapeHtml = (value: string | number) => {
@@ -140,6 +200,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return String(value).replace(/[&<>'"]/g, (character) => characters[character] ?? character);
   };
 
+  const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
+
   async function loadJson(path: string): Promise<unknown> {
     const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
     if (!response.ok) throw new Error(`API request failed: ${response.status}`);
@@ -148,15 +210,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   async function loadStats() {
     try {
-      const stats = loadJson('/stats').then((payload) => payload as ApiRecord);
-      const resolvedStats = await stats;
-      for (const key of ['confirmed_public_events_total', 'family_friendly_total']) {
+      const payload = await loadJson('/stats');
+      const confirmedTotal = pickNestedNumber(payload, ['confirmed_public_events_total']);
+      const familyTotal = pickNestedNumber(payload, ['family_friendly_total']);
+      const values = {
+        confirmed_public_events_total: confirmedTotal,
+        family_friendly_total: familyTotal
+      };
+
+      for (const [key, value] of Object.entries(values)) {
         const element = document.querySelector(`[data-stat="${key}"]`);
-        if (element && resolvedStats[key] !== undefined) {
-          element.textContent = numberFormatter.format(Number(resolvedStats[key]));
-        }
+        if (element) element.textContent = value === null ? 'Ni podatka' : numberFormatter.format(value);
       }
-      setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
+
+      if (confirmedTotal !== null && familyTotal !== null) {
+        setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
+      } else {
+        setStatus('stats', 'API je odgovoril, vendar ena ali več statističnih vrednosti manjka.');
+      }
     } catch (error) {
       setStatus('stats', 'Statistika trenutno ni dosegljiva, zato prikazujemo osnovni pogled.');
     }
@@ -172,17 +243,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (!events.length) throw new Error('No top events returned');
 
       container.innerHTML = events.map((event) => {
-        const title = pick(event, ['title', 'name', 'event_name', 'naziv', 'Tek'], 'Tekaška prireditev');
-        const location = pick(event, ['location', 'place', 'city', 'kraj', 'Regija'], 'Slovenija');
-        const date = formatDate(pick(event, ['date', 'event_date', 'datum', 'Datum']));
-        const votes = pick(event, ['votes', 'vote_count', 'glasovi', 'score'], '');
+        const title = pick(event, ['naziv_prireditve', 'title', 'name', 'event_name', 'naziv', 'Tek'], 'Tekaška prireditev');
+        const location = pick(event, ['kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
+        const region = pick(event, ['regija', 'region'], '');
+        const date = formatDate(pick(event, ['datum', 'date', 'event_date', 'Datum']));
+        const votes = pick(event, ['glasovi', 'votes', 'vote_count', 'votes_total', 'score'], '');
+        const distance = pick(event, ['razdalje_km', 'distance', 'distances'], '');
+        const surface = pick(event, ['tip_podlage', 'surface'], '');
+        const meta = joinParts([location, region && region !== location ? region : '', date]);
+
         return `
           <article class="event-card">
             <h3>${escapeHtml(title)}</h3>
-            <p>${escapeHtml(location)}${date ? ` · ${escapeHtml(date)}` : ''}</p>
+            <p>${escapeHtml(meta || 'Podrobnosti še niso navedene.')}</p>
             <div class="event-meta">
               ${votes !== '' ? `<span class="pill pill-orange">${escapeHtml(votes)} glasov</span>` : '<span class="pill pill-orange">glasovanje</span>'}
-              <span class="pill">prihajajoči tek</span>
+              ${distance ? `<span class="pill">${escapeHtml(distance)} km</span>` : '<span class="pill">prihajajoči tek</span>'}
+              ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
             </div>
           </article>
         `;
@@ -203,13 +280,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (!updates.length) throw new Error('No recent updates returned');
 
       container.innerHTML = updates.map((update) => {
-        const title = pick(update, ['title', 'name', 'event_name', 'naziv', 'Tek'], 'Posodobitev koledarja');
-        const changed = formatDate(pick(update, ['updated_at', 'updated', 'date', 'datum', 'modified_at']));
-        const summary = pick(update, ['summary', 'change', 'status', 'type', 'opis'], 'Podatek v koledarju je bil posodobljen.');
+        const title = pick(update, ['naziv_prireditve', 'title', 'name', 'event_name', 'naziv', 'Tek'], 'Posodobitev koledarja');
+        const eventDate = formatDate(pick(update, ['datum', 'date', 'event_date', 'Datum']));
+        const changed = formatDate(pick(update, ['zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const location = pick(update, ['kraj', 'location', 'place', 'city', 'regija'], '');
+        const updateType = pick(update, ['vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'posodobljeno');
+        const note = pick(update, ['opis_spremembe', 'summary', 'opis', 'opombe_javne', 'note'], '');
+        const meta = joinParts([location, eventDate ? `datum teka: ${eventDate}` : '', changed ? `posodobljeno: ${changed}` : '']);
+        const summary = note || `Vnos je bil ${updateType}.`;
+
         return `
           <article class="update-card">
             <h3>${escapeHtml(title)}</h3>
-            <p>${escapeHtml(summary)}${changed ? ` · ${escapeHtml(changed)}` : ''}</p>
+            <p>${escapeHtml(summary)}</p>
+            ${meta ? `<div class="event-meta"><span class="pill">${escapeHtml(meta)}</span></div>` : ''}
           </article>
         `;
       }).join('');

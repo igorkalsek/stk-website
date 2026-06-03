@@ -14,5 +14,8 @@
     "astro": "^5.15.0",
     "typescript": "^5.9.3"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
 }
