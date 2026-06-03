@@ -214,25 +214,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return text.length ? text : '';
   };
 
-  const findTitle = (event: ApiRecord) => {
-    const directTitle = valueAsText(event.naziv_prireditve)
-      || valueAsText(event.naziv)
-      || valueAsText(event.ime)
-      || valueAsText(event.title)
-      || valueAsText(event.name);
-    if (directTitle) return directTitle;
+  const textFromRecord = (record: ApiRecord | null, key: string) =>
+    record ? valueAsText(record[key]) : '';
 
-    return pickPath(event, [
-      'event.naziv_prireditve',
-      'event.naziv',
-      'race.naziv_prireditve',
-      'race.naziv',
-      'data.naziv_prireditve',
-      'data.naziv'
-    ])
-    || findByNormalizedKey(event, TITLE_KEYS)
-    || findNestedByNormalizedKey(event, TITLE_CONTAINERS, TITLE_KEYS)
-    || pickPath(event, TITLE_PATHS);
+  const getTopEventTitle = (item: ApiRecord) => {
+    const primaryTitle = valueAsText(item['naziv_prireditve']);
+    if (primaryTitle) return primaryTitle;
+
+    const directFallback = valueAsText(item['naziv'])
+      || valueAsText(item['ime'])
+      || valueAsText(item['title'])
+      || valueAsText(item['name']);
+    if (directFallback) return directFallback;
+
+    const event = asRecord(item['event']);
+    const eventFallback = textFromRecord(event, 'naziv_prireditve') || textFromRecord(event, 'naziv');
+    if (eventFallback) return eventFallback;
+
+    const race = asRecord(item['race']);
+    const raceFallback = textFromRecord(race, 'naziv_prireditve') || textFromRecord(race, 'naziv');
+    if (raceFallback) return raceFallback;
+
+    const data = asRecord(item['data']);
+    const dataFallback = textFromRecord(data, 'naziv_prireditve') || textFromRecord(data, 'naziv');
+    if (dataFallback) return dataFallback;
+
+    return findByNormalizedKey(item, TITLE_KEYS)
+      || findNestedByNormalizedKey(item, TITLE_CONTAINERS, TITLE_KEYS)
+      || pickPath(item, TITLE_PATHS);
   };
 
   const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
@@ -300,8 +309,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setDebug('top-count', String(items.length));
     setDebugKeys('top', items[0]);
     setDebug('top-nested', nestedKeySummary(items[0]));
-    setDebug('top-title', items[0] ? (findTitle(items[0]) || 'not detected') : 'not detected');
-    setDebug('top-votes', items[0] ? formatVoteCount(detectVoteCount(items[0])) : 'not detected');
+    setDebug('top-title', items[0] ? (getTopEventTitle(items[0]) || 'not detected') : 'not detected');
+    setDebug('top-votes', items[0] ? formatVoteCount(getTopVoteCount(items[0])) : 'not detected');
   };
 
   const setDebugRecentDetails = (items: ApiRecord[]) => {
@@ -310,20 +319,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setDebugKeys('recent', items[0]);
   };
 
-  const parsePositiveNumber = (value: unknown) => {
-    if (value === undefined || value === null || String(value).trim() === '') return null;
-    const parsed = Number(String(value).trim().replace(',', '.'));
+  const parsePositiveVote = (value: unknown) => {
+    if (value === undefined || value === null) return null;
+    const text = String(value).trim();
+    if (!text) return null;
+    const parsed = Number.parseInt(text, 10);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   };
 
-  const detectVoteCount = (event: ApiRecord) =>
-    parsePositiveNumber(event.votes_total)
-    ?? parsePositiveNumber(event.votes_last_7_days)
-    ?? parsePositiveNumber(event.glasovi)
-    ?? parsePositiveNumber(event.votes)
-    ?? parsePositiveNumber(event.vote_count)
-    ?? parsePositiveNumber(event.total_votes)
-    ?? parsePositiveNumber(valueAtPath(event, 'voting.votes'));
+  const getTopVoteCount = (item: ApiRecord) => {
+    const primaryVotes = parsePositiveVote(item['votes_total']);
+    if (primaryVotes !== null) return primaryVotes;
+
+    return parsePositiveVote(item['votes_last_7_days'])
+      ?? parsePositiveVote(item['glasovi'])
+      ?? parsePositiveVote(item['votes'])
+      ?? parsePositiveVote(item['vote_count'])
+      ?? parsePositiveVote(item['total_votes'])
+      ?? parsePositiveVote(asRecord(item['voting'])?.['votes']);
+  };
 
   const formatVoteCount = (votes: number | null) => {
     if (votes === null) return 'not detected';
@@ -332,7 +346,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const titleForEvent = (event: ApiRecord) => {
-    const title = findTitle(event);
+    const title = getTopEventTitle(event);
     if (title) return title;
 
     if (import.meta.env.DEV) {
@@ -458,7 +472,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
         const date = formatDate(pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']));
-        const votes = detectVoteCount(event);
+        const votes = getTopVoteCount(event);
         const distance = pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], '');
         const surface = pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], '');
         const meta = joinParts([location, region && region !== location ? region : '', date]);
