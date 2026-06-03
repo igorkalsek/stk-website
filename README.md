@@ -77,7 +77,7 @@ The website never reads Google Sheets directly. Google Sheets remains the master
 - Next week events: `https://stk-master-api.igor-kalsek.workers.dev/next_week`
 - Recent updates: `https://stk-master-api.igor-kalsek.workers.dev/recent_updates?days=7`
 
-The Iskalnik tekov page uses `/` for the public 2026 event list and filters it client-side.
+The Iskalnik tekov page uses `/` for the public 2026 event list and filters it client-side. The Družinam prijazni teki page also uses `/` and shows only confirmed public 2026 events whose `opombe_javne` explicitly contains `družinam prijazno`.
 
 The home page currently fetches live data from:
 
@@ -101,8 +101,8 @@ Each live section includes graceful fallback content if an API request fails or 
   - API-backed “Najbolj glasovani prihajajoči teki” section with fallback
   - API-backed “Zadnje posodobitve” section with fallback
 - First usable Iskalnik tekov page with client-side search and filters.
+- First usable Družinam prijazni teki page with client-side search and filters based on `opombe_javne`.
 - Placeholder pages for:
-  - Družinam prijazni teki
   - Najbolj glasovani teki
   - Dodaj ali popravi tek
   - STK Tekobot
