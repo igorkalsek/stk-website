@@ -1,12 +1,161 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+// TODO: replace with the public STK Tekobot URL
+const tekobotUrl = '#';
+
+const exampleQuestions = [
+  'Kateri teki so ta vikend?',
+  'Pokaži družinam prijazne teke v naslednjih 30 dneh.',
+  'Kateri trail teki so v Gorenjski?',
+  'Kateri teki imajo objavljene prijavnine?',
+  'Poišči poceni teke v naslednjem mesecu.'
+];
+
+const questionTopics = [
+  'teki po datumu',
+  'teki po regiji',
+  'družinam prijazni teki',
+  'trail, cestni in gorski teki',
+  'prijavnine in dodatni podatki, kadar so na voljo',
+  'najbolj glasovani teki'
+];
 ---
 
-<BaseLayout title="STK Tekobot" description="Pomočnik za vprašanja o tekih iz Slovenskega Tekaškega Koledarja.">
-  <PlaceholderPage
-    title="STK Tekobot"
-    description="Predstavitvena stran za pomočnika, ki tekačem pomaga najti primerne prireditve."
-    note="Integracija Tekobota ni del začetnega MVP-ja; stran je pripravljena za kasnejšo povezavo."
-  />
+<BaseLayout title="STK Tekobot" description="Informacijska stran za STK Tekobot, pomočnika za naravna vprašanja o Slovenskem Tekaškem Koledarju.">
+  <main>
+    <section class="page-hero container tekobot-hero" aria-labelledby="tekobot-title">
+      <span class="eyebrow">STK Tekobot</span>
+      <h1 id="tekobot-title">Vprašaj koledar po domače</h1>
+      <p>
+        STK Tekobot pomaga tekačem zastaviti naravna vprašanja o Slovenskem Tekaškem Koledarju — brez klikanja po filtrih,
+        ko želiš samo hitro idejo, kateri teki ustrezajo tvojemu terminu, regiji ali tipu prireditve.
+      </p>
+      <div class="cta-row tekobot-actions" aria-label="Povezave za STK Tekobot">
+        <a class="button button-primary" href={tekobotUrl}>Odpri STK Tekobot</a>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">Odpri iskalnik tekov</a>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="examples-title">
+      <div class="section-heading">
+        <h2 id="examples-title">Primeri vprašanj</h2>
+        <p>Tekobotu lahko napišeš vprašanje tako, kot bi vprašal prijatelja, ki dobro pozna tekaški koledar.</p>
+      </div>
+      <div class="tekobot-examples" aria-label="Primeri vprašanj za STK Tekobot">
+        {exampleQuestions.map((question) => (
+          <article class="info-card example-card">
+            <p>“{question}”</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="ask-title">
+      <div class="section-heading">
+        <h2 id="ask-title">Kaj lahko vprašaš?</h2>
+        <p>Najbolje delujejo konkretna vprašanja, kjer omeniš datum, regijo, vrsto teka ali dodatne podatke, ki te zanimajo.</p>
+      </div>
+      <div class="card-grid card-grid-three">
+        {questionTopics.map((topic) => (
+          <article class="info-card topic-card">
+            <span class="topic-icon" aria-hidden="true">✓</span>
+            <h3>{topic}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="note-title">
+      <div class="tekobot-note">
+        <div class="section-heading">
+          <h2 id="note-title">Preden se prijaviš</h2>
+          <p>
+            Tekobot uporablja podatke iz STK koledarja. Pred prijavo naj tekač vedno preveri uradni razpis organizatorja.
+            Če opaziš napako, uporabi stran <a href="/dodaj-ali-popravi-tek/">Dodaj ali popravi tek</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .tekobot-hero {
+    max-width: 920px;
+  }
+
+  .tekobot-actions {
+    margin-top: 8px;
+  }
+
+  .tekobot-examples {
+    display: grid;
+    gap: 14px;
+  }
+
+  .example-card {
+    background:
+      linear-gradient(135deg, rgba(200, 230, 201, 0.58), rgba(255, 255, 255, 0.92)),
+      var(--white);
+  }
+
+  .example-card p {
+    margin: 0;
+    color: var(--deep-teal);
+    font-size: clamp(1.05rem, 3vw, 1.22rem);
+    font-weight: 800;
+    line-height: 1.45;
+  }
+
+  .topic-card {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+
+  .topic-card h3 {
+    line-height: 1.25;
+  }
+
+  .topic-icon {
+    display: inline-grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--deep-teal);
+    color: var(--stk-green);
+    font-weight: 900;
+  }
+
+  .tekobot-note {
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.86);
+    padding: clamp(20px, 4vw, 30px);
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.07);
+  }
+
+  .tekobot-note .section-heading {
+    margin-bottom: 0;
+  }
+
+  .tekobot-note a {
+    color: var(--deep-teal);
+    font-weight: 900;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  @media (min-width: 720px) {
+    .tekobot-examples {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tekobot-examples .example-card:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
