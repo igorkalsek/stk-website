@@ -72,10 +72,12 @@ npm run build
 The website never reads Google Sheets directly. Google Sheets remains the master data source behind the public API.
 
 - Stats: `https://stk-master-api.igor-kalsek.workers.dev/stats`
-- Master event data: `https://stk-master-api.igor-kalsek.workers.dev/`
+- Master event data and Iskalnik tekov page: `https://stk-master-api.igor-kalsek.workers.dev/`
 - Top upcoming voted events: `https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=10`
 - Next week events: `https://stk-master-api.igor-kalsek.workers.dev/next_week`
 - Recent updates: `https://stk-master-api.igor-kalsek.workers.dev/recent_updates?days=7`
+
+The Iskalnik tekov page uses `/` for the public 2026 event list and filters it client-side.
 
 The home page currently fetches live data from:
 
@@ -98,8 +100,8 @@ Each live section includes graceful fallback content if an API request fails or 
   - API-backed “Ta teden tečemo” section with fallback
   - API-backed “Najbolj glasovani prihajajoči teki” section with fallback
   - API-backed “Zadnje posodobitve” section with fallback
+- First usable Iskalnik tekov page with client-side search and filters.
 - Placeholder pages for:
-  - Iskalnik tekov
   - Družinam prijazni teki
   - Najbolj glasovani teki
   - Dodaj ali popravi tek
@@ -111,7 +113,6 @@ Each live section includes graceful fallback content if an API request fails or 
 
 ## Still to do
 
-- Build the real event search and filtering experience.
 - Use the master event endpoint for event listing pages.
 - Replace placeholder pages with full content and interactions.
 - Add the final “Dodaj ali popravi tek” destination once the process is confirmed.
