@@ -162,6 +162,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
 
+  const getVoteUrlTitle = (item: ApiRecord) => {
+    if (typeof item?.vote_url !== 'string' || !item.vote_url.trim()) return '';
+    try {
+      const url = new URL(item.vote_url);
+      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
+    } catch (error) {
+      const match = item.vote_url.match(/[?&]entry\.1386641006=([^&]+)/);
+      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
+    }
+  };
+
   const getTopEventTitle = (item: ApiRecord) => {
     if (typeof item?.naziv_prireditve === 'string' && item.naziv_prireditve.trim()) {
       return item.naziv_prireditve.trim();
@@ -206,7 +217,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return data.naziv.trim();
     }
 
-    return 'Naziv teka ni na voljo';
+    const voteUrlTitle = getVoteUrlTitle(item);
+    return voteUrlTitle || 'Naziv teka ni na voljo';
   };
 
   const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
@@ -242,24 +254,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return row === undefined || row === null ? '' : String(row).trim();
   };
 
-  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
-    if (!isMissing(target[key]) || isMissing(source[key])) return false;
-    target[key] = String(source[key]).trim();
-    return true;
+  const getFieldValue = (item: ApiRecord, key: string) => {
+    const exact = item[key];
+    if (!isMissing(exact)) return String(exact).trim();
+
+    const wanted = normalizeKey(key);
+    for (const [itemKey, value] of Object.entries(item)) {
+      if (normalizeKey(itemKey) === wanted && !isMissing(value)) return String(value).trim();
+    }
+
+    return '';
   };
 
-  const findYearRows = (payload: unknown, year: string): ApiRecord[] => {
+  const getMasterRows = (payload: unknown): ApiRecord[] => {
     const record = asRecord(payload);
-    if (record) {
-      for (const [key, value] of Object.entries(record)) {
-        if (normalizeKey(key).includes(year)) {
-          const rows = toArray(value);
-          if (rows.length) return rows;
-        }
-      }
+    if (record && Array.isArray(record.data)) return record.data.filter(asRecord) as ApiRecord[];
 
+    const fallbackRows = toArray(payload);
+    if (fallbackRows.length) return fallbackRows;
+
+    if (record) {
       for (const value of Object.values(record)) {
-        const rows = findYearRows(value, year);
+        const rows = toArray(value);
         if (rows.length) return rows;
       }
     }
@@ -267,34 +283,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return [];
   };
 
-  const masterRowMap = (rows: ApiRecord[]) => {
-    const map = new Map<string, ApiRecord>();
-    for (const row of rows) {
-      const key = rowKey(row);
-      if (key) map.set(key, row);
-    }
-    return map;
+  const normalizedText = (value: unknown) =>
+    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
+    const topValue = normalizedText(getFieldValue(topEvent, key));
+    const masterValue = normalizedText(getFieldValue(masterEvent, key));
+    return Boolean(topValue && masterValue && topValue === masterValue);
   };
 
-  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => {
-    const rowsByKey = masterRowMap(masterRows);
-    return events.map((event) => {
-      const enriched = { ...event };
-      const match = rowsByKey.get(rowKey(event));
-      enriched.__master_matched = Boolean(match);
-      enriched.__title_source = getTopEventTitle(event) === 'Naziv teka ni na voljo' ? 'not detected' : 'top';
-      if (!match) return enriched;
+  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
+      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
+    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
+    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
+    return rowScore + matchingFields;
+  };
 
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
+    let bestMatch: ApiRecord | null = null;
+    let bestScore = 0;
+
+    for (const masterEvent of masterRows) {
+      const score = matchScore(topEvent, masterEvent);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = masterEvent;
+      }
+    }
+
+    return bestScore >= 3 ? bestMatch : null;
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key])) return false;
+    const sourceValue = getFieldValue(source, key);
+    if (!sourceValue) return false;
+    target[key] = sourceValue;
+    return true;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
+    const enriched = { ...event };
+    const topTitle = getTopEventTitle(event);
+    const voteUrlTitle = getVoteUrlTitle(event);
+    const match = findMasterMatch(event, masterRows);
+    enriched.__master_matched = Boolean(match);
+    enriched.__matched_master_row = match ? rowKey(match) : '';
+    enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__vote_url_title = voteUrlTitle;
+    enriched.__title_source = topTitle !== 'Naziv teka ni na voljo' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
+
+    if (match) {
       const filledTitle = copyIfMissing(enriched, match, 'naziv_prireditve');
       copyIfMissing(enriched, match, 'datum');
       copyIfMissing(enriched, match, 'kraj');
       copyIfMissing(enriched, match, 'regija');
       copyIfMissing(enriched, match, 'tip_podlage');
       copyIfMissing(enriched, match, 'razdalje_km');
-      if (filledTitle) enriched.__title_source = 'master fallback';
-      return enriched;
-    });
-  };
+      if (filledTitle) enriched.__title_source = 'master';
+    }
+
+    if (getTopEventTitle(enriched) === 'Naziv teka ni na voljo' && voteUrlTitle) {
+      enriched.naziv_prireditve = voteUrlTitle;
+      enriched.__title_source = 'vote_url';
+    } else if (getTopEventTitle(enriched) === voteUrlTitle && voteUrlTitle) {
+      enriched.__title_source = 'vote_url';
+    }
+
+    return enriched;
+  });
 
   const createDebugPanel = () => {
     if (!debugEnabled) return;
@@ -314,8 +372,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
             <p><strong>Raw naziv_prireditve:</strong> <code data-debug-top-title-raw>not detected</code></p>
             <p><strong>Raw votes_total:</strong> <code data-debug-top-votes-raw>not detected</code></p>
-            <p><strong>Master fallback loaded:</strong> <span data-debug-master>no</span></p>
+            <p><strong>Master loaded:</strong> <span data-debug-master>no</span></p>
+            <p><strong>Master data item count:</strong> <span data-debug-master-count>0</span></p>
+            <p><strong>vote_url title fallback:</strong> <code data-debug-vote-url-title>not detected</code></p>
             <p><strong>Matched master row:</strong> <span data-debug-master-match>no</span></p>
+            <p><strong>Matched master title:</strong> <code data-debug-master-title>not detected</code></p>
             <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
             <p><strong>Detected title source:</strong> <code data-debug-top-title-source>not detected</code></p>
             <p><strong>Detected top votes:</strong> <code data-debug-top-votes>not detected</code></p>
@@ -362,7 +423,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setDebug('top-nested', nestedKeySummary(rawFirst));
     setDebug('top-title-raw', rawValueText(rawFirst?.naziv_prireditve));
     setDebug('top-votes-raw', rawValueText(rawFirst?.votes_total));
-    setDebug('master-match', first?.__master_matched ? 'yes' : 'no');
+    setDebug('vote-url-title', rawValueText(first?.__vote_url_title ?? getVoteUrlTitle(rawFirst ?? {})));
+    setDebug('master-match', first?.__master_matched ? `yes (${rawValueText(first.__matched_master_row)})` : 'no');
+    setDebug('master-title', rawValueText(first?.__matched_master_title));
     setDebug('top-title', first ? getTopEventTitle(first) : 'not detected');
     setDebug('top-title-source', first?.__title_source ? String(first.__title_source) : 'not detected');
     setDebug('top-votes', first ? formatVoteCount(getTopEventVotes(first)) : 'not detected');
@@ -519,11 +582,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       let events = topEvents;
       try {
         const masterPayload = await loadJson('/');
-        const masterRows = findYearRows(masterPayload, '2026');
-        setDebug('master', masterRows.length ? `yes (${masterRows.length} rows)` : 'yes (2026 list empty)');
+        const masterRows = getMasterRows(masterPayload);
+        setDebug('master', 'yes');
+        setDebug('master-count', String(masterRows.length));
         events = enrichTopEventsFromMaster(topEvents, masterRows);
       } catch (error) {
         setDebug('master', 'no');
+        setDebug('master-count', '0');
       }
       setDebugTopDetails(events, topEvents);
 
