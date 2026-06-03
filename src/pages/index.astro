@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-card">
+        <div class="hero-content">
+          <span class="eyebrow">Javni tekaški koledar</span>
+          <h1 id="hero-title">Slovenski Tekaški Koledar</h1>
+          <p class="hero-lead">Neodvisen koledar tekaških prireditev po Sloveniji.</p>
+          <p class="hero-sublead">
+            Poiščite tek po datumu, regiji, podlagi, razdalji ali družinski prijaznosti.
+          </p>
+          <div class="cta-row" aria-label="Glavne povezave">
+            <a class="button button-primary" href="/iskalnik-tekov/">Iskalnik tekov</a>
+            <a class="button button-secondary" href="/druzinam-prijazni-teki/">Družinam prijazni teki</a>
+            <a class="button button-secondary" href="/najbolj-glasovani-teki/">Najbolj glasovani teki</a>
+            <a class="button button-secondary" href="/stk-tekobot/">STK Tekobot</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-strip" aria-label="Statistika koledarja">
+        <article class="stat-card">
+          <span class="stat-value" data-stat="confirmed_public_events_total">—</span>
+          <span class="stat-label">potrjenih javnih tekaških prireditev</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-value" data-stat="family_friendly_total">—</span>
+          <span class="stat-label">družinam prijaznih tekov</span>
+        </article>
+      </div>
+      <p class="data-note" data-status="stats">Statistiko nalagamo iz javnega STK API-ja.</p>
+    </section>
+
+    <section class="section container" aria-labelledby="week-title">
+      <div class="section-heading">
+        <h2 id="week-title">Ta teden tečemo</h2>
+        <p>
+          Prvi MVP še ne izračunava tedenskega izbora. Kartice spodaj kažejo končno obliko za pregled najbližjih tekov.
+        </p>
+      </div>
+      <div class="card-grid card-grid-three">
+        <article class="info-card">
+          <h3>Najbližji vikend</h3>
+          <p>Tu bo kratek seznam prireditev, ki se zgodijo ta teden.</p>
+        </article>
+        <article class="info-card">
+          <h3>Po regijah</h3>
+          <p>Pregled bo pomagal hitro ločiti teke po Sloveniji.</p>
+        </article>
+        <article class="info-card">
+          <h3>Za družine</h3>
+          <p>Izpostavljeni bodo teki z otroškimi ali družinsko prijaznimi programi.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="voted-title">
+      <div class="section-heading">
+        <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
+        <p>Če je API dosegljiv, se seznam napolni z javnimi podatki. V nasprotnem primeru ostane miren nadomestni prikaz.</p>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">upcoming</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">Vir: /top?scope=upcoming&amp;limit=10</p>
+    </section>
+
+    <section class="section container" aria-labelledby="updates-title">
+      <div class="section-heading">
+        <h2 id="updates-title">Zadnje posodobitve</h2>
+        <p>Najnovejše spremembe v koledarju pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
+      </div>
+      <div class="card-grid" data-recent-updates>
+        <article class="update-card">
+          <h3>Ni še prikazanih posodobitev</h3>
+          <p>Ko bo API odgovoril, bodo zadnje spremembe prikazane tukaj.</p>
+        </article>
+      </div>
+      <p class="data-note" data-status="updates">Vir: /recent_updates?days=7</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  type ApiRecord = Record<string, unknown>;
+
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const numberFormatter = new Intl.NumberFormat('sl-SI');
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const setStatus = (name: string, message: string) => {
+    const element = document.querySelector(`[data-status="${name}"]`);
+    if (element) element.textContent = message;
+  };
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (!payload || typeof payload !== 'object') return [];
+    const record = payload as Record<string, unknown>;
+    if (Array.isArray(payload)) return payload as ApiRecord[];
+    if (Array.isArray(record.data)) return record.data as ApiRecord[];
+    if (Array.isArray(record.events)) return record.events as ApiRecord[];
+    if (Array.isArray(record.items)) return record.items as ApiRecord[];
+    if (Array.isArray(record.updates)) return record.updates as ApiRecord[];
+    return [];
+  };
+
+  const pick = (item: ApiRecord, keys: string[], fallback = ''): string | number => {
+    for (const key of keys) {
+      const value = item?.[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value);
+    }
+    return fallback;
+  };
+
+  const formatDate = (value: string | number) => {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : dateFormatter.format(date);
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return String(value).replace(/[&<>'"]/g, (character) => characters[character] ?? character);
+  };
+
+  async function loadJson(path: string): Promise<unknown> {
+    const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    return response.json();
+  }
+
+  async function loadStats() {
+    try {
+      const stats = loadJson('/stats').then((payload) => payload as ApiRecord);
+      const resolvedStats = await stats;
+      for (const key of ['confirmed_public_events_total', 'family_friendly_total']) {
+        const element = document.querySelector(`[data-stat="${key}"]`);
+        if (element && resolvedStats[key] !== undefined) {
+          element.textContent = numberFormatter.format(Number(resolvedStats[key]));
+        }
+      }
+      setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
+    } catch (error) {
+      setStatus('stats', 'Statistika trenutno ni dosegljiva, zato prikazujemo osnovni pogled.');
+    }
+  }
+
+  async function loadTopEvents() {
+    const container = document.querySelector('[data-top-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/top?scope=upcoming&limit=10');
+      const events = toArray(payload).slice(0, 6);
+      if (!events.length) throw new Error('No top events returned');
+
+      container.innerHTML = events.map((event) => {
+        const title = pick(event, ['title', 'name', 'event_name', 'naziv', 'Tek'], 'Tekaška prireditev');
+        const location = pick(event, ['location', 'place', 'city', 'kraj', 'Regija'], 'Slovenija');
+        const date = formatDate(pick(event, ['date', 'event_date', 'datum', 'Datum']));
+        const votes = pick(event, ['votes', 'vote_count', 'glasovi', 'score'], '');
+        return `
+          <article class="event-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(location)}${date ? ` · ${escapeHtml(date)}` : ''}</p>
+            <div class="event-meta">
+              ${votes !== '' ? `<span class="pill pill-orange">${escapeHtml(votes)} glasov</span>` : '<span class="pill pill-orange">glasovanje</span>'}
+              <span class="pill">prihajajoči tek</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+      setStatus('top', 'Najbolj glasovani teki so naloženi iz STK API-ja.');
+    } catch (error) {
+      setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
+    }
+  }
+
+  async function loadRecentUpdates() {
+    const container = document.querySelector('[data-recent-updates]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/recent_updates?days=7');
+      const updates = toArray(payload).slice(0, 6);
+      if (!updates.length) throw new Error('No recent updates returned');
+
+      container.innerHTML = updates.map((update) => {
+        const title = pick(update, ['title', 'name', 'event_name', 'naziv', 'Tek'], 'Posodobitev koledarja');
+        const changed = formatDate(pick(update, ['updated_at', 'updated', 'date', 'datum', 'modified_at']));
+        const summary = pick(update, ['summary', 'change', 'status', 'type', 'opis'], 'Podatek v koledarju je bil posodobljen.');
+        return `
+          <article class="update-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(summary)}${changed ? ` · ${escapeHtml(changed)}` : ''}</p>
+          </article>
+        `;
+      }).join('');
+      setStatus('updates', 'Zadnje posodobitve so naložene iz STK API-ja.');
+    } catch (error) {
+      setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
+    }
+  }
+
+  loadStats();
+  loadTopEvents();
+  loadRecentUpdates();
+</script>
