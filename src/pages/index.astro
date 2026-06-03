@@ -158,18 +158,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
 
-  const getVoteUrlTitle = (item: ApiRecord) => {
-    if (typeof item?.vote_url !== 'string' || !item.vote_url.trim()) return '';
+  const decodeVoteValue = (value: string) => {
     try {
-      const url = new URL(item.vote_url);
-      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
+      return decodeURIComponent(value.replace(/\+/g, ' ')).trim();
     } catch (error) {
-      const match = item.vote_url.match(/[?&]entry\.1386641006=([^&]+)/);
-      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
+      return value.replace(/\+/g, ' ').trim();
     }
   };
 
-  const getTopEventTitle = (item: ApiRecord) => {
+  const getVoteUrlParam = (voteUrl: string, param: string) => {
+    try {
+      const url = new URL(voteUrl, window.location.href);
+      return url.searchParams.get(param)?.trim() ?? '';
+    } catch (error) {
+      const escapedParam = param.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const match = voteUrl.match(new RegExp(`(?:[?&]|^)${escapedParam}=([^&]*)`));
+      return match ? decodeVoteValue(match[1]) : '';
+    }
+  };
+
+  const getVoteUrlDetails = (item: ApiRecord) => {
+    const voteUrl = typeof item?.vote_url === 'string' ? item.vote_url.trim() : '';
+    if (!voteUrl) return { title: '', eventToken: '', eventId: '', date: '' };
+
+    const title = getVoteUrlParam(voteUrl, 'entry.1386641006');
+    const eventToken = getVoteUrlParam(voteUrl, 'entry.11620528');
+    const explicitEventId = getVoteUrlParam(voteUrl, 'entry.1006782074');
+    const [tokenEventId = '', tokenDate = ''] = eventToken.split('|').map((part) => part.trim());
+
+    return {
+      title,
+      eventToken,
+      eventId: explicitEventId || tokenEventId,
+      date: tokenDate
+    };
+  };
+
+  const getVoteUrlTitle = (item: ApiRecord) => getVoteUrlDetails(item).title;
+
+  const getExplicitTopEventTitle = (item: ApiRecord) => {
     if (typeof item?.naziv_prireditve === 'string' && item.naziv_prireditve.trim()) {
       return item.naziv_prireditve.trim();
     }
@@ -213,6 +240,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return data.naziv.trim();
     }
 
+    return '';
+  };
+
+  const getTopEventTitle = (item: ApiRecord) => {
+    const explicitTitle = getExplicitTopEventTitle(item);
+    if (explicitTitle) return explicitTitle;
+
     const voteUrlTitle = getVoteUrlTitle(item);
     return voteUrlTitle || 'Naziv teka ni na voljo';
   };
@@ -243,13 +277,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const isMissing = (value: unknown) =>
     value === undefined || value === null || String(value).trim() === '';
 
-  const rowKey = (value: unknown) => {
-    const record = asRecord(value);
-    if (!record) return '';
-    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
-    return row === undefined || row === null ? '' : String(row).trim();
-  };
-
   const getFieldValue = (item: ApiRecord, key: string) => {
     const exact = item[key];
     if (!isMissing(exact)) return String(exact).trim();
@@ -260,6 +287,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
 
     return '';
+  };
+
+  const rowKey = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '';
+    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
+    return row === undefined || row === null ? '' : String(row).trim();
   };
 
   const getMasterRows = (payload: unknown): ApiRecord[] => {
@@ -280,35 +314,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const normalizedText = (value: unknown) =>
-    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+    String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/\s+/g, ' ');
 
-  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
-    const topValue = normalizedText(getFieldValue(topEvent, key));
-    const masterValue = normalizedText(getFieldValue(masterEvent, key));
-    return Boolean(topValue && masterValue && topValue === masterValue);
+  const normalizedDate = (value: unknown) => {
+    const text = String(value ?? '').trim();
+    if (!text) return '';
+    const isoMatch = text.match(/\d{4}-\d{2}-\d{2}/);
+    if (isoMatch) return isoMatch[0];
+    const slMatch = text.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);
+    if (slMatch) {
+      const [, day, month, year] = slMatch;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return text;
   };
 
-  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
-    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
-      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
-    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
-    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
-    return rowScore + matchingFields;
+  const MASTER_ID_KEYS = [
+    'event_id', 'eventId', 'id', 'ID', 'eventid', 'sifra_prireditve', 'sifra',
+    'stk_id', 'stkId', 'race_id', 'raceId', 'entry.1006782074'
+  ];
+
+  const getMasterEventId = (item: ApiRecord) => {
+    for (const key of MASTER_ID_KEYS) {
+      const value = getFieldValue(item, key);
+      if (value) return value;
+    }
+    return '';
   };
 
   const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
-    let bestMatch: ApiRecord | null = null;
-    let bestScore = 0;
+    const voteDetails = getVoteUrlDetails(topEvent);
+    const topTitle = getExplicitTopEventTitle(topEvent) || voteDetails.title;
+    const voteDate = voteDetails.date || getFieldValue(topEvent, 'datum') || getFieldValue(topEvent, 'date') || getFieldValue(topEvent, 'event_date');
+    const normalizedTitle = normalizedText(topTitle);
+    const normalizedVoteDate = normalizedDate(voteDate);
 
-    for (const masterEvent of masterRows) {
-      const score = matchScore(topEvent, masterEvent);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = masterEvent;
-      }
+    if (voteDetails.eventId) {
+      const idMatches = masterRows.filter((masterEvent) => getMasterEventId(masterEvent) === voteDetails.eventId);
+      if (idMatches.length === 1) return idMatches[0];
     }
 
-    return bestScore >= 3 ? bestMatch : null;
+    if (!normalizedTitle || !normalizedVoteDate) return null;
+
+    const titleDateMatches = masterRows.filter((masterEvent) => (
+      normalizedText(getFieldValue(masterEvent, 'naziv_prireditve')) === normalizedTitle
+      && normalizedDate(getFieldValue(masterEvent, 'datum')) === normalizedVoteDate
+    ));
+
+    return titleDateMatches.length === 1 ? titleDateMatches[0] : null;
   };
 
   const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
@@ -319,32 +372,40 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return true;
   };
 
+  const setDisplayTitle = (target: ApiRecord, title: string) => {
+    if (!title) return;
+    target.naziv_prireditve = title;
+  };
+
   const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
     const enriched = { ...event };
-    const topTitle = getTopEventTitle(event);
-    const voteUrlTitle = getVoteUrlTitle(event);
+    const topTitle = getExplicitTopEventTitle(event);
+    const voteDetails = getVoteUrlDetails(event);
+    const voteUrlTitle = voteDetails.title;
+    const displayTitle = topTitle || voteUrlTitle;
     const match = findMasterMatch(event, masterRows);
+    const masterTitle = match ? getFieldValue(match, 'naziv_prireditve') : '';
     enriched.__master_matched = Boolean(match);
     enriched.__matched_master_row = match ? rowKey(match) : '';
-    enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__matched_master_title = masterTitle;
     enriched.__vote_url_title = voteUrlTitle;
-    enriched.__title_source = topTitle !== 'Naziv teka ni na voljo' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
+    enriched.__vote_url_event_token = voteDetails.eventToken;
+    enriched.__vote_url_event_id = voteDetails.eventId;
+    enriched.__title_source = topTitle ? 'top' : voteUrlTitle ? 'vote_url' : 'not detected';
+
+    if (displayTitle) setDisplayTitle(enriched, displayTitle);
 
     if (match) {
-      const filledTitle = copyIfMissing(enriched, match, 'naziv_prireditve');
+      // Do not overwrite vote_url decoded titles with loose master matches.
       copyIfMissing(enriched, match, 'datum');
       copyIfMissing(enriched, match, 'kraj');
       copyIfMissing(enriched, match, 'regija');
       copyIfMissing(enriched, match, 'tip_podlage');
       copyIfMissing(enriched, match, 'razdalje_km');
-      if (filledTitle) enriched.__title_source = 'master';
-    }
-
-    if (getTopEventTitle(enriched) === 'Naziv teka ni na voljo' && voteUrlTitle) {
-      enriched.naziv_prireditve = voteUrlTitle;
-      enriched.__title_source = 'vote_url';
-    } else if (getTopEventTitle(enriched) === voteUrlTitle && voteUrlTitle) {
-      enriched.__title_source = 'vote_url';
+      if (!displayTitle && masterTitle) {
+        setDisplayTitle(enriched, masterTitle);
+        enriched.__title_source = 'master';
+      }
     }
 
     return enriched;

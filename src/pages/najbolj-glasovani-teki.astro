@@ -1,12 +1,302 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
 ---
 
 <BaseLayout title="Najbolj glasovani teki" description="Pregled najbolj glasovanih prihajajočih tekaških prireditev.">
-  <PlaceholderPage
-    title="Najbolj glasovani teki"
-    description="Tu bo razširjen pregled prihajajočih prireditev, ki jih tekači največkrat izpostavijo."
-    note="Za zdaj ne uvajamo novega glasovanja ali lastne logike; stran bo uporabljala samo javni STK API."
-  />
+  <main>
+    <section class="section container" aria-labelledby="top-voted-title">
+      <div class="section-heading">
+        <span class="eyebrow">Glasovi tekačev</span>
+        <h1 id="top-voted-title">Najbolj glasovani teki</h1>
+        <p>Pregled prihajajočih prireditev, ki jih tekači največkrat izpostavijo v javnem STK API-ju.</p>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">upcoming</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">Vir: /top?scope=upcoming&amp;limit=10</p>
+    </section>
+  </main>
 </BaseLayout>
+
+<script>
+  type ApiRecord = Record<string, unknown>;
+
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+  const numberFormatter = new Intl.NumberFormat('sl-SI');
+  const ARRAY_KEYS = ['events', 'data', 'items', 'rows', 'results'];
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    for (const key of ARRAY_KEYS) {
+      const nested = asRecord(record[key]);
+      if (!nested) continue;
+      const nestedArray = toArray(nested);
+      if (nestedArray.length) return nestedArray;
+    }
+
+    return [];
+  };
+
+  const setStatus = (message: string) => {
+    const element = document.querySelector('[data-status="top"]');
+    if (element) element.textContent = message;
+  };
+
+  const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
+  const isMissing = (value: unknown) => value === undefined || value === null || String(value).trim() === '';
+
+  const getFieldValue = (item: ApiRecord, key: string) => {
+    const exact = item[key];
+    if (!isMissing(exact)) return String(exact).trim();
+
+    const wanted = normalizeKey(key);
+    for (const [itemKey, value] of Object.entries(item)) {
+      if (normalizeKey(itemKey) === wanted && !isMissing(value)) return String(value).trim();
+    }
+
+    return '';
+  };
+
+  const valueAtPath = (item: ApiRecord, path: string): unknown => {
+    let current: unknown = item;
+    for (const part of path.split('.')) {
+      const record = asRecord(current);
+      if (!record) return undefined;
+      current = record[part];
+    }
+    return current;
+  };
+
+  const pickPath = (item: ApiRecord, paths: string[], fallback = ''): string => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (!isMissing(value)) return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const decodeVoteValue = (value: string) => {
+    try {
+      return decodeURIComponent(value.replace(/\+/g, ' ')).trim();
+    } catch (error) {
+      return value.replace(/\+/g, ' ').trim();
+    }
+  };
+
+  const getVoteUrlParam = (voteUrl: string, param: string) => {
+    try {
+      const url = new URL(voteUrl, window.location.href);
+      return url.searchParams.get(param)?.trim() ?? '';
+    } catch (error) {
+      const escapedParam = param.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const match = voteUrl.match(new RegExp(`(?:[?&]|^)${escapedParam}=([^&]*)`));
+      return match ? decodeVoteValue(match[1]) : '';
+    }
+  };
+
+  const getVoteUrlDetails = (item: ApiRecord) => {
+    const voteUrl = typeof item.vote_url === 'string' ? item.vote_url.trim() : '';
+    if (!voteUrl) return { title: '', eventToken: '', eventId: '', date: '' };
+
+    const title = getVoteUrlParam(voteUrl, 'entry.1386641006');
+    const eventToken = getVoteUrlParam(voteUrl, 'entry.11620528');
+    const explicitEventId = getVoteUrlParam(voteUrl, 'entry.1006782074');
+    const [tokenEventId = '', tokenDate = ''] = eventToken.split('|').map((part) => part.trim());
+
+    return {
+      title,
+      eventToken,
+      eventId: explicitEventId || tokenEventId,
+      date: tokenDate
+    };
+  };
+
+  const getExplicitTopEventTitle = (item: ApiRecord) => {
+    for (const path of ['naziv_prireditve', 'naziv', 'title', 'name', 'event.naziv_prireditve', 'event.naziv', 'race.naziv_prireditve', 'race.naziv', 'data.naziv_prireditve', 'data.naziv']) {
+      const value = pickPath(item, [path]);
+      if (value) return value;
+    }
+    return '';
+  };
+
+  const titleForEvent = (item: ApiRecord) => getExplicitTopEventTitle(item) || getVoteUrlDetails(item).title || 'Naziv teka ni na voljo';
+
+  const normalizedText = (value: unknown) =>
+    String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+  const normalizedDate = (value: unknown) => {
+    const text = String(value ?? '').trim();
+    if (!text) return '';
+    const isoMatch = text.match(/\d{4}-\d{2}-\d{2}/);
+    if (isoMatch) return isoMatch[0];
+    const slMatch = text.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);
+    if (slMatch) {
+      const [, day, month, year] = slMatch;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return text;
+  };
+
+  const MASTER_ID_KEYS = ['event_id', 'eventId', 'id', 'ID', 'eventid', 'sifra_prireditve', 'sifra', 'stk_id', 'stkId', 'race_id', 'raceId', 'entry.1006782074'];
+
+  const getMasterEventId = (item: ApiRecord) => {
+    for (const key of MASTER_ID_KEYS) {
+      const value = getFieldValue(item, key);
+      if (value) return value;
+    }
+    return '';
+  };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
+    const voteDetails = getVoteUrlDetails(topEvent);
+    const topTitle = getExplicitTopEventTitle(topEvent) || voteDetails.title;
+    const voteDate = voteDetails.date || getFieldValue(topEvent, 'datum') || getFieldValue(topEvent, 'date') || getFieldValue(topEvent, 'event_date');
+    const title = normalizedText(topTitle);
+    const date = normalizedDate(voteDate);
+
+    if (voteDetails.eventId) {
+      const idMatches = masterRows.filter((masterEvent) => getMasterEventId(masterEvent) === voteDetails.eventId);
+      if (idMatches.length === 1) return idMatches[0];
+    }
+
+    if (!title || !date) return null;
+
+    const titleDateMatches = masterRows.filter((masterEvent) => (
+      normalizedText(getFieldValue(masterEvent, 'naziv_prireditve')) === title
+      && normalizedDate(getFieldValue(masterEvent, 'datum')) === date
+    ));
+
+    return titleDateMatches.length === 1 ? titleDateMatches[0] : null;
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key])) return;
+    const sourceValue = getFieldValue(source, key);
+    if (sourceValue) target[key] = sourceValue;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
+    const enriched = { ...event };
+    const displayTitle = getExplicitTopEventTitle(event) || getVoteUrlDetails(event).title;
+    const match = findMasterMatch(event, masterRows);
+
+    if (displayTitle) enriched.naziv_prireditve = displayTitle;
+
+    if (match) {
+      // Do not overwrite vote_url decoded titles with loose master matches.
+      copyIfMissing(enriched, match, 'datum');
+      copyIfMissing(enriched, match, 'kraj');
+      copyIfMissing(enriched, match, 'regija');
+      copyIfMissing(enriched, match, 'tip_podlage');
+      copyIfMissing(enriched, match, 'razdalje_km');
+      if (!displayTitle) copyIfMissing(enriched, match, 'naziv_prireditve');
+    }
+
+    return enriched;
+  });
+
+  const getMasterRows = (payload: unknown): ApiRecord[] => {
+    const record = asRecord(payload);
+    if (record && Array.isArray(record.data)) return record.data.filter(asRecord) as ApiRecord[];
+    const fallbackRows = toArray(payload);
+    if (fallbackRows.length) return fallbackRows;
+    return [];
+  };
+
+  const loadJson = async (path: string) => {
+    const response = await fetch(`${API_BASE}${path}`);
+    if (!response.ok) throw new Error(`API ${path} failed with ${response.status}`);
+    return response.json();
+  };
+
+  const escapeHtml = (value: string) =>
+    value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  const joinParts = (parts: string[]) => parts.filter((part) => part && part.trim()).join(' · ');
+
+  const formatDate = (value: string) => {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return dateFormatter.format(date);
+  };
+
+  const getVotes = (event: ApiRecord) => {
+    for (const key of ['votes_total', 'votes', 'vote_count', 'count', 'total']) {
+      const value = Number(getFieldValue(event, key));
+      if (Number.isFinite(value)) return value;
+    }
+    return null;
+  };
+
+  const formatVoteCount = (value: number) => `${numberFormatter.format(value)} ${value === 1 ? 'glas' : value === 2 ? 'glasova' : 'glasov'}`;
+
+  async function loadTopEvents() {
+    const container = document.querySelector('[data-top-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/top?scope=upcoming&limit=10');
+      const topEvents = toArray(payload).slice(0, 10);
+      if (!topEvents.length) {
+        setStatus('API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
+        return;
+      }
+
+      let events = topEvents;
+      try {
+        const masterPayload = await loadJson('/');
+        events = enrichTopEventsFromMaster(topEvents, getMasterRows(masterPayload));
+      } catch (error) {
+        events = topEvents.map((event) => ({ ...event, naziv_prireditve: titleForEvent(event) }));
+      }
+
+      container.innerHTML = events.map((event, index) => {
+        const title = titleForEvent(event);
+        const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
+        const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
+        const date = formatDate(pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']));
+        const distance = pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], '');
+        const surface = pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], '');
+        const votes = getVotes(event);
+        const meta = joinParts([location, region && region !== location ? region : '', date]);
+
+        return `
+          <article class="event-card">
+            <h3>${index + 1}. ${escapeHtml(title)}</h3>
+            <p>${escapeHtml(meta || 'Podrobnosti še niso navedene.')}</p>
+            <div class="event-meta">
+              ${votes !== null ? `<span class="pill pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="pill pill-orange">Glasovanje odprto</span>'}
+              ${distance ? `<span class="pill">${escapeHtml(distance)} km</span>` : '<span class="pill">prihajajoči tek</span>'}
+              ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+      setStatus('Najbolj glasovani teki so naloženi iz STK API-ja.');
+    } catch (error) {
+      setStatus('Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
+    }
+  }
+
+  loadTopEvents();
+</script>
