@@ -108,6 +108,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results'];
   const PAGE_SIZE = 30;
+  const FAMILY_NOTE_MAX_LENGTH = 180;
   const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
@@ -210,6 +211,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const pluralizeEvents = (count: number) =>
     `${count} ${count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count < 5 ? 'dogodki' : 'dogodkov'}`;
+
+  const removePublicNotePrefixes = (value: string) => {
+    let note = value.trim();
+    let previous = '';
+
+    while (note && note !== previous) {
+      previous = note;
+      note = note.replace(/^(?:kratek povzetek|sporočilo organizatorja)\s*:\s*/iu, '').trim();
+    }
+
+    return note;
+  };
+
+  const trimFamilyNote = (value: string) => {
+    if (value.length <= FAMILY_NOTE_MAX_LENGTH) return value;
+
+    const candidate = value.slice(0, FAMILY_NOTE_MAX_LENGTH + 1);
+    const lastSpace = candidate.lastIndexOf(' ');
+    const trimmed = (lastSpace > 120 ? candidate.slice(0, lastSpace) : candidate.slice(0, FAMILY_NOTE_MAX_LENGTH))
+      .replace(/[\s,.;:!?-]+$/u, '')
+      .trim();
+
+    return `${trimmed}…`;
+  };
+
+  const formatFamilyNote = (value: string) => {
+    const markerPattern = /družinam\s+prijazno\s*[:\-–—]\s*/iu;
+    let note = value.replace(/\s+/g, ' ').trim();
+    if (!note) return '';
+
+    note = removePublicNotePrefixes(note);
+
+    const markerMatch = markerPattern.exec(note);
+    if (markerMatch?.index !== undefined) {
+      note = note.slice(markerMatch.index + markerMatch[0].length).trim();
+    }
+
+    note = removePublicNotePrefixes(note)
+      .replace(/^družinam\s+prijazno\s*[:\-–—]?\s*/iu, '')
+      .replace(/^[|\s:;\-–—]+/u, '')
+      .trim();
+
+    if (!note) return '';
+
+    const sentenceCaseNote = note.replace(/^\p{Ll}/u, (letter) => letter.toLocaleUpperCase('sl-SI'));
+    return trimFamilyNote(sentenceCaseNote);
+  };
 
   const getFilters = () => ({
     search: normalize(searchInput?.value ?? ''),
@@ -335,6 +383,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
     ].filter(Boolean).join('');
+    const familyNote = formatFamilyNote(event.publicNotes);
 
     return `
       <article class="event-card search-event-card">
@@ -344,7 +393,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
         <div class="event-details">${metaItems || '<span class="event-detail">Podrobnosti še niso navedene.</span>'}</div>
-        ${event.publicNotes ? `<p>${escapeHtml(event.publicNotes)}</p>` : ''}
+        ${familyNote ? `<p>${escapeHtml(familyNote)}</p>` : ''}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
