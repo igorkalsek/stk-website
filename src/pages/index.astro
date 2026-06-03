@@ -89,6 +89,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
       <p class="data-note" data-status="updates">Vir: /recent_updates?days=7</p>
     </section>
+
+    <section class="section container api-debug" data-api-debug hidden aria-label="API debug">
+      <details>
+        <summary>API debug</summary>
+        <div class="debug-grid">
+          <p><strong>/stats:</strong> <span data-debug-stats>ni naloženo</span></p>
+          <p><strong>/top:</strong> <span data-debug-top>ni naloženo</span></p>
+          <p><strong>Prvi top item:</strong> <code data-debug-top-keys>—</code></p>
+          <p><strong>/recent_updates:</strong> <span data-debug-recent>ni naloženo</span></p>
+          <p><strong>Prvi recent item:</strong> <code data-debug-recent-keys>—</code></p>
+        </div>
+      </details>
+    </section>
   </main>
 </BaseLayout>
 
@@ -101,6 +114,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const ARRAY_KEYS = ['events', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
   const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
+  const TITLE_PATHS = [
+    'naziv_prireditve',
+    'naziv',
+    'event.naziv_prireditve',
+    'event.naziv',
+    'race.naziv_prireditve',
+    'race.naziv',
+    'data.naziv_prireditve',
+    'data.naziv',
+    'title',
+    'name'
+  ];
+  const VOTE_PATHS = ['glasovi', 'votes', 'vote_count', 'votes_total', 'total_votes', 'voting.votes'];
+  const debugEnabled = new URLSearchParams(window.location.search).get('debug') === '1';
 
   const setStatus = (name: string, message: string) => {
     const element = document.querySelector(`[data-status="${name}"]`);
@@ -137,6 +164,74 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
     }
     return fallback;
+  };
+
+  const valueAtPath = (item: ApiRecord, path: string): unknown => {
+    let current: unknown = item;
+    for (const part of path.split('.')) {
+      const record = asRecord(current);
+      if (!record) return undefined;
+      current = record[part];
+    }
+    return current;
+  };
+
+  const pickPath = (item: ApiRecord, paths: string[], fallback = ''): string => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const pickPathNumber = (item: ApiRecord, paths: string[]): number | null => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (value === undefined || value === null || String(value).trim() === '') continue;
+      const numberValue = Number(value);
+      if (Number.isFinite(numberValue)) return numberValue;
+    }
+    return null;
+  };
+
+  const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
+
+  const describeKeys = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '—';
+    const entries = Object.entries(record).slice(0, 18).map(([key, entryValue]) => {
+      const type = Array.isArray(entryValue) ? 'array' : typeof entryValue;
+      return `${key}:${type}`;
+    });
+    return entries.length ? entries.join(', ') : 'brez ključev';
+  };
+
+  const setDebug = (target: string, text: string) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}]`);
+    if (element) element.textContent = text;
+  };
+
+  const setDebugKeys = (target: string, value: unknown) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}-keys]`);
+    if (element) element.textContent = describeKeys(value);
+  };
+
+  const showDebugPanel = () => {
+    if (!debugEnabled) return;
+    document.querySelector('[data-api-debug]')?.removeAttribute('hidden');
+  };
+
+  const titleForEvent = (event: ApiRecord) => {
+    const title = pickPath(event, TITLE_PATHS);
+    if (title) return title;
+
+    if (import.meta.env.DEV) {
+      console.warn('STK top event title missing. Available keys:', objectKeys(event));
+    }
+
+    return 'Naziv teka ni na voljo';
   };
 
   const pickNumber = (item: ApiRecord, keys: string[]): number | null => {
@@ -223,12 +318,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (element) element.textContent = value === null ? 'Ni podatka' : numberFormatter.format(value);
       }
 
+      setDebug('stats', `naloženo (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed manjka'}, ${familyTotal !== null ? 'family ok' : 'family manjka'})`);
+
       if (confirmedTotal !== null && familyTotal !== null) {
         setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
       } else {
         setStatus('stats', 'API je odgovoril, vendar ena ali več statističnih vrednosti manjka.');
       }
     } catch (error) {
+      setDebug('stats', 'napaka');
       setStatus('stats', 'Statistika trenutno ni dosegljiva, zato prikazujemo osnovni pogled.');
     }
   }
@@ -240,16 +338,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
       const events = toArray(payload).slice(0, 6);
+      setDebug('top', events.length ? `naloženo (${events.length} prikazanih)` : 'naloženo (prazen seznam)');
+      setDebugKeys('top', events[0]);
       if (!events.length) throw new Error('No top events returned');
 
       container.innerHTML = events.map((event) => {
-        const title = pick(event, ['naziv_prireditve', 'title', 'name', 'event_name', 'naziv', 'Tek'], 'Tekaška prireditev');
-        const location = pick(event, ['kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
-        const region = pick(event, ['regija', 'region'], '');
-        const date = formatDate(pick(event, ['datum', 'date', 'event_date', 'Datum']));
-        const votes = pick(event, ['glasovi', 'votes', 'vote_count', 'votes_total', 'score'], '');
-        const distance = pick(event, ['razdalje_km', 'distance', 'distances'], '');
-        const surface = pick(event, ['tip_podlage', 'surface'], '');
+        const title = titleForEvent(event);
+        const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
+        const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
+        const date = formatDate(pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']));
+        const votes = pickPathNumber(event, VOTE_PATHS);
+        const distance = pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], '');
+        const surface = pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], '');
         const meta = joinParts([location, region && region !== location ? region : '', date]);
 
         return `
@@ -257,7 +357,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <h3>${escapeHtml(title)}</h3>
             <p>${escapeHtml(meta || 'Podrobnosti še niso navedene.')}</p>
             <div class="event-meta">
-              ${votes !== '' ? `<span class="pill pill-orange">${escapeHtml(votes)} glasov</span>` : '<span class="pill pill-orange">glasovanje</span>'}
+              ${votes !== null ? `<span class="pill pill-orange">${escapeHtml(numberFormatter.format(votes))} glasov</span>` : '<span class="pill pill-orange">Glasovanje odprto</span>'}
               ${distance ? `<span class="pill">${escapeHtml(distance)} km</span>` : '<span class="pill">prihajajoči tek</span>'}
               ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
             </div>
@@ -266,6 +366,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }).join('');
       setStatus('top', 'Najbolj glasovani teki so naloženi iz STK API-ja.');
     } catch (error) {
+      setDebug('top', 'napaka');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
     }
   }
@@ -277,16 +378,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     try {
       const payload = await loadJson('/recent_updates?days=7');
       const updates = toArray(payload).slice(0, 6);
-      if (!updates.length) throw new Error('No recent updates returned');
+      setDebug('recent', updates.length ? `naloženo (${updates.length} prikazanih)` : 'naloženo (prazen seznam)');
+      setDebugKeys('recent', updates[0]);
+
+      if (!updates.length) {
+        container.innerHTML = `
+          <article class="update-card">
+            <h3>Ni novih javnih posodobitev</h3>
+            <p>V zadnjih 7 dneh ni zabeleženih javnih posodobitev.</p>
+          </article>
+        `;
+        setStatus('updates', 'API je odgovoril, vendar za zadnjih 7 dni ni javnih posodobitev.');
+        return;
+      }
 
       container.innerHTML = updates.map((update) => {
-        const title = pick(update, ['naziv_prireditve', 'title', 'name', 'event_name', 'naziv', 'Tek'], 'Posodobitev koledarja');
-        const eventDate = formatDate(pick(update, ['datum', 'date', 'event_date', 'Datum']));
-        const changed = formatDate(pick(update, ['zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
-        const location = pick(update, ['kraj', 'location', 'place', 'city', 'regija'], '');
-        const updateType = pick(update, ['vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'posodobljeno');
-        const note = pick(update, ['opis_spremembe', 'summary', 'opis', 'opombe_javne', 'note'], '');
-        const meta = joinParts([location, eventDate ? `datum teka: ${eventDate}` : '', changed ? `posodobljeno: ${changed}` : '']);
+        const title = pickPath(update, [
+          'naziv_prireditve',
+          'naziv',
+          'event.naziv_prireditve',
+          'event.naziv',
+          'title',
+          'name'
+        ], 'Posodobitev koledarja');
+        const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
+        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'zadnja_sprememba_podrobno', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
+        const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
+        const updateType = pickPath(update, ['sprememba', 'vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'posodobljeno');
+        const note = pickPath(update, ['opis', 'zadnja_sprememba_podrobno', 'opis_spremembe', 'summary', 'notes', 'note', 'opombe_javne'], '');
+        const place = joinParts([location, region && region !== location ? region : '']);
+        const meta = joinParts([place, eventDate ? `datum teka: ${eventDate}` : '', changed ? `posodobljeno: ${changed}` : '']);
         const summary = note || `Vnos je bil ${updateType}.`;
 
         return `
@@ -299,10 +421,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }).join('');
       setStatus('updates', 'Zadnje posodobitve so naložene iz STK API-ja.');
     } catch (error) {
+      setDebug('recent', 'napaka');
       setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
     }
   }
 
+  showDebugPanel();
   loadStats();
   loadTopEvents();
   loadRecentUpdates();
