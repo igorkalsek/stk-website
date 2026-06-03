@@ -1,12 +1,483 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
 ---
 
-<BaseLayout title="Družinam prijazni teki" description="Pregled tekaških prireditev, primernih za družine in otroke.">
-  <PlaceholderPage
-    title="Družinam prijazni teki"
-    description="Poseben pregled tekov z otroškimi razdaljami, spremljevalnim programom ali prijazno logistiko."
-    note="Ta MVP pripravi informacijsko arhitekturo; dejanski seznam bo vezan na STK API in obstoječe oznake v viru podatkov."
-  />
+<BaseLayout title="Družinam prijazni teki" description="Pregled tekaških prireditev, ki so v javnem viru označene kot družinam prijazne.">
+  <main>
+    <section class="page-hero container" aria-labelledby="family-title">
+      <span class="eyebrow">Družinam prijazni teki</span>
+      <h1 id="family-title">Teki za družine in otroke</h1>
+      <p>
+        Pregled potrjenih javnih tekaških prireditev za leto 2026, pri katerih vir izrecno omenja, da so družinam prijazne.
+        Dogodek prikažemo le, ko javna opomba omenja otroške teke, družinske kategorije, otroške aktivnosti, popuste
+        ali podobne ugodnosti za družine.
+      </p>
+    </section>
+
+    <section class="section container" aria-labelledby="family-filters-title">
+      <div class="search-panel">
+        <div class="section-heading search-heading">
+          <div>
+            <h2 id="family-filters-title">Filtri</h2>
+            <p>Začnite z imenom teka ali krajem, nato po potrebi zožite izbor po mesecu, regiji ali podlagi.</p>
+          </div>
+          <p class="result-count" data-result-count>Dogodke nalagamo …</p>
+        </div>
+
+        <form class="filters-grid" data-search-form>
+          <label class="field field-wide">
+            <span>Iskanje</span>
+            <input
+              type="search"
+              name="search"
+              placeholder="Ime teka ali kraj"
+              autocomplete="off"
+              data-filter="search"
+            />
+          </label>
+
+          <label class="field">
+            <span>Mesec</span>
+            <select name="month" data-filter="month" disabled>
+              <option value="">Vsi meseci</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Regija</span>
+            <select name="region" data-filter="region" disabled>
+              <option value="">Vse regije</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Podlaga</span>
+            <select name="surface" data-filter="surface" disabled>
+              <option value="">Vse podlage</option>
+            </select>
+          </label>
+
+          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
+            Počisti filtre
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="family-results-title">
+      <div class="section-heading">
+        <h2 id="family-results-title">Rezultati</h2>
+        <p data-search-status>Nalagamo družinam prijazne dogodke iz STK API-ja …</p>
+      </div>
+      <div class="search-results" data-search-results aria-live="polite">
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Seznam družinam prijaznih tekov bo prikazan tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">/</span>
+          </div>
+        </article>
+      </div>
+      <div class="search-more" data-search-more hidden>
+        <button class="button button-primary" type="button" data-show-more>Prikaži več</button>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<script>
+  type ApiRecord = Record<string, unknown>;
+  type FamilyEvent = {
+    id: string;
+    date: string;
+    dateValue: number;
+    month: string;
+    title: string;
+    place: string;
+    region: string;
+    surface: string;
+    distances: string;
+    startTime: string;
+    noticeUrl: string;
+    registrationUrl: string;
+    publicNotes: string;
+    searchText: string;
+  };
+
+  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
+  const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results'];
+  const PAGE_SIZE = 30;
+  const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
+  const FAMILY_NOTE_MAX_LENGTH = 180;
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+  const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
+
+  const state: { events: FamilyEvent[]; filtered: FamilyEvent[]; apiAvailable: boolean; visibleCount: number; usedPastFallback: boolean } = {
+    events: [],
+    filtered: [],
+    apiAvailable: true,
+    visibleCount: PAGE_SIZE,
+    usedPastFallback: false
+  };
+
+  const resultsElement = document.querySelector<HTMLElement>('[data-search-results]');
+  const statusElement = document.querySelector<HTMLElement>('[data-search-status]');
+  const countElement = document.querySelector<HTMLElement>('[data-result-count]');
+  const formElement = document.querySelector<HTMLFormElement>('[data-search-form]');
+  const moreElement = document.querySelector<HTMLElement>('[data-search-more]');
+  const showMoreButton = document.querySelector<HTMLButtonElement>('[data-show-more]');
+  const searchInput = document.querySelector<HTMLInputElement>('[data-filter="search"]');
+  const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
+  const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
+  const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    return [];
+  };
+
+  const pick = (item: ApiRecord, key: string): string => {
+    const value = item[key];
+    return value === undefined || value === null ? '' : String(value).trim();
+  };
+
+  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const todayStart = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  };
+
+  const parseDateValue = (value: string) => {
+    if (!value) return Number.NaN;
+    const date = new Date(`${value}T00:00:00`);
+    return date.getTime();
+  };
+
+  const formatDate = (value: string) => {
+    const timestamp = parseDateValue(value);
+    return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
+  };
+
+  const monthLabel = (month: string) => {
+    const monthNumber = Number(month);
+    if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
+    const date = new Date(2026, monthNumber - 1, 1);
+    return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    return String(value).replace(/[&<>"']/g, (character) => characters[character]);
+  };
+
+  const safeUrl = (value: string) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const setStatus = (message: string) => {
+    if (statusElement) statusElement.textContent = message;
+  };
+
+  const setCount = (message: string) => {
+    if (countElement) countElement.textContent = message;
+  };
+
+  const pluralizeEvents = (count: number) =>
+    `${count} ${count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count < 5 ? 'dogodki' : 'dogodkov'}`;
+
+  const getFilters = () => ({
+    search: normalize(searchInput?.value ?? ''),
+    month: monthSelect?.value ?? '',
+    region: regionSelect?.value ?? '',
+    surface: surfaceSelect?.value ?? ''
+  });
+
+  const isConfirmedPublicFamilyEvent = (item: ApiRecord) => {
+    const date = pick(item, 'datum');
+    const publicNotes = pick(item, 'opombe_javne');
+
+    return (
+      date.startsWith('2026-') &&
+      normalize(pick(item, 'status_dogodka')) === 'potrjeno' &&
+      pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
+      normalize(publicNotes).includes(FAMILY_FRIENDLY_MARKER)
+    );
+  };
+
+  const mapFamilyEvent = (item: ApiRecord): FamilyEvent | null => {
+    const date = pick(item, 'datum');
+    const dateValue = parseDateValue(date);
+    const title = pick(item, 'naziv_prireditve');
+    const place = pick(item, 'kraj');
+    const region = pick(item, 'regija');
+    const surface = pick(item, 'tip_podlage');
+    const distances = pick(item, 'razdalje_km');
+    const startTime = pick(item, 'cas_zacetka');
+    const publicNotes = pick(item, 'opombe_javne');
+
+    if (!date || Number.isNaN(dateValue) || !title) return null;
+
+    return {
+      id: pick(item, 'row') || `${date}-${title}-${place}`,
+      date,
+      dateValue,
+      month: date.slice(5, 7),
+      title,
+      place,
+      region,
+      surface,
+      distances,
+      startTime,
+      noticeUrl: safeUrl(pick(item, 'povezava_razpis')),
+      registrationUrl: safeUrl(pick(item, 'povezava_prijava')),
+      publicNotes,
+      searchText: normalize(`${title} ${place}`)
+    };
+  };
+
+  const getFamilyEvents = (items: ApiRecord[]) => {
+    const today = todayStart();
+    const allFamilyEvents = items
+      .filter(isConfirmedPublicFamilyEvent)
+      .map(mapFamilyEvent)
+      .filter((event): event is FamilyEvent => Boolean(event))
+      .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
+
+    const upcomingEvents = allFamilyEvents.filter((event) => event.dateValue >= today);
+    state.usedPastFallback = allFamilyEvents.length > 0 && upcomingEvents.length === 0;
+
+    return upcomingEvents.length ? upcomingEvents : allFamilyEvents;
+  };
+
+  const renderOptions = (select: HTMLSelectElement | null, values: string[], fallbackLabel: string, labelForValue = (value: string) => value) => {
+    if (!select) return;
+    select.innerHTML = `<option value="">${escapeHtml(fallbackLabel)}</option>${values
+      .map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(labelForValue(value))}</option>`)
+      .join('')}`;
+    select.disabled = values.length === 0;
+  };
+
+  const populateFilters = () => {
+    const months = [...new Set(state.events.map((event) => event.month))].sort();
+    const regions = [...new Set(state.events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+    const surfaces = [...new Set(state.events.map((event) => event.surface).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+
+    renderOptions(monthSelect, months, 'Vsi meseci', monthLabel);
+    renderOptions(regionSelect, regions, 'Vse regije');
+    renderOptions(surfaceSelect, surfaces, 'Vse podlage');
+  };
+
+  const renderEmptyState = (title: string, message: string, pill = 'Družinski teki', showClearAction = false) => {
+    if (!resultsElement) return;
+    resultsElement.innerHTML = `
+      <article class="event-card search-empty-card">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(message)}</p>
+        <div class="event-meta">
+          <span class="pill">${escapeHtml(pill)}</span>
+        </div>
+        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Počisti filtre</button>' : ''}
+      </article>
+    `;
+  };
+
+  const formatDistances = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+
+    const hasTextOrUnits = /[a-zčšž]/i.test(trimmed);
+    const normalized = trimmed
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(' / ');
+
+    if (hasTextOrUnits) return normalized;
+    return `${normalized || trimmed} km`;
+  };
+
+  const trimToSentence = (value: string, maxLength = FAMILY_NOTE_MAX_LENGTH) => {
+    if (value.length <= maxLength) return value;
+
+    const shortened = value.slice(0, maxLength + 1);
+    const lastSpace = shortened.lastIndexOf(' ');
+    const trimmed = (lastSpace > 120 ? shortened.slice(0, lastSpace) : shortened.slice(0, maxLength)).trim();
+
+    return `${trimmed.replace(/[.,;:!?-]+$/u, '')}…`;
+  };
+
+  const sentenceCase = (value: string) => value.replace(/^./u, (letter) => letter.toLocaleUpperCase('sl-SI'));
+
+  const removePublicNotePrefixes = (value: string) =>
+    value
+      .replace(/^(?:kratek povzetek|sporočilo organizatorja)\s*:\s*/iu, '')
+      .replace(/\s+\|\s+(?:kratek povzetek|sporočilo organizatorja)\s*:\s*/giu, ' | ')
+      .trim();
+
+  const displayFamilyNote = (value: string) => {
+    const normalizedNote = value.replace(/\s+/g, ' ').trim();
+    if (!normalizedNote) return '';
+
+    const withoutPrefixes = removePublicNotePrefixes(normalizedNote);
+    const markerMatch = /(?:^|\|\s*)družinam prijazno\s*[:\-–—]\s*/iu.exec(withoutPrefixes);
+    const familyPart = markerMatch
+      ? withoutPrefixes.slice(markerMatch.index + markerMatch[0].length)
+      : withoutPrefixes.replace(/^družinam prijazno\s*[:\-–—]?\s*/iu, '');
+
+    const firstSegment = removePublicNotePrefixes(familyPart).split('|')[0]?.trim() ?? '';
+    const cleaned = firstSegment.replace(/^družinam prijazno\s*[:\-–—]?\s*/iu, '').trim();
+
+    return trimToSentence(sentenceCase(cleaned));
+  };
+
+  const renderEvent = (event: FamilyEvent) => {
+    const metaItems = [
+      event.place && `<span class="event-detail"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
+      event.region && `<span class="event-detail"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
+      event.surface && `<span class="event-detail"><strong>Podlaga:</strong> ${escapeHtml(event.surface)}</span>`,
+      event.distances && `<span class="event-detail"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span class="event-detail"><strong>Start:</strong> ${escapeHtml(event.startTime)}</span>`
+    ].filter(Boolean).join('');
+
+    const links = [
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
+      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
+    ].filter(Boolean).join('');
+    const familyNote = displayFamilyNote(event.publicNotes);
+
+    return `
+      <article class="event-card search-event-card">
+        <div class="search-event-date">
+          <time datetime="${escapeHtml(event.date)}">${escapeHtml(formatDate(event.date))}</time>
+          <span class="pill">Družinam prijazno</span>
+        </div>
+        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <div class="event-details">${metaItems || '<span class="event-detail">Podrobnosti še niso navedene.</span>'}</div>
+        ${familyNote ? `<p>${escapeHtml(familyNote)}</p>` : ''}
+        ${links ? `<div class="event-actions">${links}</div>` : ''}
+      </article>
+    `;
+  };
+
+  const renderResults = () => {
+    if (!state.apiAvailable) {
+      setStatus('STK API trenutno ni dosegljiv. Poskusite znova čez nekaj minut.');
+      setCount('API ni dosegljiv');
+      renderEmptyState('API trenutno ni dosegljiv', 'Dogodkov ne moremo prikazati, ker javni STK API ni odgovoril.', 'STK API');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (!state.events.length) {
+      setStatus('Ni družinam prijaznih dogodkov za prikaz. Dogodek se prikaže samo, če javna opomba vsebuje oznako “družinam prijazno”.');
+      setCount('0 dogodkov');
+      renderEmptyState('Ni dogodkov za prikaz', 'V javnem API-ju trenutno ni potrjenih javnih dogodkov za leto 2026 z oznako “družinam prijazno”.', '2026');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    const filters = getFilters();
+    state.filtered = state.events.filter((event) => {
+      if (filters.search && !event.searchText.includes(filters.search)) return false;
+      if (filters.month && event.month !== filters.month) return false;
+      if (filters.region && event.region !== filters.region) return false;
+      if (filters.surface && event.surface !== filters.surface) return false;
+      return true;
+    });
+
+    const count = state.filtered.length;
+    const visibleEvents = state.filtered.slice(0, state.visibleCount);
+    const visibleCount = visibleEvents.length;
+
+    setCount(count > visibleCount ? `Prikazanih ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setStatus(
+      state.usedPastFallback
+        ? 'Prikazani so potrjeni javni dogodki za leto 2026 z oznako “družinam prijazno”; prihodnjih dogodkov s to oznako trenutno ni.'
+        : 'Prikazani so potrjeni javni dogodki od danes naprej z oznako “družinam prijazno”, privzeto urejeni po datumu.'
+    );
+
+    if (!count) {
+      renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+    if (moreElement) moreElement.hidden = visibleCount >= count;
+  };
+
+  const loadEvents = async () => {
+    setStatus('Nalagamo družinam prijazne dogodke iz STK API-ja …');
+
+    try {
+      const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`API status ${response.status}`);
+
+      const payload = await response.json();
+      state.events = getFamilyEvents(toArray(payload));
+      state.apiAvailable = true;
+      populateFilters();
+      renderResults();
+    } catch (error) {
+      console.error('Družinam prijazni teki API error', error);
+      state.apiAvailable = false;
+      renderResults();
+    }
+  };
+
+  const resetVisibleResults = () => {
+    state.visibleCount = PAGE_SIZE;
+    renderResults();
+  };
+
+  const clearFilters = () => {
+    formElement?.reset();
+    resetVisibleResults();
+  };
+
+  formElement?.addEventListener('input', resetVisibleResults);
+  formElement?.addEventListener('change', resetVisibleResults);
+  formElement?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    resetVisibleResults();
+  });
+
+  showMoreButton?.addEventListener('click', () => {
+    state.visibleCount += PAGE_SIZE;
+    renderResults();
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
+    if (target) clearFilters();
+  });
+
+  loadEvents();
+</script>
