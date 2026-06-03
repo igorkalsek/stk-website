@@ -38,24 +38,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="section container" aria-labelledby="week-title">
       <div class="section-heading">
         <h2 id="week-title">Ta teden tečemo</h2>
-        <p>
-          Prvi MVP še ne izračunava tedenskega izbora. Kartice spodaj kažejo končno obliko za pregled najbližjih tekov.
-        </p>
+        <p>Najbližji teki iz javnega STK API-ja, prikazani v kratkem pregledu za hiter izbor.</p>
       </div>
-      <div class="card-grid card-grid-three">
-        <article class="info-card">
-          <h3>Najbližji vikend</h3>
-          <p>Tu bo kratek seznam prireditev, ki se zgodijo ta teden.</p>
-        </article>
-        <article class="info-card">
-          <h3>Po regijah</h3>
-          <p>Pregled bo pomagal hitro ločiti teke po Sloveniji.</p>
-        </article>
-        <article class="info-card">
-          <h3>Za družine</h3>
-          <p>Izpostavljeni bodo teki z otroškimi ali družinsko prijaznimi programi.</p>
+      <div class="card-grid card-grid-three" data-next-week-events>
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Teki za ta teden bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">next_week</span>
+          </div>
         </article>
       </div>
+      <p class="data-note" data-status="next-week">Vir: /next_week</p>
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
@@ -100,7 +95,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const numberFormatter = new Intl.NumberFormat('sl-SI');
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  const ARRAY_KEYS = ['events', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
+  const ARRAY_KEYS = ['events', 'next_week', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
   const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
   const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
   const enableApiDebug = import.meta.env.DEV;
@@ -532,10 +527,110 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
 
+
+  const distanceLabel = (distance: string) => {
+    if (!distance) return '';
+    return /\bkm\b/i.test(distance) ? distance : `${distance} km`;
+  };
+
+  const nestedEventPaths = (field: string) => [
+    field,
+    `event.${field}`,
+    `race.${field}`,
+    `data.${field}`,
+    `item.${field}`,
+    `row.${field}`,
+    `fields.${field}`
+  ];
+
+  const getEventTitle = (event: ApiRecord, fallback = 'Naziv teka ni na voljo') =>
+    pickPath(event, [
+      ...nestedEventPaths('naziv_prireditve'),
+      ...nestedEventPaths('naziv'),
+      ...nestedEventPaths('title'),
+      ...nestedEventPaths('name')
+    ], fallback);
+
+  const getEventField = (event: ApiRecord, field: string, aliases: string[] = []) =>
+    pickPath(event, [
+      ...nestedEventPaths(field),
+      ...aliases.flatMap(nestedEventPaths)
+    ], '');
+
   async function loadJson(path: string): Promise<unknown> {
     const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
     if (!response.ok) throw new Error(`API request failed: ${response.status}`);
     return response.json();
+  }
+
+
+  async function loadNextWeekEvents() {
+    const container = document.querySelector('[data-next-week-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/next_week');
+      const events = toArray(payload);
+      const visibleEvents = events.slice(0, 6);
+
+      if (!events.length) {
+        container.innerHTML = `
+          <article class="event-card">
+            <h3>Ta teden ni najavljenih tekov</h3>
+            <p>V javnem STK API-ju trenutno ni prireditev za naslednjih sedem dni. Preverite še iskalnik tekov.</p>
+            <div class="event-meta">
+              <a class="pill" href="/iskalnik-tekov/">Iskalnik tekov</a>
+            </div>
+          </article>
+        `;
+        setStatus('next-week', 'API je odgovoril, vendar za ta teden ni javnih tekov.');
+        return;
+      }
+
+      const eventCards = visibleEvents.map((event) => {
+        const title = getEventTitle(event);
+        const date = formatDate(getEventField(event, 'datum', ['date', 'event_date', 'Datum']));
+        const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
+        const region = getEventField(event, 'regija', ['region']);
+        const surface = getEventField(event, 'tip_podlage', ['surface']);
+        const distance = distanceLabel(getEventField(event, 'razdalje_km', ['distance', 'distances']));
+        const startTime = getEventField(event, 'cas_zacetka', ['čas_zacetka', 'čas_začetka', 'cas_začetka', 'start_time', 'time']);
+        const summary = joinParts([date, location, region]);
+
+        return `
+          <article class="event-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(summary || 'Podrobnosti bodo objavljene v koledarju.')}</p>
+            <div class="event-meta">
+              ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
+              ${distance ? `<span class="pill">${escapeHtml(distance)}</span>` : ''}
+              ${startTime ? `<span class="pill pill-orange">${escapeHtml(startTime)}</span>` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      const moreLink = events.length > visibleEvents.length ? `
+        <article class="event-card">
+          <h3>Še več tekov</h3>
+          <p>Prikazanih je prvih ${visibleEvents.length} od ${events.length} tekov za ta teden.</p>
+          <div class="event-meta">
+            <a class="pill pill-orange" href="/iskalnik-tekov/">Iskalnik tekov</a>
+          </div>
+        </article>
+      ` : '';
+
+      container.innerHTML = `${eventCards}${moreLink}`;
+      setStatus('next-week', 'Teki za ta teden so naloženi iz STK API-ja.');
+    } catch (error) {
+      container.innerHTML = `
+        <article class="event-card">
+          <h3>Tedenski seznam trenutno ni dosegljiv</h3>
+          <p>Ko bo javni STK API spet odgovoril, se bodo najbližji teki prikazali tukaj.</p>
+        </article>
+      `;
+      setStatus('next-week', 'Seznam /next_week trenutno ni dosegljiv, zato prikazujemo miren nadomestni prikaz.');
+    }
   }
 
   async function loadStats() {
@@ -679,6 +774,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   if (enableApiDebug) createDebugPanel();
   loadStats();
+  loadNextWeekEvents();
   loadTopEvents();
   loadRecentUpdates();
 </script>

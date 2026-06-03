@@ -74,11 +74,13 @@ The website never reads Google Sheets directly. Google Sheets remains the master
 - Stats: `https://stk-master-api.igor-kalsek.workers.dev/stats`
 - Master event data: `https://stk-master-api.igor-kalsek.workers.dev/`
 - Top upcoming voted events: `https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=10`
+- Next week events: `https://stk-master-api.igor-kalsek.workers.dev/next_week`
 - Recent updates: `https://stk-master-api.igor-kalsek.workers.dev/recent_updates?days=7`
 
 The home page currently fetches live data from:
 
 - `/stats` for `confirmed_public_events_total` and `family_friendly_total`
+- `/next_week` for the live “Ta teden tečemo” section
 - `/top?scope=upcoming&limit=10` for the most voted upcoming events
 - `/recent_updates?days=7` for recent updates
 
@@ -93,7 +95,7 @@ Each live section includes graceful fallback content if an API request fails or 
   - strong STK hero section
   - primary CTA links
   - live stats strip
-  - placeholder “Ta teden tečemo” cards
+  - API-backed “Ta teden tečemo” section with fallback
   - API-backed “Najbolj glasovani prihajajoči teki” section with fallback
   - API-backed “Zadnje posodobitve” section with fallback
 - Placeholder pages for:
@@ -111,7 +113,6 @@ Each live section includes graceful fallback content if an API request fails or 
 
 - Build the real event search and filtering experience.
 - Use the master event endpoint for event listing pages.
-- Add a real weekly “Ta teden tečemo” query or client-side filter.
 - Replace placeholder pages with full content and interactions.
 - Add the final “Dodaj ali popravi tek” destination once the process is confirmed.
 - Integrate STK Tekobot when requested.
