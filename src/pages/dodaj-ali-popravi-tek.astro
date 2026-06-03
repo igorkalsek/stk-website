@@ -1,12 +1,220 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+const submissionUrl = 'https://sites.google.com/view/slovenski-tekaski-koledar/popravek-nov-tek';
+
+const sendOptions = [
+  'nov tek, ki še ni v koledarju',
+  'popravek datuma, kraja ali razdalj',
+  'povezavo do uradnega razpisa',
+  'povezavo do prijav',
+  'informacijo o otroških ali družinskih tekih',
+  'informacijo o odpovedi ali spremembi dogodka',
+];
+
+const helpfulDetails = [
+  'uradni razpis ali uradna stran dogodka',
+  'prijavni portal',
+  'točen datum in kraj',
+  'razdalje',
+  'ura štarta, če je znana',
+  'podatek, ali gre za družinam prijazen dogodek',
+];
+
+const beforeSubmit = [
+  'preveri, ali je tek že v koledarju',
+  'priloži povezavo do vira',
+  'pri popravku napiši, kateri podatek je napačen',
+  'pri novem teku dodaj čim več osnovnih podatkov',
+];
 ---
 
-<BaseLayout title="Dodaj ali popravi tek" description="Predlagajte dodatek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
-  <PlaceholderPage
-    title="Dodaj ali popravi tek"
-    description="Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek."
-    note="V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov."
-  />
+<BaseLayout title="Dodaj ali popravi tek" description="Oddaj predlog novega teka ali popravek podatkov za Slovenski Tekaški Koledar.">
+  <main>
+    <section class="container page-hero submission-hero" aria-labelledby="submission-title">
+      <span class="eyebrow">Pomagaj izboljšati koledar</span>
+      <h1 id="submission-title">Dodaj ali popravi tek</h1>
+      <p>
+        Opaziš manjkajoč tek, napačen datum ali novo povezavo do prijav? Tekači in organizatorji
+        lahko pomagate izboljšati Slovenski Tekaški Koledar tako, da pošljete strukturirane podatke
+        o prireditvi in povezavo do zanesljivega vira.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={submissionUrl} target="_blank" rel="noopener noreferrer">
+          Oddaj predlog ali popravek
+        </a>
+        <a class="button button-secondary submission-secondary" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="what-title">
+      <div class="section-heading">
+        <h2 id="what-title">Kaj lahko pošlješ?</h2>
+        <p>Najbolj koristni so predlogi z jasnim virom in osnovnimi podatki o dogodku.</p>
+      </div>
+      <div class="card-grid card-grid-three compact-card-grid">
+        {sendOptions.map((option) => (
+          <article class="info-card compact-info-card">
+            <h3>{option}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="helpful-title">
+      <div class="section-heading">
+        <h2 id="helpful-title">Kaj najbolj pomaga?</h2>
+        <p>Če imaš na voljo več informacij, jih dodaj v obrazec. Tako je preverjanje hitrejše.</p>
+      </div>
+      <ul class="check-list">
+        {helpfulDetails.map((detail) => (
+          <li>{detail}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="container note-panel submission-note" aria-labelledby="review-title">
+      <h2 id="review-title">Pred objavo</h2>
+      <p>Predlogi se pred objavo preverijo.</p>
+      <p>STK ne dodaja dogodkov samo na podlagi nejasnih ali neuradnih informacij.</p>
+      <p>
+        Pri družinam prijaznih tekih naj bo iz vira jasno razvidno, da obstajajo otroški teki,
+        družinske kategorije ali podobna ponudba.
+      </p>
+    </section>
+
+    <section class="container section before-submit-section" aria-labelledby="before-title">
+      <div class="section-heading">
+        <h2 id="before-title">Pred oddajo</h2>
+        <p>Kratek pregled pred pošiljanjem predloga ali popravka.</p>
+      </div>
+      <ul class="check-list before-submit-list">
+        {beforeSubmit.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      <div class="cta-row final-cta-row">
+        <a class="button button-primary" href={submissionUrl} target="_blank" rel="noopener noreferrer">
+          Oddaj predlog ali popravek
+        </a>
+        <a class="button button-secondary submission-secondary" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .submission-hero {
+    max-width: 960px;
+  }
+
+  .submission-hero .eyebrow {
+    background: rgba(16, 64, 80, 0.1);
+    color: var(--deep-teal);
+  }
+
+  .submission-hero .cta-row {
+    margin-top: 6px;
+  }
+
+  .submission-secondary {
+    background: var(--white);
+    color: var(--deep-teal);
+    box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
+  }
+
+  .compact-card-grid {
+    align-items: stretch;
+  }
+
+  .compact-info-card {
+    min-height: 112px;
+  }
+
+  .compact-info-card h3 {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .check-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .check-list li {
+    position: relative;
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--deep-teal);
+    font-weight: 800;
+    line-height: 1.45;
+    padding: 14px 16px 14px 46px;
+    box-shadow: 0 10px 28px rgba(16, 64, 80, 0.06);
+  }
+
+  .check-list li::before {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    display: inline-grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(200, 230, 201, 0.85);
+    color: var(--deep-teal);
+    content: '✓';
+    font-size: 0.8rem;
+    font-weight: 900;
+  }
+
+  .submission-note {
+    display: grid;
+    gap: 10px;
+    margin-top: 36px;
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(135deg, rgba(200, 230, 201, 0.68), rgba(255, 255, 255, 0.9)),
+      var(--white);
+    padding: 22px;
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.07);
+  }
+
+  .submission-note h2,
+  .submission-note p {
+    margin: 0;
+  }
+
+  .submission-note h2 {
+    color: var(--deep-teal);
+    letter-spacing: -0.025em;
+  }
+
+  .submission-note p {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .before-submit-section {
+    padding-top: 30px;
+  }
+
+  .before-submit-list {
+    margin-bottom: 18px;
+  }
+
+  .final-cta-row {
+    margin-top: 18px;
+  }
+
+  @media (min-width: 680px) {
+    .check-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
