@@ -1,0 +1,21 @@
+{
+  "name": "stk-website",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.15.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,691 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const enableApiDebug = import.meta.env.DEV;
+---
+
+<BaseLayout>
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-card">
+        <div class="hero-content">
+          <span class="eyebrow">Javni tekaški koledar</span>
+          <h1 id="hero-title">Slovenski Tekaški Koledar</h1>
+          <p class="hero-lead">Neodvisen koledar tekaških prireditev po Sloveniji.</p>
+          <p class="hero-sublead">
+            Poiščite tek po datumu, regiji, podlagi, razdalji ali družinski prijaznosti.
+          </p>
+          <div class="cta-row" aria-label="Glavne povezave">
+            <a class="button button-primary" href="/iskalnik-tekov/">Iskalnik tekov</a>
+            <a class="button button-secondary" href="/druzinam-prijazni-teki/">Družinam prijazni teki</a>
+            <a class="button button-secondary" href="/najbolj-glasovani-teki/">Najbolj glasovani teki</a>
+            <a class="button button-secondary" href="/stk-tekobot/">STK Tekobot</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-strip" aria-label="Statistika koledarja">
+        <article class="stat-card">
+          <span class="stat-value" data-stat="confirmed_public_events_total">—</span>
+          <span class="stat-label">potrjenih javnih tekaških prireditev</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-value" data-stat="family_friendly_total">—</span>
+          <span class="stat-label">družinam prijaznih tekov</span>
+        </article>
+      </div>
+      <p class="data-note" data-status="stats">Statistiko nalagamo iz javnega STK API-ja.</p>
+    </section>
+
+    <section class="section container" aria-labelledby="week-title">
+      <div class="section-heading">
+        <h2 id="week-title">Ta teden tečemo</h2>
+        <p>
+          Prvi MVP še ne izračunava tedenskega izbora. Kartice spodaj kažejo končno obliko za pregled najbližjih tekov.
+        </p>
+      </div>
+      <div class="card-grid card-grid-three">
+        <article class="info-card">
+          <h3>Najbližji vikend</h3>
+          <p>Tu bo kratek seznam prireditev, ki se zgodijo ta teden.</p>
+        </article>
+        <article class="info-card">
+          <h3>Po regijah</h3>
+          <p>Pregled bo pomagal hitro ločiti teke po Sloveniji.</p>
+        </article>
+        <article class="info-card">
+          <h3>Za družine</h3>
+          <p>Izpostavljeni bodo teki z otroškimi ali družinsko prijaznimi programi.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="voted-title">
+      <div class="section-heading">
+        <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
+        <p>Če je API dosegljiv, se seznam napolni z javnimi podatki. V nasprotnem primeru ostane miren nadomestni prikaz.</p>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">upcoming</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">Vir: /top?scope=upcoming&amp;limit=10</p>
+    </section>
+
+    <section class="section container" aria-labelledby="updates-title">
+      <div class="section-heading">
+        <h2 id="updates-title">Zadnje posodobitve</h2>
+        <p>Najnovejše spremembe v koledarju pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
+      </div>
+      <div class="card-grid" data-recent-updates>
+        <article class="update-card">
+          <h3>Ni še prikazanih posodobitev</h3>
+          <p>Ko bo API odgovoril, bodo zadnje spremembe prikazane tukaj.</p>
+        </article>
+      </div>
+      <p class="data-note" data-status="updates">Vir: /recent_updates?days=7</p>
+    </section>
+
+    {enableApiDebug && <span id="stk-api-debug-enabled" hidden></span>}
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ enableApiDebug }}>
+  window.STK_ENABLE_API_DEBUG = enableApiDebug;
+</script>
+
+<script>
+  type ApiRecord = Record<string, unknown>;
+
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const numberFormatter = new Intl.NumberFormat('sl-SI');
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const ARRAY_KEYS = ['events', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
+  const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
+  const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
+  const enableApiDebug = (window as Window & { STK_ENABLE_API_DEBUG?: boolean }).STK_ENABLE_API_DEBUG === true && document.getElementById('stk-api-debug-enabled') !== null;
+  const debugEnabled = enableApiDebug && new URLSearchParams(window.location.search).get('debug') === '1';
+
+  const setStatus = (name: string, message: string) => {
+    const element = document.querySelector(`[data-status="${name}"]`);
+    if (element) element.textContent = message;
+  };
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    for (const key of ARRAY_KEYS) {
+      const nested = asRecord(record[key]);
+      if (!nested) continue;
+      const nestedArray = toArray(nested);
+      if (nestedArray.length) return nestedArray;
+    }
+
+    return [];
+  };
+
+  const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
+    for (const key of keys) {
+      const value = item[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const valueAtPath = (item: ApiRecord, path: string): unknown => {
+    let current: unknown = item;
+    for (const part of path.split('.')) {
+      const record = asRecord(current);
+      if (!record) return undefined;
+      current = record[part];
+    }
+    return current;
+  };
+
+  const pickPath = (item: ApiRecord, paths: string[], fallback = ''): string => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
+
+  const getVoteUrlTitle = (item: ApiRecord) => {
+    if (typeof item?.vote_url !== 'string' || !item.vote_url.trim()) return '';
+    try {
+      const url = new URL(item.vote_url);
+      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
+    } catch (error) {
+      const match = item.vote_url.match(/[?&]entry\.1386641006=([^&]+)/);
+      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
+    }
+  };
+
+  const getTopEventTitle = (item: ApiRecord) => {
+    if (typeof item?.naziv_prireditve === 'string' && item.naziv_prireditve.trim()) {
+      return item.naziv_prireditve.trim();
+    }
+
+    if (typeof item?.naziv === 'string' && item.naziv.trim()) {
+      return item.naziv.trim();
+    }
+
+    if (typeof item?.title === 'string' && item.title.trim()) {
+      return item.title.trim();
+    }
+
+    if (typeof item?.name === 'string' && item.name.trim()) {
+      return item.name.trim();
+    }
+
+    const event = asRecord(item?.event);
+    if (typeof event?.naziv_prireditve === 'string' && event.naziv_prireditve.trim()) {
+      return event.naziv_prireditve.trim();
+    }
+
+    if (typeof event?.naziv === 'string' && event.naziv.trim()) {
+      return event.naziv.trim();
+    }
+
+    const race = asRecord(item?.race);
+    if (typeof race?.naziv_prireditve === 'string' && race.naziv_prireditve.trim()) {
+      return race.naziv_prireditve.trim();
+    }
+
+    if (typeof race?.naziv === 'string' && race.naziv.trim()) {
+      return race.naziv.trim();
+    }
+
+    const data = asRecord(item?.data);
+    if (typeof data?.naziv_prireditve === 'string' && data.naziv_prireditve.trim()) {
+      return data.naziv_prireditve.trim();
+    }
+
+    if (typeof data?.naziv === 'string' && data.naziv.trim()) {
+      return data.naziv.trim();
+    }
+
+    const voteUrlTitle = getVoteUrlTitle(item);
+    return voteUrlTitle || 'Naziv teka ni na voljo';
+  };
+
+  const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
+
+  const describeKeys = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '—';
+    const entries = Object.entries(record).slice(0, 18).map(([key, entryValue]) => {
+      const type = Array.isArray(entryValue) ? 'array' : typeof entryValue;
+      return `${key}:${type}`;
+    });
+    return entries.length ? entries.join(', ') : 'brez ključev';
+  };
+
+  const rawValueText = (value: unknown) =>
+    value === undefined || value === null || String(value) === '' ? 'not detected' : String(value);
+
+  const compactJsonPreview = (value: unknown) => {
+    try {
+      return JSON.stringify(value, null, 2).slice(0, 1600);
+    } catch (error) {
+      return 'JSON preview ni na voljo.';
+    }
+  };
+
+  const isMissing = (value: unknown) =>
+    value === undefined || value === null || String(value).trim() === '';
+
+  const rowKey = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '';
+    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
+    return row === undefined || row === null ? '' : String(row).trim();
+  };
+
+  const getFieldValue = (item: ApiRecord, key: string) => {
+    const exact = item[key];
+    if (!isMissing(exact)) return String(exact).trim();
+
+    const wanted = normalizeKey(key);
+    for (const [itemKey, value] of Object.entries(item)) {
+      if (normalizeKey(itemKey) === wanted && !isMissing(value)) return String(value).trim();
+    }
+
+    return '';
+  };
+
+  const getMasterRows = (payload: unknown): ApiRecord[] => {
+    const record = asRecord(payload);
+    if (record && Array.isArray(record.data)) return record.data.filter(asRecord) as ApiRecord[];
+
+    const fallbackRows = toArray(payload);
+    if (fallbackRows.length) return fallbackRows;
+
+    if (record) {
+      for (const value of Object.values(record)) {
+        const rows = toArray(value);
+        if (rows.length) return rows;
+      }
+    }
+
+    return [];
+  };
+
+  const normalizedText = (value: unknown) =>
+    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
+    const topValue = normalizedText(getFieldValue(topEvent, key));
+    const masterValue = normalizedText(getFieldValue(masterEvent, key));
+    return Boolean(topValue && masterValue && topValue === masterValue);
+  };
+
+  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
+      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
+    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
+    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
+    return rowScore + matchingFields;
+  };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
+    let bestMatch: ApiRecord | null = null;
+    let bestScore = 0;
+
+    for (const masterEvent of masterRows) {
+      const score = matchScore(topEvent, masterEvent);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = masterEvent;
+      }
+    }
+
+    return bestScore >= 3 ? bestMatch : null;
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key])) return false;
+    const sourceValue = getFieldValue(source, key);
+    if (!sourceValue) return false;
+    target[key] = sourceValue;
+    return true;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
+    const enriched = { ...event };
+    const topTitle = getTopEventTitle(event);
+    const voteUrlTitle = getVoteUrlTitle(event);
+    const match = findMasterMatch(event, masterRows);
+    enriched.__master_matched = Boolean(match);
+    enriched.__matched_master_row = match ? rowKey(match) : '';
+    enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__vote_url_title = voteUrlTitle;
+    enriched.__title_source = topTitle !== 'Naziv teka ni na voljo' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
+
+    if (match) {
+      const filledTitle = copyIfMissing(enriched, match, 'naziv_prireditve');
+      copyIfMissing(enriched, match, 'datum');
+      copyIfMissing(enriched, match, 'kraj');
+      copyIfMissing(enriched, match, 'regija');
+      copyIfMissing(enriched, match, 'tip_podlage');
+      copyIfMissing(enriched, match, 'razdalje_km');
+      if (filledTitle) enriched.__title_source = 'master';
+    }
+
+    if (getTopEventTitle(enriched) === 'Naziv teka ni na voljo' && voteUrlTitle) {
+      enriched.naziv_prireditve = voteUrlTitle;
+      enriched.__title_source = 'vote_url';
+    } else if (getTopEventTitle(enriched) === voteUrlTitle && voteUrlTitle) {
+      enriched.__title_source = 'vote_url';
+    }
+
+    return enriched;
+  });
+
+  const createDebugPanel = () => {
+    if (!debugEnabled) return;
+    const main = document.querySelector('main');
+    if (!main) return;
+    main.insertAdjacentHTML('beforeend', `
+      <section class="section container api-debug" data-api-debug aria-label="API debug">
+        <details>
+          <summary>API debug</summary>
+          <div class="debug-grid">
+            <p><strong>/stats loaded:</strong> <span data-debug-stats>no</span></p>
+            <p><strong>/top loaded:</strong> <span data-debug-top>no</span></p>
+            <p><strong>/top item count:</strong> <span data-debug-top-count>0</span></p>
+            <p><strong>First top item keys:</strong> <code data-debug-top-keys>—</code></p>
+            <div><strong>First top raw JSON:</strong> <pre class="debug-json" data-debug-top-json>—</pre></div>
+            <p><strong>First top raw row:</strong> <code data-debug-top-row>not detected</code></p>
+            <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
+            <p><strong>Raw naziv_prireditve:</strong> <code data-debug-top-title-raw>not detected</code></p>
+            <p><strong>Raw votes_total:</strong> <code data-debug-top-votes-raw>not detected</code></p>
+            <p><strong>Master loaded:</strong> <span data-debug-master>no</span></p>
+            <p><strong>Master data item count:</strong> <span data-debug-master-count>0</span></p>
+            <p><strong>vote_url title fallback:</strong> <code data-debug-vote-url-title>not detected</code></p>
+            <p><strong>Matched master row:</strong> <span data-debug-master-match>no</span></p>
+            <p><strong>Matched master title:</strong> <code data-debug-master-title>not detected</code></p>
+            <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
+            <p><strong>Detected title source:</strong> <code data-debug-top-title-source>not detected</code></p>
+            <p><strong>Detected top votes:</strong> <code data-debug-top-votes>not detected</code></p>
+            <p><strong>/recent_updates loaded:</strong> <span data-debug-recent>no</span></p>
+            <p><strong>/recent_updates item count:</strong> <span data-debug-recent-count>0</span></p>
+            <p><strong>First recent item keys:</strong> <code data-debug-recent-keys>—</code></p>
+          </div>
+        </details>
+      </section>
+    `);
+  };
+
+  const setDebug = (target: string, text: string) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}]`);
+    if (element) element.textContent = text;
+  };
+
+  const setDebugKeys = (target: string, value: unknown) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}-keys]`);
+    if (element) element.textContent = describeKeys(value);
+  };
+
+  const nestedKeySummary = (item: unknown) => {
+    const record = asRecord(item);
+    if (!record) return '—';
+    const parts = TITLE_CONTAINERS.map((container) => {
+      const nested = asRecord(valueAtPath(record, container))
+        ?? asRecord(Object.entries(record).find(([key]) => normalizeKey(key) === normalizeKey(container))?.[1]);
+      return nested ? `${container}: ${describeKeys(nested)}` : '';
+    }).filter(Boolean);
+    return parts.length ? parts.join(' | ') : '—';
+  };
+
+  const setDebugTopDetails = (items: ApiRecord[], rawItems = items) => {
+    if (!debugEnabled) return;
+    const first = items[0];
+    const rawFirst = rawItems[0];
+    setDebug('top-count', String(rawItems.length));
+    setDebugKeys('top', rawFirst);
+    setDebug('top-json', rawFirst ? compactJsonPreview(rawFirst) : '—');
+    setDebug('top-row', rowKey(rawFirst) || 'not detected');
+    setDebug('top-nested', nestedKeySummary(rawFirst));
+    setDebug('top-title-raw', rawValueText(rawFirst?.naziv_prireditve));
+    setDebug('top-votes-raw', rawValueText(rawFirst?.votes_total));
+    setDebug('vote-url-title', rawValueText(first?.__vote_url_title ?? getVoteUrlTitle(rawFirst ?? {})));
+    setDebug('master-match', first?.__master_matched ? `yes (${rawValueText(first.__matched_master_row)})` : 'no');
+    setDebug('master-title', rawValueText(first?.__matched_master_title));
+    setDebug('top-title', first ? getTopEventTitle(first) : 'not detected');
+    setDebug('top-title-source', first?.__title_source ? String(first.__title_source) : 'not detected');
+    setDebug('top-votes', first ? formatVoteCount(getTopEventVotes(first)) : 'not detected');
+  };
+
+  const setDebugRecentDetails = (items: ApiRecord[]) => {
+    if (!debugEnabled) return;
+    setDebug('recent-count', String(items.length));
+    setDebugKeys('recent', items[0]);
+  };
+
+  const parsePositiveInteger = (value: unknown) => {
+    if (value === null || value === undefined) return null;
+    const number = Number.parseInt(String(value).trim(), 10);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  };
+
+  const getTopEventVotes = (item: ApiRecord) =>
+    parsePositiveInteger(item?.votes_total)
+    ?? parsePositiveInteger(item?.votes_last_7_days)
+    ?? parsePositiveInteger(item?.glasovi)
+    ?? parsePositiveInteger(item?.votes)
+    ?? parsePositiveInteger(item?.vote_count)
+    ?? parsePositiveInteger(item?.total_votes);
+
+  const formatVoteCount = (votes: number | null) => {
+    if (votes === null) return 'not detected';
+    const formattedVotes = numberFormatter.format(votes);
+    return votes === 1 ? `${formattedVotes} glas` : `${formattedVotes} glasov`;
+  };
+
+  const titleForEvent = (event: ApiRecord) => {
+    const title = getTopEventTitle(event);
+    if (title) return title;
+
+    if (import.meta.env.DEV) {
+      console.warn('STK top event title missing. Available keys:', objectKeys(event));
+    }
+
+    return 'Naziv teka ni na voljo';
+  };
+
+  const pickNumber = (item: ApiRecord, keys: string[]): number | null => {
+    for (const key of keys) {
+      const value = item[key];
+      if (value === undefined || value === null || String(value).trim() === '') continue;
+      const numberValue = Number(value);
+      if (Number.isFinite(numberValue)) return numberValue;
+    }
+    return null;
+  };
+
+
+  const numberFromStatArray = (items: ApiRecord[], keys: string[]): number | null => {
+    for (const item of items) {
+      const statName = pick(item, ['key', 'name', 'metric', 'field', 'id']);
+      if (!keys.includes(statName)) continue;
+      const value = pickNumber(item, ['value', 'count', 'total', 'amount']);
+      if (value !== null) return value;
+    }
+    return null;
+  };
+
+  const pickNestedNumber = (payload: unknown, keys: string[]): number | null => {
+    const root = asRecord(payload);
+    if (!root) return null;
+
+    const direct = pickNumber(root, keys);
+    if (direct !== null) return direct;
+
+    const rootArrayValue = numberFromStatArray(toArray(root), keys);
+    if (rootArrayValue !== null) return rootArrayValue;
+
+    for (const containerKey of STATS_CONTAINERS) {
+      const nested = asRecord(root[containerKey]);
+      if (!nested) continue;
+      const nestedValue = pickNumber(nested, keys);
+      if (nestedValue !== null) return nestedValue;
+
+      const nestedArrayValue = numberFromStatArray(toArray(nested), keys);
+      if (nestedArrayValue !== null) return nestedArrayValue;
+    }
+
+    return null;
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : dateFormatter.format(date);
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return String(value).replace(/[&<>'"]/g, (character) => characters[character] ?? character);
+  };
+
+  const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
+
+  async function loadJson(path: string): Promise<unknown> {
+    const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    return response.json();
+  }
+
+  async function loadStats() {
+    try {
+      const payload = await loadJson('/stats');
+      const confirmedTotal = pickNestedNumber(payload, ['confirmed_public_events_total']);
+      const familyTotal = pickNestedNumber(payload, ['family_friendly_total']);
+      const values = {
+        confirmed_public_events_total: confirmedTotal,
+        family_friendly_total: familyTotal
+      };
+
+      for (const [key, value] of Object.entries(values)) {
+        const element = document.querySelector(`[data-stat="${key}"]`);
+        if (element) element.textContent = value === null ? 'Ni podatka' : numberFormatter.format(value);
+      }
+
+      setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
+
+      if (confirmedTotal !== null && familyTotal !== null) {
+        setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
+      } else {
+        setStatus('stats', 'API je odgovoril, vendar ena ali več statističnih vrednosti manjka.');
+      }
+    } catch (error) {
+      setDebug('stats', 'no');
+      setStatus('stats', 'Statistika trenutno ni dosegljiva, zato prikazujemo osnovni pogled.');
+    }
+  }
+
+  async function loadTopEvents() {
+    const container = document.querySelector('[data-top-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/top?scope=upcoming&limit=10');
+      const topEvents = toArray(payload).slice(0, 6);
+      setDebug('top', 'yes');
+      if (!topEvents.length) {
+        setDebugTopDetails(topEvents);
+        setStatus('top', 'API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
+        return;
+      }
+
+      let events = topEvents;
+      try {
+        const masterPayload = await loadJson('/');
+        const masterRows = getMasterRows(masterPayload);
+        setDebug('master', 'yes');
+        setDebug('master-count', String(masterRows.length));
+        events = enrichTopEventsFromMaster(topEvents, masterRows);
+      } catch (error) {
+        setDebug('master', 'no');
+        setDebug('master-count', '0');
+      }
+      setDebugTopDetails(events, topEvents);
+
+      container.innerHTML = events.map((event) => {
+        const title = titleForEvent(event);
+        const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
+        const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
+        const date = formatDate(pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']));
+        const votes = getTopEventVotes(event);
+        const distance = pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], '');
+        const surface = pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], '');
+        const meta = joinParts([location, region && region !== location ? region : '', date]);
+
+        return `
+          <article class="event-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(meta || 'Podrobnosti še niso navedene.')}</p>
+            <div class="event-meta">
+              ${votes !== null ? `<span class="pill pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="pill pill-orange">Glasovanje odprto</span>'}
+              ${distance ? `<span class="pill">${escapeHtml(distance)} km</span>` : '<span class="pill">prihajajoči tek</span>'}
+              ${surface ? `<span class="pill">${escapeHtml(surface)}</span>` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+      setStatus('top', 'Najbolj glasovani teki so naloženi iz STK API-ja.');
+    } catch (error) {
+      setDebug('top', 'no');
+      setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
+    }
+  }
+
+  async function loadRecentUpdates() {
+    const container = document.querySelector('[data-recent-updates]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/recent_updates?days=7');
+      const updates = toArray(payload).slice(0, 6);
+      setDebug('recent', 'yes');
+      setDebugRecentDetails(updates);
+
+      if (!updates.length) {
+        container.innerHTML = `
+          <article class="update-card">
+            <h3>Ni novih javnih posodobitev</h3>
+            <p>V zadnjih 7 dneh ni zabeleženih javnih posodobitev.</p>
+          </article>
+        `;
+        setStatus('updates', 'API je odgovoril, vendar za zadnjih 7 dni ni javnih posodobitev.');
+        return;
+      }
+
+      container.innerHTML = updates.map((update) => {
+        const title = pickPath(update, [
+          'naziv_prireditve',
+          'naziv',
+          'event.naziv_prireditve',
+          'event.naziv',
+          'title',
+          'name'
+        ], 'Posodobitev koledarja');
+        const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
+        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'zadnja_sprememba_podrobno', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
+        const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
+        const updateType = pickPath(update, ['sprememba', 'vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'posodobljeno');
+        const note = pickPath(update, ['opis', 'zadnja_sprememba_podrobno', 'opis_spremembe', 'summary', 'notes', 'note', 'opombe_javne'], '');
+        const place = joinParts([location, region && region !== location ? region : '']);
+        const meta = joinParts([place, eventDate ? `datum teka: ${eventDate}` : '', changed ? `posodobljeno: ${changed}` : '']);
+        const summary = note || `Vnos je bil ${updateType}.`;
+
+        return `
+          <article class="update-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(summary)}</p>
+            ${meta ? `<div class="event-meta"><span class="pill">${escapeHtml(meta)}</span></div>` : ''}
+          </article>
+        `;
+      }).join('');
+      setStatus('updates', 'Zadnje posodobitve so naložene iz STK API-ja.');
+    } catch (error) {
+      setDebug('recent', 'no');
+      setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
+    }
+  }
+
+  createDebugPanel();
+  loadStats();
+  loadTopEvents();
+  loadRecentUpdates();
+</script>
