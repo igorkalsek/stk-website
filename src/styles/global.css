@@ -705,3 +705,27 @@ main {
     justify-self: start;
   }
 }
+
+.ranked-event-card {
+  position: relative;
+}
+
+.ranked-event-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  border-radius: 999px;
+  background: var(--deep-teal);
+  color: var(--stk-green);
+  font-weight: 900;
+  padding: 8px 12px;
+}

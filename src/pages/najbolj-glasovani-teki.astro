@@ -1,12 +1,595 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
 ---
 
-<BaseLayout title="Najbolj glasovani teki" description="Pregled najbolj glasovanih prihajajočih tekaških prireditev.">
-  <PlaceholderPage
-    title="Najbolj glasovani teki"
-    description="Tu bo razširjen pregled prihajajočih prireditev, ki jih tekači največkrat izpostavijo."
-    note="Za zdaj ne uvajamo novega glasovanja ali lastne logike; stran bo uporabljala samo javni STK API."
-  />
+<BaseLayout title="Najbolj glasovani teki" description="Pregled najbolj glasovanih prihajajočih tekaških prireditev iz javnega STK API-ja.">
+  <main>
+    <section class="page-hero container" aria-labelledby="top-voted-title">
+      <span class="eyebrow">Najbolj glasovani teki</span>
+      <h1 id="top-voted-title">Teki, ki jih tekači največkrat izpostavijo</h1>
+      <p>
+        Seznam temelji na javnem STK glasovanju za prihajajoče tekaške prireditve. Glasovi pomagajo izpostaviti teke,
+        za katere tekači kažejo največ zanimanja, zato lahko hitreje odkrijete priljubljene izbire v koledarju.
+      </p>
+    </section>
+
+    <section class="section container" aria-labelledby="top-filters-title">
+      <div class="search-panel">
+        <div class="section-heading search-heading">
+          <div>
+            <h2 id="top-filters-title">Filtri</h2>
+            <p>Privzeti vrstni red sledi javnemu API-ju; filtre lahko kombinirate brez spreminjanja razvrstitve.</p>
+          </div>
+          <p class="result-count" data-top-result-count>Teke nalagamo …</p>
+        </div>
+
+        <form class="filters-grid" data-top-form>
+          <label class="field field-wide">
+            <span>Iskanje</span>
+            <input
+              type="search"
+              name="search"
+              placeholder="Ime teka ali kraj"
+              autocomplete="off"
+              data-filter="search"
+            />
+          </label>
+
+          <label class="field">
+            <span>Mesec</span>
+            <select name="month" data-filter="month" disabled>
+              <option value="">Vsi meseci</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Regija</span>
+            <select name="region" data-filter="region" disabled>
+              <option value="">Vse regije</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Podlaga</span>
+            <select name="surface" data-filter="surface" disabled>
+              <option value="">Vse podlage</option>
+            </select>
+          </label>
+
+          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-top-filters>
+            Počisti filtre
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="top-results-title">
+      <div class="section-heading">
+        <h2 id="top-results-title">Lestvica</h2>
+        <p data-top-status>Nalagamo najbolj glasovane prihajajoče teke iz javnega STK API-ja …</p>
+      </div>
+      <div class="search-results" data-top-results aria-live="polite">
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">STK API</span>
+            <span class="pill pill-orange">/top</span>
+          </div>
+        </article>
+      </div>
+      <div class="search-more" data-top-more hidden>
+        <button class="button button-primary" type="button" data-show-more>Prikaži več</button>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<script>
+  type ApiRecord = Record<string, unknown>;
+  type TopEvent = {
+    id: string;
+    rank: number;
+    title: string;
+    date: string;
+    month: string;
+    place: string;
+    region: string;
+    surface: string;
+    distances: string;
+    votes: number | null;
+    voteUrl: string;
+    noticeUrl: string;
+    registrationUrl: string;
+    searchText: string;
+  };
+
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const TOP_PATH = '/top?scope=upcoming&limit=50';
+  const PAGE_SIZE = 30;
+  const ARRAY_KEYS = ['events', 'top', 'data', 'items', 'rows', 'results'];
+  const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
+  const numberFormatter = new Intl.NumberFormat('sl-SI');
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+  const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
+
+  const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number } = {
+    events: [],
+    filtered: [],
+    apiAvailable: true,
+    visibleCount: PAGE_SIZE
+  };
+
+  const resultsElement = document.querySelector<HTMLElement>('[data-top-results]');
+  const statusElement = document.querySelector<HTMLElement>('[data-top-status]');
+  const countElement = document.querySelector<HTMLElement>('[data-top-result-count]');
+  const formElement = document.querySelector<HTMLFormElement>('[data-top-form]');
+  const moreElement = document.querySelector<HTMLElement>('[data-top-more]');
+  const showMoreButton = document.querySelector<HTMLButtonElement>('[data-show-more]');
+  const searchInput = document.querySelector<HTMLInputElement>('[data-filter="search"]');
+  const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
+  const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
+  const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const isMissing = (value: unknown) =>
+    value === undefined || value === null || String(value).trim() === '';
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    for (const key of ARRAY_KEYS) {
+      const nested = asRecord(record[key]);
+      if (!nested) continue;
+      const nestedArray = toArray(nested);
+      if (nestedArray.length) return nestedArray;
+    }
+
+    return [];
+  };
+
+  const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
+
+  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const valueAtPath = (item: ApiRecord, path: string): unknown => {
+    let current: unknown = item;
+    for (const part of path.split('.')) {
+      const record = asRecord(current);
+      if (!record) return undefined;
+      current = record[part];
+    }
+    return current;
+  };
+
+  const pickPath = (item: ApiRecord, paths: string[], fallback = ''): string => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (!isMissing(value)) return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const nestedEventPaths = (field: string) => [
+    field,
+    ...TITLE_CONTAINERS.map((container) => `${container}.${field}`)
+  ];
+
+  const getFieldValue = (item: ApiRecord, key: string) => {
+    const exact = item[key];
+    if (!isMissing(exact)) return String(exact).trim();
+
+    const wanted = normalizeKey(key);
+    for (const [itemKey, value] of Object.entries(item)) {
+      if (normalizeKey(itemKey) === wanted && !isMissing(value)) return String(value).trim();
+    }
+
+    return '';
+  };
+
+  const rowKey = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '';
+    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
+    return isMissing(row) ? '' : String(row).trim();
+  };
+
+  const getVoteUrlTitle = (item: ApiRecord) => {
+    const voteUrl = pickPath(item, nestedEventPaths('vote_url'));
+    if (!voteUrl) return '';
+    try {
+      const url = new URL(voteUrl);
+      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
+    } catch (error) {
+      const match = voteUrl.match(/[?&]entry\.1386641006=([^&]+)/);
+      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
+    }
+  };
+
+  const getTopEventTitle = (item: ApiRecord) => {
+    const title = pickPath(item, [
+      ...nestedEventPaths('naziv_prireditve'),
+      ...nestedEventPaths('naziv'),
+      ...nestedEventPaths('title'),
+      ...nestedEventPaths('name')
+    ]);
+    if (title) return title;
+
+    return getVoteUrlTitle(item) || 'Naziv teka ni na voljo';
+  };
+
+  const getMasterRows = (payload: unknown): ApiRecord[] => {
+    const record = asRecord(payload);
+    if (record && Array.isArray(record.data)) return record.data.filter(asRecord) as ApiRecord[];
+
+    const fallbackRows = toArray(payload);
+    if (fallbackRows.length) return fallbackRows;
+
+    if (record) {
+      for (const value of Object.values(record)) {
+        const rows = toArray(value);
+        if (rows.length) return rows;
+      }
+    }
+
+    return [];
+  };
+
+  const normalizedText = (value: unknown) =>
+    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
+    const topValue = normalizedText(getFieldValue(topEvent, key));
+    const masterValue = normalizedText(getFieldValue(masterEvent, key));
+    return Boolean(topValue && masterValue && topValue === masterValue);
+  };
+
+  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
+      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
+    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
+    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
+    return rowScore + matchingFields;
+  };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
+    let bestMatch: ApiRecord | null = null;
+    let bestScore = 0;
+
+    for (const masterEvent of masterRows) {
+      const score = matchScore(topEvent, masterEvent);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = masterEvent;
+      }
+    }
+
+    return bestScore >= 3 ? bestMatch : null;
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key])) return false;
+    const sourceValue = getFieldValue(source, key);
+    if (!sourceValue) return false;
+    target[key] = sourceValue;
+    return true;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
+    const enriched = { ...event };
+    const voteUrlTitle = getVoteUrlTitle(event);
+    const match = findMasterMatch(event, masterRows);
+
+    if (match) {
+      copyIfMissing(enriched, match, 'naziv_prireditve');
+      copyIfMissing(enriched, match, 'datum');
+      copyIfMissing(enriched, match, 'kraj');
+      copyIfMissing(enriched, match, 'regija');
+      copyIfMissing(enriched, match, 'tip_podlage');
+      copyIfMissing(enriched, match, 'razdalje_km');
+      copyIfMissing(enriched, match, 'povezava_razpis');
+      copyIfMissing(enriched, match, 'povezava_prijava');
+      copyIfMissing(enriched, match, 'vote_url');
+    }
+
+    if (getTopEventTitle(enriched) === 'Naziv teka ni na voljo' && voteUrlTitle) {
+      enriched.naziv_prireditve = voteUrlTitle;
+    }
+
+    return enriched;
+  });
+
+  const parsePositiveInteger = (value: unknown) => {
+    if (value === null || value === undefined || String(value).trim() === '') return null;
+    const number = Number.parseInt(String(value).trim(), 10);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  };
+
+  const getTopEventVotes = (item: ApiRecord) =>
+    parsePositiveInteger(item?.votes_total)
+    ?? parsePositiveInteger(item?.votes_last_7_days)
+    ?? parsePositiveInteger(item?.glasovi)
+    ?? parsePositiveInteger(item?.votes)
+    ?? parsePositiveInteger(item?.vote_count)
+    ?? parsePositiveInteger(item?.total_votes);
+
+  const formatVoteCount = (votes: number | null) => {
+    if (votes === null) return 'Glasovanje odprto';
+    const formattedVotes = numberFormatter.format(votes);
+    return votes === 1 ? `${formattedVotes} glas` : `${formattedVotes} glasov`;
+  };
+
+  const parseDateValue = (value: string) => {
+    if (!value) return Number.NaN;
+    return new Date(`${value}T00:00:00`).getTime();
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) return '';
+    const timestamp = parseDateValue(value);
+    return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
+  };
+
+  const monthLabel = (month: string) => {
+    const monthNumber = Number(month);
+    if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
+    const date = new Date(2026, monthNumber - 1, 1);
+    return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    return String(value).replace(/[&<>"']/g, (character) => characters[character]);
+  };
+
+  const safeUrl = (value: string) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const formatDistances = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+
+    const normalized = trimmed
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(' / ');
+
+    if (/[a-zčšž]/i.test(normalized)) return normalized;
+    return `${normalized || trimmed} km`;
+  };
+
+  const setStatus = (message: string) => {
+    if (statusElement) statusElement.textContent = message;
+  };
+
+  const setCount = (message: string) => {
+    if (countElement) countElement.textContent = message;
+  };
+
+  const pluralizeEvents = (count: number) =>
+    `${count} ${count === 1 ? 'tek' : count === 2 ? 'teka' : count < 5 ? 'teki' : 'tekov'}`;
+
+  const getFilters = () => ({
+    search: normalize(searchInput?.value ?? ''),
+    month: monthSelect?.value ?? '',
+    region: regionSelect?.value ?? '',
+    surface: surfaceSelect?.value ?? ''
+  });
+
+  const uniqueValues = (events: TopEvent[], key: 'month' | 'region' | 'surface') =>
+    [...new Set(events.map((event) => event[key]).filter(Boolean))];
+
+  const setSelectOptions = (select: HTMLSelectElement | null, values: string[], label: (value: string) => string) => {
+    if (!select) return;
+    const firstOption = select.querySelector('option')?.outerHTML ?? '<option value="">Vse</option>';
+    select.innerHTML = `${firstOption}${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(label(value))}</option>`).join('')}`;
+    select.disabled = values.length === 0;
+  };
+
+  const populateFilters = () => {
+    setSelectOptions(monthSelect, uniqueValues(state.events, 'month').sort(), monthLabel);
+    setSelectOptions(regionSelect, uniqueValues(state.events, 'region').sort((a, b) => a.localeCompare(b, 'sl-SI')), (value) => value);
+    setSelectOptions(surfaceSelect, uniqueValues(state.events, 'surface').sort((a, b) => a.localeCompare(b, 'sl-SI')), (value) => value);
+  };
+
+  const renderEmptyState = (title: string, message: string, pill = 'STK API', showClearAction = false) => {
+    if (!resultsElement) return;
+    resultsElement.innerHTML = `
+      <article class="event-card search-empty-card">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(message)}</p>
+        <div class="event-meta">
+          <span class="pill">${escapeHtml(pill)}</span>
+        </div>
+        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-top-filters>Počisti filtre</button>' : ''}
+      </article>
+    `;
+  };
+
+  const toTopEvent = (item: ApiRecord, index: number): TopEvent => {
+    const title = getTopEventTitle(item);
+    const date = pickPath(item, [...nestedEventPaths('datum'), ...nestedEventPaths('date'), ...nestedEventPaths('event_date'), 'Datum']);
+    const place = pickPath(item, [...nestedEventPaths('kraj'), ...nestedEventPaths('place'), ...nestedEventPaths('city'), ...nestedEventPaths('location')]);
+    const region = pickPath(item, [...nestedEventPaths('regija'), ...nestedEventPaths('region')]);
+    const surface = pickPath(item, [...nestedEventPaths('tip_podlage'), ...nestedEventPaths('surface')]);
+    const distances = pickPath(item, [...nestedEventPaths('razdalje_km'), ...nestedEventPaths('distance'), ...nestedEventPaths('distances')]);
+    const voteUrl = safeUrl(pickPath(item, nestedEventPaths('vote_url')));
+    const noticeUrl = safeUrl(pickPath(item, [...nestedEventPaths('povezava_razpis'), ...nestedEventPaths('notice_url')]));
+    const registrationUrl = safeUrl(pickPath(item, [...nestedEventPaths('povezava_prijava'), ...nestedEventPaths('registration_url')]));
+    const month = date.match(/^\d{4}-(\d{2})-/)?.[1] ?? '';
+
+    return {
+      id: rowKey(item) || `${index + 1}-${date}-${title}-${place}`,
+      rank: index + 1,
+      title,
+      date,
+      month,
+      place,
+      region,
+      surface,
+      distances,
+      votes: getTopEventVotes(item),
+      voteUrl,
+      noticeUrl,
+      registrationUrl,
+      searchText: normalize(`${title} ${place}`)
+    };
+  };
+
+  const renderEvent = (event: TopEvent) => {
+    const detailItems = [
+      event.date && `<span class="event-detail"><strong>Datum:</strong> ${escapeHtml(formatDate(event.date))}</span>`,
+      event.place && `<span class="event-detail"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
+      event.region && `<span class="event-detail"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
+      event.surface && `<span class="event-detail"><strong>Podlaga:</strong> ${escapeHtml(event.surface)}</span>`,
+      event.distances && `<span class="event-detail"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`
+    ].filter(Boolean).join('');
+
+    const links = [
+      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasuj</a>`,
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
+      event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
+    ].filter(Boolean).join('');
+
+    return `
+      <article class="event-card search-event-card ranked-event-card">
+        <div class="ranked-event-topline">
+          <span class="rank-badge">#${escapeHtml(event.rank)}</span>
+          <span class="pill pill-orange">${escapeHtml(formatVoteCount(event.votes))}</span>
+        </div>
+        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <div class="event-details">${detailItems || '<span class="event-detail">Podrobnosti še niso navedene.</span>'}</div>
+        ${links ? `<div class="event-actions">${links}</div>` : ''}
+      </article>
+    `;
+  };
+
+  const renderResults = () => {
+    if (!state.apiAvailable) {
+      setStatus('STK API trenutno ni dosegljiv. Poskusite znova čez nekaj minut.');
+      setCount('API ni dosegljiv');
+      renderEmptyState('API trenutno ni dosegljiv', 'Najbolj glasovanih tekov ne moremo prikazati, ker javni STK API ni odgovoril.', 'STK API');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (!state.events.length) {
+      setStatus('API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
+      setCount('0 tekov');
+      renderEmptyState('Ni tekov za prikaz', 'Javni STK API trenutno ne vrača prihajajočih glasovanih tekov.', 'Glasovanje');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    const filters = getFilters();
+    state.filtered = state.events.filter((event) => {
+      if (filters.search && !event.searchText.includes(filters.search)) return false;
+      if (filters.month && event.month !== filters.month) return false;
+      if (filters.region && event.region !== filters.region) return false;
+      if (filters.surface && event.surface !== filters.surface) return false;
+      return true;
+    });
+
+    const count = state.filtered.length;
+    const visibleEvents = state.filtered.slice(0, state.visibleCount);
+    const visibleCount = visibleEvents.length;
+
+    setCount(count > visibleCount ? `Prikazanih ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setStatus('Prikazan je vrstni red iz /top?scope=upcoming&limit=50. Manjkajoče podrobnosti se dopolnijo iz javnega master endpointa, kadar je mogoče.');
+
+    if (!count) {
+      renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+    if (moreElement) moreElement.hidden = visibleCount >= count;
+  };
+
+  async function loadJson(path: string): Promise<unknown> {
+    const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    return response.json();
+  }
+
+  const loadEvents = async () => {
+    setStatus('Nalagamo najbolj glasovane prihajajoče teke iz javnega STK API-ja …');
+
+    try {
+      const payload = await loadJson(TOP_PATH);
+      const topEvents = toArray(payload).slice(0, 50);
+      let enrichedEvents = topEvents;
+
+      try {
+        const masterPayload = await loadJson('/');
+        enrichedEvents = enrichTopEventsFromMaster(topEvents, getMasterRows(masterPayload));
+      } catch (error) {
+        console.warn('Najbolj glasovani teki: master enrichment unavailable', error);
+      }
+
+      state.events = enrichedEvents.map(toTopEvent);
+      state.apiAvailable = true;
+      populateFilters();
+      renderResults();
+    } catch (error) {
+      console.error('Najbolj glasovani teki API error', error);
+      state.apiAvailable = false;
+      renderResults();
+    }
+  };
+
+  const resetVisibleResults = () => {
+    state.visibleCount = PAGE_SIZE;
+    renderResults();
+  };
+
+  const clearFilters = () => {
+    formElement?.reset();
+    resetVisibleResults();
+  };
+
+  formElement?.addEventListener('input', resetVisibleResults);
+  formElement?.addEventListener('change', resetVisibleResults);
+  formElement?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    resetVisibleResults();
+  });
+
+  showMoreButton?.addEventListener('click', () => {
+    state.visibleCount += PAGE_SIZE;
+    renderResults();
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-clear-top-filters]') : null;
+    if (target) clearFilters();
+  });
+
+  loadEvents();
+</script>
