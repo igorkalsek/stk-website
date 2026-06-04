@@ -115,8 +115,10 @@ Each live section includes graceful fallback content if an API request fails or 
 
 ## Calendar links
 
+- `/osebni-koledar/` supports a bulk Google Calendar subscription and an iCal subscription for Apple Calendar, Outlook, and other calendar apps.
 - Bulk Google Calendar subscription uses: `https://calendar.google.com/calendar/u/0/r?cid=ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92@group.calendar.google.com`
-- Event cards can include individual “Dodaj v koledar” Google Calendar links for adding a single race.
+- iCal subscription uses: `https://calendar.google.com/calendar/ical/ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92%40group.calendar.google.com/public/basic.ics`
+- Event cards can include individual Google Calendar links for adding a single race.
 
 ## Still to do
 
