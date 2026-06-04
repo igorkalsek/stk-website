@@ -1,12 +1,202 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
+const guidanceUrl = 'https://sites.google.com/view/slovenski-tekaski-koledar/popravek-nov-tek';
+
+const sendOptions = [
+  'nov tek, ki še ni v koledarju',
+  'popravek datuma, kraja ali razdalj',
+  'povezavo do uradnega razpisa',
+  'povezavo do prijav',
+  'informacijo o otroških ali družinskih tekih',
+  'informacijo o odpovedi ali spremembi dogodka',
+];
+
+const helpfulDetails = [
+  'uradni razpis ali uradna stran dogodka',
+  'prijavni portal',
+  'točen datum in kraj',
+  'razdalje',
+  'ura štarta, če je znana',
+  'podatek, ali gre za družinam prijazen dogodek',
+];
+
+const beforeSubmit = [
+  'preveri, ali je tek že v koledarju',
+  'priloži povezavo do vira',
+  'pri popravku napiši, kateri podatek je napačen',
+  'pri novem teku dodaj čim več osnovnih podatkov',
+];
 ---
 
 <BaseLayout title="Dodaj ali popravi tek" description="Predlagajte dodatek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
-  <PlaceholderPage
-    title="Dodaj ali popravi tek"
-    description="Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek."
-    note="V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov."
-  />
+  <main>
+    <section class="container page-hero add-run-hero" aria-labelledby="add-run-title">
+      <span class="eyebrow">Dodaj ali popravi tek</span>
+      <h1 id="add-run-title">Sporoči nov tek ali popravek</h1>
+      <p>
+        Če v Slovenskem Tekaškem Koledarju manjka prireditev ali opaziš napačen podatek,
+        pošlji predlog prek obrazca. Najbolj pomaga povezava do uradnega vira.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary add-run-secondary" href="/iskalnik-tekov/">Najprej preveri koledar</a>
+        <a class="button button-secondary add-run-secondary" href={guidanceUrl} target="_blank" rel="noopener noreferrer">Več navodil na STK strani</a>
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="send-title">
+      <div class="section-heading">
+        <h2 id="send-title">Kaj lahko pošlješ?</h2>
+        <p>Pošlji samo javne podatke o tekaških prireditvah ali jasne popravke obstoječih zapisov.</p>
+      </div>
+      <div class="card-grid card-grid-three add-run-list" role="list">
+        {sendOptions.map((item) => (
+          <article class="info-card add-run-card" role="listitem">
+            <h3>{item}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="helps-title">
+      <div class="section-heading">
+        <h2 id="helps-title">Kaj najbolj pomaga?</h2>
+        <p>Več preverljivih podatkov pomeni hitrejšo in natančnejšo objavo v koledarju.</p>
+      </div>
+      <div class="card-grid card-grid-three add-run-list" role="list">
+        {helpfulDetails.map((item) => (
+          <article class="info-card add-run-card" role="listitem">
+            <h3>{item}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="container section add-run-two-column" aria-label="Navodila pred objavo in oddajo">
+      <article class="info-card add-run-guidance" aria-labelledby="before-publish-title">
+        <h2 id="before-publish-title">Pred objavo</h2>
+        <p>Predlogi se pred objavo preverijo.</p>
+        <p>STK ne dodaja dogodkov samo na podlagi nejasnih ali neuradnih informacij.</p>
+        <p>
+          Pri družinam prijaznih tekih naj bo iz vira jasno razvidno, da obstajajo otroški teki,
+          družinske kategorije ali podobna ponudba.
+        </p>
+      </article>
+
+      <article class="info-card add-run-guidance" aria-labelledby="before-submit-title">
+        <h2 id="before-submit-title">Pred oddajo</h2>
+        <ul>
+          {beforeSubmit.map((item) => <li>{item}</li>)}
+        </ul>
+      </article>
+    </section>
+
+    <section class="container add-run-action" aria-labelledby="submit-title">
+      <h2 id="submit-title">Pripravljen za oddajo?</h2>
+      <p>
+        Odpri obrazec za nov tek ali popravek. Če želiš dodatna navodila, ostaja na voljo tudi
+        razlaga na STK strani.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">Oddaj predlog ali popravek</a>
+        <a class="button button-secondary add-run-secondary" href={guidanceUrl} target="_blank" rel="noopener noreferrer">Več navodil na STK strani</a>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .add-run-hero {
+    max-width: 940px;
+  }
+
+  .add-run-hero .eyebrow {
+    background: rgba(16, 64, 80, 0.1);
+    color: var(--deep-teal);
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .add-run-secondary {
+    background: var(--white);
+    color: var(--deep-teal);
+    box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
+  }
+
+  .add-run-card {
+    min-height: 108px;
+  }
+
+  .add-run-card h3 {
+    font-size: 1.02rem;
+    line-height: 1.32;
+  }
+
+  .add-run-two-column {
+    display: grid;
+    gap: 14px;
+  }
+
+  .add-run-guidance {
+    display: grid;
+    gap: 10px;
+  }
+
+  .add-run-guidance h2,
+  .add-run-guidance p,
+  .add-run-guidance ul {
+    margin: 0;
+  }
+
+  .add-run-guidance h2,
+  .add-run-action h2 {
+    color: var(--deep-teal);
+    letter-spacing: -0.025em;
+  }
+
+  .add-run-guidance p,
+  .add-run-guidance li,
+  .add-run-action p {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .add-run-guidance ul {
+    padding-left: 20px;
+  }
+
+  .add-run-guidance li + li {
+    margin-top: 8px;
+  }
+
+  .add-run-action {
+    display: grid;
+    gap: 10px;
+    margin-top: 36px;
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(135deg, rgba(200, 230, 201, 0.68), rgba(255, 255, 255, 0.9)),
+      var(--white);
+    padding: 22px;
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.07);
+  }
+
+  .add-run-action h2,
+  .add-run-action p {
+    margin: 0;
+  }
+
+  @media (min-width: 760px) {
+    .add-run-two-column {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
