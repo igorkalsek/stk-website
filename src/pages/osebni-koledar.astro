@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Osebni koledar" description="Navodila za spremljanje Slovenskega Tekaškega Koledarja v osebnem koledarju.">
+  <main>
+    <section class="page-hero container" aria-labelledby="calendar-title">
+      <span class="eyebrow">Osebni koledar</span>
+      <h1 id="calendar-title">Dodajte teke v osebni koledar</h1>
+      <p>
+        STK lahko spremljate tudi v svojem osebnem koledarju, da se tekaške prireditve prikažejo ob vaših drugih obveznostih.
+      </p>
+    </section>
+
+    <section class="section container" aria-labelledby="calendar-how-title">
+      <div class="card-grid">
+        <article class="info-card">
+          <h2 id="calendar-how-title">Kako bo delovalo</h2>
+          <p>
+            Ko bo povezava za naročanje pripravljena, jo boste lahko dodali v svoj koledar. Dogodki se bodo nato redno osveževali
+            in prikazovali ob vaših osebnih obveznostih.
+          </p>
+          <p>
+            Koledar je informativen in se redno osvežuje. Pred prijavo vedno preverite uradni razpis organizatorja.
+          </p>
+        </article>
+
+        <article class="info-card calendar-placeholder-card">
+          <h2>Naročanje na koledar</h2>
+          <!-- TODO: add the public STK calendar subscription URL -->
+          <p><strong>Povezava za naročanje na osebni koledar bo dodana kmalu.</strong></p>
+          <p>
+            Do takrat lahko teke spremljate v iskalniku in na straneh z družinam prijaznimi ter najbolj glasovanimi teki.
+          </p>
+          <div class="cta-row">
+            <a class="button button-primary" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
+            <a class="button button-secondary-light" href="/">Nazaj na prvo stran</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
