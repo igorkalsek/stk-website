@@ -85,6 +85,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { buildGoogleCalendarEventUrl } from '../utils-calendar';
+
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
     id: string;
@@ -377,9 +379,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.startTime && `<span class="event-detail"><strong>Start:</strong> ${escapeHtml(event.startTime)}</span>`
     ].filter(Boolean).join('');
 
+    const calendarUrl = buildGoogleCalendarEventUrl({
+      title: event.title,
+      date: event.date,
+      location: event.place,
+      noticeUrl: event.noticeUrl,
+      registrationUrl: event.registrationUrl
+    });
     const links = [
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
-      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
+      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`,
+      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer">Dodaj v koledar</a>`
     ].filter(Boolean).join('');
     const familyNote = formatFamilyNote(event.publicNotes);
 

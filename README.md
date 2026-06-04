@@ -74,7 +74,6 @@ The website never reads Google Sheets directly. Google Sheets remains the master
 - Stats: `https://stk-master-api.igor-kalsek.workers.dev/stats`
 - Master event data and Iskalnik tekov page: `https://stk-master-api.igor-kalsek.workers.dev/`
 - Top upcoming voted events: `https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=10`
-- Next week events: `https://stk-master-api.igor-kalsek.workers.dev/next_week`
 - Recent updates: `https://stk-master-api.igor-kalsek.workers.dev/recent_updates?days=7`
 
 The Iskalnik tekov page uses `/` for the public 2026 event list and filters it client-side. The Družinam prijazni teki page also uses `/` and shows only confirmed public 2026 events whose `opombe_javne` explicitly contains `družinam prijazno`.
@@ -82,7 +81,7 @@ The Iskalnik tekov page uses `/` for the public 2026 event list and filters it c
 The home page currently fetches live data from:
 
 - `/stats` for `confirmed_public_events_total` and `family_friendly_total`
-- `/next_week` for the live “Ta teden tečemo” section
+- `/` for the live “Najbližji teki” section, filtered client-side to the nearest confirmed public 2026 events from today onward
 - `/top?scope=upcoming&limit=10` for the most voted upcoming events
 - `/recent_updates?days=7` for recent updates
 
@@ -97,7 +96,8 @@ Each live section includes graceful fallback content if an API request fails or 
   - strong STK hero section
   - primary CTA links
   - live stats strip
-  - API-backed “Ta teden tečemo” section with fallback
+  - API-backed “Najbližji teki” section with fallback
+  - lightweight personal calendar CTA
   - API-backed “Najbolj glasovani prihajajoči teki” section with fallback
   - API-backed “Zadnje posodobitve” section with fallback
 - First usable Iskalnik tekov page with client-side search and filters.
@@ -106,10 +106,17 @@ Each live section includes graceful fallback content if an API request fails or 
   - Najbolj glasovani teki
   - Dodajte ali popravite tek
   - STK Tekobot
+  - Osebni koledar (`/osebni-koledar/`)
 - English placeholder page.
 - GitHub Codespaces support with Node 20 and forwarded port 4321.
 - Project rules in `AGENTS.md`.
 - Manual review checklist in `REVIEW_CHECKLIST.md`.
+
+
+## Calendar links
+
+- Bulk Google Calendar subscription uses: `https://calendar.google.com/calendar/u/0/r?cid=ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92@group.calendar.google.com`
+- Event cards can include individual “Dodaj v koledar” Google Calendar links for adding a single race.
 
 ## Still to do
 

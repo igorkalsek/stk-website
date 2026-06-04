@@ -337,6 +337,14 @@ main {
   line-height: 1.65;
 }
 
+.section-heading-with-action {
+  align-items: start;
+}
+
+.section-heading-with-action .button {
+  width: fit-content;
+}
+
 .card-grid {
   display: grid;
   gap: 16px;
@@ -398,6 +406,12 @@ main {
   display: grid;
   gap: 16px;
   padding: 46px 0 24px;
+}
+
+.page-hero .eyebrow {
+  background: rgba(16, 64, 80, 0.08);
+  color: var(--deep-teal);
+  box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.14);
 }
 
 .page-hero h1 {
@@ -520,8 +534,13 @@ main {
     box-shadow: inset 0 -2px 0 var(--orange);
   }
 
-  .calendar-cta-card {
+  .calendar-cta-card,
+  .section-heading-with-action {
     grid-template-columns: 1fr auto;
+  }
+
+  .section-heading-with-action {
+    align-items: center;
   }
 
   .brand-logo {
