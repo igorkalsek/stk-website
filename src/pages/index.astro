@@ -123,6 +123,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl } from '../utils-calendar';
+  import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -205,13 +206,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   };
 
-  const cleanPublicEventTitle = (title: string) =>
-    title.replace(/^EAORCH2026\s*-\s*/i, '').trim();
-
-  const getDisplayEventTitle = (title: string, fallback = 'Naziv teka ni na voljo') => {
-    const cleanedTitle = cleanPublicEventTitle(title);
-    return cleanedTitle || fallback;
-  };
 
   const getTopEventTitle = (item: ApiRecord) => {
     if (typeof item?.naziv_prireditve === 'string' && item.naziv_prireditve.trim()) {
