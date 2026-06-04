@@ -232,10 +232,39 @@ main {
   line-height: 1.7;
 }
 
+.hero-actions {
+  display: grid;
+  gap: 16px;
+}
+
 .cta-row {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.cta-primary-row .button {
+  min-width: min(100%, 210px);
+}
+
+.hero-secondary-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.hero-secondary-links a {
+  color: #d8e8df;
+  font-size: 0.95rem;
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-color: rgba(216, 232, 223, 0.36);
+  text-underline-offset: 5px;
+}
+
+.hero-secondary-links a:hover {
+  color: var(--white);
+  text-decoration-color: var(--orange);
 }
 
 .button {
@@ -506,6 +535,19 @@ main {
 .footer-inner {
   display: grid;
   gap: 18px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 11px;
 }
 
 .footer-links {
