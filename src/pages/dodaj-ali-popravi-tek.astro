@@ -1,12 +1,154 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PlaceholderPage from '../components/PlaceholderPage.astro';
+
+const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
 ---
 
-<BaseLayout title="Dodaj ali popravi tek" description="Predlagajte dodatek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
-  <PlaceholderPage
-    title="Dodaj ali popravi tek"
-    description="Prostor za jasna navodila organizatorjem in tekačem, kako sporočiti nov tek ali popravek."
-    note="V tem MVP ne gradimo administracije ali prijave. Predvidena je preprosta povezava do obstoječega postopka za urejanje podatkov."
-  />
+<BaseLayout title="Dodaj ali popravi tek" description="Predlagajte nov tek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
+  <main>
+    <section class="page-hero container" aria-labelledby="page-title">
+      <span class="eyebrow">Predlogi in popravki</span>
+      <h1 id="page-title">Dodaj ali popravi tek</h1>
+      <p>
+        Če v Slovenskem Tekaškem Koledarju manjka prireditev ali opazite napačen podatek, pošljite predlog prek
+        obrazca. Najbolj pomaga povezava do uradnega vira.
+      </p>
+      <div class="cta-row">
+        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
+          Oddaj predlog ali popravek
+        </a>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">Najprej preverite koledar</a>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="what-title">
+      <div class="section-heading">
+        <h2 id="what-title">Kaj lahko pošljete?</h2>
+        <p>Pošljite podatke, ki pomagajo, da je koledar čim bolj točen in uporaben.</p>
+      </div>
+      <div class="card-grid card-grid-three">
+        <article class="info-card">
+          <h3>Novi dogodki</h3>
+          <p>nov tek, ki še ni v koledarju</p>
+        </article>
+        <article class="info-card">
+          <h3>Popravki podatkov</h3>
+          <p>popravek datuma, kraja ali razdalj</p>
+        </article>
+        <article class="info-card">
+          <h3>Uradni viri</h3>
+          <p>povezavo do uradnega razpisa</p>
+        </article>
+        <article class="info-card">
+          <h3>Prijave</h3>
+          <p>povezavo do prijav</p>
+        </article>
+        <article class="info-card">
+          <h3>Družinski teki</h3>
+          <p>informacijo o otroških ali družinskih tekih</p>
+        </article>
+        <article class="info-card">
+          <h3>Spremembe</h3>
+          <p>informacijo o odpovedi ali spremembi dogodka</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="help-title">
+      <div class="section-heading">
+        <h2 id="help-title">Kaj najbolj pomaga?</h2>
+        <p>Najlažje preverimo podatke, ko priložite jasen in zanesljiv vir.</p>
+      </div>
+      <div class="card-grid">
+        <article class="info-card">
+          <h3>Vir dogodka</h3>
+          <p>uradni razpis ali uradna stran dogodka</p>
+        </article>
+        <article class="info-card">
+          <h3>Prijavni portal</h3>
+          <p>prijavni portal</p>
+        </article>
+        <article class="info-card">
+          <h3>Osnovni podatki</h3>
+          <p>točen datum in kraj</p>
+        </article>
+        <article class="info-card">
+          <h3>Razdalje</h3>
+          <p>razdalje</p>
+        </article>
+        <article class="info-card">
+          <h3>Štart</h3>
+          <p>ura štarta, če je znana</p>
+        </article>
+        <article class="info-card">
+          <h3>Družinam prijazno</h3>
+          <p>podatek, ali gre za družinam prijazen dogodek</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="review-title">
+      <div class="section-heading">
+        <h2 id="review-title">Pred objavo</h2>
+      </div>
+      <div class="card-grid">
+        <article class="info-card">
+          <h3>Preverjanje</h3>
+          <p>Predlogi se pred objavo preverijo.</p>
+        </article>
+        <article class="info-card">
+          <h3>Jasni viri</h3>
+          <p>STK ne dodaja dogodkov samo na podlagi nejasnih ali neuradnih informacij.</p>
+        </article>
+        <article class="info-card">
+          <h3>Družinski podatki</h3>
+          <p>
+            Pri družinam prijaznih tekih naj bo iz vira jasno razvidno, da obstajajo otroški teki, družinske kategorije
+            ali podobna ponudba.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="before-title">
+      <div class="section-heading">
+        <h2 id="before-title">Pred oddajo</h2>
+      </div>
+      <div class="card-grid">
+        <article class="info-card">
+          <h3>Preverjanje koledarja</h3>
+          <p>preverite, ali je tek že v koledarju</p>
+        </article>
+        <article class="info-card">
+          <h3>Povezava do vira</h3>
+          <p>priložite povezavo do vira</p>
+        </article>
+        <article class="info-card">
+          <h3>Popravek podatka</h3>
+          <p>pri popravku napišite, kateri podatek je napačen</p>
+        </article>
+        <article class="info-card">
+          <h3>Nov tek</h3>
+          <p>pri novem teku dodajte čim več osnovnih podatkov</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="cta-title">
+      <div class="placeholder-panel">
+        <span class="eyebrow">Obrazec</span>
+        <h2 id="cta-title">Pripravljeni za oddajo?</h2>
+        <p>
+          Obrazec odpre neposredno Google Form za nov tek ali popravek. Pred oddajo preverite, ali je dogodek že v
+          koledarju, in priložite čim bolj zanesljiv vir.
+        </p>
+        <div class="cta-row">
+          <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
+            Oddaj predlog ali popravek
+          </a>
+          <a class="button button-secondary" href="/iskalnik-tekov/">Najprej preverite koledar</a>
+        </div>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
