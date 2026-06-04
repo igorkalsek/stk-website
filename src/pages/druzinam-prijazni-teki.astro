@@ -86,6 +86,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl } from '../utils-calendar';
+  import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
@@ -172,21 +173,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
   };
 
-  const formatDateBadge = (value: string) => {
-    const timestamp = parseDateValue(value);
-    if (Number.isNaN(timestamp)) return value;
-
-    const date = new Date(timestamp);
-    const day = new Intl.DateTimeFormat('sl-SI', { weekday: 'short' })
-      .format(date)
-      .replace('.', '')
-      .toLocaleUpperCase('sl-SI');
-    const compactDate = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short' })
-      .format(date)
-      .replace('.', '');
-
-    return `${day} · ${compactDate}`;
-  };
+  const formatDateBadge = formatSloveneDateBadge;
 
   const formatStartTime = (value: string) => {
     const trimmed = value.trim();
@@ -386,24 +373,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     `;
   };
 
-  const formatDistancePart = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-    const withoutKm = trimmed.replace(/\s*km\b/gi, '').trim();
-    if (!/^\d+(?:[.,]\d+)?$/.test(withoutKm)) return trimmed.replace('.', ',');
-    return `${withoutKm.replace('.', ',')} km`;
-  };
-
-  const formatDistances = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-
-    return trimmed
-      .split(';')
-      .map(formatDistancePart)
-      .filter(Boolean)
-      .join(' · ');
-  };
+  const formatDistances = formatSloveneDistances;
 
   const renderEvent = (event: FamilyEvent) => {
     const formattedSurface = formatSurface(event.surface);
