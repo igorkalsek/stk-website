@@ -8,8 +8,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <span class="eyebrow">Najbolj glasovani teki</span>
       <h1 id="top-voted-title">Najbolj glasovani prihajajoči teki</h1>
       <p>
-        Razširjen pregled prihajajočih tekaških prireditev, ki jih tekači največkrat podprejo v javnem STK glasovanju.
-        Seznam se nalaga iz javnega STK API-ja, podatke pa lahko zožite po imenu, kraju, mesecu, regiji in podlagi.
+        Preverite prihajajoče teke, ki so prejeli največ glasov tekačev. Lestvica je razvrščena po številu glasov.
+        Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.
       </p>
     </section>
 
@@ -18,7 +18,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="top-filters-title">Filtri</h2>
-            <p>Začnite z imenom teka ali krajem, nato po potrebi zožite izbor.</p>
+            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -57,7 +57,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </label>
 
           <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
-            Počisti filtre
+            Počistite filtre
           </button>
         </form>
       </div>
@@ -66,20 +66,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="section container" aria-labelledby="top-results-title">
       <div class="section-heading">
         <h2 id="top-results-title">Rezultati</h2>
-        <p data-top-status>Nalagamo najbolj glasovane prihajajoče teke iz STK API-ja …</p>
+        <p data-top-status>Nalagamo najbolj glasovane prihajajoče teke …</p>
       </div>
       <div class="search-results" data-top-results aria-live="polite">
         <article class="event-card search-event-card">
           <h3>Podatke še nalagamo</h3>
           <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
           <div class="event-meta">
-            <span class="pill">STK API</span>
-            <span class="pill pill-orange">/top</span>
+            <span class="pill">Glasovi tekačev</span>
           </div>
         </article>
       </div>
       <div class="search-more" data-top-more hidden>
-        <button class="button button-primary" type="button" data-show-more>Prikaži več</button>
+        <button class="button button-primary" type="button" data-show-more>Prikažite več</button>
       </div>
     </section>
   </main>
@@ -439,7 +438,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="event-meta">
           <span class="pill">${escapeHtml(pill)}</span>
         </div>
-        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Počisti filtre</button>' : ''}
+        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Počistite filtre</button>' : ''}
       </article>
     `;
   };
@@ -453,7 +452,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     const links = [
-      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasuj</a>`,
+      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasujte</a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
       event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
     ].filter(Boolean).join('');
@@ -474,9 +473,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const renderResults = () => {
     if (!state.apiAvailable) {
-      setStatus('STK API trenutno ni dosegljiv. Poskusite znova čez nekaj minut.');
-      setCount('API ni dosegljiv');
-      renderEmptyState('API trenutno ni dosegljiv', 'Najbolj glasovanih tekov ne moremo prikazati, ker javni STK API ni odgovoril.', 'STK API');
+      setStatus('Podatki trenutno niso dosegljivi. Poskusite znova čez nekaj minut.');
+      setCount('Podatki niso dosegljivi');
+      renderEmptyState('Podatki trenutno niso dosegljivi', 'Najbolj glasovanih tekov trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.', 'Koledar');
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -484,7 +483,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!state.events.length) {
       setStatus('Ni najbolj glasovanih prihajajočih tekov za prikaz.');
       setCount('0 dogodkov');
-      renderEmptyState('Ni dogodkov za prikaz', 'V javnem API-ju trenutno ni najbolj glasovanih prihajajočih tekov.', 'STK API');
+      renderEmptyState('Ni dogodkov za prikaz', 'Trenutno ni prikazanih najbolj glasovanih prihajajočih tekov.', 'Glasovi');
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -503,7 +502,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const visibleCount = visibleEvents.length;
 
     setCount(count > visibleCount ? `Prikazanih ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
-    setStatus('Prikazani so najbolj glasovani prihajajoči teki iz javnega STK API-ja.');
+    setStatus('Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.');
 
     if (!count) {
       renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
@@ -522,7 +521,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const loadEvents = async () => {
-    setStatus('Nalagamo najbolj glasovane prihajajoče teke iz STK API-ja …');
+    setStatus('Nalagamo najbolj glasovane prihajajoče teke …');
 
     try {
       const [topPayload, masterPayload] = await Promise.all([

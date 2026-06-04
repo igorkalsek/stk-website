@@ -5,10 +5,10 @@ const tekobotUrl = 'https://chatgpt.com/g/g-6a04db599d108191b139cab3429ef3fa-stk
 
 const questionExamples = [
   'Kateri teki so ta vikend?',
-  'Pokaži družinam prijazne teke v naslednjih 30 dneh.',
+  'Prikažite družinam prijazne teke v naslednjih 30 dneh.',
   'Kateri trail teki so v Gorenjski?',
   'Kateri teki imajo objavljene prijavnine?',
-  'Poišči poceni teke v naslednjem mesecu.',
+  'Poiščite cenovno ugodne teke v naslednjem mesecu.',
 ];
 
 const capabilities = [
@@ -21,25 +21,25 @@ const capabilities = [
 ];
 ---
 
-<BaseLayout title="STK Tekobot" description="Vprašaj koledar po domače: STK Tekobot pomaga tekačem iskati teke v Slovenskem Tekaškem Koledarju z naravnimi vprašanji.">
+<BaseLayout title="STK Tekobot" description="Vprašajte koledar po domače: STK Tekobot pomaga tekačem iskati teke v Slovenskem Tekaškem Koledarju z naravnimi vprašanji.">
   <main>
     <section class="container page-hero tekobot-hero" aria-labelledby="tekobot-title">
       <span class="eyebrow">STK Tekobot</span>
-      <h1 id="tekobot-title">Vprašaj koledar po domače</h1>
+      <h1 id="tekobot-title">Vprašajte koledar po domače</h1>
       <p>
         STK Tekobot pomaga tekačem postavljati naravna vprašanja o Slovenskem Tekaškem Koledarju
         in hitreje najti teke po datumu, kraju, tipu prireditve ali drugih podatkih iz koledarja.
       </p>
       <div class="cta-row">
-        <a class="button button-primary" href={tekobotUrl} target="_blank" rel="noopener noreferrer">Odpri STK Tekobot</a>
-        <a class="button button-secondary tekobot-secondary" href="/iskalnik-tekov/">Odpri iskalnik tekov</a>
+        <a class="button button-primary" href={tekobotUrl} target="_blank" rel="noopener noreferrer">Odprite STK Tekobot</a>
+        <a class="button button-secondary tekobot-secondary" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
       </div>
     </section>
 
     <section class="container section" aria-labelledby="examples-title">
       <div class="section-heading">
         <h2 id="examples-title">Primeri vprašanj</h2>
-        <p>Začni z vprašanjem, kot bi ga zastavil tekaškemu prijatelju.</p>
+        <p>Začnite z vprašanjem, kot bi ga zastavili tekaškemu prijatelju.</p>
       </div>
       <div class="question-list" role="list">
         {questionExamples.map((question) => (
@@ -50,8 +50,8 @@ const capabilities = [
 
     <section class="container section" aria-labelledby="capabilities-title">
       <div class="section-heading">
-        <h2 id="capabilities-title">Kaj lahko vprašaš?</h2>
-        <p>Tekobot je uporaben za hitro usmerjanje, ko še ne veš točno, kateri tek iščeš.</p>
+        <h2 id="capabilities-title">Kaj lahko vprašate?</h2>
+        <p>Tekobot je uporaben za hitro usmerjanje, ko še ne veste točno, kateri tek iščete.</p>
       </div>
       <div class="card-grid card-grid-three">
         {capabilities.map((capability) => (
@@ -63,14 +63,14 @@ const capabilities = [
     </section>
 
     <section class="container note-panel" aria-labelledby="before-register-title">
-      <h2 id="before-register-title">Preden se prijaviš</h2>
+      <h2 id="before-register-title">Preden se prijavite</h2>
       <p>
-        Tekobot uporablja podatke iz STK koledarja. Pred prijavo vedno preveri uradni razpis
+        Tekobot uporablja podatke iz STK koledarja. Pred prijavo vedno preverite uradni razpis
         organizatorja, ker se lahko podrobnosti prireditve spremenijo.
       </p>
       <p>
-        Če opaziš napako ali manjkajoč podatek, uporabi stran
-        <a href="/dodaj-ali-popravi-tek/">Dodaj ali popravi tek</a>.
+        Če opazite napako ali manjkajoč podatek, uporabite stran
+        <a href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>.
       </p>
     </section>
   </main>

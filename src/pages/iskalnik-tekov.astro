@@ -8,8 +8,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <span class="eyebrow">Iskalnik tekov</span>
       <h1 id="search-title">Poiščite svoj naslednji tek</h1>
       <p>
-        Pregled potrjenih javnih tekaških prireditev za leto 2026 iz javnega STK API-ja. Seznam je urejen po datumu,
-        filtre pa lahko kombinirate.
+        Preverite potrjene javne tekaške prireditve za leto 2026. Iščete lahko po imenu teka ali kraju,
+        izbor pa zožite po mesecu, regiji, podlagi in družinski prijaznosti.
       </p>
     </section>
 
@@ -18,7 +18,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="filters-title">Filtri</h2>
-            <p>Začnite z imenom teka ali krajem, nato po potrebi zožite izbor.</p>
+            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -62,7 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </label>
 
           <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
-            Počisti filtre
+            Počistite filtre
           </button>
         </form>
       </div>
@@ -71,20 +71,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="section container" aria-labelledby="results-title">
       <div class="section-heading">
         <h2 id="results-title">Rezultati</h2>
-        <p data-search-status>Nalagamo potrjene javne dogodke iz STK API-ja …</p>
+        <p data-search-status>Nalagamo potrjene javne dogodke …</p>
       </div>
       <div class="search-results" data-search-results aria-live="polite">
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
           <p>Seznam prihajajočih tekov bo prikazan tukaj.</p>
           <div class="event-meta">
-            <span class="pill">STK API</span>
-            <span class="pill pill-orange">/</span>
+            <span class="pill">Koledar</span>
           </div>
         </article>
       </div>
       <div class="search-more" data-search-more hidden>
-        <button class="button button-primary" type="button" data-show-more>Prikaži več</button>
+        <button class="button button-primary" type="button" data-show-more>Prikažite več</button>
       </div>
     </section>
   </main>
@@ -293,7 +292,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="event-meta">
           <span class="pill">${escapeHtml(pill)}</span>
         </div>
-        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Počisti filtre</button>' : ''}
+        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Počistite filtre</button>' : ''}
       </article>
     `;
   };
@@ -342,9 +341,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const renderResults = () => {
     if (!state.apiAvailable) {
-      setStatus('STK API trenutno ni dosegljiv. Poskusite znova čez nekaj minut.');
-      setCount('API ni dosegljiv');
-      renderEmptyState('API trenutno ni dosegljiv', 'Dogodkov ne moremo prikazati, ker javni STK API ni odgovoril.', 'STK API');
+      setStatus('Podatki trenutno niso dosegljivi. Poskusite znova čez nekaj minut.');
+      setCount('Podatki niso dosegljivi');
+      renderEmptyState('Podatki trenutno niso dosegljivi', 'Dogodkov trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.', 'Koledar');
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -352,7 +351,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!state.events.length) {
       setStatus('Ni prihajajočih potrjenih javnih dogodkov za prikaz.');
       setCount('0 dogodkov');
-      renderEmptyState('Ni dogodkov za prikaz', 'V javnem API-ju trenutno ni potrjenih prihajajočih dogodkov za leto 2026.', '2026');
+      renderEmptyState('Ni dogodkov za prikaz', 'Trenutno ni potrjenih prihajajočih dogodkov za leto 2026.', '2026');
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -385,7 +384,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const loadEvents = async () => {
-    setStatus('Nalagamo potrjene javne dogodke iz STK API-ja …');
+    setStatus('Nalagamo potrjene javne dogodke …');
 
     try {
       const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });

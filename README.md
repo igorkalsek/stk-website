@@ -1,6 +1,6 @@
 # Slovenski Tekaški Koledar website
 
-Initial MVP for a new public website for **Slovenski Tekaški Koledar**. The site is intentionally simple: Astro pages, plain CSS, and public data from the existing STK Cloudflare Worker API.
+Initial MVP for a new public website for **Slovenski Tekaški Koledar**. The site is intentionally simple: Astro pages, plain CSS, and public event data from the existing STK Cloudflare Worker API.
 
 ## Requirements
 
@@ -67,7 +67,7 @@ If port 4321 is not listed, run the dev server command again and wait for Codesp
 npm run build
 ```
 
-## API endpoints used
+## Public data API used
 
 The website never reads Google Sheets directly. Google Sheets remains the master data source behind the public API.
 
@@ -102,23 +102,26 @@ Each live section includes graceful fallback content if an API request fails or 
   - API-backed “Zadnje posodobitve” section with fallback
 - First usable Iskalnik tekov page with client-side search and filters.
 - First usable Družinam prijazni teki page with client-side search and filters based on `opombe_javne`.
-- Placeholder pages for:
+- Full public pages for:
   - Najbolj glasovani teki
-  - Dodaj ali popravi tek
+  - Dodajte ali popravite tek
   - STK Tekobot
-  - English
+- English placeholder page.
 - GitHub Codespaces support with Node 20 and forwarded port 4321.
 - Project rules in `AGENTS.md`.
 - Manual review checklist in `REVIEW_CHECKLIST.md`.
 
 ## Still to do
 
-- Use the master event endpoint for event listing pages.
-- Replace placeholder pages with full content and interactions.
-- Add the final “Dodaj ali popravi tek” destination once the process is confirmed.
-- Integrate STK Tekobot when requested.
 - Improve structured data, SEO metadata, and social preview images.
 - Add automated tests once the data display components stabilize.
+
+## Public copy and branding
+
+- Header logo asset path: `public/stk-logo.jpeg`. Keep the visible text “Slovenski Tekaški Koledar” next to the logo for clarity and accessibility.
+- Logo asset should be added separately as public/stk-logo.jpeg because binary files are not handled by the Codex PR flow.
+- Visitor-facing Slovenian copy should use formal “vi” wording.
+- Visitor-facing copy should avoid technical API jargon; explain data refreshes in plain language instead.
 
 ## Project constraints
 
