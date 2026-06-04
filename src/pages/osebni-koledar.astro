@@ -1,67 +1,84 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { GOOGLE_CALENDAR_SUBSCRIPTION_URL } from '../utils-calendar';
+import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRIPTION_URL } from '../utils-calendar';
 ---
 
-<BaseLayout title="Osebni koledar" description="Dodajte Slovenski Tekaški Koledar v svoj Google koledar in spremljajte tekaške prireditve ob osebnih obveznostih.">
+<BaseLayout title="Osebni koledar" description="Spremljajte teke iz Slovenskega Tekaškega Koledarja v svojem osebnem koledarju z Google koledarjem ali iCal naročnino.">
   <main>
     <section class="page-hero container" aria-labelledby="calendar-title">
       <span class="eyebrow">Koledar pri roki</span>
       <h1 id="calendar-title">Osebni koledar</h1>
       <p>
-        Teke iz Slovenskega Tekaškega Koledarja lahko dodate v svoj Google koledar in jih spremljate skupaj z osebnimi obveznostmi.
+        STK dogodke lahko spremljate v svojem osebnem koledarju, da imate tekaške prireditve pri roki ob svojih vsakdanjih načrtih.
       </p>
       <div class="cta-row">
         <a class="button button-primary" href={GOOGLE_CALENDAR_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">
-          Dodajte STK v Google koledar
+          Dodajte v Google koledar
         </a>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
       </div>
     </section>
 
+    <section class="section container" aria-labelledby="calendar-options-title">
+      <div class="section-heading">
+        <h2 id="calendar-options-title">Izberite svoj koledar</h2>
+        <p>Dodajte celoten STK koledar v orodje, ki ga uporabljate za osebne načrte.</p>
+      </div>
+      <div class="card-grid card-grid-three calendar-option-grid">
+        <article class="info-card calendar-option-card">
+          <h3>Google koledar</h3>
+          <p>Dodajte STK koledar v svoj Google koledar.</p>
+          <a class="button button-primary" href={GOOGLE_CALENDAR_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">
+            Dodajte v Google koledar
+          </a>
+        </article>
+
+        <article class="info-card calendar-option-card">
+          <h3>Apple Calendar</h3>
+          <p>Za Apple Calendar uporabite naročniško iCal povezavo.</p>
+          <a class="button button-secondary-light" href={WEBCAL_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">
+            Odprite iCal povezavo
+          </a>
+        </article>
+
+        <article class="info-card calendar-option-card">
+          <h3>Outlook in drugi koledarji</h3>
+          <p>
+            V Outlooku ali drugem koledarju izberite možnost dodajanja koledarja iz spletne povezave in uporabite iCal povezavo.
+          </p>
+          <code class="calendar-url-block">{ICAL_SUBSCRIPTION_URL}</code>
+        </article>
+      </div>
+      <p class="data-note calendar-note">Koledar je informativen. Pred prijavo vedno preverite uradni razpis organizatorja.</p>
+    </section>
+
     <section class="section container" aria-labelledby="calendar-info-title">
       <div class="section-heading">
-        <h2 id="calendar-info-title">Kako vam pomaga?</h2>
-        <p>Koledar je namenjen hitremu pregledu tekaških prireditev ob vaših vsakdanjih načrtih.</p>
+        <h2 id="calendar-info-title">Kaj je dobro vedeti?</h2>
+        <p>Koledarski vnosi so namenjeni hitremu pregledu; za odločitev o nastopu vedno preverite podatke pri organizatorju.</p>
       </div>
       <div class="card-grid card-grid-three">
         <article class="info-card">
-          <h3>Kaj dobite?</h3>
+          <h3>Osveževanje</h3>
           <p>
-            Dogodki se prikažejo v vašem osebnem Google koledarju. Ko se koledar osveži, se lahko samodejno prikažejo tudi posodobitve dogodkov.
+            Koledar se lahko v vašem izbranem programu osveži samodejno, čas osveževanja pa je odvisen od nastavitev posameznega koledarja.
           </p>
         </article>
 
         <article class="info-card">
           <h3>Pred prijavo</h3>
           <p>
-            Vnosi v koledarju so informativni. Pred prijavo vedno preverite uradni razpis, prijavno stran ali stran organizatorja.
+            Pred prijavo vedno preverite uradni razpis, prijavno stran ali stran organizatorja.
           </p>
         </article>
 
         <article class="info-card">
           <h3>Posamezni teki</h3>
           <p>
-            Izbrane kartice dogodkov lahko ponudijo tudi povezavo “Dodaj v koledar”, s katero dodate samo en izbran tek.
+            Na karticah dogodkov lahko dodate tudi samo izbran tek v svoj Google koledar.
           </p>
         </article>
       </div>
-    </section>
-
-    <section class="section container" aria-labelledby="calendar-cta-title">
-      <article class="placeholder-panel personal-calendar-panel">
-        <span class="eyebrow eyebrow-light">Google koledar</span>
-        <h2 id="calendar-cta-title">Dodajte celoten STK koledar</h2>
-        <p>
-          Če želite spremljati več prireditev na enem mestu, dodajte javni STK koledar v svoj Google koledar.
-        </p>
-        <div class="cta-row">
-          <a class="button button-primary" href={GOOGLE_CALENDAR_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">
-            Dodajte STK v Google koledar
-          </a>
-          <a class="button button-secondary" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
-        </div>
-      </article>
     </section>
   </main>
 </BaseLayout>

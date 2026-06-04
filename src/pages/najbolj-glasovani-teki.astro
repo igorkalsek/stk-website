@@ -462,10 +462,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const links = [
-      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasuj</a>`,
-      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
-      event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`,
-      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer">Dodaj v koledar</a>`
+      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">👍</span><span>Glasujte</span></a>`,
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
+      event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
+      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📅</span><span>Koledar</span></a>`
     ].filter(Boolean).join('');
 
     return `
