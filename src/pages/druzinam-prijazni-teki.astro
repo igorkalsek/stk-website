@@ -172,6 +172,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
   };
 
+  const formatDateBadge = (value: string) => {
+    const timestamp = parseDateValue(value);
+    if (Number.isNaN(timestamp)) return value;
+
+    const date = new Date(timestamp);
+    const day = new Intl.DateTimeFormat('sl-SI', { weekday: 'short' })
+      .format(date)
+      .replace('.', '')
+      .toLocaleUpperCase('sl-SI');
+    const compactDate = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short' })
+      .format(date)
+      .replace('.', '');
+
+    return `${day} · ${compactDate}`;
+  };
+
+  const formatStartTime = (value: string) => {
+    const trimmed = value.trim();
+    const match = trimmed.match(/^(\d{1,2}):(\d{2})(.*)$/);
+    if (!match) return trimmed;
+    return `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}`;
+  };
+
+  const formatSurface = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    return trimmed
+      .toLocaleLowerCase('sl-SI')
+      .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+  };
+
   const monthLabel = (month: string) => {
     const monthNumber = Number(month);
     if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
@@ -355,28 +386,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     `;
   };
 
+  const formatDistancePart = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    const withoutKm = trimmed.replace(/\s*km\b/gi, '').trim();
+    if (!/^\d+(?:[.,]\d+)?$/.test(withoutKm)) return trimmed.replace('.', ',');
+    return `${withoutKm.replace('.', ',')} km`;
+  };
+
   const formatDistances = (value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return '';
 
-    const hasTextOrUnits = /[a-zčšž]/i.test(trimmed);
-    const normalized = trimmed
+    return trimmed
       .split(';')
-      .map((part) => part.trim())
+      .map(formatDistancePart)
       .filter(Boolean)
-      .join(' / ');
-
-    if (hasTextOrUnits) return normalized;
-    return `${normalized || trimmed} km`;
+      .join(' · ');
   };
 
   const renderEvent = (event: FamilyEvent) => {
+    const formattedSurface = formatSurface(event.surface);
     const metaItems = [
-      event.place && `<span class="event-detail"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
-      event.region && `<span class="event-detail"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
-      event.surface && `<span class="event-detail"><strong>Podlaga:</strong> ${escapeHtml(event.surface)}</span>`,
-      event.distances && `<span class="event-detail"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
-      event.startTime && `<span class="event-detail"><strong>Start:</strong> ${escapeHtml(event.startTime)}</span>`
+      event.place && `<span class="event-chip"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
+      event.region && `<span class="event-chip"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
+      formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
+      event.distances && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`,
+      formatFamilyNote(event.publicNotes) && `<span class="event-chip"><strong>Za družine:</strong> ${escapeHtml(formatFamilyNote(event.publicNotes))}</span>`
     ].filter(Boolean).join('');
 
     const calendarUrl = buildGoogleCalendarEventUrl({
@@ -387,21 +424,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const links = [
-      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
-      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📅</span><span>Koledar</span></a>`
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
+      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📅</span><span>V koledar</span></a>`
     ].filter(Boolean).join('');
-    const familyNote = formatFamilyNote(event.publicNotes);
 
     return `
       <article class="event-card search-event-card">
         <div class="search-event-date">
-          <time datetime="${escapeHtml(event.date)}">${escapeHtml(formatDate(event.date))}</time>
+          <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           <span class="pill">Družinam prijazno</span>
         </div>
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
-        <div class="event-details">${metaItems || '<span class="event-detail">Podrobnosti še niso navedene.</span>'}</div>
-        ${familyNote ? `<p>${escapeHtml(familyNote)}</p>` : ''}
+        ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
