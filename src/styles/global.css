@@ -644,7 +644,8 @@ main {
 }
 
 .footer-links,
-.footer-contact {
+.footer-contact,
+.footer-link-list {
   display: grid;
   gap: 8px;
 }
@@ -658,14 +659,14 @@ main {
   text-transform: uppercase;
 }
 
-.footer-links a,
+.footer-link-list a,
 .footer-contact a {
   width: fit-content;
   color: var(--muted);
   font-weight: 750;
 }
 
-.footer-links a:hover,
+.footer-link-list a:hover,
 .footer-contact a:hover {
   color: var(--deep-teal);
 }
@@ -742,8 +743,13 @@ main {
   }
 
   .footer-inner {
-    grid-template-columns: 1fr 1.15fr minmax(150px, 0.7fr) minmax(170px, 0.8fr);
+    grid-template-columns: 1fr 1fr minmax(320px, 1.25fr) minmax(170px, 0.7fr);
     align-items: start;
+  }
+
+  .footer-link-list {
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    column-gap: 22px;
   }
 }
 
