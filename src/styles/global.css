@@ -589,6 +589,19 @@ main {
   margin: 0;
 }
 
+.footer-note p {
+  margin: 0 0 6px;
+}
+
+.footer-note p:last-child {
+  margin-bottom: 0;
+}
+
+.footer-note a {
+  color: var(--deep-teal);
+  font-weight: 700;
+}
+
 @media (min-width: 680px) {
   .stats-strip,
   .card-grid {
