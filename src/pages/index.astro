@@ -38,21 +38,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="data-note" data-status="stats">Statistiko koledarja pripravljamo …</p>
     </section>
 
-    <section class="section container" aria-labelledby="week-title">
-      <div class="section-heading">
-        <h2 id="week-title">Ta teden tečemo</h2>
-        <p>Najbližji teki v kratkem pregledu za hiter izbor.</p>
+    <section class="section container" aria-labelledby="nearest-title">
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="nearest-title">Najbližji teki</h2>
+          <p>Prikazujemo najbližje potrjene tekaške prireditve iz koledarja.</p>
+        </div>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
       </div>
-      <div class="card-grid card-grid-three" data-next-week-events>
+      <div class="card-grid card-grid-three" data-nearest-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
-          <p>Teki za ta teden bodo prikazani tukaj.</p>
+          <p>Najbližji teki bodo prikazani tukaj.</p>
           <div class="event-meta">
             <span class="pill">Koledar</span>
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="next-week">Podatki se redno osvežujejo iz Slovenskega Tekaškega Koledarja.</p>
+      <p class="data-note" data-status="nearest">Podatki se redno osvežujejo iz Slovenskega Tekaškega Koledarja.</p>
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
@@ -78,7 +81,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div>
           <span class="eyebrow eyebrow-light">Osebni koledar</span>
           <h2 id="calendar-cta-title">Dodajte teke v osebni koledar</h2>
-          <p>STK lahko spremljate tudi prek osebnega koledarja, kjer se posodobitve prikažejo samodejno.</p>
+          <p>STK lahko spremljate tudi prek osebnega koledarja, kjer se dogodki prikažejo ob vaših drugih obveznostih.</p>
         </div>
         <a class="button button-secondary-light" href="/osebni-koledar/">Navodila za osebni koledar</a>
       </article>
@@ -102,6 +105,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { buildGoogleCalendarEventUrl } from '../utils-calendar';
   import { formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -541,6 +545,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
 
+  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const safeUrl = (value: string) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
 
   const distanceLabel = (distance: string) => {
     if (!distance) return '';
@@ -578,38 +593,74 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
 
-  async function loadNextWeekEvents() {
-    const container = document.querySelector('[data-next-week-events]');
+  async function loadNearestEvents() {
+    const container = document.querySelector('[data-nearest-events]');
     if (!container) return;
 
     try {
-      const payload = await loadJson('/next_week');
-      const events = toArray(payload);
+      const payload = await loadJson('/');
+      const today = new Date();
+      const todayValue = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+      const events = toArray(payload)
+        .filter((event) => {
+          const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+          const dateValue = new Date(`${date}T00:00:00`).getTime();
+
+          return (
+            /^2026-/.test(date) &&
+            Number.isFinite(dateValue) &&
+            dateValue >= todayValue &&
+            normalize(getEventField(event, 'status_dogodka')) === 'potrjeno' &&
+            getEventField(event, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA'
+          );
+        })
+        .sort((a, b) => {
+          const dateA = getEventField(a, 'datum', ['date', 'event_date', 'Datum']);
+          const dateB = getEventField(b, 'datum', ['date', 'event_date', 'Datum']);
+          const dateDifference = new Date(`${dateA}T00:00:00`).getTime() - new Date(`${dateB}T00:00:00`).getTime();
+          if (dateDifference !== 0) return dateDifference;
+
+          const placeDifference = getEventField(a, 'kraj', ['place', 'city', 'location']).localeCompare(getEventField(b, 'kraj', ['place', 'city', 'location']), 'sl-SI');
+          if (placeDifference !== 0) return placeDifference;
+
+          return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
+        });
       const visibleEvents = events.slice(0, 6);
 
       if (!events.length) {
         container.innerHTML = `
           <article class="event-card">
-            <h3>Ta teden ni najavljenih tekov</h3>
-            <p>Trenutno ni prikazanih prireditev za naslednjih sedem dni. Preverite še iskalnik tekov.</p>
+            <h3>Trenutno ni prikazanih najbližjih tekov</h3>
+            <p>Preverite iskalnik tekov za širši pregled koledarja.</p>
             <div class="event-meta">
-              <a class="pill" href="/iskalnik-tekov/">Iskalnik tekov</a>
+              <a class="pill" href="/iskalnik-tekov/">Poglejte vse teke</a>
             </div>
           </article>
         `;
-        setStatus('next-week', 'Za ta teden trenutno ni prikazanih javnih tekov.');
+        setStatus('nearest', 'Trenutno ni prikazanih potrjenih prihajajočih javnih tekov.');
         return;
       }
 
       const eventCards = visibleEvents.map((event) => {
         const title = getEventTitle(event);
-        const date = formatDate(getEventField(event, 'datum', ['date', 'event_date', 'Datum']));
+        const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+        const date = formatDate(dateValue);
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
         const region = getEventField(event, 'regija', ['region']);
         const surface = getEventField(event, 'tip_podlage', ['surface']);
         const distance = distanceLabel(getEventField(event, 'razdalje_km', ['distance', 'distances']));
         const startTime = getEventField(event, 'cas_zacetka', ['čas_zacetka', 'čas_začetka', 'cas_začetka', 'start_time', 'time']);
+        const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
+        const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
+        const voteUrl = safeUrl(getEventField(event, 'vote_url', ['glasovanje_url', 'url_glasovanje']));
+        const calendarUrl = buildGoogleCalendarEventUrl({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([date, location, region]);
+        const links = [
+          noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
+          registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`,
+          voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(voteUrl)}" target="_blank" rel="noopener noreferrer">Glasuj</a>`,
+          calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer">Dodaj v koledar</a>`
+        ].filter(Boolean).join('');
 
         return `
           <article class="event-card">
@@ -620,30 +671,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               ${distance ? `<span class="pill">${escapeHtml(distance)}</span>` : ''}
               ${startTime ? `<span class="pill pill-orange">${escapeHtml(startTime)}</span>` : ''}
             </div>
+            ${links ? `<div class="event-actions">${links}</div>` : ''}
           </article>
         `;
       }).join('');
 
-      const moreLink = events.length > visibleEvents.length ? `
-        <article class="event-card">
-          <h3>Še več tekov</h3>
-          <p>Prikazanih je prvih ${visibleEvents.length} od ${events.length} tekov za ta teden.</p>
-          <div class="event-meta">
-            <a class="pill pill-orange" href="/iskalnik-tekov/">Iskalnik tekov</a>
-          </div>
-        </article>
-      ` : '';
-
-      container.innerHTML = `${eventCards}${moreLink}`;
-      setStatus('next-week', 'Teki za ta teden so osveženi.');
+      container.innerHTML = eventCards;
+      setStatus('nearest', 'Najbližji teki so osveženi.');
     } catch (error) {
       container.innerHTML = `
         <article class="event-card">
-          <h3>Tedenski seznam trenutno ni dosegljiv</h3>
+          <h3>Seznam trenutno ni dosegljiv</h3>
           <p>Ko bodo podatki znova na voljo, se bodo najbližji teki prikazali tukaj.</p>
         </article>
       `;
-      setStatus('next-week', 'Tedenski seznam trenutno ni dosegljiv, zato prikazujemo nadomestni prikaz.');
+      setStatus('nearest', 'Seznam najbližjih tekov trenutno ni dosegljiv, zato prikazujemo nadomestni prikaz.');
     }
   }
 
@@ -788,7 +830,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   if (enableApiDebug) createDebugPanel();
   loadStats();
-  loadNextWeekEvents();
+  loadNearestEvents();
   loadTopEvents();
   loadRecentUpdates();
 </script>

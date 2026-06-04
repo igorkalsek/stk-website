@@ -1,9 +1,12 @@
 export const formatSloveneVoteCount = (count: number) => {
   const formattedCount = new Intl.NumberFormat('sl-SI').format(count);
-  const lastTwoDigits = Math.abs(count) % 100;
+  const absoluteCount = Math.abs(count);
+  const lastTwoDigits = absoluteCount % 100;
+  const lastDigit = absoluteCount % 10;
 
-  if (lastTwoDigits === 1) return `${formattedCount} glas`;
-  if (lastTwoDigits === 2) return `${formattedCount} glasova`;
-  if (lastTwoDigits === 3 || lastTwoDigits === 4) return `${formattedCount} glasovi`;
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return `${formattedCount} glasov`;
+  if (lastDigit === 1) return `${formattedCount} glas`;
+  if (lastDigit === 2) return `${formattedCount} glasova`;
+  if (lastDigit === 3 || lastDigit === 4) return `${formattedCount} glasovi`;
   return `${formattedCount} glasov`;
 };

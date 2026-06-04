@@ -85,6 +85,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { buildGoogleCalendarEventUrl } from '../utils-calendar';
   import { formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -453,10 +454,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.distances && `<span class="event-detail"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`
     ].filter(Boolean).join('');
 
+    const calendarUrl = buildGoogleCalendarEventUrl({
+      title: event.title,
+      date: event.date,
+      location: event.place,
+      noticeUrl: event.noticeUrl,
+      registrationUrl: event.registrationUrl
+    });
     const links = [
-      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasujte</a>`,
+      event.voteUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer">Glasuj</a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer">Razpis</a>`,
-      event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`
+      event.registrationUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer">Prijava</a>`,
+      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer">Dodaj v koledar</a>`
     ].filter(Boolean).join('');
 
     return `
