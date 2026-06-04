@@ -11,9 +11,10 @@ const currentPath = Astro.url.pathname;
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label="Slovenski Tekaški Koledar">
-      <span class="brand-mark">STK</span>
-      <span>Slovenski Tekaški Koledar</span>
+    <a class="brand" href="/" aria-label="Slovenski Tekaški Koledar - domov">
+      <!-- TODO: Add the logo asset separately at public/stk-logo.jpeg; keep text branding visible until the binary asset is available. -->
+      <span class="brand-mark" aria-hidden="true">STK</span>
+      <span class="brand-name">Slovenski Tekaški Koledar</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
       Meni

@@ -7,17 +7,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="hero container" aria-labelledby="hero-title">
       <div class="hero-card">
         <div class="hero-content">
-          <span class="eyebrow">Javni tekaški koledar</span>
+          <span class="eyebrow">Neodvisen tekaški koledar</span>
           <h1 id="hero-title">Slovenski Tekaški Koledar</h1>
-          <p class="hero-lead">Neodvisen koledar tekaških prireditev po Sloveniji.</p>
+          <p class="hero-lead">Neodvisen pregled tekaških prireditev po Sloveniji, zbran za tekače, družine in organizatorje.</p>
           <p class="hero-sublead">
-            Poiščite tek po datumu, regiji, podlagi, razdalji ali družinski prijaznosti.
+            Poiščite teke, preverite družinam prijazne dogodke, glasujte za priljubljene prireditve ali pošljite predlog za popravek.
           </p>
           <div class="cta-row" aria-label="Glavne povezave">
             <a class="button button-primary" href="/iskalnik-tekov/">Iskalnik tekov</a>
             <a class="button button-secondary" href="/druzinam-prijazni-teki/">Družinam prijazni teki</a>
             <a class="button button-secondary" href="/najbolj-glasovani-teki/">Najbolj glasovani teki</a>
-            <a class="button button-secondary" href="/stk-tekobot/">STK Tekobot</a>
+            <a class="button button-secondary" href="/stk-tekobot/">Odprite STK Tekobot</a>
+            <a class="button button-secondary" href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
           </div>
         </div>
       </div>
@@ -32,43 +33,41 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <span class="stat-label">družinam prijaznih tekov</span>
         </article>
       </div>
-      <p class="data-note" data-status="stats">Statistiko nalagamo iz javnega STK API-ja.</p>
+      <p class="data-note" data-status="stats">Statistiko koledarja pripravljamo …</p>
     </section>
 
     <section class="section container" aria-labelledby="week-title">
       <div class="section-heading">
         <h2 id="week-title">Ta teden tečemo</h2>
-        <p>Najbližji teki iz javnega STK API-ja, prikazani v kratkem pregledu za hiter izbor.</p>
+        <p>Najbližji teki v kratkem pregledu za hiter izbor.</p>
       </div>
       <div class="card-grid card-grid-three" data-next-week-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
           <p>Teki za ta teden bodo prikazani tukaj.</p>
           <div class="event-meta">
-            <span class="pill">STK API</span>
-            <span class="pill pill-orange">next_week</span>
+            <span class="pill">Koledar</span>
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="next-week">Vir: /next_week</p>
+      <p class="data-note" data-status="next-week">Podatki se redno osvežujejo iz Slovenskega Tekaškega Koledarja.</p>
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
       <div class="section-heading">
         <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
-        <p>Če je API dosegljiv, se seznam napolni z javnimi podatki. V nasprotnem primeru ostane miren nadomestni prikaz.</p>
+        <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev.</p>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
           <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
           <div class="event-meta">
-            <span class="pill">STK API</span>
-            <span class="pill pill-orange">upcoming</span>
+            <span class="pill">Glasovi tekačev</span>
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="top">Vir: /top?scope=upcoming&amp;limit=10</p>
+      <p class="data-note" data-status="top">Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.</p>
     </section>
 
     <section class="section container" aria-labelledby="updates-title">
@@ -79,10 +78,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="card-grid" data-recent-updates>
         <article class="update-card">
           <h3>Ni še prikazanih posodobitev</h3>
-          <p>Ko bo API odgovoril, bodo zadnje spremembe prikazane tukaj.</p>
+          <p>Zadnje spremembe bodo prikazane tukaj, ko bodo na voljo.</p>
         </article>
       </div>
-      <p class="data-note" data-status="updates">Vir: /recent_updates?days=7</p>
+      <p class="data-note" data-status="updates">Podatki se redno osvežujejo iz Slovenskega Tekaškega Koledarja.</p>
     </section>
 
   </main>
@@ -355,9 +354,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const main = document.querySelector('main');
     if (!main) return;
     main.insertAdjacentHTML('beforeend', `
-      <section class="section container api-debug" data-api-debug aria-label="API debug">
+      <section class="section container api-debug" data-api-debug aria-label="Razvojna diagnostika">
         <details>
-          <summary>API debug</summary>
+          <summary>Razvojna diagnostika</summary>
           <div class="debug-grid">
             <p><strong>/stats loaded:</strong> <span data-debug-stats>no</span></p>
             <p><strong>/top loaded:</strong> <span data-debug-top>no</span></p>
@@ -577,13 +576,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         container.innerHTML = `
           <article class="event-card">
             <h3>Ta teden ni najavljenih tekov</h3>
-            <p>V javnem STK API-ju trenutno ni prireditev za naslednjih sedem dni. Preverite še iskalnik tekov.</p>
+            <p>Trenutno ni prikazanih prireditev za naslednjih sedem dni. Preverite še iskalnik tekov.</p>
             <div class="event-meta">
               <a class="pill" href="/iskalnik-tekov/">Iskalnik tekov</a>
             </div>
           </article>
         `;
-        setStatus('next-week', 'API je odgovoril, vendar za ta teden ni javnih tekov.');
+        setStatus('next-week', 'Za ta teden trenutno ni prikazanih javnih tekov.');
         return;
       }
 
@@ -621,15 +620,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       ` : '';
 
       container.innerHTML = `${eventCards}${moreLink}`;
-      setStatus('next-week', 'Teki za ta teden so naloženi iz STK API-ja.');
+      setStatus('next-week', 'Teki za ta teden so osveženi.');
     } catch (error) {
       container.innerHTML = `
         <article class="event-card">
           <h3>Tedenski seznam trenutno ni dosegljiv</h3>
-          <p>Ko bo javni STK API spet odgovoril, se bodo najbližji teki prikazali tukaj.</p>
+          <p>Ko bodo podatki znova na voljo, se bodo najbližji teki prikazali tukaj.</p>
         </article>
       `;
-      setStatus('next-week', 'Seznam /next_week trenutno ni dosegljiv, zato prikazujemo miren nadomestni prikaz.');
+      setStatus('next-week', 'Tedenski seznam trenutno ni dosegljiv, zato prikazujemo nadomestni prikaz.');
     }
   }
 
@@ -651,9 +650,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
 
       if (confirmedTotal !== null && familyTotal !== null) {
-        setStatus('stats', 'Statistika je naložena iz javnega STK API-ja.');
+        setStatus('stats', 'Statistika je osvežena.');
       } else {
-        setStatus('stats', 'API je odgovoril, vendar ena ali več statističnih vrednosti manjka.');
+        setStatus('stats', 'Ena ali več statističnih vrednosti trenutno manjka.');
       }
     } catch (error) {
       setDebug('stats', 'no');
@@ -671,7 +670,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       setDebug('top', 'yes');
       if (!topEvents.length) {
         setDebugTopDetails(topEvents);
-        setStatus('top', 'API je odgovoril, vendar trenutno ni najbolj glasovanih prihajajočih tekov.');
+        setStatus('top', 'Trenutno ni prikazanih najbolj glasovanih prihajajočih tekov.');
         return;
       }
 
@@ -710,7 +709,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         `;
       }).join('');
-      setStatus('top', 'Najbolj glasovani teki so naloženi iz STK API-ja.');
+      setStatus('top', 'Najbolj glasovani teki so osveženi.');
     } catch (error) {
       setDebug('top', 'no');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
@@ -734,7 +733,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <p>V zadnjih 7 dneh ni zabeleženih javnih posodobitev.</p>
           </article>
         `;
-        setStatus('updates', 'API je odgovoril, vendar za zadnjih 7 dni ni javnih posodobitev.');
+        setStatus('updates', 'Za zadnjih 7 dni trenutno ni javnih posodobitev.');
         return;
       }
 
@@ -765,7 +764,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </article>
         `;
       }).join('');
-      setStatus('updates', 'Zadnje posodobitve so naložene iz STK API-ja.');
+      setStatus('updates', 'Zadnje posodobitve so osvežene.');
     } catch (error) {
       setDebug('recent', 'no');
       setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
