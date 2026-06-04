@@ -85,6 +85,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { formatSloveneVoteCount } from '../utils-slovenian';
+
   type ApiRecord = Record<string, unknown>;
   type VoteUrlDetails = {
     title: string;
@@ -330,7 +332,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatVoteLabel = (count: number | null) => {
     if (!count) return 'Glasovanje odprto';
-    return `${new Intl.NumberFormat('sl-SI').format(count)} ${count === 1 ? 'glas' : count === 2 ? 'glasova' : count < 5 ? 'glasovi' : 'glasov'}`;
+    return formatSloveneVoteCount(count);
   };
 
   const formatDistances = (value: string) => {

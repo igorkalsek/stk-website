@@ -25,10 +25,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="stats-strip" aria-label="Statistika koledarja">
         <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">🏃</span>
           <span class="stat-value" data-stat="confirmed_public_events_total">—</span>
           <span class="stat-label">potrjenih javnih tekaških prireditev</span>
         </article>
         <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
           <span class="stat-value" data-stat="family_friendly_total">—</span>
           <span class="stat-label">družinam prijaznih tekov</span>
         </article>
@@ -70,6 +72,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="data-note" data-status="top">Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.</p>
     </section>
 
+
+    <section class="section container" aria-labelledby="calendar-cta-title">
+      <article class="info-card calendar-cta-card">
+        <div>
+          <span class="eyebrow eyebrow-light">Osebni koledar</span>
+          <h2 id="calendar-cta-title">Dodajte teke v osebni koledar</h2>
+          <p>STK lahko spremljate tudi prek osebnega koledarja, kjer se posodobitve prikažejo samodejno.</p>
+        </div>
+        <a class="button button-secondary-light" href="/osebni-koledar/">Navodila za osebni koledar</a>
+      </article>
+    </section>
+
     <section class="section container" aria-labelledby="updates-title">
       <div class="section-heading">
         <h2 id="updates-title">Zadnje posodobitve</h2>
@@ -88,6 +102,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { formatSloveneVoteCount } from '../utils-slovenian';
+
   type ApiRecord = Record<string, unknown>;
 
   const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
@@ -448,8 +464,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatVoteCount = (votes: number | null) => {
     if (votes === null) return 'not detected';
-    const formattedVotes = numberFormatter.format(votes);
-    return votes === 1 ? `${formattedVotes} glas` : `${formattedVotes} glasov`;
+    return formatSloveneVoteCount(votes);
   };
 
   const titleForEvent = (event: ApiRecord) => {

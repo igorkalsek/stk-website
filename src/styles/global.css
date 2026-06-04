@@ -148,6 +148,7 @@ button {
 }
 
 .site-nav a {
+  position: relative;
   border-radius: 14px;
   color: var(--muted);
   font-size: 0.95rem;
@@ -155,10 +156,15 @@ button {
   padding: 12px 14px;
 }
 
-.site-nav a:hover,
-.site-nav a[aria-current="page"] {
-  background: rgba(200, 230, 201, 0.55);
+.site-nav a:hover {
+  background: rgba(200, 230, 201, 0.38);
   color: var(--deep-teal);
+}
+
+.site-nav a[aria-current="page"] {
+  background: rgba(200, 230, 201, 0.68);
+  color: var(--deep-teal);
+  box-shadow: inset 3px 0 0 var(--orange);
 }
 
 main {
@@ -269,11 +275,19 @@ main {
 }
 
 .stat-card {
+  position: relative;
   border: 1px solid rgba(16, 64, 80, 0.1);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.84);
   padding: 20px;
   box-shadow: 0 10px 30px rgba(16, 64, 80, 0.07);
+}
+
+.stat-icon {
+  display: inline-flex;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
 .stat-value {
@@ -403,6 +417,29 @@ main {
   margin-top: 4px;
 }
 
+.eyebrow-light {
+  background: rgba(200, 230, 201, 0.68);
+  color: var(--deep-teal);
+}
+
+.calendar-cta-card {
+  display: grid;
+  gap: 18px;
+  align-items: center;
+}
+
+.calendar-cta-card h2,
+.calendar-placeholder-card h2 {
+  margin: 12px 0 0;
+  color: var(--deep-teal);
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  letter-spacing: -0.035em;
+}
+
+.calendar-cta-card .button {
+  width: fit-content;
+}
+
 .placeholder-panel {
   display: grid;
   gap: 8px;
@@ -479,6 +516,14 @@ main {
     padding: 9px 11px;
   }
 
+  .site-nav a[aria-current="page"] {
+    box-shadow: inset 0 -2px 0 var(--orange);
+  }
+
+  .calendar-cta-card {
+    grid-template-columns: 1fr auto;
+  }
+
   .brand-logo {
     width: 48px;
     height: 48px;
@@ -502,10 +547,15 @@ main {
   }
 }
 
-.placeholder-panel .button-secondary {
+.placeholder-panel .button-secondary,
+.button-secondary-light {
   background: var(--white);
   color: var(--deep-teal);
   box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
+}
+
+.button-secondary-light:hover {
+  background: rgba(200, 230, 201, 0.45);
 }
 
 .api-debug[hidden] {
@@ -694,12 +744,6 @@ main {
 
 .search-more[hidden] {
   display: none;
-}
-
-.button-secondary-light {
-  background: var(--white);
-  color: var(--deep-teal);
-  box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
 }
 
 .search-empty-card {

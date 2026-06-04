@@ -4,9 +4,11 @@ const navItems = [
   { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
   { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni' },
   { href: '/najbolj-glasovani-teki/', label: 'Glasovani teki' },
-  { href: '/stk-tekobot/', label: 'Tekobot' }
+  { href: '/stk-tekobot/', label: 'Tekobot' },
+  { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte tek' }
 ];
-const currentPath = Astro.url.pathname;
+const normalizePath = (path: string) => (path === '/' ? '/' : `${path.replace(/\/$/, '')}/`);
+const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <header class="site-header">
