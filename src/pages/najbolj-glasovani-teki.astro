@@ -85,7 +85,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { buildGoogleCalendarEventUrl } from '../utils-calendar';
+  import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -385,6 +385,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     };
   }).filter(Boolean) as TopEvent[];
 
+
+  const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
+    title: string;
+    date: string;
+    location?: string;
+    noticeUrl?: string;
+    registrationUrl?: string;
+  }) => {
+    const event = { title, date, location, noticeUrl, registrationUrl };
+    const googleUrl = buildGoogleCalendarEventUrl(event);
+    const icsUrl = buildIcsDataUrl(event);
+    const icsFilename = buildIcsFilename(event);
+    const outlookUrl = buildOutlookCalendarEventUrl(event);
+    if (!googleUrl && !icsUrl && !outlookUrl) return '';
+
+    const options = [
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      outlookUrl
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+    ].filter(Boolean).join('');
+
+    return `
+      <details class="calendar-menu">
+        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>V koledar</span></summary>
+        <div class="calendar-menu-options">${options}</div>
+      </details>
+    `;
+  };
+
   const setStatus = (message: string) => {
     if (statusElement) statusElement.textContent = message;
   };
@@ -452,7 +483,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.distances && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`
     ].filter(Boolean).join('');
 
-    const calendarUrl = buildGoogleCalendarEventUrl({
+    const calendarOptions = renderCalendarOptions({
       title: event.title,
       date: event.date,
       location: event.place,
@@ -462,8 +493,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
-      event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj za tek</span></a>`,
-      calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📅</span><span>V koledar</span></a>`
+      event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
+      calendarOptions
     ].filter(Boolean).join('');
 
     return `
