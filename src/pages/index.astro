@@ -39,6 +39,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <span class="stat-value" data-stat="family_friendly_total">—</span>
           <span class="stat-label">družinam prijaznih tekov</span>
         </article>
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">📅</span>
+          <span class="stat-value stat-value-text">Osebni</span>
+          <span class="stat-label">koledar za telefon in računalnik</span>
+        </article>
       </div>
     </section>
 
@@ -62,9 +67,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
-      <div class="section-heading">
-        <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
-        <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev.</p>
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
+          <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev.</p>
+        </div>
+        <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">Poglejte celotno lestvico</a>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
@@ -78,6 +86,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="data-note" data-status="top">Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.</p>
     </section>
 
+
+    <section class="section container" aria-labelledby="trust-title">
+      <article class="info-card trust-card">
+        <div>
+          <span class="eyebrow eyebrow-light">Zanesljiv pregled</span>
+          <h2 id="trust-title">Zakaj Slovenski Tekaški Koledar?</h2>
+          <p>Na enem mestu zbiramo potrjene tekaške prireditve po Sloveniji, povezave do razpisov, prijav in osebnega koledarja. Pred prijavo vedno preverite uradni razpis organizatorja.</p>
+          <p class="tekobot-note">STK Tekobot vam pomaga poiskati teke z vprašanji v naravnem jeziku.</p>
+        </div>
+        <a class="button button-secondary-light" href="/stk-tekobot/">Vprašajte STK Tekobota</a>
+      </article>
+    </section>
 
     <section class="section container" aria-labelledby="calendar-cta-title">
       <article class="info-card calendar-cta-card">
@@ -188,6 +208,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const match = item.vote_url.match(/[?&]entry\.1386641006=([^&]+)/);
       return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
     }
+  };
+
+  const cleanPublicEventTitle = (title: string) =>
+    title.replace(/^EAORCH2026\s*-\s*/i, '').trim();
+
+  const getDisplayEventTitle = (title: string, fallback = 'Naziv teka ni na voljo') => {
+    const cleanedTitle = cleanPublicEventTitle(title);
+    return cleanedTitle || fallback;
   };
 
   const getTopEventTitle = (item: ApiRecord) => {
@@ -474,7 +502,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const titleForEvent = (event: ApiRecord) => {
-    const title = getTopEventTitle(event);
+    const title = getDisplayEventTitle(getTopEventTitle(event));
     if (title) return title;
 
     if (import.meta.env.DEV) {
@@ -644,7 +672,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
 
       const eventCards = visibleEvents.map((event) => {
-        const title = getEventTitle(event);
+        const sourceTitle = getEventTitle(event);
+        const title = getDisplayEventTitle(sourceTitle);
         const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
         const date = formatDate(dateValue);
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
@@ -655,7 +684,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
         const voteUrl = safeUrl(getEventField(event, 'vote_url', ['glasovanje_url', 'url_glasovanje']));
-        const calendarUrl = buildGoogleCalendarEventUrl({ title, date: dateValue, location, noticeUrl, registrationUrl });
+        const calendarUrl = buildGoogleCalendarEventUrl({ title: sourceTitle, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([date, location, region]);
         const links = [
           noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
