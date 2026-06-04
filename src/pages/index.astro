@@ -85,7 +85,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="section container" aria-labelledby="trust-title">
       <article class="info-card trust-card">
         <div>
-          <span class="eyebrow eyebrow-light">Zanesljiv pregled</span>
+          <span class="eyebrow eyebrow-light">O koledarju</span>
           <h2 id="trust-title">Zakaj Slovenski Tekaški Koledar?</h2>
           <p>Na enem mestu zbiramo potrjene tekaške prireditve po Sloveniji, povezave do razpisov, prijav in osebnega koledarja. Pred prijavo vedno preverite uradni razpis organizatorja.</p>
           <p class="tekobot-note">STK Tekobot vam pomaga poiskati teke z vprašanji v naravnem jeziku.</p>
@@ -123,7 +123,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl } from '../utils-calendar';
-  import { formatSloveneVoteCount } from '../utils-slovenian';
+  import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -558,19 +558,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
 
-  const formatDateBadge = (value: string) => {
-    if (!value) return '';
-    const date = new Date(`${value}T00:00:00`);
-    if (Number.isNaN(date.getTime())) return value;
-    const day = new Intl.DateTimeFormat('sl-SI', { weekday: 'short' })
-      .format(date)
-      .replace('.', '')
-      .toLocaleUpperCase('sl-SI');
-    const compactDate = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short' })
-      .format(date)
-      .replace('.', '');
-    return `${day} · ${compactDate}`;
-  };
+  const formatDateBadge = formatSloveneDateBadge;
 
   const formatStartTime = (value: string) => {
     const trimmed = value.trim();
@@ -587,20 +575,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
   };
 
-  const formatDistancePart = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-    const withoutKm = trimmed.replace(/\s*km\b/gi, '').trim();
-    if (!/^\d+(?:[.,]\d+)?$/.test(withoutKm)) return trimmed.replace('.', ',');
-    return `${withoutKm.replace('.', ',')} km`;
-  };
-
-  const formatDistances = (value: string) => value
-    .trim()
-    .split(';')
-    .map(formatDistancePart)
-    .filter(Boolean)
-    .join(' · ');
+  const formatDistances = formatSloveneDistances;
 
   const escapeHtml = (value: string | number) => {
     const characters: Record<string, string> = {
@@ -627,10 +602,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   };
 
-  const distanceLabel = (distance: string) => {
-    if (!distance) return '';
-    return /\bkm\b/i.test(distance) ? distance : `${distance} km`;
-  };
 
   const nestedEventPaths = (field: string) => [
     field,
@@ -719,7 +690,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
         const region = getEventField(event, 'regija', ['region']);
         const surface = getEventField(event, 'tip_podlage', ['surface']);
-        const distance = distanceLabel(getEventField(event, 'razdalje_km', ['distance', 'distances']));
+        const distance = formatDistances(getEventField(event, 'razdalje_km', ['distance', 'distances']));
         const startTime = getEventField(event, 'cas_zacetka', ['čas_zacetka', 'čas_začetka', 'cas_začetka', 'start_time', 'time']);
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
@@ -735,7 +706,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const links = [
           registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
           noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
-          voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(voteUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">👍</span><span>Glasujte</span></a>`,
+          voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(voteUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj za tek</span></a>`,
           calendarUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(calendarUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📅</span><span>V koledar</span></a>`
         ].filter(Boolean).join('');
 
