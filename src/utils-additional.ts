@@ -280,6 +280,28 @@ const formatElevationGain = (value: string) => {
   return `Višinski metri: ${trimmed} m+`;
 };
 
+const ROUTE_URL_HINTS = ['trasa', 'trase', 'route', 'routes', 'gpx', 'strava', 'maps'];
+
+const getRouteUrlLabel = (value: string) => {
+  try {
+    const url = new URL(value);
+    const searchableUrl = decodeURIComponent(`${url.hostname} ${url.pathname} ${url.search}`)
+      .toLocaleLowerCase('sl-SI')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (/\.pdf(?:$|[?#])/.test(url.pathname.toLocaleLowerCase('sl-SI'))) {
+      return { label: 'Več informacij', text: 'Odprite povezavo' };
+    }
+
+    return ROUTE_URL_HINTS.some((hint) => searchableUrl.includes(hint))
+      ? { label: 'Trasa', text: 'Odprite traso' }
+      : { label: 'Več informacij', text: 'Odprite povezavo' };
+  } catch {
+    return { label: 'Več informacij', text: 'Odprite povezavo' };
+  }
+};
+
 export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData | null) => {
   if (!additionalData) return false;
   return Boolean(
@@ -313,8 +335,9 @@ export const renderAdditionalDataBlock = (
     formatDayOfRegistration(additionalData.dayOfRegistration),
     formatElevationGain(additionalData.elevationGain)
   ].filter(Boolean).map((item) => escapeHtml(String(item)));
-  const routeItem = additionalData.routeUrl
-    ? `Trasa: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">Odprite traso</a>`
+  const routeLabel = additionalData.routeUrl ? getRouteUrlLabel(additionalData.routeUrl) : null;
+  const routeItem = routeLabel
+    ? `${routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${routeLabel.text}</a>`
     : '';
   const items = [...textItems, routeItem].filter(Boolean);
 
