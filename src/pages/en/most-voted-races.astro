@@ -110,8 +110,9 @@ const englishNavItems = [
 <script>
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
   import { getDisplayEventTitle } from '../../utils-events';
-  import { formatSloveneDateBadge, formatSloveneDistances } from '../../utils-slovenian';
+  import { formatSloveneDistances } from '../../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
   type VoteUrlDetails = {
@@ -148,8 +149,7 @@ const englishNavItems = [
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const FIELD_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
   const PAGE_SIZE = 30;
-  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
-  const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number } = {
     events: [],
@@ -238,26 +238,15 @@ const englishNavItems = [
     return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
   };
 
-  const formatDateBadge = formatSloveneDateBadge;
+  const formatDateBadge = formatEnglishDateBadge;
 
   const formatPublicTitleForDisplay = getDisplayEventTitle;
 
   const formatVisibleEventTitle = (title: string) => title.replace(/\s+-\s+/gu, ' – ');
 
-  const formatSurface = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-    return trimmed
-      .toLocaleLowerCase('sl-SI')
-      .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-  };
+  const formatSurface = formatEnglishSurface;
 
-  const monthLabel = (month: string) => {
-    const monthNumber = Number(month);
-    if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
-    const date = new Date(2026, monthNumber - 1, 1);
-    return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-  };
+  const monthLabel = formatEnglishMonthLabel;
 
   const escapeHtml = (value: string | number) => {
     const characters: Record<string, string> = {
