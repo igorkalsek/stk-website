@@ -226,18 +226,23 @@ const parseMoney = (value: string) => {
 const formatMoney = (value: number) =>
   new Intl.NumberFormat('sl-SI', { maximumFractionDigits: 2 }).format(value);
 
-const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Prijavnina', language: 'sl' | 'en' = 'sl') => {
+const formatRegistrationFeeValue = (additionalData: AdditionalEventData, language: 'sl' | 'en' = 'sl') => {
   const min = parseMoney(additionalData.registrationMinEur);
   const max = parseMoney(additionalData.registrationMaxEur);
 
   if (min !== null && max !== null) {
-    if (min === max) return `${label}: ${formatMoney(min)} €`;
-    return `${label}: ${formatMoney(min)}–${formatMoney(max)} €`;
+    if (min === max) return `${formatMoney(min)} €`;
+    return `${formatMoney(min)}–${formatMoney(max)} €`;
   }
 
-  if (min !== null) return language === 'en' ? `${label}: from ${formatMoney(min)} €` : `${label}: od ${formatMoney(min)} €`;
-  if (max !== null) return language === 'en' ? `${label}: up to ${formatMoney(max)} €` : `${label}: do ${formatMoney(max)} €`;
+  if (min !== null) return language === 'en' ? `from ${formatMoney(min)} €` : `od ${formatMoney(min)} €`;
+  if (max !== null) return language === 'en' ? `up to ${formatMoney(max)} €` : `do ${formatMoney(max)} €`;
   return '';
+};
+
+const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Prijavnina', language: 'sl' | 'en' = 'sl') => {
+  const value = formatRegistrationFeeValue(additionalData, language);
+  return value ? `${label}: ${value}` : '';
 };
 
 const ENGLISH_MONTH_ABBREVIATIONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -290,17 +295,28 @@ const normalizeDayOfRegistration = (value: string) => value.toLocaleUpperCase('s
 
 const hasDayOfRegistration = (value: string) => normalizeDayOfRegistration(value) === 'DA';
 
-const formatDayOfRegistration = (value: string, language: 'sl' | 'en' = 'sl') => {
+const formatDayOfRegistrationValue = (value: string, language: 'sl' | 'en' = 'sl') => {
   const normalized = normalizeDayOfRegistration(value);
-  if (normalized === 'DA') return language === 'en' ? 'Race-day registration: yes' : 'Prijave na dan: da';
-  if (normalized === 'NE') return language === 'en' ? 'Race-day registration: no' : 'Prijave na dan: ne';
+  if (normalized === 'DA') return language === 'en' ? 'yes' : 'da';
+  if (normalized === 'NE') return language === 'en' ? 'no' : 'ne';
   return '';
 };
 
-const formatElevationGain = (value: string, language: 'sl' | 'en' = 'sl') => {
+const formatDayOfRegistration = (value: string, language: 'sl' | 'en' = 'sl') => {
+  const displayValue = formatDayOfRegistrationValue(value, language);
+  if (!displayValue) return '';
+  return `${language === 'en' ? 'Race-day registration' : 'Prijave na dan'}: ${displayValue}`;
+};
+
+const formatElevationGainValue = (value: string) => {
   const trimmed = value.trim();
-  if (!trimmed) return '';
-  return `${language === 'en' ? 'Elevation gain' : 'Višinski metri'}: ${trimmed} m+`;
+  return trimmed ? `${trimmed} m+` : '';
+};
+
+const formatElevationGain = (value: string, language: 'sl' | 'en' = 'sl') => {
+  const displayValue = formatElevationGainValue(value);
+  if (!displayValue) return '';
+  return `${language === 'en' ? 'Elevation gain' : 'Višinski metri'}: ${displayValue}`;
 };
 
 const ROUTE_URL_HINTS = ['trasa', 'trase', 'route', 'routes', 'gpx', 'strava', 'maps'];
@@ -366,16 +382,42 @@ export const renderAdditionalDataBlock = (
     registrationDeadline &&
     !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
   );
+  const routeLabel = additionalData.routeUrl ? getRouteUrlLabel(additionalData.routeUrl) : null;
+
+  if (language === 'en') {
+    const englishItems = [
+      { label: registrationFeeLabel, value: formatRegistrationFeeValue(additionalData, language) },
+      { label: 'Registration deadline', value: showRegistrationDeadline ? registrationDeadline : '' },
+      { label: 'Early registration deadline', value: earlyRegistrationDeadline },
+      { label: 'Race-day registration', value: formatDayOfRegistrationValue(additionalData.dayOfRegistration, language) },
+      { label: 'Elevation gain', value: formatElevationGainValue(additionalData.elevationGain) },
+      {
+        label: 'Route',
+        value: routeLabel
+          ? `<a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">Open route</a>`
+          : ''
+      }
+    ].filter((item) => item.value);
+
+    if (!englishItems.length) return '';
+
+    return `
+      <details class="additional-data-block">
+        <summary>ℹ️ Additional info</summary>
+        <ul class="additional-data-list additional-data-list-vertical">${englishItems.map((item) => `<li class="additional-data-item additional-data-item-vertical"><span class="additional-data-label">${escapeHtml(item.label)}:</span> <span class="additional-data-value">${typeof item.value === 'string' && item.value.includes('<a ') ? item.value : escapeHtml(item.value)}</span></li>`).join('')}</ul>
+      </details>
+    `;
+  }
+
   const textItems = [
     formatRegistrationFee(additionalData, registrationFeeLabel, language),
-    showRegistrationDeadline && `${language === 'en' ? 'Registration deadline' : 'Rok prijave'}: ${registrationDeadline}`,
-    earlyRegistrationDeadline && `${language === 'en' ? 'Early registration deadline' : 'Cenejša prijava do'}: ${earlyRegistrationDeadline}`,
+    showRegistrationDeadline && `Rok prijave: ${registrationDeadline}`,
+    earlyRegistrationDeadline && `Cenejša prijava do: ${earlyRegistrationDeadline}`,
     formatDayOfRegistration(additionalData.dayOfRegistration, language),
     formatElevationGain(additionalData.elevationGain, language)
   ].filter(Boolean).map((item) => escapeHtml(String(item)));
-  const routeLabel = additionalData.routeUrl ? getRouteUrlLabel(additionalData.routeUrl) : null;
   const routeItem = routeLabel
-    ? `${language === 'en' ? 'Route' : routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${language === 'en' ? 'Open route' : routeLabel.text}</a>`
+    ? `${routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${routeLabel.text}</a>`
     : '';
   const items = [...textItems, routeItem].filter(Boolean);
 
@@ -383,7 +425,7 @@ export const renderAdditionalDataBlock = (
 
   return `
     <details class="additional-data-block">
-      <summary>ℹ️ ${language === 'en' ? 'Additional info' : 'Dodatni podatki'}</summary>
+      <summary>ℹ️ Dodatni podatki</summary>
       <ul class="additional-data-list">${items.map((item) => `<li class="additional-data-item">${item}</li>`).join('')}</ul>
     </details>
   `;

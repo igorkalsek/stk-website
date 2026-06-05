@@ -1049,6 +1049,21 @@ main {
   line-height: 1.55;
 }
 
+.family-source-note {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.family-source-note summary {
+  color: var(--deep-teal);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.family-source-note p {
+  margin-top: 6px;
+}
+
 .event-details {
   display: flex;
   flex-wrap: wrap;
@@ -1273,6 +1288,22 @@ main {
 .additional-data-item {
   display: list-item;
   line-height: 1.45;
+}
+
+.additional-data-list-vertical {
+  list-style: none;
+  padding-left: 0;
+}
+
+.additional-data-item-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.additional-data-label {
+  color: var(--deep-teal);
+  font-weight: 850;
 }
 
 .additional-data-block a {
