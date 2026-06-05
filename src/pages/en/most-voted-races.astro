@@ -88,7 +88,7 @@ const englishNavItems = [
 
     <section class="section container" aria-labelledby="top-results-title">
       <div class="section-heading">
-        <h2 id="top-results-title">Results</h2>
+        <h2 id="top-results-title">Ranking</h2>
         <p data-top-status>Loading most voted upcoming races …</p>
       </div>
       <div class="search-results" data-top-results aria-live="polite">
@@ -583,7 +583,7 @@ const englishNavItems = [
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
-    setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setCount(count > visibleCount ? `Showing ${visibleCount} of ${count} voted ${count === 1 ? 'race' : 'races'}` : pluralizeEvents(count));
     setStatus('');
 
     if (!count) {
