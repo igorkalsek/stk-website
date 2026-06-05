@@ -324,6 +324,12 @@ main {
   transform: translateY(-1px);
 }
 
+.facebook-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+}
+
 .button-primary {
   background: var(--orange);
   color: #1e2b1e;
@@ -675,6 +681,33 @@ main {
   width: fit-content;
 }
 
+.facebook-cta-section {
+  padding-top: 30px;
+}
+
+.facebook-cta-card {
+  display: grid;
+  gap: 16px;
+  border-color: rgba(16, 64, 80, 0.08);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 22px rgba(16, 64, 80, 0.05);
+}
+
+.facebook-cta-card h2 {
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: clamp(1.25rem, 3.4vw, 1.7rem);
+  letter-spacing: -0.03em;
+}
+
+.facebook-cta-card p {
+  max-width: 44rem;
+}
+
+.facebook-cta-card .button {
+  width: fit-content;
+}
+
 .tekobot-note {
   font-size: 0.95rem;
 }
@@ -763,6 +796,12 @@ main {
   width: fit-content;
   color: var(--muted);
   font-weight: 750;
+}
+
+.footer-link-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .footer-link-list a:hover,

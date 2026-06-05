@@ -1,8 +1,11 @@
 ---
+import FacebookIcon from './FacebookIcon.astro';
+
 interface FooterLink {
   href: string;
   label: string;
   external?: boolean;
+  facebook?: boolean;
 }
 
 interface Props {
@@ -19,7 +22,12 @@ const links: FooterLink[] = isEnglish ? [
   { href: '/en/most-voted-races/', label: 'Most voted races' },
   { href: '/en/personal-calendar/', label: 'Personal calendar' },
   { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
-  { href: 'https://www.facebook.com/SlovenskiTekaskiKoledar', label: 'Facebook', external: true },
+  {
+    href: 'https://www.facebook.com/SlovenskiTekaskiKoledar',
+    label: 'Follow STK on Facebook',
+    external: true,
+    facebook: true
+  },
   { href: '/', label: 'Slovenščina' }
 ] : [
   { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
@@ -30,7 +38,12 @@ const links: FooterLink[] = isEnglish ? [
   { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte ali popravite tek' },
   { href: '/stk-tekobot/', label: 'STK Tekobot' },
   { href: '/o-projektu-in-zasebnost/', label: 'O projektu in zasebnost' },
-  { href: 'https://www.facebook.com/SlovenskiTekaskiKoledar', label: 'Facebook', external: true },
+  {
+    href: 'https://www.facebook.com/SlovenskiTekaskiKoledar',
+    label: 'Sledite STK na Facebooku',
+    external: true,
+    facebook: true
+  },
   { href: '/en/', label: 'English' }
 ];
 ---
@@ -54,7 +67,15 @@ const links: FooterLink[] = isEnglish ? [
       <h2 class="footer-heading">{isEnglish ? 'Links' : 'Povezave'}</h2>
       <div class="footer-link-list">
         {links.map((link) => (
-          <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>{link.label}</a>
+          <a
+            href={link.href}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+            class:list={[link.facebook && 'facebook-link']}
+          >
+            {link.facebook && <FacebookIcon />}
+            <span>{link.label}</span>
+          </a>
         ))}
       </div>
     </nav>
