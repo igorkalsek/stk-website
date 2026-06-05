@@ -86,7 +86,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
+  import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
+  import { enrichEventsWithVoteUrls } from '../utils-vote';
 
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
@@ -347,7 +349,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       date,
       dateValue,
       month: date.slice(5, 7),
-      title,
+      title: getDisplayEventTitle(title),
       place,
       region,
       surface,
@@ -396,72 +398,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return labels[normalize(value)] ?? formatSurface(value);
   };
 
-  const voteField = (item: ApiRecord, key: string): string => {
-    const direct = pick(item, key);
-    if (direct) return direct;
-
-    for (const container of ['event', 'race', 'data', 'item', 'row', 'fields']) {
-      const nested = asRecord(item[container]);
-      if (!nested) continue;
-      const nestedValue = voteField(nested, key);
-      if (nestedValue) return nestedValue;
-    }
-
-    return '';
-  };
-
-  const rowKey = (item: ApiRecord) => voteField(item, 'row') || voteField(item, 'Row') || voteField(item, 'ROW') || voteField(item, 'row_number') || voteField(item, 'rowNumber');
-
-  const cleanTitle = (value: string) => value.replace(/^EAORCH2026\s*-\s*/i, '').trim();
-
-  const normalizedMatchText = (value: string) => normalize(cleanTitle(value)).replace(/[^\p{L}\p{N}/]+/gu, ' ').trim();
-
-  const voteMatchKey = (date: string, title: string, place: string) =>
-    [date, normalizedMatchText(title), normalize(place)].join('|');
-
-  const voteUrlTitle = (value: string) => {
-    if (!value) return '';
-    try {
-      const url = new URL(value);
-      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
-    } catch {
-      const match = value.match(/[?&]entry\.1386641006=([^&]+)/);
-      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
-    }
-  };
-
-  const buildVoteLookup = (rows: ApiRecord[]) => {
-    const byRow = new Map<string, string>();
-    const byEvent = new Map<string, string>();
-
-    rows.forEach((row) => {
-      const voteUrl = safeUrl(voteField(row, 'vote_url') || voteField(row, 'glasovanje_url') || voteField(row, 'url_glasovanje'));
-      if (!voteUrl) return;
-
-      const rowId = rowKey(row);
-      if (rowId) byRow.set(rowId, voteUrl);
-
-      const date = voteField(row, 'datum') || voteField(row, 'date');
-      const titleCandidates = [voteField(row, 'naziv_prireditve'), voteField(row, 'naziv'), voteField(row, 'title'), voteUrlTitle(voteUrl)].filter(Boolean);
-      const place = voteField(row, 'kraj') || voteField(row, 'place') || voteField(row, 'city') || voteField(row, 'location');
-      titleCandidates.forEach((title) => {
-        if (date && title) byEvent.set(voteMatchKey(date, title, place), voteUrl);
-      });
-    });
-
-    return { byRow, byEvent };
-  };
-
-  const enrichEventsWithVoteUrls = (events: FamilyEvent[], voteRows: ApiRecord[]) => {
-    const lookup = buildVoteLookup(voteRows);
-    return events.map((event) => {
-      if (event.voteUrl) return event;
-      const byRow = lookup.byRow.get(event.id);
-      const byEvent = lookup.byEvent.get(voteMatchKey(event.date, event.title, event.place));
-      const byCleanTitle = lookup.byEvent.get(voteMatchKey(event.date, cleanTitle(event.title), event.place));
-      return { ...event, voteUrl: byRow || byEvent || byCleanTitle || '' };
-    });
-  };
 
   const populateFilters = () => {
     const months = [...new Set(state.events.map((event) => event.month))].sort();

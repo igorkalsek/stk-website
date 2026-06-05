@@ -1058,6 +1058,10 @@ main {
   display: none;
 }
 
+.calendar-menu:not([open]) .calendar-menu-options {
+  display: none;
+}
+
 .calendar-menu-options {
   position: absolute;
   z-index: 10;
