@@ -314,72 +314,7 @@ const englishNavItems = [
     .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.\s*(?:uri|uro|h)\b/giu, (_match, hour: string) => `${hour.padStart(2, '0')}:00`)
     .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.(?=\s*(?:$|[;,]|in\b))/giu, (_match, hour: string) => `${hour.padStart(2, '0')}:00`);
 
-  const stripFamilyNoteDeadlines = (value: string) => value
-    .replace(/\s*\bdo\s+(?:\d{1,2}\.\d{1,2}\.\d{4}|\d{4}-\d{2}-\d{2})\b/giu, '')
-    .replace(/\s*\bdo\s+\d{1,2}\.\d{1,2}\.\b/giu, '');
-
-  const cleanupFamilyNoteSegment = (value: string) => {
-    let segment = stripFamilyNoteDeadlines(value)
-      .replace(/\(([^)]*\bkm\b[^)]*)\)/giu, '$1')
-      .replace(/\bpredprijav[aoe]?\b/giu, '')
-      .replace(/\b(?:nato|potem|na dan(?: prireditve)?)\b[^;,.]*/giu, '')
-      .replace(/\b\d+(?:[,.]\d+)?\s*(?:eur|€)\b/giu, '')
-      .replace(/\b(?:cena|prijavnina|štartnina|startnina)\s*:?\s*/giu, '')
-      .replace(/\s{2,}/gu, ' ')
-      .replace(/\s+,/gu, ',')
-      .replace(/(?:,\s*){2,}/gu, ', ')
-      .replace(/[\s,.;:!?-]+$/u, '')
-      .trim();
-
-    if (/^brezplačn[ao]\b/iu.test(segment) && !/\b(?:otroc|otrošk|udelež)/iu.test(segment)) {
-      segment = 'brezplačna udeležba';
-    }
-
-    return segment;
-  };
-
-  const isFamilyNoteSegment = (value: string) => (
-    /\b(?:otro(?:ci|ke|ški|ška|ških|kom|cih|ci)|družin(?:ski|ska|ske|am|e|o)?|vozičk(?:i|om|e)?|animacij(?:a|e|o)|brezplačn(?:o|a|i|e)|ugodnost(?:i|jo)?|mini)\b/iu.test(value)
-  );
-
-  const cleanFamilyNoteForDisplay = (value: string) => {
-    const normalized = normalizeFamilyNoteTimes(value);
-    const rawSegments = normalized
-      .split(/\s*[;|]\s*/u)
-      .map((segment) => segment.trim())
-      .filter(Boolean);
-
-    const sourceSegments = rawSegments.length ? rawSegments : [normalized];
-    const cleanedSegments = sourceSegments
-      .map(cleanupFamilyNoteSegment)
-      .filter(Boolean);
-    const familySegments = cleanedSegments.filter(isFamilyNoteSegment);
-    const startsWithDistanceOnly = /^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+)$/iu.test(cleanedSegments[0] ?? '');
-    const selectedSegments = familySegments.length
-      ? startsWithDistanceOnly && familySegments.some((segment) => /\botro/iu.test(segment))
-        ? ['Children’s race', ...familySegments]
-        : familySegments
-      : cleanedSegments;
-
-    const note = selectedSegments.join('; ')
-      .replace(/^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+)$/iu, 'Children’s race')
-      .replace(/^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+);\s*/iu, 'Children’s race; ')
-      .replace(/\btek mini\s+([^;,.]+)/iu, 'TEK MINI $1')
-      .replace(/,\s*brezplačno\b/iu, '; brezplačna udeležba')
-      .replace(/\s{2,}/gu, ' ')
-      .replace(/\s+([,.;:])/gu, '$1')
-      .replace(/[\s,.;:!?-]+$/u, '')
-      .trim();
-
-    return note;
-  };
-
-  const normalizeFamilyNoteDisplay = (value: string) => {
-    if (/^družinske ugodnosti\s*\(družinska\s*\)$/iu.test(value)) return 'Family benefits.';
-    return value;
-  };
-
-  const formatFamilyNote = (value: string) => {
+  const getFamilySourceNote = (value: string) => {
     const markerPattern = /družinam\s+prijazno\s*[:\-–—]?\s*/iu;
     let note = value.replace(/\s+/g, ' ').trim();
     if (!note) return '';
@@ -391,18 +326,70 @@ const englishNavItems = [
       note = note.slice(markerMatch.index + markerMatch[0].length).trim();
     }
 
-    note = removePublicNotePrefixes(note)
+    return removePublicNotePrefixes(note)
       .replace(/^družinam\s+prijazno\s*[:\-–—]?\s*/iu, '')
       .replace(/^[|\s:;\-–—]+/u, '')
+      .replace(/[\s,.;:!?-]+$/u, '')
       .trim();
+  };
 
-    if (!note) return '';
+  const normalizeFamilySignalText = (value: string) => normalizeFamilyNoteTimes(value)
+    .toLocaleLowerCase('sl-SI')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 
-    note = cleanFamilyNoteForDisplay(note);
-    if (!note) return '';
+  const addFamilySummarySignal = (signals: string[], signal: string) => {
+    if (!signals.includes(signal)) signals.push(signal);
+  };
 
-    const sentenceCaseNote = note.replace(/^\p{Ll}/u, (letter) => letter.toLocaleUpperCase('sl-SI'));
-    return trimFamilyNote(normalizeFamilyNoteDisplay(sentenceCaseNote));
+  const summarizeFamilyNoteInEnglish = (value: string) => {
+    const searchableNote = normalizeFamilySignalText(value);
+    const signals: string[] = [];
+
+    if (/otrosk(?:i\s+tek|i\s+teki|e\s+kategorije)|otroske\s+kategorije/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Children’s races available.');
+    }
+
+    if (/brezplac(?:na\s+udelezba|no|ni|na|ne)/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Free participation for children or selected categories.');
+    }
+
+    if (/druzinski\s+tek/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Family run available.');
+    }
+
+    if (/druzinska\s+stafeta/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Family relay available.');
+    }
+
+    if (/tek\s+z\s+vozicki|vozicki/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Stroller-friendly participation mentioned.');
+    }
+
+    if (/animacija|zabava\s+za\s+otroke|delavnice\s+za\s+otroke/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Children’s programme or activities mentioned.');
+    }
+
+    if (/popust\s+za\s+druzine|druzinske\s+ugodnosti/iu.test(searchableNote)) {
+      addFamilySummarySignal(signals, 'Family discount or family benefit mentioned.');
+    }
+
+    return signals.join(' ');
+  };
+
+  const formatFamilyNoteDisplay = (value: string) => {
+    const sourceNote = getFamilySourceNote(value);
+    if (!sourceNote) return null;
+
+    const summary = summarizeFamilyNoteInEnglish(sourceNote) || 'Family-friendly information is available in the source.';
+    const usefulSourceNote = summary === 'Family-friendly information is available in the source.'
+      ? trimFamilyNote(sourceNote)
+      : '';
+
+    return {
+      summary,
+      sourceNote: usefulSourceNote
+    };
   };
 
   const getFilters = () => ({
@@ -520,7 +507,7 @@ const englishNavItems = [
       event.distances && `<span class="event-chip"><strong>Distances:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
       event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
-    const familyNote = formatFamilyNote(event.publicNotes);
+    const familyNote = formatFamilyNoteDisplay(event.publicNotes);
 
     const calendarOptions = renderCalendarOptions({
       title: event.title,
@@ -531,7 +518,6 @@ const englishNavItems = [
     });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, {
       eventDate: event.date,
-      registrationFeeLabel: 'Lowest known entry fee',
       language: 'en'
     });
     const links = [
@@ -547,7 +533,7 @@ const englishNavItems = [
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
         </div>
         <h3 class="search-event-title">${escapeHtml(formatPublicTitleForDisplay(event.title))}</h3>
-        ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>For families</strong></div><p>${escapeHtml(familyNote)}</p></div>` : ''}
+        ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Family info</strong></div><p>${escapeHtml(familyNote.summary)}</p>${familyNote.sourceNote ? `<details class="family-source-note"><summary>Source note:</summary><p>${escapeHtml(familyNote.sourceNote)}</p></details>` : ''}</div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
