@@ -5,12 +5,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Najbolj glasovani teki" description="Pregled najbolj glasovanih prihajajočih tekaških prireditev.">
   <main>
     <section class="page-hero container" aria-labelledby="top-voted-title">
-      <span class="eyebrow">Najbolj glasovani teki</span>
+      <span class="eyebrow">Glasovanje tekačev</span>
       <h1 id="top-voted-title">Najbolj glasovani prihajajoči teki</h1>
       <p>
         Preverite prihajajoče teke, ki so prejeli največ glasov tekačev. Lestvica je razvrščena po številu glasov.
         Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.
       </p>
+      <p>Podprite tek, ki ga želite izpostaviti v koledarju.</p>
     </section>
 
     <section class="section container" aria-labelledby="top-filters-title">
@@ -86,6 +87,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
+  import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -106,6 +108,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     region: string;
     surface: string;
     distances: string;
+    startTime: string;
     voteLabel: string;
     voteCount: number | null;
     voteUrl: string;
@@ -210,6 +213,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const formatDateBadge = formatSloveneDateBadge;
+
+  const formatPublicTitleForDisplay = getDisplayEventTitle;
 
   const formatSurface = (value: string) => {
     const trimmed = value.trim();
@@ -348,25 +353,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatDistances = formatSloveneDistances;
 
+  const formatStartTime = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    const [hours, minutes] = trimmed.split(':');
+    if (!hours || !minutes) return trimmed;
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+  };
+
   const mapTopEvents = (topRows: ApiRecord[], masterRows: ApiRecord[]) => topRows.map((row, index): TopEvent | null => {
     const voteUrl = safeUrl(pickFirst(row, ['vote_url', 'glasovanje_url', 'url_glasovanje']));
     const voteDetails = parseVoteUrlDetails(voteUrl || pickFirst(row, ['vote_url', 'glasovanje_url', 'url_glasovanje']));
     const match = findSafeMasterMatch(row, masterRows, voteDetails);
-    const title = buildDisplayTitle(row, match, voteDetails);
+    const sourceTitle = buildDisplayTitle(row, match, voteDetails);
+    const title = formatPublicTitleForDisplay(sourceTitle);
     const date = enrichValue(row, match, ['datum', 'date']) || voteDetails.date;
     const dateValue = parseDateValue(date);
     const place = enrichValue(row, match, ['kraj', 'place']);
     const region = enrichValue(row, match, ['regija', 'region']);
     const surface = enrichValue(row, match, ['tip_podlage', 'podlaga', 'surface']);
     const distances = enrichValue(row, match, ['razdalje_km', 'razdalje', 'distances']);
+    const startTime = enrichValue(row, match, ['cas_zacetka', 'start_time', 'startTime']);
     const voteCount = getReliableVoteCount(row);
     const noticeUrl = safeUrl(enrichValue(row, match, ['povezava_razpis', 'razpis_url', 'notice_url']));
     const registrationUrl = safeUrl(enrichValue(row, match, ['povezava_prijava', 'prijava_url', 'registration_url']));
 
-    if (!title || title === 'Naziv teka ni na voljo') return null;
+    if (!sourceTitle || sourceTitle === 'Naziv teka ni na voljo') return null;
 
     return {
-      id: voteDetails.eventId || `${date}-${title}-${index}`,
+      id: voteDetails.eventId || `${date}-${sourceTitle}-${index}`,
       rank: index + 1,
       date,
       dateValue,
@@ -376,12 +391,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       region,
       surface,
       distances,
+      startTime,
       voteLabel: formatVoteLabel(voteCount),
       voteCount,
       voteUrl,
       noticeUrl,
       registrationUrl,
-      searchText: normalize([title, place].filter(Boolean).join(' '))
+      searchText: normalize([sourceTitle, place].filter(Boolean).join(' '))
     };
   }).filter(Boolean) as TopEvent[];
 
@@ -457,7 +473,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     renderOptions(monthSelect, months, 'Vsi meseci', monthLabel);
     renderOptions(regionSelect, regions, 'Vse regije');
-    renderOptions(surfaceSelect, surfaces, 'Vse podlage');
+    renderOptions(surfaceSelect, surfaces, 'Vse podlage', formatSurface);
   };
 
   const renderEmptyState = (title: string, message: string, pill = 'Najbolj glasovani', showClearAction = false) => {
@@ -480,7 +496,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.place && `<span class="event-chip"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
       event.region && `<span class="event-chip"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
       formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
-      event.distances && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`
+      event.distances && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
 
     const calendarOptions = renderCalendarOptions({
@@ -541,7 +558,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
-    setCount(count > visibleCount ? `Prikazanih ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus('Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.');
 
     if (!count) {
