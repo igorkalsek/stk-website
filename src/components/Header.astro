@@ -14,12 +14,11 @@ interface Props {
 
 const defaultNavItems = [
   { href: '/', label: 'Domov' },
-  { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
+  { href: '/iskalnik-tekov/', label: 'Iskalnik' },
   { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni' },
-  { href: '/najbolj-glasovani-teki/', label: 'Glasovani teki' },
-  { href: '/osebni-koledar/', label: 'Osebni koledar' },
-  { href: '/stk-tekobot/', label: 'Tekobot' },
-  { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte/popravite' }
+  { href: '/najbolj-glasovani-teki/', label: 'Glasovani' },
+  { href: '/osebni-koledar/', label: 'Koledar' },
+  { href: '/stk-tekobot/', label: 'Tekobot' }
 ];
 
 const {
@@ -29,8 +28,25 @@ const {
   navLabel = 'Glavna navigacija',
   menuLabel = 'Meni'
 } = Astro.props;
+
+const languagePairs = new Map<string, string>([
+  ['/', '/en/'],
+  ['/iskalnik-tekov/', '/en/find-races/'],
+  ['/druzinam-prijazni-teki/', '/en/family-friendly-races/'],
+  ['/najbolj-glasovani-teki/', '/en/most-voted-races/'],
+  ['/osebni-koledar/', '/en/personal-calendar/'],
+  ['/stk-tekobot/', '/en/stk-tekobot/']
+]);
+
 const normalizePath = (path: string) => (path === '/' ? '/' : `${path.replace(/\/$/, '')}/`);
 const currentPath = normalizePath(Astro.url.pathname);
+const isEnglishPage = currentPath.startsWith('/en/');
+const currentSlovenianPath = isEnglishPage
+  ? [...languagePairs.entries()].find(([, englishPath]) => englishPath === currentPath)?.[0]
+  : currentPath;
+const currentEnglishPath = isEnglishPage ? currentPath : languagePairs.get(currentPath);
+const slovenianHref = currentSlovenianPath && languagePairs.has(currentSlovenianPath) ? currentSlovenianPath : '/';
+const englishHref = currentEnglishPath ?? '/en/';
 ---
 
 <header class="site-header">
@@ -48,6 +64,21 @@ const currentPath = normalizePath(Astro.url.pathname);
           {item.label}
         </a>
       ))}
+      <div class="language-switcher" aria-label={isEnglishPage ? 'Language switcher' : 'Izbira jezika'}>
+        <a
+          class:list={["language-link", { 'is-active': !isEnglishPage }]}
+          href={slovenianHref}
+          aria-label="Switch to Slovenian"
+          aria-current={!isEnglishPage ? 'true' : undefined}
+        >🇸🇮 SL</a>
+        <span class="language-separator" aria-hidden="true">|</span>
+        <a
+          class:list={["language-link", { 'is-active': isEnglishPage }]}
+          href={englishHref}
+          aria-label="Switch to English"
+          aria-current={isEnglishPage ? 'true' : undefined}
+        >🇬🇧 EN</a>
+      </div>
     </nav>
   </div>
 </header>
