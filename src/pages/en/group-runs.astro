@@ -1,0 +1,62 @@
+---
+import GroupRunsSection from '../../components/GroupRunsSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/en/find-races/', label: 'Find' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly' },
+  { href: '/en/group-runs/', label: 'Group runs' },
+  { href: '/en/most-voted-races/', label: 'Most voted' },
+  { href: '/en/personal-calendar/', label: 'Calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' }
+];
+
+const labels = {
+  loading: 'Loading data',
+  search: 'Search',
+  searchPlaceholder: 'Name, town or region',
+  region: 'Region',
+  type: 'Type',
+  participation: 'Participation',
+  allRegions: 'All regions',
+  allTypes: 'All types',
+  allParticipation: 'All options',
+  clearFilters: 'Clear filters',
+  town: 'Town',
+  schedule: 'Schedule',
+  intendedFor: 'Intended for',
+  moreInfo: 'More info',
+  notes: 'Notes',
+  empty: 'No group runs are currently listed. Please try again later or check the STK Facebook page.',
+  noResults: 'No group runs match the selected filters.',
+  error: 'Group runs could not be loaded right now. Please try again later or check the STK Facebook page.'
+};
+---
+
+<BaseLayout
+  title="Group Runs in Slovenia | Run Slovenia Race Calendar"
+  description="Find regular group runs, running communities and guided recreational training sessions in Slovenia."
+  lang="en"
+  canonicalPath="/en/group-runs/"
+  alternateLinks={[
+    { lang: 'sl', href: '/skupinski-teki/' },
+    { lang: 'en', href: '/en/group-runs/' }
+  ]}
+  navItems={englishNavItems}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - English home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+>
+  <main>
+    <section class="page-hero container" aria-labelledby="page-title">
+      <span class="eyebrow">Community</span>
+      <h1 id="page-title">Group runs in Slovenia</h1>
+      <p class="hero-subtitle">Looking for people to run with? This page collects regular group runs, running communities and guided recreational training sessions in Slovenia.</p>
+      <p>STK does not organise these runs. Information is provided for orientation only. Always check the current schedule, meeting point and participation conditions with the organiser.</p>
+    </section>
+
+    <GroupRunsSection lang="en" labels={labels} />
+  </main>
+</BaseLayout>
