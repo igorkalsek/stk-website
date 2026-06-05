@@ -12,14 +12,14 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
         STK dogodke lahko spremljate v svojem osebnem koledarju, da imate tekaške prireditve pri roki ob svojih vsakdanjih načrtih.
       </p>
       <div class="cta-row">
-        <a class="button button-primary" href={GOOGLE_CALENDAR_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">
-          Dodajte v Google koledar
+        <a class="button button-primary" href="#moznosti-koledarja">
+          Dodajte STK v svoj koledar
         </a>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
       </div>
     </section>
 
-    <section class="section container" aria-labelledby="calendar-options-title">
+    <section id="moznosti-koledarja" class="section container" aria-labelledby="calendar-options-title">
       <div class="section-heading">
         <h2 id="calendar-options-title">Izberite svoj koledar</h2>
         <p>Dodajte celoten STK koledar v orodje, ki ga uporabljate za osebne načrte.</p>
@@ -44,9 +44,16 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
         <article class="info-card calendar-option-card">
           <h3>Outlook in drugi koledarji</h3>
           <p>
-            V Outlooku ali drugem koledarju izberite možnost dodajanja koledarja iz spletne povezave in uporabite iCal povezavo.
+            V Outlooku ali drugem koledarju izberite dodajanje koledarja iz spletne povezave in prilepite spodnjo povezavo.
           </p>
-          <code class="calendar-url-block">{ICAL_SUBSCRIPTION_URL}</code>
+          <div class="calendar-copy-block" aria-label="iCal povezava za ročno kopiranje">
+            <span class="calendar-copy-label">Povezava za koledar</span>
+            <code class="calendar-url-block">{ICAL_SUBSCRIPTION_URL}</code>
+          </div>
+          <button class="button button-secondary-light calendar-copy-button" type="button" data-copy-ical={ICAL_SUBSCRIPTION_URL}>
+            Kopirajte iCal povezavo
+          </button>
+          <span class="calendar-copy-status" data-copy-status aria-live="polite"></span>
         </article>
       </div>
       <p class="data-note calendar-note">Koledar je informativen. Pred prijavo vedno preverite uradni razpis organizatorja.</p>
@@ -81,4 +88,25 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
       </div>
     </section>
   </main>
+
+  <script>
+    const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-ical]');
+    const copyStatus = document.querySelector<HTMLElement>('[data-copy-status]');
+
+    copyButton?.addEventListener('click', async () => {
+      const icalUrl = copyButton.dataset.copyIcal;
+
+      if (!icalUrl || !navigator.clipboard) {
+        copyStatus && (copyStatus.textContent = 'Povezavo lahko označite in kopirate ročno.');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(icalUrl);
+        copyStatus && (copyStatus.textContent = 'Povezava je kopirana.');
+      } catch {
+        copyStatus && (copyStatus.textContent = 'Povezavo lahko označite in kopirate ročno.');
+      }
+    });
+  </script>
 </BaseLayout>
