@@ -142,12 +142,12 @@ const { lang, labels } = Astro.props;
   const exactEnglishMaps = {
     tip: new Map([
       ['skupinski tek', 'Group run'],
-      ['trail runda', 'Trail run'],
-      ['odprt trening', 'Open training']
+      ['trail runda', 'Trail group run'],
+      ['odprt trening', 'Open training session']
     ]),
     udelezba: new Map([
       ['Brezplačno', 'Free'],
-      ['Ni jasno', 'Not clear'],
+      ['Ni jasno', 'Check with organiser'],
       ['Plačljivo / članarina / vadnina', 'Paid / membership / training fee']
     ]),
     namenjeno: new Map([
@@ -155,6 +155,80 @@ const { lang, labels } = Astro.props;
       ['rekreativci', 'Recreational runners'],
       ['hitrejši tempo', 'Faster pace']
     ])
+  };
+
+  const schedulePhraseMap = new Map([
+    ['aktualen termin preverite na povezavi', 'check the current schedule at the link'],
+    ['aktualni mesečni razpored objavi klub', 'the club publishes the current monthly schedule'],
+    ['aktualen termin objavi organizator', 'the organiser publishes the current schedule'],
+    ['točen urnik preveri pri organizatorju', 'check the exact schedule with the organiser'],
+    ['po dogovoru', 'by arrangement'],
+    ['ura se prilagodi letnemu času', 'time may vary by season'],
+    ['zimske runde', 'winter runs'],
+    ['socialni tek', 'social run'],
+    ['skupinski tek', 'group run']
+  ]);
+
+  const scheduleTermMap = new Map([
+    ['ponedeljek', 'Monday'],
+    ['torek', 'Tuesday'],
+    ['sreda', 'Wednesday'],
+    ['četrtek', 'Thursday'],
+    ['petek', 'Friday'],
+    ['sobota', 'Saturday'],
+    ['nedelja', 'Sunday'],
+    ['pon', 'Mon'],
+    ['tor', 'Tue'],
+    ['sre', 'Wed'],
+    ['čet', 'Thu'],
+    ['pet', 'Fri'],
+    ['sob', 'Sat'],
+    ['ned', 'Sun'],
+    ['vsak', 'every'],
+    ['vsako', 'every'],
+    ['tedenski', 'weekly'],
+    ['mesečni', 'monthly'],
+    ['ob', 'at'],
+    ['sezonsko', 'seasonal'],
+    ['začetku', 'beginning'],
+    ['počasnejša', 'slower group'],
+    ['hitrejša', 'faster group']
+  ]);
+
+  const replaceSafeScheduleText = (text, replacements) => {
+    let translated = text;
+
+    for (const [source, replacement] of replacements) {
+      translated = translated.replace(source, replacement);
+    }
+
+    return translated;
+  };
+
+  const displaySchedule = (value) => {
+    if (pageLang !== 'en' || !value) return value;
+
+    const urlPattern = /(https?:\/\/\S+)/iu;
+    return value
+      .split(urlPattern)
+      .map((part) => {
+        if (urlPattern.test(part)) return part;
+
+        const phraseReplacements = [...schedulePhraseMap].map(([source, replacement]) => [
+          new RegExp(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'giu'),
+          replacement
+        ]);
+        const termReplacements = [...scheduleTermMap].map(([source, replacement]) => [
+          new RegExp(`(?<!\\p{L})${source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.?(?!\\p{L})`, 'giu'),
+          replacement
+        ]);
+
+        return replaceSafeScheduleText(
+          replaceSafeScheduleText(part, phraseReplacements),
+          termReplacements
+        );
+      })
+      .join('');
   };
 
   const displayValue = (field, value) => {
@@ -165,9 +239,10 @@ const { lang, labels } = Astro.props;
     if (field !== 'namenjeno') return value;
 
     return value
-      .split(/(\s*[,/;]\s*)/u)
-      .map((part) => exactEnglishMaps.namenjeno.get(part.trim()) ?? part)
-      .join('');
+      .split(/\s*[,/;]\s*/u)
+      .map((part) => exactEnglishMaps.namenjeno.get(part.trim()) ?? part.trim())
+      .filter(Boolean)
+      .join('; ');
   };
 
   const mapRun = (item, index) => {
@@ -221,7 +296,7 @@ const { lang, labels } = Astro.props;
     const details = [
       detail(labels.town, run.kraj),
       detail(labels.region, run.regija),
-      detail(labels.schedule, run.termin),
+      detail(labels.schedule, displaySchedule(run.termin)),
       detail(labels.type, displayValue('tip', run.tip)),
       detail(labels.intendedFor, displayValue('namenjeno', run.namenjeno)),
       detail(labels.participation, displayValue('udelezba', run.udelezba))
