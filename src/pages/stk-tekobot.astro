@@ -8,6 +8,7 @@ const questionExamples = [
   'Prikažite družinam prijazne teke v naslednjih 30 dneh.',
   'Kateri trail teki so v Gorenjski?',
   'Kateri teki imajo objavljene prijavnine?',
+  'Kateri teki v naslednjih 30 dneh imajo objavljene prijavnine?',
   'Poiščite cenovno ugodne teke v naslednjem mesecu.',
 ];
 
@@ -33,6 +34,34 @@ const capabilities = [
       <div class="cta-row">
         <a class="button button-primary" href={tekobotUrl} target="_blank" rel="noopener noreferrer">Odprite STK Tekobot</a>
         <a class="button button-secondary tekobot-secondary" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
+      </div>
+
+      <div class="tekobot-onboarding" aria-label="Navodila za uporabo STK Tekobota">
+        <article class="onboarding-card">
+          <h2>Za uporabo Tekobota</h2>
+          <p>
+            Za pogovor s STK Tekobotom potrebujete prijavo v ChatGPT. Če računa še nimate, vas bo
+            ChatGPT ob odpiranju Tekobota vodil skozi prijavo ali ustvarjanje računa.
+          </p>
+        </article>
+
+        <article class="onboarding-card">
+          <h2>Shranite si Tekobota za kasneje</h2>
+          <p>
+            Ko Tekobota prvič odprete, si lahko pogovor pripnete v ChatGPT, da ga kasneje hitreje
+            najdete.
+          </p>
+          <ul>
+            <li>
+              <strong>Na računalniku:</strong> v levi stranski vrstici ChatGPT premaknite miško na
+              pogovor, kliknite ⋯ in izberite “Pin chat”.
+            </li>
+            <li>
+              <strong>Na telefonu:</strong> v aplikaciji ChatGPT pridržite pogovor s Tekobotom in
+              izberite “Pin chat”.
+            </li>
+          </ul>
+        </article>
       </div>
     </section>
 
@@ -94,6 +123,51 @@ const capabilities = [
     background: var(--white);
     color: var(--deep-teal);
     box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
+  }
+
+  .tekobot-onboarding {
+    display: grid;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .onboarding-card {
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 18px;
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.06);
+  }
+
+  .onboarding-card h2,
+  .onboarding-card p,
+  .onboarding-card ul {
+    margin: 0;
+  }
+
+  .onboarding-card h2 {
+    color: var(--deep-teal);
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+  }
+
+  .onboarding-card p {
+    margin-top: 8px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .onboarding-card ul {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+    padding-left: 20px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .onboarding-card strong {
+    color: var(--deep-teal);
   }
 
   .question-list {
