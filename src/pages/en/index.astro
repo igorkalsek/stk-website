@@ -3,17 +3,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const englishNavItems = [
   { href: '/en/', label: 'Home' },
-  { href: '/iskalnik-tekov/', label: 'Find races' },
-  { href: '/druzinam-prijazni-teki/', label: 'Family-friendly races' },
-  { href: '/najbolj-glasovani-teki/', label: 'Most voted races' },
-  { href: '/osebni-koledar/', label: 'Personal calendar' },
-  { href: '/stk-tekobot/', label: 'STK Tekobot' },
+  { href: '/en/find-races/', label: 'Find races' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly races' },
+  { href: '/en/most-voted-races/', label: 'Most voted races' },
+  { href: '/en/personal-calendar/', label: 'Personal calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
   { href: '/', label: 'Slovenščina' }
 ];
 ---
 
 <BaseLayout
-  title="Run Slovenia: Race Calendar"
+  title="Run Slovenia: Race Calendar | Slovenski Tekaški Koledar"
   description="Find running events in Slovenia, including road races, trail runs, mountain runs, family-friendly races and local running events."
   lang="en"
   canonicalPath="/en/"
@@ -39,13 +39,13 @@ const englishNavItems = [
           </p>
           <div class="hero-actions" aria-label="Main links">
             <div class="cta-row cta-primary-row">
-              <a class="button button-primary" href="/iskalnik-tekov/">Find a race</a>
-              <a class="button button-primary" href="/osebni-koledar/">Add races to your calendar</a>
+              <a class="button button-primary" href="/en/find-races/">Find a race</a>
+              <a class="button button-primary" href="/en/personal-calendar/">Add races to your calendar</a>
             </div>
             <nav class="hero-secondary-links" aria-label="Additional links">
-              <a href="/druzinam-prijazni-teki/">Family-friendly races</a>
-              <a href="/najbolj-glasovani-teki/">Most voted races</a>
-              <a href="/stk-tekobot/">Ask STK Tekobot</a>
+              <a href="/en/family-friendly-races/">Family-friendly races</a>
+              <a href="/en/most-voted-races/">Most voted races</a>
+              <a href="/en/stk-tekobot/">Ask STK Tekobot</a>
             </nav>
           </div>
         </div>
@@ -71,7 +71,7 @@ const englishNavItems = [
           <h2 id="nearest-title">This week’s races</h2>
           <p>Upcoming confirmed races from the Slovenian Race Calendar.</p>
         </div>
-        <a class="button button-secondary-light" href="/iskalnik-tekov/">View all races</a>
+        <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
       </div>
       <div class="card-grid card-grid-three" data-nearest-events>
         <article class="event-card">
@@ -82,7 +82,7 @@ const englishNavItems = [
           </div>
         </article>
       </div>
-      <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/iskalnik-tekov/">race search</a>.</p>
+      <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/en/find-races/">race search</a>.</p>
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
@@ -91,7 +91,7 @@ const englishNavItems = [
           <h2 id="voted-title">Most voted upcoming races</h2>
           <p>A compact ranking of upcoming races that received the most runner votes.</p>
         </div>
-        <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">View full ranking</a>
+        <a class="button button-secondary-light" href="/en/most-voted-races/">View full ranking</a>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
@@ -113,7 +113,7 @@ const englishNavItems = [
           <p>The calendar brings together confirmed running events across Slovenia, including links to official announcements, registration pages and personal calendar options. Before registering, always check the official race announcement or the organiser’s website.</p>
           <p class="tekobot-note">STK Tekobot helps you find races using natural-language questions.</p>
         </div>
-        <a class="button button-secondary-light" href="/stk-tekobot/">Ask STK Tekobot</a>
+        <a class="button button-secondary-light" href="/en/stk-tekobot/">Ask STK Tekobot</a>
       </article>
     </section>
 
@@ -124,7 +124,7 @@ const englishNavItems = [
           <h2 id="calendar-cta-title">Add races to your personal calendar</h2>
           <p>You can follow STK races in your personal calendar and see them next to your other plans.</p>
         </div>
-        <a class="button button-secondary-light" href="/osebni-koledar/">Personal calendar instructions</a>
+        <a class="button button-secondary-light" href="/en/personal-calendar/">Personal calendar instructions</a>
       </article>
     </section>
 
@@ -716,7 +716,7 @@ const englishNavItems = [
             <h3>No upcoming races are shown right now</h3>
             <p>Open the race search for a wider calendar overview.</p>
             <div class="event-meta">
-              <a class="pill" href="/iskalnik-tekov/">View all races</a>
+              <a class="pill" href="/en/find-races/">View all races</a>
             </div>
           </article>
         `;
