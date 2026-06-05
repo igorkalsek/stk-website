@@ -87,6 +87,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
@@ -95,6 +96,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
     id: string;
+    row: string;
     date: string;
     dateValue: number;
     month: string;
@@ -109,6 +111,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     voteUrl: string;
     publicNotes: string;
     searchText: string;
+    additionalData?: AdditionalEventData | null;
   };
 
   const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
@@ -421,8 +424,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!date || Number.isNaN(dateValue) || !title) return null;
 
+    const row = pick(item, 'row');
+
     return {
-      id: pick(item, 'row') || `${date}-${title}-${place}`,
+      id: row || `${date}-${title}-${place}`,
+      row,
       date,
       dateValue,
       month: date.slice(5, 7),
@@ -520,6 +526,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
@@ -535,6 +542,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h3 class="search-event-title">${escapeHtml(formatPublicTitleForDisplay(event.title))}</h3>
         ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Za družine</strong></div><p>${escapeHtml(familyNote)}</p></div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
@@ -596,6 +604,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       const payload = await response.json();
       let events = getFamilyEvents(toArray(payload));
+
+      try {
+        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+      } catch (error) {
+        console.warn('Družinam prijazni teki additional data skipped', error);
+      }
 
       try {
         const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
