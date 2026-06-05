@@ -929,9 +929,10 @@ main {
   accent-color: var(--deep-teal);
 }
 
-.checkbox-filter-group {
+.filter-card,
+.advanced-filters {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   margin: 0;
   border: 1px solid rgba(16, 64, 80, 0.1);
   border-radius: 16px;
@@ -939,8 +940,8 @@ main {
   padding: 10px 12px 12px;
 }
 
-.checkbox-filter-group legend {
-  padding: 0 4px;
+.filter-card legend,
+.advanced-filters summary {
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 800;
@@ -948,7 +949,31 @@ main {
   text-transform: uppercase;
 }
 
-.checkbox-filter-group .checkbox-field {
+.filter-card legend {
+  padding: 0 4px;
+}
+
+.filter-card-price,
+.advanced-filters {
+  grid-column: 1 / -1;
+}
+
+.filter-card-grid,
+.advanced-filters-content {
+  display: grid;
+  gap: 12px;
+}
+
+.advanced-filters summary {
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.advanced-filters-content {
+  padding-top: 4px;
+}
+
+.advanced-filters .checkbox-field {
   min-height: 32px;
 }
 
@@ -1081,6 +1106,16 @@ main {
   }
 
   .field-wide {
+    grid-column: span 2;
+  }
+
+  .filter-card-grid,
+  .advanced-filters-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  .advanced-elevation-field {
     grid-column: span 2;
   }
 
