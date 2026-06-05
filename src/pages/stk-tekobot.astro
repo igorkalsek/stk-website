@@ -35,6 +35,10 @@ const capabilities = [
         <a class="button button-primary" href={tekobotUrl} target="_blank" rel="noopener noreferrer">Odprite STK Tekobot</a>
         <a class="button button-secondary tekobot-secondary" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
       </div>
+      <p class="tekobot-privacy-note">
+        Pred uporabo Tekobota ne vpisujte občutljivih osebnih podatkov. Več:
+        <a href="/o-projektu-in-zasebnost/">O projektu in zasebnost</a>.
+      </p>
 
       <div class="tekobot-onboarding" aria-label="Navodila za uporabo STK Tekobota">
         <article class="onboarding-card">
@@ -123,6 +127,20 @@ const capabilities = [
     background: var(--white);
     color: var(--deep-teal);
     box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16);
+  }
+
+  .tekobot-privacy-note {
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .tekobot-privacy-note a {
+    color: var(--deep-teal);
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .tekobot-onboarding {
