@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FacebookIcon from '../components/FacebookIcon.astro';
 ---
 
 <BaseLayout>
@@ -118,6 +119,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p>Zadnje spremembe bodo prikazane tukaj, ko bodo na voljo.</p>
         </article>
       </div>
+    </section>
+
+    <section class="section container facebook-cta-section" aria-labelledby="facebook-cta-title">
+      <article class="info-card facebook-cta-card">
+        <div>
+          <h2 id="facebook-cta-title">Spremljajte STK na Facebooku</h2>
+          <p>Za tedenske objave “Ta teden tečemo”, nove teke, popravke in glasovanja spremljajte Slovenski Tekaški Koledar tudi na Facebooku.</p>
+        </div>
+        <a class="button button-secondary-light" href="https://www.facebook.com/SlovenskiTekaskiKoledar" target="_blank" rel="noopener noreferrer">
+          <FacebookIcon />
+          <span>Sledite na Facebooku</span>
+        </a>
+      </article>
     </section>
 
   </main>

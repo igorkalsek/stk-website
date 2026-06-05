@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FacebookIcon from '../../components/FacebookIcon.astro';
 
 const englishNavItems = [
   { href: '/en/', label: 'Home' },
@@ -140,6 +141,19 @@ const englishNavItems = [
           <p>Latest changes will appear here when available.</p>
         </article>
       </div>
+    </section>
+
+    <section class="section container facebook-cta-section" aria-labelledby="facebook-cta-title">
+      <article class="info-card facebook-cta-card">
+        <div>
+          <h2 id="facebook-cta-title">Follow STK on Facebook</h2>
+          <p>For weekly race highlights, new events, updates and runner voting, follow Slovenski Tekaški Koledar on Facebook.</p>
+        </div>
+        <a class="button button-secondary-light" href="https://www.facebook.com/SlovenskiTekaskiKoledar" target="_blank" rel="noopener noreferrer">
+          <FacebookIcon />
+          <span>Follow on Facebook</span>
+        </a>
+      </article>
     </section>
 
   </main>
