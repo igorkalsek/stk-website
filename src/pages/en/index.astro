@@ -633,6 +633,18 @@ const englishNavItems = [
 
   const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
 
+  const normalizeDescription = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC').replace(/\s+/g, ' ').trim();
+
+  const RECENT_UPDATE_DESCRIPTIONS: Record<string, string> = {
+    [normalizeDescription('Dodan otroški Tek Štrkcev 0.5 km, popravljena družinska opomba in dodana prijavna/informacijska povezava.')]:
+      'Children’s race, family-friendly note and information/registration links were updated.'
+  };
+
+  const getRecentUpdateDescription = (value: string) => {
+    if (!value) return '';
+    return RECENT_UPDATE_DESCRIPTIONS[normalizeDescription(value)] ?? 'Calendar details for this race were updated.';
+  };
+
   const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
 
   const safeUrl = (value: string) => {
@@ -922,7 +934,7 @@ const englishNavItems = [
         const updateDateMeta = recentUpdateDate
           ? joinParts([`Updated ${recentUpdateDate}`, eventDate ? `event ${eventDate}` : ''])
           : eventDate;
-        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const changed = getRecentUpdateDescription(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
         const place = joinParts([location, region && region !== location ? region : '']);
