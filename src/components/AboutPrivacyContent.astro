@@ -1,0 +1,123 @@
+---
+const sections = [
+  {
+    heading: 'O projektu',
+    paragraphs: [
+      'Slovenski Tekaški Koledar je neodvisen pregled rekreativnih tekaških prireditev, skupinskih tekov in tekaških informacij po Sloveniji.',
+      'Namen projekta je tekačem olajšati iskanje tekov, razpisov, prijav, družinam prijaznih dogodkov, skupinskih tekov in drugih uporabnih informacij.',
+      'STK ni organizator navedenih dogodkov. Podatki so informativni; pred prijavo ali udeležbo vedno preverite uradni razpis, prijavni portal ali stran organizatorja.',
+    ],
+  },
+  {
+    heading: 'Kdo ureja STK',
+    paragraphs: [
+      'Projekt ureja Igor Kalšek, rekreativni tekač in ljubitelj vzdržljivostnih športov, ki STK razvija kot neodvisen skupnostni projekt.',
+      'Podatke zbira iz javno dostopnih virov, uradnih razpisov, prijavnih portalov, spletnih strani organizatorjev, javnih objav in predlogov tekaške skupnosti.',
+    ],
+  },
+  {
+    heading: 'STK Tekobot',
+    paragraphs: [
+      'STK Tekobot je pomočnik na osnovi ChatGPT, ki odgovarja na vprašanja o podatkih iz Slovenskega Tekaškega Koledarja.',
+      'Namenjen je lažjemu iskanju tekov, razdalj, prijav, družinam prijaznih dogodkov, skupinskih tekov in dodatnih informacij.',
+      'Odgovori so informativni in lahko vsebujejo napake. Pred prijavo ali odhodom na dogodek vedno preverite uradni vir organizatorja.',
+    ],
+  },
+  {
+    heading: 'Zasebnost pri uporabi STK Tekobota',
+    paragraphs: [
+      'STK Tekobot deluje znotraj platforme ChatGPT. Ko uporabljate Tekobota, se vaša vprašanja in odgovori obdelujejo v okolju ChatGPT/OpenAI.',
+      'V Tekobot ne vpisujte občutljivih osebnih podatkov, zdravstvenih informacij, finančnih podatkov, gesel ali drugih zaupnih vsebin.',
+      'STK Tekobot za odgovore uporablja javno dostopne podatke STK in ni namenjen obdelavi osebnih podatkov uporabnikov.',
+      'Za spremljanje delovanja in izboljševanje Tekobota se lahko beležijo osnovni tehnični zapisi uporabe, na primer čas uporabe, uporabljeni endpoint ali splošen tip poizvedbe. Namen beleženja je odpravljanje napak in izboljševanje uporabnosti.',
+    ],
+  },
+  {
+    heading: 'Obrazci, e-pošta in analitika',
+    paragraphs: [
+      'Če pošljete predlog, popravek ali sporočilo prek obrazca ali e-pošte, se poslani podatki uporabijo za urejanje koledarja, preverjanje informacij ali odgovor na sporočilo.',
+      'V obrazce ne pošiljajte občutljivih osebnih podatkov.',
+      'Spletna stran lahko uporablja osnovno analitiko obiska za razumevanje uporabe strani, izboljševanje vsebine in spremljanje klikov na pomembne povezave.',
+    ],
+  },
+];
+---
+
+<main>
+  <section class="container page-hero about-privacy-hero" aria-labelledby="about-privacy-title">
+    <span class="eyebrow">STK</span>
+    <h1 id="about-privacy-title">O projektu in zasebnost</h1>
+    <p>
+      Kratek opis projekta Slovenski Tekaški Koledar, uporabe STK Tekobota, virov podatkov in
+      osnovnih informacij o zasebnosti.
+    </p>
+  </section>
+
+  <section class="container about-privacy-content" aria-label="O projektu in zasebnosti">
+    {sections.map((section) => (
+      <article class="about-privacy-section">
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </article>
+    ))}
+
+    <article class="about-privacy-section contact-section">
+      <h2>Kontakt</h2>
+      <p>Za vprašanja o projektu, popravke podatkov ali vprašanja glede zasebnosti lahko pišete na:</p>
+      <p><a href="mailto:tekaski.koledar@gmail.com">tekaski.koledar@gmail.com</a></p>
+      <p>Zahtevate lahko popravek ali izbris podatkov, ki ste jih sami poslali prek obrazca ali e-pošte.</p>
+    </article>
+  </section>
+</main>
+
+<style>
+  .about-privacy-hero {
+    max-width: 900px;
+  }
+
+  .about-privacy-content {
+    display: grid;
+    gap: 16px;
+    max-width: 900px;
+  }
+
+  .about-privacy-section {
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.86);
+    padding: clamp(18px, 4vw, 26px);
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.06);
+  }
+
+  .about-privacy-section h2,
+  .about-privacy-section p {
+    margin: 0;
+  }
+
+  .about-privacy-section h2 {
+    color: var(--deep-teal);
+    font-size: clamp(1.35rem, 4vw, 2rem);
+    letter-spacing: -0.035em;
+  }
+
+  .about-privacy-section p {
+    margin-top: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .about-privacy-section a {
+    color: var(--deep-teal);
+    font-weight: 850;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .contact-section {
+    background:
+      linear-gradient(135deg, rgba(200, 230, 201, 0.52), rgba(255, 255, 255, 0.9)),
+      var(--white);
+  }
+</style>
