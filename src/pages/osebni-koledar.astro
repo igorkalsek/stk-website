@@ -12,16 +12,16 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
         STK dogodke lahko spremljate v svojem osebnem koledarju, da imate tekaške prireditve pri roki ob svojih vsakdanjih načrtih.
       </p>
       <div class="cta-row">
-        <a class="button button-primary" href="#moznosti-koledarja">
+        <a class="button button-primary" href="#izberite-koledar">
           Dodajte STK v svoj koledar
         </a>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Odprite iskalnik tekov</a>
       </div>
     </section>
 
-    <section id="moznosti-koledarja" class="section container" aria-labelledby="calendar-options-title">
+    <section class="section container" aria-labelledby="izberite-koledar">
       <div class="section-heading">
-        <h2 id="calendar-options-title">Izberite svoj koledar</h2>
+        <h2 id="izberite-koledar">Izberite svoj koledar</h2>
         <p>Dodajte celoten STK koledar v orodje, ki ga uporabljate za osebne načrte.</p>
       </div>
       <div class="card-grid card-grid-three calendar-option-grid">
@@ -82,7 +82,7 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
         <article class="info-card">
           <h3>Posamezni teki</h3>
           <p>
-            Na karticah dogodkov lahko dodate tudi samo izbran tek v svoj Google koledar.
+            Na karticah dogodkov lahko dodate tudi samo izbran tek v svoj koledar.
           </p>
         </article>
       </div>
@@ -103,7 +103,7 @@ import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRI
 
       try {
         await navigator.clipboard.writeText(icalUrl);
-        copyStatus && (copyStatus.textContent = 'Povezava je kopirana.');
+        copyStatus && (copyStatus.textContent = 'Kopirano.');
       } catch {
         copyStatus && (copyStatus.textContent = 'Povezavo lahko označite in kopirate ročno.');
       }
