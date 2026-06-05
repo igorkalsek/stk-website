@@ -6,7 +6,7 @@ const navItems = [
   { href: '/najbolj-glasovani-teki/', label: 'Glasovani teki' },
   { href: '/osebni-koledar/', label: 'Osebni koledar' },
   { href: '/stk-tekobot/', label: 'Tekobot' },
-  { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte/popravi' }
+  { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte/popravite' }
 ];
 const normalizePath = (path: string) => (path === '/' ? '/' : `${path.replace(/\/$/, '')}/`);
 const currentPath = normalizePath(Astro.url.pathname);
