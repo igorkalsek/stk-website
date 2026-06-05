@@ -551,6 +551,26 @@ main {
   margin-top: 4px;
 }
 
+.hero-subtitle {
+  color: var(--deep-teal);
+  font-size: clamp(1.18rem, 3vw, 1.45rem);
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.hero-secondary-link {
+  width: fit-content;
+  color: var(--deep-teal);
+  font-weight: 850;
+  text-decoration-color: rgba(16, 64, 80, 0.34);
+  text-underline-offset: 4px;
+}
+
+.hero-secondary-link:hover,
+.hero-secondary-link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .eyebrow-light {
   background: rgba(200, 230, 201, 0.68);
   color: var(--deep-teal);
@@ -907,6 +927,30 @@ main {
   background: rgba(240, 160, 48, 0.2);
   color: #704406;
   padding: 7px 10px;
+}
+
+
+.family-note-row {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 16px;
+  background: rgba(16, 64, 80, 0.045);
+  color: var(--muted);
+  padding: 12px 14px;
+}
+
+.family-note-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--deep-teal);
+  font-weight: 900;
+}
+
+.family-note-row p {
+  margin: 0;
+  line-height: 1.55;
 }
 
 .event-details {
