@@ -168,6 +168,43 @@ button {
   box-shadow: inset 3px 0 0 var(--orange);
 }
 
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(16, 64, 80, 0.1);
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 12px 10px 4px;
+  white-space: nowrap;
+}
+
+.site-nav .language-link {
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: inherit;
+  line-height: 1;
+  padding: 8px 9px;
+}
+
+.site-nav .language-link:hover {
+  background: rgba(16, 64, 80, 0.06);
+  color: var(--deep-teal);
+}
+
+.site-nav .language-link.is-active {
+  background: rgba(16, 64, 80, 0.08);
+  color: var(--deep-teal);
+  box-shadow: none;
+}
+
+.language-separator {
+  color: rgba(16, 64, 80, 0.34);
+}
+
 main {
   padding: 28px 0 64px;
 }
@@ -775,6 +812,18 @@ main {
 
   .site-nav a[aria-current="page"] {
     box-shadow: inset 0 -2px 0 var(--orange);
+  }
+
+  .language-switcher {
+    margin-top: 0;
+    margin-left: 2px;
+    border-top: 0;
+    border-left: 1px solid rgba(16, 64, 80, 0.12);
+    padding: 0 0 0 12px;
+  }
+
+  .site-nav .language-link {
+    padding: 8px 7px;
   }
 
   .calendar-cta-card,
