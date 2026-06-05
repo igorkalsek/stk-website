@@ -3,18 +3,44 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface AlternateLink {
+  lang: string;
+  href: string;
+}
+
 interface Props {
   title?: string;
   description?: string;
   lang?: string;
+  canonicalPath?: string;
+  alternateLinks?: AlternateLink[];
+  navItems?: NavItem[];
+  brandHref?: string;
+  brandLabel?: string;
+  navLabel?: string;
+  menuLabel?: string;
 }
 
 const {
   title = 'Slovenski Tekaški Koledar',
   description = 'Neodvisen koledar tekaških prireditev po Sloveniji.',
-  lang = 'sl'
+  lang = 'sl',
+  canonicalPath,
+  alternateLinks = [],
+  navItems,
+  brandHref,
+  brandLabel,
+  navLabel,
+  menuLabel
 } = Astro.props;
 const pageTitle = title === 'Slovenski Tekaški Koledar' ? title : `${title} | Slovenski Tekaški Koledar`;
+const canonicalUrl = canonicalPath ? new URL(canonicalPath, Astro.site).href : Astro.url.href;
+const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
 ---
 
 <!doctype html>
@@ -26,11 +52,21 @@ const pageTitle = title === 'Slovenski Tekaški Koledar' ? title : `${title} | S
     <meta name="theme-color" content="#104050" />
     <link rel="icon" type="image/jpeg" href="/stk-logo.jpeg" />
     <link rel="shortcut icon" type="image/jpeg" href="/stk-logo.jpeg" />
+    <link rel="canonical" href={canonicalUrl} />
+    {alternateLinks.map((link) => (
+      <link rel="alternate" hreflang={link.lang} href={new URL(link.href, Astro.site).href} />
+    ))}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Slovenski Tekaški Koledar" />
+    <meta property="og:locale" content={openGraphLocale} />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <Header />
+    <Header navItems={navItems} brandHref={brandHref} brandLabel={brandLabel} navLabel={navLabel} menuLabel={menuLabel} />
     <slot />
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

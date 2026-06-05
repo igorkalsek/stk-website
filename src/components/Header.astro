@@ -1,5 +1,18 @@
 ---
-const navItems = [
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  navItems?: NavItem[];
+  brandHref?: string;
+  brandLabel?: string;
+  navLabel?: string;
+  menuLabel?: string;
+}
+
+const defaultNavItems = [
   { href: '/', label: 'Domov' },
   { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
   { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni' },
@@ -8,22 +21,30 @@ const navItems = [
   { href: '/stk-tekobot/', label: 'Tekobot' },
   { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte/popravite' }
 ];
+
+const {
+  navItems = defaultNavItems,
+  brandHref = '/',
+  brandLabel = 'Slovenski Tekaški Koledar - domov',
+  navLabel = 'Glavna navigacija',
+  menuLabel = 'Meni'
+} = Astro.props;
 const normalizePath = (path: string) => (path === '/' ? '/' : `${path.replace(/\/$/, '')}/`);
 const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label="Slovenski Tekaški Koledar - domov">
+    <a class="brand" href={brandHref} aria-label={brandLabel}>
       <img class="brand-logo" src="/stk-logo.jpeg" alt="Slovenski Tekaški Koledar" />
       <span class="brand-name">Slovenski Tekaški Koledar</span>
     </a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
-      Meni
+      {menuLabel}
     </button>
-    <nav id="site-navigation" class="site-nav" data-open="false" aria-label="Glavna navigacija">
+    <nav id="site-navigation" class="site-nav" data-open="false" aria-label={navLabel}>
       {navItems.map((item) => (
-        <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>
+        <a href={item.href} aria-current={currentPath === normalizePath(item.href) ? 'page' : undefined}>
           {item.label}
         </a>
       ))}
