@@ -226,17 +226,17 @@ const parseMoney = (value: string) => {
 const formatMoney = (value: number) =>
   new Intl.NumberFormat('sl-SI', { maximumFractionDigits: 2 }).format(value);
 
-const formatRegistrationFee = (additionalData: AdditionalEventData) => {
+const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Prijavnina') => {
   const min = parseMoney(additionalData.registrationMinEur);
   const max = parseMoney(additionalData.registrationMaxEur);
 
   if (min !== null && max !== null) {
-    if (min === max) return `Prijavnina: ${formatMoney(min)} €`;
-    return `Prijavnina: ${formatMoney(min)}–${formatMoney(max)} €`;
+    if (min === max) return `${label}: ${formatMoney(min)} €`;
+    return `${label}: ${formatMoney(min)}–${formatMoney(max)} €`;
   }
 
-  if (min !== null) return `Prijavnina: od ${formatMoney(min)} €`;
-  if (max !== null) return `Prijavnina: do ${formatMoney(max)} €`;
+  if (min !== null) return `${label}: od ${formatMoney(min)} €`;
+  if (max !== null) return `${label}: do ${formatMoney(max)} €`;
   return '';
 };
 
@@ -320,12 +320,20 @@ export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData
   );
 };
 
+type AdditionalDataRenderOptions = {
+  eventDate?: string;
+  registrationFeeLabel?: string;
+};
+
 export const renderAdditionalDataBlock = (
   additionalData: AdditionalEventData | null | undefined,
   escapeHtml: (value: string | number) => string,
-  eventDate = ''
+  options: string | AdditionalDataRenderOptions = ''
 ) => {
   if (!additionalData) return '';
+
+  const eventDate = typeof options === 'string' ? options : options.eventDate ?? '';
+  const registrationFeeLabel = typeof options === 'string' ? 'Prijavnina' : options.registrationFeeLabel ?? 'Prijavnina';
 
   const registrationDeadline = isTodayOrFutureIsoDate(additionalData.registrationDeadline)
     ? formatSlovenianIsoDate(additionalData.registrationDeadline)
@@ -338,7 +346,7 @@ export const renderAdditionalDataBlock = (
     !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
   );
   const textItems = [
-    formatRegistrationFee(additionalData),
+    formatRegistrationFee(additionalData, registrationFeeLabel),
     showRegistrationDeadline && `Rok prijave: ${registrationDeadline}`,
     earlyRegistrationDeadline && `Cenejša prijava do: ${earlyRegistrationDeadline}`,
     formatDayOfRegistration(additionalData.dayOfRegistration),

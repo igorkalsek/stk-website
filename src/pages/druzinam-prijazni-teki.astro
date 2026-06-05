@@ -21,6 +21,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div>
             <h2 id="family-filters-title">Filtri</h2>
             <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
+            <p class="additional-data-note">Za iskanje po prijavnini, prijavah na dan ali višinskih metrih uporabite <a href="/iskalnik-tekov/">napredni iskalnik</a>.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -526,7 +527,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
-    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml);
+    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, {
+      eventDate: event.date,
+      registrationFeeLabel: 'Najnižja znana prijavnina'
+    });
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
