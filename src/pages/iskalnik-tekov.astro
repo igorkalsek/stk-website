@@ -56,45 +56,63 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </select>
           </label>
 
-          <label class="field">
-            <span>Prijavnina</span>
-            <select name="registrationFee" data-filter="registration-fee">
-              <option value="">Vse prijavnine</option>
-              <option value="free-option">Ima brezplačno možnost</option>
-              <option value="10">Do 10 €</option>
-              <option value="20">Do 20 €</option>
-              <option value="30">Do 30 €</option>
-              <option value="50">Do 50 €</option>
-            </select>
-            <small>Filter upošteva najnižjo znano prijavnino.</small>
-          </label>
+          <fieldset class="filter-card filter-card-price">
+            <legend>Prijavnina in razvrščanje</legend>
+            <div class="filter-card-grid">
+              <label class="field">
+                <span>Prijavnina</span>
+                <select name="registrationFee" data-filter="registration-fee">
+                  <option value="">Vse prijavnine</option>
+                  <option value="free-option">Ima brezplačno možnost</option>
+                  <option value="10">Do 10 €</option>
+                  <option value="20">Do 20 €</option>
+                  <option value="30">Do 30 €</option>
+                  <option value="50">Do 50 €</option>
+                </select>
+                <small>Filter upošteva najnižjo znano prijavnino.</small>
+              </label>
 
-          <label class="field">
-            <span>Razvrsti po</span>
-            <select name="sort" data-filter="sort">
-              <option value="date">Datumu</option>
-              <option value="registration-min">Najcenejši najprej</option>
-              <option value="registration-max">Najdražji najprej</option>
-            </select>
-          </label>
-
-          <fieldset class="checkbox-filter-group">
-            <legend>Dodatni filtri</legend>
-            <label class="checkbox-field">
-              <input type="checkbox" name="family" data-filter="family" />
-              <span>Družinam prijazno</span>
-            </label>
-
-            <label class="checkbox-field">
-              <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
-              <span>Prijave na dan dogodka</span>
-            </label>
-
-            <label class="checkbox-field">
-              <input type="checkbox" name="additional" data-filter="additional" />
-              <span>Ima dodatne podatke</span>
-            </label>
+              <label class="field">
+                <span>Razvrsti po</span>
+                <select name="sort" data-filter="sort">
+                  <option value="date">Datumu</option>
+                  <option value="registration-min">Najcenejši najprej</option>
+                  <option value="registration-max">Najdražji najprej</option>
+                </select>
+              </label>
+            </div>
           </fieldset>
+
+          <details class="advanced-filters">
+            <summary>Napredni filtri</summary>
+            <div class="advanced-filters-content">
+              <label class="checkbox-field">
+                <input type="checkbox" name="family" data-filter="family" />
+                <span>Družinam prijazno</span>
+              </label>
+
+              <label class="checkbox-field">
+                <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
+                <span>Prijave na dan dogodka</span>
+              </label>
+
+              <label class="checkbox-field">
+                <input type="checkbox" name="additional" data-filter="additional" />
+                <span>Ima dodatne podatke</span>
+              </label>
+
+              <label class="field advanced-elevation-field">
+                <span>Višinski metri</span>
+                <select name="elevation" data-filter="elevation">
+                  <option value="">Vsi višinci</option>
+                  <option value="max-300">Do 300 m+</option>
+                  <option value="max-800">Do 800 m+</option>
+                  <option value="max-1500">Do 1500 m+</option>
+                  <option value="over-1500">Nad 1500 m+</option>
+                </select>
+              </label>
+            </div>
+          </details>
 
           <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
             Počistite filtre
@@ -186,6 +204,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
   const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
   const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
+  const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
 
   const asRecord = (value: unknown): ApiRecord | null =>
@@ -291,6 +310,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const getRegistrationMaxEur = (event: RaceEvent) =>
     hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMaxEur) : null;
 
+  const parseElevationGain = (value: string) => {
+    if (!value) return null;
+    const normalized = value.trim().replace(',', '.').replace(/\s+/g, '');
+    if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) return null;
+    const elevationGain = Number(normalized);
+    return Number.isFinite(elevationGain) ? elevationGain : null;
+  };
+
+  const getReliableElevationGain = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseElevationGain(event.additionalData.elevationGain) : null;
+
   const hasDayOfRegistration = (event: RaceEvent) =>
     hasReliableAdditionalData(event.additionalData) &&
     event.additionalData.dayOfRegistration.toLocaleUpperCase('sl-SI').trim() === 'DA';
@@ -304,6 +334,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     const limit = Number(filter);
     return Number.isFinite(limit) && min <= limit;
+  };
+
+  const matchesElevationFilter = (event: RaceEvent, filter: string) => {
+    if (!filter) return true;
+
+    const elevationGain = getReliableElevationGain(event);
+    if (elevationGain === null) return false;
+
+    if (filter === 'max-300') return elevationGain <= 300;
+    if (filter === 'max-800') return elevationGain <= 800;
+    if (filter === 'max-1500') return elevationGain <= 1500;
+    if (filter === 'over-1500') return elevationGain > 1500;
+    return true;
   };
 
   const compareNullableNumber = (a: number | null, b: number | null, direction: 'asc' | 'desc') => {
@@ -377,6 +420,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     surface: surfaceSelect?.value ?? '',
     registrationFee: registrationFeeSelect?.value ?? '',
     sort: sortSelect?.value ?? 'date',
+    elevation: elevationSelect?.value ?? '',
     family: Boolean(familyInput?.checked),
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
     additional: Boolean(additionalInput?.checked)
@@ -559,6 +603,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
       if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
+      if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
       if (filters.family && !event.familyFriendly) return false;
       if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
       if (filters.additional && !hasRenderableAdditionalData(event.additionalData)) return false;
@@ -577,7 +622,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
 
     if (!count) {
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter prijavnine ali dodatnih podatkov.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter prijavnine, višinskih metrov ali dodatnih podatkov.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
