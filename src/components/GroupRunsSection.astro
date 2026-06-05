@@ -157,78 +157,48 @@ const { lang, labels } = Astro.props;
     ])
   };
 
-  const schedulePhraseMap = new Map([
-    ['aktualen termin preverite na povezavi', 'check the current schedule at the link'],
-    ['aktualni mesečni razpored objavi klub', 'the club publishes the current monthly schedule'],
-    ['aktualen termin objavi organizator', 'the organiser publishes the current schedule'],
-    ['točen urnik preveri pri organizatorju', 'check the exact schedule with the organiser'],
-    ['po dogovoru', 'by arrangement'],
-    ['ura se prilagodi letnemu času', 'time may vary by season'],
-    ['zimske runde', 'winter runs'],
-    ['socialni tek', 'social run'],
-    ['skupinski tek', 'group run']
+  const exactEnglishScheduleMap = new Map([
+    [
+      'Nedeljske zimske runde, praviloma 08:00; sezonsko nov–feb',
+      'Sunday winter runs, usually at 08:00; seasonal, Nov–Feb'
+    ],
+    [
+      'pon 18:00 Kranj; sre 18:00 Škofja Loka; čet 18:00 Medvode; sob 09:00 Škofja Loka',
+      'Mon 18:00 Kranj; Wed 18:00 Škofja Loka; Thu 18:00 Medvode; Sat 09:00 Škofja Loka'
+    ],
+    ['vsak torek in četrtek ob 18:30', 'Every Tuesday and Thursday at 18:30'],
+    ['pon/čet 17:00, stadion Šentjernej', 'Mon/Thu 17:00, Šentjernej stadium'],
+    [
+      'Ponedeljek in četrtek ob 19.00, ura se prilagodi letnemu času.',
+      'Monday and Thursday at 19:00; time may vary by season.'
+    ],
+    ['Aktualni mesečni razpored objavi klub', 'The club publishes the current monthly schedule.'],
+    ['Tedenski easy run; v začetku 2026 sobote 09:00', 'Weekly easy run; in early 2026, Saturdays at 09:00'],
+    [
+      'Tedenski socialni tek; aktualen termin preverite na povezavi.',
+      'Weekly social run; check the current schedule at the link.'
+    ],
+    ['2x tedensko; točen urnik preveri pri organizatorju', 'Twice weekly; check the exact schedule with the organiser.'],
+    ['Trzin pon/pet 19:15; Ljubljana tor/čet 18:30', 'Trzin Mon/Fri 19:15; Ljubljana Tue/Thu 18:30'],
+    [
+      'vsak torek ob 17:00; občasno tudi vikend daljši trail teki',
+      'Every Tuesday at 17:00; occasional longer weekend trail runs.'
+    ],
+    ['vsak torek in četrtek ob 18.00h', 'Every Tuesday and Thursday at 18:00'],
+    [
+      'Tedenski skupinski tek; aktualen termin objavi organizator.',
+      'Weekly group run; the organiser publishes the current schedule.'
+    ],
+    [
+      'tor/čet 18:00 počasnejša; tor/čet 19:00 hitrejša; nedelja po dogovoru',
+      'Tue/Thu 18:00 slower group; Tue/Thu 19:00 faster group; Sunday by arrangement'
+    ]
   ]);
-
-  const scheduleTermMap = new Map([
-    ['ponedeljek', 'Monday'],
-    ['torek', 'Tuesday'],
-    ['sreda', 'Wednesday'],
-    ['četrtek', 'Thursday'],
-    ['petek', 'Friday'],
-    ['sobota', 'Saturday'],
-    ['nedelja', 'Sunday'],
-    ['pon', 'Mon'],
-    ['tor', 'Tue'],
-    ['sre', 'Wed'],
-    ['čet', 'Thu'],
-    ['pet', 'Fri'],
-    ['sob', 'Sat'],
-    ['ned', 'Sun'],
-    ['vsak', 'every'],
-    ['vsako', 'every'],
-    ['tedenski', 'weekly'],
-    ['mesečni', 'monthly'],
-    ['ob', 'at'],
-    ['sezonsko', 'seasonal'],
-    ['začetku', 'beginning'],
-    ['počasnejša', 'slower group'],
-    ['hitrejša', 'faster group']
-  ]);
-
-  const replaceSafeScheduleText = (text, replacements) => {
-    let translated = text;
-
-    for (const [source, replacement] of replacements) {
-      translated = translated.replace(source, replacement);
-    }
-
-    return translated;
-  };
 
   const displaySchedule = (value) => {
     if (pageLang !== 'en' || !value) return value;
 
-    const urlPattern = /(https?:\/\/\S+)/iu;
-    return value
-      .split(urlPattern)
-      .map((part) => {
-        if (urlPattern.test(part)) return part;
-
-        const phraseReplacements = [...schedulePhraseMap].map(([source, replacement]) => [
-          new RegExp(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'giu'),
-          replacement
-        ]);
-        const termReplacements = [...scheduleTermMap].map(([source, replacement]) => [
-          new RegExp(`(?<!\\p{L})${source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.?(?!\\p{L})`, 'giu'),
-          replacement
-        ]);
-
-        return replaceSafeScheduleText(
-          replaceSafeScheduleText(part, phraseReplacements),
-          termReplacements
-        );
-      })
-      .join('');
+    return exactEnglishScheduleMap.get(value) ?? value;
   };
 
   const displayValue = (field, value) => {
