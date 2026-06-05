@@ -2,6 +2,8 @@
 import GroupRunsSection from '../components/GroupRunsSection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const groupRunFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfOV63Lm_fTxrpuySgFsey7A7VWGAH-7lMAv-Hsp4Jz-iTSNA/viewform';
+
 const labels = {
   loading: 'Podatke še nalagamo',
   search: 'Iskanje',
@@ -41,6 +43,22 @@ const labels = {
       <p>STK teh tekov ne organizira. Podatki so informativni. Aktualen termin, zbirno mesto, prijavo in morebitne pogoje vedno preverite pri organizatorju.</p>
     </section>
 
+    <section class="section container group-run-submit-section" aria-labelledby="group-run-submit-title">
+      <article class="info-card calendar-cta-card group-run-submit-card">
+        <div>
+          <h2 id="group-run-submit-title">Poznate skupinski tek, ki manjka?</h2>
+          <p>Sporočite redno tekaško rundo, tekaško skupnost ali voden rekreativni trening, ki še ni na seznamu.</p>
+        </div>
+        <a class="button button-primary" href={groupRunFormUrl} target="_blank" rel="noopener noreferrer">
+          Dodajte skupinski tek
+        </a>
+      </article>
+    </section>
+
     <GroupRunsSection lang="sl" labels={labels} />
+
+    <section class="section container group-run-bottom-submit" aria-label="Dodajanje skupinskega teka">
+      <p>Manjka skupinski tek? Sporočite ga <a href={groupRunFormUrl} target="_blank" rel="noopener noreferrer">prek obrazca</a>.</p>
+    </section>
   </main>
 </BaseLayout>

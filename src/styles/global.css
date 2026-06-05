@@ -1413,3 +1413,35 @@ main {
     grid-column: auto;
   }
 }
+
+.group-run-submit-section {
+  padding-top: 0;
+}
+
+.group-run-submit-card p {
+  margin: 8px 0 0;
+  max-width: 680px;
+}
+
+.group-run-bottom-submit {
+  padding-top: 0;
+}
+
+.group-run-bottom-submit p {
+  margin: 0;
+  color: var(--deep-teal);
+  font-weight: 750;
+  text-align: center;
+}
+
+.group-run-bottom-submit a {
+  color: var(--deep-teal);
+  font-weight: 850;
+  text-decoration-color: rgba(16, 64, 80, 0.32);
+  text-underline-offset: 3px;
+}
+
+.group-run-bottom-submit a:hover,
+.group-run-bottom-submit a:focus-visible {
+  text-decoration-color: currentColor;
+}
