@@ -6,11 +6,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <main>
     <section class="page-hero container" aria-labelledby="family-title">
       <span class="eyebrow">Družinam prijazni teki</span>
-      <h1 id="family-title">Teki za družine in otroke</h1>
+      <h1 id="family-title">Družinam prijazni teki</h1>
+      <p class="hero-subtitle">Poiščite teke z otroškimi in družinskimi vsebinami</p>
       <p>
-        Pregled vključuje samo teke, pri katerih vir jasno omenja otroške teke, družinske kategorije,
-        otroške aktivnosti ali podobne informacije za družine. Kratka razdalja sama po sebi še ne pomeni, da je tek družinam prijazen.
+        Pregled vključuje samo prireditve, pri katerih vir jasno omenja otroške teke, družinske kategorije,
+        otroške aktivnosti ali druge informacije za družine. Kratka razdalja sama po sebi še ne pomeni, da je tek družinam prijazen.
       </p>
+      <a class="hero-secondary-link" href="/iskalnik-tekov/">Iščete vse teke? Odprite iskalnik tekov.</a>
     </section>
 
     <section class="section container" aria-labelledby="family-filters-title">
@@ -113,7 +115,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
-  const FAMILY_NOTE_MAX_LENGTH = 180;
+  const FAMILY_NOTE_MAX_LENGTH = 160;
   const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
@@ -290,7 +292,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const formatFamilyNote = (value: string) => {
-    const markerPattern = /družinam\s+prijazno\s*[:\-–—]\s*/iu;
+    const markerPattern = /družinam\s+prijazno\s*[:\-–—]?\s*/iu;
     let note = value.replace(/\s+/g, ' ').trim();
     if (!note) return '';
 
@@ -432,9 +434,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.region && `<span class="event-chip"><strong>Regija:</strong> ${escapeHtml(event.region)}</span>`,
       formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
       event.distances && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
-      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`,
-      formatFamilyNote(event.publicNotes) && `<span class="event-chip"><strong>Za družine:</strong> ${escapeHtml(formatFamilyNote(event.publicNotes))}</span>`
+      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
+    const familyNote = formatFamilyNote(event.publicNotes);
 
     const calendarOptions = renderCalendarOptions({
       title: event.title,
@@ -454,9 +456,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <article class="event-card search-event-card">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
-          <span class="pill">Družinam prijazno</span>
         </div>
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Za družine</strong></div><p>${escapeHtml(familyNote)}</p></div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
