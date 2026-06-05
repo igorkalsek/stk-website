@@ -104,6 +104,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     dateValue: number;
     month: string;
     title: string;
+    displayTitle: string;
     place: string;
     region: string;
     surface: string;
@@ -215,6 +216,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const formatDateBadge = formatSloveneDateBadge;
 
   const formatPublicTitleForDisplay = getDisplayEventTitle;
+
+  const formatVisibleEventTitle = (title: string) => title.replace(/\s+-\s+/gu, ' – ');
 
   const formatSurface = (value: string) => {
     const trimmed = value.trim();
@@ -367,6 +370,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const match = findSafeMasterMatch(row, masterRows, voteDetails);
     const sourceTitle = buildDisplayTitle(row, match, voteDetails);
     const title = formatPublicTitleForDisplay(sourceTitle);
+    const displayTitle = formatVisibleEventTitle(title);
     const date = enrichValue(row, match, ['datum', 'date']) || voteDetails.date;
     const dateValue = parseDateValue(date);
     const place = enrichValue(row, match, ['kraj', 'place']);
@@ -387,6 +391,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       dateValue,
       month: Number.isNaN(dateValue) ? '' : String(new Date(dateValue).getMonth() + 1),
       title,
+      displayTitle,
       place,
       region,
       surface,
@@ -433,7 +438,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const setStatus = (message: string) => {
-    if (statusElement) statusElement.textContent = message;
+    if (!statusElement) return;
+    statusElement.textContent = message;
+    statusElement.hidden = !message;
   };
 
   const setCount = (message: string) => {
@@ -521,7 +528,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           <span class="pill pill-orange">${escapeHtml(event.voteLabel)}</span>
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <h3 class="search-event-title">${escapeHtml(event.displayTitle)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
@@ -559,7 +566,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const visibleCount = visibleEvents.length;
 
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
-    setStatus('Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.');
+    setStatus('');
 
     if (!count) {
       renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
