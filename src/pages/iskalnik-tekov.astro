@@ -84,7 +84,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </fieldset>
 
           <details class="advanced-filters">
-            <summary>Napredni filtri</summary>
+            <summary data-advanced-filters-summary>Napredni filtri</summary>
             <div class="advanced-filters-content">
               <label class="checkbox-field">
                 <input type="checkbox" name="family" data-filter="family" />
@@ -206,6 +206,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
+  const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
 
   const asRecord = (value: unknown): ApiRecord | null =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
@@ -426,6 +427,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     additional: Boolean(additionalInput?.checked)
   });
 
+  const updateAdvancedFiltersSummary = (filters = getFilters()) => {
+    if (!advancedFiltersSummary) return;
+    const activeCount = [
+      filters.family,
+      filters.dayOfRegistration,
+      filters.additional,
+      Boolean(filters.elevation)
+    ].filter(Boolean).length;
+
+    advancedFiltersSummary.textContent = activeCount ? `Napredni filtri (${activeCount})` : 'Napredni filtri';
+  };
+
   const getPublicUpcomingEvents = (items: ApiRecord[]) => {
     const today = todayStart();
 
@@ -580,6 +593,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const renderResults = () => {
+    const filters = getFilters();
+    updateAdvancedFiltersSummary(filters);
+
     if (!state.apiAvailable) {
       setStatus('Podatki trenutno niso dosegljivi. Poskusite znova čez nekaj minut.');
       setCount('Podatki niso dosegljivi');
@@ -596,7 +612,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return;
     }
 
-    const filters = getFilters();
     state.filtered = state.events.filter((event) => {
       if (filters.search && !event.searchText.includes(filters.search)) return false;
       if (filters.month && event.month !== filters.month) return false;
@@ -695,5 +710,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (target) clearFilters();
   });
 
+  updateAdvancedFiltersSummary();
   loadEvents();
 </script>
