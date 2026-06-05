@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const tekobotUrl = 'https://chatgpt.com/g/g-6a04db599d108191b139cab3429ef3fa-stk-tekobot';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/en/find-races/', label: 'Find races' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly races' },
+  { href: '/en/most-voted-races/', label: 'Most voted races' },
+  { href: '/en/personal-calendar/', label: 'Personal calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
+  { href: '/', label: 'Slovenščina' }
+];
+
+const questionExamples = [
+  'Which races are happening in Slovenia this weekend?',
+  'Find trail races in July.',
+  'Which races are family-friendly?',
+  'Which races have published entry fees?',
+  'Show me races near Ljubljana.'
+];
+
+const capabilities = [
+  'Races by date',
+  'Races by region or town',
+  'Family-friendly races',
+  'Trail, road and mountain races',
+  'Entry fees and additional data when available',
+  'Most voted races'
+];
+---
+
+<BaseLayout
+  title="STK Tekobot in English | Find Races in Slovenia"
+  description="Ask STK Tekobot natural-language questions in English to find running races in Slovenia."
+  lang="en"
+  canonicalPath="/en/stk-tekobot/"
+  alternateLinks={[
+    { lang: 'sl', href: '/stk-tekobot/' },
+    { lang: 'en', href: '/en/stk-tekobot/' }
+  ]}
+  navItems={englishNavItems}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - English home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+>
+  <main>
+    <section class="container page-hero tekobot-hero" aria-labelledby="tekobot-title">
+      <span class="eyebrow">STK Tekobot</span>
+      <h1 id="tekobot-title">Ask the race calendar in plain English</h1>
+      <p>STK Tekobot can help visitors find races in Slovenia using natural-language questions. Ask about dates, towns, regions, race types, family-friendly information or other public data from the calendar.</p>
+      <div class="cta-row">
+        <a class="button button-primary" href={tekobotUrl} target="_blank" rel="noopener noreferrer">Open STK Tekobot</a>
+        <a class="button button-secondary tekobot-secondary" href="/en/find-races/">Find races</a>
+      </div>
+
+      <div class="tekobot-onboarding" aria-label="How to use STK Tekobot">
+        <article class="onboarding-card">
+          <h2>To use Tekobot</h2>
+          <p>You need to sign in to ChatGPT to talk with STK Tekobot. If you do not have an account yet, ChatGPT will guide you through sign-in or account creation.</p>
+        </article>
+
+        <article class="onboarding-card">
+          <h2>Save Tekobot for later</h2>
+          <p>After you open Tekobot for the first time, you can pin the chat in ChatGPT so it is easier to find later.</p>
+          <ul>
+            <li><strong>On desktop:</strong> hover over the chat in the ChatGPT sidebar, click ⋯ and choose “Pin chat”.</li>
+            <li><strong>On mobile:</strong> press and hold the Tekobot chat in the ChatGPT app and choose “Pin chat”.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="examples-title">
+      <div class="section-heading">
+        <h2 id="examples-title">Example prompts</h2>
+        <p>Start with a question you would ask a running friend.</p>
+      </div>
+      <div class="question-list" role="list">
+        {questionExamples.map((question) => <div class="question-card" role="listitem">“{question}”</div>)}
+      </div>
+    </section>
+
+    <section class="container section" aria-labelledby="capabilities-title">
+      <div class="section-heading">
+        <h2 id="capabilities-title">What can you ask?</h2>
+        <p>Tekobot is useful when you want a quick direction and do not yet know exactly which race you are looking for.</p>
+      </div>
+      <div class="card-grid card-grid-three">
+        {capabilities.map((capability) => (
+          <article class="info-card capability-card">
+            <h3>{capability}</h3>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="container note-panel" aria-labelledby="before-register-title">
+      <h2 id="before-register-title">Before registering</h2>
+      <p>Tekobot uses public data from the STK calendar. Before registering, always check the official race announcement or the organiser’s website because race details can change.</p>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .tekobot-hero { max-width: 900px; }
+  .tekobot-hero .eyebrow { background: rgba(16, 64, 80, 0.1); color: var(--deep-teal); }
+  .tekobot-hero .cta-row { margin-top: 6px; }
+  .tekobot-secondary { background: var(--white); color: var(--deep-teal); box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.16); }
+  .tekobot-onboarding { display: grid; gap: 12px; margin-top: 24px; }
+  .onboarding-card { border: 1px solid rgba(16, 64, 80, 0.1); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.9); padding: 18px; box-shadow: 0 12px 34px rgba(16, 64, 80, 0.06); }
+  .onboarding-card h2, .onboarding-card p, .onboarding-card ul { margin: 0; }
+  .onboarding-card h2 { color: var(--deep-teal); font-size: 1.05rem; letter-spacing: -0.02em; }
+  .onboarding-card p { margin-top: 8px; color: var(--muted); line-height: 1.6; }
+  .onboarding-card ul { display: grid; gap: 8px; margin-top: 12px; padding-left: 20px; color: var(--muted); line-height: 1.55; }
+  .onboarding-card strong { color: var(--deep-teal); }
+  .question-list { display: grid; gap: 12px; }
+  .question-card { border: 1px solid rgba(16, 64, 80, 0.1); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.88); color: var(--deep-teal); font-weight: 800; line-height: 1.45; padding: 18px; box-shadow: 0 12px 34px rgba(16, 64, 80, 0.06); }
+  .capability-card { min-height: 110px; }
+  .capability-card h3 { line-height: 1.25; }
+  .note-panel { display: grid; gap: 10px; margin-top: 36px; border: 1px solid rgba(16, 64, 80, 0.1); border-radius: var(--radius-md); background: linear-gradient(135deg, rgba(200, 230, 201, 0.68), rgba(255, 255, 255, 0.9)), var(--white); padding: 22px; box-shadow: 0 12px 34px rgba(16, 64, 80, 0.07); }
+  .note-panel h2, .note-panel p { margin: 0; }
+  .note-panel h2 { color: var(--deep-teal); letter-spacing: -0.025em; }
+  .note-panel p { color: var(--muted); line-height: 1.65; }
+  @media (min-width: 680px) { .question-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

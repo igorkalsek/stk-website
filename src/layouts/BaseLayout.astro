@@ -38,7 +38,7 @@ const {
   navLabel,
   menuLabel
 } = Astro.props;
-const pageTitle = title === 'Slovenski Tekaški Koledar' ? title : `${title} | Slovenski Tekaški Koledar`;
+const pageTitle = title === 'Slovenski Tekaški Koledar' || title.includes('|') ? title : `${title} | Slovenski Tekaški Koledar`;
 const canonicalUrl = canonicalPath ? new URL(canonicalPath, Astro.site).href : Astro.url.href;
 const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
 ---

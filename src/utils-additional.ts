@@ -226,7 +226,7 @@ const parseMoney = (value: string) => {
 const formatMoney = (value: number) =>
   new Intl.NumberFormat('sl-SI', { maximumFractionDigits: 2 }).format(value);
 
-const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Prijavnina') => {
+const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Prijavnina', language: 'sl' | 'en' = 'sl') => {
   const min = parseMoney(additionalData.registrationMinEur);
   const max = parseMoney(additionalData.registrationMaxEur);
 
@@ -235,8 +235,8 @@ const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Pri
     return `${label}: ${formatMoney(min)}–${formatMoney(max)} €`;
   }
 
-  if (min !== null) return `${label}: od ${formatMoney(min)} €`;
-  if (max !== null) return `${label}: do ${formatMoney(max)} €`;
+  if (min !== null) return language === 'en' ? `${label}: from ${formatMoney(min)} €` : `${label}: od ${formatMoney(min)} €`;
+  if (max !== null) return language === 'en' ? `${label}: up to ${formatMoney(max)} €` : `${label}: do ${formatMoney(max)} €`;
   return '';
 };
 
@@ -271,17 +271,17 @@ const normalizeDayOfRegistration = (value: string) => value.toLocaleUpperCase('s
 
 const hasDayOfRegistration = (value: string) => normalizeDayOfRegistration(value) === 'DA';
 
-const formatDayOfRegistration = (value: string) => {
+const formatDayOfRegistration = (value: string, language: 'sl' | 'en' = 'sl') => {
   const normalized = normalizeDayOfRegistration(value);
-  if (normalized === 'DA') return 'Prijave na dan: da';
-  if (normalized === 'NE') return 'Prijave na dan: ne';
+  if (normalized === 'DA') return language === 'en' ? 'Race-day registration: yes' : 'Prijave na dan: da';
+  if (normalized === 'NE') return language === 'en' ? 'Race-day registration: no' : 'Prijave na dan: ne';
   return '';
 };
 
-const formatElevationGain = (value: string) => {
+const formatElevationGain = (value: string, language: 'sl' | 'en' = 'sl') => {
   const trimmed = value.trim();
   if (!trimmed) return '';
-  return `Višinski metri: ${trimmed} m+`;
+  return `${language === 'en' ? 'Elevation gain' : 'Višinski metri'}: ${trimmed} m+`;
 };
 
 const ROUTE_URL_HINTS = ['trasa', 'trase', 'route', 'routes', 'gpx', 'strava', 'maps'];
@@ -323,6 +323,7 @@ export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData
 type AdditionalDataRenderOptions = {
   eventDate?: string;
   registrationFeeLabel?: string;
+  language?: 'sl' | 'en';
 };
 
 export const renderAdditionalDataBlock = (
@@ -333,7 +334,8 @@ export const renderAdditionalDataBlock = (
   if (!additionalData) return '';
 
   const eventDate = typeof options === 'string' ? options : options.eventDate ?? '';
-  const registrationFeeLabel = typeof options === 'string' ? 'Prijavnina' : options.registrationFeeLabel ?? 'Prijavnina';
+  const language = typeof options === 'string' ? 'sl' : options.language ?? 'sl';
+  const registrationFeeLabel = typeof options === 'string' ? 'Prijavnina' : options.registrationFeeLabel ?? (language === 'en' ? 'Entry fees' : 'Prijavnina');
 
   const registrationDeadline = isTodayOrFutureIsoDate(additionalData.registrationDeadline)
     ? formatSlovenianIsoDate(additionalData.registrationDeadline)
@@ -346,15 +348,15 @@ export const renderAdditionalDataBlock = (
     !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
   );
   const textItems = [
-    formatRegistrationFee(additionalData, registrationFeeLabel),
-    showRegistrationDeadline && `Rok prijave: ${registrationDeadline}`,
-    earlyRegistrationDeadline && `Cenejša prijava do: ${earlyRegistrationDeadline}`,
-    formatDayOfRegistration(additionalData.dayOfRegistration),
-    formatElevationGain(additionalData.elevationGain)
+    formatRegistrationFee(additionalData, registrationFeeLabel, language),
+    showRegistrationDeadline && `${language === 'en' ? 'Registration deadline' : 'Rok prijave'}: ${registrationDeadline}`,
+    earlyRegistrationDeadline && `${language === 'en' ? 'Early registration deadline' : 'Cenejša prijava do'}: ${earlyRegistrationDeadline}`,
+    formatDayOfRegistration(additionalData.dayOfRegistration, language),
+    formatElevationGain(additionalData.elevationGain, language)
   ].filter(Boolean).map((item) => escapeHtml(String(item)));
   const routeLabel = additionalData.routeUrl ? getRouteUrlLabel(additionalData.routeUrl) : null;
   const routeItem = routeLabel
-    ? `${routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${routeLabel.text}</a>`
+    ? `${language === 'en' ? 'Route' : routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${language === 'en' ? 'Open route' : routeLabel.text}</a>`
     : '';
   const items = [...textItems, routeItem].filter(Boolean);
 
@@ -362,7 +364,7 @@ export const renderAdditionalDataBlock = (
 
   return `
     <details class="additional-data-block">
-      <summary>ℹ️ Dodatni podatki</summary>
+      <summary>ℹ️ ${language === 'en' ? 'Additional info' : 'Dodatni podatki'}</summary>
       <ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>
     </details>
   `;

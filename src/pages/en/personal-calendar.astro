@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { GOOGLE_CALENDAR_SUBSCRIPTION_URL, ICAL_SUBSCRIPTION_URL, WEBCAL_SUBSCRIPTION_URL } from '../../utils-calendar';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/en/find-races/', label: 'Find races' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly races' },
+  { href: '/en/most-voted-races/', label: 'Most voted races' },
+  { href: '/en/personal-calendar/', label: 'Personal calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
+  { href: '/', label: 'Slovenščina' }
+];
+---
+
+<BaseLayout
+  title="Add Slovenian Races to Your Calendar | Run Slovenia Race Calendar"
+  description="Add Slovenian running races to Google Calendar, Apple Calendar, Outlook or another calendar app using the STK calendar links."
+  lang="en"
+  canonicalPath="/en/personal-calendar/"
+  alternateLinks={[
+    { lang: 'sl', href: '/osebni-koledar/' },
+    { lang: 'en', href: '/en/personal-calendar/' }
+  ]}
+  navItems={englishNavItems}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - English home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+>
+  <main>
+    <section class="page-hero container" aria-labelledby="calendar-title">
+      <span class="eyebrow">Calendar at hand</span>
+      <h1 id="calendar-title">Personal calendar</h1>
+      <p>Add Slovenian running races to the calendar app you already use, so race dates appear next to your everyday plans.</p>
+      <div class="cta-row">
+        <a class="button button-primary" href="#choose-calendar">Add the STK calendar</a>
+        <a class="button button-secondary-light" href="/en/find-races/">Find races</a>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="individual-races-title">
+      <div class="section-heading">
+        <h2 id="individual-races-title">Add individual races</h2>
+        <p>Race cards on English pages include an <strong>Add to calendar</strong> menu when the race date is available.</p>
+      </div>
+      <div class="card-grid card-grid-three">
+        <article class="info-card">
+          <h3>Google Calendar</h3>
+          <p>Open a race card, choose <strong>Add to calendar</strong>, then choose <strong>Google</strong>. Google Calendar opens with the race title, date, town and useful links already filled in.</p>
+        </article>
+        <article class="info-card">
+          <h3>Apple / iCal</h3>
+          <p>Choose <strong>Apple / iCal</strong> to download an .ics file for one race. Open the file and add it to Apple Calendar or another iCal-compatible app.</p>
+        </article>
+        <article class="info-card">
+          <h3>Outlook</h3>
+          <p>Choose <strong>Outlook</strong> to open Outlook’s add-event screen. If your app does not support that link, use the .ics option instead.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="choose-calendar">
+      <div class="section-heading">
+        <h2 id="choose-calendar">Subscribe to the full calendar</h2>
+        <p>The subscription calendar adds the full STK race calendar to your calendar app. Updates can appear automatically, depending on how often your calendar app refreshes subscribed calendars.</p>
+      </div>
+      <div class="card-grid card-grid-three calendar-option-grid">
+        <article class="info-card calendar-option-card">
+          <h3>Google Calendar</h3>
+          <p>Add the public STK calendar to your Google Calendar account.</p>
+          <a class="button button-primary" href={GOOGLE_CALENDAR_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+        </article>
+
+        <article class="info-card calendar-option-card">
+          <h3>Apple Calendar</h3>
+          <p>Use the webcal / iCal subscription link in Apple Calendar.</p>
+          <a class="button button-secondary-light" href={WEBCAL_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer">Open iCal link</a>
+        </article>
+
+        <article class="info-card calendar-option-card">
+          <h3>Outlook and other calendars</h3>
+          <p>Choose “add calendar from web” or a similar option in your calendar app, then paste this iCal URL.</p>
+          <div class="calendar-copy-block" aria-label="iCal URL for manual copying">
+            <span class="calendar-copy-label">Calendar URL</span>
+            <code class="calendar-url-block">{ICAL_SUBSCRIPTION_URL}</code>
+          </div>
+          <button class="button button-secondary-light calendar-copy-button" type="button" data-copy-ical={ICAL_SUBSCRIPTION_URL}>Copy iCal link</button>
+          <span class="calendar-copy-status" data-copy-status aria-live="polite"></span>
+        </article>
+      </div>
+      <p class="data-note calendar-note">The calendar is for orientation only. Before registering, always check the official race announcement or the organiser’s website.</p>
+    </section>
+  </main>
+
+  <script>
+    const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-ical]');
+    const copyStatus = document.querySelector<HTMLElement>('[data-copy-status]');
+
+    copyButton?.addEventListener('click', async () => {
+      const icalUrl = copyButton.dataset.copyIcal;
+
+      if (!icalUrl || !navigator.clipboard) {
+        copyStatus && (copyStatus.textContent = 'You can select and copy the link manually.');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(icalUrl);
+        copyStatus && (copyStatus.textContent = 'Copied.');
+      } catch {
+        copyStatus && (copyStatus.textContent = 'You can select and copy the link manually.');
+      }
+    });
+  </script>
+</BaseLayout>

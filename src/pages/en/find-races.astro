@@ -1,0 +1,738 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/en/find-races/', label: 'Find races' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly races' },
+  { href: '/en/most-voted-races/', label: 'Most voted races' },
+  { href: '/en/personal-calendar/', label: 'Personal calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
+  { href: '/', label: 'Slovenščina' }
+];
+---
+
+<BaseLayout
+  title="Find Running Races in Slovenia | Run Slovenia Race Calendar"
+  description="Search confirmed running races in Slovenia by name, town, month, region, surface, race type and family-friendly information."
+  lang="en"
+  canonicalPath="/en/find-races/"
+  alternateLinks={[
+    { lang: 'sl', href: '/iskalnik-tekov/' },
+    { lang: 'en', href: '/en/find-races/' }
+  ]}
+  navItems={englishNavItems}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - English home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+>
+  <main>
+    <section class="page-hero container" aria-labelledby="search-title">
+      <span class="eyebrow">Find races</span>
+      <h1 id="search-title">Find your next race</h1>
+      <p>
+        Search confirmed public running events in Slovenia for 2026. Search by race name, town or region, then narrow the list by month, region, surface and family-friendly information.
+      </p>
+    </section>
+
+    <section class="section container" aria-labelledby="filters-title">
+      <div class="search-panel">
+        <div class="section-heading search-heading">
+          <div>
+            <h2 id="filters-title">Filters</h2>
+            <p>Search by race name, town or region, then choose a month, region or surface.</p>
+          </div>
+          <p class="result-count" data-result-count>Loading races …</p>
+        </div>
+
+        <form class="filters-grid" data-search-form>
+          <label class="field field-wide">
+            <span>Search</span>
+            <input
+              type="search"
+              name="search"
+              placeholder="Search by race name, town or region"
+              autocomplete="off"
+              data-filter="search"
+            />
+          </label>
+
+          <label class="field">
+            <span>Month</span>
+            <select name="month" data-filter="month" disabled>
+              <option value="">All months</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Region</span>
+            <select name="region" data-filter="region" disabled>
+              <option value="">All regions</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Surface</span>
+            <select name="surface" data-filter="surface" disabled>
+              <option value="">All surfaces</option>
+            </select>
+          </label>
+
+          <fieldset class="filter-card filter-card-price">
+            <legend>Entry fees and sorting</legend>
+            <div class="filter-card-grid">
+              <label class="field">
+                <span>Entry fees</span>
+                <select name="registrationFee" data-filter="registration-fee">
+                  <option value="">All entry fees</option>
+                  <option value="free-option">Has a free option</option>
+                  <option value="10">Up to €10</option>
+                  <option value="20">Up to €20</option>
+                  <option value="30">Up to €30</option>
+                  <option value="50">Up to €50</option>
+                </select>
+                <small>The filter uses the lowest known entry fee.</small>
+              </label>
+
+              <label class="field">
+                <span>Sort by</span>
+                <select name="sort" data-filter="sort">
+                  <option value="date">Date</option>
+                  <option value="registration-min">Lowest entry fee first</option>
+                  <option value="registration-max">Highest entry fee first</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <details class="advanced-filters">
+            <summary data-advanced-filters-summary>Advanced filters</summary>
+            <div class="advanced-filters-content">
+              <label class="checkbox-field">
+                <input type="checkbox" name="family" data-filter="family" />
+                <span>Family-friendly</span>
+              </label>
+
+              <label class="checkbox-field">
+                <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
+                <span>Race-day registration</span>
+              </label>
+
+              <label class="checkbox-field">
+                <input type="checkbox" name="additional" data-filter="additional" />
+                <span>Has additional data</span>
+              </label>
+
+              <label class="field advanced-elevation-field">
+                <span>Elevation gain</span>
+                <select name="elevation" data-filter="elevation">
+                  <option value="">All elevation gains</option>
+                  <option value="max-300">Up to 300 m+</option>
+                  <option value="max-800">Up to 800 m+</option>
+                  <option value="max-1500">Up to 1500 m+</option>
+                  <option value="over-1500">Over 1500 m+</option>
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
+            Clear filters
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="results-title">
+      <div class="section-heading">
+        <h2 id="results-title">Results</h2>
+        <p data-search-status>Loading confirmed public races …</p>
+        <p class="additional-data-note" data-additional-note hidden>Some races also include entry fees, registration deadlines, routes or elevation gain.</p>
+      </div>
+      <div class="search-results" data-search-results aria-live="polite">
+        <article class="event-card">
+          <h3>Loading data</h3>
+          <p>The list of upcoming races will appear here.</p>
+          <div class="event-meta">
+            <span class="pill">Calendar</span>
+          </div>
+        </article>
+      </div>
+      <div class="search-more" data-search-more hidden>
+        <button class="button button-primary" type="button" data-show-more>Show more</button>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, type AdditionalEventData } from '../../utils-additional';
+  import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { getDisplayEventTitle } from '../../utils-events';
+  import { formatSloveneDateBadge, formatSloveneDistances } from '../../utils-slovenian';
+  import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../utils-vote';
+
+  type ApiRecord = Record<string, unknown>;
+  type RaceEvent = {
+    id: string;
+    row: string;
+    date: string;
+    dateValue: number;
+    month: string;
+    title: string;
+    displayTitle: string;
+    naziv_prireditve: string;
+    datum: string;
+    place: string;
+    region: string;
+    surface: string;
+    distances: string;
+    startTime: string;
+    noticeUrl: string;
+    registrationUrl: string;
+    voteUrl: string;
+    publicNotes: string;
+    searchText: string;
+    familyFriendly: boolean;
+    additionalData?: AdditionalEventData | null;
+  };
+
+  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
+  const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
+  const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
+  const PAGE_SIZE = 30;
+  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+  const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
+
+  const state: { events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number } = {
+    events: [],
+    filtered: [],
+    apiAvailable: true,
+    visibleCount: PAGE_SIZE
+  };
+
+  const resultsElement = document.querySelector<HTMLElement>('[data-search-results]');
+  const statusElement = document.querySelector<HTMLElement>('[data-search-status]');
+  const countElement = document.querySelector<HTMLElement>('[data-result-count]');
+  const formElement = document.querySelector<HTMLFormElement>('[data-search-form]');
+  const moreElement = document.querySelector<HTMLElement>('[data-search-more]');
+  const showMoreButton = document.querySelector<HTMLButtonElement>('[data-show-more]');
+  const searchInput = document.querySelector<HTMLInputElement>('[data-filter="search"]');
+  const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
+  const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
+  const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+  const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
+  const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
+  const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
+  const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
+  const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
+  const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
+  const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
+  const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    return [];
+  };
+
+  const pick = (item: ApiRecord, key: string): string => {
+    const value = item[key];
+    return value === undefined || value === null ? '' : String(value).trim();
+  };
+
+  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const todayStart = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  };
+
+  const parseDateValue = (value: string) => {
+    if (!value) return Number.NaN;
+    const date = new Date(`${value}T00:00:00`);
+    return date.getTime();
+  };
+
+  const formatDate = (value: string) => {
+    const timestamp = parseDateValue(value);
+    return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
+  };
+
+  const formatDateBadge = formatSloveneDateBadge;
+
+  const formatStartTime = (value: string) => {
+    const trimmed = value.trim();
+    const match = trimmed.match(/^(\d{1,2}):(\d{2})(.*)$/);
+    if (!match) return trimmed;
+    return `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}`;
+  };
+
+  const formatSurface = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    return trimmed
+      .toLocaleLowerCase('sl-SI')
+      .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+  };
+
+  const monthLabel = (month: string) => {
+    const monthNumber = Number(month);
+    if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
+    const date = new Date(2026, monthNumber - 1, 1);
+    return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    return String(value).replace(/[&<>"']/g, (character) => characters[character]);
+  };
+
+  const safeUrl = (value: string) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const parseMoney = (value: string) => {
+    if (!value) return null;
+    const normalized = value.replace(',', '.').replace(/[^\d.-]/g, '');
+    if (!normalized) return null;
+    const amount = Number(normalized);
+    return Number.isFinite(amount) ? amount : null;
+  };
+
+  const hasReliableAdditionalData = (additionalData?: AdditionalEventData | null): additionalData is AdditionalEventData =>
+    additionalData?.reliability === 'visoka';
+
+  const getRegistrationMinEur = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMinEur) : null;
+
+  const getRegistrationMaxEur = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMaxEur) : null;
+
+  const parseElevationGain = (value: string) => {
+    if (!value) return null;
+    const normalized = value.trim().replace(',', '.').replace(/\s+/g, '');
+    if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) return null;
+    const elevationGain = Number(normalized);
+    return Number.isFinite(elevationGain) ? elevationGain : null;
+  };
+
+  const getReliableElevationGain = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseElevationGain(event.additionalData.elevationGain) : null;
+
+  const hasDayOfRegistration = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) &&
+    event.additionalData.dayOfRegistration.toLocaleUpperCase('sl-SI').trim() === 'DA';
+
+  const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
+    if (!filter) return true;
+
+    const min = getRegistrationMinEur(event);
+    if (min === null) return false;
+    if (filter === 'free-option') return min === 0;
+
+    const limit = Number(filter);
+    return Number.isFinite(limit) && min <= limit;
+  };
+
+  const matchesElevationFilter = (event: RaceEvent, filter: string) => {
+    if (!filter) return true;
+
+    const elevationGain = getReliableElevationGain(event);
+    if (elevationGain === null) return false;
+
+    if (filter === 'max-300') return elevationGain <= 300;
+    if (filter === 'max-800') return elevationGain <= 800;
+    if (filter === 'max-1500') return elevationGain <= 1500;
+    if (filter === 'over-1500') return elevationGain > 1500;
+    return true;
+  };
+
+  const compareNullableNumber = (a: number | null, b: number | null, direction: 'asc' | 'desc') => {
+    if (a === null && b === null) return 0;
+    if (a === null) return 1;
+    if (b === null) return -1;
+    return direction === 'asc' ? a - b : b - a;
+  };
+
+  const compareByDate = (a: RaceEvent, b: RaceEvent) =>
+    a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI');
+
+  const sortEvents = (events: RaceEvent[], sort: string) =>
+    [...events].sort((a, b) => {
+      if (sort === 'registration-min') {
+        return compareNullableNumber(getRegistrationMinEur(a), getRegistrationMinEur(b), 'asc') || compareByDate(a, b);
+      }
+
+      if (sort === 'registration-max') {
+        return compareNullableNumber(getRegistrationMaxEur(a), getRegistrationMaxEur(b), 'desc') || compareByDate(a, b);
+      }
+
+      return compareByDate(a, b);
+    });
+
+  const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
+    title: string;
+    date: string;
+    location?: string;
+    noticeUrl?: string;
+    registrationUrl?: string;
+  }) => {
+    const event = { title, date, location, noticeUrl, registrationUrl, language: 'en' as const };
+    const googleUrl = buildGoogleCalendarEventUrl(event);
+    const icsUrl = buildIcsDataUrl(event);
+    const icsFilename = buildIcsFilename(event);
+    const outlookUrl = buildOutlookCalendarEventUrl(event);
+    if (!googleUrl && !icsUrl && !outlookUrl) return '';
+
+    const options = [
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      outlookUrl
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+    ].filter(Boolean).join('');
+
+    return `
+      <details class="calendar-menu">
+        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>Add to calendar</span></summary>
+        <div class="calendar-menu-options">${options}</div>
+      </details>
+    `;
+  };
+
+  const setStatus = (message: string) => {
+    if (statusElement) statusElement.textContent = message;
+  };
+
+  const setCount = (message: string) => {
+    if (countElement) countElement.textContent = message;
+  };
+
+  const pluralizeEvents = (count: number) =>
+    `${count} ${count === 1 ? 'race' : count === 2 ? 'races' : count < 5 ? 'races' : 'races'}`;
+
+  const getFilters = () => ({
+    search: normalize(searchInput?.value ?? ''),
+    month: monthSelect?.value ?? '',
+    region: regionSelect?.value ?? '',
+    surface: surfaceSelect?.value ?? '',
+    registrationFee: registrationFeeSelect?.value ?? '',
+    sort: sortSelect?.value ?? 'date',
+    elevation: elevationSelect?.value ?? '',
+    family: Boolean(familyInput?.checked),
+    dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
+    additional: Boolean(additionalInput?.checked)
+  });
+
+  const updateAdvancedFiltersSummary = (filters = getFilters()) => {
+    if (!advancedFiltersSummary) return;
+    const activeCount = [
+      filters.family,
+      filters.dayOfRegistration,
+      filters.additional,
+      Boolean(filters.elevation)
+    ].filter(Boolean).length;
+
+    advancedFiltersSummary.textContent = activeCount ? `Advanced filters (${activeCount})` : 'Advanced filters';
+  };
+
+  const getPublicUpcomingEvents = (items: ApiRecord[]) => {
+    const today = todayStart();
+
+    return items
+      .map((item): RaceEvent | null => {
+        const date = pick(item, 'datum');
+        const dateValue = parseDateValue(date);
+        const title = pick(item, 'naziv_prireditve');
+        const place = pick(item, 'kraj');
+        const region = pick(item, 'regija');
+        const surface = pick(item, 'tip_podlage');
+        const distances = pick(item, 'razdalje_km');
+        const startTime = pick(item, 'cas_zacetka');
+        const publicNotes = pick(item, 'opombe_javne');
+
+        if (!date || Number.isNaN(dateValue) || !title) return null;
+        if (!date.startsWith('2026-')) return null;
+        if (dateValue < today) return null;
+        if (normalize(pick(item, 'status_dogodka')) !== 'potrjeno') return null;
+        if (pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') !== 'DA') return null;
+
+        const row = pick(item, 'row');
+        const displayTitle = getDisplayEventTitle(title);
+
+        return {
+          id: row || `${date}-${title}-${place}`,
+          row,
+          date,
+          dateValue,
+          month: date.slice(5, 7),
+          title: displayTitle,
+          displayTitle,
+          naziv_prireditve: title,
+          datum: date,
+          place,
+          region,
+          surface,
+          distances,
+          startTime,
+          noticeUrl: safeUrl(pick(item, 'povezava_razpis')),
+          registrationUrl: safeUrl(pick(item, 'povezava_prijava')),
+          voteUrl: safeUrl(pick(item, 'vote_url') || pick(item, 'glasovanje_url') || pick(item, 'url_glasovanje')),
+          publicNotes,
+          searchText: normalize(`${title} ${place}`),
+          familyFriendly: normalize(publicNotes).includes('družinam prijazno')
+        };
+      })
+      .filter((event): event is RaceEvent => Boolean(event))
+      .sort(compareByDate);
+  };
+
+  const renderOptions = (select: HTMLSelectElement | null, values: string[], fallbackLabel: string, labelForValue = (value: string) => value) => {
+    if (!select) return;
+    select.innerHTML = `<option value="">${escapeHtml(fallbackLabel)}</option>${values
+      .map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(labelForValue(value))}</option>`)
+      .join('')}`;
+    select.disabled = values.length === 0;
+  };
+
+
+  const formatSurfaceOption = (value: string) => {
+    const labels: Record<string, string> = {
+      cesta: 'Cesta',
+      'cesta/trail': 'Cesta/trail',
+      gorski: 'Gorski',
+      oviratlon: 'Oviratlon',
+      stopnice: 'Stopnice',
+      trail: 'Trail'
+    };
+    return labels[normalize(value)] ?? formatSurface(value);
+  };
+
+
+  const populateFilters = () => {
+    const months = [...new Set(state.events.map((event) => event.month))].sort();
+    const regions = [...new Set(state.events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+    const surfaces = [...new Set(state.events.map((event) => event.surface).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+
+    renderOptions(monthSelect, months, 'All months', monthLabel);
+    renderOptions(regionSelect, regions, 'All regions');
+    renderOptions(surfaceSelect, surfaces, 'All surfaces', formatSurfaceOption);
+  };
+
+  const renderEmptyState = (title: string, message: string, pill = 'Search', showClearAction = false) => {
+    if (!resultsElement) return;
+    resultsElement.innerHTML = `
+      <article class="event-card search-empty-card">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(message)}</p>
+        <div class="event-meta">
+          <span class="pill">${escapeHtml(pill)}</span>
+        </div>
+        ${showClearAction ? '<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>Clear filters</button>' : ''}
+      </article>
+    `;
+  };
+
+  const formatDistances = formatSloveneDistances;
+
+  const getRenderableVoteUrl = (event: RaceEvent) => {
+    if (!event.voteUrl) return '';
+    const validation = isVoteUrlSafeForEvent(event, event.voteUrl);
+    if (validation.safe) return event.voteUrl;
+    if (import.meta.env.DEV) {
+      console.warn('[STK vote_url] skipped rendering vote_url', {
+        title: event.title,
+        date: event.date,
+        reason: validation.reason ?? 'unverified'
+      });
+    }
+    return '';
+  };
+
+  const renderEvent = (event: RaceEvent) => {
+    const formattedSurface = formatSurface(event.surface);
+    const metaItems = [
+      event.place && `<span class="event-chip"><strong>Town:</strong> ${escapeHtml(event.place)}</span>`,
+      event.region && `<span class="event-chip"><strong>Region:</strong> ${escapeHtml(event.region)}</span>`,
+      formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
+      event.distances && `<span class="event-chip"><strong>Distances:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
+    ].filter(Boolean).join('');
+
+    const calendarOptions = renderCalendarOptions({
+      title: event.title,
+      date: event.date,
+      location: event.place,
+      noticeUrl: event.noticeUrl,
+      registrationUrl: event.registrationUrl
+    });
+    const renderableVoteUrl = getRenderableVoteUrl(event);
+    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, { eventDate: event.date, language: 'en' });
+    const links = [
+      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
+      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
+      calendarOptions
+    ].filter(Boolean).join('');
+
+    return `
+      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}">
+        <div class="search-event-date">
+          <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
+          ${event.familyFriendly ? '<span class="pill">Family-friendly</span>' : ''}
+        </div>
+        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${additionalDataBlock}
+        ${links ? `<div class="event-actions">${links}</div>` : ''}
+      </article>
+    `;
+  };
+
+  const renderResults = () => {
+    const filters = getFilters();
+    updateAdvancedFiltersSummary(filters);
+
+    if (!state.apiAvailable) {
+      setStatus('Race data is currently unavailable. Please try again in a few minutes.');
+      setCount('Data unavailable');
+      renderEmptyState('Race data is currently unavailable', 'We cannot show races right now. Please try again in a few minutes.', 'Calendar');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (!state.events.length) {
+      setStatus('There are no upcoming confirmed public races to show.');
+      setCount('0 races');
+      renderEmptyState('No races to show', 'There are currently no confirmed upcoming races for 2026.', '2026');
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    state.filtered = state.events.filter((event) => {
+      if (filters.search && !event.searchText.includes(filters.search)) return false;
+      if (filters.month && event.month !== filters.month) return false;
+      if (filters.region && event.region !== filters.region) return false;
+      if (filters.surface && event.surface !== filters.surface) return false;
+      if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
+      if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
+      if (filters.family && !event.familyFriendly) return false;
+      if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
+      if (filters.additional && !hasRenderableAdditionalData(event.additionalData)) return false;
+      return true;
+    });
+    state.filtered = sortEvents(state.filtered, filters.sort);
+
+    const count = state.filtered.length;
+    const visibleEvents = state.filtered.slice(0, state.visibleCount);
+    const visibleCount = visibleEvents.length;
+
+    setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setStatus(filters.sort === 'date'
+      ? 'Confirmed public races from today onward are shown, sorted by date by default.'
+      : 'Confirmed public races from today onward are shown, sorted by the selected entry fee.');
+    if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
+
+    if (!count) {
+      renderEmptyState('No races match the selected filters.', 'Try removing the entry fee, elevation gain or additional data filter.', 'Filters', true);
+      if (moreElement) moreElement.hidden = true;
+      return;
+    }
+
+    if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+    if (moreElement) moreElement.hidden = visibleCount >= count;
+  };
+
+  const loadEvents = async () => {
+    setStatus('Loading confirmed public races …');
+
+    try {
+      const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error(`API status ${response.status}`);
+
+      const payload = await response.json();
+      let events = getPublicUpcomingEvents(toArray(payload));
+
+      try {
+        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+      } catch (error) {
+        console.warn('Find races additional data skipped', error);
+      }
+
+      try {
+        const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
+        if (topResponse.ok) {
+          const topPayload = await topResponse.json();
+          events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+        }
+      } catch (error) {
+        console.warn('Find races vote enrichment skipped', error);
+      }
+
+      state.events = events;
+      state.apiAvailable = true;
+      populateFilters();
+      renderResults();
+    } catch (error) {
+      console.error('Find races API error', error);
+      state.apiAvailable = false;
+      renderResults();
+    }
+  };
+
+  const resetVisibleResults = () => {
+    state.visibleCount = PAGE_SIZE;
+    renderResults();
+  };
+
+  const clearFilters = () => {
+    formElement?.reset();
+    resetVisibleResults();
+  };
+
+  formElement?.addEventListener('input', resetVisibleResults);
+  formElement?.addEventListener('change', resetVisibleResults);
+  formElement?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    resetVisibleResults();
+  });
+
+  showMoreButton?.addEventListener('click', () => {
+    state.visibleCount += PAGE_SIZE;
+    renderResults();
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
+    if (target) clearFilters();
+  });
+
+  updateAdvancedFiltersSummary();
+  loadEvents();
+</script>
