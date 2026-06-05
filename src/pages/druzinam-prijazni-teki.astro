@@ -181,6 +181,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatDateBadge = formatSloveneDateBadge;
 
+  const formatPublicTitleForDisplay = (value: string) => value.replace(/\s+-\s+/gu, ' – ');
+
   const formatStartTime = (value: string) => {
     const trimmed = value.trim();
     const match = trimmed.match(/^(\d{1,2}):(\d{2})(.*)$/);
@@ -356,6 +358,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return note;
   };
 
+  const normalizeFamilyNoteDisplay = (value: string) => {
+    if (/^družinske ugodnosti\s*\(družinska\s*\)$/iu.test(value)) return 'Družinske ugodnosti.';
+    return value;
+  };
+
   const formatFamilyNote = (value: string) => {
     const markerPattern = /družinam\s+prijazno\s*[:\-–—]?\s*/iu;
     let note = value.replace(/\s+/g, ' ').trim();
@@ -379,7 +386,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!note) return '';
 
     const sentenceCaseNote = note.replace(/^\p{Ll}/u, (letter) => letter.toLocaleUpperCase('sl-SI'));
-    return trimFamilyNote(sentenceCaseNote);
+    return trimFamilyNote(normalizeFamilyNoteDisplay(sentenceCaseNote));
   };
 
   const getFilters = () => ({
@@ -525,7 +532,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <h3 class="search-event-title">${escapeHtml(formatPublicTitleForDisplay(event.title))}</h3>
         ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Za družine</strong></div><p>${escapeHtml(familyNote)}</p></div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
