@@ -887,6 +887,12 @@ main {
   font-weight: 800;
 }
 
+.field small {
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 .field input,
 .field select {
   width: 100%;

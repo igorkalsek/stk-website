@@ -56,9 +56,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </select>
           </label>
 
+          <label class="field">
+            <span>Prijavnina</span>
+            <select name="registrationFee" data-filter="registration-fee">
+              <option value="">Vse prijavnine</option>
+              <option value="free-option">Ima brezplačno možnost</option>
+              <option value="10">Do 10 €</option>
+              <option value="20">Do 20 €</option>
+              <option value="30">Do 30 €</option>
+              <option value="50">Do 50 €</option>
+            </select>
+            <small>Filter upošteva najnižjo znano prijavnino.</small>
+          </label>
+
+          <label class="field">
+            <span>Razvrsti po</span>
+            <select name="sort" data-filter="sort">
+              <option value="date">Datum</option>
+              <option value="registration-min">Najnižja prijavnina</option>
+              <option value="registration-max">Najvišja prijavnina</option>
+            </select>
+          </label>
+
           <label class="checkbox-field">
             <input type="checkbox" name="family" data-filter="family" />
             <span>Družinam prijazno</span>
+          </label>
+
+          <label class="checkbox-field">
+            <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
+            <span>Prijave na dan dogodka</span>
           </label>
 
           <label class="checkbox-field">
@@ -151,7 +178,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
   const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
   const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+  const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
+  const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
+  const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
   const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
 
@@ -241,6 +271,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   };
 
+  const parseMoney = (value: string) => {
+    if (!value) return null;
+    const normalized = value.replace(',', '.').replace(/[^\d.-]/g, '');
+    if (!normalized) return null;
+    const amount = Number(normalized);
+    return Number.isFinite(amount) ? amount : null;
+  };
+
+  const hasReliableAdditionalData = (additionalData?: AdditionalEventData | null): additionalData is AdditionalEventData =>
+    additionalData?.reliability === 'visoka';
+
+  const getRegistrationMinEur = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMinEur) : null;
+
+  const getRegistrationMaxEur = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMaxEur) : null;
+
+  const hasDayOfRegistration = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) &&
+    event.additionalData.dayOfRegistration.toLocaleUpperCase('sl-SI').trim() === 'DA';
+
+  const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
+    if (!filter) return true;
+
+    const min = getRegistrationMinEur(event);
+    if (min === null) return false;
+    if (filter === 'free-option') return min === 0;
+
+    const limit = Number(filter);
+    return Number.isFinite(limit) && min <= limit;
+  };
+
+  const compareNullableNumber = (a: number | null, b: number | null, direction: 'asc' | 'desc') => {
+    if (a === null && b === null) return 0;
+    if (a === null) return 1;
+    if (b === null) return -1;
+    return direction === 'asc' ? a - b : b - a;
+  };
+
+  const compareByDate = (a: RaceEvent, b: RaceEvent) =>
+    a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI');
+
+  const sortEvents = (events: RaceEvent[], sort: string) =>
+    [...events].sort((a, b) => {
+      if (sort === 'registration-min') {
+        return compareNullableNumber(getRegistrationMinEur(a), getRegistrationMinEur(b), 'asc') || compareByDate(a, b);
+      }
+
+      if (sort === 'registration-max') {
+        return compareNullableNumber(getRegistrationMaxEur(a), getRegistrationMaxEur(b), 'desc') || compareByDate(a, b);
+      }
+
+      return compareByDate(a, b);
+    });
 
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
@@ -288,7 +372,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     month: monthSelect?.value ?? '',
     region: regionSelect?.value ?? '',
     surface: surfaceSelect?.value ?? '',
+    registrationFee: registrationFeeSelect?.value ?? '',
+    sort: sortSelect?.value ?? 'date',
     family: Boolean(familyInput?.checked),
+    dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
     additional: Boolean(additionalInput?.checked)
   });
 
@@ -340,7 +427,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         };
       })
       .filter((event): event is RaceEvent => Boolean(event))
-      .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
+      .sort(compareByDate);
   };
 
   const renderOptions = (select: HTMLSelectElement | null, values: string[], fallbackLabel: string, labelForValue = (value: string) => value) => {
@@ -468,21 +555,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.month && event.month !== filters.month) return false;
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
+      if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
       if (filters.family && !event.familyFriendly) return false;
+      if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
       if (filters.additional && !hasRenderableAdditionalData(event.additionalData)) return false;
       return true;
     });
+    state.filtered = sortEvents(state.filtered, filters.sort);
 
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
-    setStatus('Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.');
+    setStatus(filters.sort === 'date'
+      ? 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.'
+      : 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani prijavnini.');
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
 
     if (!count) {
-      renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter prijavnine ali dodatnih podatkov.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
