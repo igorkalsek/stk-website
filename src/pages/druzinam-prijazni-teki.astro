@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Družinam prijazni teki" description="Pregled tekaških prireditev, ki so v javnem viru označene kot družinam prijazne.">
   <main>
     <section class="page-hero container" aria-labelledby="family-title">
-      <span class="eyebrow">Družinam prijazni teki</span>
+      <span class="eyebrow">Za družine</span>
       <h1 id="family-title">Družinam prijazni teki</h1>
       <p class="hero-subtitle">Poiščite teke z otroškimi in družinskimi vsebinami</p>
       <p>
@@ -291,6 +291,71 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return `${trimmed}…`;
   };
 
+  const normalizeFamilyNoteTimes = (value: string) => value
+    .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.(\d{2})\.\s*(?:uri|uro|h)?\b/giu, (_match, hour: string, minute: string) => `${hour.padStart(2, '0')}:${minute}`)
+    .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.\s*(?:uri|uro|h)\b/giu, (_match, hour: string) => `${hour.padStart(2, '0')}:00`)
+    .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.(?=\s*(?:$|[;,]|in\b))/giu, (_match, hour: string) => `${hour.padStart(2, '0')}:00`);
+
+  const stripFamilyNoteDeadlines = (value: string) => value
+    .replace(/\s*\bdo\s+(?:\d{1,2}\.\d{1,2}\.\d{4}|\d{4}-\d{2}-\d{2})\b/giu, '')
+    .replace(/\s*\bdo\s+\d{1,2}\.\d{1,2}\.\b/giu, '');
+
+  const cleanupFamilyNoteSegment = (value: string) => {
+    let segment = stripFamilyNoteDeadlines(value)
+      .replace(/\(([^)]*\bkm\b[^)]*)\)/giu, '$1')
+      .replace(/\bpredprijav[aoe]?\b/giu, '')
+      .replace(/\b(?:nato|potem|na dan(?: prireditve)?)\b[^;,.]*/giu, '')
+      .replace(/\b\d+(?:[,.]\d+)?\s*(?:eur|€)\b/giu, '')
+      .replace(/\b(?:cena|prijavnina|štartnina|startnina)\s*:?\s*/giu, '')
+      .replace(/\s{2,}/gu, ' ')
+      .replace(/\s+,/gu, ',')
+      .replace(/(?:,\s*){2,}/gu, ', ')
+      .replace(/[\s,.;:!?-]+$/u, '')
+      .trim();
+
+    if (/^brezplačn[ao]\b/iu.test(segment) && !/\b(?:otroc|otrošk|udelež)/iu.test(segment)) {
+      segment = 'brezplačna udeležba';
+    }
+
+    return segment;
+  };
+
+  const isFamilyNoteSegment = (value: string) => (
+    /\b(?:otro(?:ci|ke|ški|ška|ških|kom|cih|ci)|družin(?:ski|ska|ske|am|e|o)?|vozičk(?:i|om|e)?|animacij(?:a|e|o)|brezplačn(?:o|a|i|e)|ugodnost(?:i|jo)?|mini)\b/iu.test(value)
+  );
+
+  const cleanFamilyNoteForDisplay = (value: string) => {
+    const normalized = normalizeFamilyNoteTimes(value);
+    const rawSegments = normalized
+      .split(/\s*[;|]\s*/u)
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+
+    const sourceSegments = rawSegments.length ? rawSegments : [normalized];
+    const cleanedSegments = sourceSegments
+      .map(cleanupFamilyNoteSegment)
+      .filter(Boolean);
+    const familySegments = cleanedSegments.filter(isFamilyNoteSegment);
+    const startsWithDistanceOnly = /^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+)$/iu.test(cleanedSegments[0] ?? '');
+    const selectedSegments = familySegments.length
+      ? startsWithDistanceOnly && familySegments.some((segment) => /\botro/iu.test(segment))
+        ? ['Otroški tek', ...familySegments]
+        : familySegments
+      : cleanedSegments;
+
+    const note = selectedSegments.join('; ')
+      .replace(/^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+)$/iu, 'Otroški tek')
+      .replace(/^((?:\d+(?:[,.]\d+)?\s*(?:km|m)\s*(?:\+\s*)?)+);\s*/iu, 'Otroški tek; ')
+      .replace(/\btek mini\s+([^;,.]+)/iu, 'TEK MINI $1')
+      .replace(/,\s*brezplačno\b/iu, '; brezplačna udeležba')
+      .replace(/\s{2,}/gu, ' ')
+      .replace(/\s+([,.;:])/gu, '$1')
+      .replace(/[\s,.;:!?-]+$/u, '')
+      .trim();
+
+    return note;
+  };
+
   const formatFamilyNote = (value: string) => {
     const markerPattern = /družinam\s+prijazno\s*[:\-–—]?\s*/iu;
     let note = value.replace(/\s+/g, ' ').trim();
@@ -308,6 +373,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       .replace(/^[|\s:;\-–—]+/u, '')
       .trim();
 
+    if (!note) return '';
+
+    note = cleanFamilyNoteForDisplay(note);
     if (!note) return '';
 
     const sentenceCaseNote = note.replace(/^\p{Ll}/u, (letter) => letter.toLocaleUpperCase('sl-SI'));
