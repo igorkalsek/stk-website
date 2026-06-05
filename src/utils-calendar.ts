@@ -10,6 +10,7 @@ export type CalendarEventLinkInput = {
   location?: string;
   noticeUrl?: string;
   registrationUrl?: string;
+  language?: 'sl' | 'en';
 };
 
 const formatGoogleCalendarDate = (value: string) => value.replace(/-/g, '');
@@ -27,11 +28,32 @@ const getNextDate = (value: string) => {
   return date.toISOString().slice(0, 10);
 };
 
-const getEventDetails = ({ noticeUrl = '', registrationUrl = '' }: Pick<CalendarEventLinkInput, 'noticeUrl' | 'registrationUrl'>) => [
-  'Dodano iz Slovenskega Tekaškega Koledarja. Pred prijavo preverite uradni razpis ali stran organizatorja.',
-  noticeUrl ? `Razpis: ${noticeUrl}` : '',
-  registrationUrl ? `Prijava: ${registrationUrl}` : ''
-].filter(Boolean).join('\n');
+const EVENT_DETAILS = {
+  sl: {
+    intro: 'Dodano iz Slovenskega Tekaškega Koledarja. Pred prijavo preverite uradni razpis ali stran organizatorja.',
+    notice: 'Razpis:',
+    registration: 'Prijava:'
+  },
+  en: {
+    intro: 'Added from the Slovenian Race Calendar. Before registering, always check the official race announcement or the organiser’s website.',
+    notice: 'Official info:',
+    registration: 'Registration:'
+  }
+} as const;
+
+const getEventDetails = ({
+  noticeUrl = '',
+  registrationUrl = '',
+  language = 'sl'
+}: Pick<CalendarEventLinkInput, 'noticeUrl' | 'registrationUrl' | 'language'>) => {
+  const labels = EVENT_DETAILS[language] ?? EVENT_DETAILS.sl;
+
+  return [
+    labels.intro,
+    noticeUrl ? `${labels.notice} ${noticeUrl}` : '',
+    registrationUrl ? `${labels.registration} ${registrationUrl}` : ''
+  ].filter(Boolean).join('\n');
+};
 
 const hasValidAllDayDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date);
 
@@ -40,7 +62,8 @@ export const buildGoogleCalendarEventUrl = ({
   date,
   location = '',
   noticeUrl = '',
-  registrationUrl = ''
+  registrationUrl = '',
+  language = 'sl'
 }: CalendarEventLinkInput) => {
   if (!title || !hasValidAllDayDate(date)) return '';
 
@@ -51,7 +74,7 @@ export const buildGoogleCalendarEventUrl = ({
     action: 'TEMPLATE',
     text: title,
     dates: `${formatGoogleCalendarDate(date)}/${formatGoogleCalendarDate(nextDate)}`,
-    details: getEventDetails({ noticeUrl, registrationUrl })
+    details: getEventDetails({ noticeUrl, registrationUrl, language })
   });
 
   if (location) params.set('location', location);
@@ -97,7 +120,8 @@ export const buildIcsCalendarEvent = ({
   date,
   location = '',
   noticeUrl = '',
-  registrationUrl = ''
+  registrationUrl = '',
+  language = 'sl'
 }: CalendarEventLinkInput) => {
   if (!title || !hasValidAllDayDate(date)) return '';
 
@@ -117,7 +141,7 @@ export const buildIcsCalendarEvent = ({
     `DTEND;VALUE=DATE:${formatGoogleCalendarDate(nextDate)}`,
     `SUMMARY:${escapeIcsText(title)}`,
     location ? `LOCATION:${escapeIcsText(location)}` : '',
-    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl }))}`,
+    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl, language }))}`,
     'END:VEVENT',
     'END:VCALENDAR'
   ].filter(Boolean).map(foldIcsLine);
@@ -137,7 +161,8 @@ export const buildOutlookCalendarEventUrl = ({
   date,
   location = '',
   noticeUrl = '',
-  registrationUrl = ''
+  registrationUrl = '',
+  language = 'sl'
 }: CalendarEventLinkInput) => {
   if (!title || !hasValidAllDayDate(date)) return '';
 
@@ -150,7 +175,7 @@ export const buildOutlookCalendarEventUrl = ({
     startdt: date,
     enddt: nextDate,
     allday: 'true',
-    body: getEventDetails({ noticeUrl, registrationUrl })
+    body: getEventDetails({ noticeUrl, registrationUrl, language })
   });
 
   if (location) params.set('location', location);
