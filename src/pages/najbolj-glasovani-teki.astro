@@ -86,6 +86,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
@@ -99,6 +100,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
   type TopEvent = {
     id: string;
+    row: string;
     rank: number;
     date: string;
     dateValue: number;
@@ -116,6 +118,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     noticeUrl: string;
     registrationUrl: string;
     searchText: string;
+    additionalData?: AdditionalEventData | null;
   };
 
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=50';
@@ -381,11 +384,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const voteCount = getReliableVoteCount(row);
     const noticeUrl = safeUrl(enrichValue(row, match, ['povezava_razpis', 'razpis_url', 'notice_url']));
     const registrationUrl = safeUrl(enrichValue(row, match, ['povezava_prijava', 'prijava_url', 'registration_url']));
+    const masterRow = match ? getFieldValue(match, 'row') : '';
 
     if (!sourceTitle || sourceTitle === 'Naziv teka ni na voljo') return null;
 
     return {
-      id: voteDetails.eventId || `${date}-${sourceTitle}-${index}`,
+      id: voteDetails.eventId || masterRow || `${date}-${sourceTitle}-${index}`,
+      row: masterRow,
       rank: index + 1,
       date,
       dateValue,
@@ -514,6 +519,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
@@ -530,6 +536,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <h3 class="search-event-title">${escapeHtml(event.displayTitle)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
@@ -588,15 +595,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setStatus('Nalagamo najbolj glasovane prihajajoče teke …');
 
     try {
-      const [topPayload, masterPayload] = await Promise.all([
+      const [topPayload, masterPayload, additionalRows] = await Promise.all([
         loadJson(TOP_API_URL),
         loadJson(MASTER_API_URL).catch((error) => {
           console.warn('Najbolj glasovani teki master enrichment skipped', error);
           return [];
+        }),
+        fetchAdditionalEventData().catch((error) => {
+          console.warn('Najbolj glasovani teki additional data skipped', error);
+          return [];
         })
       ]);
 
-      state.events = mapTopEvents(toArray(topPayload), toArray(masterPayload));
+      state.events = attachAdditionalDataByMasterRow(mapTopEvents(toArray(topPayload), toArray(masterPayload)), additionalRows);
       state.apiAvailable = true;
       populateFilters();
       renderResults();

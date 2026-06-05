@@ -1163,3 +1163,46 @@ main {
 .calendar-menu-options a:focus-visible {
   background: rgba(200, 230, 201, 0.58);
 }
+
+.additional-data-note {
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.additional-data-block {
+  border: 1px solid rgba(16, 64, 80, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--muted);
+  padding: 10px 12px;
+}
+
+.additional-data-block summary {
+  color: var(--deep-teal);
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.additional-data-block ul {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding-left: 1.1rem;
+}
+
+.additional-data-block li {
+  line-height: 1.45;
+}
+
+.additional-data-block a {
+  color: var(--deep-teal);
+  font-weight: 800;
+  text-decoration-color: rgba(16, 64, 80, 0.32);
+  text-underline-offset: 3px;
+}
+
+.additional-data-block a:hover,
+.additional-data-block a:focus-visible {
+  text-decoration-color: currentColor;
+}
