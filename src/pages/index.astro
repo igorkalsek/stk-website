@@ -59,6 +59,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </article>
       </div>
+      <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
     </section>
 
     <section class="section container" aria-labelledby="voted-title">
@@ -124,7 +125,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
-  import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
+  import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -556,23 +557,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatDateBadge = formatSloveneDateBadge;
 
-  const formatStartTime = (value: string) => {
-    const trimmed = value.trim();
-    const match = trimmed.match(/^(\d{1,2}):(\d{2})(.*)$/);
-    if (!match) return trimmed;
-    return `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}`;
-  };
-
-  const formatSurface = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-    return trimmed
-      .toLocaleLowerCase('sl-SI')
-      .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-  };
-
-  const formatDistances = formatSloveneDistances;
-
   const escapeHtml = (value: string | number) => {
     const characters: Record<string, string> = {
       '&': '&amp;',
@@ -716,24 +700,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const date = formatDate(dateValue);
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
         const region = getEventField(event, 'regija', ['region']);
-        const surface = getEventField(event, 'tip_podlage', ['surface']);
-        const distance = formatDistances(getEventField(event, 'razdalje_km', ['distance', 'distances']));
-        const startTime = getEventField(event, 'cas_zacetka', ['čas_zacetka', 'čas_začetka', 'cas_začetka', 'start_time', 'time']);
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
-        const voteUrl = safeUrl(getEventField(event, 'vote_url', ['glasovanje_url', 'url_glasovanje']));
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
-        const formattedSurface = formatSurface(surface);
-        const metaItems = [
-          formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
-          distance && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(distance)}</span>`,
-          startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(startTime))}</span>`
-        ].filter(Boolean).join('');
         const links = [
-          registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
           noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
-          voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(voteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Glasujte za ${title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
+          registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
           calendarOptions
         ].filter(Boolean).join('');
 
@@ -744,7 +717,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <h3>${escapeHtml(title)}</h3>
             </div>
             ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
-            ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
             ${links ? `<div class="event-actions">${links}</div>` : ''}
           </article>
         `;
@@ -825,13 +797,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const dateValue = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
         const date = formatDate(dateValue);
         const votes = getTopEventVotes(event);
-        const distance = formatDistances(pickPath(event, ['razdalje_km', 'event.razdalje_km', 'race.razdalje_km', 'data.razdalje_km', 'distance', 'distances'], ''));
-        const surface = formatSurface(pickPath(event, ['tip_podlage', 'event.tip_podlage', 'race.tip_podlage', 'data.tip_podlage', 'surface'], ''));
         const meta = joinParts([location, region && region !== location ? region : '']);
         const metaItems = [
-          votes !== null ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="event-chip pill-orange">Glasovanje odprto</span>',
-          distance && `<span class="event-chip"><strong>Razdalje:</strong> ${escapeHtml(distance)}</span>`,
-          surface && `<span class="event-chip event-chip-surface">${escapeHtml(surface)}</span>`
+          votes !== null ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
         ].filter(Boolean).join('');
 
         return `
