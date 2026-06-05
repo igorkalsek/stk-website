@@ -1,0 +1,46 @@
+---
+import GroupRunsSection from '../components/GroupRunsSection.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const labels = {
+  loading: 'Podatke še nalagamo',
+  search: 'Iskanje',
+  searchPlaceholder: 'Naziv, kraj ali regija',
+  region: 'Regija',
+  type: 'Tip',
+  participation: 'Udeležba',
+  allRegions: 'Vse regije',
+  allTypes: 'Vsi tipi',
+  allParticipation: 'Vse možnosti',
+  clearFilters: 'Počisti filtre',
+  town: 'Kraj',
+  schedule: 'Termin',
+  intendedFor: 'Namenjeno',
+  moreInfo: 'Več informacij',
+  notes: 'Opombe',
+  empty: 'Trenutno ni prikazanih skupinskih tekov. Poskusite znova kasneje ali preverite Facebook stran STK.',
+  noResults: 'Za izbrane filtre ni prikazanih skupinskih tekov.',
+  error: 'Skupinskih tekov trenutno ni mogoče naložiti. Poskusite znova kasneje ali preverite Facebook stran STK.'
+};
+---
+
+<BaseLayout
+  title="Skupinski teki po Sloveniji | Slovenski Tekaški Koledar"
+  description="Pregled rednih skupinskih tekov, tekaških rund, tekaških skupnosti in vodenih rekreativnih treningov po Sloveniji."
+  canonicalPath="/skupinski-teki/"
+  alternateLinks={[
+    { lang: 'sl', href: '/skupinski-teki/' },
+    { lang: 'en', href: '/en/group-runs/' }
+  ]}
+>
+  <main>
+    <section class="page-hero container" aria-labelledby="page-title">
+      <span class="eyebrow">Skupnost</span>
+      <h1 id="page-title">Skupinski teki</h1>
+      <p class="hero-subtitle">Iščete družbo za tek? Tukaj zbiramo redne skupinske teke, tekaške runde, tekaške skupnosti in vodene rekreativne treninge po Sloveniji.</p>
+      <p>STK teh tekov ne organizira. Podatki so informativni. Aktualen termin, zbirno mesto, prijavo in morebitne pogoje vedno preverite pri organizatorju.</p>
+    </section>
+
+    <GroupRunsSection lang="sl" labels={labels} />
+  </main>
+</BaseLayout>

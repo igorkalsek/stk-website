@@ -1,0 +1,323 @@
+---
+interface Labels {
+  loading: string;
+  search: string;
+  searchPlaceholder: string;
+  region: string;
+  type: string;
+  participation: string;
+  allRegions: string;
+  allTypes: string;
+  allParticipation: string;
+  clearFilters: string;
+  town: string;
+  schedule: string;
+  intendedFor: string;
+  moreInfo: string;
+  notes: string;
+  empty: string;
+  noResults: string;
+  error: string;
+}
+
+interface Props {
+  lang: 'sl' | 'en';
+  labels: Labels;
+}
+
+const { lang, labels } = Astro.props;
+---
+
+<section class="section container" aria-labelledby="group-runs-list-title">
+  <div class="search-panel group-runs-panel">
+    <div class="section-heading search-heading">
+      <div>
+        <h2 id="group-runs-list-title">{lang === 'en' ? 'Listed group runs' : 'Seznam skupinskih tekov'}</h2>
+        <p>{lang === 'en' ? 'Filter the list by name, town, region, type or participation.' : 'Seznam lahko filtrirate po nazivu, kraju, regiji, tipu ali udeležbi.'}</p>
+      </div>
+    </div>
+
+    <form class="filters-grid group-runs-filters" data-group-runs-filters>
+      <label class="field field-wide">
+        {labels.search}
+        <input type="search" name="search" data-filter="search" placeholder={labels.searchPlaceholder} autocomplete="off" />
+      </label>
+
+      <label class="field">
+        {labels.region}
+        <select name="region" data-filter="region">
+          <option value="">{labels.allRegions}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        {labels.type}
+        <select name="type" data-filter="type">
+          <option value="">{labels.allTypes}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        {labels.participation}
+        <select name="participation" data-filter="participation">
+          <option value="">{labels.allParticipation}</option>
+        </select>
+      </label>
+
+      <button class="button button-secondary-light clear-filters-button" type="button" data-clear-filters>{labels.clearFilters}</button>
+    </form>
+  </div>
+
+  <div class="search-results group-runs-results" data-group-runs-results aria-live="polite">
+    <article class="event-card search-empty-card">
+      <h3>{labels.loading}</h3>
+    </article>
+  </div>
+</section>
+
+<script define:vars={{ labels, pageLang: lang }} is:inline>
+  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/group-runs';
+  const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results'];
+
+  const state = {
+    runs: [],
+    filtered: [],
+    loadFailed: false
+  };
+
+  const resultsElement = document.querySelector('[data-group-runs-results]');
+  const formElement = document.querySelector('[data-group-runs-filters]');
+  const searchInput = document.querySelector('[data-filter="search"]');
+  const regionSelect = document.querySelector('[data-filter="region"]');
+  const typeSelect = document.querySelector('[data-filter="type"]');
+  const participationSelect = document.querySelector('[data-filter="participation"]');
+  const clearButton = document.querySelector('[data-clear-filters]');
+
+  const asRecord = (value) =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+
+  const toArray = (payload) => {
+    if (Array.isArray(payload)) return payload.filter(asRecord);
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord);
+    }
+
+    return [];
+  };
+
+  const pick = (item, key) => {
+    const value = item[key];
+    return value === undefined || value === null ? '' : String(value).trim();
+  };
+
+  const normalize = (value) => value.toLocaleLowerCase(pageLang === 'en' ? 'en-US' : 'sl-SI').normalize('NFKC');
+
+  const escapeHtml = (value) => {
+    const characters = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    return String(value).replace(/[&<>"']/g, (character) => characters[character]);
+  };
+
+  const safeUrl = (value) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const exactEnglishMaps = {
+    tip: new Map([
+      ['skupinski tek', 'Group run'],
+      ['trail runda', 'Trail run'],
+      ['odprt trening', 'Open training']
+    ]),
+    udelezba: new Map([
+      ['Brezplačno', 'Free'],
+      ['Ni jasno', 'Not clear'],
+      ['Plačljivo / članarina / vadnina', 'Paid / membership / training fee']
+    ]),
+    namenjeno: new Map([
+      ['začetniki', 'Beginners'],
+      ['rekreativci', 'Recreational runners'],
+      ['hitrejši tempo', 'Faster pace']
+    ])
+  };
+
+  const displayValue = (field, value) => {
+    if (pageLang !== 'en' || !value) return value;
+    const exact = exactEnglishMaps[field].get(value);
+    if (exact) return exact;
+
+    if (field !== 'namenjeno') return value;
+
+    return value
+      .split(/(\s*[,/;]\s*)/u)
+      .map((part) => exactEnglishMaps.namenjeno.get(part.trim()) ?? part)
+      .join('');
+  };
+
+  const mapRun = (item, index) => {
+    const run = {
+      id: pick(item, 'row') || String(index + 1),
+      naziv: pick(item, 'naziv'),
+      kraj: pick(item, 'kraj'),
+      regija: pick(item, 'regija'),
+      termin: pick(item, 'termin'),
+      tip: pick(item, 'tip'),
+      namenjeno: pick(item, 'namenjeno'),
+      udelezba: pick(item, 'udelezba'),
+      povezava: pick(item, 'povezava'),
+      opombe: pick(item, 'opombe'),
+      searchText: ''
+    };
+
+    run.searchText = normalize([run.naziv, run.kraj, run.regija].join(' '));
+    return run;
+  };
+
+  const uniqueSorted = (values) => [...new Set(values.filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, pageLang === 'en' ? 'en-US' : 'sl-SI', { sensitivity: 'base' })
+  );
+
+  const renderOptions = (select, values, labelForValue) => {
+    if (!select) return;
+    const firstOption = select.options[0];
+    select.innerHTML = '';
+    select.append(firstOption);
+    for (const value of values) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = labelForValue(value);
+      select.append(option);
+    }
+  };
+
+  const renderFilters = () => {
+    renderOptions(regionSelect, uniqueSorted(state.runs.map((run) => run.regija)), (value) => value);
+    renderOptions(typeSelect, uniqueSorted(state.runs.map((run) => run.tip)), (value) => displayValue('tip', value));
+    renderOptions(participationSelect, uniqueSorted(state.runs.map((run) => run.udelezba)), (value) => displayValue('udelezba', value));
+  };
+
+  const detail = (label, value) => value
+    ? `<span class="event-detail"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</span>`
+    : '';
+
+  const renderRunCard = (run) => {
+    const url = safeUrl(run.povezava);
+    const details = [
+      detail(labels.town, run.kraj),
+      detail(labels.region, run.regija),
+      detail(labels.schedule, run.termin),
+      detail(labels.type, displayValue('tip', run.tip)),
+      detail(labels.intendedFor, displayValue('namenjeno', run.namenjeno)),
+      detail(labels.participation, displayValue('udelezba', run.udelezba))
+    ].filter(Boolean).join('');
+
+    const notes = run.opombe
+      ? `<div class="family-note-row group-run-notes"><span class="family-note-label">${escapeHtml(labels.notes)}</span><p>${escapeHtml(run.opombe)}</p></div>`
+      : '';
+
+    const actions = url
+      ? `<div class="event-actions"><a class="button button-primary button-small" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(labels.moreInfo)}</a></div>`
+      : '';
+
+    return `
+      <article class="event-card search-event-card group-run-card">
+        <h3 class="search-event-title">${escapeHtml(run.naziv)}</h3>
+        ${details ? `<div class="event-details">${details}</div>` : ''}
+        ${notes}
+        ${actions}
+      </article>
+    `;
+  };
+
+  const renderStateMessage = (message) => {
+    if (!resultsElement) return;
+    resultsElement.innerHTML = `
+      <article class="event-card search-empty-card">
+        <h3>${escapeHtml(message)}</h3>
+      </article>
+    `;
+  };
+
+  const renderRuns = () => {
+    if (!resultsElement) return;
+
+    if (state.loadFailed) {
+      renderStateMessage(labels.error);
+      return;
+    }
+
+    if (!state.runs.length) {
+      renderStateMessage(labels.empty);
+      return;
+    }
+
+    if (!state.filtered.length) {
+      renderStateMessage(labels.noResults);
+      return;
+    }
+
+    resultsElement.innerHTML = state.filtered.map(renderRunCard).join('');
+  };
+
+  const applyFilters = () => {
+    const search = normalize(searchInput?.value ?? '');
+    const region = regionSelect?.value ?? '';
+    const type = typeSelect?.value ?? '';
+    const participation = participationSelect?.value ?? '';
+
+    state.filtered = state.runs.filter((run) => {
+      const matchesSearch = !search || run.searchText.includes(search);
+      const matchesRegion = !region || run.regija === region;
+      const matchesType = !type || run.tip === type;
+      const matchesParticipation = !participation || run.udelezba === participation;
+      return matchesSearch && matchesRegion && matchesType && matchesParticipation;
+    });
+
+    renderRuns();
+  };
+
+  const loadGroupRuns = async () => {
+    try {
+      const response = await fetch(API_URL, { headers: { accept: 'application/json' } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const payload = await response.json();
+      const record = asRecord(payload);
+      if (record?.ok === false) throw new Error('API returned ok:false');
+
+      state.runs = toArray(payload).map(mapRun).filter((run) => run.naziv);
+      state.filtered = [...state.runs];
+      renderFilters();
+      renderRuns();
+    } catch (error) {
+      console.error('Group runs could not be loaded.', error);
+      state.loadFailed = true;
+      renderRuns();
+    }
+  };
+
+  formElement?.addEventListener('input', applyFilters);
+  formElement?.addEventListener('change', applyFilters);
+  clearButton?.addEventListener('click', () => {
+    formElement?.reset();
+    applyFilters();
+  });
+
+  loadGroupRuns();
+</script>

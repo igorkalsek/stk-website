@@ -1366,3 +1366,50 @@ main {
 .additional-data-block a:focus-visible {
   text-decoration-color: currentColor;
 }
+
+.hero-secondary-feature-link {
+  display: grid;
+  max-width: 300px;
+  gap: 3px;
+}
+
+.hero-secondary-feature-link strong {
+  font-weight: 850;
+}
+
+.hero-secondary-feature-link span {
+  color: #cfe2da;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.group-runs-panel {
+  margin-bottom: 18px;
+}
+
+.group-runs-filters {
+  margin-top: 16px;
+}
+
+.group-runs-results {
+  margin-top: 18px;
+}
+
+.group-run-card {
+  grid-column: auto;
+}
+
+.group-run-notes {
+  margin-top: 0;
+}
+
+@media (min-width: 720px) {
+  .group-runs-filters {
+    grid-template-columns: minmax(220px, 1.6fr) repeat(3, minmax(150px, 1fr)) auto;
+  }
+
+  .group-runs-filters .field-wide {
+    grid-column: auto;
+  }
+}
