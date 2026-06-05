@@ -2,6 +2,10 @@ export type ApiRecord = Record<string, unknown>;
 
 export type AdditionalEventData = {
   masterRow: string;
+  masterRowNumber: number;
+  reliability: string;
+  date: string;
+  eventTitle: string;
   registrationMinEur: string;
   registrationMaxEur: string;
   registrationDeadline: string;
@@ -14,12 +18,27 @@ export type AdditionalEventData = {
 export type EventWithAdditionalRow = {
   row?: string;
   id?: string;
+  date?: string;
+  datum?: string;
+  title?: string;
+  displayTitle?: string;
+  naziv_prireditve?: string;
   additionalData?: AdditionalEventData | null;
 };
 
 const ADDITIONAL_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/additional';
 const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'additional'];
 const HIGH_RELIABILITY = 'visoka';
+const TITLE_STOP_WORDS = new Set([
+  'tek',
+  'teki',
+  'trail',
+  'trails',
+  'maraton',
+  'polmaraton',
+  'prireditev',
+  'prireditve'
+]);
 
 const asRecord = (value: unknown): ApiRecord | null =>
   value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
@@ -43,10 +62,40 @@ const pick = (item: ApiRecord, key: string): string => {
   return value === undefined || value === null ? '' : String(value).trim();
 };
 
-const normalizeRow = (value: string) => value.trim();
+const normalizeRow = (value: string) => {
+  const trimmed = value.trim();
+  return trimmed ? Number(trimmed) : Number.NaN;
+};
 
-const normalizeReliability = (value: string) =>
-  value.toLocaleLowerCase('sl-SI').normalize('NFKC').trim();
+const hasValidRowNumber = (value: number) => Number.isFinite(value);
+
+const isDevelopment = () => import.meta.env.DEV;
+
+const warnAdditionalDataSkipped = (reason: string, context: Record<string, unknown>) => {
+  if (!isDevelopment()) return;
+  console.warn(`[additional-data] Skipped additional row: ${reason}`, context);
+};
+
+const normalizeTitle = (value: string) =>
+  value
+    .toLocaleLowerCase('sl-SI')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+const titleTokens = (value: string) =>
+  normalizeTitle(value)
+    .split(/\s+/)
+    .filter((token) => token.length >= 2 && !TITLE_STOP_WORDS.has(token));
+
+const titlesAppearUnrelated = (additionalTitle: string, eventTitle: string) => {
+  const additionalTokens = titleTokens(additionalTitle);
+  const eventTokens = new Set(titleTokens(eventTitle));
+
+  if (!additionalTokens.length || !eventTokens.size) return false;
+  return !additionalTokens.some((token) => eventTokens.has(token));
+};
 
 const safeUrl = (value: string) => {
   if (!value) return '';
@@ -58,14 +107,15 @@ const safeUrl = (value: string) => {
   }
 };
 
-const mapAdditionalRow = (item: ApiRecord): AdditionalEventData | null => {
-  if (normalizeReliability(pick(item, 'zanesljivost')) !== HIGH_RELIABILITY) return null;
-
-  const masterRow = normalizeRow(pick(item, 'master_row'));
-  if (!masterRow) return null;
+const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
+  const masterRow = pick(item, 'master_row');
 
   return {
     masterRow,
+    masterRowNumber: normalizeRow(masterRow),
+    reliability: pick(item, 'zanesljivost'),
+    date: pick(item, 'datum'),
+    eventTitle: pick(item, 'naziv_prireditve'),
     registrationMinEur: pick(item, 'prijavnina_min_eur'),
     registrationMaxEur: pick(item, 'prijavnina_max_eur'),
     registrationDeadline: pick(item, 'rok_prijave'),
@@ -76,27 +126,87 @@ const mapAdditionalRow = (item: ApiRecord): AdditionalEventData | null => {
   };
 };
 
+const getEventDate = (event: EventWithAdditionalRow) => event.date ?? event.datum ?? '';
+
+const getEventTitle = (event: EventWithAdditionalRow) =>
+  event.naziv_prireditve ?? event.displayTitle ?? event.title ?? '';
+
+const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: AdditionalEventData) => {
+  const eventRow = normalizeRow(event.row ?? '');
+
+  if (!hasValidRowNumber(eventRow)) {
+    warnAdditionalDataSkipped('event.row is missing', { event });
+    return false;
+  }
+
+  if (additionalRow.masterRowNumber !== eventRow) return false;
+
+  if (additionalRow.reliability !== HIGH_RELIABILITY) return false;
+
+  const eventDate = getEventDate(event).trim();
+  if (additionalRow.date && eventDate && additionalRow.date !== eventDate) {
+    warnAdditionalDataSkipped('date mismatch', {
+      eventRow: event.row,
+      additionalMasterRow: additionalRow.masterRow,
+      eventDate,
+      additionalDate: additionalRow.date
+    });
+    return false;
+  }
+
+  const eventTitle = getEventTitle(event).trim();
+  if (additionalRow.eventTitle && eventTitle && titlesAppearUnrelated(additionalRow.eventTitle, eventTitle)) {
+    warnAdditionalDataSkipped('title appears unrelated', {
+      eventRow: event.row,
+      additionalMasterRow: additionalRow.masterRow,
+      eventTitle,
+      additionalTitle: additionalRow.eventTitle
+    });
+    return false;
+  }
+
+  return true;
+};
+
 export const fetchAdditionalEventData = async () => {
   const response = await fetch(ADDITIONAL_API_URL, { headers: { Accept: 'application/json' } });
   if (!response.ok) throw new Error(`Additional API status ${response.status}`);
-  return toAdditionalArray(await response.json())
-    .map(mapAdditionalRow)
-    .filter((item): item is AdditionalEventData => Boolean(item));
+  return toAdditionalArray(await response.json()).map(mapAdditionalRow);
 };
 
 export const attachAdditionalDataByMasterRow = <TEvent extends EventWithAdditionalRow>(
   events: TEvent[],
   additionalRows: AdditionalEventData[]
 ): TEvent[] => {
-  const byMasterRow = new Map<string, AdditionalEventData>();
+  const byMasterRow = new Map<number, AdditionalEventData>();
 
   for (const additionalRow of additionalRows) {
-    if (!byMasterRow.has(additionalRow.masterRow)) byMasterRow.set(additionalRow.masterRow, additionalRow);
+    if (!hasValidRowNumber(additionalRow.masterRowNumber)) {
+      warnAdditionalDataSkipped('master_row is missing', { additionalRow });
+      continue;
+    }
+
+    if (additionalRow.reliability !== HIGH_RELIABILITY) continue;
+
+    if (!byMasterRow.has(additionalRow.masterRowNumber)) {
+      byMasterRow.set(additionalRow.masterRowNumber, additionalRow);
+    }
   }
 
   return events.map((event) => {
-    const row = normalizeRow(event.row ?? '');
-    return row ? { ...event, additionalData: byMasterRow.get(row) ?? null } : event;
+    const eventRow = normalizeRow(event.row ?? '');
+
+    if (!hasValidRowNumber(eventRow)) {
+      warnAdditionalDataSkipped('event.row is missing', { event });
+      return { ...event, additionalData: null };
+    }
+
+    const additionalData = byMasterRow.get(eventRow) ?? null;
+    if (!additionalData || !isValidAdditionalMatch(event, additionalData)) {
+      return { ...event, additionalData: null };
+    }
+
+    return { ...event, additionalData };
   });
 };
 
@@ -133,6 +243,25 @@ const formatSlovenianIsoDate = (value: string) => {
   return `${Number(day)}. ${Number(month)}. ${year}`;
 };
 
+const todayStartValue = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today.getTime();
+};
+
+const parseIsoDateValue = (value: string) => {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return Number.NaN;
+
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+};
+
+const isTodayOrFutureIsoDate = (value: string) => {
+  const dateValue = parseIsoDateValue(value);
+  return Number.isFinite(dateValue) && dateValue >= todayStartValue();
+};
+
 const formatDayOfRegistration = (value: string) => {
   const normalized = value.toLocaleUpperCase('sl-SI').trim();
   if (normalized === 'DA') return 'Prijave na dan: da';
@@ -151,7 +280,8 @@ export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData
   return Boolean(
     formatRegistrationFee(additionalData) ||
     formatSlovenianIsoDate(additionalData.registrationDeadline) ||
-    formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline) ||
+    (isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline) &&
+      formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)) ||
     formatDayOfRegistration(additionalData.dayOfRegistration) ||
     formatElevationGain(additionalData.elevationGain) ||
     additionalData.routeUrl
@@ -165,7 +295,9 @@ export const renderAdditionalDataBlock = (
   if (!additionalData) return '';
 
   const registrationDeadline = formatSlovenianIsoDate(additionalData.registrationDeadline);
-  const earlyRegistrationDeadline = formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline);
+  const earlyRegistrationDeadline = isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline)
+    ? formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)
+    : '';
   const textItems = [
     formatRegistrationFee(additionalData),
     registrationDeadline && `Rok prijave: ${registrationDeadline}`,
