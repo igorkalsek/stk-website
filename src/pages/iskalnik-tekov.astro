@@ -93,7 +93,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
-  import { enrichEventsWithVoteUrls } from '../utils-vote';
+  import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -369,6 +369,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const formatDistances = formatSloveneDistances;
 
+  const getRenderableVoteUrl = (event: RaceEvent) => {
+    if (!event.voteUrl) return '';
+    const validation = isVoteUrlSafeForEvent(event, event.voteUrl);
+    if (validation.safe) return event.voteUrl;
+    if (import.meta.env.DEV) {
+      console.warn('[STK vote_url] skipped rendering vote_url', {
+        title: event.title,
+        date: event.date,
+        reason: validation.reason ?? 'unverified'
+      });
+    }
+    return '';
+  };
+
   const renderEvent = (event: RaceEvent) => {
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
@@ -386,10 +400,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const renderableVoteUrl = getRenderableVoteUrl(event);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
-      event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
+      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
     ].filter(Boolean).join('');
 
