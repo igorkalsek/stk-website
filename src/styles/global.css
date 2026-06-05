@@ -700,6 +700,11 @@ main {
   max-width: 36rem;
 }
 
+.footer-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .footer-links,
 .footer-contact,
 .footer-link-list {
