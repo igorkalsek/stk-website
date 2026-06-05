@@ -204,6 +204,23 @@ const englishNavItems = [
     return [];
   };
 
+  const getRecordArray = (record: ApiRecord | null, key: string): ApiRecord[] => {
+    const value = record?.[key];
+    return Array.isArray(value) ? value.filter(asRecord) as ApiRecord[] : [];
+  };
+
+  const getRecentUpdateGroups = (payload: unknown) => {
+    const root = asRecord(payload);
+    const recentUpdatesLastDays = asRecord(root?.recent_updates_last_days);
+    const source = recentUpdatesLastDays ?? root;
+
+    return {
+      updatedEvents: getRecordArray(source, 'updated_events'),
+      newEvents: getRecordArray(source, 'new_events'),
+      confirmedEvents: getRecordArray(source, 'confirmed_events')
+    };
+  };
+
   const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
     for (const key of keys) {
       const value = item[key];
@@ -871,12 +888,17 @@ const englishNavItems = [
     if (!container) return;
 
     try {
-      const payload = await loadJson('/recent_updates?days=7');
-      const updates = toArray(payload).slice(0, 6);
+      const payload = await loadJson('/recent_updates?days=7&limit=20');
+      const { updatedEvents, newEvents, confirmedEvents } = getRecentUpdateGroups(payload);
+      const updates = [
+        ...updatedEvents,
+        ...newEvents,
+        ...confirmedEvents
+      ].slice(0, 20);
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 
-      if (!updates.length) {
+      if (!updatedEvents.length && !newEvents.length && !confirmedEvents.length) {
         container.innerHTML = `
           <article class="update-card">
             <p>There were no new public calendar updates in the last 7 days.</p>
@@ -896,20 +918,17 @@ const englishNavItems = [
           'name'
         ], 'Calendar update');
         const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
-        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'zadnja_sprememba_podrobno', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
-        const updateType = pickPath(update, ['sprememba', 'vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'updated');
-        const note = pickPath(update, ['opis', 'zadnja_sprememba_podrobno', 'opis_spremembe', 'summary', 'notes', 'note', 'opombe_javne'], '');
         const place = joinParts([location, region && region !== location ? region : '']);
-        const meta = joinParts([place, eventDate ? `race date: ${eventDate}` : '', changed ? `updated: ${changed}` : '']);
-        const summary = note || `The entry was ${updateType}.`;
 
         return `
           <article class="update-card">
+            ${eventDate ? `<p><strong>${escapeHtml(eventDate)}</strong></p>` : ''}
             <h3>${escapeHtml(title)}</h3>
-            <p>${escapeHtml(summary)}</p>
-            ${meta ? `<div class="event-meta"><span class="pill">${escapeHtml(meta)}</span></div>` : ''}
+            ${place ? `<p>${escapeHtml(place)}</p>` : ''}
+            ${changed ? `<p>${escapeHtml(changed)}</p>` : ''}
           </article>
         `;
       }).join('');
