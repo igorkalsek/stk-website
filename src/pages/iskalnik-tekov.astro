@@ -105,6 +105,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     dateValue: number;
     month: string;
     title: string;
+    displayTitle: string;
+    naziv_prireditve: string;
+    datum: string;
     place: string;
     region: string;
     surface: string;
@@ -304,6 +307,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         if (pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') !== 'DA') return null;
 
         const row = pick(item, 'row');
+        const displayTitle = getDisplayEventTitle(title);
 
         return {
           id: row || `${date}-${title}-${place}`,
@@ -311,7 +315,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           date,
           dateValue,
           month: date.slice(5, 7),
-          title: getDisplayEventTitle(title),
+          title: displayTitle,
+          displayTitle,
+          naziv_prireditve: title,
+          datum: date,
           place,
           region,
           surface,
@@ -418,7 +425,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card">
+      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill">Družinam prijazno</span>' : ''}

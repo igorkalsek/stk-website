@@ -126,10 +126,11 @@ const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
   };
 };
 
-const getEventDate = (event: EventWithAdditionalRow) => event.date ?? event.datum ?? '';
+const getEventDate = (event: EventWithAdditionalRow) => event.datum ?? event.date ?? '';
 
-const getEventTitle = (event: EventWithAdditionalRow) =>
-  event.naziv_prireditve ?? event.displayTitle ?? event.title ?? '';
+const getEventRawTitle = (event: EventWithAdditionalRow) => event.naziv_prireditve ?? '';
+
+const getEventDisplayTitle = (event: EventWithAdditionalRow) => event.displayTitle ?? event.title ?? '';
 
 const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: AdditionalEventData) => {
   const eventRow = normalizeRow(event.row ?? '');
@@ -144,7 +145,7 @@ const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: Ad
   if (additionalRow.reliability !== HIGH_RELIABILITY) return false;
 
   const eventDate = getEventDate(event).trim();
-  if (additionalRow.date && eventDate && additionalRow.date !== eventDate) {
+  if (!additionalRow.date || !eventDate || additionalRow.date !== eventDate) {
     warnAdditionalDataSkipped('date mismatch', {
       eventRow: event.row,
       additionalMasterRow: additionalRow.masterRow,
@@ -154,12 +155,16 @@ const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: Ad
     return false;
   }
 
-  const eventTitle = getEventTitle(event).trim();
-  if (additionalRow.eventTitle && eventTitle && titlesAppearUnrelated(additionalRow.eventTitle, eventTitle)) {
+  const rawTitle = getEventRawTitle(event).trim();
+  const displayTitle = getEventDisplayTitle(event).trim();
+  const relatedToRawTitle = rawTitle && !titlesAppearUnrelated(additionalRow.eventTitle, rawTitle);
+  const relatedToDisplayTitle = displayTitle && !titlesAppearUnrelated(additionalRow.eventTitle, displayTitle);
+  if (additionalRow.eventTitle && !relatedToRawTitle && !relatedToDisplayTitle) {
     warnAdditionalDataSkipped('title appears unrelated', {
       eventRow: event.row,
       additionalMasterRow: additionalRow.masterRow,
-      eventTitle,
+      rawTitle,
+      displayTitle,
       additionalTitle: additionalRow.eventTitle
     });
     return false;
@@ -279,7 +284,8 @@ export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData
   if (!additionalData) return false;
   return Boolean(
     formatRegistrationFee(additionalData) ||
-    formatSlovenianIsoDate(additionalData.registrationDeadline) ||
+    (isTodayOrFutureIsoDate(additionalData.registrationDeadline) &&
+      formatSlovenianIsoDate(additionalData.registrationDeadline)) ||
     (isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline) &&
       formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)) ||
     formatDayOfRegistration(additionalData.dayOfRegistration) ||
@@ -294,7 +300,9 @@ export const renderAdditionalDataBlock = (
 ) => {
   if (!additionalData) return '';
 
-  const registrationDeadline = formatSlovenianIsoDate(additionalData.registrationDeadline);
+  const registrationDeadline = isTodayOrFutureIsoDate(additionalData.registrationDeadline)
+    ? formatSlovenianIsoDate(additionalData.registrationDeadline)
+    : '';
   const earlyRegistrationDeadline = isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline)
     ? formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)
     : '';
