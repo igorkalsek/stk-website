@@ -240,13 +240,32 @@ const formatRegistrationFee = (additionalData: AdditionalEventData, label = 'Pri
   return '';
 };
 
-const formatSlovenianIsoDate = (value: string) => {
+const ENGLISH_MONTH_ABBREVIATIONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const parseIsoDateParts = (value: string) => {
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return '';
+  if (!match) return null;
 
   const [, year, month, day] = match;
-  return `${Number(day)}. ${Number(month)}. ${year}`;
+  return { year, month: Number(month), day: Number(day) };
 };
+
+const formatSlovenianIsoDate = (value: string) => {
+  const parts = parseIsoDateParts(value);
+  if (!parts) return '';
+
+  return `${parts.day}. ${parts.month}. ${parts.year}`;
+};
+
+const formatEnglishIsoDate = (value: string) => {
+  const parts = parseIsoDateParts(value);
+  if (!parts || parts.month < 1 || parts.month > 12) return '';
+
+  return `${parts.day} ${ENGLISH_MONTH_ABBREVIATIONS[parts.month - 1]} ${parts.year}`;
+};
+
+const formatIsoDate = (value: string, language: 'sl' | 'en' = 'sl') =>
+  language === 'en' ? formatEnglishIsoDate(value) : formatSlovenianIsoDate(value);
 
 const todayStartValue = () => {
   const today = new Date();
@@ -338,10 +357,10 @@ export const renderAdditionalDataBlock = (
   const registrationFeeLabel = typeof options === 'string' ? 'Prijavnina' : options.registrationFeeLabel ?? (language === 'en' ? 'Entry fees' : 'Prijavnina');
 
   const registrationDeadline = isTodayOrFutureIsoDate(additionalData.registrationDeadline)
-    ? formatSlovenianIsoDate(additionalData.registrationDeadline)
+    ? formatIsoDate(additionalData.registrationDeadline, language)
     : '';
   const earlyRegistrationDeadline = isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline)
-    ? formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)
+    ? formatIsoDate(additionalData.earlyRegistrationDeadline, language)
     : '';
   const showRegistrationDeadline = Boolean(
     registrationDeadline &&
@@ -365,7 +384,7 @@ export const renderAdditionalDataBlock = (
   return `
     <details class="additional-data-block">
       <summary>ℹ️ ${language === 'en' ? 'Additional info' : 'Dodatni podatki'}</summary>
-      <ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>
+      <ul class="additional-data-list">${items.map((item) => `<li class="additional-data-item">${item}</li>`).join('')}</ul>
     </details>
   `;
 };

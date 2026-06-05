@@ -113,8 +113,9 @@ const englishNavItems = [
 <script>
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
   import { getDisplayEventTitle } from '../../utils-events';
-  import { formatSloveneDateBadge, formatSloveneDistances } from '../../utils-slovenian';
+  import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls } from '../../utils-vote';
 
   type ApiRecord = Record<string, unknown>;
@@ -144,8 +145,7 @@ const englishNavItems = [
   const PAGE_SIZE = 30;
   const FAMILY_NOTE_MAX_LENGTH = 160;
   const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
-  const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
-  const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   const state: { events: FamilyEvent[]; filtered: FamilyEvent[]; apiAvailable: boolean; visibleCount: number; usedPastFallback: boolean } = {
     events: [],
@@ -206,7 +206,7 @@ const englishNavItems = [
     return Number.isNaN(timestamp) ? value : dateFormatter.format(new Date(timestamp));
   };
 
-  const formatDateBadge = formatSloveneDateBadge;
+  const formatDateBadge = formatEnglishDateBadge;
 
   const formatPublicTitleForDisplay = (value: string) => value.replace(/\s+-\s+/gu, ' – ');
 
@@ -217,20 +217,9 @@ const englishNavItems = [
     return `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}`;
   };
 
-  const formatSurface = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return '';
-    return trimmed
-      .toLocaleLowerCase('sl-SI')
-      .replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-  };
+  const formatSurface = formatEnglishSurface;
 
-  const monthLabel = (month: string) => {
-    const monthNumber = Number(month);
-    if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
-    const date = new Date(2026, monthNumber - 1, 1);
-    return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-  };
+  const monthLabel = formatEnglishMonthLabel;
 
   const escapeHtml = (value: string | number) => {
     const characters: Record<string, string> = {
@@ -493,17 +482,7 @@ const englishNavItems = [
   };
 
 
-  const formatSurfaceOption = (value: string) => {
-    const labels: Record<string, string> = {
-      cesta: 'Cesta',
-      'cesta/trail': 'Cesta/trail',
-      gorski: 'Gorski',
-      oviratlon: 'Oviratlon',
-      stopnice: 'Stopnice',
-      trail: 'Trail'
-    };
-    return labels[normalize(value)] ?? formatSurface(value);
-  };
+  const formatSurfaceOption = formatSurface;
 
 
   const populateFilters = () => {

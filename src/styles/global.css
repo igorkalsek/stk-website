@@ -1261,14 +1261,17 @@ main {
   font-weight: 850;
 }
 
-.additional-data-block ul {
+.additional-data-block ul,
+.additional-data-list {
   display: grid;
   gap: 6px;
   margin: 10px 0 0;
   padding-left: 1.1rem;
 }
 
-.additional-data-block li {
+.additional-data-block li,
+.additional-data-item {
+  display: list-item;
   line-height: 1.45;
 }
 
