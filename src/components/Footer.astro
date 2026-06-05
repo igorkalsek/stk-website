@@ -44,6 +44,7 @@ const links: FooterLink[] = isEnglish ? [
 
     <div class="footer-column footer-info">
       <p>{isEnglish ? 'Race information is updated regularly, but it is provided for orientation only. Before registering, always check the official race announcement or the organiser’s website.' : 'Podatki se sproti posodabljajo, vendar so informativne narave. Pred prijavo vedno preverite uradni razpis ali stran organizatorja.'}</p>
+      {isEnglish && <p class="footer-note">Some detailed pages are currently available in Slovenian only.</p>}
     </div>
 
     <nav class="footer-column footer-links" aria-label={isEnglish ? 'Footer links' : 'Povezave v nogi'}>
