@@ -490,8 +490,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return formatSloveneVoteCount(votes);
   };
 
+  const normalizeVisibleTitleDash = (title: string) => title.replace(/\s+-\s+/g, ' – ');
+
   const titleForEvent = (event: ApiRecord) => {
-    const title = getDisplayEventTitle(getTopEventTitle(event));
+    const title = normalizeVisibleTitleDash(getDisplayEventTitle(getTopEventTitle(event)));
     if (title) return title;
 
     if (import.meta.env.DEV) {
@@ -720,7 +722,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
         const voteUrl = safeUrl(getEventField(event, 'vote_url', ['glasovanje_url', 'url_glasovanje']));
-        const calendarOptions = renderCalendarOptions({ title: sourceTitle, date: dateValue, location, noticeUrl, registrationUrl });
+        const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
         const formattedSurface = formatSurface(surface);
         const metaItems = [
