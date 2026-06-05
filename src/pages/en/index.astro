@@ -8,7 +8,6 @@ const englishNavItems = [
   { href: '/najbolj-glasovani-teki/', label: 'Most voted races' },
   { href: '/osebni-koledar/', label: 'Personal calendar' },
   { href: '/stk-tekobot/', label: 'STK Tekobot' },
-  { href: '/dodaj-ali-popravi-tek/', label: 'Submit or correct a race' },
   { href: '/', label: 'Slovenščina' }
 ];
 ---
@@ -47,7 +46,6 @@ const englishNavItems = [
               <a href="/druzinam-prijazni-teki/">Family-friendly races</a>
               <a href="/najbolj-glasovani-teki/">Most voted races</a>
               <a href="/stk-tekobot/">Ask STK Tekobot</a>
-              <a href="/dodaj-ali-popravi-tek/">Submit or correct a race</a>
             </nav>
           </div>
         </div>
@@ -622,7 +620,7 @@ const englishNavItems = [
     noticeUrl?: string;
     registrationUrl?: string;
   }) => {
-    const event = { title, date, location, noticeUrl, registrationUrl };
+    const event = { title, date, location, noticeUrl, registrationUrl, language: 'en' as const };
     const googleUrl = buildGoogleCalendarEventUrl(event);
     const icsUrl = buildIcsDataUrl(event);
     const icsFilename = buildIcsFilename(event);
