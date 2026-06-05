@@ -267,8 +267,12 @@ const isTodayOrFutureIsoDate = (value: string) => {
   return Number.isFinite(dateValue) && dateValue >= todayStartValue();
 };
 
+const normalizeDayOfRegistration = (value: string) => value.toLocaleUpperCase('sl-SI').trim();
+
+const hasDayOfRegistration = (value: string) => normalizeDayOfRegistration(value) === 'DA';
+
 const formatDayOfRegistration = (value: string) => {
-  const normalized = value.toLocaleUpperCase('sl-SI').trim();
+  const normalized = normalizeDayOfRegistration(value);
   if (normalized === 'DA') return 'Prijave na dan: da';
   if (normalized === 'NE') return 'Prijave na dan: ne';
   return '';
@@ -318,7 +322,8 @@ export const hasRenderableAdditionalData = (additionalData?: AdditionalEventData
 
 export const renderAdditionalDataBlock = (
   additionalData: AdditionalEventData | null | undefined,
-  escapeHtml: (value: string | number) => string
+  escapeHtml: (value: string | number) => string,
+  eventDate = ''
 ) => {
   if (!additionalData) return '';
 
@@ -328,9 +333,13 @@ export const renderAdditionalDataBlock = (
   const earlyRegistrationDeadline = isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline)
     ? formatSlovenianIsoDate(additionalData.earlyRegistrationDeadline)
     : '';
+  const showRegistrationDeadline = Boolean(
+    registrationDeadline &&
+    !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
+  );
   const textItems = [
     formatRegistrationFee(additionalData),
-    registrationDeadline && `Rok prijave: ${registrationDeadline}`,
+    showRegistrationDeadline && `Rok prijave: ${registrationDeadline}`,
     earlyRegistrationDeadline && `Cenejša prijava do: ${earlyRegistrationDeadline}`,
     formatDayOfRegistration(additionalData.dayOfRegistration),
     formatElevationGain(additionalData.elevationGain)

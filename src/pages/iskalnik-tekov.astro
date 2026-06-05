@@ -72,26 +72,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <label class="field">
             <span>Razvrsti po</span>
             <select name="sort" data-filter="sort">
-              <option value="date">Datum</option>
-              <option value="registration-min">Najnižja prijavnina</option>
-              <option value="registration-max">Najvišja prijavnina</option>
+              <option value="date">Datumu</option>
+              <option value="registration-min">Najcenejši najprej</option>
+              <option value="registration-max">Najdražji najprej</option>
             </select>
           </label>
 
-          <label class="checkbox-field">
-            <input type="checkbox" name="family" data-filter="family" />
-            <span>Družinam prijazno</span>
-          </label>
+          <fieldset class="checkbox-filter-group">
+            <legend>Dodatni filtri</legend>
+            <label class="checkbox-field">
+              <input type="checkbox" name="family" data-filter="family" />
+              <span>Družinam prijazno</span>
+            </label>
 
-          <label class="checkbox-field">
-            <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
-            <span>Prijave na dan dogodka</span>
-          </label>
+            <label class="checkbox-field">
+              <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
+              <span>Prijave na dan dogodka</span>
+            </label>
 
-          <label class="checkbox-field">
-            <input type="checkbox" name="additional" data-filter="additional" />
-            <span>Ima dodatne podatke</span>
-          </label>
+            <label class="checkbox-field">
+              <input type="checkbox" name="additional" data-filter="additional" />
+              <span>Ima dodatne podatke</span>
+            </label>
+          </fieldset>
 
           <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
             Počistite filtre
@@ -510,7 +513,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml);
+    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, event.date);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
