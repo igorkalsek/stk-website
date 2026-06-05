@@ -1,3 +1,38 @@
+---
+interface FooterLink {
+  href: string;
+  label: string;
+  external?: boolean;
+}
+
+interface Props {
+  lang?: 'sl' | 'en' | string;
+}
+
+const { lang = 'sl' } = Astro.props;
+const isEnglish = lang === 'en';
+
+const links: FooterLink[] = isEnglish ? [
+  { href: '/iskalnik-tekov/', label: 'Find races' },
+  { href: '/druzinam-prijazni-teki/', label: 'Family-friendly races' },
+  { href: '/najbolj-glasovani-teki/', label: 'Most voted races' },
+  { href: '/osebni-koledar/', label: 'Personal calendar' },
+  { href: '/dodaj-ali-popravi-tek/', label: 'Submit or correct a race' },
+  { href: '/stk-tekobot/', label: 'STK Tekobot' },
+  { href: 'https://www.facebook.com/SlovenskiTekaskiKoledar', label: 'Facebook', external: true },
+  { href: '/', label: 'Slovenščina' }
+] : [
+  { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
+  { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni teki' },
+  { href: '/najbolj-glasovani-teki/', label: 'Glasovani teki' },
+  { href: '/osebni-koledar/', label: 'Osebni koledar' },
+  { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte ali popravite tek' },
+  { href: '/stk-tekobot/', label: 'STK Tekobot' },
+  { href: 'https://www.facebook.com/SlovenskiTekaskiKoledar', label: 'Facebook', external: true },
+  { href: '/en/', label: 'English' }
+];
+---
+
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-column footer-identity">
@@ -5,29 +40,24 @@
         <img class="footer-logo" src="/stk-logo.jpeg" alt="Slovenski Tekaški Koledar" />
         <p class="footer-title">Slovenski Tekaški Koledar</p>
       </div>
-      <p>Neodvisen pregled tekaških prireditev po Sloveniji.</p>
+      <p>{isEnglish ? 'An independent overview of running events in Slovenia.' : 'Neodvisen pregled tekaških prireditev po Sloveniji.'}</p>
     </div>
 
     <div class="footer-column footer-info">
-      <p>Podatki se sproti posodabljajo, vendar so informativne narave. Pred prijavo vedno preverite uradni razpis ali stran organizatorja.</p>
+      <p>{isEnglish ? 'Race information is updated regularly, but it is provided for orientation only. Before registering, always check the official race announcement or the organiser’s website.' : 'Podatki se sproti posodabljajo, vendar so informativne narave. Pred prijavo vedno preverite uradni razpis ali stran organizatorja.'}</p>
     </div>
 
-    <nav class="footer-column footer-links" aria-label="Povezave v nogi">
-      <h2 class="footer-heading">Povezave</h2>
+    <nav class="footer-column footer-links" aria-label={isEnglish ? 'Footer links' : 'Povezave v nogi'}>
+      <h2 class="footer-heading">{isEnglish ? 'Links' : 'Povezave'}</h2>
       <div class="footer-link-list">
-        <a href="/iskalnik-tekov/">Iskalnik tekov</a>
-        <a href="/druzinam-prijazni-teki/">Družinam prijazni teki</a>
-        <a href="/najbolj-glasovani-teki/">Glasovani teki</a>
-        <a href="/osebni-koledar/">Osebni koledar</a>
-        <a href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
-        <a href="/stk-tekobot/">STK Tekobot</a>
-        <a href="https://www.facebook.com/SlovenskiTekaskiKoledar" target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a href="/en/">English</a>
+        {links.map((link) => (
+          <a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>{link.label}</a>
+        ))}
       </div>
     </nav>
 
     <div class="footer-column footer-contact">
-      <h2 class="footer-heading">Kontakt</h2>
+      <h2 class="footer-heading">{isEnglish ? 'Contact' : 'Kontakt'}</h2>
       <a href="mailto:tekaski.koledar@gmail.com">tekaski.koledar@gmail.com</a>
     </div>
   </div>

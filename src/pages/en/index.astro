@@ -1,12 +1,915 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PlaceholderPage from '../../components/PlaceholderPage.astro';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/iskalnik-tekov/', label: 'Find races' },
+  { href: '/druzinam-prijazni-teki/', label: 'Family-friendly races' },
+  { href: '/najbolj-glasovani-teki/', label: 'Most voted races' },
+  { href: '/osebni-koledar/', label: 'Personal calendar' },
+  { href: '/stk-tekobot/', label: 'STK Tekobot' },
+  { href: '/dodaj-ali-popravi-tek/', label: 'Submit or correct a race' },
+  { href: '/', label: 'Slovenščina' }
+];
 ---
 
-<BaseLayout title="English" description="English introduction to the Slovenian Running Calendar." lang="en">
-  <PlaceholderPage
-    title="Slovenian Running Calendar"
-    description="An independent public calendar of running events in Slovenia."
-    note="The English page is a placeholder for now. The first version focuses on the Slovene public website and regularly refreshed calendar data."
-  />
+<BaseLayout
+  title="Run Slovenia: Race Calendar"
+  description="Find running events in Slovenia, including road races, trail runs, mountain runs, family-friendly races and local running events."
+  lang="en"
+  canonicalPath="/en/"
+  alternateLinks={[
+    { lang: 'sl', href: '/' },
+    { lang: 'en', href: '/en/' }
+  ]}
+  navItems={englishNavItems}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - English home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+>
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-card">
+        <div class="hero-content">
+          <span class="eyebrow">Find running events across Slovenia</span>
+          <h1 id="hero-title">Run Slovenia: Race Calendar</h1>
+          <p class="hero-lead">An independent race calendar for runners, families and visitors looking for road races, trail runs, mountain runs and local running events in Slovenia.</p>
+          <p class="hero-sublead">
+            Race information is provided for orientation only. Before registering, always check the official race announcement or the organiser’s website.
+          </p>
+          <div class="hero-actions" aria-label="Main links">
+            <div class="cta-row cta-primary-row">
+              <a class="button button-primary" href="/iskalnik-tekov/">Find a race</a>
+              <a class="button button-primary" href="/osebni-koledar/">Add races to your calendar</a>
+            </div>
+            <nav class="hero-secondary-links" aria-label="Additional links">
+              <a href="/druzinam-prijazni-teki/">Family-friendly races</a>
+              <a href="/najbolj-glasovani-teki/">Most voted races</a>
+              <a href="/stk-tekobot/">Ask STK Tekobot</a>
+              <a href="/dodaj-ali-popravi-tek/">Submit or correct a race</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-strip" aria-label="Calendar statistics">
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">🏃</span>
+          <span class="stat-value" data-stat="confirmed_public_events_total">—</span>
+          <span class="stat-label">confirmed public running events</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+          <span class="stat-value" data-stat="family_friendly_total">—</span>
+          <span class="stat-label">family-friendly races</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="nearest-title">
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="nearest-title">This week we run</h2>
+          <p>Upcoming confirmed races from the Slovenian Race Calendar.</p>
+        </div>
+        <a class="button button-secondary-light" href="/iskalnik-tekov/">View all races</a>
+      </div>
+      <div class="card-grid card-grid-three" data-nearest-events>
+        <article class="event-card">
+          <h3>Loading data</h3>
+          <p>Upcoming races will be shown here.</p>
+          <div class="event-meta">
+            <span class="pill">Calendar</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/iskalnik-tekov/">race search</a>.</p>
+    </section>
+
+    <section class="section container" aria-labelledby="voted-title">
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="voted-title">Most voted upcoming races</h2>
+          <p>A compact ranking of upcoming races that received the most runner votes.</p>
+        </div>
+        <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">View full ranking</a>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Loading data</h3>
+          <p>Most voted upcoming races will be shown here.</p>
+          <div class="event-meta">
+            <span class="pill">Runner votes</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.</p>
+    </section>
+
+    <section class="section container" aria-labelledby="trust-title">
+      <article class="info-card trust-card">
+        <div>
+          <span class="eyebrow eyebrow-light">About the calendar</span>
+          <h2 id="trust-title">Why use the Slovenian Race Calendar?</h2>
+          <p>The calendar brings together confirmed running events across Slovenia, including links to official announcements, registration pages and personal calendar options. Before registering, always check the official race announcement or the organiser’s website.</p>
+          <p class="tekobot-note">STK Tekobot helps you find races using natural-language questions.</p>
+        </div>
+        <a class="button button-secondary-light" href="/stk-tekobot/">Ask STK Tekobot</a>
+      </article>
+    </section>
+
+    <section class="section container" aria-labelledby="calendar-cta-title">
+      <article class="info-card calendar-cta-card">
+        <div>
+          <span class="eyebrow eyebrow-light">Personal calendar</span>
+          <h2 id="calendar-cta-title">Add races to your personal calendar</h2>
+          <p>You can follow STK races in your personal calendar and see them next to your other plans.</p>
+        </div>
+        <a class="button button-secondary-light" href="/osebni-koledar/">Personal calendar instructions</a>
+      </article>
+    </section>
+
+    <section class="section container" aria-labelledby="updates-title">
+      <div class="section-heading">
+        <h2 id="updates-title">Latest updates</h2>
+        <p>The latest calendar changes help you quickly see what was added or corrected.</p>
+      </div>
+      <div class="card-grid" data-recent-updates>
+        <article class="update-card">
+          <h3>No updates shown yet</h3>
+          <p>Latest changes will appear here when available.</p>
+        </article>
+      </div>
+    </section>
+
+  </main>
 </BaseLayout>
+
+<script>
+  import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { getDisplayEventTitle } from '../../utils-events';
+
+  type ApiRecord = Record<string, unknown>;
+
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const numberFormatter = new Intl.NumberFormat('en-US');
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const ARRAY_KEYS = ['events', 'next_week', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
+  const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
+  const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
+  const enableApiDebug = import.meta.env.DEV;
+  const debugEnabled = enableApiDebug && new URLSearchParams(window.location.search).get('debug') === '1';
+
+  const setStatus = (name: string, message: string) => {
+    const element = document.querySelector(`[data-status="${name}"]`);
+    if (element) element.textContent = message;
+  };
+
+  const asRecord = (value: unknown): ApiRecord | null =>
+    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+
+  const toArray = (payload: unknown): ApiRecord[] => {
+    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
+
+    const record = asRecord(payload);
+    if (!record) return [];
+
+    for (const key of ARRAY_KEYS) {
+      const value = record[key];
+      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
+    }
+
+    for (const key of ARRAY_KEYS) {
+      const nested = asRecord(record[key]);
+      if (!nested) continue;
+      const nestedArray = toArray(nested);
+      if (nestedArray.length) return nestedArray;
+    }
+
+    return [];
+  };
+
+  const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
+    for (const key of keys) {
+      const value = item[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const valueAtPath = (item: ApiRecord, path: string): unknown => {
+    let current: unknown = item;
+    for (const part of path.split('.')) {
+      const record = asRecord(current);
+      if (!record) return undefined;
+      current = record[part];
+    }
+    return current;
+  };
+
+  const pickPath = (item: ApiRecord, paths: string[], fallback = ''): string => {
+    for (const path of paths) {
+      const value = valueAtPath(item, path);
+      if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();
+    }
+    return fallback;
+  };
+
+  const normalizeKey = (key: string) => key.toLowerCase().trim().replace(/[\s_-]+/g, '');
+
+  const getVoteUrlTitle = (item: ApiRecord) => {
+    if (typeof item?.vote_url !== 'string' || !item.vote_url.trim()) return '';
+    try {
+      const url = new URL(item.vote_url);
+      return url.searchParams.get('entry.1386641006')?.trim() ?? '';
+    } catch (error) {
+      const match = item.vote_url.match(/[?&]entry\.1386641006=([^&]+)/);
+      return match ? decodeURIComponent(match[1].replace(/\+/g, ' ')).trim() : '';
+    }
+  };
+
+
+  const getTopEventTitle = (item: ApiRecord) => {
+    if (typeof item?.naziv_prireditve === 'string' && item.naziv_prireditve.trim()) {
+      return item.naziv_prireditve.trim();
+    }
+
+    if (typeof item?.naziv === 'string' && item.naziv.trim()) {
+      return item.naziv.trim();
+    }
+
+    if (typeof item?.title === 'string' && item.title.trim()) {
+      return item.title.trim();
+    }
+
+    if (typeof item?.name === 'string' && item.name.trim()) {
+      return item.name.trim();
+    }
+
+    const event = asRecord(item?.event);
+    if (typeof event?.naziv_prireditve === 'string' && event.naziv_prireditve.trim()) {
+      return event.naziv_prireditve.trim();
+    }
+
+    if (typeof event?.naziv === 'string' && event.naziv.trim()) {
+      return event.naziv.trim();
+    }
+
+    const race = asRecord(item?.race);
+    if (typeof race?.naziv_prireditve === 'string' && race.naziv_prireditve.trim()) {
+      return race.naziv_prireditve.trim();
+    }
+
+    if (typeof race?.naziv === 'string' && race.naziv.trim()) {
+      return race.naziv.trim();
+    }
+
+    const data = asRecord(item?.data);
+    if (typeof data?.naziv_prireditve === 'string' && data.naziv_prireditve.trim()) {
+      return data.naziv_prireditve.trim();
+    }
+
+    if (typeof data?.naziv === 'string' && data.naziv.trim()) {
+      return data.naziv.trim();
+    }
+
+    const voteUrlTitle = getVoteUrlTitle(item);
+    return voteUrlTitle || 'Race name unavailable';
+  };
+
+  const objectKeys = (value: unknown) => asRecord(value) ? Object.keys(value as ApiRecord) : [];
+
+  const describeKeys = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '—';
+    const entries = Object.entries(record).slice(0, 18).map(([key, entryValue]) => {
+      const type = Array.isArray(entryValue) ? 'array' : typeof entryValue;
+      return `${key}:${type}`;
+    });
+    return entries.length ? entries.join(', ') : 'brez ključev';
+  };
+
+  const rawValueText = (value: unknown) =>
+    value === undefined || value === null || String(value) === '' ? 'not detected' : String(value);
+
+  const compactJsonPreview = (value: unknown) => {
+    try {
+      return JSON.stringify(value, null, 2).slice(0, 1600);
+    } catch (error) {
+      return 'JSON preview ni na voljo.';
+    }
+  };
+
+  const isMissing = (value: unknown) =>
+    value === undefined || value === null || String(value).trim() === '';
+
+  const rowKey = (value: unknown) => {
+    const record = asRecord(value);
+    if (!record) return '';
+    const row = record.row ?? record.Row ?? record.ROW ?? record.row_number ?? record.rowNumber;
+    return row === undefined || row === null ? '' : String(row).trim();
+  };
+
+  const getFieldValue = (item: ApiRecord, key: string) => {
+    const exact = item[key];
+    if (!isMissing(exact)) return String(exact).trim();
+
+    const wanted = normalizeKey(key);
+    for (const [itemKey, value] of Object.entries(item)) {
+      if (normalizeKey(itemKey) === wanted && !isMissing(value)) return String(value).trim();
+    }
+
+    return '';
+  };
+
+  const getMasterRows = (payload: unknown): ApiRecord[] => {
+    const record = asRecord(payload);
+    if (record && Array.isArray(record.data)) return record.data.filter(asRecord) as ApiRecord[];
+
+    const fallbackRows = toArray(payload);
+    if (fallbackRows.length) return fallbackRows;
+
+    if (record) {
+      for (const value of Object.values(record)) {
+        const rows = toArray(value);
+        if (rows.length) return rows;
+      }
+    }
+
+    return [];
+  };
+
+  const normalizedText = (value: unknown) =>
+    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
+    const topValue = normalizedText(getFieldValue(topEvent, key));
+    const masterValue = normalizedText(getFieldValue(masterEvent, key));
+    return Boolean(topValue && masterValue && topValue === masterValue);
+  };
+
+  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
+      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
+    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
+    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
+    return rowScore + matchingFields;
+  };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
+    let bestMatch: ApiRecord | null = null;
+    let bestScore = 0;
+
+    for (const masterEvent of masterRows) {
+      const score = matchScore(topEvent, masterEvent);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = masterEvent;
+      }
+    }
+
+    return bestScore >= 3 ? bestMatch : null;
+  };
+
+  const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
+    if (!isMissing(target[key])) return false;
+    const sourceValue = getFieldValue(source, key);
+    if (!sourceValue) return false;
+    target[key] = sourceValue;
+    return true;
+  };
+
+  const enrichTopEventsFromMaster = (events: ApiRecord[], masterRows: ApiRecord[]) => events.map((event) => {
+    const enriched = { ...event };
+    const topTitle = getTopEventTitle(event);
+    const voteUrlTitle = getVoteUrlTitle(event);
+    const match = findMasterMatch(event, masterRows);
+    enriched.__master_matched = Boolean(match);
+    enriched.__matched_master_row = match ? rowKey(match) : '';
+    enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__vote_url_title = voteUrlTitle;
+    enriched.__title_source = topTitle !== 'Race name unavailable' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
+
+    if (match) {
+      const filledTitle = copyIfMissing(enriched, match, 'naziv_prireditve');
+      copyIfMissing(enriched, match, 'datum');
+      copyIfMissing(enriched, match, 'kraj');
+      copyIfMissing(enriched, match, 'regija');
+      copyIfMissing(enriched, match, 'tip_podlage');
+      copyIfMissing(enriched, match, 'razdalje_km');
+      if (filledTitle) enriched.__title_source = 'master';
+    }
+
+    if (getTopEventTitle(enriched) === 'Race name unavailable' && voteUrlTitle) {
+      enriched.naziv_prireditve = voteUrlTitle;
+      enriched.__title_source = 'vote_url';
+    } else if (getTopEventTitle(enriched) === voteUrlTitle && voteUrlTitle) {
+      enriched.__title_source = 'vote_url';
+    }
+
+    return enriched;
+  });
+
+  const createDebugPanel = () => {
+    if (!debugEnabled) return;
+    const main = document.querySelector('main');
+    if (!main) return;
+    main.insertAdjacentHTML('beforeend', `
+      <section class="section container api-debug" data-api-debug aria-label="Development diagnostics">
+        <details>
+          <summary>Development diagnostics</summary>
+          <div class="debug-grid">
+            <p><strong>/stats loaded:</strong> <span data-debug-stats>no</span></p>
+            <p><strong>/top loaded:</strong> <span data-debug-top>no</span></p>
+            <p><strong>/top item count:</strong> <span data-debug-top-count>0</span></p>
+            <p><strong>First top item keys:</strong> <code data-debug-top-keys>—</code></p>
+            <div><strong>First top raw JSON:</strong> <pre class="debug-json" data-debug-top-json>—</pre></div>
+            <p><strong>First top raw row:</strong> <code data-debug-top-row>not detected</code></p>
+            <p><strong>Top nested keys:</strong> <code data-debug-top-nested>—</code></p>
+            <p><strong>Raw naziv_prireditve:</strong> <code data-debug-top-title-raw>not detected</code></p>
+            <p><strong>Raw votes_total:</strong> <code data-debug-top-votes-raw>not detected</code></p>
+            <p><strong>Master loaded:</strong> <span data-debug-master>no</span></p>
+            <p><strong>Master data item count:</strong> <span data-debug-master-count>0</span></p>
+            <p><strong>vote_url title fallback:</strong> <code data-debug-vote-url-title>not detected</code></p>
+            <p><strong>Matched master row:</strong> <span data-debug-master-match>no</span></p>
+            <p><strong>Matched master title:</strong> <code data-debug-master-title>not detected</code></p>
+            <p><strong>Detected top title:</strong> <code data-debug-top-title>not detected</code></p>
+            <p><strong>Detected title source:</strong> <code data-debug-top-title-source>not detected</code></p>
+            <p><strong>Detected top votes:</strong> <code data-debug-top-votes>not detected</code></p>
+            <p><strong>/recent_updates loaded:</strong> <span data-debug-recent>no</span></p>
+            <p><strong>/recent_updates item count:</strong> <span data-debug-recent-count>0</span></p>
+            <p><strong>First recent item keys:</strong> <code data-debug-recent-keys>—</code></p>
+          </div>
+        </details>
+      </section>
+    `);
+  };
+
+  const setDebug = (target: string, text: string) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}]`);
+    if (element) element.textContent = text;
+  };
+
+  const setDebugKeys = (target: string, value: unknown) => {
+    if (!debugEnabled) return;
+    const element = document.querySelector(`[data-debug-${target}-keys]`);
+    if (element) element.textContent = describeKeys(value);
+  };
+
+  const nestedKeySummary = (item: unknown) => {
+    const record = asRecord(item);
+    if (!record) return '—';
+    const parts = TITLE_CONTAINERS.map((container) => {
+      const nested = asRecord(valueAtPath(record, container))
+        ?? asRecord(Object.entries(record).find(([key]) => normalizeKey(key) === normalizeKey(container))?.[1]);
+      return nested ? `${container}: ${describeKeys(nested)}` : '';
+    }).filter(Boolean);
+    return parts.length ? parts.join(' | ') : '—';
+  };
+
+  const setDebugTopDetails = (items: ApiRecord[], rawItems = items) => {
+    if (!debugEnabled) return;
+    const first = items[0];
+    const rawFirst = rawItems[0];
+    setDebug('top-count', String(rawItems.length));
+    setDebugKeys('top', rawFirst);
+    setDebug('top-json', rawFirst ? compactJsonPreview(rawFirst) : '—');
+    setDebug('top-row', rowKey(rawFirst) || 'not detected');
+    setDebug('top-nested', nestedKeySummary(rawFirst));
+    setDebug('top-title-raw', rawValueText(rawFirst?.naziv_prireditve));
+    setDebug('top-votes-raw', rawValueText(rawFirst?.votes_total));
+    setDebug('vote-url-title', rawValueText(first?.__vote_url_title ?? getVoteUrlTitle(rawFirst ?? {})));
+    setDebug('master-match', first?.__master_matched ? `yes (${rawValueText(first.__matched_master_row)})` : 'no');
+    setDebug('master-title', rawValueText(first?.__matched_master_title));
+    setDebug('top-title', first ? getTopEventTitle(first) : 'not detected');
+    setDebug('top-title-source', first?.__title_source ? String(first.__title_source) : 'not detected');
+    setDebug('top-votes', first ? formatVoteCount(getTopEventVotes(first)) : 'not detected');
+  };
+
+  const setDebugRecentDetails = (items: ApiRecord[]) => {
+    if (!debugEnabled) return;
+    setDebug('recent-count', String(items.length));
+    setDebugKeys('recent', items[0]);
+  };
+
+  const parsePositiveInteger = (value: unknown) => {
+    if (value === null || value === undefined) return null;
+    const number = Number.parseInt(String(value).trim(), 10);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  };
+
+  const getTopEventVotes = (item: ApiRecord) =>
+    parsePositiveInteger(item?.votes_total)
+    ?? parsePositiveInteger(item?.votes_last_7_days)
+    ?? parsePositiveInteger(item?.glasovi)
+    ?? parsePositiveInteger(item?.votes)
+    ?? parsePositiveInteger(item?.vote_count)
+    ?? parsePositiveInteger(item?.total_votes);
+
+  const formatVoteCount = (votes: number | null) => {
+    if (votes === null) return 'not detected';
+    return `${numberFormatter.format(votes)} ${votes === 1 ? 'vote' : 'votes'}`;
+  };
+
+  const normalizeVisibleTitleDash = (title: string) => title.replace(/\s+-\s+/g, ' – ');
+
+  const titleForEvent = (event: ApiRecord) => {
+    const title = normalizeVisibleTitleDash(getDisplayEventTitle(getTopEventTitle(event)));
+    if (title) return title;
+
+    if (import.meta.env.DEV) {
+      console.warn('STK top event title missing. Available keys:', objectKeys(event));
+    }
+
+    return 'Race name unavailable';
+  };
+
+  const pickNumber = (item: ApiRecord, keys: string[]): number | null => {
+    for (const key of keys) {
+      const value = item[key];
+      if (value === undefined || value === null || String(value).trim() === '') continue;
+      const numberValue = Number(value);
+      if (Number.isFinite(numberValue)) return numberValue;
+    }
+    return null;
+  };
+
+
+  const numberFromStatArray = (items: ApiRecord[], keys: string[]): number | null => {
+    for (const item of items) {
+      const statName = pick(item, ['key', 'name', 'metric', 'field', 'id']);
+      if (!keys.includes(statName)) continue;
+      const value = pickNumber(item, ['value', 'count', 'total', 'amount']);
+      if (value !== null) return value;
+    }
+    return null;
+  };
+
+  const pickNestedNumber = (payload: unknown, keys: string[]): number | null => {
+    const root = asRecord(payload);
+    if (!root) return null;
+
+    const direct = pickNumber(root, keys);
+    if (direct !== null) return direct;
+
+    const rootArrayValue = numberFromStatArray(toArray(root), keys);
+    if (rootArrayValue !== null) return rootArrayValue;
+
+    for (const containerKey of STATS_CONTAINERS) {
+      const nested = asRecord(root[containerKey]);
+      if (!nested) continue;
+      const nestedValue = pickNumber(nested, keys);
+      if (nestedValue !== null) return nestedValue;
+
+      const nestedArrayValue = numberFromStatArray(toArray(nested), keys);
+      if (nestedArrayValue !== null) return nestedArrayValue;
+    }
+
+    return null;
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : dateFormatter.format(date);
+  };
+
+
+  const formatDateBadge = (value: string) => {
+    if (!value) return '';
+
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+
+    const weekday = new Intl.DateTimeFormat('en-GB', { weekday: 'short' }).format(date).toLocaleUpperCase('en-GB');
+    const compactDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(date);
+
+    return `${weekday} · ${compactDate}`;
+  };
+
+  const escapeHtml = (value: string | number) => {
+    const characters: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return String(value).replace(/[&<>'"]/g, (character) => characters[character] ?? character);
+  };
+
+  const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
+
+  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const safeUrl = (value: string) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
+    title: string;
+    date: string;
+    location?: string;
+    noticeUrl?: string;
+    registrationUrl?: string;
+  }) => {
+    const event = { title, date, location, noticeUrl, registrationUrl };
+    const googleUrl = buildGoogleCalendarEventUrl(event);
+    const icsUrl = buildIcsDataUrl(event);
+    const icsFilename = buildIcsFilename(event);
+    const outlookUrl = buildOutlookCalendarEventUrl(event);
+    if (!googleUrl && !icsUrl && !outlookUrl) return '';
+
+    const options = [
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      outlookUrl
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+    ].filter(Boolean).join('');
+
+    return `
+      <details class="calendar-menu">
+        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>Add to calendar</span></summary>
+        <div class="calendar-menu-options">${options}</div>
+      </details>
+    `;
+  };
+
+
+
+  const nestedEventPaths = (field: string) => [
+    field,
+    `event.${field}`,
+    `race.${field}`,
+    `data.${field}`,
+    `item.${field}`,
+    `row.${field}`,
+    `fields.${field}`
+  ];
+
+  const getEventTitle = (event: ApiRecord, fallback = 'Race name unavailable') =>
+    pickPath(event, [
+      ...nestedEventPaths('naziv_prireditve'),
+      ...nestedEventPaths('naziv'),
+      ...nestedEventPaths('title'),
+      ...nestedEventPaths('name')
+    ], fallback);
+
+  const getEventField = (event: ApiRecord, field: string, aliases: string[] = []) =>
+    pickPath(event, [
+      ...nestedEventPaths(field),
+      ...aliases.flatMap(nestedEventPaths)
+    ], '');
+
+  async function loadJson(path: string): Promise<unknown> {
+    const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    return response.json();
+  }
+
+
+  async function loadNearestEvents() {
+    const container = document.querySelector('[data-nearest-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/');
+      const today = new Date();
+      const todayValue = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+      const events = toArray(payload)
+        .filter((event) => {
+          const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+          const dateValue = new Date(`${date}T00:00:00`).getTime();
+
+          return (
+            /^2026-/.test(date) &&
+            Number.isFinite(dateValue) &&
+            dateValue >= todayValue &&
+            normalize(getEventField(event, 'status_dogodka')) === 'potrjeno' &&
+            getEventField(event, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA'
+          );
+        })
+        .sort((a, b) => {
+          const dateA = getEventField(a, 'datum', ['date', 'event_date', 'Datum']);
+          const dateB = getEventField(b, 'datum', ['date', 'event_date', 'Datum']);
+          const dateDifference = new Date(`${dateA}T00:00:00`).getTime() - new Date(`${dateB}T00:00:00`).getTime();
+          if (dateDifference !== 0) return dateDifference;
+
+          const placeDifference = getEventField(a, 'kraj', ['place', 'city', 'location']).localeCompare(getEventField(b, 'kraj', ['place', 'city', 'location']), 'sl-SI');
+          if (placeDifference !== 0) return placeDifference;
+
+          return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
+        });
+      const visibleEvents = events.slice(0, 6);
+
+      if (!events.length) {
+        container.innerHTML = `
+          <article class="event-card">
+            <h3>No upcoming races are shown right now</h3>
+            <p>Open the race search for a wider calendar overview.</p>
+            <div class="event-meta">
+              <a class="pill" href="/iskalnik-tekov/">View all races</a>
+            </div>
+          </article>
+        `;
+        setStatus('nearest', 'No confirmed upcoming public races are shown right now.');
+        return;
+      }
+
+      const eventCards = visibleEvents.map((event) => {
+        const sourceTitle = getEventTitle(event);
+        const title = getDisplayEventTitle(sourceTitle);
+        const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+        const date = formatDate(dateValue);
+        const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
+        const region = getEventField(event, 'regija', ['region']);
+        const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
+        const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
+        const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
+        const summary = joinParts([location, region]);
+        const links = [
+          noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
+          registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
+          calendarOptions
+        ].filter(Boolean).join('');
+
+        return `
+          <article class="event-card">
+            <div class="event-card-heading">
+              <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
+              <h3>${escapeHtml(title)}</h3>
+            </div>
+            ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
+            ${links ? `<div class="event-actions">${links}</div>` : ''}
+          </article>
+        `;
+      }).join('');
+
+      container.innerHTML = eventCards;
+      setStatus('nearest', '');
+    } catch (error) {
+      container.innerHTML = `
+        <article class="event-card">
+          <h3>The list is currently unavailable</h3>
+          <p>Upcoming races will appear here when the data is available again.</p>
+        </article>
+      `;
+      setStatus('nearest', 'The upcoming race list is currently unavailable, so a fallback view is shown.');
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const payload = await loadJson('/stats');
+      const confirmedTotal = pickNestedNumber(payload, ['confirmed_public_events_total']);
+      const familyTotal = pickNestedNumber(payload, ['family_friendly_total']);
+      const values = {
+        confirmed_public_events_total: confirmedTotal,
+        family_friendly_total: familyTotal
+      };
+
+      for (const [key, value] of Object.entries(values)) {
+        const element = document.querySelector(`[data-stat="${key}"]`);
+        if (element) element.textContent = value === null ? 'No data' : numberFormatter.format(value);
+      }
+
+      setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
+
+      if (confirmedTotal !== null && familyTotal !== null) {
+        setStatus('stats', '');
+      } else {
+        setStatus('stats', 'One or more statistic values are currently missing.');
+      }
+    } catch (error) {
+      setDebug('stats', 'no');
+      setStatus('stats', 'Statistics are currently unavailable, so the basic view is shown.');
+    }
+  }
+
+  async function loadTopEvents() {
+    const container = document.querySelector('[data-top-events]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/top?scope=upcoming&limit=10');
+      const topEvents = toArray(payload).slice(0, 6);
+      setDebug('top', 'yes');
+      if (!topEvents.length) {
+        setDebugTopDetails(topEvents);
+        setStatus('top', 'No most voted upcoming races are shown right now.');
+        return;
+      }
+
+      let events = topEvents;
+      try {
+        const masterPayload = await loadJson('/');
+        const masterRows = getMasterRows(masterPayload);
+        setDebug('master', 'yes');
+        setDebug('master-count', String(masterRows.length));
+        events = enrichTopEventsFromMaster(topEvents, masterRows);
+      } catch (error) {
+        setDebug('master', 'no');
+        setDebug('master-count', '0');
+      }
+      setDebugTopDetails(events, topEvents);
+
+      container.innerHTML = events.map((event) => {
+        const title = titleForEvent(event);
+        const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenia');
+        const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
+        const dateValue = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
+        const date = formatDate(dateValue);
+        const votes = getTopEventVotes(event);
+        const meta = joinParts([location, region && region !== location ? region : '']);
+        const metaItems = [
+          votes !== null ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="event-chip pill-orange">Voting open</span>'
+        ].filter(Boolean).join('');
+
+        return `
+          <article class="event-card">
+            <div class="event-card-heading">
+              <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
+              <h3>${escapeHtml(title)}</h3>
+            </div>
+            ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
+            ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+          </article>
+        `;
+      }).join('');
+      setStatus('top', 'The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.');
+    } catch (error) {
+      setDebug('top', 'no');
+      setStatus('top', 'The list is currently unavailable, so the fallback view remains.');
+    }
+  }
+
+  async function loadRecentUpdates() {
+    const container = document.querySelector('[data-recent-updates]');
+    if (!container) return;
+
+    try {
+      const payload = await loadJson('/recent_updates?days=7');
+      const updates = toArray(payload).slice(0, 6);
+      setDebug('recent', 'yes');
+      setDebugRecentDetails(updates);
+
+      if (!updates.length) {
+        container.innerHTML = `
+          <article class="update-card">
+            <p>There were no new public calendar updates in the last 7 days.</p>
+          </article>
+        `;
+        setStatus('updates', '');
+        return;
+      }
+
+      container.innerHTML = updates.map((update) => {
+        const title = pickPath(update, [
+          'naziv_prireditve',
+          'naziv',
+          'event.naziv_prireditve',
+          'event.naziv',
+          'title',
+          'name'
+        ], 'Calendar update');
+        const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
+        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'zadnja_sprememba_podrobno', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
+        const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
+        const updateType = pickPath(update, ['sprememba', 'vrsta_spremembe', 'change_type', 'change', 'status', 'type'], 'updated');
+        const note = pickPath(update, ['opis', 'zadnja_sprememba_podrobno', 'opis_spremembe', 'summary', 'notes', 'note', 'opombe_javne'], '');
+        const place = joinParts([location, region && region !== location ? region : '']);
+        const meta = joinParts([place, eventDate ? `race date: ${eventDate}` : '', changed ? `updated: ${changed}` : '']);
+        const summary = note || `The entry was ${updateType}.`;
+
+        return `
+          <article class="update-card">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(summary)}</p>
+            ${meta ? `<div class="event-meta"><span class="pill">${escapeHtml(meta)}</span></div>` : ''}
+          </article>
+        `;
+      }).join('');
+      setStatus('updates', '');
+    } catch (error) {
+      setDebug('recent', 'no');
+      setStatus('updates', 'Latest updates are currently unavailable, so the fallback view remains.');
+    }
+  }
+
+  if (enableApiDebug) createDebugPanel();
+  loadStats();
+  loadNearestEvents();
+  loadTopEvents();
+  loadRecentUpdates();
+</script>
