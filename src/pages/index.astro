@@ -889,6 +889,10 @@ import FacebookIcon from '../components/FacebookIcon.astro';
           'name'
         ], 'Posodobitev koledarja');
         const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
+        const recentUpdateDate = formatDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
+        const updateDateMeta = recentUpdateDate
+          ? joinParts([`Posodobljeno ${recentUpdateDate}`, eventDate ? `dogodek ${eventDate}` : ''])
+          : eventDate;
         const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
@@ -896,7 +900,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
 
         return `
           <article class="update-card">
-            ${eventDate ? `<p><strong>${escapeHtml(eventDate)}</strong></p>` : ''}
+            ${updateDateMeta ? `<p class="update-meta">${escapeHtml(updateDateMeta)}</p>` : ''}
             <h3>${escapeHtml(title)}</h3>
             ${place ? `<p>${escapeHtml(place)}</p>` : ''}
             ${changed ? `<p>${escapeHtml(changed)}</p>` : ''}

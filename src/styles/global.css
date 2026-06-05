@@ -479,6 +479,12 @@ main {
   margin: 10px 0 0;
 }
 
+.update-card .update-meta {
+  font-size: 0.9rem;
+  line-height: 1.35;
+  margin-top: 0;
+}
+
 .calendar-option-card {
   display: flex;
   flex-direction: column;
