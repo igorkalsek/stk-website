@@ -409,7 +409,7 @@ export const renderAdditionalDataChips = (
     }
 
     if (additionalData.routeUrl) {
-      chips.push(`<a class="event-chip event-chip-additional" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(language === 'en' ? 'Route' : 'Trasa')}</a>`);
+      chips.push(`<a class="event-chip event-chip-additional" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa">${escapeHtml(language === 'en' ? 'Route' : 'Trasa')}</a>`);
     }
   }
 
@@ -453,7 +453,7 @@ export const renderAdditionalDataBlock = (
       {
         label: 'Route',
         value: routeLabel
-          ? `<a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">Open route</a>`
+          ? `<a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa">Open route</a>`
           : ''
       }
     ].filter((item) => item.value);
@@ -476,7 +476,7 @@ export const renderAdditionalDataBlock = (
     formatElevationGain(additionalData.elevationGain, language)
   ].filter(Boolean).map((item) => escapeHtml(String(item)));
   const routeItem = routeLabel
-    ? `${routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${routeLabel.text}</a>`
+    ? `${routeLabel.label}: <a href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa">${routeLabel.text}</a>`
     : '';
   const items = [...textItems, routeItem].filter(Boolean);
 

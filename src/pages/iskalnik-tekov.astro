@@ -144,6 +144,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
+  import { filtersToAnalyticsJson, logAnalyticsEvent } from '../utils-analytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
@@ -182,11 +183,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
 
-  const state: { events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number } = {
+  const state: { events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
     events: [],
     filtered: [],
     apiAvailable: true,
-    visibleCount: PAGE_SIZE
+    visibleCount: PAGE_SIZE,
+    userInteracted: false,
+    lastLoggedSearchSignature: ''
   };
 
   const resultsElement = document.querySelector<HTMLElement>('[data-search-results]');
@@ -388,11 +391,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!googleUrl && !icsUrl && !outlookUrl) return '';
 
     const options = [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
-      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>`,
       outlookUrl
-        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
-        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>`
     ].filter(Boolean).join('');
 
     return `
@@ -426,6 +429,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
     additional: Boolean(additionalInput?.checked)
   });
+
+  const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
+    if (!state.userInteracted) return;
+    const analyticsFilters = { ...filters };
+    const query = (searchInput?.value ?? '').trim();
+    const filtersJson = filtersToAnalyticsJson(analyticsFilters);
+    const signature = JSON.stringify({ query, filtersJson, resultsCount });
+    if (signature === state.lastLoggedSearchSignature) return;
+    state.lastLoggedSearchSignature = signature;
+
+    const commonPayload = {
+      event_type: 'search_performed' as const,
+      search_query: query || undefined,
+      filters_json: filtersJson,
+      results_count: resultsCount,
+      language: 'sl'
+    };
+    logAnalyticsEvent(commonPayload);
+    if (resultsCount === 0) {
+      logAnalyticsEvent({ ...commonPayload, event_type: 'no_results_search', results_count: undefined });
+    }
+  };
 
   const updateAdvancedFiltersSummary = (filters = getFilters()) => {
     if (!advancedFiltersSummary) return;
@@ -573,14 +598,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, familyFriendly: event.familyFriendly });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, event.date);
     const links = [
-      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
-      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
-      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
+      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
+      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}">
+      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill">Družinam prijazno</span>' : ''}
@@ -637,6 +662,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       ? 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.'
       : 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani prijavnini.');
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
+    trackSearchResult(filters, count);
 
     if (!count) {
       renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter prijavnine, višinskih metrov ali dodatnih podatkov.', 'Filtri', true);
@@ -686,6 +712,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const resetVisibleResults = () => {
+    state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
     renderResults();
   };
