@@ -31,7 +31,10 @@ import FacebookIcon from '../components/FacebookIcon.astro';
           </div>
         </div>
         <aside class="hero-preview" aria-label="Predogled koledarja">
-          <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
+          <div class="hero-preview-heading">
+            <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
+            <p class="hero-preview-helper" data-hero-preview-helper>Po glasovih tekačev, dopolnjeno z najbližjimi teki.</p>
+          </div>
           <ol class="hero-preview-list" data-hero-preview-list>
             <li><span>nalagamo</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>
           </ol>
@@ -100,9 +103,12 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       <div class="section-heading section-heading-with-action">
         <div>
           <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
-          <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev.</p>
+          <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev. Svoj glas lahko oddate pri posameznem teku v iskalniku.</p>
         </div>
-        <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">Poglejte celotno lestvico</a>
+        <div class="section-heading-actions">
+          <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">Poglejte celotno lestvico</a>
+          <a class="button button-secondary-muted" href="/iskalnik-tekov/">Glasuj za svoj tek</a>
+        </div>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
@@ -738,7 +744,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
     const previewEvents = selected.slice(0, 3);
 
     if (titleElement) {
-      titleElement.textContent = votedEvents.length ? 'Izpostavljeno v naslednjih dneh' : 'Ta teden tečemo';
+      titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
     }
 
     if (!previewEvents.length) {
