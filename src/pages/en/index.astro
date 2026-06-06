@@ -52,11 +52,9 @@ const englishNavItems = [
           </div>
         </div>
         <aside class="hero-preview" aria-label="Calendar preview">
-          <span class="hero-preview-kicker">This week’s races</span>
-          <ol class="hero-preview-list">
-            <li><span>6 Jun</span><strong>Tek Bevke</strong></li>
-            <li><span>7 Jun</span><strong>Kunigundanje trail tek</strong></li>
-            <li><span>13 Jun</span><strong>Tek pod Krnom</strong></li>
+          <span class="hero-preview-kicker" data-hero-preview-title>Highlighted in the next days</span>
+          <ol class="hero-preview-list" data-hero-preview-list>
+            <li><span>loading</span><strong>Upcoming races will appear here.</strong></li>
           </ol>
         </aside>
       </div>
@@ -64,7 +62,7 @@ const englishNavItems = [
       <div class="stats-strip" aria-label="Calendar statistics">
         <article class="stat-card stat-card-races">
           <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="confirmed_public_events_total" data-stat-suffix="+">237+</span>
+          <span class="stat-value" data-stat="confirmed_public_events_total">237</span>
           <span class="stat-label">confirmed races</span>
         </article>
         <article class="stat-card stat-card-family">
@@ -74,10 +72,29 @@ const englishNavItems = [
         </article>
         <article class="stat-card stat-card-group">
           <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value">14</span>
+          <span class="stat-value" data-stat="group_runs_total">14</span>
           <span class="stat-label">group runs</span>
         </article>
       </div>
+    </section>
+
+    <section class="section container feature-strip-section" aria-labelledby="extra-data-title">
+      <article class="feature-strip">
+        <div class="feature-strip-copy">
+          <h2 id="extra-data-title">More than race dates</h2>
+          <p>The race search includes practical details for many events, including entry fees, registration deadlines, elevation gain, routes and family-friendly information.</p>
+        </div>
+        <div class="feature-strip-actions">
+          <div class="feature-chip-list" aria-label="Extra details in race search">
+            <span class="feature-chip">Entry fees</span>
+            <span class="feature-chip">Registration deadlines</span>
+            <span class="feature-chip">Elevation gain</span>
+            <span class="feature-chip">Routes / GPX</span>
+            <span class="feature-chip">Kids’ races</span>
+          </div>
+          <a class="button button-small button-secondary-light" href="/en/find-races/">Open race search</a>
+        </div>
+      </article>
     </section>
 
     <section class="section container" aria-labelledby="nearest-title">
@@ -726,6 +743,56 @@ const englishNavItems = [
       ...aliases.flatMap(nestedEventPaths)
     ], '');
 
+
+  const daysFromToday = (days: number) => {
+    const today = new Date();
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    date.setDate(date.getDate() + days);
+    return date.getTime();
+  };
+
+  const renderHeroPreview = (events: ApiRecord[]) => {
+    const titleElement = document.querySelector('[data-hero-preview-title]');
+    const listElement = document.querySelector('[data-hero-preview-list]');
+    if (!listElement) return;
+
+    const cutoffValue = daysFromToday(14);
+    const eventsInNextDays = events.filter((event) => {
+      const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+      const dateValue = new Date(`${date}T00:00:00`).getTime();
+      return Number.isFinite(dateValue) && dateValue <= cutoffValue;
+    });
+    const votedEvents = eventsInNextDays
+      .filter((event) => (getTopEventVotes(event) ?? 0) > 0)
+      .sort((a, b) => {
+        const voteDifference = (getTopEventVotes(b) ?? 0) - (getTopEventVotes(a) ?? 0);
+        if (voteDifference !== 0) return voteDifference;
+        const dateA = getEventField(a, 'datum', ['date', 'event_date', 'Datum']);
+        const dateB = getEventField(b, 'datum', ['date', 'event_date', 'Datum']);
+        return new Date(`${dateA}T00:00:00`).getTime() - new Date(`${dateB}T00:00:00`).getTime();
+      });
+    const selected = [...votedEvents];
+    for (const event of [...eventsInNextDays, ...events]) {
+      if (selected.length >= 3) break;
+      if (!selected.includes(event)) selected.push(event);
+    }
+    const previewEvents = selected.slice(0, 3);
+
+    if (titleElement) {
+      titleElement.textContent = votedEvents.length ? 'Highlighted in the next days' : 'This week’s races';
+    }
+
+    if (!previewEvents.length) {
+      listElement.innerHTML = '<li><span>soon</span><strong>Upcoming races will appear here.</strong></li>';
+      return;
+    }
+
+    listElement.innerHTML = previewEvents.map((event) => {
+      const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</strong></li>`;
+    }).join('');
+  };
+
   async function loadJson(path: string): Promise<unknown> {
     const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
     if (!response.ok) throw new Error(`API request failed: ${response.status}`);
@@ -765,6 +832,7 @@ const englishNavItems = [
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
+      renderHeroPreview(events);
       const visibleEvents = events.slice(0, 6);
 
       if (!events.length) {
@@ -825,25 +893,31 @@ const englishNavItems = [
 
   async function loadStats() {
     try {
-      const payload = await loadJson('/stats');
-      const confirmedTotal = pickNestedNumber(payload, ['confirmed_public_events_total']);
-      const familyTotal = pickNestedNumber(payload, ['family_friendly_total']);
+      const [statsResult, groupRunsResult] = await Promise.allSettled([
+        loadJson('/stats'),
+        loadJson('/group-runs')
+      ]);
+      const statsPayload = statsResult.status === 'fulfilled' ? statsResult.value : null;
+      const groupRunsPayload = groupRunsResult.status === 'fulfilled' ? groupRunsResult.value : null;
+      const confirmedTotal = pickNestedNumber(statsPayload, ['confirmed_public_events_total']);
+      const familyTotal = pickNestedNumber(statsPayload, ['family_friendly_total']);
+      const groupRunsTotal = pickNestedNumber(groupRunsPayload, ['row_count', 'group_runs_total', 'total', 'count']);
       const values = {
         confirmed_public_events_total: confirmedTotal,
-        family_friendly_total: familyTotal
+        family_friendly_total: familyTotal,
+        group_runs_total: groupRunsTotal
       };
 
       for (const [key, value] of Object.entries(values)) {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
-          const suffix = element.getAttribute('data-stat-suffix') ?? '';
-          element.textContent = value === null ? 'No data' : `${numberFormatter.format(value)}${suffix}`;
+          element.textContent = value === null ? 'No data' : numberFormatter.format(value);
         }
       }
 
-      setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
+      setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'}, ${groupRunsTotal !== null ? 'group runs ok' : 'group runs missing'})`);
 
-      if (confirmedTotal !== null && familyTotal !== null) {
+      if (confirmedTotal !== null && familyTotal !== null && groupRunsTotal !== null) {
         setStatus('stats', '');
       } else {
         setStatus('stats', 'One or more statistic values are currently missing.');
