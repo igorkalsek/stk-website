@@ -144,7 +144,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, type AdditionalEventData } from '../utils-additional';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
@@ -570,6 +570,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const renderableVoteUrl = getRenderableVoteUrl(event);
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, familyFriendly: event.familyFriendly });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, event.date);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
@@ -586,6 +587,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${additionalDataChips}
         ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>

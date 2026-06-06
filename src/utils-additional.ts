@@ -272,6 +272,22 @@ const formatEnglishIsoDate = (value: string) => {
 const formatIsoDate = (value: string, language: 'sl' | 'en' = 'sl') =>
   language === 'en' ? formatEnglishIsoDate(value) : formatSlovenianIsoDate(value);
 
+const formatSlovenianShortIsoDate = (value: string) => {
+  const parts = parseIsoDateParts(value);
+  if (!parts) return '';
+
+  return `${parts.day}. ${parts.month}.`;
+};
+
+const formatCompactIsoDate = (value: string, language: 'sl' | 'en' = 'sl') => {
+  const parts = parseIsoDateParts(value);
+  if (!parts || parts.month < 1 || parts.month > 12) return '';
+
+  return language === 'en'
+    ? `${parts.day} ${ENGLISH_MONTH_ABBREVIATIONS[parts.month - 1]}`
+    : formatSlovenianShortIsoDate(value);
+};
+
 const todayStartValue = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -359,6 +375,49 @@ type AdditionalDataRenderOptions = {
   eventDate?: string;
   registrationFeeLabel?: string;
   language?: 'sl' | 'en';
+};
+
+export const renderAdditionalDataChips = (
+  additionalData: AdditionalEventData | null | undefined,
+  escapeHtml: (value: string | number) => string,
+  options: AdditionalDataRenderOptions & { familyFriendly?: boolean } = {}
+) => {
+  const language = options.language ?? 'sl';
+  const eventDate = options.eventDate ?? '';
+  const chips: string[] = [];
+
+  if (additionalData) {
+    const registrationFee = formatRegistrationFeeValue(additionalData, language);
+    if (registrationFee) {
+      chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? `Entry fee ${registrationFee}` : `Startnina ${registrationFee}`)}</span>`);
+    }
+
+    const registrationDeadline = isTodayOrFutureIsoDate(additionalData.registrationDeadline)
+      ? formatCompactIsoDate(additionalData.registrationDeadline, language)
+      : '';
+    const showRegistrationDeadline = Boolean(
+      registrationDeadline &&
+      !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
+    );
+    if (showRegistrationDeadline) {
+      chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? `Deadline ${registrationDeadline}` : `Rok prijave ${registrationDeadline}`)}</span>`);
+    }
+
+    const elevationGain = additionalData.elevationGain.trim();
+    if (elevationGain) {
+      chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(`+${elevationGain} m`)}</span>`);
+    }
+
+    if (additionalData.routeUrl) {
+      chips.push(`<a class="event-chip event-chip-additional" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(language === 'en' ? 'Route' : 'Trasa')}</a>`);
+    }
+  }
+
+  if (options.familyFriendly) {
+    chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? 'Kids’ races' : 'Otroški teki')}</span>`);
+  }
+
+  return chips.length ? `<div class="event-details event-additional-chips">${chips.join('')}</div>` : '';
 };
 
 export const renderAdditionalDataBlock = (
