@@ -227,6 +227,7 @@ main {
     radial-gradient(circle at 16% 82%, rgba(200, 230, 201, 0.16), transparent 20rem),
     linear-gradient(145deg, #0f3c4e 0%, #173f45 56%, #28574b 100%);
   color: var(--white);
+  display: grid;
   box-shadow: 0 22px 60px rgba(16, 64, 80, 0.16);
 }
 
@@ -266,6 +267,75 @@ main {
   max-width: 850px;
   gap: 18px;
   padding: clamp(28px, 7vw, 66px);
+}
+
+.hero-preview {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  align-self: center;
+  margin: 0 clamp(18px, 5vw, 56px) clamp(24px, 6vw, 56px);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 24px;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+    rgba(9, 37, 48, 0.34);
+  color: var(--white);
+  padding: 18px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.hero-preview::before {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(200, 230, 201, 0.14);
+  border-radius: 18px;
+  pointer-events: none;
+  content: "";
+}
+
+.hero-preview-kicker {
+  color: #d9f2dc;
+  font-size: 0.82rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-preview-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-preview-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+}
+
+.hero-preview-list span {
+  min-width: 4.7rem;
+  border-radius: 999px;
+  background: rgba(240, 160, 48, 0.92);
+  color: #1f2d22;
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.hero-preview-list strong {
+  color: #f3fbf4;
+  font-size: 0.96rem;
+  line-height: 1.25;
 }
 
 .eyebrow {
@@ -366,6 +436,12 @@ main {
 
 .button:hover {
   transform: translateY(-1px);
+}
+
+.button:focus-visible,
+.hero-secondary-links a:focus-visible {
+  outline: 3px solid rgba(240, 160, 48, 0.72);
+  outline-offset: 3px;
 }
 
 .facebook-icon {
@@ -973,12 +1049,18 @@ main {
   }
 
   .hero-card {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
     min-height: 540px;
   }
 
   .hero-content {
     min-height: 540px;
     align-content: center;
+    padding-right: clamp(28px, 4vw, 54px);
+  }
+
+  .hero-preview {
+    margin: clamp(34px, 6vw, 66px) clamp(28px, 5vw, 56px) clamp(34px, 6vw, 66px) 0;
   }
 
   .card-grid-three {
