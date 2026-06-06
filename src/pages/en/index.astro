@@ -15,7 +15,7 @@ const englishNavItems = [
 
 <BaseLayout
   title="Run Slovenia: Race Calendar | Slovenski Tekaški Koledar"
-  description="Slovenia’s independent running race guide with confirmed races, official links, registration pages, family-friendly events, group runs and practical details for runners."
+  description="Slovenia’s independent running guide with confirmed races, official links, registration pages, family-friendly events, group runs and practical details for runners."
   lang="en"
   canonicalPath="/en/"
   alternateLinks={[
@@ -32,7 +32,7 @@ const englishNavItems = [
     <section class="hero container" aria-labelledby="hero-title">
       <div class="hero-card">
         <div class="hero-content">
-          <span class="eyebrow">Slovenia’s independent running race guide</span>
+          <span class="eyebrow">Slovenia’s independent running guide</span>
           <h1 id="hero-title">Find your next race in Slovenia</h1>
           <p class="hero-lead">A regularly updated race calendar with confirmed events, official race links, registration pages, family-friendly races, group runs and practical details for runners visiting or living in Slovenia.</p>
           <p class="hero-sublead">
@@ -41,28 +41,33 @@ const englishNavItems = [
           <div class="hero-actions" aria-label="Main links">
             <div class="cta-row cta-primary-row">
               <a class="button button-primary" href="/en/find-races/">Find a race</a>
-              <a class="button button-primary" href="/en/personal-calendar/">Add races to your calendar</a>
+              <a class="button button-primary" href="/en/stk-tekobot/">Ask STK Tekobot</a>
             </div>
             <nav class="hero-secondary-links" aria-label="Additional links">
+              <a href="/en/personal-calendar/">Add races to your calendar</a>
               <a href="/en/family-friendly-races/">Family-friendly races</a>
               <a href="/en/group-runs/">Group runs</a>
               <a href="/en/most-voted-races/">Most voted races</a>
-              <a href="/en/stk-tekobot/">Ask STK Tekobot</a>
             </nav>
           </div>
         </div>
       </div>
 
       <div class="stats-strip" aria-label="Calendar statistics">
-        <article class="stat-card">
-          <span class="stat-icon" aria-hidden="true">🏃</span>
-          <span class="stat-value" data-stat="confirmed_public_events_total">—</span>
-          <span class="stat-label">confirmed public running events</span>
+        <article class="stat-card stat-card-races">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="confirmed_public_events_total" data-stat-suffix="+">237+</span>
+          <span class="stat-label">confirmed races</span>
         </article>
-        <article class="stat-card">
-          <span class="stat-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
-          <span class="stat-value" data-stat="family_friendly_total">—</span>
-          <span class="stat-label">family-friendly races</span>
+        <article class="stat-card stat-card-family">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="family_friendly_total">116</span>
+          <span class="stat-label">family-friendly</span>
+        </article>
+        <article class="stat-card stat-card-group">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value">14</span>
+          <span class="stat-label">group runs</span>
         </article>
       </div>
     </section>
@@ -822,7 +827,10 @@ const englishNavItems = [
 
       for (const [key, value] of Object.entries(values)) {
         const element = document.querySelector(`[data-stat="${key}"]`);
-        if (element) element.textContent = value === null ? 'No data' : numberFormatter.format(value);
+        if (element) {
+          const suffix = element.getAttribute('data-stat-suffix') ?? '';
+          element.textContent = value === null ? 'No data' : `${numberFormatter.format(value)}${suffix}`;
+        }
       }
 
       setDebug('stats', `yes (${confirmedTotal !== null ? 'confirmed ok' : 'confirmed missing'}, ${familyTotal !== null ? 'family ok' : 'family missing'})`);
