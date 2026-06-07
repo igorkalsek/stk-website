@@ -144,7 +144,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { filtersToAnalyticsJson, logAnalyticsEvent } from '../utils-analytics';
+  import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
@@ -430,26 +430,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     additional: Boolean(additionalInput?.checked)
   });
 
+  let searchAnalyticsTimer: number | undefined;
+
   const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
     if (!state.userInteracted) return;
+
     const analyticsFilters = { ...filters };
     const query = (searchInput?.value ?? '').trim();
     const filtersJson = filtersToAnalyticsJson(analyticsFilters);
     const signature = JSON.stringify({ query, filtersJson, resultsCount });
     if (signature === state.lastLoggedSearchSignature) return;
-    state.lastLoggedSearchSignature = signature;
 
-    const commonPayload = {
-      event_type: 'search_performed' as const,
-      search_query: query || undefined,
-      filters_json: filtersJson,
-      results_count: resultsCount,
-      language: 'sl'
-    };
-    logAnalyticsEvent(commonPayload);
-    if (resultsCount === 0) {
-      logAnalyticsEvent({ ...commonPayload, event_type: 'no_results_search', results_count: undefined });
-    }
+    if (searchAnalyticsTimer) window.clearTimeout(searchAnalyticsTimer);
+    searchAnalyticsTimer = window.setTimeout(() => {
+      if (signature === state.lastLoggedSearchSignature) return;
+      state.lastLoggedSearchSignature = signature;
+
+      const commonPayload = {
+        event_type: 'search_performed' as const,
+        search_query: query || undefined,
+        filters_json: filtersJson,
+        results_count: resultsCount,
+        language: 'sl'
+      };
+      trackStkEvent(commonPayload);
+      if (resultsCount === 0) {
+        trackStkEvent({ ...commonPayload, event_type: 'no_results_search' as const, results_count: 0 });
+      }
+    }, 700);
   };
 
   const updateAdvancedFiltersSummary = (filters = getFilters()) => {
