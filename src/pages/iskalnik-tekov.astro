@@ -145,7 +145,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
-  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataBlock, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
@@ -327,7 +327,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const hasDayOfRegistration = (event: RaceEvent) =>
     hasReliableAdditionalData(event.additionalData) &&
-    event.additionalData.dayOfRegistration.toLocaleUpperCase('sl-SI').trim() === 'DA';
+    ['da', 'yes', 'true'].includes(event.additionalData.dayOfRegistration.toLocaleLowerCase('sl-SI').trim());
 
   const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
     if (!filter) return true;
@@ -604,7 +604,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     });
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, familyFriendly: event.familyFriendly });
-    const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, event.date);
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
@@ -621,7 +620,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
-        ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
