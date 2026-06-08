@@ -223,20 +223,25 @@ const parseMoney = (value: string) => {
   return Number.isFinite(amount) ? amount : null;
 };
 
-const formatMoney = (value: number) =>
-  new Intl.NumberFormat('sl-SI', { maximumFractionDigits: 2 }).format(value);
+const formatMoney = (value: number, language: 'sl' | 'en' = 'sl') =>
+  new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 2 }).format(value);
+
+const formatEuro = (value: number, language: 'sl' | 'en' = 'sl') =>
+  language === 'en' ? `€${formatMoney(value, language)}` : `${formatMoney(value, language)} €`;
 
 const formatRegistrationFeeValue = (additionalData: AdditionalEventData, language: 'sl' | 'en' = 'sl') => {
   const min = parseMoney(additionalData.registrationMinEur);
   const max = parseMoney(additionalData.registrationMaxEur);
 
   if (min !== null && max !== null) {
-    if (min === max) return `${formatMoney(min)} €`;
-    return `${formatMoney(min)}–${formatMoney(max)} €`;
+    if (min === max) return formatEuro(min, language);
+    return language === 'en'
+      ? `€${formatMoney(min, language)}–${formatMoney(max, language)}`
+      : `${formatMoney(min, language)}–${formatMoney(max, language)} €`;
   }
 
-  if (min !== null) return language === 'en' ? `from ${formatMoney(min)} €` : `od ${formatMoney(min)} €`;
-  if (max !== null) return language === 'en' ? `up to ${formatMoney(max)} €` : `do ${formatMoney(max)} €`;
+  if (min !== null) return language === 'en' ? `from ${formatEuro(min, language)}` : `od ${formatEuro(min, language)}`;
+  if (max !== null) return language === 'en' ? `up to ${formatEuro(max, language)}` : `do ${formatEuro(max, language)}`;
   return '';
 };
 
@@ -288,33 +293,28 @@ const formatCompactIsoDate = (value: string, language: 'sl' | 'en' = 'sl') => {
     : formatSlovenianShortIsoDate(value);
 };
 
-const todayStartValue = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today.getTime();
+const todayIsoDateInLjubljana = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    day: '2-digit',
+    month: '2-digit',
+    timeZone: 'Europe/Ljubljana',
+    year: 'numeric'
+  }).formatToParts(new Date());
+  const getPart = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? '';
+  return `${getPart('year')}-${getPart('month')}-${getPart('day')}`;
 };
 
-const parseIsoDateValue = (value: string) => {
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return Number.NaN;
+const isTodayOrFutureIsoDate = (value: string) =>
+  parseIsoDateParts(value) !== null && value >= todayIsoDateInLjubljana();
 
-  const [, year, month, day] = match;
-  return new Date(Number(year), Number(month) - 1, Number(day)).getTime();
-};
+const normalizeDayOfRegistration = (value: string) => value.toLocaleLowerCase('sl-SI').trim();
 
-const isTodayOrFutureIsoDate = (value: string) => {
-  const dateValue = parseIsoDateValue(value);
-  return Number.isFinite(dateValue) && dateValue >= todayStartValue();
-};
-
-const normalizeDayOfRegistration = (value: string) => value.toLocaleUpperCase('sl-SI').trim();
-
-const hasDayOfRegistration = (value: string) => normalizeDayOfRegistration(value) === 'DA';
+const hasDayOfRegistration = (value: string) => ['da', 'yes', 'true'].includes(normalizeDayOfRegistration(value));
 
 const formatDayOfRegistrationValue = (value: string, language: 'sl' | 'en' = 'sl') => {
   const normalized = normalizeDayOfRegistration(value);
-  if (normalized === 'DA') return language === 'en' ? 'yes' : 'da';
-  if (normalized === 'NE') return language === 'en' ? 'no' : 'ne';
+  if (hasDayOfRegistration(value)) return language === 'en' ? 'yes' : 'da';
+  if (['ne', 'no', 'false'].includes(normalized)) return language === 'en' ? 'no' : 'ne';
   return '';
 };
 
@@ -401,6 +401,17 @@ export const renderAdditionalDataChips = (
     );
     if (showRegistrationDeadline) {
       chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? `Deadline ${registrationDeadline}` : `Rok prijave ${registrationDeadline}`)}</span>`);
+    }
+
+    const earlyRegistrationDeadline = isTodayOrFutureIsoDate(additionalData.earlyRegistrationDeadline)
+      ? formatCompactIsoDate(additionalData.earlyRegistrationDeadline, language)
+      : '';
+    if (earlyRegistrationDeadline) {
+      chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? `Cheaper until ${earlyRegistrationDeadline}` : `Ceneje do ${earlyRegistrationDeadline}`)}</span>`);
+    }
+
+    if (hasDayOfRegistration(additionalData.dayOfRegistration)) {
+      chips.push(`<span class="event-chip event-chip-additional">${escapeHtml(language === 'en' ? 'Race-day registration' : 'Prijave na dan')}</span>`);
     }
 
     const elevationGain = additionalData.elevationGain.trim();
