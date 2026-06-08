@@ -69,6 +69,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
           </div>
         </div>
         <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+        <a class="registration-deadlines-cta" href="/iskalnik-tekov/">Poglej vse roke v iskalniku</a>
       </article>
     </section>
 
@@ -779,41 +780,84 @@ import FacebookIcon from '../components/FacebookIcon.astro';
     return getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
   };
 
-  const eventIdentity = (event: ApiRecord) => {
+  const eventRowKey = (event: ApiRecord) => {
     const row = rowKey(event);
+    if (row) return row;
+
+    return pick(event, ['master_row', 'masterRow', 'master row']);
+  };
+
+  const eventIdentity = (event: ApiRecord) => {
+    const row = eventRowKey(event);
     if (row) return `row:${row}`;
 
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-    return [date, getDisplayEventTitle(getEventTitle(event))]
+    const place = getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj']);
+    return [date, getDisplayEventTitle(getEventTitle(event)), place]
       .map((part) => normalizedText(part))
       .filter(Boolean)
       .join('|');
   };
 
-  const enrichEventsWithTopVotes = (events: ApiRecord[], topEvents: ApiRecord[]) => events.map((event) => {
-    const currentVotes = getTopEventVotes(event);
-    if (currentVotes !== null) return event;
+  const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
-    const matchingTopEvent = topEvents.find((topEvent) => matchScore(topEvent, event) >= 3);
-    const topVotes = matchingTopEvent ? getTopEventVotes(matchingTopEvent) : null;
-    return topVotes !== null ? { ...event, votes_total: topVotes } : event;
-  });
+  const normalizeTopUpcomingRace = (event: ApiRecord) => {
+    const votes = getTopEventVotes(event);
+    return votes !== null ? { ...event, votes_total: votes } : { ...event };
+  };
 
-  const renderHeroPreview = (events: ApiRecord[]) => {
+  const getTopUpcomingRaces = async () => {
+    const payload = await loadJson('/top?scope=upcoming&limit=50');
+    const rawEvents = toArray(payload);
+    let events = rawEvents.map(normalizeTopUpcomingRace);
+
+    try {
+      const masterPayload = await loadJson('/');
+      const masterRows = getMasterRows(masterPayload);
+      setDebug('master', 'yes');
+      setDebug('master-count', String(masterRows.length));
+      events = enrichTopEventsFromMaster(events, masterRows).map(normalizeTopUpcomingRace);
+    } catch (error) {
+      setDebug('master', 'no');
+      setDebug('master-count', '0');
+    }
+
+    return { events, rawEvents };
+  };
+
+  const hasConfirmedPublicFields = (event: ApiRecord) => {
+    const status = getEventField(event, 'status_dogodka');
+    if (status && normalize(status) !== 'potrjeno') return false;
+
+    const isPublic = getEventField(event, 'vidno_v_javnem_koledarju');
+    if (isPublic && isPublic.toLocaleUpperCase('sl-SI') !== 'DA') return false;
+
+    return true;
+  };
+
+  const removeHeroVotes = (event: ApiRecord) => ({ ...event, votes_total: undefined });
+
+  const renderHeroPreview = (topEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
     const titleElement = document.querySelector('[data-hero-preview-title]');
     const helperElement = document.querySelector('[data-hero-preview-helper]');
     const listElement = document.querySelector('[data-hero-preview-list]');
     if (!listElement) return;
 
+    const todayValue = todayStartValue();
     const cutoffValue = daysFromToday(14);
-    const eventsInNextDays = events.filter((event) => {
-      const dateValue = eventDateValue(event);
-      return dateValue !== null && dateValue <= cutoffValue;
-    });
-    const votedEvents = eventsInNextDays
-      .filter((event) => (getTopEventVotes(event) ?? 0) > 0)
+    const votedEvents = topEvents
+      .filter((event) => {
+        const dateValue = eventDateValue(event);
+        return (
+          dateValue !== null &&
+          dateValue >= todayValue &&
+          dateValue <= cutoffValue &&
+          hasConfirmedPublicFields(event) &&
+          (getHeroPreviewVotes(event) ?? 0) > 0
+        );
+      })
       .sort((a, b) => {
-        const voteDifference = (getTopEventVotes(b) ?? 0) - (getTopEventVotes(a) ?? 0);
+        const voteDifference = (getHeroPreviewVotes(b) ?? 0) - (getHeroPreviewVotes(a) ?? 0);
         if (voteDifference !== 0) return voteDifference;
         return compareEventDateThenTitle(a, b);
       });
@@ -826,19 +870,23 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       if (identity) selectedIds.add(identity);
       votedSelection.push(event);
     }
+
     const fallbackEvents: ApiRecord[] = [];
-    const unvotedEvents = eventsInNextDays
-      .filter((event) => (getTopEventVotes(event) ?? 0) === 0)
+    const nearestFallbackEvents = fallbackCandidates
+      .filter((event) => {
+        const dateValue = eventDateValue(event);
+        return dateValue !== null && dateValue >= todayValue;
+      })
       .sort(compareEventDateThenTitle);
-    for (const event of unvotedEvents) {
+    for (const event of nearestFallbackEvents) {
       if (votedSelection.length + fallbackEvents.length >= 3) break;
       const identity = eventIdentity(event);
       if (identity && selectedIds.has(identity)) continue;
       if (identity) selectedIds.add(identity);
-      fallbackEvents.push(event);
+      fallbackEvents.push(removeHeroVotes(event));
     }
     const previewEvents = [...votedSelection, ...fallbackEvents];
-    const useVoteOnlyHelper = previewEvents.length === 3 && fallbackEvents.length === 0;
+    const useVoteOnlyHelper = previewEvents.length > 0 && fallbackEvents.length === 0;
 
     if (titleElement) {
       titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
@@ -854,7 +902,9 @@ import FacebookIcon from '../components/FacebookIcon.astro';
 
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</strong></li>`;
+      const votes = getHeroPreviewVotes(event);
+      const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
     }).join('');
   };
 
@@ -1062,11 +1112,10 @@ import FacebookIcon from '../components/FacebookIcon.astro';
     if (!container) return;
 
     try {
-      const [payload, topPayload] = await Promise.all([
+      const [payload, topUpcomingResult] = await Promise.all([
         loadJson('/'),
-        loadJson('/top?scope=upcoming&limit=10').catch(() => null)
+        getTopUpcomingRaces().catch(() => ({ events: [], rawEvents: [] }))
       ]);
-      const topEvents = topPayload ? toArray(topPayload) : [];
       const todayValue = todayStartValue();
       const events = toArray(payload)
         .filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
@@ -1079,8 +1128,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      const eventsWithVotes = enrichEventsWithTopVotes(events, topEvents);
-      renderHeroPreview(eventsWithVotes);
+      renderHeroPreview(topUpcomingResult.events, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1181,29 +1229,19 @@ import FacebookIcon from '../components/FacebookIcon.astro';
     if (!container) return;
 
     try {
-      const payload = await loadJson('/top?scope=upcoming&limit=10');
-      const topEvents = toArray(payload).slice(0, 4);
+      const topUpcomingResult = await getTopUpcomingRaces();
+      const topEvents = topUpcomingResult.events.slice(0, 4);
+      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 4);
       setDebug('top', 'yes');
       if (!topEvents.length) {
-        setDebugTopDetails(topEvents);
+        setDebugTopDetails(topEvents, rawTopEvents);
         setStatus('top', 'Trenutno ni prikazanih najbolj glasovanih prihajajočih tekov.');
         return;
       }
 
-      let events = topEvents;
-      try {
-        const masterPayload = await loadJson('/');
-        const masterRows = getMasterRows(masterPayload);
-        setDebug('master', 'yes');
-        setDebug('master-count', String(masterRows.length));
-        events = enrichTopEventsFromMaster(topEvents, masterRows);
-      } catch (error) {
-        setDebug('master', 'no');
-        setDebug('master-count', '0');
-      }
-      setDebugTopDetails(events, topEvents);
+      setDebugTopDetails(topEvents, rawTopEvents);
 
-      container.innerHTML = events.map((event) => {
+      container.innerHTML = topEvents.map((event) => {
         const title = titleForEvent(event);
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');

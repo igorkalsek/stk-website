@@ -350,6 +350,13 @@ main {
   line-height: 1.25;
 }
 
+.hero-preview-votes {
+  color: rgba(243, 251, 244, 0.72);
+  font-size: 0.82rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
 .eyebrow {
   display: inline-flex;
   width: fit-content;
@@ -624,6 +631,21 @@ main {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.registration-deadlines-cta {
+  width: fit-content;
+  color: var(--deep-teal);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration-color: rgba(16, 64, 80, 0.24);
+  text-underline-offset: 3px;
+}
+
+.registration-deadlines-cta:hover,
+.registration-deadlines-cta:focus-visible {
+  color: var(--forest);
+  text-decoration-color: currentColor;
 }
 
 .registration-price-chip {
