@@ -34,9 +34,9 @@ const englishNavItems = [
         <div class="hero-content">
           <span class="eyebrow">Slovenia’s independent running guide</span>
           <h1 id="hero-title">Find your next race in Slovenia</h1>
-          <p class="hero-lead">A regularly updated race calendar with confirmed events, official race links, registration pages, family-friendly races, group runs and practical details for runners visiting or living in Slovenia.</p>
+          <p class="hero-lead">A clean starting point for confirmed races, practical details and official race links across Slovenia.</p>
           <p class="hero-sublead">
-            Built with organiser updates, public sources, community input and AI-assisted search through STK Tekobot.
+            Start with race search or ask STK Tekobot in natural language.
           </p>
           <div class="hero-actions" aria-label="Main links">
             <div class="cta-row cta-primary-row">
@@ -88,7 +88,6 @@ const englishNavItems = [
             <h2 id="registration-deadlines-title">Registration deadlines</h2>
             <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
           </div>
-          <a class="button button-small button-secondary-light" href="/en/find-races/">Open race search</a>
         </div>
         <ol class="registration-deadlines-list" data-registration-deadlines></ol>
       </article>
@@ -98,7 +97,7 @@ const englishNavItems = [
       <article class="feature-strip">
         <div class="feature-strip-copy">
           <h2 id="extra-data-title">More than race dates</h2>
-          <p>The race search includes practical details for many events, including entry fees, registration deadlines, elevation gain, routes and family-friendly information.</p>
+          <p>STK also includes entry fees, registration deadlines, elevation gain, routes / GPX and kids’ races.</p>
         </div>
         <div class="feature-strip-actions">
           <div class="feature-chip-list" aria-label="Extra details in race search">
@@ -121,7 +120,7 @@ const englishNavItems = [
         </div>
         <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
       </div>
-      <div class="card-grid card-grid-three" data-nearest-events>
+      <div class="card-grid" data-nearest-events>
         <article class="event-card">
           <h3>Loading data</h3>
           <p>Upcoming races will be shown here.</p>
@@ -1096,7 +1095,7 @@ const englishNavItems = [
         });
       const eventsWithVotes = enrichEventsWithTopVotes(events, topEvents);
       renderHeroPreview(eventsWithVotes);
-      const visibleEvents = events.slice(0, 6);
+      const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
         container.innerHTML = `
@@ -1197,7 +1196,7 @@ const englishNavItems = [
 
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
-      const topEvents = toArray(payload).slice(0, 6);
+      const topEvents = toArray(payload).slice(0, 4);
       setDebug('top', 'yes');
       if (!topEvents.length) {
         setDebugTopDetails(topEvents);

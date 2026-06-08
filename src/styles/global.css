@@ -211,9 +211,9 @@ main {
 
 .hero {
   display: grid;
-  gap: 24px;
+  gap: 18px;
   align-items: center;
-  padding: 34px 0 24px;
+  padding: 30px 0 18px;
 }
 
 .hero-card {
@@ -228,7 +228,7 @@ main {
     linear-gradient(145deg, #0f3c4e 0%, #173f45 56%, #28574b 100%);
   color: var(--white);
   display: grid;
-  box-shadow: 0 22px 60px rgba(16, 64, 80, 0.16);
+  box-shadow: 0 18px 48px rgba(16, 64, 80, 0.14);
 }
 
 .hero-card::before,
@@ -265,23 +265,23 @@ main {
   position: relative;
   display: grid;
   max-width: 850px;
-  gap: 18px;
-  padding: clamp(28px, 7vw, 66px);
+  gap: 15px;
+  padding: clamp(26px, 6vw, 54px);
 }
 
 .hero-preview {
   position: relative;
   display: grid;
-  gap: 14px;
+  gap: 12px;
   align-self: center;
   margin: 0 clamp(18px, 5vw, 56px) clamp(24px, 6vw, 56px);
   border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 24px;
+  border-radius: 20px;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
     rgba(9, 37, 48, 0.34);
   color: var(--white);
-  padding: 18px;
+  padding: 15px;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(10px);
 }
@@ -317,7 +317,7 @@ main {
 
 .hero-preview-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -326,11 +326,11 @@ main {
 .hero-preview-list li {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  border-radius: 15px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 10px;
+  padding: 8px;
 }
 
 .hero-preview-list span {
@@ -369,7 +369,7 @@ main {
 .page-hero h1 {
   margin: 0;
   max-width: 760px;
-  font-size: clamp(2.45rem, 10vw, 5.6rem);
+  font-size: clamp(2.35rem, 9vw, 4.9rem);
   line-height: 0.94;
   letter-spacing: -0.07em;
 }
@@ -378,8 +378,8 @@ main {
   margin: 0;
   max-width: 720px;
   color: #e7f4ea;
-  font-size: clamp(1.1rem, 3vw, 1.45rem);
-  line-height: 1.55;
+  font-size: clamp(1.04rem, 2.6vw, 1.28rem);
+  line-height: 1.45;
 }
 
 .hero-sublead {
@@ -391,7 +391,7 @@ main {
 
 .hero-actions {
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .cta-row {
@@ -407,27 +407,24 @@ main {
 .hero-secondary-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px 14px;
   padding-top: 2px;
 }
 
 .hero-secondary-links a {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  border: 1px solid rgba(216, 232, 223, 0.2);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  min-height: 32px;
+  border-bottom: 1px solid rgba(216, 232, 223, 0.34);
   color: #e0eee6;
-  font-size: 0.92rem;
-  font-weight: 780;
-  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 760;
+  padding: 4px 0;
 }
 
 .hero-secondary-links a:hover,
 .hero-secondary-links a:focus-visible {
-  border-color: rgba(240, 160, 48, 0.68);
-  background: rgba(255, 255, 255, 0.13);
+  border-bottom-color: rgba(240, 160, 48, 0.82);
   color: var(--white);
 }
 
@@ -489,13 +486,13 @@ main {
 .stat-card {
   position: relative;
   display: grid;
-  min-height: 118px;
+  min-height: 92px;
   align-content: space-between;
   overflow: hidden;
   border: 1px solid rgba(16, 64, 80, 0.1);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.9);
-  padding: 16px;
+  padding: 13px 14px;
   box-shadow: 0 10px 30px rgba(16, 64, 80, 0.07);
 }
 
@@ -503,17 +500,17 @@ main {
   position: absolute;
   right: -22px;
   bottom: -28px;
-  width: 108px;
-  height: 108px;
+  width: 82px;
+  height: 82px;
   border: 1px solid rgba(16, 64, 80, 0.09);
   border-radius: 999px;
   content: "";
 }
 
 .stat-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
   background:
     linear-gradient(135deg, rgba(240, 160, 48, 0.9), rgba(240, 160, 48, 0.42)),
     var(--orange);
@@ -531,7 +528,7 @@ main {
 .stat-value {
   display: block;
   color: var(--deep-teal);
-  font-size: clamp(2rem, 7vw, 3rem);
+  font-size: clamp(1.75rem, 5.4vw, 2.45rem);
   font-weight: 930;
   letter-spacing: -0.065em;
   line-height: 0.95;
@@ -541,7 +538,7 @@ main {
   display: block;
   margin-top: 6px;
   color: var(--muted);
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   font-weight: 760;
   line-height: 1.28;
 }
@@ -554,16 +551,16 @@ main {
 
 
 .registration-deadlines-section {
-  margin-top: clamp(18px, 4vw, 30px);
+  margin-top: clamp(14px, 3vw, 22px);
 }
 
 .registration-deadlines-card {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   border: 1px solid rgba(16, 64, 80, 0.1);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.88);
-  padding: clamp(16px, 3vw, 21px);
+  padding: clamp(14px, 2.4vw, 18px);
   box-shadow: 0 12px 32px rgba(16, 64, 80, 0.06);
 }
 
@@ -576,7 +573,7 @@ main {
 .registration-deadlines-heading h2 {
   margin: 0;
   color: var(--deep-teal);
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-size: clamp(1.12rem, 2.5vw, 1.34rem);
   letter-spacing: -0.025em;
 }
 
@@ -600,7 +597,7 @@ main {
   gap: 3px;
   border-radius: 16px;
   background: rgba(200, 230, 201, 0.18);
-  padding: 11px 12px;
+  padding: 9px 10px;
 }
 
 .registration-deadlines-line {
@@ -640,17 +637,17 @@ main {
 }
 
 .feature-strip-section {
-  margin-top: clamp(22px, 5vw, 38px);
+  margin-top: clamp(16px, 4vw, 28px);
 }
 
 .feature-strip {
   display: grid;
-  gap: 16px;
-  border: 1px solid rgba(16, 64, 80, 0.1);
+  gap: 12px;
+  border: 1px solid rgba(16, 64, 80, 0.08);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.82);
-  padding: clamp(18px, 4vw, 24px);
-  box-shadow: 0 12px 32px rgba(16, 64, 80, 0.06);
+  padding: clamp(14px, 3vw, 18px);
+  box-shadow: 0 8px 24px rgba(16, 64, 80, 0.04);
 }
 
 .feature-strip-copy {
@@ -661,14 +658,14 @@ main {
 .feature-strip h2 {
   margin: 0;
   color: var(--deep-teal);
-  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-size: clamp(1.18rem, 3vw, 1.42rem);
 }
 
 .feature-strip p {
   max-width: 760px;
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .feature-strip-actions {
@@ -691,7 +688,7 @@ main {
   font-size: 0.86rem;
   font-weight: 800;
   line-height: 1.25;
-  padding: 7px 10px;
+  padding: 6px 9px;
 }
 
 .event-additional-chips {
@@ -1235,22 +1232,22 @@ main {
   }
 
   .hero {
-    padding-top: 52px;
+    padding-top: 42px;
   }
 
   .hero-card {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-    min-height: 540px;
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 340px);
+    min-height: 460px;
   }
 
   .hero-content {
-    min-height: 540px;
+    min-height: 460px;
     align-content: center;
     padding-right: clamp(28px, 4vw, 54px);
   }
 
   .hero-preview {
-    margin: clamp(34px, 6vw, 66px) clamp(28px, 5vw, 56px) clamp(34px, 6vw, 66px) 0;
+    margin: clamp(26px, 5vw, 46px) clamp(24px, 4vw, 46px) clamp(26px, 5vw, 46px) 0;
   }
 
 
@@ -1264,7 +1261,7 @@ main {
   }
 
   .feature-strip {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.75fr);
     align-items: center;
   }
 

@@ -12,9 +12,9 @@ import FacebookIcon from '../components/FacebookIcon.astro';
         <div class="hero-content">
           <span class="eyebrow">Neodvisen tekaški vodič za Slovenijo</span>
           <h1 id="hero-title">Poiščite svoj naslednji tek</h1>
-          <p class="hero-lead">Slovenski Tekaški Koledar združuje potrjene tekaške prireditve, razpise, prijave, družinam prijazne teke, skupinske teke in dodatne informacije na enem mestu.</p>
+          <p class="hero-lead">Slovenski Tekaški Koledar na enem mestu zbira potrjene tekaške prireditve, koristne podatke in povezave do uradnih razpisov.</p>
           <p class="hero-sublead">
-            Koledar se redno posodablja iz uradnih virov, prijav organizatorjev in predlogov tekaške skupnosti.
+            Za hiter začetek odprite iskalnik ali vprašajte STK Tekobota.
           </p>
           <div class="hero-actions" aria-label="Glavne povezave">
             <div class="cta-row cta-primary-row">
@@ -67,7 +67,6 @@ import FacebookIcon from '../components/FacebookIcon.astro';
             <h2 id="registration-deadlines-title">Prijave se iztekajo</h2>
             <p>Roki prijav in cenejših prijavnin za prihajajoče teke.</p>
           </div>
-          <a class="button button-small button-secondary-light" href="/iskalnik-tekov/">Odpri iskalnik tekov</a>
         </div>
         <ol class="registration-deadlines-list" data-registration-deadlines></ol>
       </article>
@@ -77,7 +76,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       <article class="feature-strip">
         <div class="feature-strip-copy">
           <h2 id="extra-data-title">Več kot samo datumi tekov</h2>
-          <p>V iskalniku tekov so pri številnih prireditvah dodani tudi podatki o prijavninah, rokih prijav, višinskih metrih, trasah in družinam prijaznih vsebinah.</p>
+          <p>STK vključuje tudi startnine, roke prijav, višinske metre, trase / GPX in otroške teke.</p>
         </div>
         <div class="feature-strip-actions">
           <div class="feature-chip-list" aria-label="Dodatni podatki v iskalniku">
@@ -100,7 +99,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
         </div>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
       </div>
-      <div class="card-grid card-grid-three" data-nearest-events>
+      <div class="card-grid" data-nearest-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
           <p>Najbližji teki bodo prikazani tukaj.</p>
@@ -1055,7 +1054,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
         });
       const eventsWithVotes = enrichEventsWithTopVotes(events, topEvents);
       renderHeroPreview(eventsWithVotes);
-      const visibleEvents = events.slice(0, 6);
+      const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
         container.innerHTML = `
@@ -1156,7 +1155,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
 
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
-      const topEvents = toArray(payload).slice(0, 6);
+      const topEvents = toArray(payload).slice(0, 4);
       setDebug('top', 'yes');
       if (!topEvents.length) {
         setDebugTopDetails(topEvents);
