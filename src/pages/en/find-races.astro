@@ -197,6 +197,7 @@ const englishNavItems = [
     publicNotes: string;
     searchText: string;
     familyFriendly: boolean;
+    kidsRaces: boolean;
     additionalData?: AdditionalEventData | null;
   };
 
@@ -257,6 +258,8 @@ const englishNavItems = [
   };
 
   const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
+
+  const hasKidsRaceNote = (value: string) => /\botro(?:ški|ška|ških|kom|ci|cih|ke|ci)|\bkids?\b|\bchildren(?:’s|'s)?\b/iu.test(value);
 
   const todayStart = () => {
     const now = new Date();
@@ -528,7 +531,8 @@ const englishNavItems = [
           voteUrl: safeUrl(pick(item, 'vote_url') || pick(item, 'glasovanje_url') || pick(item, 'url_glasovanje')),
           publicNotes,
           searchText: normalize(`${title} ${place}`),
-          familyFriendly: normalize(publicNotes).includes('družinam prijazno')
+          familyFriendly: normalize(publicNotes).includes('družinam prijazno'),
+          kidsRaces: hasKidsRaceNote(publicNotes)
         };
       })
       .filter((event): event is RaceEvent => Boolean(event))
@@ -605,7 +609,7 @@ const englishNavItems = [
       registrationUrl: event.registrationUrl
     });
     const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, language: 'en', familyFriendly: event.familyFriendly });
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, language: 'en', kidsRaces: event.kidsRaces });
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
@@ -617,7 +621,7 @@ const englishNavItems = [
       <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
-          ${event.familyFriendly ? '<span class="pill">Family-friendly</span>' : ''}
+          ${event.familyFriendly ? '<span class="pill pill-family">Family-friendly</span>' : ''}
         </div>
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
