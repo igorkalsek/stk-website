@@ -34,9 +34,9 @@ const englishNavItems = [
         <div class="hero-content">
           <span class="eyebrow">Slovenia’s independent running guide</span>
           <h1 id="hero-title">Find your next race in Slovenia</h1>
-          <p class="hero-lead">A regularly updated race calendar with confirmed events, official race links, registration pages, family-friendly races, group runs and practical details for runners visiting or living in Slovenia.</p>
+          <p class="hero-lead">A clean starting point for confirmed races, practical details and official race links across Slovenia.</p>
           <p class="hero-sublead">
-            Built with organiser updates, public sources, community input and AI-assisted search through STK Tekobot.
+            Start with race search or ask STK Tekobot in natural language.
           </p>
           <div class="hero-actions" aria-label="Main links">
             <div class="cta-row cta-primary-row">
@@ -65,17 +65,17 @@ const englishNavItems = [
       <div class="stats-strip" aria-label="Calendar statistics">
         <article class="stat-card stat-card-races">
           <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="confirmed_public_events_total">237</span>
+          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
           <span class="stat-label">confirmed races</span>
         </article>
         <article class="stat-card stat-card-family">
           <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="family_friendly_total">116</span>
+          <span class="stat-value" data-stat="family_friendly_total">…</span>
           <span class="stat-label">family-friendly</span>
         </article>
         <article class="stat-card stat-card-group">
           <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="group_runs_total">14</span>
+          <span class="stat-value" data-stat="group_runs_total">…</span>
           <span class="stat-label">group runs</span>
         </article>
       </div>
@@ -88,7 +88,6 @@ const englishNavItems = [
             <h2 id="registration-deadlines-title">Registration deadlines</h2>
             <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
           </div>
-          <a class="button button-small button-secondary-light" href="/en/find-races/">Open race search</a>
         </div>
         <ol class="registration-deadlines-list" data-registration-deadlines></ol>
       </article>
@@ -98,7 +97,7 @@ const englishNavItems = [
       <article class="feature-strip">
         <div class="feature-strip-copy">
           <h2 id="extra-data-title">More than race dates</h2>
-          <p>The race search includes practical details for many events, including entry fees, registration deadlines, elevation gain, routes and family-friendly information.</p>
+          <p>STK also includes entry fees, registration deadlines, elevation gain, routes / GPX and kids’ races.</p>
         </div>
         <div class="feature-strip-actions">
           <div class="feature-chip-list" aria-label="Extra details in race search">
@@ -121,7 +120,7 @@ const englishNavItems = [
         </div>
         <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
       </div>
-      <div class="card-grid card-grid-three" data-nearest-events>
+      <div class="card-grid" data-nearest-events>
         <article class="event-card">
           <h3>Loading data</h3>
           <p>Upcoming races will be shown here.</p>
@@ -186,8 +185,8 @@ const englishNavItems = [
       </div>
       <div class="card-grid" data-recent-updates>
         <article class="update-card">
-          <h3>No updates shown yet</h3>
-          <p>Latest changes will appear here when available.</p>
+          <h3>Loading data</h3>
+          <p>Latest changes will appear here.</p>
         </article>
       </div>
     </section>
@@ -763,16 +762,54 @@ const englishNavItems = [
     ], '');
 
 
+  const LJUBLJANA_TIME_ZONE = 'Europe/Ljubljana';
+  const ljubljanaDatePartsFormatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: LJUBLJANA_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  const parseIsoDateValue = (value: string) => {
+    const trimmedDate = value.trim();
+    const match = trimmedDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return Number.NaN;
+
+    const [, year, month, day] = match;
+    const dateValue = Date.UTC(Number(year), Number(month) - 1, Number(day));
+    const date = new Date(dateValue);
+    if (
+      date.getUTCFullYear() !== Number(year) ||
+      date.getUTCMonth() !== Number(month) - 1 ||
+      date.getUTCDate() !== Number(day)
+    ) {
+      return Number.NaN;
+    }
+
+    return dateValue;
+  };
+
+  const todayStartValue = () => {
+    const parts = Object.fromEntries(
+      ljubljanaDatePartsFormatter.formatToParts(new Date())
+        .filter((part) => part.type !== 'literal')
+        .map((part) => [part.type, part.value])
+    ) as Record<string, string>;
+
+    return parseIsoDateValue(`${parts.year}-${parts.month}-${parts.day}`);
+  };
+
   const daysFromToday = (days: number) => {
-    const today = new Date();
-    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    date.setDate(date.getDate() + days);
+    const dateValue = todayStartValue();
+    if (!Number.isFinite(dateValue)) return Number.NaN;
+    const date = new Date(dateValue);
+    date.setUTCDate(date.getUTCDate() + days);
     return date.getTime();
   };
 
   const eventDateValue = (event: ApiRecord) => {
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-    const dateValue = new Date(`${date}T00:00:00`).getTime();
+    const dateValue = parseIsoDateValue(date);
     return Number.isFinite(dateValue) ? dateValue : null;
   };
 
@@ -869,11 +906,12 @@ const englishNavItems = [
     deadlineDate: string;
     deadlineValue: number;
     deadlineType: DeadlineType;
+    deadlineWindowRank: number;
     eventDateValue: number;
     title: string;
   };
 
-  const deadlineDateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+  const deadlineDateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: LJUBLJANA_TIME_ZONE });
 
   const trimmedValue = (value: unknown) => String(value || '').trim();
 
@@ -881,33 +919,23 @@ const englishNavItems = [
 
   const getAdditionalField = (item: ApiRecord, key: string) => getFieldValue(item, key);
 
-  const parseIsoDateValue = (value: string) => {
-    const trimmedDate = value.trim();
-    const match = trimmedDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!match) return Number.NaN;
-
-    const [, year, month, day] = match;
-    const date = new Date(Number(year), Number(month) - 1, Number(day));
-    if (
-      date.getFullYear() !== Number(year) ||
-      date.getMonth() !== Number(month) - 1 ||
-      date.getDate() !== Number(day)
-    ) {
-      return Number.NaN;
-    }
-
-    return date.getTime();
-  };
-
   const formatDeadlineDate = (value: string) => {
     const dateValue = parseIsoDateValue(value);
     return Number.isFinite(dateValue) ? deadlineDateFormatter.format(new Date(dateValue)) : '';
   };
 
-  const todayStartValue = () => {
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const isTodayValue = (value: number) => value === todayStartValue();
+
+  const formatDeadlineLabel = (item: DeadlineCandidate, deadlineDate: string) => {
+    if (isTodayValue(item.deadlineValue)) {
+      return item.deadlineType === 'early' ? 'Cheaper entry ends today' : 'Registration deadline is today';
+    }
+
+    return item.deadlineType === 'early' ? `Cheaper entry until ${deadlineDate}` : `Registration deadline ${deadlineDate}`;
   };
+
+  const formatDeadlineBadge = (item: DeadlineCandidate, deadlineDate: string) =>
+    isTodayValue(item.deadlineValue) ? 'Today' : deadlineDate;
 
   const isConfirmedPublicUpcomingEvent = (event: ApiRecord, todayValue: number) => {
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
@@ -960,6 +988,7 @@ const englishNavItems = [
 
   const buildDeadlineCandidates = (masterPayload: unknown, additionalPayload: unknown) => {
     const todayValue = todayStartValue();
+    const deadlineWindowEndValue = daysFromToday(14);
     const masterEventsByRow = new Map<string, ApiRecord>();
 
     for (const event of toArray(masterPayload)) {
@@ -994,6 +1023,7 @@ const englishNavItems = [
         deadlineDate: deadline.date,
         deadlineValue: deadline.value,
         deadlineType: deadline.type,
+        deadlineWindowRank: deadline.value <= deadlineWindowEndValue ? 0 : 1,
         eventDateValue,
         title: getDisplayEventTitle(getEventTitle(event))
       });
@@ -1001,7 +1031,9 @@ const englishNavItems = [
 
     return candidates
       .sort((a, b) =>
+        a.deadlineWindowRank - b.deadlineWindowRank ||
         a.deadlineValue - b.deadlineValue ||
+        (a.deadlineType === 'early' ? 0 : 1) - (b.deadlineType === 'early' ? 0 : 1) ||
         a.eventDateValue - b.eventDateValue ||
         a.title.localeCompare(b.title, 'sl-SI')
       )
@@ -1010,18 +1042,19 @@ const englishNavItems = [
 
   const renderRegistrationDeadlineItems = (items: DeadlineCandidate[]) => items.map((item) => {
     const deadlineDate = formatDeadlineDate(item.deadlineDate);
-    const label = item.deadlineType === 'early' ? 'Cheaper entry until' : 'Registration deadline';
+    const deadlineBadge = formatDeadlineBadge(item, deadlineDate);
+    const label = formatDeadlineLabel(item, deadlineDate);
     const price = formatDeadlinePrice(item.additional);
 
     return `
       <li class="registration-deadlines-item">
         <div class="registration-deadlines-line">
-          <time datetime="${escapeHtml(item.deadlineDate)}">${escapeHtml(deadlineDate)}</time>
+          <time datetime="${escapeHtml(item.deadlineDate)}">${escapeHtml(deadlineBadge)}</time>
           <span aria-hidden="true">·</span>
           <strong>${escapeHtml(item.title)}</strong>
           ${price ? `<span class="registration-price-chip">${escapeHtml(price)}</span>` : ''}
         </div>
-        <p>${escapeHtml(label)} ${escapeHtml(deadlineDate)}</p>
+        <p>${escapeHtml(label)}</p>
       </li>
     `;
   }).join('');
@@ -1051,10 +1084,17 @@ const englishNavItems = [
     }
   }
 
+  const apiRequestCache = new Map<string, Promise<unknown>>();
+
   async function loadJson(path: string): Promise<unknown> {
-    const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
-    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
-    return response.json();
+    if (!apiRequestCache.has(path)) {
+      apiRequestCache.set(path, fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } }).then((response) => {
+        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+        return response.json();
+      }));
+    }
+
+    return apiRequestCache.get(path)!;
   }
 
 
@@ -1065,28 +1105,14 @@ const englishNavItems = [
     try {
       const [payload, topPayload] = await Promise.all([
         loadJson('/'),
-        loadJson('/top?scope=upcoming&limit=50').catch(() => null)
+        loadJson('/top?scope=upcoming&limit=10').catch(() => null)
       ]);
       const topEvents = topPayload ? toArray(topPayload) : [];
-      const today = new Date();
-      const todayValue = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+      const todayValue = todayStartValue();
       const events = toArray(payload)
-        .filter((event) => {
-          const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-          const dateValue = new Date(`${date}T00:00:00`).getTime();
-
-          return (
-            /^2026-/.test(date) &&
-            Number.isFinite(dateValue) &&
-            dateValue >= todayValue &&
-            normalize(getEventField(event, 'status_dogodka')) === 'potrjeno' &&
-            getEventField(event, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA'
-          );
-        })
+        .filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
         .sort((a, b) => {
-          const dateA = getEventField(a, 'datum', ['date', 'event_date', 'Datum']);
-          const dateB = getEventField(b, 'datum', ['date', 'event_date', 'Datum']);
-          const dateDifference = new Date(`${dateA}T00:00:00`).getTime() - new Date(`${dateB}T00:00:00`).getTime();
+          const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
           if (dateDifference !== 0) return dateDifference;
 
           const placeDifference = getEventField(a, 'kraj', ['place', 'city', 'location']).localeCompare(getEventField(b, 'kraj', ['place', 'city', 'location']), 'sl-SI');
@@ -1096,7 +1122,7 @@ const englishNavItems = [
         });
       const eventsWithVotes = enrichEventsWithTopVotes(events, topEvents);
       renderHeroPreview(eventsWithVotes);
-      const visibleEvents = events.slice(0, 6);
+      const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
         container.innerHTML = `
@@ -1197,7 +1223,7 @@ const englishNavItems = [
 
     try {
       const payload = await loadJson('/top?scope=upcoming&limit=10');
-      const topEvents = toArray(payload).slice(0, 6);
+      const topEvents = toArray(payload).slice(0, 4);
       setDebug('top', 'yes');
       if (!topEvents.length) {
         setDebugTopDetails(topEvents);
