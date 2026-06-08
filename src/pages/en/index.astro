@@ -757,35 +757,85 @@ const englishNavItems = [
     return date.getTime();
   };
 
+  const eventDateValue = (event: ApiRecord) => {
+    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+    const dateValue = new Date(`${date}T00:00:00`).getTime();
+    return Number.isFinite(dateValue) ? dateValue : null;
+  };
+
+  const compareEventDateThenTitle = (a: ApiRecord, b: ApiRecord) => {
+    const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
+    if (dateDifference !== 0) return dateDifference;
+
+    return getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
+  };
+
+  const eventIdentity = (event: ApiRecord) => {
+    const row = rowKey(event);
+    if (row) return `row:${row}`;
+
+    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+    return [date, getDisplayEventTitle(getEventTitle(event))]
+      .map((part) => normalizedText(part))
+      .filter(Boolean)
+      .join('|');
+  };
+
+  const enrichEventsWithTopVotes = (events: ApiRecord[], topEvents: ApiRecord[]) => events.map((event) => {
+    const currentVotes = getTopEventVotes(event);
+    if (currentVotes !== null) return event;
+
+    const matchingTopEvent = topEvents.find((topEvent) => matchScore(topEvent, event) >= 3);
+    const topVotes = matchingTopEvent ? getTopEventVotes(matchingTopEvent) : null;
+    return topVotes !== null ? { ...event, votes_total: topVotes } : event;
+  });
+
   const renderHeroPreview = (events: ApiRecord[]) => {
     const titleElement = document.querySelector('[data-hero-preview-title]');
+    const helperElement = document.querySelector('[data-hero-preview-helper]');
     const listElement = document.querySelector('[data-hero-preview-list]');
     if (!listElement) return;
 
     const cutoffValue = daysFromToday(14);
     const eventsInNextDays = events.filter((event) => {
-      const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const dateValue = new Date(`${date}T00:00:00`).getTime();
-      return Number.isFinite(dateValue) && dateValue <= cutoffValue;
+      const dateValue = eventDateValue(event);
+      return dateValue !== null && dateValue <= cutoffValue;
     });
     const votedEvents = eventsInNextDays
       .filter((event) => (getTopEventVotes(event) ?? 0) > 0)
       .sort((a, b) => {
         const voteDifference = (getTopEventVotes(b) ?? 0) - (getTopEventVotes(a) ?? 0);
         if (voteDifference !== 0) return voteDifference;
-        const dateA = getEventField(a, 'datum', ['date', 'event_date', 'Datum']);
-        const dateB = getEventField(b, 'datum', ['date', 'event_date', 'Datum']);
-        return new Date(`${dateA}T00:00:00`).getTime() - new Date(`${dateB}T00:00:00`).getTime();
+        return compareEventDateThenTitle(a, b);
       });
-    const selected = [...votedEvents];
-    for (const event of [...eventsInNextDays, ...events]) {
-      if (selected.length >= 3) break;
-      if (!selected.includes(event)) selected.push(event);
+    const selectedIds = new Set<string>();
+    const votedSelection: ApiRecord[] = [];
+    for (const event of votedEvents) {
+      if (votedSelection.length >= 3) break;
+      const identity = eventIdentity(event);
+      if (identity && selectedIds.has(identity)) continue;
+      if (identity) selectedIds.add(identity);
+      votedSelection.push(event);
     }
-    const previewEvents = selected.slice(0, 3);
+    const fallbackEvents: ApiRecord[] = [];
+    const unvotedEvents = eventsInNextDays
+      .filter((event) => (getTopEventVotes(event) ?? 0) === 0)
+      .sort(compareEventDateThenTitle);
+    for (const event of unvotedEvents) {
+      if (votedSelection.length + fallbackEvents.length >= 3) break;
+      const identity = eventIdentity(event);
+      if (identity && selectedIds.has(identity)) continue;
+      if (identity) selectedIds.add(identity);
+      fallbackEvents.push(event);
+    }
+    const previewEvents = [...votedSelection, ...fallbackEvents];
+    const useVoteOnlyHelper = previewEvents.length === 3 && fallbackEvents.length === 0;
 
     if (titleElement) {
       titleElement.textContent = 'Highlighted in the next days';
+    }
+    if (helperElement) {
+      helperElement.textContent = useVoteOnlyHelper ? 'Most votes among upcoming races.' : 'Based on runner votes, filled with nearby upcoming races.';
     }
 
     if (!previewEvents.length) {
@@ -811,7 +861,11 @@ const englishNavItems = [
     if (!container) return;
 
     try {
-      const payload = await loadJson('/');
+      const [payload, topPayload] = await Promise.all([
+        loadJson('/'),
+        loadJson('/top?scope=upcoming&limit=50').catch(() => null)
+      ]);
+      const topEvents = topPayload ? toArray(topPayload) : [];
       const today = new Date();
       const todayValue = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
       const events = toArray(payload)
@@ -838,7 +892,8 @@ const englishNavItems = [
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      renderHeroPreview(events);
+      const eventsWithVotes = enrichEventsWithTopVotes(events, topEvents);
+      renderHeroPreview(eventsWithVotes);
       const visibleEvents = events.slice(0, 6);
 
       if (!events.length) {
