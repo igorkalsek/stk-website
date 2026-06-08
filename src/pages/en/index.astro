@@ -90,6 +90,7 @@ const englishNavItems = [
           </div>
         </div>
         <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+        <a class="registration-deadlines-cta" href="/en/find-races/">View all deadlines in race search</a>
       </article>
     </section>
 
@@ -895,7 +896,9 @@ const englishNavItems = [
 
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</strong></li>`;
+      const votes = getTopEventVotes(event);
+      const voteCount = votes !== null && votes > 0 ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
     }).join('');
   };
 
