@@ -552,6 +552,93 @@ main {
 }
 
 
+
+.registration-deadlines-section {
+  margin-top: clamp(18px, 4vw, 30px);
+}
+
+.registration-deadlines-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(16, 64, 80, 0.1);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.88);
+  padding: clamp(16px, 3vw, 21px);
+  box-shadow: 0 12px 32px rgba(16, 64, 80, 0.06);
+}
+
+.registration-deadlines-heading {
+  display: grid;
+  gap: 12px;
+  align-items: start;
+}
+
+.registration-deadlines-heading h2 {
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  letter-spacing: -0.025em;
+}
+
+.registration-deadlines-heading p {
+  max-width: 620px;
+  margin: 5px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.registration-deadlines-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.registration-deadlines-item {
+  display: grid;
+  gap: 3px;
+  border-radius: 16px;
+  background: rgba(200, 230, 201, 0.18);
+  padding: 11px 12px;
+}
+
+.registration-deadlines-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  color: var(--deep-teal);
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.registration-deadlines-line time {
+  color: #704406;
+  font-weight: 900;
+}
+
+.registration-deadlines-line strong {
+  font-weight: 850;
+}
+
+.registration-deadlines-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.registration-price-chip {
+  border-radius: 999px;
+  background: rgba(240, 160, 48, 0.16);
+  color: #704406;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.2;
+  padding: 5px 8px;
+}
+
 .feature-strip-section {
   margin-top: clamp(22px, 5vw, 38px);
 }
@@ -1164,6 +1251,16 @@ main {
 
   .hero-preview {
     margin: clamp(34px, 6vw, 66px) clamp(28px, 5vw, 56px) clamp(34px, 6vw, 66px) 0;
+  }
+
+
+  .registration-deadlines-heading {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .registration-deadlines-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .feature-strip {
