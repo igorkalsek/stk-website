@@ -781,7 +781,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
   };
 
   const eventIdentity = (event: ApiRecord) => {
-    const row = rowKey(event);
+    const row = eventRowKey(event);
     if (row) return `row:${row}`;
 
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
@@ -791,12 +791,76 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       .join('|');
   };
 
-  const enrichEventsWithTopVotes = (events: ApiRecord[], topEvents: ApiRecord[]) => events.map((event) => {
-    const currentVotes = getTopEventVotes(event);
-    if (currentVotes !== null) return event;
+  const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
-    const matchingTopEvent = topEvents.find((topEvent) => matchScore(topEvent, event) >= 3);
-    const topVotes = matchingTopEvent ? getTopEventVotes(matchingTopEvent) : null;
+  const stableIdKeys = [
+    'id',
+    'event_id',
+    'eventId',
+    'dogodek_id',
+    'race_id',
+    'raceId',
+    'vote_id',
+    'voteId',
+    'glasovanje_id'
+  ];
+
+  const stableId = (event: ApiRecord) => pick(event, stableIdKeys);
+
+  const eventRowKey = (event: ApiRecord) => {
+    const row = rowKey(event);
+    if (row) return row;
+
+    const masterRow = pick(event, ['master_row', 'masterRow', 'master row']);
+    return masterRow;
+  };
+
+  const normalizedMatchText = (value: unknown) =>
+    String(value ?? '').trim().toLocaleLowerCase('sl-SI').replace(/\s+/g, ' ');
+
+  const matchDate = (event: ApiRecord) => normalizedMatchText(getEventField(event, 'datum', ['date', 'event_date', 'Datum']));
+  const matchTitle = (event: ApiRecord) => normalizedMatchText(getDisplayEventTitle(getTopEventTitle(event)));
+  const matchPlace = (event: ApiRecord) => normalizedMatchText(getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj']));
+
+  const isStableEventMatch = (topEvent: ApiRecord, event: ApiRecord) => {
+    const topId = stableId(topEvent);
+    const eventId = stableId(event);
+    if (topId && eventId) return topId === eventId;
+
+    const topRow = eventRowKey(topEvent);
+    const eventRow = eventRowKey(event);
+    if (topRow && eventRow) return topRow === eventRow;
+
+    const topDate = matchDate(topEvent);
+    const eventDate = matchDate(event);
+    const topTitle = matchTitle(topEvent);
+    const eventTitle = matchTitle(event);
+    const topPlace = matchPlace(topEvent);
+    const eventPlace = matchPlace(event);
+
+    return Boolean(
+      topDate &&
+      eventDate &&
+      topDate === eventDate &&
+      topTitle &&
+      eventTitle &&
+      topTitle === eventTitle &&
+      topPlace &&
+      eventPlace &&
+      topPlace === eventPlace
+    );
+  };
+
+  const findStableVoteMatch = (event: ApiRecord, topEvents: ApiRecord[]) => {
+    const matches = topEvents.filter((topEvent) => isStableEventMatch(topEvent, event));
+    return matches.length === 1 ? matches[0] : null;
+  };
+
+  const enrichEventsWithTopVotes = (events: ApiRecord[], topEvents: ApiRecord[]) => events.map((event) => {
+    if (getHeroPreviewVotes(event) !== null) return event;
+
+    const matchingTopEvent = findStableVoteMatch(event, topEvents);
+    const topVotes = matchingTopEvent ? getHeroPreviewVotes(matchingTopEvent) : null;
     return topVotes !== null ? { ...event, votes_total: topVotes } : event;
   });
 
@@ -812,9 +876,9 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       return dateValue !== null && dateValue <= cutoffValue;
     });
     const votedEvents = eventsInNextDays
-      .filter((event) => (getTopEventVotes(event) ?? 0) > 0)
+      .filter((event) => (getHeroPreviewVotes(event) ?? 0) > 0)
       .sort((a, b) => {
-        const voteDifference = (getTopEventVotes(b) ?? 0) - (getTopEventVotes(a) ?? 0);
+        const voteDifference = (getHeroPreviewVotes(b) ?? 0) - (getHeroPreviewVotes(a) ?? 0);
         if (voteDifference !== 0) return voteDifference;
         return compareEventDateThenTitle(a, b);
       });
@@ -829,7 +893,7 @@ import FacebookIcon from '../components/FacebookIcon.astro';
     }
     const fallbackEvents: ApiRecord[] = [];
     const unvotedEvents = eventsInNextDays
-      .filter((event) => (getTopEventVotes(event) ?? 0) === 0)
+      .filter((event) => (getHeroPreviewVotes(event) ?? 0) === 0)
       .sort(compareEventDateThenTitle);
     for (const event of unvotedEvents) {
       if (votedSelection.length + fallbackEvents.length >= 3) break;
@@ -855,8 +919,8 @@ import FacebookIcon from '../components/FacebookIcon.astro';
 
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const votes = getTopEventVotes(event);
-      const voteCount = votes !== null && votes > 0 ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
+      const votes = getHeroPreviewVotes(event);
+      const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
       return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
     }).join('');
   };
