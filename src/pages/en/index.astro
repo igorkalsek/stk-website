@@ -81,6 +81,19 @@ const englishNavItems = [
       </div>
     </section>
 
+    <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+      <article class="registration-deadlines-card">
+        <div class="registration-deadlines-heading">
+          <div>
+            <h2 id="registration-deadlines-title">Registration deadlines</h2>
+            <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
+          </div>
+          <a class="button button-small button-secondary-light" href="/en/find-races/">Open race search</a>
+        </div>
+        <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+      </article>
+    </section>
+
     <section class="section container feature-strip-section" aria-labelledby="extra-data-title">
       <article class="feature-strip">
         <div class="feature-strip-copy">
@@ -197,6 +210,7 @@ const englishNavItems = [
 
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from '../../utils-additional';
   import { getDisplayEventTitle } from '../../utils-events';
 
   type ApiRecord = Record<string, unknown>;
@@ -849,6 +863,144 @@ const englishNavItems = [
     }).join('');
   };
 
+  type DeadlineType = 'early' | 'registration';
+  type DeadlineEvent = ApiRecord & {
+    additionalData?: AdditionalEventData | null;
+    __deadlineDate: string;
+    __deadlineValue: number;
+    __deadlineType: DeadlineType;
+    __eventDateValue: number;
+  };
+
+  const deadlineDateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+
+  const parseIsoDateValue = (value: string) => {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return Number.NaN;
+    const [, year, month, day] = match;
+    return new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+  };
+
+  const formatDeadlineDate = (value: string) => {
+    const dateValue = parseIsoDateValue(value);
+    return Number.isFinite(dateValue) ? deadlineDateFormatter.format(new Date(dateValue)) : '';
+  };
+
+  const todayStartValue = () => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  };
+
+  const isConfirmedPublicUpcomingEvent = (event: ApiRecord, todayValue: number) => {
+    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+    const dateValue = parseIsoDateValue(date);
+
+    return (
+      Number.isFinite(dateValue) &&
+      dateValue >= todayValue &&
+      normalize(getEventField(event, 'status_dogodka')) === 'potrjeno' &&
+      getEventField(event, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
+      Boolean(getEventTitle(event, ''))
+    );
+  };
+
+  const upcomingDeadlineFor = (additionalData: AdditionalEventData, todayValue: number) => {
+    const earlyDeadlineValue = parseIsoDateValue(additionalData.earlyRegistrationDeadline);
+    if (Number.isFinite(earlyDeadlineValue) && earlyDeadlineValue >= todayValue) {
+      return { date: additionalData.earlyRegistrationDeadline, value: earlyDeadlineValue, type: 'early' as const };
+    }
+
+    const registrationDeadlineValue = parseIsoDateValue(additionalData.registrationDeadline);
+    if (Number.isFinite(registrationDeadlineValue) && registrationDeadlineValue >= todayValue) {
+      return { date: additionalData.registrationDeadline, value: registrationDeadlineValue, type: 'registration' as const };
+    }
+
+    return null;
+  };
+
+  const parseMoneyAmount = (value: string) => {
+    const normalizedValue = value.replace(',', '.').replace(/[^\d.-]/g, '');
+    if (!normalizedValue) return null;
+    const amount = Number(normalizedValue);
+    return Number.isFinite(amount) ? amount : null;
+  };
+
+  const formatDeadlinePrice = (additionalData: AdditionalEventData) => {
+    const min = parseMoneyAmount(additionalData.registrationMinEur);
+    const max = parseMoneyAmount(additionalData.registrationMaxEur);
+    if (min === null || max === null) return '';
+    const formatAmount = (amount: number) => new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 }).format(amount);
+    return min === max ? `€${formatAmount(min)}` : `€${formatAmount(min)}–${formatAmount(max)}`;
+  };
+
+  const renderRegistrationDeadlineItems = (items: DeadlineEvent[]) => items.map((event) => {
+    const additionalData = event.additionalData;
+    const deadlineDate = formatDeadlineDate(event.__deadlineDate);
+    const title = getDisplayEventTitle(getEventTitle(event));
+    const label = event.__deadlineType === 'early' ? 'Cheaper entry until' : 'Registration deadline';
+    const price = additionalData ? formatDeadlinePrice(additionalData) : '';
+
+    return `
+      <li class="registration-deadlines-item">
+        <div class="registration-deadlines-line">
+          <time datetime="${escapeHtml(event.__deadlineDate)}">${escapeHtml(deadlineDate)}</time>
+          <span aria-hidden="true">·</span>
+          <strong>${escapeHtml(title)}</strong>
+          ${price ? `<span class="registration-price-chip">${escapeHtml(price)}</span>` : ''}
+        </div>
+        <p>${escapeHtml(label)} ${escapeHtml(deadlineDate)}</p>
+      </li>
+    `;
+  }).join('');
+
+  async function loadRegistrationDeadlines() {
+    const section = document.querySelector<HTMLElement>('[data-registration-deadlines-section]');
+    const list = document.querySelector<HTMLElement>('[data-registration-deadlines]');
+    if (!section || !list) return;
+
+    try {
+      const todayValue = todayStartValue();
+      const [masterPayload, additionalRows] = await Promise.all([
+        loadJson('/'),
+        fetchAdditionalEventData()
+      ]);
+      const publicUpcomingEvents = toArray(masterPayload)
+        .filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue));
+      const deadlineEvents = attachAdditionalDataByMasterRow(publicUpcomingEvents, additionalRows)
+        .map((event): DeadlineEvent | null => {
+          const additionalData = event.additionalData as AdditionalEventData | null | undefined;
+          if (!additionalData) return null;
+          const eventDate = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+          const eventDateValue = parseIsoDateValue(eventDate);
+          const deadline = upcomingDeadlineFor(additionalData, todayValue);
+          if (!deadline || !Number.isFinite(eventDateValue)) return null;
+          return {
+            ...event,
+            additionalData,
+            __deadlineDate: deadline.date,
+            __deadlineValue: deadline.value,
+            __deadlineType: deadline.type,
+            __eventDateValue: eventDateValue
+          };
+        })
+        .filter((event): event is DeadlineEvent => Boolean(event))
+        .sort((a, b) => a.__deadlineValue - b.__deadlineValue || a.__eventDateValue - b.__eventDateValue)
+        .slice(0, 3);
+
+      if (!deadlineEvents.length) {
+        section.hidden = true;
+        list.innerHTML = '';
+        return;
+      }
+
+      list.innerHTML = renderRegistrationDeadlineItems(deadlineEvents);
+      section.hidden = false;
+    } catch (error) {
+      section.hidden = true;
+      list.innerHTML = '';
+    }
+  }
+
   async function loadJson(path: string): Promise<unknown> {
     const response = await fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } });
     if (!response.ok) throw new Error(`API request failed: ${response.status}`);
@@ -1109,6 +1261,7 @@ const englishNavItems = [
   if (enableApiDebug) createDebugPanel();
   loadStats();
   loadNearestEvents();
+  loadRegistrationDeadlines();
   loadTopEvents();
   loadRecentUpdates();
 </script>
