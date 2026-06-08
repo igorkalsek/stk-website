@@ -80,10 +80,10 @@ const englishNavItems = [
           </label>
 
           <fieldset class="filter-card filter-card-price">
-            <legend>Entry fees and sorting</legend>
+            <legend>Entry fee and sorting</legend>
             <div class="filter-card-grid">
               <label class="field">
-                <span>Entry fees</span>
+                <span>Entry fee</span>
                 <select name="registrationFee" data-filter="registration-fee">
                   <option value="">All entry fees</option>
                   <option value="free-option">Has a free option</option>
@@ -107,7 +107,7 @@ const englishNavItems = [
           </fieldset>
 
           <details class="advanced-filters">
-            <summary data-advanced-filters-summary>Advanced filters</summary>
+            <summary data-advanced-filters-summary>Additional filters</summary>
             <div class="advanced-filters-content">
               <label class="checkbox-field">
                 <input type="checkbox" name="family" data-filter="family" />
@@ -120,8 +120,8 @@ const englishNavItems = [
               </label>
 
               <label class="checkbox-field">
-                <input type="checkbox" name="additional" data-filter="additional" />
-                <span>Detailed info available</span>
+                <input type="checkbox" name="route" data-filter="route" />
+                <span>Has route / GPX</span>
               </label>
 
               <label class="field advanced-elevation-field">
@@ -230,7 +230,7 @@ const englishNavItems = [
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
   const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
-  const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
+  const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
@@ -344,6 +344,9 @@ const englishNavItems = [
     hasReliableAdditionalData(event.additionalData) &&
     ['da', 'yes', 'true'].includes(event.additionalData.dayOfRegistration.toLocaleLowerCase('sl-SI').trim());
 
+  const hasRouteData = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) && Boolean(event.additionalData.routeUrl);
+
   const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
     if (!filter) return true;
 
@@ -442,7 +445,7 @@ const englishNavItems = [
     elevation: elevationSelect?.value ?? '',
     family: Boolean(familyInput?.checked),
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
-    additional: Boolean(additionalInput?.checked)
+    route: Boolean(routeInput?.checked)
   });
 
   let searchAnalyticsTimer: number | undefined;
@@ -480,11 +483,11 @@ const englishNavItems = [
     const activeCount = [
       filters.family,
       filters.dayOfRegistration,
-      filters.additional,
+      filters.route,
       Boolean(filters.elevation)
     ].filter(Boolean).length;
 
-    advancedFiltersSummary.textContent = activeCount ? `Advanced filters (${activeCount})` : 'Advanced filters';
+    advancedFiltersSummary.textContent = activeCount ? `Additional filters (${activeCount})` : 'Additional filters';
   };
 
   const getPublicUpcomingEvents = (items: ApiRecord[]) => {
@@ -660,7 +663,7 @@ const englishNavItems = [
       if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
       if (filters.family && !event.familyFriendly) return false;
       if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
-      if (filters.additional && !hasRenderableAdditionalData(event.additionalData)) return false;
+      if (filters.route && !hasRouteData(event)) return false;
       return true;
     });
     state.filtered = sortEvents(state.filtered, filters.sort);
@@ -677,7 +680,7 @@ const englishNavItems = [
     trackSearchResult(filters, count);
 
     if (!count) {
-      renderEmptyState('No races match the selected filters.', 'Try removing the entry fee, elevation gain or additional data filter.', 'Filters', true);
+      renderEmptyState('No races match the selected filters.', 'Try removing the entry fee, route or elevation gain filter.', 'Filters', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }

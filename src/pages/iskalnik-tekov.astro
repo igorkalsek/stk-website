@@ -57,19 +57,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </label>
 
           <fieldset class="filter-card filter-card-price">
-            <legend>Prijavnina in razvrščanje</legend>
+            <legend>Startnina in razvrščanje</legend>
             <div class="filter-card-grid">
               <label class="field">
-                <span>Prijavnina</span>
+                <span>Startnina</span>
                 <select name="registrationFee" data-filter="registration-fee">
-                  <option value="">Vse prijavnine</option>
+                  <option value="">Vse startnine</option>
                   <option value="free-option">Ima brezplačno možnost</option>
                   <option value="10">Do 10 €</option>
                   <option value="20">Do 20 €</option>
                   <option value="30">Do 30 €</option>
                   <option value="50">Do 50 €</option>
                 </select>
-                <small>Filter upošteva najnižjo znano prijavnino.</small>
+                <small>Filter upošteva najnižjo znano startnino.</small>
               </label>
 
               <label class="field">
@@ -84,7 +84,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </fieldset>
 
           <details class="advanced-filters">
-            <summary data-advanced-filters-summary>Napredni filtri</summary>
+            <summary data-advanced-filters-summary>Dodatni filtri</summary>
             <div class="advanced-filters-content">
               <label class="checkbox-field">
                 <input type="checkbox" name="family" data-filter="family" />
@@ -97,8 +97,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               </label>
 
               <label class="checkbox-field">
-                <input type="checkbox" name="additional" data-filter="additional" />
-                <span>Ima dodatne podatke</span>
+                <input type="checkbox" name="route" data-filter="route" />
+                <span>Ima traso / GPX</span>
               </label>
 
               <label class="field advanced-elevation-field">
@@ -125,7 +125,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="section-heading">
         <h2 id="results-title">Rezultati</h2>
         <p data-search-status>Nalagamo potrjene javne dogodke …</p>
-        <p class="additional-data-note" data-additional-note hidden>Pri nekaterih tekih so dodani tudi prijavnine, roki prijav, trase ali višinski metri.</p>
+        <p class="additional-data-note" data-additional-note hidden>Pri nekaterih tekih so dodane tudi startnine, roki prijav, trase ali višinski metri.</p>
       </div>
       <div class="search-results" data-search-results aria-live="polite">
         <article class="event-card">
@@ -207,7 +207,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
   const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
-  const additionalInput = document.querySelector<HTMLInputElement>('[data-filter="additional"]');
+  const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
@@ -332,6 +332,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     hasReliableAdditionalData(event.additionalData) &&
     ['da', 'yes', 'true'].includes(event.additionalData.dayOfRegistration.toLocaleLowerCase('sl-SI').trim());
 
+  const hasRouteData = (event: RaceEvent) =>
+    hasReliableAdditionalData(event.additionalData) && Boolean(event.additionalData.routeUrl);
+
   const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
     if (!filter) return true;
 
@@ -430,7 +433,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     elevation: elevationSelect?.value ?? '',
     family: Boolean(familyInput?.checked),
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
-    additional: Boolean(additionalInput?.checked)
+    route: Boolean(routeInput?.checked)
   });
 
   let searchAnalyticsTimer: number | undefined;
@@ -468,11 +471,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const activeCount = [
       filters.family,
       filters.dayOfRegistration,
-      filters.additional,
+      filters.route,
       Boolean(filters.elevation)
     ].filter(Boolean).length;
 
-    advancedFiltersSummary.textContent = activeCount ? `Napredni filtri (${activeCount})` : 'Napredni filtri';
+    advancedFiltersSummary.textContent = activeCount ? `Dodatni filtri (${activeCount})` : 'Dodatni filtri';
   };
 
   const getPublicUpcomingEvents = (items: ApiRecord[]) => {
@@ -658,7 +661,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
       if (filters.family && !event.familyFriendly) return false;
       if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
-      if (filters.additional && !hasRenderableAdditionalData(event.additionalData)) return false;
+      if (filters.route && !hasRouteData(event)) return false;
       return true;
     });
     state.filtered = sortEvents(state.filtered, filters.sort);
@@ -670,12 +673,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(filters.sort === 'date'
       ? 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.'
-      : 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani prijavnini.');
+      : 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.');
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
     if (!count) {
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter prijavnine, višinskih metrov ali dodatnih podatkov.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
