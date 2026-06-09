@@ -1,0 +1,55 @@
+---
+import FacebookIcon from './FacebookIcon.astro';
+import InstagramIcon from './InstagramIcon.astro';
+import { STK_SOCIAL_LINKS } from '../social-links';
+
+interface Props {
+  lang?: 'sl' | 'en' | string;
+  variant?: 'default' | 'footer' | 'inline';
+  labelledby?: string;
+  label?: string;
+}
+
+const { lang = 'sl', variant = 'default', labelledby, label } = Astro.props;
+const isEnglish = lang === 'en';
+const ariaLabels = {
+  facebook: isEnglish ? 'Open STK on Facebook' : 'Odprite STK na Facebooku',
+  instagram: isEnglish ? 'Open STK on Instagram' : 'Odprite STK na Instagramu'
+};
+const socialLinks = [
+  {
+    href: STK_SOCIAL_LINKS.facebook,
+    label: 'Facebook',
+    platform: 'facebook',
+    ariaLabel: ariaLabels.facebook,
+    Icon: FacebookIcon
+  },
+  {
+    href: STK_SOCIAL_LINKS.instagram,
+    label: 'Instagram',
+    platform: 'instagram',
+    ariaLabel: ariaLabels.instagram,
+    Icon: InstagramIcon
+  }
+] as const;
+---
+
+<div
+  class:list={['social-links', `social-links-${variant}`]}
+  aria-labelledby={labelledby}
+  aria-label={!labelledby ? label : undefined}
+>
+  {socialLinks.map(({ href, label: linkLabel, platform, ariaLabel, Icon }) => (
+    <a
+      class:list={['social-link-button', `social-link-${platform}`]}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={ariaLabel}
+      data-analytics-link-type={platform}
+    >
+      <Icon />
+      <span class:list={[variant === 'footer' && 'visually-hidden']}>{linkLabel}</span>
+    </a>
+  ))}
+</div>

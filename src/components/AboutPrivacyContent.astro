@@ -1,4 +1,6 @@
 ---
+import SocialLinks from './SocialLinks.astro';
+
 const sections = [
   {
     heading: 'O projektu',
@@ -66,6 +68,10 @@ const sections = [
       <h2>Kontakt</h2>
       <p>Za vprašanja o projektu, popravke podatkov ali vprašanja glede zasebnosti lahko pišete na:</p>
       <p><a href="mailto:tekaski.koledar@gmail.com">tekaski.koledar@gmail.com</a></p>
+      <div class="contact-social-line">
+        <p id="about-social-title">Družbena omrežja:</p>
+        <SocialLinks variant="inline" labelledby="about-social-title" />
+      </div>
       <p>Zahtevate lahko popravek ali izbris podatkov, ki ste jih sami poslali prek obrazca ali e-pošte.</p>
     </article>
   </section>
@@ -120,5 +126,19 @@ const sections = [
     background:
       linear-gradient(135deg, rgba(200, 230, 201, 0.52), rgba(255, 255, 255, 0.9)),
       var(--white);
+  }
+
+  .contact-social-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .contact-social-line p {
+    margin-top: 0;
+    color: var(--deep-teal);
+    font-weight: 850;
   }
 </style>
