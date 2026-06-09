@@ -376,6 +376,8 @@ type AdditionalDataRenderOptions = {
   registrationFeeLabel?: string;
   language?: 'sl' | 'en';
   kidsRaces?: boolean;
+  eventId?: string;
+  eventName?: string;
 };
 
 export const renderAdditionalDataChips = (
@@ -436,7 +438,15 @@ export const renderAdditionalDataChips = (
     }
 
     if (additionalData.routeUrl) {
-      chips.push(`<a class="event-chip event-chip-additional event-chip-additional-route" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa">${escapeHtml(language === 'en' ? 'Route ↗' : 'Trasa ↗')}</a>`);
+      const routeTrackingAttributes = [
+        'data-stk-track="external-link"',
+        'data-stk-action="trasa"',
+        options.eventId ? `data-stk-event-id="${escapeHtml(options.eventId)}"` : '',
+        options.eventName ? `data-stk-event-name="${escapeHtml(options.eventName)}"` : '',
+        eventDate ? `data-stk-event-date="${escapeHtml(eventDate)}"` : '',
+        'data-analytics-link-type="trasa"'
+      ].filter(Boolean).join(' ');
+      chips.push(`<a class="event-chip event-chip-additional event-chip-additional-route" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" ${routeTrackingAttributes}>${escapeHtml(language === 'en' ? 'Route ↗' : 'Trasa ↗')}</a>`);
     }
   }
 
