@@ -49,7 +49,7 @@ const socialLinks = [
       data-analytics-link-type={platform}
     >
       <Icon />
-      <span>{linkLabel}</span>
+      <span class:list={[variant === 'footer' && 'visually-hidden']}>{linkLabel}</span>
     </a>
   ))}
 </div>
