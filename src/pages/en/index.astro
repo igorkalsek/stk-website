@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FacebookIcon from '../../components/FacebookIcon.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
 
 const englishNavItems = [
   { href: '/en/', label: 'Home' },
@@ -192,16 +192,13 @@ const englishNavItems = [
       </div>
     </section>
 
-    <section class="section container facebook-cta-section" aria-labelledby="facebook-cta-title">
-      <article class="info-card facebook-cta-card">
+    <section class="section container social-cta-section" aria-labelledby="social-cta-title">
+      <article class="info-card social-cta-card">
         <div>
-          <h2 id="facebook-cta-title">Follow STK on Facebook</h2>
-          <p>For weekly race highlights, new events, updates and runner voting, follow Slovenski Tekaški Koledar on Facebook.</p>
+          <h2 id="social-cta-title">Follow STK</h2>
+          <p>Follow STK for weekly race highlights, new events, updates, voting and running calendar posts.</p>
         </div>
-        <a class="button button-secondary-light" href="https://www.facebook.com/SlovenskiTekaskiKoledar" target="_blank" rel="noopener noreferrer">
-          <FacebookIcon />
-          <span>Follow on Facebook</span>
-        </a>
+        <SocialLinks lang="en" labelledby="social-cta-title" />
       </article>
     </section>
 

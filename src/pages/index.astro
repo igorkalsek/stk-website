@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FacebookIcon from '../components/FacebookIcon.astro';
+import SocialLinks from '../components/SocialLinks.astro';
 ---
 
 <BaseLayout
@@ -172,16 +172,13 @@ import FacebookIcon from '../components/FacebookIcon.astro';
       </div>
     </section>
 
-    <section class="section container facebook-cta-section" aria-labelledby="facebook-cta-title">
-      <article class="info-card facebook-cta-card">
+    <section class="section container social-cta-section" aria-labelledby="social-cta-title">
+      <article class="info-card social-cta-card">
         <div>
-          <h2 id="facebook-cta-title">Spremljajte STK na Facebooku</h2>
-          <p>Za tedenske objave “Ta teden tečemo”, nove teke, popravke in glasovanja spremljajte Slovenski Tekaški Koledar tudi na Facebooku.</p>
+          <h2 id="social-cta-title">Spremljajte STK</h2>
+          <p>Za tedenske objave, nove teke, popravke, glasovanja in utrinke iz tekaškega koledarja spremljajte STK tudi na družbenih omrežjih.</p>
         </div>
-        <a class="button button-secondary-light" href="https://www.facebook.com/SlovenskiTekaskiKoledar" target="_blank" rel="noopener noreferrer">
-          <FacebookIcon />
-          <span>Sledite na Facebooku</span>
-        </a>
+        <SocialLinks lang="sl" labelledby="social-cta-title" />
       </article>
     </section>
 
