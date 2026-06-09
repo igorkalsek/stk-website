@@ -163,7 +163,7 @@ const inferCalendarType = (link: HTMLAnchorElement) => {
 };
 
 const inferLinkType = (link: HTMLAnchorElement) => {
-  const explicit = link.dataset.analyticsLinkType;
+  const explicit = link.dataset.stkAction || link.dataset.analyticsLinkType;
   if (explicit) return explicit;
   const label = link.textContent?.toLocaleLowerCase('sl-SI') ?? '';
   const href = link.href.toLocaleLowerCase('sl-SI');
@@ -178,9 +178,9 @@ const inferLinkType = (link: HTMLAnchorElement) => {
 const getEventContext = (link: HTMLAnchorElement) => {
   const card = getCard(link);
   return {
-    event_id: getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
-    event_name: getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
-    event_date: getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || ''
+    event_id: link.dataset.stkEventId || getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
+    event_name: link.dataset.stkEventName || getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
+    event_date: link.dataset.stkEventDate || getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || ''
   };
 };
 

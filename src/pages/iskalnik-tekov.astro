@@ -441,7 +441,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
     if (!state.userInteracted) return;
 
-    const analyticsFilters = { ...filters };
+    const { route, ...filtersWithoutRoute } = filters;
+    const analyticsFilters = { ...filtersWithoutRoute, hasRoute: route };
     const query = (searchInput?.value ?? '').trim();
     const filtersJson = filtersToAnalyticsJson(analyticsFilters);
     const signature = JSON.stringify({ query, filtersJson, resultsCount });
@@ -610,7 +611,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, kidsRaces: event.kidsRaces });
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, kidsRaces: event.kidsRaces });
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
