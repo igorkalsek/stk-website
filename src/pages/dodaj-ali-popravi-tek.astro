@@ -4,14 +4,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
 ---
 
-<BaseLayout title="Dodajte ali popravite tek" description="Predlagajte nov tek ali popravek podatkov v Slovenskem Tekaškem Koledarju.">
+<BaseLayout title="Dodajte ali popravite tek" description="Predlagajte nov tek, popravek ali dopolnitev podatkov v Slovenskem Tekaškem Koledarju.">
   <main>
     <section class="page-hero container" aria-labelledby="page-title">
       <span class="eyebrow">Predlogi in popravki</span>
       <h1 id="page-title">Dodajte ali popravite tek</h1>
       <p>
-        Če v Slovenskem Tekaškem Koledarju manjka prireditev ali opazite napačen podatek, pošljite predlog prek
-        obrazca. Najbolj pomaga povezava do uradnega vira.
+        Če v Slovenskem Tekaškem Koledarju manjka prireditev, opazite napačen podatek ali želite dopolniti
+        startnine, roke prijav, trase, višinske metre ali druge dodatne informacije, pošljite predlog prek obrazca.
+        Najbolj pomaga povezava do uradnega vira.
       </p>
       <div class="cta-row">
         <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
@@ -36,10 +37,10 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
           <p>Sporočite popravek datuma, kraja, razdalj, ure štarta, povezave do razpisa ali prijav.</p>
         </article>
         <article class="info-card guidance-card">
-          <h3>Dodatne informacije</h3>
+          <h3>Dopolnitev dodatnih podatkov</h3>
           <p>
-            Dodate lahko tudi informacijo o otroških ali družinskih tekih, odpovedi, spremembi dogodka ali drugi
-            pomembni dopolnitvi.
+            Za obstoječi tek lahko dopolnite startnino, rok prijave, cenejšo prijavo, prijave na dan dogodka, traso /
+            zemljevid / GPX, višinske metre ali popravek že objavljenega dodatnega podatka.
           </p>
         </article>
       </div>
@@ -56,6 +57,10 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
           <li>prijavni portal</li>
           <li>točen datum, kraj, razdalje in ura štarta</li>
           <li>jasen dokaz za otroške ali družinske teke, kadar gre za družinam prijazen dogodek</li>
+          <li>
+            pri dodatnih podatkih pošljite povezavo do razpisa, prijavnega portala, trase, GPX datoteke ali drugega
+            uradnega vira
+          </li>
         </ul>
       </div>
     </section>
@@ -83,6 +88,10 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
           <li>priložite povezavo do vira</li>
           <li>pri popravku napišite, kateri podatek je napačen</li>
           <li>pri novem teku dodajte čim več osnovnih podatkov</li>
+          <li>pri dopolnitvi dodatnih podatkov napišite, za kateri obstoječi tek gre</li>
+          <li>
+            če gre za startnino, rok prijave, traso ali višinske metre, priložite vir, kjer je podatek objavljen
+          </li>
         </ul>
       </div>
     </section>
@@ -92,8 +101,9 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
         <span class="eyebrow">Obrazec</span>
         <h2 id="cta-title">Pripravljeni za oddajo?</h2>
         <p>
-          Obrazec se odpre v Google Forms in je namenjen novim tekom, popravkom ter dopolnitvam obstoječih dogodkov.
-          Pred oddajo preverite koledar in priložite zanesljiv vir.
+          Obrazec se odpre v Google Forms in je namenjen novim tekom, popravkom ter dopolnitvam obstoječih dogodkov,
+          vključno s startninami, roki prijav, trasami, višinskimi metri in prijavami na dan dogodka. Pred oddajo
+          preverite koledar in priložite zanesljiv vir.
         </p>
         <div class="cta-row">
           <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
