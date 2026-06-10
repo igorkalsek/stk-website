@@ -406,30 +406,43 @@ export const renderAdditionalDataChips = (
       chips.push(chip(language === 'en' ? `Entry fee ${registrationFee}` : `Startnina ${registrationFee}`, 'price'));
     }
 
+    const hasRaceDayRegistration = hasDayOfRegistration(additionalData.dayOfRegistration);
     const registrationDeadline = deadlineLabel(
       additionalData.registrationDeadline,
-      language === 'en' ? 'Deadline today' : 'Rok danes',
-      language === 'en' ? 'Deadline' : 'Rok'
+      hasRaceDayRegistration
+        ? language === 'en' ? 'Pre-registration by today' : 'Predprijava do danes'
+        : language === 'en' ? 'Deadline today' : 'Rok danes',
+      hasRaceDayRegistration
+        ? language === 'en' ? 'Pre-registration by' : 'Predprijava do'
+        : language === 'en' ? 'Deadline' : 'Rok'
     );
     const showRegistrationDeadline = Boolean(
       registrationDeadline &&
-      !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
+      !(additionalData.registrationDeadline === eventDate && hasRaceDayRegistration)
     );
-    if (showRegistrationDeadline) {
-      chips.push(chip(registrationDeadline, 'price'));
-    }
 
     const earlyRegistrationDeadline = deadlineLabel(
       additionalData.earlyRegistrationDeadline,
       language === 'en' ? 'Cheaper today' : 'Ceneje danes',
       language === 'en' ? 'Cheaper' : 'Ceneje'
     );
-    if (earlyRegistrationDeadline) {
+    const hasDistinctEarlyRegistrationDeadline = Boolean(
+      earlyRegistrationDeadline &&
+      (
+        !isTodayOrFutureIsoDate(additionalData.registrationDeadline) ||
+        additionalData.earlyRegistrationDeadline < additionalData.registrationDeadline
+      )
+    );
+    if (hasDistinctEarlyRegistrationDeadline) {
       chips.push(chip(earlyRegistrationDeadline, 'price'));
     }
 
-    if (hasDayOfRegistration(additionalData.dayOfRegistration)) {
-      chips.push(chip(language === 'en' ? 'Race-day registration' : 'Prijave na dan', 'price'));
+    if (showRegistrationDeadline) {
+      chips.push(chip(registrationDeadline, 'price'));
+    }
+
+    if (hasRaceDayRegistration) {
+      chips.push(chip(language === 'en' ? 'Also on race day' : 'Tudi na dan tekme', 'price'));
     }
 
     const elevationGain = additionalData.elevationGain.trim();

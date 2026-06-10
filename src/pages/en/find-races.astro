@@ -99,6 +99,7 @@ const englishNavItems = [
                 <span>Sort by</span>
                 <select name="sort" data-filter="sort">
                   <option value="date">Date</option>
+                  <option value="registration-deadline">Registration deadlines first</option>
                   <option value="registration-min">Lowest entry fee first</option>
                   <option value="registration-max">Highest entry fee first</option>
                 </select>
@@ -381,6 +382,47 @@ const englishNavItems = [
   const compareByDate = (a: RaceEvent, b: RaceEvent) =>
     a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI');
 
+  const todayIsoDateInLjubljana = () => {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      day: '2-digit',
+      month: '2-digit',
+      timeZone: 'Europe/Ljubljana',
+      year: 'numeric'
+    }).formatToParts(new Date());
+    const getPart = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? '';
+    return `${getPart('year')}-${getPart('month')}-${getPart('day')}`;
+  };
+
+  const parseIsoDateSortValue = (value: string) => {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return Number.NaN;
+
+    const [, year, month, day] = match;
+    return Date.UTC(Number(year), Number(month) - 1, Number(day));
+  };
+
+  const getNearestRegistrationDeadlineValue = (event: RaceEvent, todayIsoDate = todayIsoDateInLjubljana()) => {
+    if (!hasReliableAdditionalData(event.additionalData)) return null;
+
+    const deadlineValues = [
+      event.additionalData.earlyRegistrationDeadline,
+      event.additionalData.registrationDeadline
+    ]
+      .filter((deadline) => deadline >= todayIsoDate)
+      .map(parseIsoDateSortValue)
+      .filter(Number.isFinite);
+
+    return deadlineValues.length ? Math.min(...deadlineValues) : null;
+  };
+
+  const compareByRegistrationDeadline = (a: RaceEvent, b: RaceEvent) => {
+    const todayIsoDate = todayIsoDateInLjubljana();
+    const aDeadline = getNearestRegistrationDeadlineValue(a, todayIsoDate);
+    const bDeadline = getNearestRegistrationDeadlineValue(b, todayIsoDate);
+
+    return compareNullableNumber(aDeadline, bDeadline, 'asc') || compareByDate(a, b);
+  };
+
   const sortEvents = (events: RaceEvent[], sort: string) =>
     [...events].sort((a, b) => {
       if (sort === 'registration-min') {
@@ -389,6 +431,10 @@ const englishNavItems = [
 
       if (sort === 'registration-max') {
         return compareNullableNumber(getRegistrationMaxEur(a), getRegistrationMaxEur(b), 'desc') || compareByDate(a, b);
+      }
+
+      if (sort === 'registration-deadline') {
+        return compareByRegistrationDeadline(a, b);
       }
 
       return compareByDate(a, b);
@@ -674,9 +720,11 @@ const englishNavItems = [
     const visibleCount = visibleEvents.length;
 
     setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
-    setStatus(filters.sort === 'date'
-      ? 'Confirmed public races from today onward are shown, sorted by date by default.'
-      : 'Confirmed public races from today onward are shown, sorted by the selected entry fee.');
+    const statusMessages: Record<string, string> = {
+      date: 'Confirmed public races from today onward are shown, sorted by date by default.',
+      'registration-deadline': 'Races with the nearest known registration or cheaper-entry deadlines are shown first. Races without a known deadline are shown below.'
+    };
+    setStatus(statusMessages[filters.sort] ?? 'Confirmed public races from today onward are shown, sorted by the selected entry fee.');
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
