@@ -415,21 +415,29 @@ export const renderAdditionalDataChips = (
       registrationDeadline &&
       !(additionalData.registrationDeadline === eventDate && hasDayOfRegistration(additionalData.dayOfRegistration))
     );
-    if (showRegistrationDeadline) {
-      chips.push(chip(registrationDeadline, 'price'));
-    }
 
     const earlyRegistrationDeadline = deadlineLabel(
       additionalData.earlyRegistrationDeadline,
       language === 'en' ? 'Cheaper today' : 'Ceneje danes',
       language === 'en' ? 'Cheaper' : 'Ceneje'
     );
-    if (earlyRegistrationDeadline) {
+    const hasDistinctEarlyRegistrationDeadline = Boolean(
+      earlyRegistrationDeadline &&
+      (
+        !isTodayOrFutureIsoDate(additionalData.registrationDeadline) ||
+        additionalData.earlyRegistrationDeadline < additionalData.registrationDeadline
+      )
+    );
+    if (hasDistinctEarlyRegistrationDeadline) {
       chips.push(chip(earlyRegistrationDeadline, 'price'));
     }
 
+    if (showRegistrationDeadline) {
+      chips.push(chip(registrationDeadline, 'price'));
+    }
+
     if (hasDayOfRegistration(additionalData.dayOfRegistration)) {
-      chips.push(chip(language === 'en' ? 'Race-day registration' : 'Prijave na dan', 'price'));
+      chips.push(chip(language === 'en' ? 'On race day' : 'Na dan tekme', 'price'));
     }
 
     const elevationGain = additionalData.elevationGain.trim();
