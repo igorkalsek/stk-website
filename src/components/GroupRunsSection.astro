@@ -82,7 +82,8 @@ const { lang, labels } = Astro.props;
   const state = {
     runs: [],
     filtered: [],
-    loadFailed: false
+    loadFailed: false,
+    userInteracted: false
   };
 
   const resultsElement = document.querySelector('[data-group-runs-results]');
@@ -277,11 +278,11 @@ const { lang, labels } = Astro.props;
       : '';
 
     const actions = url
-      ? `<div class="event-actions"><a class="button button-primary button-small" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(labels.moreInfo)}</a></div>`
+      ? `<div class="event-actions"><a class="button button-primary button-small" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="group_run_info">${escapeHtml(labels.moreInfo)}</a></div>`
       : '';
 
     return `
-      <article class="event-card search-event-card group-run-card">
+      <article class="event-card search-event-card group-run-card" data-analytics-event-id="${escapeHtml(run.id)}" data-analytics-event-name="${escapeHtml(run.naziv)}" data-analytics-event-date="">
         <h3 class="search-event-title">${escapeHtml(run.naziv)}</h3>
         ${details ? `<div class="event-details">${details}</div>` : ''}
         ${notes}
@@ -320,6 +321,22 @@ const { lang, labels } = Astro.props;
     resultsElement.innerHTML = state.filtered.map(renderRunCard).join('');
   };
 
+
+  const dispatchFilterAnalytics = ({ region, type, participation }) => {
+    if (!state.userInteracted) return;
+    const query = (searchInput?.value ?? '').trim();
+    if (!query && !region && !type && !participation) return;
+
+    document.dispatchEvent(new CustomEvent('stk:group-runs-filtered', {
+      detail: {
+        searchQuery: query,
+        filters: { region, type, participation },
+        resultsCount: state.filtered.length,
+        language: pageLang
+      }
+    }));
+  };
+
   const applyFilters = () => {
     const search = normalize(searchInput?.value ?? '');
     const region = regionSelect?.value ?? '';
@@ -335,6 +352,7 @@ const { lang, labels } = Astro.props;
     });
 
     renderRuns();
+    dispatchFilterAnalytics({ region, type, participation });
   };
 
   const loadGroupRuns = async () => {
@@ -357,12 +375,65 @@ const { lang, labels } = Astro.props;
     }
   };
 
-  formElement?.addEventListener('input', applyFilters);
-  formElement?.addEventListener('change', applyFilters);
+  formElement?.addEventListener('input', () => {
+    state.userInteracted = true;
+    applyFilters();
+  });
+  formElement?.addEventListener('change', () => {
+    state.userInteracted = true;
+    applyFilters();
+  });
   clearButton?.addEventListener('click', () => {
+    state.userInteracted = true;
     formElement?.reset();
     applyFilters();
   });
 
   loadGroupRuns();
+</script>
+
+
+<script>
+  import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
+
+  let groupRunAnalyticsTimer: number | undefined;
+  let lastGroupRunSearchSignature = '';
+
+  document.addEventListener('stk:group-runs-filtered', (event) => {
+    const detail = event instanceof CustomEvent ? event.detail : null;
+    if (!detail) return;
+
+    const filters = detail.filters ?? {};
+    const filtersJson = filtersToAnalyticsJson({
+      pageType: 'group_runs',
+      region: filters.region,
+      type: filters.type,
+      participation: filters.participation
+    });
+    const searchQuery = String(detail.searchQuery ?? '').trim();
+    if (!searchQuery && !filters.region && !filters.type && !filters.participation) return;
+
+    const resultsCount = Number(detail.resultsCount ?? 0);
+    const language = detail.language === 'en' ? 'en' : 'sl';
+    const signature = JSON.stringify({ searchQuery, filtersJson, resultsCount, language });
+    if (signature === lastGroupRunSearchSignature) return;
+
+    if (groupRunAnalyticsTimer) window.clearTimeout(groupRunAnalyticsTimer);
+    groupRunAnalyticsTimer = window.setTimeout(() => {
+      if (signature === lastGroupRunSearchSignature) return;
+      lastGroupRunSearchSignature = signature;
+
+      const commonPayload = {
+        event_type: 'search_performed' as const,
+        search_query: searchQuery || undefined,
+        filters_json: filtersJson,
+        results_count: resultsCount,
+        language
+      };
+      trackStkEvent(commonPayload);
+      if (resultsCount === 0) {
+        trackStkEvent({ ...commonPayload, event_type: 'no_results_search' as const, results_count: 0 });
+      }
+    }, 700);
+  });
 </script>
