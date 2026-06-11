@@ -30,6 +30,9 @@ const STK_SITE_EVENTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwSm--
 const MAX_FIELD_LENGTH = 500;
 const MAX_JSON_FIELD_LENGTH = 1000;
 const MAX_QUERY_LENGTH = 120;
+const STK_ANALYTICS_OPT_OUT_KEY = 'stkAnalyticsOptOut';
+
+let hasProcessedAnalyticsToggle = false;
 
 const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'search_performed',
@@ -39,6 +42,64 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'vote_clicked',
   'tekobot_clicked'
 ]);
+
+
+const setStkAnalyticsOptOut = () => {
+  try {
+    window.localStorage?.setItem(STK_ANALYTICS_OPT_OUT_KEY, 'true');
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const removeStkAnalyticsOptOut = () => {
+  try {
+    window.localStorage?.removeItem(STK_ANALYTICS_OPT_OUT_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const isStkAnalyticsOptedOut = () => {
+  try {
+    return window.localStorage?.getItem(STK_ANALYTICS_OPT_OUT_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const cleanStkAnalyticsToggleParam = (url: URL) => {
+  try {
+    url.searchParams.delete('stk_analytics');
+    const cleanUrl = `${url.pathname}${url.search}${url.hash}`;
+    window.history.replaceState(window.history.state, document.title, cleanUrl);
+  } catch {
+    // Analytics controls must fail silently.
+  }
+};
+
+const processStkAnalyticsToggleParam = () => {
+  if (hasProcessedAnalyticsToggle || typeof window === 'undefined') return;
+  hasProcessedAnalyticsToggle = true;
+
+  try {
+    const url = new URL(window.location.href);
+    const toggleValue = url.searchParams.get('stk_analytics');
+    if (toggleValue !== 'off' && toggleValue !== 'on') return;
+
+    if (toggleValue === 'off') {
+      if (setStkAnalyticsOptOut()) console.info('STK analytics disabled for this browser.');
+    } else if (removeStkAnalyticsOptOut()) {
+      console.info('STK analytics enabled for this browser.');
+    }
+
+    cleanStkAnalyticsToggleParam(url);
+  } catch {
+    // Analytics controls must fail silently.
+  }
+};
 
 const trimText = (value: unknown, maxLength = MAX_FIELD_LENGTH) => {
   if (value === undefined || value === null) return '';
@@ -132,6 +193,9 @@ const sendBody = (body: ReturnType<typeof buildBody>) => {
 
 export const trackStkEvent = (payload: StkAnalyticsPayload) => {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') return;
+
+  processStkAnalyticsToggleParam();
+  if (isStkAnalyticsOptedOut()) return;
   if (!ALLOWED_EVENT_TYPES.has(payload.event_type)) return;
 
   const body = buildBody(payload);
@@ -196,6 +260,8 @@ const isTekobotHref = (href: string) => {
 
 export const initializeStkAnalyticsClickTracking = () => {
   if (typeof document === 'undefined') return;
+
+  processStkAnalyticsToggleParam();
 
   document.addEventListener('click', (event) => {
     const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
