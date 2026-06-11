@@ -23,6 +23,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
 
+        <div class="quick-picks" aria-label="Hitri izbori">
+          <p>Hitri izbori</p>
+          <div class="quick-picks-list">
+            <button class="quick-pick" type="button" data-quick-pick="deadlines-soon">Roki se iztekajo</button>
+            <button class="quick-pick" type="button" data-quick-pick="budget">Poceni teki</button>
+            <button class="quick-pick" type="button" data-quick-pick="first-race">Za prvi tek</button>
+            <button class="quick-pick" type="button" data-quick-pick="trail">Trail izzivi</button>
+            <button class="quick-pick" type="button" data-quick-pick="kids">Z otroki</button>
+            <button class="quick-pick" type="button" data-quick-pick="route">S traso</button>
+          </div>
+        </div>
+
         <form class="filters-grid" data-search-form>
           <label class="field field-wide">
             <span>Iskanje</span>
@@ -57,7 +69,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </label>
 
           <fieldset class="filter-card filter-card-price">
-            <legend>Startnina in razvrščanje</legend>
+            <legend>Startnina, roki in razvrščanje</legend>
             <div class="filter-card-grid">
               <label class="field">
                 <span>Startnina</span>
@@ -69,7 +81,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   <option value="30">Do 30 €</option>
                   <option value="50">Do 50 €</option>
                 </select>
-                <small>Filter upošteva najnižjo znano startnino.</small>
+                <small>Startnina uporablja najnižjo znano startnino. Roki vključujejo predprijave in cenejše prijave; možnost “s traso” pomeni povezavo do trase, zemljevida ali GPX, ne nujno GPX datoteke.</small>
+              </label>
+
+              <label class="field">
+                <span>Rok prijave</span>
+                <select name="deadlineFilter" data-filter="deadline">
+                  <option value="">Vsi roki</option>
+                  <option value="within-7">Rok v 7 dneh</option>
+                  <option value="within-14">Rok v 14 dneh</option>
+                  <option value="within-30">Rok v 30 dneh</option>
+                  <option value="early-ending">Cenejša prijava se izteka</option>
+                  <option value="race-day">Tudi na dan tekme</option>
+                </select>
               </label>
 
               <label class="field">
@@ -99,7 +123,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
               <label class="checkbox-field">
                 <input type="checkbox" name="route" data-filter="route" />
-                <span>Ima traso / GPX</span>
+                <span>Ima traso / zemljevid</span>
               </label>
 
               <label class="field advanced-elevation-field">
@@ -205,6 +229,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
   const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
   const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
+  const deadlineSelect = document.querySelector<HTMLSelectElement>('[data-filter="deadline"]');
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
   const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
@@ -212,6 +237,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
+  const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
+  const selectedQuickPicks = new Set<string>();
 
   const asRecord = (value: unknown): ApiRecord | null =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
@@ -360,6 +387,74 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return true;
   };
 
+  const addDaysToIsoDate = (value: string, days: number) => {
+    const timestamp = parseIsoDateSortValue(value);
+    if (!Number.isFinite(timestamp)) return '';
+    return new Date(timestamp + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  };
+
+  const getUpcomingDeadlineDates = (event: RaceEvent, todayIsoDate = todayIsoDateInLjubljana()) => {
+    if (!hasReliableAdditionalData(event.additionalData)) return [];
+    return [event.additionalData.registrationDeadline, event.additionalData.earlyRegistrationDeadline]
+      .filter((deadline) => /^\d{4}-\d{2}-\d{2}$/.test(deadline) && deadline >= todayIsoDate);
+  };
+
+  const hasDeadlineWithinDays = (event: RaceEvent, days: number, todayIsoDate = todayIsoDateInLjubljana()) => {
+    const latestIsoDate = addDaysToIsoDate(todayIsoDate, days);
+    if (!latestIsoDate) return false;
+    return getUpcomingDeadlineDates(event, todayIsoDate).some((deadline) => deadline <= latestIsoDate);
+  };
+
+  const hasEarlyRegistrationEndingSoon = (event: RaceEvent, todayIsoDate = todayIsoDateInLjubljana()) => {
+    if (!hasReliableAdditionalData(event.additionalData)) return false;
+    const deadline = event.additionalData.earlyRegistrationDeadline;
+    const latestIsoDate = addDaysToIsoDate(todayIsoDate, 14);
+    return /^\d{4}-\d{2}-\d{2}$/.test(deadline) && Boolean(latestIsoDate) && deadline >= todayIsoDate && deadline <= latestIsoDate;
+  };
+
+  const matchesDeadlineFilter = (event: RaceEvent, filter: string) => {
+    if (!filter) return true;
+    if (filter === 'race-day') return hasDayOfRegistration(event);
+    if (filter === 'early-ending') return hasEarlyRegistrationEndingSoon(event);
+    if (filter === 'within-7') return hasDeadlineWithinDays(event, 7);
+    if (filter === 'within-14') return hasDeadlineWithinDays(event, 14);
+    if (filter === 'within-30') return hasDeadlineWithinDays(event, 30);
+    return true;
+  };
+
+  const getMaxKnownDistanceKm = (event: RaceEvent) => {
+    if (!event.distances) return null;
+    const distances = [...event.distances.replace(/,/g, '.').matchAll(/\d+(?:\.\d+)?/g)]
+      .map((match) => Number(match[0]))
+      .filter((distance) => Number.isFinite(distance) && distance > 0 && distance < 500);
+    return distances.length ? Math.max(...distances) : null;
+  };
+
+  const hasTrailChallengeName = (event: RaceEvent) => {
+    const searchableName = `${event.title} ${event.naziv_prireditve}`
+      .toLocaleLowerCase('sl-SI')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+    return /\b(?:ultra|trails?|vertical|gorski|vzpon|mountain|challenge)\b/i.test(searchableName);
+  };
+
+  const isTrailOrMountainSurface = (surface: string) => {
+    const normalizedSurface = normalize(surface);
+    return normalizedSurface.includes('trail') || normalizedSurface.includes('gorski') || normalizedSurface.includes('mountain');
+  };
+
+  const matchesTrailChallengeQuickPick = (event: RaceEvent) => {
+    if (!isTrailOrMountainSurface(event.surface)) return false;
+
+    const maxDistanceKm = getMaxKnownDistanceKm(event);
+    const elevationGain = getReliableElevationGain(event);
+    return (
+      (maxDistanceKm !== null && maxDistanceKm >= 20) ||
+      (elevationGain !== null && elevationGain >= 800) ||
+      hasTrailChallengeName(event)
+    );
+  };
+
   const compareNullableNumber = (a: number | null, b: number | null, direction: 'asc' | 'desc') => {
     if (a === null && b === null) return 0;
     if (a === null) return 1;
@@ -475,21 +570,127 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     region: regionSelect?.value ?? '',
     surface: surfaceSelect?.value ?? '',
     registrationFee: registrationFeeSelect?.value ?? '',
+    deadlineFilter: deadlineSelect?.value ?? '',
     sort: sortSelect?.value ?? 'date',
     elevation: elevationSelect?.value ?? '',
     family: Boolean(familyInput?.checked),
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
-    route: Boolean(routeInput?.checked)
+    route: Boolean(routeInput?.checked),
+    quickPick: getActiveQuickPickValues().join(',')
   });
+
+  const pickFirstAvailableSurface = (preferredSurfaces: string[]) => {
+    const availableSurfaces = new Map([...new Set(state.events.map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
+    return preferredSurfaces.map((surface) => availableSurfaces.get(surface)).find(Boolean) ?? '';
+  };
+
+  const quickPickMatches: Record<string, (filters: any) => boolean> = {
+    'deadlines-soon': (filters) => filters.deadlineFilter === 'within-14' && filters.sort === 'registration-deadline',
+    budget: (filters) => filters.registrationFee === '20',
+    'first-race': (filters) => ['cesta', 'cesta/trail'].includes(normalize(filters.surface)),
+    trail: () => true,
+    kids: (filters) => filters.family,
+    route: (filters) => filters.route
+  };
+
+  function getActiveQuickPickValues() {
+    const filters = {
+      search: normalize(searchInput?.value ?? ''),
+      month: monthSelect?.value ?? '',
+      region: regionSelect?.value ?? '',
+      surface: surfaceSelect?.value ?? '',
+      registrationFee: registrationFeeSelect?.value ?? '',
+      deadlineFilter: deadlineSelect?.value ?? '',
+      sort: sortSelect?.value ?? 'date',
+      elevation: elevationSelect?.value ?? '',
+      family: Boolean(familyInput?.checked),
+      dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
+      route: Boolean(routeInput?.checked)
+    };
+    return [...selectedQuickPicks].filter((quickPick) => quickPickMatches[quickPick]?.(filters));
+  }
+
+  const updateQuickPickStates = () => {
+    const activeQuickPicks = new Set(getActiveQuickPickValues());
+    for (const quickPick of selectedQuickPicks) {
+      if (!activeQuickPicks.has(quickPick)) selectedQuickPicks.delete(quickPick);
+    }
+    for (const button of quickPickButtons) {
+      const isActive = activeQuickPicks.has(button.dataset.quickPick ?? '');
+      const label = button.dataset.quickPickLabel ?? button.textContent?.replace(/^✓\s*/, '') ?? '';
+      button.dataset.quickPickLabel = label;
+      button.textContent = isActive ? `✓ ${label}` : label;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    }
+  };
+
+  const applyQuickPick = (quickPick: string) => {
+    if (quickPick === 'deadlines-soon') {
+      if (deadlineSelect) deadlineSelect.value = 'within-14';
+      if (sortSelect) sortSelect.value = 'registration-deadline';
+    } else if (quickPick === 'budget') {
+      if (registrationFeeSelect) registrationFeeSelect.value = '20';
+    } else if (quickPick === 'first-race') {
+      const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail']);
+      if (surfaceSelect && beginnerSurface) surfaceSelect.value = beginnerSurface;
+    } else if (quickPick === 'trail') {
+      // Trail challenges use a dedicated quick-pick filter so trail and mountain races can both match.
+    } else if (quickPick === 'kids') {
+      if (familyInput) familyInput.checked = true;
+    } else if (quickPick === 'route') {
+      if (routeInput) routeInput.checked = true;
+    }
+  };
+
+  const removeQuickPick = (quickPick: string) => {
+    if (quickPick === 'deadlines-soon') {
+      if (deadlineSelect?.value === 'within-14') deadlineSelect.value = '';
+      if (sortSelect?.value === 'registration-deadline') sortSelect.value = 'date';
+    } else if (quickPick === 'budget') {
+      if (registrationFeeSelect?.value === '20') registrationFeeSelect.value = '';
+    } else if (quickPick === 'first-race') {
+      if (surfaceSelect && ['cesta', 'cesta/trail'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+    } else if (quickPick === 'trail') {
+      // No visible field is owned by this quick pick.
+    } else if (quickPick === 'kids') {
+      if (familyInput?.checked) familyInput.checked = false;
+    } else if (quickPick === 'route') {
+      if (routeInput?.checked) routeInput.checked = false;
+    }
+  };
+
+  const toggleQuickPick = (quickPick: string) => {
+    const isActive = getActiveQuickPickValues().includes(quickPick);
+    if (isActive) {
+      selectedQuickPicks.delete(quickPick);
+      removeQuickPick(quickPick);
+    } else {
+      selectedQuickPicks.add(quickPick);
+      applyQuickPick(quickPick);
+    }
+  };
 
   let searchAnalyticsTimer: number | undefined;
 
   const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
     if (!state.userInteracted) return;
 
-    const { route, ...filtersWithoutRoute } = filters;
-    const analyticsFilters = { ...filtersWithoutRoute, hasRoute: route };
     const query = (searchInput?.value ?? '').trim();
+    const analyticsFilters = {
+      search: filters.search,
+      month: filters.month,
+      region: filters.region,
+      surface: filters.surface,
+      priceFilter: filters.registrationFee,
+      deadlineFilter: filters.deadlineFilter,
+      sortBy: filters.sort,
+      familyFriendly: filters.family,
+      raceDayRegistration: filters.dayOfRegistration,
+      hasRoute: filters.route,
+      elevationFilter: filters.elevation,
+      quickPicks: filters.quickPick
+    };
     const filtersJson = filtersToAnalyticsJson(analyticsFilters);
     const signature = JSON.stringify({ query, filtersJson, resultsCount });
     if (signature === state.lastLoggedSearchSignature) return;
@@ -519,6 +720,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       filters.family,
       filters.dayOfRegistration,
       filters.route,
+      Boolean(filters.deadlineFilter),
       Boolean(filters.elevation)
     ].filter(Boolean).length;
 
@@ -688,6 +890,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       setCount('Podatki niso dosegljivi');
       renderEmptyState('Podatki trenutno niso dosegljivi', 'Dogodkov trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.', 'Koledar');
       if (moreElement) moreElement.hidden = true;
+      updateQuickPickStates();
       return;
     }
 
@@ -705,10 +908,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
       if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
+      if (filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
       if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
       if (filters.family && !event.familyFriendly) return false;
       if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
       if (filters.route && !hasRouteData(event)) return false;
+      if (filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
       return true;
     });
     state.filtered = sortEvents(state.filtered, filters.sort);
@@ -722,18 +927,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       date: 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.',
       'registration-deadline': 'Najprej so prikazani teki z najbližjimi znanimi roki prijav ali cenejših prijav. Teki brez znanega roka so prikazani spodaj.'
     };
-    setStatus(statusMessages[filters.sort] ?? 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.');
+    const statusMessage = filters.quickPick
+      ? 'Prikazani so teki, ki ustrezajo izbranemu hitremu izboru in filtrom.'
+      : filters.deadlineFilter
+        ? 'Prikazani so teki, ki ustrezajo izbranemu roku prijave. Roki vključujejo predprijave in cenejše prijave.'
+        : statusMessages[filters.sort] ?? 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.';
+    setStatus(statusMessage);
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
     if (!count) {
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
+      updateQuickPickStates();
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
 
     if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
     if (moreElement) moreElement.hidden = visibleCount >= count;
+    updateQuickPickStates();
   };
 
   const loadEvents = async () => {
@@ -781,6 +993,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const clearFilters = () => {
     formElement?.reset();
+    selectedQuickPicks.clear();
+    updateQuickPickStates();
     resetVisibleResults();
   };
 
@@ -794,6 +1008,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   showMoreButton?.addEventListener('click', () => {
     state.visibleCount += PAGE_SIZE;
     renderResults();
+  });
+
+  quickPickButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', 'false');
+    button.addEventListener('click', () => {
+      state.userInteracted = true;
+      state.visibleCount = PAGE_SIZE;
+      toggleQuickPick(button.dataset.quickPick ?? '');
+      renderResults();
+    });
   });
 
   document.addEventListener('click', (event) => {

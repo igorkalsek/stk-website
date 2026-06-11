@@ -1552,6 +1552,45 @@ main {
   padding: 8px 12px;
 }
 
+.quick-picks {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.quick-picks p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.quick-picks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-pick {
+  border: 1px solid rgba(16, 64, 80, 0.16);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--deep-teal);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
+.quick-pick:hover,
+.quick-pick:focus-visible,
+.quick-pick.is-active {
+  border-color: var(--deep-teal);
+  background: rgba(200, 230, 201, 0.75);
+  outline: none;
+}
+
 .filters-grid {
   display: grid;
   gap: 14px;
