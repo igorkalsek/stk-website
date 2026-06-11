@@ -594,6 +594,9 @@ const englishNavItems = [
     const activeQuickPicks = new Set(getActiveQuickPickValues());
     for (const button of quickPickButtons) {
       const isActive = activeQuickPicks.has(button.dataset.quickPick ?? '');
+      const label = button.dataset.quickPickLabel ?? button.textContent?.replace(/^✓\s*/, '') ?? '';
+      button.dataset.quickPickLabel = label;
+      button.textContent = isActive ? `✓ ${label}` : label;
       button.classList.toggle('is-active', isActive);
       button.setAttribute('aria-pressed', String(isActive));
     }
@@ -618,14 +621,52 @@ const englishNavItems = [
     }
   };
 
+  const removeQuickPick = (quickPick: string) => {
+    if (quickPick === 'deadlines-soon') {
+      if (deadlineSelect?.value === 'within-14') deadlineSelect.value = '';
+      if (sortSelect?.value === 'registration-deadline') sortSelect.value = 'date';
+    } else if (quickPick === 'budget') {
+      if (registrationFeeSelect?.value === '20') registrationFeeSelect.value = '';
+    } else if (quickPick === 'first-race') {
+      if (surfaceSelect && ['cesta', 'cesta/trail'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+    } else if (quickPick === 'trail') {
+      if (surfaceSelect && ['trail', 'gorski'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+    } else if (quickPick === 'kids') {
+      if (familyInput?.checked) familyInput.checked = false;
+    } else if (quickPick === 'route') {
+      if (routeInput?.checked) routeInput.checked = false;
+    }
+  };
+
+  const toggleQuickPick = (quickPick: string) => {
+    const isActive = getActiveQuickPickValues().includes(quickPick);
+    if (isActive) {
+      removeQuickPick(quickPick);
+    } else {
+      applyQuickPick(quickPick);
+    }
+  };
+
   let searchAnalyticsTimer: number | undefined;
 
   const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
     if (!state.userInteracted) return;
 
-    const { route, ...filtersWithoutRoute } = filters;
-    const analyticsFilters = { ...filtersWithoutRoute, hasRoute: route };
     const query = (searchInput?.value ?? '').trim();
+    const analyticsFilters = {
+      search: filters.search,
+      month: filters.month,
+      region: filters.region,
+      surface: filters.surface,
+      priceFilter: filters.registrationFee,
+      deadlineFilter: filters.deadlineFilter,
+      sortBy: filters.sort,
+      familyFriendly: filters.family,
+      raceDayRegistration: filters.dayOfRegistration,
+      hasRoute: filters.route,
+      elevationFilter: filters.elevation,
+      quickPicks: filters.quickPick
+    };
     const filtersJson = filtersToAnalyticsJson(analyticsFilters);
     const signature = JSON.stringify({ query, filtersJson, resultsCount });
     if (signature === state.lastLoggedSearchSignature) return;
@@ -860,7 +901,7 @@ const englishNavItems = [
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('No races match the selected filters.', 'Try removing the entry fee, route or elevation gain filter.', 'Filters', true);
+      renderEmptyState('No races match the selected filters.', filters.quickPick ? 'Too many filters are selected. Try turning off one of the quick picks or clearing the filters.' : 'Try removing the entry fee, route or elevation gain filter.', 'Filters', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -936,7 +977,7 @@ const englishNavItems = [
     button.addEventListener('click', () => {
       state.userInteracted = true;
       state.visibleCount = PAGE_SIZE;
-      applyQuickPick(button.dataset.quickPick ?? '');
+      toggleQuickPick(button.dataset.quickPick ?? '');
       renderResults();
     });
   });

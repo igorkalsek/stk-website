@@ -582,6 +582,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const activeQuickPicks = new Set(getActiveQuickPickValues());
     for (const button of quickPickButtons) {
       const isActive = activeQuickPicks.has(button.dataset.quickPick ?? '');
+      const label = button.dataset.quickPickLabel ?? button.textContent?.replace(/^✓\s*/, '') ?? '';
+      button.dataset.quickPickLabel = label;
+      button.textContent = isActive ? `✓ ${label}` : label;
       button.classList.toggle('is-active', isActive);
       button.setAttribute('aria-pressed', String(isActive));
     }
@@ -606,14 +609,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   };
 
+  const removeQuickPick = (quickPick: string) => {
+    if (quickPick === 'deadlines-soon') {
+      if (deadlineSelect?.value === 'within-14') deadlineSelect.value = '';
+      if (sortSelect?.value === 'registration-deadline') sortSelect.value = 'date';
+    } else if (quickPick === 'budget') {
+      if (registrationFeeSelect?.value === '20') registrationFeeSelect.value = '';
+    } else if (quickPick === 'first-race') {
+      if (surfaceSelect && ['cesta', 'cesta/trail'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+    } else if (quickPick === 'trail') {
+      if (surfaceSelect && ['trail', 'gorski'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+    } else if (quickPick === 'kids') {
+      if (familyInput?.checked) familyInput.checked = false;
+    } else if (quickPick === 'route') {
+      if (routeInput?.checked) routeInput.checked = false;
+    }
+  };
+
+  const toggleQuickPick = (quickPick: string) => {
+    const isActive = getActiveQuickPickValues().includes(quickPick);
+    if (isActive) {
+      removeQuickPick(quickPick);
+    } else {
+      applyQuickPick(quickPick);
+    }
+  };
+
   let searchAnalyticsTimer: number | undefined;
 
   const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
     if (!state.userInteracted) return;
 
-    const { route, ...filtersWithoutRoute } = filters;
-    const analyticsFilters = { ...filtersWithoutRoute, hasRoute: route };
     const query = (searchInput?.value ?? '').trim();
+    const analyticsFilters = {
+      search: filters.search,
+      month: filters.month,
+      region: filters.region,
+      surface: filters.surface,
+      priceFilter: filters.registrationFee,
+      deadlineFilter: filters.deadlineFilter,
+      sortBy: filters.sort,
+      familyFriendly: filters.family,
+      raceDayRegistration: filters.dayOfRegistration,
+      hasRoute: filters.route,
+      elevationFilter: filters.elevation,
+      quickPicks: filters.quickPick
+    };
     const filtersJson = filtersToAnalyticsJson(analyticsFilters);
     const signature = JSON.stringify({ query, filtersJson, resultsCount });
     if (signature === state.lastLoggedSearchSignature) return;
@@ -858,7 +899,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -934,7 +975,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     button.addEventListener('click', () => {
       state.userInteracted = true;
       state.visibleCount = PAGE_SIZE;
-      applyQuickPick(button.dataset.quickPick ?? '');
+      toggleQuickPick(button.dataset.quickPick ?? '');
       renderResults();
     });
   });
