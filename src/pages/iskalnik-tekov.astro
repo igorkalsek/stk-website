@@ -238,6 +238,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
+  const selectedQuickPicks = new Set<string>();
 
   const asRecord = (value: unknown): ApiRecord | null =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
@@ -421,6 +422,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return true;
   };
 
+  const getMaxKnownDistanceKm = (event: RaceEvent) => {
+    if (!event.distances) return null;
+    const distances = [...event.distances.replace(/,/g, '.').matchAll(/\d+(?:\.\d+)?/g)]
+      .map((match) => Number(match[0]))
+      .filter((distance) => Number.isFinite(distance) && distance > 0 && distance < 500);
+    return distances.length ? Math.max(...distances) : null;
+  };
+
+  const hasTrailChallengeName = (event: RaceEvent) => {
+    const searchableName = `${event.title} ${event.naziv_prireditve}`
+      .toLocaleLowerCase('sl-SI')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+    return /\b(?:ultra|trails?|vertical|gorski|vzpon|mountain|challenge)\b/i.test(searchableName);
+  };
+
+  const isTrailOrMountainSurface = (surface: string) => {
+    const normalizedSurface = normalize(surface);
+    return normalizedSurface.includes('trail') || normalizedSurface.includes('gorski') || normalizedSurface.includes('mountain');
+  };
+
+  const matchesTrailChallengeQuickPick = (event: RaceEvent) => {
+    if (!isTrailOrMountainSurface(event.surface)) return false;
+
+    const maxDistanceKm = getMaxKnownDistanceKm(event);
+    const elevationGain = getReliableElevationGain(event);
+    return (
+      (maxDistanceKm !== null && maxDistanceKm >= 20) ||
+      (elevationGain !== null && elevationGain >= 800) ||
+      hasTrailChallengeName(event)
+    );
+  };
+
   const compareNullableNumber = (a: number | null, b: number | null, direction: 'asc' | 'desc') => {
     if (a === null && b === null) return 0;
     if (a === null) return 1;
@@ -554,7 +588,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     'deadlines-soon': (filters) => filters.deadlineFilter === 'within-14' && filters.sort === 'registration-deadline',
     budget: (filters) => filters.registrationFee === '20',
     'first-race': (filters) => ['cesta', 'cesta/trail'].includes(normalize(filters.surface)),
-    trail: (filters) => ['trail', 'gorski'].includes(normalize(filters.surface)),
+    trail: () => true,
     kids: (filters) => filters.family,
     route: (filters) => filters.route
   };
@@ -573,13 +607,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
       route: Boolean(routeInput?.checked)
     };
-    return quickPickButtons
-      .map((button) => button.dataset.quickPick ?? '')
-      .filter((quickPick) => quickPick && quickPickMatches[quickPick]?.(filters));
+    return [...selectedQuickPicks].filter((quickPick) => quickPickMatches[quickPick]?.(filters));
   }
 
   const updateQuickPickStates = () => {
     const activeQuickPicks = new Set(getActiveQuickPickValues());
+    for (const quickPick of selectedQuickPicks) {
+      if (!activeQuickPicks.has(quickPick)) selectedQuickPicks.delete(quickPick);
+    }
     for (const button of quickPickButtons) {
       const isActive = activeQuickPicks.has(button.dataset.quickPick ?? '');
       const label = button.dataset.quickPickLabel ?? button.textContent?.replace(/^✓\s*/, '') ?? '';
@@ -600,8 +635,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail']);
       if (surfaceSelect && beginnerSurface) surfaceSelect.value = beginnerSurface;
     } else if (quickPick === 'trail') {
-      const trailSurface = pickFirstAvailableSurface(['trail', 'gorski']);
-      if (surfaceSelect && trailSurface) surfaceSelect.value = trailSurface;
+      // Trail challenges use a dedicated quick-pick filter so trail and mountain races can both match.
     } else if (quickPick === 'kids') {
       if (familyInput) familyInput.checked = true;
     } else if (quickPick === 'route') {
@@ -618,7 +652,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     } else if (quickPick === 'first-race') {
       if (surfaceSelect && ['cesta', 'cesta/trail'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
     } else if (quickPick === 'trail') {
-      if (surfaceSelect && ['trail', 'gorski'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
+      // No visible field is owned by this quick pick.
     } else if (quickPick === 'kids') {
       if (familyInput?.checked) familyInput.checked = false;
     } else if (quickPick === 'route') {
@@ -629,8 +663,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const toggleQuickPick = (quickPick: string) => {
     const isActive = getActiveQuickPickValues().includes(quickPick);
     if (isActive) {
+      selectedQuickPicks.delete(quickPick);
       removeQuickPick(quickPick);
     } else {
+      selectedQuickPicks.add(quickPick);
       applyQuickPick(quickPick);
     }
   };
@@ -877,6 +913,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.family && !event.familyFriendly) return false;
       if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
       if (filters.route && !hasRouteData(event)) return false;
+      if (filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
       return true;
     });
     state.filtered = sortEvents(state.filtered, filters.sort);
@@ -890,9 +927,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       date: 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.',
       'registration-deadline': 'Najprej so prikazani teki z najbližjimi znanimi roki prijav ali cenejših prijav. Teki brez znanega roka so prikazani spodaj.'
     };
-    const statusMessage = filters.deadlineFilter
-      ? 'Prikazani so teki, ki ustrezajo izbranemu roku prijave. Roki vključujejo predprijave in cenejše prijave.'
-      : statusMessages[filters.sort] ?? 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.';
+    const statusMessage = filters.quickPick
+      ? 'Prikazani so teki, ki ustrezajo izbranemu hitremu izboru in filtrom.'
+      : filters.deadlineFilter
+        ? 'Prikazani so teki, ki ustrezajo izbranemu roku prijave. Roki vključujejo predprijave in cenejše prijave.'
+        : statusMessages[filters.sort] ?? 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.';
     setStatus(statusMessage);
     if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
@@ -954,6 +993,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const clearFilters = () => {
     formElement?.reset();
+    selectedQuickPicks.clear();
     updateQuickPickStates();
     resetVisibleResults();
   };
