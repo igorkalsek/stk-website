@@ -110,6 +110,7 @@ const englishNavItems = [
 <script>
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { filtersToAnalyticsJson, trackStkEvent } from '../../lib/stkAnalytics';
   import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
@@ -151,11 +152,13 @@ const englishNavItems = [
   const PAGE_SIZE = 30;
   const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number } = {
+  const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
     events: [],
     filtered: [],
     apiAvailable: true,
-    visibleCount: PAGE_SIZE
+    visibleCount: PAGE_SIZE,
+    userInteracted: false,
+    lastLoggedSearchSignature: ''
   };
 
   const resultsElement = document.querySelector<HTMLElement>('[data-top-results]');
@@ -438,11 +441,11 @@ const englishNavItems = [
     if (!googleUrl && !icsUrl && !outlookUrl) return '';
 
     const options = [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
-      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>`,
       outlookUrl
-        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
-        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>`
     ].filter(Boolean).join('');
 
     return `
@@ -532,14 +535,14 @@ const englishNavItems = [
     });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, { eventDate: event.date, language: 'en' });
     const links = [
-      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
-      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
-      event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
+      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
+      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
+      event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
       calendarOptions
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card ranked-event-card">
+      <article class="event-card search-event-card ranked-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}">
         <div class="ranked-event-top">
           <span class="rank-badge" aria-label="Ranking">#${escapeHtml(event.rank)}</span>
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
@@ -551,6 +554,44 @@ const englishNavItems = [
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
+  };
+
+
+  let searchAnalyticsTimer: number | undefined;
+
+  const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
+    if (!state.userInteracted) return;
+
+    const query = (searchInput?.value ?? '').trim();
+    const hasActiveFilters = Boolean(query || filters.month || filters.region || filters.surface);
+    if (!hasActiveFilters) return;
+
+    const filtersJson = filtersToAnalyticsJson({
+      pageType: 'most_voted',
+      month: filters.month,
+      region: filters.region,
+      surface: filters.surface
+    });
+    const signature = JSON.stringify({ query, filtersJson, resultsCount });
+    if (signature === state.lastLoggedSearchSignature) return;
+
+    if (searchAnalyticsTimer) window.clearTimeout(searchAnalyticsTimer);
+    searchAnalyticsTimer = window.setTimeout(() => {
+      if (signature === state.lastLoggedSearchSignature) return;
+      state.lastLoggedSearchSignature = signature;
+
+      const commonPayload = {
+        event_type: 'search_performed' as const,
+        search_query: query || undefined,
+        filters_json: filtersJson,
+        results_count: resultsCount,
+        language: 'en'
+      };
+      trackStkEvent(commonPayload);
+      if (resultsCount === 0) {
+        trackStkEvent({ ...commonPayload, event_type: 'no_results_search' as const, results_count: 0 });
+      }
+    }, 700);
   };
 
   const renderResults = () => {
@@ -582,6 +623,8 @@ const englishNavItems = [
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
+
+    trackSearchResult(filters, count);
 
     setCount(count > visibleCount ? `Showing ${visibleCount} of ${count} voted ${count === 1 ? 'race' : 'races'}` : pluralizeEvents(count));
     setStatus('');
@@ -630,6 +673,7 @@ const englishNavItems = [
   };
 
   const resetVisibleResults = () => {
+    state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
     renderResults();
   };

@@ -89,6 +89,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <script>
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
+  import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
@@ -130,11 +131,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
 
-  const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number } = {
+  const state: { events: TopEvent[]; filtered: TopEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
     events: [],
     filtered: [],
     apiAvailable: true,
-    visibleCount: PAGE_SIZE
+    visibleCount: PAGE_SIZE,
+    userInteracted: false,
+    lastLoggedSearchSignature: ''
   };
 
   const resultsElement = document.querySelector<HTMLElement>('[data-top-results]');
@@ -543,6 +546,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     `;
   };
 
+
+  let searchAnalyticsTimer: number | undefined;
+
+  const trackSearchResult = (filters: ReturnType<typeof getFilters>, resultsCount: number) => {
+    if (!state.userInteracted) return;
+
+    const query = (searchInput?.value ?? '').trim();
+    const hasActiveFilters = Boolean(query || filters.month || filters.region || filters.surface);
+    if (!hasActiveFilters) return;
+
+    const filtersJson = filtersToAnalyticsJson({
+      pageType: 'most_voted',
+      month: filters.month,
+      region: filters.region,
+      surface: filters.surface
+    });
+    const signature = JSON.stringify({ query, filtersJson, resultsCount });
+    if (signature === state.lastLoggedSearchSignature) return;
+
+    if (searchAnalyticsTimer) window.clearTimeout(searchAnalyticsTimer);
+    searchAnalyticsTimer = window.setTimeout(() => {
+      if (signature === state.lastLoggedSearchSignature) return;
+      state.lastLoggedSearchSignature = signature;
+
+      const commonPayload = {
+        event_type: 'search_performed' as const,
+        search_query: query || undefined,
+        filters_json: filtersJson,
+        results_count: resultsCount,
+        language: 'sl'
+      };
+      trackStkEvent(commonPayload);
+      if (resultsCount === 0) {
+        trackStkEvent({ ...commonPayload, event_type: 'no_results_search' as const, results_count: 0 });
+      }
+    }, 700);
+  };
+
   const renderResults = () => {
     if (!state.apiAvailable) {
       setStatus('Podatki trenutno niso dosegljivi. Poskusite znova čez nekaj minut.');
@@ -572,6 +613,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
+
+    trackSearchResult(filters, count);
 
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus('');
@@ -620,6 +663,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const resetVisibleResults = () => {
+    state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
     renderResults();
   };

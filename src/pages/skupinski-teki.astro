@@ -49,7 +49,7 @@ const labels = {
           <h2 id="group-run-submit-title">Poznate skupinski tek ali popravek?</h2>
           <p>Sporočite novo tekaško rundo, tekaško skupnost ali popravek podatkov za že objavljen skupinski tek.</p>
         </div>
-        <a class="button button-primary" href={groupRunFormUrl} target="_blank" rel="noopener noreferrer">
+        <a class="button button-primary" href={groupRunFormUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="group_run_form">
           Dodajte ali popravite skupinski tek
         </a>
       </article>
@@ -58,7 +58,7 @@ const labels = {
     <GroupRunsSection lang="sl" labels={labels} />
 
     <section class="section container group-run-bottom-submit" aria-label="Dodajanje skupinskega teka">
-      <p>Manjka skupinski tek ali so podatki zastareli? Sporočite dodatek ali popravek <a href={groupRunFormUrl} target="_blank" rel="noopener noreferrer">prek obrazca</a>.</p>
+      <p>Manjka skupinski tek ali so podatki zastareli? Sporočite dodatek ali popravek <a href={groupRunFormUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="group_run_form">prek obrazca</a>.</p>
     </section>
   </main>
 </BaseLayout>
