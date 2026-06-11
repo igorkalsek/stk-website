@@ -99,8 +99,9 @@ const titlesAppearUnrelated = (additionalTitle: string, eventTitle: string) => {
 
 const safeUrl = (value: string) => {
   if (!value) return '';
+  const candidate = value.match(/https?:\/\/[^\s,;]+/i)?.[0] ?? value.trim();
   try {
-    const url = new URL(value);
+    const url = new URL(candidate);
     return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
   } catch {
     return '';
@@ -337,6 +338,17 @@ const formatElevationGain = (value: string, language: 'sl' | 'en' = 'sl') => {
 
 const ROUTE_URL_HINTS = ['trasa', 'trase', 'route', 'routes', 'gpx', 'strava', 'maps'];
 
+const isGpxRouteUrl = (value: string) => {
+  try {
+    return new URL(value).pathname.toLocaleLowerCase('sl-SI').endsWith('.gpx');
+  } catch {
+    return false;
+  }
+};
+
+const getRouteChipLabel = (value: string, language: 'sl' | 'en' = 'sl') =>
+  isGpxRouteUrl(value) ? 'GPX ↗' : language === 'en' ? 'Route ↗' : 'Trasa ↗';
+
 const getRouteUrlLabel = (value: string) => {
   try {
     const url = new URL(value);
@@ -459,7 +471,7 @@ export const renderAdditionalDataChips = (
         eventDate ? `data-stk-event-date="${escapeHtml(eventDate)}"` : '',
         'data-analytics-link-type="trasa"'
       ].filter(Boolean).join(' ');
-      chips.push(`<a class="event-chip event-chip-additional event-chip-additional-route" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" ${routeTrackingAttributes}>${escapeHtml(language === 'en' ? 'Route ↗' : 'Trasa ↗')}</a>`);
+      chips.push(`<a class="event-chip event-chip-additional event-chip-additional-route" href="${escapeHtml(additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" ${routeTrackingAttributes}>${escapeHtml(getRouteChipLabel(additionalData.routeUrl, language))}</a>`);
     }
   }
 
