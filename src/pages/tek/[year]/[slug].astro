@@ -6,6 +6,7 @@ import { buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMat
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../utils-public-year';
 import { formatSloveneDistances } from '../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../utils-vote';
+import { getCanonicalOrigin } from '../../../utils-site-url';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -83,7 +84,8 @@ const description = event
 const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni najden | Slovenski Tekaški Koledar';
 const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
-const shareUrl = event ? new URL(buildEventDetailPath(event), Astro.url.origin).href : '';
+const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
+const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
 
 const getDateStatus = (value: string) => {
   const eventTime = new Date(`${value}T00:00:00`).getTime();
@@ -255,10 +257,10 @@ const routeItems = event?.additionalData ? [
                 <div class="event-detail-share-panel">
                   <h2>Deli tek</h2>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span><span>Sistemsko</span></button>
+                    <button class="button button-small button-secondary-light event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span><span>Deli</span></button>
                     <button class="button button-small button-secondary-light" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span><span>Kopiraj</span></button>
                     <a class="button button-small button-secondary-light" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span><span>Facebook</span></a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">☘</span><span>WhatsApp</span></a>
+                    <a class="button button-small button-secondary-light" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span><span>WhatsApp</span></a>
                     <a class="button button-small button-secondary-light" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Deli na X"><span aria-hidden="true">𝕏</span><span>X</span></a>
                     <a class="button button-small button-secondary-light" href={shareLinks.email} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span><span>E-pošta</span></a>
                   </div>
