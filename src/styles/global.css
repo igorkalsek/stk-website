@@ -2109,20 +2109,38 @@ main {
 }
 
 .year-switcher-link {
-  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #fff;
+  border: 1px solid rgba(16, 64, 80, 0.24);
   border-radius: 999px;
-  color: var(--color-text);
-  font-weight: 700;
+  color: var(--deep-teal);
+  font-weight: 800;
   padding: 0.55rem 0.9rem;
   text-decoration: none;
 }
 
 .year-switcher-link:hover,
-.year-switcher-link:focus-visible,
+.year-switcher-link:focus-visible {
+  background: #eaf4ee;
+  border-color: var(--deep-teal);
+  color: var(--deep-teal);
+  outline: 3px solid rgba(240, 160, 48, 0.34);
+  outline-offset: 2px;
+}
+
 .year-switcher-link.is-active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+  background: var(--deep-teal);
+  border-color: var(--deep-teal);
   color: #fff;
+}
+
+.year-switcher-link.is-active:hover,
+.year-switcher-link.is-active:focus-visible {
+  background: #0b2f3a;
+  color: #fff;
+}
+
+.calendar-year-notice[hidden] {
+  display: none;
 }
 
 .calendar-year-notice {
