@@ -2438,3 +2438,25 @@ main {
   font-weight: 800;
   min-width: 1.2em;
 }
+
+.event-detail-calendar-actions,
+.event-detail-share-options {
+  grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
+}
+
+.event-detail-icon-button {
+  aspect-ratio: 1;
+  font-size: 1.05rem;
+  min-height: 2.75rem;
+  padding: 0.65rem;
+}
+
+.event-detail-icon-button span[aria-hidden='true'] {
+  font-weight: 800;
+  line-height: 1;
+}
+
+.event-detail-inline-action {
+  display: inline-flex;
+  margin-top: 0.25rem;
+}

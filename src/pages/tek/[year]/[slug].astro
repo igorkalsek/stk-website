@@ -122,7 +122,7 @@ const shareLinks = shareUrl ? {
 const heroBadges = event ? [
   event.surface ? { label: 'Podlaga', value: formatSurface(event.surface) } : null,
   event.distances ? { label: 'Razdalje', value: formatSloveneDistances(event.distances) } : null,
-  event.startTime ? { label: 'Start', value: formatStartTime(event.startTime) } : null,
+  event.startTime ? { label: 'Start', value: `Start ${formatStartTime(event.startTime)}` } : null,
   event.cup ? { label: 'Pokal', value: event.cup } : null
 ].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
 
@@ -181,7 +181,7 @@ const routeItems = event?.additionalData ? [
             {heroBadges.length > 0 && (
               <div class="event-detail-hero-badges" aria-label="Povzetek teka">
                 {heroBadges.map((badge) => (
-                  <span class="event-chip event-detail-hero-chip"><strong>{badge.label}:</strong> {badge.value}</span>
+                  <span class="event-chip event-detail-hero-chip" aria-label={`${badge.label}: ${badge.value}`}>{badge.value}</span>
                 ))}
               </div>
             )}
@@ -196,7 +196,7 @@ const routeItems = event?.additionalData ? [
           <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date}>
             <div class="event-detail-main-column">
               <article class="info-card event-detail-panel">
-                <h2>Hitri podatki</h2>
+                <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
                 <dl class="event-detail-list">
                   {detailItems.map((item) => (
                     <div>
@@ -208,7 +208,7 @@ const routeItems = event?.additionalData ? [
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2>Prijava in stroški</h2>
+                <h2><span aria-hidden="true">🎟</span> Prijava in stroški</h2>
                 {registrationItems.length > 0 ? (
                   <dl class="event-detail-list">
                     {registrationItems.map((item) => (
@@ -222,13 +222,13 @@ const routeItems = event?.additionalData ? [
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2>Trasa</h2>
+                <h2><span aria-hidden="true">🗺</span> Trasa</h2>
                 {routeItems.length > 0 ? (
                   <dl class="event-detail-list">
                     {routeItems.map((item) => (
                       <div>
                         <dt>{item.label}</dt>
-                        <dd>{item.label === 'GPX / zemljevid' ? <a href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa">Odpri traso</a> : item.value}</dd>
+                        <dd>{item.label === 'GPX / zemljevid' ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa"><span aria-hidden="true">🗺</span><span>GPX / zemljevid</span></a> : item.value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -236,7 +236,7 @@ const routeItems = event?.additionalData ? [
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2>Opombe in vir</h2>
+                <h2><span aria-hidden="true">ℹ️</span> Opombe in vir</h2>
                 {event.publicNotes ? <p>{event.publicNotes}</p> : <p>Javne opombe niso dodane.</p>}
                 <p class="data-note">Koledar je informativen. Pred prijavo vedno preverite uradne informacije organizatorja.</p>
                 {event.noticeUrl && <p class="data-note">Vir: uradni razpis organizatorja.</p>}
@@ -257,12 +257,12 @@ const routeItems = event?.additionalData ? [
                 <div class="event-detail-share-panel">
                   <h2>Deli tek</h2>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span><span>Deli</span></button>
-                    <button class="button button-small button-secondary-light" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span><span>Kopiraj</span></button>
-                    <a class="button button-small button-secondary-light" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span><span>Facebook</span></a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span><span>WhatsApp</span></a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Deli na X"><span aria-hidden="true">𝕏</span><span>X</span></a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.email} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span><span>E-pošta</span></a>
+                    <button class="button button-small button-secondary-light event-detail-icon-button event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span></button>
+                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
                   </div>
                   <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
                 </div>
@@ -270,11 +270,11 @@ const routeItems = event?.additionalData ? [
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
-                  <h2>Dodaj v koledar</h2>
+                  <h2>Koledar</h2>
                   <div class="event-detail-calendar-actions">
-                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google</a>}
-                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics">Apple / iCal</a>}
-                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics">Outlook / .ics</a>}
+                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span></a>}
+                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span></a>}
+                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span></a>}
                   </div>
                 </div>
               )}
@@ -282,7 +282,7 @@ const routeItems = event?.additionalData ? [
               {locationUrl && (
                 <div class="event-detail-location-panel">
                   <h2>Lokacija</h2>
-                  <a class="button button-small button-secondary-light" href={locationUrl} target="_blank" rel="noopener noreferrer">Odpri lokacijo</a>
+                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" aria-label="Odpri lokacijo"><span aria-hidden="true">📍</span></a>
                 </div>
               )}
             </aside>
