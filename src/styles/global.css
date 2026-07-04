@@ -2424,3 +2424,17 @@ main {
 .event-detail-location-panel h2 {
   margin: 0 0 0.75rem;
 }
+
+.event-detail-share-panel {
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+  padding-top: 1rem;
+}
+
+.event-detail-share-panel h2 {
+  margin: 0 0 0.75rem;
+}
+
+.event-detail-share-options .button span[aria-hidden='true'] {
+  font-weight: 800;
+  min-width: 1.2em;
+}

@@ -18,6 +18,7 @@ interface Props {
   description?: string;
   lang?: string;
   canonicalPath?: string;
+  canonicalUrl?: string;
   alternateLinks?: AlternateLink[];
   navItems?: NavItem[];
   brandHref?: string;
@@ -31,6 +32,7 @@ const {
   description = 'Neodvisen koledar tekaških prireditev po Sloveniji.',
   lang = 'sl',
   canonicalPath,
+  canonicalUrl: canonicalUrlOverride,
   alternateLinks = [],
   navItems,
   brandHref,
@@ -39,7 +41,7 @@ const {
   menuLabel
 } = Astro.props;
 const pageTitle = title === 'Slovenski Tekaški Koledar' || title.includes('|') ? title : `${title} | Slovenski Tekaški Koledar`;
-const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const canonicalUrl = canonicalUrlOverride ?? new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
 const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
 ---
 

@@ -83,7 +83,7 @@ const description = event
 const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni najden | Slovenski Tekaški Koledar';
 const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
-const shareUrl = event ? new URL(buildEventDetailPath(event), Astro.site).href : '';
+const shareUrl = event ? new URL(buildEventDetailPath(event), Astro.url.origin).href : '';
 
 const getDateStatus = (value: string) => {
   const eventTime = new Date(`${value}T00:00:00`).getTime();
@@ -165,7 +165,7 @@ const routeItems = event?.additionalData ? [
 
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+<BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined}>
   <main>
     {event ? (
       <>
@@ -248,19 +248,23 @@ const routeItems = event?.additionalData ? [
                   {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>}
                   {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>}
                   {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>}
-                  <button class="button button-secondary-light event-detail-share-button" type="button" data-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText}><span class="action-icon" aria-hidden="true">🔗</span><span>Deli</span></button>
                 </div>
-                <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
-                {shareLinks && (
-                  <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light" type="button" data-copy-share-url={shareUrl}>Kopiraj povezavo</button>
-                    <a class="button button-small button-secondary-light" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer">X / Twitter</a>
-                    <a class="button button-small button-secondary-light" href={shareLinks.email}>E-pošta</a>
-                  </div>
-                )}
               </div>
+
+              {shareLinks && (
+                <div class="event-detail-share-panel">
+                  <h2>Deli tek</h2>
+                  <div class="event-detail-share-options" aria-label="Možnosti deljenja">
+                    <button class="button button-small button-secondary-light event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span><span>Sistemsko</span></button>
+                    <button class="button button-small button-secondary-light" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span><span>Kopiraj</span></button>
+                    <a class="button button-small button-secondary-light" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span><span>Facebook</span></a>
+                    <a class="button button-small button-secondary-light" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">☘</span><span>WhatsApp</span></a>
+                    <a class="button button-small button-secondary-light" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Deli na X"><span aria-hidden="true">𝕏</span><span>X</span></a>
+                    <a class="button button-small button-secondary-light" href={shareLinks.email} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span><span>E-pošta</span></a>
+                  </div>
+                  <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
+                </div>
+              )}
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
@@ -296,7 +300,7 @@ const routeItems = event?.additionalData ? [
 </BaseLayout>
 
 <script>
-  const button = document.querySelector<HTMLButtonElement>('[data-share-button]');
+  const nativeShareButton = document.querySelector<HTMLButtonElement>('[data-native-share-button]');
   const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
 
@@ -325,30 +329,22 @@ const routeItems = event?.additionalData ? [
     return true;
   };
 
-  button?.addEventListener('click', async () => {
-    const shareUrl = button.getAttribute('data-share-url') || window.location.href;
-    const shareTitle = button.getAttribute('data-share-title') || document.title;
-    const shareText = button.getAttribute('data-share-text') || shareTitle;
-    setShareFeedback('');
+  if (nativeShareButton && navigator.share) {
+    nativeShareButton.hidden = false;
+    nativeShareButton.addEventListener('click', async () => {
+      const shareUrl = nativeShareButton.getAttribute('data-share-url') || window.location.href;
+      const shareTitle = nativeShareButton.getAttribute('data-share-title') || document.title;
+      const shareText = nativeShareButton.getAttribute('data-share-text') || shareTitle;
+      setShareFeedback('');
 
-    try {
-      if (navigator.share) {
+      try {
         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
         setShareFeedback('Povezava pripravljena za deljenje.');
-        return;
-      }
-
-      await copyWithFallback(shareUrl);
-      setShareFeedback('Povezava kopirana.');
-    } catch {
-      try {
-        await copyWithFallback(shareUrl);
-        setShareFeedback('Povezava kopirana.');
       } catch {
-        setShareFeedback('Povezave ni bilo mogoče kopirati.');
+        setShareFeedback('Deljenje ni bilo dokončano. Povezavo lahko kopirate ali delite prek spodnjih povezav.');
       }
-    }
-  });
+    });
+  }
 
   copyButtons.forEach((copyButton) => {
     copyButton.addEventListener('click', async () => {
