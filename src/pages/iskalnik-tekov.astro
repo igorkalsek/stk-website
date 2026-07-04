@@ -177,34 +177,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
-  import { getDisplayEventTitle } from '../utils-events';
+  import { buildEventDetailPath, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
-  type RaceEvent = {
-    id: string;
-    row: string;
-    date: string;
-    dateValue: number;
+  type RaceEvent = PublicRaceEvent & {
     month: string;
-    title: string;
-    displayTitle: string;
-    naziv_prireditve: string;
     datum: string;
-    place: string;
-    region: string;
-    surface: string;
-    distances: string;
-    startTime: string;
-    noticeUrl: string;
-    registrationUrl: string;
-    voteUrl: string;
-    publicNotes: string;
     searchText: string;
-    familyFriendly: boolean;
-    kidsRaces: boolean;
     additionalData?: AdditionalEventData | null;
   };
 
@@ -213,7 +195,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const additionalDataEnabled = isAdditionalDataEnabledForYear(activeYear);
   const API_URL = `${API_BASE}${buildMasterApiPath(activeYear)}`;
   const TOP_API_URL = `${API_BASE}/top?scope=upcoming&limit=1000`;
-  const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
@@ -264,31 +245,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
 
-  const asRecord = (value: unknown): ApiRecord | null =>
-    value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
+  const toArray = toApiRecords;
 
-  const toArray = (payload: unknown): ApiRecord[] => {
-    if (Array.isArray(payload)) return payload.filter(asRecord) as ApiRecord[];
-
-    const record = asRecord(payload);
-    if (!record) return [];
-
-    for (const key of ARRAY_KEYS) {
-      const value = record[key];
-      if (Array.isArray(value)) return value.filter(asRecord) as ApiRecord[];
-    }
-
-    return [];
-  };
-
-  const pick = (item: ApiRecord, key: string): string => {
-    const value = item[key];
-    return value === undefined || value === null ? '' : String(value).trim();
-  };
-
-  const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
-
-  const hasKidsRaceNote = (value: string) => /\botro(?:ški|ška|ških|kom|ci|cih|ke|ci)|\bkids?\b|\bchildren(?:’s|'s)?\b/iu.test(value);
+  const normalize = normalizeSloveneText;
 
   const todayStart = () => {
     const now = new Date();
@@ -297,8 +256,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const parseDateValue = (value: string) => {
     if (!value) return Number.NaN;
-    const date = new Date(`${value}T00:00:00`);
-    return date.getTime();
+    return parsePublicDateValue(value);
   };
 
   const formatDate = (value: string) => {
@@ -342,15 +300,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return String(value).replace(/[&<>"']/g, (character) => characters[character]);
   };
 
-  const safeUrl = (value: string) => {
-    if (!value) return '';
-    try {
-      const url = new URL(value);
-      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
-    } catch {
-      return '';
-    }
-  };
 
   const parseMoney = (value: string) => {
     if (!value) return null;
@@ -756,47 +705,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     return items
       .map((item): RaceEvent | null => {
-        const date = pick(item, 'datum');
-        const dateValue = parseDateValue(date);
-        const title = pick(item, 'naziv_prireditve');
-        const place = pick(item, 'kraj');
-        const region = pick(item, 'regija');
-        const surface = pick(item, 'tip_podlage');
-        const distances = pick(item, 'razdalje_km');
-        const startTime = pick(item, 'cas_zacetka');
-        const publicNotes = pick(item, 'opombe_javne');
-
-        if (!date || Number.isNaN(dateValue) || !title) return null;
-        if (!date.startsWith(`${activeYear}-`)) return null;
-        if (dateValue < today) return null;
-        if (normalize(pick(item, 'status_dogodka')) !== 'potrjeno') return null;
-        if (pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') !== 'DA') return null;
-
-        const row = pick(item, 'row');
-        const displayTitle = getDisplayEventTitle(title);
+        const event = mapPublicRaceEvent(item, activeYear, today);
+        if (!event) return null;
 
         return {
-          id: row || `${date}-${title}-${place}`,
-          row,
-          date,
-          dateValue,
-          month: date.slice(5, 7),
-          title: displayTitle,
-          displayTitle,
-          naziv_prireditve: title,
-          datum: date,
-          place,
-          region,
-          surface,
-          distances,
-          startTime,
-          noticeUrl: safeUrl(pick(item, 'povezava_razpis')),
-          registrationUrl: safeUrl(pick(item, 'povezava_prijava')),
-          voteUrl: safeUrl(pick(item, 'vote_url') || pick(item, 'glasovanje_url') || pick(item, 'url_glasovanje')),
-          publicNotes,
-          searchText: normalize(`${title} ${place}`),
-          familyFriendly: normalize(publicNotes).includes('družinam prijazno'),
-          kidsRaces: hasKidsRaceNote(publicNotes)
+          ...event,
+          month: event.date.slice(5, 7),
+          datum: event.date,
+          searchText: normalize(`${event.naziv_prireditve} ${event.place}`)
         };
       })
       .filter((event): event is RaceEvent => Boolean(event))
@@ -882,10 +798,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const detailPath = buildEventDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, kidsRaces: event.kidsRaces });
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
+      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>Podrobnosti teka</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
       renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
@@ -897,7 +815,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Družinam prijazno</span>' : ''}
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
