@@ -798,11 +798,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const detailPath = buildEventDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, kidsRaces: event.kidsRaces });
     const links = [
       event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
-      `<a class="button button-small button-secondary-light" href="${escapeHtml(buildEventDetailPath(event))}"><span class="action-icon" aria-hidden="true">🔎</span><span>Podrobnosti</span></a>`,
+      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>Podrobnosti teka</span></a>`,
       event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
       renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
@@ -814,7 +815,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Družinam prijazno</span>' : ''}
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
