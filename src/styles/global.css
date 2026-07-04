@@ -2100,3 +2100,37 @@ main {
 .group-run-bottom-submit a:focus-visible {
   text-decoration-color: currentColor;
 }
+
+.year-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.year-switcher-link {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-weight: 700;
+  padding: 0.55rem 0.9rem;
+  text-decoration: none;
+}
+
+.year-switcher-link:hover,
+.year-switcher-link:focus-visible,
+.year-switcher-link.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.calendar-year-notice {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-md);
+  color: #9a3412;
+  font-weight: 700;
+  margin: 1rem 0 0;
+  padding: 0.8rem 1rem;
+}
