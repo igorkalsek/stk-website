@@ -2281,3 +2281,19 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+.event-detail-date-line,
+.event-detail-summary-line {
+  color: var(--color-text);
+  font-weight: 700;
+  margin: 0.65rem 0 0;
+}
+
+.event-detail-summary-line {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.event-detail-share-button {
+  cursor: pointer;
+}
