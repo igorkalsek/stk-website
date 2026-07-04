@@ -2445,14 +2445,20 @@ main {
 }
 
 .event-detail-icon-button {
+  align-items: center;
   aspect-ratio: 1;
-  font-size: 1.05rem;
+  display: inline-flex;
+  font-size: 1.2rem;
+  justify-content: center;
   min-height: 2.75rem;
-  padding: 0.65rem;
+  padding: 0.55rem;
 }
 
 .event-detail-icon-button span[aria-hidden='true'] {
-  font-weight: 800;
+  align-items: center;
+  display: inline-flex;
+  font-weight: 900;
+  justify-content: center;
   line-height: 1;
 }
 

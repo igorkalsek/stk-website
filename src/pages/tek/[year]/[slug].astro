@@ -257,7 +257,6 @@ const routeItems = event?.additionalData ? [
                 <div class="event-detail-share-panel">
                   <h2>Deli tek</h2>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light event-detail-icon-button event-detail-native-share" type="button" data-native-share-button data-share-url={shareUrl} data-share-title={event.title} data-share-text={shareText} hidden aria-label="Deli s sistemskim menijem"><span aria-hidden="true">📲</span></button>
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
                     <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
                     <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
@@ -302,7 +301,6 @@ const routeItems = event?.additionalData ? [
 </BaseLayout>
 
 <script>
-  const nativeShareButton = document.querySelector<HTMLButtonElement>('[data-native-share-button]');
   const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
 
@@ -330,23 +328,6 @@ const routeItems = event?.additionalData ? [
     if (!copied) throw new Error('copy failed');
     return true;
   };
-
-  if (nativeShareButton && navigator.share) {
-    nativeShareButton.hidden = false;
-    nativeShareButton.addEventListener('click', async () => {
-      const shareUrl = nativeShareButton.getAttribute('data-share-url') || window.location.href;
-      const shareTitle = nativeShareButton.getAttribute('data-share-title') || document.title;
-      const shareText = nativeShareButton.getAttribute('data-share-text') || shareTitle;
-      setShareFeedback('');
-
-      try {
-        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
-        setShareFeedback('Povezava pripravljena za deljenje.');
-      } catch {
-        setShareFeedback('Deljenje ni bilo dokončano. Povezavo lahko kopirate ali delite prek spodnjih povezav.');
-      }
-    });
-  }
 
   copyButtons.forEach((copyButton) => {
     copyButton.addEventListener('click', async () => {
