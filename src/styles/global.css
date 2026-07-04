@@ -2100,3 +2100,55 @@ main {
 .group-run-bottom-submit a:focus-visible {
   text-decoration-color: currentColor;
 }
+
+.year-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.year-switcher-link {
+  background: #fff;
+  border: 1px solid rgba(16, 64, 80, 0.24);
+  border-radius: 999px;
+  color: var(--deep-teal);
+  font-weight: 800;
+  padding: 0.55rem 0.9rem;
+  text-decoration: none;
+}
+
+.year-switcher-link:hover,
+.year-switcher-link:focus-visible {
+  background: #eaf4ee;
+  border-color: var(--deep-teal);
+  color: var(--deep-teal);
+  outline: 3px solid rgba(240, 160, 48, 0.34);
+  outline-offset: 2px;
+}
+
+.year-switcher-link.is-active {
+  background: var(--deep-teal);
+  border-color: var(--deep-teal);
+  color: #fff;
+}
+
+.year-switcher-link.is-active:hover,
+.year-switcher-link.is-active:focus-visible {
+  background: #0b2f3a;
+  color: #fff;
+}
+
+.calendar-year-notice[hidden] {
+  display: none;
+}
+
+.calendar-year-notice {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-md);
+  color: #9a3412;
+  font-weight: 700;
+  margin: 1rem 0 0;
+  padding: 0.8rem 1rem;
+}

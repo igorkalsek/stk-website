@@ -8,9 +8,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <span class="eyebrow">Iskalnik tekov</span>
       <h1 id="search-title">Poiščite svoj naslednji tek</h1>
       <p>
-        Preverite potrjene javne tekaške prireditve za leto 2026. Iščete lahko po imenu teka ali kraju,
+        Preverite potrjene javne tekaške prireditve za izbrano leto. Iščete lahko po imenu teka ali kraju,
         izbor pa zožite po mesecu, regiji, podlagi in družinski prijaznosti.
       </p>
+      <div class="year-switcher" aria-label="Izbira leta koledarja">
+        <a class="year-switcher-link" href="/iskalnik-tekov/" data-year-link="2026">Koledar 2026</a>
+        <a class="year-switcher-link" href="/iskalnik-tekov/?year=2027" data-year-link="2027">Koledar 2027</a>
+      </div>
+      <p class="calendar-year-notice" data-year-notice hidden>Koledar 2027 se dopolnjuje.</p>
     </section>
 
     <section class="section container" aria-labelledby="filters-title">
@@ -175,6 +180,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
+  import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -202,14 +208,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     additionalData?: AdditionalEventData | null;
   };
 
-  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
-  const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const activeYear = getPublicYearFromSearchParams(new URLSearchParams(window.location.search));
+  const additionalDataEnabled = isAdditionalDataEnabledForYear(activeYear);
+  const API_URL = `${API_BASE}${buildMasterApiPath(activeYear)}`;
+  const TOP_API_URL = `${API_BASE}/top?scope=upcoming&limit=1000`;
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
 
-  const state: { events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
+  const state: { activeYear: PublicYear; events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
+    activeYear,
     events: [],
     filtered: [],
     apiAvailable: true,
@@ -236,6 +246,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
+  const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
+  const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+
+  const initializeYearUi = () => {
+    yearLinkElements.forEach((link) => {
+      const isActive = link.dataset.yearLink === activeYear;
+      link.classList.toggle('is-active', isActive);
+      if (isActive) link.setAttribute('aria-current', 'page');
+    });
+    if (yearNoticeElement) yearNoticeElement.hidden = activeYear !== '2027';
+    document.querySelectorAll<HTMLElement>('[data-selected-year]').forEach((element) => {
+      element.textContent = activeYear;
+    });
+  };
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
@@ -302,7 +326,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const monthLabel = (month: string) => {
     const monthNumber = Number(month);
     if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) return month;
-    const date = new Date(2026, monthNumber - 1, 1);
+    const date = new Date(Number(activeYear), monthNumber - 1, 1);
     return monthFormatter.format(date).replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
   };
 
@@ -743,7 +767,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const publicNotes = pick(item, 'opombe_javne');
 
         if (!date || Number.isNaN(dateValue) || !title) return null;
-        if (!date.startsWith('2026-')) return null;
+        if (!date.startsWith(`${activeYear}-`)) return null;
         if (dateValue < today) return null;
         if (normalize(pick(item, 'status_dogodka')) !== 'potrjeno') return null;
         if (pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') !== 'DA') return null;
@@ -897,7 +921,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (!state.events.length) {
       setStatus('Ni prihajajočih potrjenih javnih dogodkov za prikaz.');
       setCount('0 dogodkov');
-      renderEmptyState('Ni dogodkov za prikaz', 'Trenutno ni potrjenih prihajajočih dogodkov za leto 2026.', '2026');
+      renderEmptyState('Ni dogodkov za prikaz', `Trenutno ni potrjenih prihajajočih dogodkov za leto ${activeYear}.`, activeYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -933,7 +957,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         ? 'Prikazani so teki, ki ustrezajo izbranemu roku prijave. Roki vključujejo predprijave in cenejše prijave.'
         : statusMessages[filters.sort] ?? 'Prikazani so potrjeni javni dogodki od danes naprej, urejeni po izbrani startnini.';
     setStatus(statusMessage);
-    if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
+    if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
     if (!count) {
@@ -959,12 +983,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       let events = getPublicUpcomingEvents(toArray(payload));
 
       try {
-        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+        if (additionalDataEnabled) {
+          events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+        }
       } catch (error) {
         console.warn('Iskalnik tekov additional data skipped', error);
       }
 
       try {
+        if (activeYear !== DEFAULT_PUBLIC_YEAR) throw new Error('Vote enrichment is enabled only for the default public year');
         const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
         if (topResponse.ok) {
           const topPayload = await topResponse.json();
@@ -1026,5 +1053,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   });
 
   updateAdvancedFiltersSummary();
+  initializeYearUi();
   loadEvents();
 </script>
