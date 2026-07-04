@@ -2390,3 +2390,37 @@ main {
     position: static;
   }
 }
+
+.event-detail-status-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.event-detail-status-pill {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.event-detail-share-options {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  margin-top: 0.75rem;
+}
+
+.event-detail-share-options .button {
+  justify-content: center;
+  width: 100%;
+}
+
+.event-detail-location-panel {
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+  padding-top: 1rem;
+}
+
+.event-detail-location-panel h2 {
+  margin: 0 0 0.75rem;
+}
