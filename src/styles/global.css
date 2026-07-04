@@ -2152,3 +2152,25 @@ main {
   margin: 1rem 0 0;
   padding: 0.8rem 1rem;
 }
+
+.event-detail-hero .search-event-date {
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.event-detail-card {
+  gap: 1.25rem;
+}
+
+.event-detail-grid {
+  align-items: flex-start;
+}
+
+.event-detail-notes {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.event-detail-actions {
+  margin-top: 0.25rem;
+}
