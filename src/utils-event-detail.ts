@@ -83,6 +83,9 @@ export const buildEventDetailSlug = (event: Pick<PublicRaceEvent, 'row' | 'date'
 export const buildEventDetailPath = (event: Pick<PublicRaceEvent, 'year' | 'row' | 'date' | 'title' | 'naziv_prireditve' | 'place'>) =>
   `/tek/${event.year}/${buildEventDetailSlug(event)}/`;
 
+export const buildEnglishEventDetailPath = (event: Pick<PublicRaceEvent, 'year' | 'row' | 'date' | 'title' | 'naziv_prireditve' | 'place'>) =>
+  `/en/races/${event.year}/${buildEventDetailSlug(event)}/`;
+
 export const slugMatchesEvent = (slug: string, event: Pick<PublicRaceEvent, 'row' | 'date' | 'title' | 'naziv_prireditve' | 'place'>) =>
   slug === buildEventDetailSlug(event) || slug.startsWith(`${getStableEventId(event)}-`) || slug === getStableEventId(event);
 

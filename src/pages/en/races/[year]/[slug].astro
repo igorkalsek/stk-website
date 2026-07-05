@@ -1,12 +1,13 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from '../../../utils-additional';
-import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../utils-calendar';
-import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMatchesEvent, toApiRecords, type PublicRaceEvent } from '../../../utils-event-detail';
-import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../utils-public-year';
-import { formatSloveneDistances } from '../../../utils-slovenian';
-import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../utils-vote';
-import { getCanonicalOrigin } from '../../../utils-site-url';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from '../../../../utils-additional';
+import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../../utils-calendar';
+import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMatchesEvent, toApiRecords, type PublicRaceEvent } from '../../../../utils-event-detail';
+import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
+import { formatSloveneDistances } from '../../../../utils-slovenian';
+import { formatEnglishSurface } from '../../../../utils-english';
+import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
+import { getCanonicalOrigin } from '../../../../utils-site-url';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -20,7 +21,7 @@ export async function getStaticPaths() {
     try {
       response = await fetch(`https://stk-master-api.igor-kalsek.workers.dev${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } });
     } catch (error) {
-      console.warn(`Detail strani getStaticPaths skipped ${year}`, error);
+      console.warn(`English detail pages getStaticPaths skipped ${year}`, error);
       continue;
     }
     if (!response.ok) continue;
@@ -49,7 +50,7 @@ if (event && eventYear && isAdditionalDataEnabledForYear(eventYear)) {
     const [withAdditional] = attachAdditionalDataByMasterRow([event], await fetchAdditionalEventData());
     event = withAdditional;
   } catch (error) {
-    console.warn('Detail strani additional data skipped', error);
+    console.warn('English detail pages additional data skipped', error);
   }
 }
 
@@ -61,33 +62,33 @@ if (event && year === '2026') {
       event = withVoteUrl;
     }
   } catch (error) {
-    console.warn('Detail strani vote enrichment skipped', error);
+    console.warn('English detail pages vote enrichment skipped', error);
   }
 }
 
-const formatDate = (value: string) => new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+const formatDate = (value: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
 const formatStartTime = (value: string) => {
   const match = value.trim().match(/^(\d{1,2}):(\d{2})(.*)$/);
   return match ? `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}` : value.trim();
 };
-const formatSurface = (value: string) => value.trim().toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+const formatSurface = formatEnglishSurface;
 const calendarOptions = event ? {
-  googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
-  icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
+  googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
+  icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
   icsFilename: buildIcsFilename({ title: event.title, date: event.date }),
-  outlookUrl: buildOutlookCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl })
+  outlookUrl: buildOutlookCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' })
 } : null;
 const voteUrl = event?.voteUrl && isVoteUrlSafeForEvent(event, event.voteUrl).safe ? event.voteUrl : '';
 const description = event
-  ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. Razdalje: ${event.distances ? formatSloveneDistances(event.distances) : 'niso dodane'}. Podrobnosti, razpis, prijava in koledar na Slovenskem Tekaškem Koledarju.`
-  : 'Podrobnosti teka trenutno niso na voljo. Preverite iskalnik tekov.';
-const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni najden | Slovenski Tekaški Koledar';
-const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
-const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
+  ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. Distances: ${event.distances ? formatSloveneDistances(event.distances) : 'not listed'}. Details, official notice, registration and calendar links on Slovenski Tekaški Koledar.`
+  : 'Race details are currently unavailable. Check the race finder.';
+const title = event ? `${event.title} | Run Slovenia Race Calendar` : 'Race not found | Run Slovenia Race Calendar';
+const canonicalPath = event ? buildEnglishEventDetailPath(event) : `/en/find-races/${year === '2027' ? '?year=2027' : ''}`;
+const searchPath = year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/';
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
-const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
+const shareUrl = event ? new URL(buildEnglishEventDetailPath(event), canonicalOrigin).href : '';
 const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
-const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/');
+const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
 const getDateStatus = (value: string) => {
   const eventTime = new Date(`${value}T00:00:00`).getTime();
@@ -95,9 +96,9 @@ const getDateStatus = (value: string) => {
   const todayTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   if (!Number.isFinite(eventTime)) return '';
   const days = Math.round((eventTime - todayTime) / 86_400_000);
-  if (days === 0) return 'Danes';
-  if (days > 0) return `Prihaja čez ${days} ${days === 1 ? 'dan' : days === 2 ? 'dni' : 'dni'}`;
-  return 'Dogodek je že mimo';
+  if (days === 0) return 'Today';
+  if (days > 0) return `Coming in ${days} ${days === 1 ? 'day' : 'days'}`;
+  return 'This race has already passed';
 };
 const formatContextualDeadline = (label: string, value: string, expiredLabel: string) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value ? `${label}: ${value}` : '';
@@ -110,7 +111,7 @@ const formatContextualDeadline = (label: string, value: string, expiredLabel: st
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
 const eventStatus = event ? getDateStatus(event.date) : '';
-const shareText = event ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. Več na Slovenskem Tekaškem Koledarju:` : 'Slovenski Tekaški Koledar:';
+const shareText = event ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. More on Slovenski Tekaški Koledar:` : 'Slovenski Tekaški Koledar:';
 const encodedShareUrl = encodeURIComponent(shareUrl);
 const encodedShareText = encodeURIComponent(`${shareText} ${shareUrl}`);
 const encodedShareTitle = encodeURIComponent(event?.title ?? 'Slovenski Tekaški Koledar');
@@ -128,10 +129,10 @@ const parseRegistrationAmount = (value: string) => {
 };
 
 const heroBadges = event ? [
-  event.surface ? { label: 'Podlaga', value: formatSurface(event.surface) } : null,
-  event.distances ? { label: 'Razdalje', value: formatSloveneDistances(event.distances) } : null,
+  event.surface ? { label: 'Surface', value: formatSurface(event.surface) } : null,
+  event.distances ? { label: 'Distances', value: formatSloveneDistances(event.distances) } : null,
   event.startTime ? { label: 'Start', value: `Start ${formatStartTime(event.startTime)}` } : null,
-  event.cup ? { label: 'Pokal', value: event.cup } : null
+  event.cup ? { label: 'Series', value: event.cup } : null
 ].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
 
 const hasText = (value: string | undefined | null) => Boolean(value?.trim());
@@ -149,26 +150,30 @@ const formatMoneyRange = (minValue = '', maxValue = '') => {
 };
 const formatYesNo = (value: string) => {
   const normalized = value.trim().toLocaleLowerCase('sl-SI');
-  if (['da', 'yes', 'true'].includes(normalized)) return 'Da';
-  if (['ne', 'no', 'false'].includes(normalized)) return 'Ne';
+  if (['da', 'yes', 'true'].includes(normalized)) return 'Yes';
+  if (['ne', 'no', 'false'].includes(normalized)) return 'No';
   return value.trim();
 };
+const formatEnglishPublicNotes = (value: string) => value
+  .replace(/družinam prijazno:/giu, 'Family-friendly:')
+  .replace(/otroški teki brezplačni/giu, 'children’s races are free')
+  .replace(/otroški teki/giu, 'children’s races');
 const detailItems = event ? [
-  { icon: '📅', label: 'Datum', value: formatDate(event.date) },
-  { icon: '📍', label: 'Kraj', value: [event.place, event.region].filter(Boolean).join(' · ') },
-  { icon: '👟', label: 'Razdalje', value: event.distances ? formatSloveneDistances(event.distances) : '' },
+  { icon: '📅', label: 'Date', value: formatDate(event.date) },
+  { icon: '📍', label: 'Location', value: [event.place, event.region].filter(Boolean).join(' · ') },
+  { icon: '👟', label: 'Distances', value: event.distances ? formatSloveneDistances(event.distances) : '' },
   { icon: '🕘', label: 'Start', value: event.startTime ? formatStartTime(event.startTime) : '' },
-  { icon: '🏆', label: 'Pokal/serija', value: event.cup }
+  { icon: '🏆', label: 'Cup/series', value: event.cup }
 ].filter((item) => hasText(item.value)) : [];
 const registrationItems = event?.additionalData ? [
-  { label: 'Startnina', value: formatMoneyRange(event.additionalData.registrationMinEur, event.additionalData.registrationMaxEur) },
-  { label: 'Rok prijave', value: formatContextualDeadline('Rok prijave', event.additionalData.registrationDeadline, 'Rok prijave je potekel') },
-  { label: 'Cenejša prijava', value: formatContextualDeadline('Cenejša prijava do', event.additionalData.earlyRegistrationDeadline, 'Cenejša prijava je potekla') },
-  { label: 'Prijave na dan dogodka', value: formatYesNo(event.additionalData.dayOfRegistration) === 'Da' ? 'Prijave na dan dogodka so možne' : formatYesNo(event.additionalData.dayOfRegistration) }
+  { label: 'Entry fee', value: formatMoneyRange(event.additionalData.registrationMinEur, event.additionalData.registrationMaxEur) },
+  { label: 'Registration deadline', value: formatContextualDeadline('Registration deadline', event.additionalData.registrationDeadline, 'Registration deadline has passed') },
+  { label: 'Cheaper entry', value: formatContextualDeadline('Cheaper entry until', event.additionalData.earlyRegistrationDeadline, 'Cheaper-entry deadline has passed') },
+  { label: 'Race-day registration', value: formatYesNo(event.additionalData.dayOfRegistration) === 'Yes' ? 'Race-day registration is available' : formatYesNo(event.additionalData.dayOfRegistration) }
 ].filter((item) => hasText(item.value)) : [];
 const routeItems = event?.additionalData ? [
-  { label: 'GPX / zemljevid', value: event.additionalData.routeUrl },
-  { label: 'Višinski metri', value: event.additionalData.elevationGain ? `${event.additionalData.elevationGain.trim()} m+` : '' }
+  { label: 'GPX / map', value: event.additionalData.routeUrl },
+  { label: 'Elevation gain', value: event.additionalData.elevationGain ? `${event.additionalData.elevationGain.trim()} m+` : '' }
 ].filter((item) => hasText(item.value)) : [];
 const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
 const jsonLd = event ? {
@@ -183,7 +188,7 @@ const jsonLd = event ? {
     location: {
       '@type': 'Place',
       name: event.place,
-      address: [event.place, event.region, 'Slovenija'].filter(Boolean).join(', ')
+      address: [event.place, event.region, 'Slovenia'].filter(Boolean).join(', ')
     }
   } : {}),
   url: shareUrl,
@@ -201,25 +206,25 @@ const jsonLd = event ? {
 
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: buildEventDetailPath(event) }, { lang: 'en', href: englishPath }] : []}>
+<BaseLayout title={title} description={description} lang="en" canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: slovenePath }, { lang: 'en', href: buildEnglishEventDetailPath(event) }] : []} navItems={[{ href: '/en/', label: 'Home' }, { href: '/en/find-races/', label: 'Find' }, { href: '/en/family-friendly-races/', label: 'Family-friendly' }, { href: '/en/group-runs/', label: 'Group runs' }, { href: '/en/most-voted-races/', label: 'Most voted' }, { href: '/en/personal-calendar/', label: 'Calendar' }, { href: '/en/stk-tekobot/', label: 'STK Tekobot' }]} brandHref="/en/" brandLabel="Slovenski Tekaški Koledar - English home" navLabel="Main navigation" menuLabel="Menu">
   {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   <main>
     {event ? (
       <>
         <section class="section container event-detail-top-section" aria-labelledby="event-detail-title">
           <div class="event-detail-profile-hero">
-            <nav class="event-detail-breadcrumb" aria-label="Navigacija">
-              <a href={searchPath}>Iskalnik tekov</a>
+            <nav class="event-detail-breadcrumb" aria-label="Navigation">
+              <a href={searchPath}>Race finder</a>
               <span aria-hidden="true">›</span>
               <span>{event.title}</span>
             </nav>
-            <div class="event-detail-language-switch"><span class="eyebrow">Profil teka · {year}</span><a href={englishPath} hreflang="en">English</a></div>
+            <div class="event-detail-language-switch"><span class="eyebrow">Race profile · {year}</span><a href={slovenePath} hreflang="sl">Slovenščina</a></div>
             <h1 id="event-detail-title">{event.title}</h1>
             <p class="event-detail-date-line">
               <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
             </p>
             {heroBadges.length > 0 && (
-              <div class="event-detail-hero-badges" aria-label="Povzetek teka">
+              <div class="event-detail-hero-badges" aria-label="Race summary">
                 {heroBadges.map((badge) => (
                   <span class="event-chip event-detail-hero-chip" aria-label={`${badge.label}: ${badge.value}`}>{badge.value}</span>
                 ))}
@@ -227,17 +232,17 @@ const jsonLd = event ? {
             )}
             <div class="event-detail-status-row">
               {eventStatus && <span class="pill event-detail-status-pill">{eventStatus}</span>}
-              {event.familyFriendly && <span class="pill pill-family">Družinam prijazno</span>}
+              {event.familyFriendly && <span class="pill pill-family">Family-friendly</span>}
             </div>
           </div>
         </section>
 
-        <section class="section container event-detail-section" aria-label="Podrobnosti teka">
+        <section class="section container event-detail-section" aria-label="Race details">
           <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date}>
             <div class="event-detail-main-column">
               <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
-                <div class="event-detail-summary-grid" aria-label="Kratek povzetek teka">
+                <h2><span aria-hidden="true">⚡</span> Quick facts</h2>
+                <div class="event-detail-summary-grid" aria-label="Short race summary">
                   {detailItems.map((item) => (
                     <div class="event-detail-summary-item">
                       <span class="event-detail-summary-icon" aria-hidden="true">{item.icon}</span>
@@ -251,7 +256,7 @@ const jsonLd = event ? {
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🎟</span> Prijava in stroški</h2>
+                <h2><span aria-hidden="true">🎟</span> Registration and fees</h2>
                 {registrationItems.length > 0 ? (
                   <dl class="event-detail-list">
                     {registrationItems.map((item) => (
@@ -261,58 +266,58 @@ const jsonLd = event ? {
                       </div>
                     ))}
                   </dl>
-                ) : <p>Podatki o startnini in prijavnih rokih trenutno niso dodani.</p>}
+                ) : <p>Entry fee and registration deadline details are not listed yet.</p>}
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🗺</span> Trasa</h2>
+                <h2><span aria-hidden="true">🗺</span> Course</h2>
                 {routeItems.length > 0 ? (
                   <dl class="event-detail-list">
                     {routeItems.map((item) => (
                       <div>
                         <dt>{item.label}</dt>
-                        <dd>{item.label === 'GPX / zemljevid' ? <a class="button button-small button-secondary-light event-detail-inline-action event-detail-icon-button" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa" aria-label="Odpri GPX ali zemljevid trase"><span aria-hidden="true">🗺</span></a> : item.value}</dd>
+                        <dd>{item.label === 'GPX / map' ? <a class="button button-small button-secondary-light event-detail-inline-action event-detail-icon-button" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa" aria-label="Open GPX or course map"><span aria-hidden="true">🗺</span></a> : item.value}</dd>
                       </div>
                     ))}
                   </dl>
-                ) : <p>Trasa še ni dodana. Organizator lahko pošlje GPX ali povezavo do trase.</p>}
+                ) : <p>Course details are not listed yet. The organizer can send a GPX file or course link.</p>}
               </article>
 
               <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">ℹ️</span> Opombe in vir</h2>
-                {event.publicNotes ? <p>{event.publicNotes}</p> : <p>Javne opombe niso dodane.</p>}
-                <p class="data-note">Koledar je informativen. Pred prijavo vedno preverite uradne informacije organizatorja.</p>
-                {event.noticeUrl && <p class="data-note">Vir: uradni razpis organizatorja.</p>}
+                <h2><span aria-hidden="true">ℹ️</span> Notes and source</h2>
+                {event.publicNotes ? <p>{formatEnglishPublicNotes(event.publicNotes)}</p> : <p>Public notes are not listed.</p>}
+                <p class="data-note">The calendar is informative. Always check the organizer's official information before registering.</p>
+                {event.noticeUrl && <p class="data-note">Source: organizer's official notice.</p>}
               </article>
             </div>
 
-            <aside class="info-card event-detail-action-panel" aria-label="Glavne povezave">
+            <aside class="info-card event-detail-action-panel" aria-label="Main links">
               <div>
-                <h2>Glavne povezave</h2>
+                <h2>Main links</h2>
                 <div class="event-detail-action-list">
-                  {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>}
-                  {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>}
-                  {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>}
+                  {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Official notice</span></a>}
+                  {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>}
+                  {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Vote for ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>}
                 </div>
               </div>
 
               <div class="event-detail-organizer-panel">
-                <h2>Ste organizator tega teka?</h2>
-                <p>Pomagajte, da bodo podatki točni in privlačni.</p>
+                <h2>Are you the organizer of this race?</h2>
+                <p>Help keep the race details accurate and useful.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-secondary-light" href={correctionUrl}>Predlagaj popravek ali dopolnitev</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl}>Suggest a correction or update</a>
                 </div>
               </div>
 
               {shareLinks && (
                 <div class="event-detail-share-panel">
-                  <h2>Deli tek</h2>
-                  <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
+                  <h2>Share race</h2>
+                  <div class="event-detail-share-options" aria-label="Sharing options">
+                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Copy link"><span aria-hidden="true">🔗</span></button>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><span aria-hidden="true">f</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"><span aria-hidden="true">WA</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Share on X"><span aria-hidden="true">𝕏</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} aria-label="Send by email"><span aria-hidden="true">✉</span></a>
                   </div>
                   <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
                 </div>
@@ -320,32 +325,32 @@ const jsonLd = event ? {
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
-                  <h2>Dodaj v svoj koledar</h2>
+                  <h2>Add to your calendar</h2>
                   <div class="event-detail-calendar-actions">
-                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span></a>}
-                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span></a>}
-                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span></a>}
+                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Add to Google Calendar"><span aria-hidden="true">G</span></a>}
+                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download iCal file"><span aria-hidden="true"></span></a>}
+                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Add to Outlook"><span aria-hidden="true">O</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download Outlook iCal file"><span aria-hidden="true">O</span></a>}
                   </div>
                 </div>
               )}
 
               {locationUrl && (
                 <div class="event-detail-location-panel">
-                  <h2>Lokacija</h2>
-                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" aria-label="Odpri lokacijo"><span aria-hidden="true">📍</span></a>
+                  <h2>Location</h2>
+                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" aria-label="Open location"><span aria-hidden="true">📍</span></a>
                 </div>
               )}
             </aside>
           </div>
-          <p class="event-detail-back"><a class="button button-secondary-light" href={searchPath}>Nazaj na iskalnik tekov</a></p>
+          <p class="event-detail-back"><a class="button button-secondary-light" href={searchPath}>Back to race finder</a></p>
         </section>
       </>
     ) : (
       <section class="page-hero container" aria-labelledby="event-not-found-title">
-        <span class="eyebrow">Tek ni najden</span>
-        <h1 id="event-not-found-title">Tega teka ne moremo prikazati</h1>
-        <p>Dogodek ne obstaja, ni javno objavljen ali pa povezava ni pravilna. Podatkov za drugo leto ne prikazujemo pod tem URL-jem.</p>
-        <a class="button button-primary" href={searchPath}>Nazaj na iskalnik tekov</a>
+        <span class="eyebrow">Race not found</span>
+        <h1 id="event-not-found-title">We cannot show this race</h1>
+        <p>The race does not exist, is not public, or the link is incorrect. Data for another year is not shown under this URL.</p>
+        <a class="button button-primary" href={searchPath}>Back to race finder</a>
       </section>
     )}
   </main>
@@ -385,9 +390,9 @@ const jsonLd = event ? {
       const shareUrl = copyButton.getAttribute('data-copy-share-url') || window.location.href;
       try {
         await copyWithFallback(shareUrl);
-        setShareFeedback('Povezava kopirana.');
+        setShareFeedback('Link copied.');
       } catch {
-        setShareFeedback('Povezave ni bilo mogoče kopirati.');
+        setShareFeedback('Could not copy the link.');
       }
     });
   });
