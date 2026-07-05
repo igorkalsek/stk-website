@@ -187,6 +187,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
+  import { buildEventDetailPath } from '../utils-event-detail';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
 
@@ -399,36 +400,50 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const normalizedText = (value: unknown) =>
-    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+    String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/\s*-\s*/g, ' - ')
+      .replace(/\s+/g, ' ');
 
-  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
-    const topValue = normalizedText(getFieldValue(topEvent, key));
-    const masterValue = normalizedText(getFieldValue(masterEvent, key));
-    return Boolean(topValue && masterValue && topValue === masterValue);
+  const eventNaturalParts = (event: ApiRecord) => {
+    const date = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
+    const title = getDisplayEventTitle(getTopEventTitle(event));
+    const place = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'place', 'city', 'location', 'Kraj']);
+    const explicitYear = pickPath(event, ['year', 'event.year', 'race.year', 'data.year', 'leto', 'event.leto'], '');
+    const dateYear = date.match(/^(\d{4})-/)?.[1] ?? '';
+
+    return {
+      year: /^\d{4}$/.test(explicitYear) ? explicitYear : dateYear || '2026',
+      date,
+      title,
+      place
+    };
   };
 
-  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
-    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
-      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
-    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
-    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
-    return rowScore + matchingFields;
+  const eventNaturalKey = (event: ApiRecord) => {
+    const { year, date, title, place } = eventNaturalParts(event);
+    return [year, date, title, place]
+      .map((part) => normalizedText(part))
+      .filter(Boolean)
+      .join('|');
   };
 
-  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
-    let bestMatch: ApiRecord | null = null;
-    let bestScore = 0;
+  const masterMatchesNaturalEvent = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const topParts = eventNaturalParts(topEvent);
+    const masterParts = eventNaturalParts(masterEvent);
+    if (!normalizedText(topParts.year) || normalizedText(topParts.year) !== normalizedText(masterParts.year)) return false;
+    if (!normalizedText(topParts.date) || normalizedText(topParts.date) !== normalizedText(masterParts.date)) return false;
+    if (!normalizedText(topParts.title) || normalizedText(topParts.title) !== normalizedText(masterParts.title)) return false;
 
-    for (const masterEvent of masterRows) {
-      const score = matchScore(topEvent, masterEvent);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = masterEvent;
-      }
-    }
-
-    return bestScore >= 3 ? bestMatch : null;
+    const topPlace = normalizedText(topParts.place);
+    const masterPlace = normalizedText(masterParts.place);
+    return !topPlace || !masterPlace || topPlace === masterPlace;
   };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) =>
+    masterRows.find((masterEvent) => masterMatchesNaturalEvent(topEvent, masterEvent)) ?? null;
 
   const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
     if (!isMissing(target[key])) return false;
@@ -446,6 +461,7 @@ import SocialLinks from '../components/SocialLinks.astro';
     enriched.__master_matched = Boolean(match);
     enriched.__matched_master_row = match ? rowKey(match) : '';
     enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__canonical_master_event = match ?? undefined;
     enriched.__vote_url_title = voteUrlTitle;
     enriched.__title_source = topTitle !== 'Naziv teka ni na voljo' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
 
@@ -778,23 +794,38 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const eventRowKey = (event: ApiRecord) => {
+    const matchedMasterRow = pick(event, ['__matched_master_row']);
+    if (matchedMasterRow) return matchedMasterRow;
+
     const row = rowKey(event);
     if (row) return row;
 
     return pick(event, ['master_row', 'masterRow', 'master row']);
   };
 
-  const eventIdentity = (event: ApiRecord) => {
-    const row = eventRowKey(event);
-    if (row) return `row:${row}`;
+  const getEventYear = (event: ApiRecord) => {
+    const explicitYear = getEventField(event, 'year', ['leto']);
+    if (/^\d{4}$/.test(explicitYear)) return explicitYear;
 
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-    const place = getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj']);
-    return [date, getDisplayEventTitle(getEventTitle(event)), place]
-      .map((part) => normalizedText(part))
-      .filter(Boolean)
-      .join('|');
+    const dateYear = date.match(/^(\d{4})-/)?.[1];
+    return dateYear || '2026';
   };
+
+  const detailEventData = (event: ApiRecord) => ({
+    year: getEventYear(event),
+    row: eventRowKey(event),
+    date: getEventField(event, 'datum', ['date', 'event_date', 'Datum']),
+    title: getDisplayEventTitle(getEventTitle(event)),
+    naziv_prireditve: getEventTitle(event),
+    place: getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj'])
+  });
+
+  const canonicalDetailEvent = (event: ApiRecord) => asRecord(event.__canonical_master_event) ?? event;
+
+  const eventDetailPath = (event: ApiRecord) => buildEventDetailPath(detailEventData(canonicalDetailEvent(event)));
+
+  const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
 
   const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
@@ -901,7 +932,8 @@ import SocialLinks from '../components/SocialLinks.astro';
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
       const votes = getHeroPreviewVotes(event);
       const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
+      const detailPath = eventDetailPath(event);
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</a>${voteCount}</strong></li>`;
     }).join('');
   };
 
@@ -1057,7 +1089,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         <div class="registration-deadlines-line">
           <time datetime="${escapeHtml(item.deadlineDate)}">${escapeHtml(deadlineBadge)}</time>
           <span aria-hidden="true">·</span>
-          <strong>${escapeHtml(item.title)}</strong>
+          <strong><a href="${escapeHtml(eventDetailPath(item.event))}">${escapeHtml(item.title)}</a></strong>
           ${price ? `<span class="registration-price-chip">${escapeHtml(price)}</span>` : ''}
         </div>
         <p>${escapeHtml(label)}</p>
@@ -1163,7 +1195,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <article class="event-card">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3>${escapeHtml(title)}</h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
             ${links ? `<div class="event-actions">${links}</div>` : ''}
@@ -1254,7 +1286,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <article class="event-card">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3>${escapeHtml(title)}</h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
             ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
