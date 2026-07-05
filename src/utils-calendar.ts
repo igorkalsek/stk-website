@@ -35,8 +35,8 @@ const EVENT_DETAILS = {
     registration: 'Prijava:'
   },
   en: {
-    intro: 'Added from the Slovenian Race Calendar. Before registering, always check the official race announcement or the organiser’s website.',
-    notice: 'Official info:',
+    intro: 'Added from Slovenski Tekaški Koledar. Before registering, check the official race announcement or the organizer’s website.',
+    notice: 'Official notice:',
     registration: 'Registration:'
   }
 } as const;

@@ -73,10 +73,10 @@ const formatStartTime = (value: string) => {
 };
 const formatSurface = formatEnglishSurface;
 const calendarOptions = event ? {
-  googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
-  icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
+  googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
+  icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
   icsFilename: buildIcsFilename({ title: event.title, date: event.date }),
-  outlookUrl: buildOutlookCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl })
+  outlookUrl: buildOutlookCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' })
 } : null;
 const voteUrl = event?.voteUrl && isVoteUrlSafeForEvent(event, event.voteUrl).safe ? event.voteUrl : '';
 const description = event
