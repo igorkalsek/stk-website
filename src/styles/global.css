@@ -350,6 +350,17 @@ main {
   line-height: 1.25;
 }
 
+.hero-preview-list strong a {
+  color: inherit;
+  text-decoration-color: rgba(243, 251, 244, 0.45);
+  text-underline-offset: 0.14em;
+}
+
+.hero-preview-list strong a:hover,
+.hero-preview-list strong a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .hero-preview-votes {
   color: rgba(243, 251, 244, 0.72);
   font-size: 0.82rem;
@@ -626,6 +637,17 @@ main {
   font-weight: 850;
 }
 
+.registration-deadlines-line strong a {
+  color: inherit;
+  text-decoration-color: rgba(16, 64, 80, 0.3);
+  text-underline-offset: 0.14em;
+}
+
+.registration-deadlines-line strong a:hover,
+.registration-deadlines-line strong a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .registration-deadlines-item p {
   margin: 0;
   color: var(--muted);
@@ -790,6 +812,17 @@ main {
 
 .event-card h3 {
   line-height: 1.18;
+}
+
+.event-card h3 a {
+  color: inherit;
+  text-decoration-color: rgba(16, 64, 80, 0.28);
+  text-underline-offset: 0.14em;
+}
+
+.event-card h3 a:hover,
+.event-card h3 a:focus-visible {
+  text-decoration-color: currentColor;
 }
 
 .event-card .event-actions {
