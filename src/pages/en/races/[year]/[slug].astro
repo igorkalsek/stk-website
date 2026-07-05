@@ -7,6 +7,7 @@ import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YE
 import { formatSloveneDistances } from '../../../../utils-slovenian';
 import { formatEnglishSurface } from '../../../../utils-english';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
+import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
@@ -86,6 +87,7 @@ const title = event ? `${event.title} | Run Slovenia Race Calendar` : 'Race not 
 const canonicalPath = event ? buildEnglishEventDetailPath(event) : `/en/find-races/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/';
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
+const copyDescription = event ? buildRaceCopyDescription({ event, language: 'en', formatDate }) : '';
 const shareUrl = event ? new URL(buildEnglishEventDetailPath(event), canonicalOrigin).href : '';
 const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
@@ -312,6 +314,7 @@ const jsonLd = event ? {
               {shareLinks && (
                 <div class="event-detail-share-panel">
                   <h2>Share race</h2>
+                  <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription}>Copy description</button>
                   <div class="event-detail-share-options" aria-label="Sharing options">
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Copy link"><span aria-hidden="true">🔗</span></button>
                     <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><span aria-hidden="true">f</span></a>
@@ -357,7 +360,8 @@ const jsonLd = event ? {
 </BaseLayout>
 
 <script>
-  const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
+  const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
+  const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
 
   const setShareFeedback = (message: string) => {
@@ -385,7 +389,7 @@ const jsonLd = event ? {
     return true;
   };
 
-  copyButtons.forEach((copyButton) => {
+  copyLinkButtons.forEach((copyButton) => {
     copyButton.addEventListener('click', async () => {
       const shareUrl = copyButton.getAttribute('data-copy-share-url') || window.location.href;
       try {
@@ -393,6 +397,18 @@ const jsonLd = event ? {
         setShareFeedback('Link copied.');
       } catch {
         setShareFeedback('Could not copy the link.');
+      }
+    });
+  });
+
+  copyTextButtons.forEach((copyButton) => {
+    copyButton.addEventListener('click', async () => {
+      const shareText = copyButton.getAttribute('data-copy-share-text') || '';
+      try {
+        await copyWithFallback(shareText);
+        setShareFeedback('Copied.');
+      } catch {
+        setShareFeedback('Could not copy the description.');
       }
     });
   });

@@ -6,6 +6,7 @@ import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../utils-public-year';
 import { formatSloveneDistances } from '../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../utils-vote';
+import { buildRaceCopyDescription } from '../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../utils-site-url';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
@@ -85,6 +86,7 @@ const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni na
 const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
+const copyDescription = event ? buildRaceCopyDescription({ event, language: 'sl', formatDate }) : '';
 const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
 const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
 const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/');
@@ -307,6 +309,7 @@ const jsonLd = event ? {
               {shareLinks && (
                 <div class="event-detail-share-panel">
                   <h2>Deli tek</h2>
+                  <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription}>Kopiraj opis</button>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
                     <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
@@ -352,7 +355,8 @@ const jsonLd = event ? {
 </BaseLayout>
 
 <script>
-  const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
+  const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
+  const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
 
   const setShareFeedback = (message: string) => {
@@ -380,7 +384,7 @@ const jsonLd = event ? {
     return true;
   };
 
-  copyButtons.forEach((copyButton) => {
+  copyLinkButtons.forEach((copyButton) => {
     copyButton.addEventListener('click', async () => {
       const shareUrl = copyButton.getAttribute('data-copy-share-url') || window.location.href;
       try {
@@ -388,6 +392,18 @@ const jsonLd = event ? {
         setShareFeedback('Povezava kopirana.');
       } catch {
         setShareFeedback('Povezave ni bilo mogoče kopirati.');
+      }
+    });
+  });
+
+  copyTextButtons.forEach((copyButton) => {
+    copyButton.addEventListener('click', async () => {
+      const shareText = copyButton.getAttribute('data-copy-share-text') || '';
+      try {
+        await copyWithFallback(shareText);
+        setShareFeedback('Kopirano.');
+      } catch {
+        setShareFeedback('Opisa ni bilo mogoče kopirati.');
       }
     });
   });
