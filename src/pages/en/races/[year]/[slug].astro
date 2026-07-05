@@ -5,7 +5,7 @@ import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOu
 import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMatchesEvent, toApiRecords, type PublicRaceEvent } from '../../../../utils-event-detail';
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
 import { formatSloveneDistances } from '../../../../utils-slovenian';
-import { formatEnglishSurface } from '../../../../utils-english';
+import { formatEnglishPublicNotes, formatEnglishSurface } from '../../../../utils-english';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
@@ -156,10 +156,6 @@ const formatYesNo = (value: string) => {
   if (['ne', 'no', 'false'].includes(normalized)) return 'No';
   return value.trim();
 };
-const formatEnglishPublicNotes = (value: string) => value
-  .replace(/družinam prijazno:/giu, 'Family-friendly:')
-  .replace(/otroški teki brezplačni/giu, 'children’s races are free')
-  .replace(/otroški teki/giu, 'children’s races');
 const detailItems = event ? [
   { icon: '📅', label: 'Date', value: formatDate(event.date) },
   { icon: '📍', label: 'Location', value: [event.place, event.region].filter(Boolean).join(' · ') },
