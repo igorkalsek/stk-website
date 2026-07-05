@@ -15,7 +15,7 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
         Najbolj pomaga povezava do uradnega vira.
       </p>
       <div class="cta-row">
-        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
+        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link>
           Oddajte predlog ali popravek
         </a>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Najprej preverite koledar</a>
@@ -115,7 +115,7 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
           preverite koledar in priložite zanesljiv vir.
         </p>
         <div class="cta-row">
-          <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer">
+          <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link>
             Oddajte predlog ali popravek
           </a>
           <a class="button button-secondary" href="/iskalnik-tekov/">Najprej preverite koledar</a>
@@ -238,6 +238,7 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
   const contextTitle = document.querySelector('[data-correction-context-title]');
   const contextMeta = document.querySelector('[data-correction-context-meta]');
   const contextReturn = document.querySelector('[data-correction-context-return]');
+  const correctionFormLinks = document.querySelectorAll<HTMLAnchorElement>('[data-correction-form-link]');
 
   const params = new URLSearchParams(window.location.search);
   const eventTitle = params.get('event')?.trim() ?? '';
@@ -253,6 +254,49 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
 
     contextPanel.dataset.correctionSource = source;
 
+    const buildPrefillDescription = () => {
+      const lines = language === 'en'
+        ? ['Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
+        : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
+
+      const details = language === 'en'
+        ? [
+            ['Race', eventTitle],
+            ['Date', date],
+            ['Place', place],
+            ['Race page', isSafeReturnUrl ? returnUrl : '']
+          ]
+        : [
+            ['Tek', eventTitle],
+            ['Datum', date],
+            ['Kraj', place],
+            ['Stran teka', isSafeReturnUrl ? returnUrl : '']
+          ];
+
+      for (const [label, value] of details) {
+        if (value) lines.push(`${label}: ${value}`);
+      }
+
+      lines.push('');
+      lines.push(language === 'en'
+        ? 'Please add below which detail should be corrected or updated.'
+        : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
+
+      return lines.join('\n');
+    };
+
+    const buildPrefilledFormUrl = (baseUrl: string) => {
+      const formUrl = new URL(baseUrl);
+      formUrl.searchParams.set('usp', 'pp_url');
+      formUrl.searchParams.set('entry.1029369192', 'Popravek obstoječega vnosa v koledarju');
+      formUrl.searchParams.set('entry.1001315624', date);
+      formUrl.searchParams.set('entry.528776717', eventTitle);
+      formUrl.searchParams.set('entry.2041922472', place);
+      formUrl.searchParams.set('entry.1582791574', 'Ne vem / nisem prepričan (navedem v opisu)');
+      formUrl.searchParams.set('entry.1306192166', buildPrefillDescription());
+      return formUrl.href;
+    };
+
     const formatDate = (value: string) => {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
       return new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', {
@@ -261,6 +305,10 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
         year: 'numeric'
       }).format(new Date(`${value}T00:00:00`));
     };
+
+    for (const link of correctionFormLinks) {
+      link.href = buildPrefilledFormUrl(link.href);
+    }
 
     contextPanel.hidden = false;
 
