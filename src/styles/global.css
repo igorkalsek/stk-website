@@ -2467,6 +2467,11 @@ main {
   width: 100%;
 }
 
+.event-detail-copy-description-button {
+  justify-content: center;
+  width: 100%;
+}
+
 .event-detail-location-panel {
   border-top: 1px solid rgba(16, 64, 80, 0.12);
   padding-top: 1rem;
