@@ -88,7 +88,19 @@ const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-t
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
 const copyDescription = event ? buildRaceCopyDescription({ event, language: 'sl', formatDate }) : '';
 const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
-const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
+const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl: string) => {
+  const params = new URLSearchParams({
+    event: event.title,
+    year: event.year,
+    date: event.date ?? '',
+    place: event.place ?? '',
+    source: 'detail',
+    lang: language,
+    returnUrl
+  });
+  return `/dodaj-ali-popravi-tek/?${params.toString()}`;
+};
+const correctionUrl = event ? buildCorrectionUrl(event, 'sl', shareUrl) : '/dodaj-ali-popravi-tek/';
 const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/');
 
 const getDateStatus = (value: string) => {
@@ -300,7 +312,7 @@ const jsonLd = event ? {
 
               <div class="event-detail-organizer-panel">
                 <h2>Ste organizator tega teka?</h2>
-                <p>Pomagajte, da bodo podatki točni in privlačni.</p>
+                <p>Pomagajte tekačem najti točne podatke. Sporočite popravek razpisa, prijave, trase, startnine, otroških tekov ali drugih informacij.</p>
                 <div class="event-detail-organizer-actions">
                   <a class="button button-small button-secondary-light" href={correctionUrl}>Predlagaj popravek ali dopolnitev</a>
                 </div>

@@ -89,7 +89,19 @@ const searchPath = year === '2027' ? '/en/find-races/?year=2027' : '/en/find-rac
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
 const copyDescription = event ? buildRaceCopyDescription({ event, language: 'en', formatDate }) : '';
 const shareUrl = event ? new URL(buildEnglishEventDetailPath(event), canonicalOrigin).href : '';
-const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
+const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl: string) => {
+  const params = new URLSearchParams({
+    event: event.title,
+    year: event.year,
+    date: event.date ?? '',
+    place: event.place ?? '',
+    source: 'detail',
+    lang: language,
+    returnUrl
+  });
+  return `/dodaj-ali-popravi-tek/?${params.toString()}`;
+};
+const correctionUrl = event ? buildCorrectionUrl(event, 'en', shareUrl) : '/dodaj-ali-popravi-tek/';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
 const getDateStatus = (value: string) => {
@@ -301,9 +313,9 @@ const jsonLd = event ? {
 
               <div class="event-detail-organizer-panel">
                 <h2>Are you the organizer of this race?</h2>
-                <p>Help keep the race details accurate and useful.</p>
+                <p>Help runners find accurate information. Send an update for the official notice, registration, course, entry fees, children’s races or other race details.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-secondary-light" href={correctionUrl}>Suggest a correction or update</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl}>Suggest an update or correction</a>
                 </div>
               </div>
 
