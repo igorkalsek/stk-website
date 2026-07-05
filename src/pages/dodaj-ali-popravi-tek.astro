@@ -2,6 +2,69 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform';
+const params = Astro.url.searchParams;
+const correctionContext = {
+  event: params.get('event')?.trim() ?? '',
+  year: params.get('year')?.trim() ?? '',
+  date: params.get('date')?.trim() ?? '',
+  place: params.get('place')?.trim() ?? '',
+  source: params.get('source')?.trim() ?? '',
+  lang: params.get('lang') === 'en' ? 'en' : 'sl',
+  returnUrl: params.get('returnUrl')?.trim() ?? ''
+};
+const hasCorrectionContext = Boolean(correctionContext.event);
+const isSafeReturnUrl = (value: string) =>
+  (value.startsWith('/') && !value.startsWith('//')) || value.startsWith('https://') || value.startsWith('http://');
+const safeReturnUrl = isSafeReturnUrl(correctionContext.returnUrl) ? correctionContext.returnUrl : '';
+const buildPrefillDescription = () => {
+  const lines = correctionContext.lang === 'en'
+    ? ['Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
+    : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
+  const details = correctionContext.lang === 'en'
+    ? [
+        ['Race', correctionContext.event],
+        ['Date', correctionContext.date],
+        ['Place', correctionContext.place],
+        ['Race page', safeReturnUrl]
+      ]
+    : [
+        ['Tek', correctionContext.event],
+        ['Datum', correctionContext.date],
+        ['Kraj', correctionContext.place],
+        ['Stran teka', safeReturnUrl]
+      ];
+  for (const [label, value] of details) {
+    if (value) lines.push(`${label}: ${value}`);
+  }
+  lines.push('');
+  lines.push(correctionContext.lang === 'en'
+    ? 'Please add below which detail should be corrected or updated.'
+    : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
+  return lines.join('\n');
+};
+const buildPrefilledFormUrl = () => {
+  const url = new URL(formUrl);
+  url.searchParams.set('usp', 'pp_url');
+  url.searchParams.set('entry.1029369192', 'Popravek obstoječega vnosa v koledarju');
+  url.searchParams.set('entry.1001315624', correctionContext.date);
+  url.searchParams.set('entry.528776717', correctionContext.event);
+  url.searchParams.set('entry.2041922472', correctionContext.place);
+  url.searchParams.set('entry.1582791574', 'Ne vem / nisem prepričan (navedem v opisu)');
+  url.searchParams.set('entry.1306192166', buildPrefillDescription());
+  return url.href;
+};
+const resolvedFormUrl = hasCorrectionContext ? buildPrefilledFormUrl() : formUrl;
+const formatContextDate = (value: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  return new Intl.DateTimeFormat(correctionContext.lang === 'en' ? 'en-GB' : 'sl-SI', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date(`${value}T00:00:00`));
+};
+const correctionContextLabel = correctionContext.lang === 'en' ? 'Correction for selected race' : 'Popravek za izbrani tek';
+const correctionContextBackLabel = correctionContext.lang === 'en' ? 'Back to race page' : 'Nazaj na stran teka';
+const correctionContextMeta = [formatContextDate(correctionContext.date) || correctionContext.year, correctionContext.place].filter(Boolean).join(' · ');
 ---
 
 <BaseLayout title="Dodajte ali popravite tek" description="Predlagajte nov tek, popravek ali dopolnitev podatkov v Slovenskem Tekaškem Koledarju.">
@@ -15,19 +78,19 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
         Najbolj pomaga povezava do uradnega vira.
       </p>
       <div class="cta-row">
-        <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link>
+        <a class="button button-primary" href={resolvedFormUrl} target="_blank" rel="noopener noreferrer">
           Oddajte predlog ali popravek
         </a>
         <a class="button button-secondary-light" href="/iskalnik-tekov/">Najprej preverite koledar</a>
       </div>
     </section>
 
-    <section class="section container correction-context" data-correction-context hidden aria-live="polite">
+    <section class="section container correction-context" data-correction-context data-correction-source={correctionContext.source} hidden={!hasCorrectionContext} aria-live="polite">
       <article class="info-card correction-context-card">
-        <span class="eyebrow" data-correction-context-label>Popravek za izbrani tek</span>
-        <h2 data-correction-context-title></h2>
-        <p data-correction-context-meta></p>
-        <a class="correction-context-back" data-correction-context-return href="/iskalnik-tekov/">Nazaj na stran teka</a>
+        <span class="eyebrow" data-correction-context-label>{correctionContextLabel}</span>
+        <h2 data-correction-context-title>{correctionContext.event}</h2>
+        <p data-correction-context-meta hidden={!correctionContextMeta}>{correctionContextMeta}</p>
+        <a class="correction-context-back" data-correction-context-return href={safeReturnUrl || "/iskalnik-tekov/"} hidden={!safeReturnUrl}>{correctionContextBackLabel}</a>
       </article>
     </section>
 
@@ -115,7 +178,7 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
           preverite koledar in priložite zanesljiv vir.
         </p>
         <div class="cta-row">
-          <a class="button button-primary" href={formUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link>
+          <a class="button button-primary" href={resolvedFormUrl} target="_blank" rel="noopener noreferrer">
             Oddajte predlog ali popravek
           </a>
           <a class="button button-secondary" href="/iskalnik-tekov/">Najprej preverite koledar</a>
@@ -238,7 +301,6 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
   const contextTitle = document.querySelector('[data-correction-context-title]');
   const contextMeta = document.querySelector('[data-correction-context-meta]');
   const contextReturn = document.querySelector('[data-correction-context-return]');
-  const correctionFormLinks = document.querySelectorAll<HTMLAnchorElement>('[data-correction-form-link]');
 
   const params = new URLSearchParams(window.location.search);
   const eventTitle = params.get('event')?.trim() ?? '';
@@ -254,49 +316,6 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
 
     contextPanel.dataset.correctionSource = source;
 
-    const buildPrefillDescription = () => {
-      const lines = language === 'en'
-        ? ['Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
-        : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
-
-      const details = language === 'en'
-        ? [
-            ['Race', eventTitle],
-            ['Date', date],
-            ['Place', place],
-            ['Race page', isSafeReturnUrl ? returnUrl : '']
-          ]
-        : [
-            ['Tek', eventTitle],
-            ['Datum', date],
-            ['Kraj', place],
-            ['Stran teka', isSafeReturnUrl ? returnUrl : '']
-          ];
-
-      for (const [label, value] of details) {
-        if (value) lines.push(`${label}: ${value}`);
-      }
-
-      lines.push('');
-      lines.push(language === 'en'
-        ? 'Please add below which detail should be corrected or updated.'
-        : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
-
-      return lines.join('\n');
-    };
-
-    const buildPrefilledFormUrl = (baseUrl: string) => {
-      const formUrl = new URL(baseUrl);
-      formUrl.searchParams.set('usp', 'pp_url');
-      formUrl.searchParams.set('entry.1029369192', 'Popravek obstoječega vnosa v koledarju');
-      formUrl.searchParams.set('entry.1001315624', date);
-      formUrl.searchParams.set('entry.528776717', eventTitle);
-      formUrl.searchParams.set('entry.2041922472', place);
-      formUrl.searchParams.set('entry.1582791574', 'Ne vem / nisem prepričan (navedem v opisu)');
-      formUrl.searchParams.set('entry.1306192166', buildPrefillDescription());
-      return formUrl.href;
-    };
-
     const formatDate = (value: string) => {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
       return new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', {
@@ -306,9 +325,6 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
       }).format(new Date(`${value}T00:00:00`));
     };
 
-    for (const link of correctionFormLinks) {
-      link.href = buildPrefilledFormUrl(link.href);
-    }
 
     contextPanel.hidden = false;
 
