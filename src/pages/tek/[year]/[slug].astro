@@ -79,13 +79,14 @@ const calendarOptions = event ? {
 } : null;
 const voteUrl = event?.voteUrl && isVoteUrlSafeForEvent(event, event.voteUrl).safe ? event.voteUrl : '';
 const description = event
-  ? `${event.title}: ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}${event.region ? ` (${event.region})` : ''}${event.distances ? `. Razdalje: ${formatSloveneDistances(event.distances)}.` : '.'}`
+  ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. Razdalje: ${event.distances ? formatSloveneDistances(event.distances) : 'niso dodane'}. Podrobnosti, razpis, prijava in koledar na Slovenskem Tekaškem Koledarju.`
   : 'Podrobnosti teka trenutno niso na voljo. Preverite iskalnik tekov.';
 const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni najden | Slovenski Tekaški Koledar';
 const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
 const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
 const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
+const correctionUrl = event ? `/dodaj-ali-popravi-tek/?event=${encodeURIComponent(event.title)}&year=${encodeURIComponent(event.year)}` : '/dodaj-ali-popravi-tek/';
 
 const getDateStatus = (value: string) => {
   const eventTime = new Date(`${value}T00:00:00`).getTime();
@@ -118,6 +119,12 @@ const shareLinks = shareUrl ? {
   twitter: `https://twitter.com/intent/tweet?text=${encodedShareText}`,
   email: `mailto:?subject=${encodedShareTitle}&body=${encodedShareText}`
 } : null;
+
+const parseRegistrationAmount = (value: string) => {
+  if (!value) return null;
+  const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
+  return Number.isFinite(amount) ? amount : null;
+};
 
 const heroBadges = event ? [
   event.surface ? { label: 'Podlaga', value: formatSurface(event.surface) } : null,
@@ -164,15 +171,49 @@ const routeItems = event?.additionalData ? [
   { label: 'GPX / zemljevid', value: event.additionalData.routeUrl },
   { label: 'Višinski metri', value: event.additionalData.elevationGain ? `${event.additionalData.elevationGain.trim()} m+` : '' }
 ].filter((item) => hasText(item.value)) : [];
+const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
+const jsonLd = event ? {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: event.title,
+  startDate: event.date,
+  endDate: event.date,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  ...(event.place ? {
+    location: {
+      '@type': 'Place',
+      name: event.place,
+      address: [event.place, event.region, 'Slovenija'].filter(Boolean).join(', ')
+    }
+  } : {}),
+  url: shareUrl,
+  description,
+  ...(offerPrice !== null ? {
+    offers: {
+      '@type': 'Offer',
+      price: offerPrice,
+      priceCurrency: 'EUR',
+      url: event.registrationUrl || event.noticeUrl || shareUrl,
+      availability: 'https://schema.org/InStock'
+    }
+  } : {})
+} : null;
 
 ---
 
 <BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined}>
+  {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   <main>
     {event ? (
       <>
         <section class="section container event-detail-top-section" aria-labelledby="event-detail-title">
           <div class="event-detail-profile-hero">
+            <nav class="event-detail-breadcrumb" aria-label="Navigacija">
+              <a href={searchPath}>Iskalnik tekov</a>
+              <span aria-hidden="true">›</span>
+              <span>{event.title}</span>
+            </nav>
             <span class="eyebrow">Profil teka · {year}</span>
             <h1 id="event-detail-title">{event.title}</h1>
             <p class="event-detail-date-line">
@@ -232,7 +273,7 @@ const routeItems = event?.additionalData ? [
                       </div>
                     ))}
                   </dl>
-                ) : <p>GPX, zemljevid ali višinski metri trenutno niso dodani.</p>}
+                ) : <p>Trasa še ni dodana. Organizator lahko pošlje GPX ali povezavo do trase.</p>}
               </article>
 
               <article class="info-card event-detail-panel">
@@ -250,6 +291,15 @@ const routeItems = event?.additionalData ? [
                   {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>}
                   {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>}
                   {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>}
+                </div>
+              </div>
+
+              <div class="event-detail-organizer-panel">
+                <h2>Ste organizator tega teka?</h2>
+                <p>Pomagajte, da bodo podatki točni in privlačni.</p>
+                <div class="event-detail-organizer-actions">
+                  <a class="button button-small button-secondary-light" href={correctionUrl}>Predlagaj popravek</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl}>Dodaj razpis/prijavo/trase</a>
                 </div>
               </div>
 

@@ -2466,3 +2466,38 @@ main {
   display: inline-flex;
   margin-top: 0.25rem;
 }
+
+.event-detail-breadcrumb {
+  align-items: center;
+  color: rgba(255, 255, 255, 0.78);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.event-detail-breadcrumb a {
+  color: #fff;
+  font-weight: 700;
+}
+
+.event-detail-organizer-panel {
+  background: rgba(16, 64, 80, 0.06);
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 18px;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.event-detail-organizer-panel h2,
+.event-detail-organizer-panel p {
+  margin: 0;
+}
+
+.event-detail-organizer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
