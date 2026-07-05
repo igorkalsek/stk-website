@@ -400,36 +400,50 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const normalizedText = (value: unknown) =>
-    String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+    String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/\s*-\s*/g, ' - ')
+      .replace(/\s+/g, ' ');
 
-  const fieldMatches = (topEvent: ApiRecord, masterEvent: ApiRecord, key: string) => {
-    const topValue = normalizedText(getFieldValue(topEvent, key));
-    const masterValue = normalizedText(getFieldValue(masterEvent, key));
-    return Boolean(topValue && masterValue && topValue === masterValue);
+  const eventNaturalParts = (event: ApiRecord) => {
+    const date = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
+    const title = getDisplayEventTitle(getTopEventTitle(event));
+    const place = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'place', 'city', 'location', 'Kraj']);
+    const explicitYear = pickPath(event, ['year', 'event.year', 'race.year', 'data.year', 'leto', 'event.leto'], '');
+    const dateYear = date.match(/^(\d{4})-/)?.[1] ?? '';
+
+    return {
+      year: /^\d{4}$/.test(explicitYear) ? explicitYear : dateYear || '2026',
+      date,
+      title,
+      place
+    };
   };
 
-  const matchScore = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
-    const matchingFields = ['datum', 'kraj', 'regija', 'razdalje_km']
-      .filter((key) => fieldMatches(topEvent, masterEvent, key)).length;
-    const rowMatches = rowKey(topEvent) && rowKey(topEvent) === rowKey(masterEvent);
-    const rowScore = rowMatches && matchingFields > 0 ? 2 : 0;
-    return rowScore + matchingFields;
+  const eventNaturalKey = (event: ApiRecord) => {
+    const { year, date, title, place } = eventNaturalParts(event);
+    return [year, date, title, place]
+      .map((part) => normalizedText(part))
+      .filter(Boolean)
+      .join('|');
   };
 
-  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) => {
-    let bestMatch: ApiRecord | null = null;
-    let bestScore = 0;
+  const masterMatchesNaturalEvent = (topEvent: ApiRecord, masterEvent: ApiRecord) => {
+    const topParts = eventNaturalParts(topEvent);
+    const masterParts = eventNaturalParts(masterEvent);
+    if (!normalizedText(topParts.year) || normalizedText(topParts.year) !== normalizedText(masterParts.year)) return false;
+    if (!normalizedText(topParts.date) || normalizedText(topParts.date) !== normalizedText(masterParts.date)) return false;
+    if (!normalizedText(topParts.title) || normalizedText(topParts.title) !== normalizedText(masterParts.title)) return false;
 
-    for (const masterEvent of masterRows) {
-      const score = matchScore(topEvent, masterEvent);
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = masterEvent;
-      }
-    }
-
-    return bestScore >= 3 ? bestMatch : null;
+    const topPlace = normalizedText(topParts.place);
+    const masterPlace = normalizedText(masterParts.place);
+    return !topPlace || !masterPlace || topPlace === masterPlace;
   };
+
+  const findMasterMatch = (topEvent: ApiRecord, masterRows: ApiRecord[]) =>
+    masterRows.find((masterEvent) => masterMatchesNaturalEvent(topEvent, masterEvent)) ?? null;
 
   const copyIfMissing = (target: ApiRecord, source: ApiRecord, key: string) => {
     if (!isMissing(target[key])) return false;
@@ -447,6 +461,7 @@ import SocialLinks from '../components/SocialLinks.astro';
     enriched.__master_matched = Boolean(match);
     enriched.__matched_master_row = match ? rowKey(match) : '';
     enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__canonical_master_event = match ?? undefined;
     enriched.__vote_url_title = voteUrlTitle;
     enriched.__title_source = topTitle !== 'Naziv teka ni na voljo' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
 
@@ -779,10 +794,13 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const eventRowKey = (event: ApiRecord) => {
+    const matchedMasterRow = pick(event, ['__matched_master_row']);
+    if (matchedMasterRow) return matchedMasterRow;
+
     const row = rowKey(event);
     if (row) return row;
 
-    return pick(event, ['__matched_master_row', 'master_row', 'masterRow', 'master row']);
+    return pick(event, ['master_row', 'masterRow', 'master row']);
   };
 
   const getEventYear = (event: ApiRecord) => {
@@ -803,19 +821,11 @@ import SocialLinks from '../components/SocialLinks.astro';
     place: getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj'])
   });
 
-  const eventDetailPath = (event: ApiRecord) => buildEventDetailPath(detailEventData(event));
+  const canonicalDetailEvent = (event: ApiRecord) => asRecord(event.__canonical_master_event) ?? event;
 
-  const eventIdentity = (event: ApiRecord) => {
-    const row = eventRowKey(event);
-    if (row) return `row:${row}`;
+  const eventDetailPath = (event: ApiRecord) => buildEventDetailPath(detailEventData(canonicalDetailEvent(event)));
 
-    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-    const place = getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj']);
-    return [getEventYear(event), date, getDisplayEventTitle(getEventTitle(event)), place]
-      .map((part) => normalizedText(part))
-      .filter(Boolean)
-      .join('|');
-  };
+  const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
 
   const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
