@@ -154,6 +154,10 @@ const formatYesNo = (value: string) => {
   if (['ne', 'no', 'false'].includes(normalized)) return 'No';
   return value.trim();
 };
+const formatEnglishPublicNotes = (value: string) => value
+  .replace(/družinam prijazno:/giu, 'Family-friendly:')
+  .replace(/otroški teki brezplačni/giu, 'children’s races are free')
+  .replace(/otroški teki/giu, 'children’s races');
 const detailItems = event ? [
   { icon: '📅', label: 'Date', value: formatDate(event.date) },
   { icon: '📍', label: 'Location', value: [event.place, event.region].filter(Boolean).join(' · ') },
@@ -281,7 +285,7 @@ const jsonLd = event ? {
 
               <article class="info-card event-detail-panel">
                 <h2><span aria-hidden="true">ℹ️</span> Notes and source</h2>
-                {event.publicNotes ? <p>{event.publicNotes}</p> : <p>Public notes are not listed.</p>}
+                {event.publicNotes ? <p>{formatEnglishPublicNotes(event.publicNotes)}</p> : <p>Public notes are not listed.</p>}
                 <p class="data-note">The calendar is informative. Always check the organizer's official information before registering.</p>
                 {event.noticeUrl && <p class="data-note">Source: organizer's official notice.</p>}
               </article>

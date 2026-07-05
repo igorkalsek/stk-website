@@ -131,7 +131,7 @@ export const buildIcsCalendarEvent = ({
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Slovenski Tekaski Koledar//STK Website//SL',
+    `PRODID:-//Slovenski Tekaski Koledar//STK Website//${language === 'en' ? 'EN' : 'SL'}`,
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
