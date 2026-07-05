@@ -25,6 +25,7 @@ interface Props {
   brandLabel?: string;
   navLabel?: string;
   menuLabel?: string;
+  languageSwitchHref?: string;
 }
 
 const {
@@ -38,7 +39,8 @@ const {
   brandHref,
   brandLabel,
   navLabel,
-  menuLabel
+  menuLabel,
+  languageSwitchHref
 } = Astro.props;
 const pageTitle = title === 'Slovenski Tekaški Koledar' || title.includes('|') ? title : `${title} | Slovenski Tekaški Koledar`;
 const canonicalUrl = canonicalUrlOverride ?? new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
@@ -70,9 +72,9 @@ const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
     <title>{pageTitle}</title>
   </head>
   <body>
-    <Header navItems={navItems} brandHref={brandHref} brandLabel={brandLabel} navLabel={navLabel} menuLabel={menuLabel} />
+    <Header navItems={navItems} brandHref={brandHref} brandLabel={brandLabel} navLabel={navLabel} menuLabel={menuLabel} languageSwitchHref={languageSwitchHref} />
     <slot />
-    <Footer lang={lang} />
+    <Footer lang={lang} languageSwitchHref={languageSwitchHref} />
   </body>
 </html>
 

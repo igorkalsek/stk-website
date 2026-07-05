@@ -8,9 +8,10 @@ interface FooterLink {
 
 interface Props {
   lang?: 'sl' | 'en' | string;
+  languageSwitchHref?: string;
 }
 
-const { lang = 'sl' } = Astro.props;
+const { lang = 'sl', languageSwitchHref } = Astro.props;
 const isEnglish = lang === 'en';
 
 const links: FooterLink[] = isEnglish ? [
@@ -20,7 +21,7 @@ const links: FooterLink[] = isEnglish ? [
   { href: '/en/most-voted-races/', label: 'Most voted races' },
   { href: '/en/personal-calendar/', label: 'Personal calendar' },
   { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
-  { href: '/', label: 'Slovenščina' }
+  { href: languageSwitchHref ?? '/', label: 'Slovenščina' }
 ] : [
   { href: '/iskalnik-tekov/', label: 'Iskalnik tekov' },
   { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni teki' },
@@ -30,7 +31,7 @@ const links: FooterLink[] = isEnglish ? [
   { href: '/dodaj-ali-popravi-tek/', label: 'Dodajte ali popravite tek' },
   { href: '/stk-tekobot/', label: 'STK Tekobot' },
   { href: '/o-projektu-in-zasebnost/', label: 'O projektu in zasebnost' },
-  { href: '/en/', label: 'English' }
+  { href: languageSwitchHref ?? '/en/', label: 'English' }
 ];
 ---
 

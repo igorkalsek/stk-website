@@ -203,7 +203,7 @@ const jsonLd = event ? {
 
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: buildEventDetailPath(event) }, { lang: 'en', href: englishPath }] : []}>
+<BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: buildEventDetailPath(event) }, { lang: 'en', href: englishPath }] : []} languageSwitchHref={englishPath}>
   {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   <main>
     {event ? (
