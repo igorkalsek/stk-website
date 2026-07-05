@@ -153,13 +153,11 @@ const formatYesNo = (value: string) => {
   return value.trim();
 };
 const detailItems = event ? [
-  { label: 'Datum', value: formatDate(event.date) },
-  { label: 'Kraj', value: event.place },
-  { label: 'Regija', value: event.region },
-  { label: 'Podlaga', value: event.surface ? formatSurface(event.surface) : '' },
-  { label: 'Razdalje', value: event.distances ? formatSloveneDistances(event.distances) : '' },
-  { label: 'Start', value: event.startTime ? formatStartTime(event.startTime) : '' },
-  { label: 'Pokal/serija', value: event.cup }
+  { icon: '📅', label: 'Datum', value: formatDate(event.date) },
+  { icon: '📍', label: 'Kraj', value: [event.place, event.region].filter(Boolean).join(' · ') },
+  { icon: '👟', label: 'Razdalje', value: event.distances ? formatSloveneDistances(event.distances) : '' },
+  { icon: '🕘', label: 'Start', value: event.startTime ? formatStartTime(event.startTime) : '' },
+  { icon: '🏆', label: 'Pokal/serija', value: event.cup }
 ].filter((item) => hasText(item.value)) : [];
 const registrationItems = event?.additionalData ? [
   { label: 'Startnina', value: formatMoneyRange(event.additionalData.registrationMinEur, event.additionalData.registrationMaxEur) },
@@ -238,14 +236,17 @@ const jsonLd = event ? {
             <div class="event-detail-main-column">
               <article class="info-card event-detail-panel">
                 <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
-                <dl class="event-detail-list">
+                <div class="event-detail-summary-grid" aria-label="Kratek povzetek teka">
                   {detailItems.map((item) => (
-                    <div>
-                      <dt>{item.label}</dt>
-                      <dd>{item.value}</dd>
+                    <div class="event-detail-summary-item">
+                      <span class="event-detail-summary-icon" aria-hidden="true">{item.icon}</span>
+                      <span class="event-detail-summary-content">
+                        <span class="event-detail-summary-label">{item.label}</span>
+                        <strong>{item.value}</strong>
+                      </span>
                     </div>
                   ))}
-                </dl>
+                </div>
               </article>
 
               <article class="info-card event-detail-panel">
@@ -269,7 +270,7 @@ const jsonLd = event ? {
                     {routeItems.map((item) => (
                       <div>
                         <dt>{item.label}</dt>
-                        <dd>{item.label === 'GPX / zemljevid' ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa"><span aria-hidden="true">🗺</span><span>GPX / zemljevid</span></a> : item.value}</dd>
+                        <dd>{item.label === 'GPX / zemljevid' ? <a class="button button-small button-secondary-light event-detail-inline-action event-detail-icon-button" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa" aria-label="Odpri GPX ali zemljevid trase"><span aria-hidden="true">🗺</span></a> : item.value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -298,8 +299,7 @@ const jsonLd = event ? {
                 <h2>Ste organizator tega teka?</h2>
                 <p>Pomagajte, da bodo podatki točni in privlačni.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-secondary-light" href={correctionUrl}>Predlagaj popravek</a>
-                  <a class="button button-small button-secondary-light" href={correctionUrl}>Dodaj razpis/prijavo/trase</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl}>Predlagaj popravek ali dopolnitev</a>
                 </div>
               </div>
 
@@ -319,7 +319,7 @@ const jsonLd = event ? {
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
-                  <h2>Koledar</h2>
+                  <h2>Dodaj v svoj koledar</h2>
                   <div class="event-detail-calendar-actions">
                     {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span></a>}
                     {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span></a>}

@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://slovenskitekaskikoledar.si'
+  site: 'https://tekaski-koledar.si'
 });

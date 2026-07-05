@@ -2501,3 +2501,49 @@ main {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.event-detail-summary-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.event-detail-summary-item {
+  align-items: center;
+  background: rgba(16, 64, 80, 0.05);
+  border: 1px solid rgba(16, 64, 80, 0.08);
+  border-radius: 16px;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.event-detail-summary-icon {
+  flex: 0 0 auto;
+  font-size: 1.25rem;
+}
+
+.event-detail-summary-content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.event-detail-summary-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.event-detail-summary-content strong {
+  color: var(--deep-teal);
+  overflow-wrap: anywhere;
+}
+
+.event-detail-organizer-actions .button {
+  max-width: 100%;
+  white-space: normal;
+}

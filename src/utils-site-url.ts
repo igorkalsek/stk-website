@@ -1,4 +1,4 @@
-export const PUBLIC_SITE_URL = 'https://slovenskitekaskikoledar.si';
+export const PUBLIC_SITE_URL = 'https://tekaski-koledar.si';
 
 const PREVIEW_ORIGIN_PATTERNS = [/localhost/i, /127\.0\.0\.1/, /pages\.dev$/i, /\.pages\.dev$/i];
 
