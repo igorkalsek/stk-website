@@ -22,6 +22,15 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
       </div>
     </section>
 
+    <section class="section container correction-context" data-correction-context hidden aria-live="polite">
+      <article class="info-card correction-context-card">
+        <span class="eyebrow" data-correction-context-label>Popravek za izbrani tek</span>
+        <h2 data-correction-context-title></h2>
+        <p data-correction-context-meta></p>
+        <a class="correction-context-back" data-correction-context-return href="/iskalnik-tekov/">Nazaj na stran teka</a>
+      </article>
+    </section>
+
     <section class="section container" aria-labelledby="what-title">
       <div class="section-heading">
         <h2 id="what-title">Kaj lahko pošljete?</h2>
@@ -117,6 +126,39 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
 </BaseLayout>
 
 <style>
+  .correction-context {
+    padding-top: 0;
+  }
+
+  .correction-context-card {
+    display: grid;
+    gap: 8px;
+    padding: 20px;
+    border-color: rgba(50, 121, 61, 0.22);
+    background:
+      linear-gradient(135deg, rgba(200, 230, 201, 0.62), rgba(255, 255, 255, 0.94)),
+      var(--white);
+  }
+
+  .correction-context-card h2,
+  .correction-context-card p {
+    margin: 0;
+  }
+
+  .correction-context-card h2 {
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+  }
+
+  .correction-context-card p {
+    color: var(--muted);
+  }
+
+  .correction-context-back {
+    width: fit-content;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
   .guidance-grid,
   .guidance-panel,
   .guidance-note {
@@ -189,3 +231,60 @@ const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacv
     }
   }
 </style>
+
+<script>
+  const contextPanel = document.querySelector('[data-correction-context]');
+  const contextLabel = document.querySelector('[data-correction-context-label]');
+  const contextTitle = document.querySelector('[data-correction-context-title]');
+  const contextMeta = document.querySelector('[data-correction-context-meta]');
+  const contextReturn = document.querySelector('[data-correction-context-return]');
+
+  const params = new URLSearchParams(window.location.search);
+  const eventTitle = params.get('event')?.trim() ?? '';
+
+  if (contextPanel instanceof HTMLElement && eventTitle) {
+    const language = params.get('lang') === 'en' ? 'en' : 'sl';
+    const year = params.get('year')?.trim() ?? '';
+    const date = params.get('date')?.trim() ?? '';
+    const place = params.get('place')?.trim() ?? '';
+    const source = params.get('source')?.trim() ?? '';
+    const returnUrl = params.get('returnUrl')?.trim() ?? '';
+    const isSafeReturnUrl = (returnUrl.startsWith('/') && !returnUrl.startsWith('//')) || returnUrl.startsWith('https://') || returnUrl.startsWith('http://');
+
+    contextPanel.dataset.correctionSource = source;
+
+    const formatDate = (value: string) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+      return new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(new Date(`${value}T00:00:00`));
+    };
+
+    contextPanel.hidden = false;
+
+    if (contextLabel) {
+      contextLabel.textContent = language === 'en' ? 'Correction for selected race' : 'Popravek za izbrani tek';
+    }
+
+    if (contextTitle) {
+      contextTitle.textContent = eventTitle;
+    }
+
+    if (contextMeta instanceof HTMLElement) {
+      const metaParts = [formatDate(date) || year, place].filter(Boolean);
+      contextMeta.textContent = metaParts.join(' · ');
+      contextMeta.hidden = metaParts.length === 0;
+    }
+
+    if (contextReturn instanceof HTMLAnchorElement) {
+      contextReturn.textContent = language === 'en' ? 'Back to race page' : 'Nazaj na stran teka';
+      if (returnUrl && isSafeReturnUrl) {
+        contextReturn.href = returnUrl;
+      } else {
+        contextReturn.hidden = true;
+      }
+    }
+  }
+</script>
