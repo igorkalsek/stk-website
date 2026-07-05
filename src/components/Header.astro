@@ -10,6 +10,7 @@ interface Props {
   brandLabel?: string;
   navLabel?: string;
   menuLabel?: string;
+  languageSwitchHref?: string;
 }
 
 const defaultNavItems = [
@@ -27,7 +28,8 @@ const {
   brandHref = '/',
   brandLabel = 'Slovenski Tekaški Koledar - domov',
   navLabel = 'Glavna navigacija',
-  menuLabel = 'Meni'
+  menuLabel = 'Meni',
+  languageSwitchHref
 } = Astro.props;
 
 const languagePairs = new Map<string, string>([
@@ -47,8 +49,10 @@ const currentSlovenianPath = isEnglishPage
   ? [...languagePairs.entries()].find(([, englishPath]) => englishPath === currentPath)?.[0]
   : currentPath;
 const currentEnglishPath = isEnglishPage ? currentPath : languagePairs.get(currentPath);
-const slovenianHref = currentSlovenianPath && languagePairs.has(currentSlovenianPath) ? currentSlovenianPath : '/';
-const englishHref = currentEnglishPath ?? '/en/';
+const slovenianHref = isEnglishPage && languageSwitchHref
+  ? languageSwitchHref
+  : currentSlovenianPath && languagePairs.has(currentSlovenianPath) ? currentSlovenianPath : '/';
+const englishHref = !isEnglishPage && languageSwitchHref ? languageSwitchHref : currentEnglishPath ?? '/en/';
 ---
 
 <header class="site-header">
