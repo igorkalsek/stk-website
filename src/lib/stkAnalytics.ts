@@ -4,7 +4,10 @@ type StkAnalyticsEventType =
   | 'external_link_clicked'
   | 'calendar_add_clicked'
   | 'vote_clicked'
-  | 'tekobot_clicked';
+  | 'tekobot_clicked'
+  | 'share_clicked'
+  | 'correction_clicked'
+  | 'copy_clicked';
 
 type UserAgentGroup = 'mobile' | 'tablet' | 'desktop' | 'unknown';
 
@@ -15,6 +18,8 @@ export type StkAnalyticsPayload = {
   event_id?: string;
   event_name?: string;
   event_date?: string;
+  event_year?: string;
+  target_url?: string;
   action_type?: 'razpis' | 'prijava' | 'uradna_stran' | 'trasa' | 'gpx' | 'other' | string;
   search_query?: string;
   filters_json?: string;
@@ -40,7 +45,10 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'external_link_clicked',
   'calendar_add_clicked',
   'vote_clicked',
-  'tekobot_clicked'
+  'tekobot_clicked',
+  'share_clicked',
+  'correction_clicked',
+  'copy_clicked'
 ]);
 
 
@@ -157,6 +165,8 @@ const buildBody = (payload: StkAnalyticsPayload) => ({
   event_id: trimText(payload.event_id, 120),
   event_name: trimText(payload.event_name),
   event_date: trimText(payload.event_date, 40),
+  event_year: trimText(payload.event_year, 12),
+  target_url: trimText(payload.target_url),
   action_type: trimText(payload.action_type, 80),
   search_query: trimText(payload.search_query, MAX_QUERY_LENGTH),
   filters_json: trimText(payload.filters_json, MAX_JSON_FIELD_LENGTH),
@@ -226,25 +236,38 @@ const inferCalendarType = (link: HTMLAnchorElement) => {
   return '';
 };
 
+const ACTION_TYPE_MAP: Record<string, string> = {
+  razpis: 'official_notice_click',
+  prijava: 'registration_click',
+  uradna_stran: 'official_site_click',
+  trasa: 'route_click',
+  gpx: 'gpx_click',
+  group_run_form: 'google_form_click',
+  correction_form: 'google_form_click'
+};
+
+const normalizeActionType = (value: string) => ACTION_TYPE_MAP[value] || value;
+
 const inferLinkType = (link: HTMLAnchorElement) => {
-  const explicit = link.dataset.stkAction || link.dataset.analyticsLinkType;
-  if (explicit) return explicit;
+  const explicit = link.dataset.stkAction || link.dataset.analyticsActionType || link.dataset.analyticsLinkType;
+  if (explicit) return normalizeActionType(explicit);
   const label = link.textContent?.toLocaleLowerCase('sl-SI') ?? '';
   const href = link.href.toLocaleLowerCase('sl-SI');
-  if (label.includes('prijava') || label.includes('registration')) return 'prijava';
-  if (label.includes('razpis') || label.includes('official info')) return 'razpis';
-  if (label.includes('uradna') || label.includes('official') || label.includes('organiser') || label.includes('organizer')) return 'uradna_stran';
-  if (label.includes('gpx') || href.includes('gpx')) return 'gpx';
-  if (label.includes('trasa') || label.includes('route') || href.includes('strava') || href.includes('map')) return 'trasa';
+  if (label.includes('prijava') || label.includes('registration')) return 'registration_click';
+  if (label.includes('razpis') || label.includes('official info')) return 'official_notice_click';
+  if (label.includes('uradna') || label.includes('official') || label.includes('organiser') || label.includes('organizer')) return 'official_site_click';
+  if (label.includes('gpx') || href.includes('gpx')) return 'gpx_click';
+  if (label.includes('trasa') || label.includes('route') || href.includes('strava') || href.includes('map')) return 'route_click';
   return '';
 };
 
-const getEventContext = (link: HTMLAnchorElement) => {
-  const card = getCard(link);
+const getEventContext = (element: HTMLElement) => {
+  const card = getCard(element);
   return {
-    event_id: link.dataset.stkEventId || getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
-    event_name: link.dataset.stkEventName || getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
-    event_date: link.dataset.stkEventDate || getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || ''
+    event_id: element.dataset.stkEventId || getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
+    event_name: element.dataset.stkEventName || getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
+    event_date: element.dataset.stkEventDate || getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || '',
+    event_year: element.dataset.stkEventYear || getCardValue(card, 'analyticsEventYear')
   };
 };
 
@@ -264,7 +287,25 @@ export const initializeStkAnalyticsClickTracking = () => {
   processStkAnalyticsToggleParam();
 
   document.addEventListener('click', (event) => {
-    const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
+    const clickedElement = event.target instanceof Element ? event.target.closest<HTMLElement>('a[href], button[data-analytics-event-type], button[data-analytics-action-type]') : null;
+    if (!clickedElement) return;
+
+    const explicitEventType = clickedElement.dataset.analyticsEventType as StkAnalyticsEventType | undefined;
+    const explicitActionType = clickedElement.dataset.analyticsActionType;
+    const explicitContext = getEventContext(clickedElement);
+    if (explicitEventType && ALLOWED_EVENT_TYPES.has(explicitEventType)) {
+      const targetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
+      trackStkEvent({
+        event_type: explicitEventType,
+        ...explicitContext,
+        action_type: explicitActionType,
+        target_url: targetUrl,
+        target_domain: targetUrl ? getStkTargetDomain(targetUrl) : ''
+      });
+      return;
+    }
+
+    const link = clickedElement instanceof HTMLAnchorElement ? clickedElement : null;
     if (!link) return;
 
     if (isTekobotHref(link.getAttribute('href') ?? '')) {
@@ -275,13 +316,13 @@ export const initializeStkAnalyticsClickTracking = () => {
     const context = getEventContext(link);
     const calendarType = inferCalendarType(link);
     if (calendarType) {
-      trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType });
+      trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType, action_type: `${calendarType}_calendar_click`, target_url: link.href, target_domain: getStkTargetDomain(link.href) });
       return;
     }
 
     const isVote = link.dataset.analyticsAction === 'vote' || /glasuj|vote/i.test(link.textContent ?? '');
     if (isVote) {
-      trackStkEvent({ event_type: 'vote_clicked', ...context });
+      trackStkEvent({ event_type: 'vote_clicked', ...context, action_type: 'vote_click', target_url: link.href, target_domain: getStkTargetDomain(link.href) });
       return;
     }
 
@@ -291,6 +332,7 @@ export const initializeStkAnalyticsClickTracking = () => {
         event_type: 'external_link_clicked',
         ...context,
         action_type: linkType,
+        target_url: link.href,
         target_domain: getStkTargetDomain(link.href)
       });
     }

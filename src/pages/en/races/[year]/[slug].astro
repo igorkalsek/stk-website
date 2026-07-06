@@ -248,7 +248,7 @@ const jsonLd = event ? {
         </section>
 
         <section class="section container event-detail-section" aria-label="Race details">
-          <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date}>
+          <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year}>
             <div class="event-detail-main-column">
               <article class="info-card event-detail-panel">
                 <h2><span aria-hidden="true">⚡</span> Quick facts</h2>
@@ -315,20 +315,20 @@ const jsonLd = event ? {
                 <h2>Are you the organizer of this race?</h2>
                 <p>Help runners find accurate information. Send an update for the official notice, registration, course, entry fees, children’s races or other race details.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-secondary-light" href={correctionUrl}>Suggest an update or correction</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Suggest an update or correction</a>
                 </div>
               </div>
 
               {shareLinks && (
                 <div class="event-detail-share-panel">
                   <h2>Share race</h2>
-                  <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription}>Copy description</button>
+                  <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Copy description</button>
                   <div class="event-detail-share-options" aria-label="Sharing options">
-                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} aria-label="Copy link"><span aria-hidden="true">🔗</span></button>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><span aria-hidden="true">f</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"><span aria-hidden="true">WA</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Share on X"><span aria-hidden="true">𝕏</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} aria-label="Send by email"><span aria-hidden="true">✉</span></a>
+                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Copy link"><span aria-hidden="true">🔗</span></button>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" aria-label="Share on Facebook"><span aria-hidden="true">f</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" aria-label="Share on WhatsApp"><span aria-hidden="true">WA</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" aria-label="Share on X"><span aria-hidden="true">𝕏</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" aria-label="Send by email"><span aria-hidden="true">✉</span></a>
                   </div>
                   <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
                 </div>
@@ -348,7 +348,7 @@ const jsonLd = event ? {
               {locationUrl && (
                 <div class="event-detail-location-panel">
                   <h2>Location</h2>
-                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" aria-label="Open location"><span aria-hidden="true">📍</span></a>
+                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Open location"><span aria-hidden="true">📍</span></a>
                 </div>
               )}
             </aside>

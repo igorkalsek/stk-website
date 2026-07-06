@@ -1201,7 +1201,7 @@ const englishNavItems = [
         ].filter(Boolean).join('');
 
         return `
-          <article class="event-card">
+          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3>${escapeHtml(title)}</h3>
@@ -1292,7 +1292,7 @@ const englishNavItems = [
         ].filter(Boolean).join('');
 
         return `
-          <article class="event-card">
+          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3>${escapeHtml(title)}</h3>

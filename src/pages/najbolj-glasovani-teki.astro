@@ -91,6 +91,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
+  import { DEFAULT_PUBLIC_YEAR } from '../utils-public-year';
   import { formatSloveneDateBadge, formatSloveneDistances, formatSloveneVoteCount } from '../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -532,7 +533,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card ranked-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}">
+      <article class="event-card search-event-card ranked-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(DEFAULT_PUBLIC_YEAR)}">
         <div class="ranked-event-top">
           <span class="rank-badge" aria-label="Uvrstitev">#${escapeHtml(event.rank)}</span>
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
