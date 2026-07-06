@@ -810,12 +810,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}">
+      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Družinam prijazno</span>' : ''}
         </div>
-        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
+        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
