@@ -115,24 +115,23 @@ import SocialLinks from '../components/SocialLinks.astro';
     <section class="section container" aria-labelledby="voted-title">
       <div class="section-heading section-heading-with-action">
         <div>
-          <h2 id="voted-title">Najbolj glasovani prihajajoči teki</h2>
-          <p>Lestvica izpostavi prihajajoče teke, ki so prejeli največ glasov tekačev. Svoj glas lahko oddate pri posameznem teku v iskalniku.</p>
+          <h2 id="voted-title">Največ zanimanja</h2>
+          <p>Izpostavljeno po zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid, prikazano z obstoječimi podatki o tekih.</p>
         </div>
         <div class="section-heading-actions">
-          <a class="button button-secondary-light" href="/najbolj-glasovani-teki/">Poglejte celotno lestvico</a>
-          <a class="button button-secondary-muted" href="/iskalnik-tekov/">Glasuj za svoj tek</a>
+          <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
         </div>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
-          <p>Najbolj glasovani prihajajoči teki bodo prikazani tukaj.</p>
+          <p>Teki z največ zanimanja bodo prikazani tukaj.</p>
           <div class="event-meta">
-            <span class="pill">Glasovi tekačev</span>
+            <span class="pill">Zanimanje obiskovalcev</span>
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="top">Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.</p>
+      <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
     </section>
 
 
@@ -194,6 +193,7 @@ import SocialLinks from '../components/SocialLinks.astro';
   type ApiRecord = Record<string, unknown>;
 
   const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&year=2026&include_past=false&include_fallback=false&limit=5';
   const numberFormatter = new Intl.NumberFormat('sl-SI');
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -834,16 +834,21 @@ import SocialLinks from '../components/SocialLinks.astro';
     return votes !== null ? { ...event, votes_total: votes } : { ...event };
   };
 
+  const getMasterRaceRows = async () => {
+    const masterPayload = await loadJson('/');
+    const masterRows = getMasterRows(masterPayload);
+    setDebug('master', 'yes');
+    setDebug('master-count', String(masterRows.length));
+    return masterRows;
+  };
+
   const getTopUpcomingRaces = async () => {
     const payload = await loadJson('/top?scope=upcoming&limit=50');
     const rawEvents = toArray(payload);
     let events = rawEvents.map(normalizeTopUpcomingRace);
 
     try {
-      const masterPayload = await loadJson('/');
-      const masterRows = getMasterRows(masterPayload);
-      setDebug('master', 'yes');
-      setDebug('master-count', String(masterRows.length));
+      const masterRows = await getMasterRaceRows();
       events = enrichTopEventsFromMaster(events, masterRows).map(normalizeTopUpcomingRace);
     } catch (error) {
       setDebug('master', 'no');
@@ -851,6 +856,71 @@ import SocialLinks from '../components/SocialLinks.astro';
     }
 
     return { events, rawEvents };
+  };
+
+
+
+  const INTEREST_ID_KEYS = ['event_id', 'eventId', 'race_id', 'raceId', 'edition_id', 'editionId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
+
+  const eventIdValue = (event: ApiRecord) => {
+    for (const key of INTEREST_ID_KEYS) {
+      const value = getEventField(event, key);
+      if (value) return value;
+    }
+    return '';
+  };
+
+  const buildUniqueEventIdIndex = (events: ApiRecord[]) => {
+    const candidates = new Map<string, ApiRecord[]>();
+    for (const event of events) {
+      const id = eventIdValue(event);
+      if (!id) continue;
+      const bucket = candidates.get(id) ?? [];
+      bucket.push(event);
+      candidates.set(id, bucket);
+    }
+
+    const unique = new Map<string, ApiRecord>();
+    for (const [id, matches] of candidates.entries()) {
+      if (matches.length === 1) unique.set(id, matches[0]);
+    }
+    return unique;
+  };
+
+  const loadInterestPreviewPayload = async () => {
+    const response = await fetch(INTEREST_PREVIEW_URL, { headers: { accept: 'application/json' } });
+    if (!response.ok) throw new Error(`Interest preview request failed: ${response.status}`);
+    const payload = await response.json();
+    const record = asRecord(payload);
+    if (!record || record.ok !== true || record.type !== 'interest_preview') {
+      throw new Error('Interest preview response was not valid.');
+    }
+    return record;
+  };
+
+  const getInterestPreviewRaces = async (masterRows: ApiRecord[], limit = 5) => {
+    const payload = await loadInterestPreviewPayload();
+    const interestItems = toArray(payload).slice(0, limit);
+    if (!interestItems.length) return [];
+
+    const todayValue = todayStartValue();
+    const masterEventsById = buildUniqueEventIdIndex(
+      masterRows.filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
+    );
+    const selectedIds = new Set<string>();
+    const rankedEvents: ApiRecord[] = [];
+
+    for (const item of interestItems) {
+      const id = eventIdValue(item);
+      if (!id || selectedIds.has(id)) continue;
+      const match = masterEventsById.get(id);
+      if (!match) continue;
+      selectedIds.add(id);
+      rankedEvents.push({ ...match, __interest_preview_ranked: true });
+      if (rankedEvents.length >= limit) break;
+    }
+
+    return rankedEvents;
   };
 
   const hasConfirmedPublicFields = (event: ApiRecord) => {
@@ -1257,20 +1327,8 @@ import SocialLinks from '../components/SocialLinks.astro';
     const container = document.querySelector('[data-top-events]');
     if (!container) return;
 
-    try {
-      const topUpcomingResult = await getTopUpcomingRaces();
-      const topEvents = topUpcomingResult.events.slice(0, 4);
-      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 4);
-      setDebug('top', 'yes');
-      if (!topEvents.length) {
-        setDebugTopDetails(topEvents, rawTopEvents);
-        setStatus('top', 'Trenutno ni prikazanih najbolj glasovanih prihajajočih tekov.');
-        return;
-      }
-
-      setDebugTopDetails(topEvents, rawTopEvents);
-
-      container.innerHTML = topEvents.map((event) => {
+    const renderEvents = (events: ApiRecord[], options: { interestPreview: boolean }) => {
+      container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
@@ -1279,11 +1337,15 @@ import SocialLinks from '../components/SocialLinks.astro';
         const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
         const metaItems = [
-          votes !== null ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
+          options.interestPreview
+            ? '<span class="event-chip pill-orange">Zanimanje obiskovalcev</span>'
+            : votes !== null
+              ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
+              : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
         ].filter(Boolean).join('');
 
         return `
-          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
+          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3><a href="${escapeHtml(eventDetailPath(event))}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(title)}</a></h3>
@@ -1293,7 +1355,36 @@ import SocialLinks from '../components/SocialLinks.astro';
           </article>
         `;
       }).join('');
-      setStatus('top', 'Lestvica je razvrščena po številu glasov. Pri izenačenem številu glasov imajo prednost bližnji prihajajoči teki.');
+    };
+
+    try {
+      const masterRows = await getMasterRaceRows();
+      const interestEvents = await getInterestPreviewRaces(masterRows, 5);
+      if (interestEvents.length) {
+        setDebug('top', 'yes');
+        setDebugTopDetails(interestEvents, interestEvents);
+        renderEvents(interestEvents, { interestPreview: true });
+        setStatus('top', 'Izbor uporablja javni pregled zanimanja obiskovalcev. Prikazani so samo teki, ki jih lahko varno povežemo z obstoječim koledarjem.');
+        return;
+      }
+    } catch (error) {
+      if (import.meta.env.DEV) console.warn('STK interest preview unavailable, falling back to voted races.', error);
+    }
+
+    try {
+      const topUpcomingResult = await getTopUpcomingRaces();
+      const topEvents = topUpcomingResult.events.slice(0, 5);
+      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 5);
+      setDebug('top', 'yes');
+      if (!topEvents.length) {
+        setDebugTopDetails(topEvents, rawTopEvents);
+        setStatus('top', 'Trenutno ni prikazanih tekov z največ zanimanja.');
+        return;
+      }
+
+      setDebugTopDetails(topEvents, rawTopEvents);
+      renderEvents(topEvents, { interestPreview: false });
+      setStatus('top', 'Pregled zanimanja trenutno ni dosegljiv, zato prikazujemo obstoječi seznam glasovanih prihajajočih tekov.');
     } catch (error) {
       setDebug('top', 'no');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
