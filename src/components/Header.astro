@@ -71,19 +71,33 @@ const englishHref = !isEnglishPage && languageSwitchHref ? languageSwitchHref : 
         </a>
       ))}
       <div class="language-switcher" aria-label={isEnglishPage ? 'Language switcher' : 'Izbira jezika'}>
-        <a
-          class:list={["language-link", { 'is-active': !isEnglishPage }]}
-          href={slovenianHref}
-          aria-label="Switch to Slovenian"
-          aria-current={!isEnglishPage ? 'true' : undefined}
-        >🇸🇮 SL</a>
+        {isEnglishPage ? (
+          <a
+            class="language-link"
+            href={slovenianHref}
+            aria-label="Switch to Slovenian"
+          >🇸🇮 SL</a>
+        ) : (
+          <span
+            class="language-link is-active"
+            aria-label="Current language: Slovenian"
+            aria-current="true"
+          >🇸🇮 SL</span>
+        )}
         <span class="language-separator" aria-hidden="true">|</span>
-        <a
-          class:list={["language-link", { 'is-active': isEnglishPage }]}
-          href={englishHref}
-          aria-label="Switch to English"
-          aria-current={isEnglishPage ? 'true' : undefined}
-        >🇬🇧 EN</a>
+        {isEnglishPage ? (
+          <span
+            class="language-link is-active"
+            aria-label="Current language: English"
+            aria-current="true"
+          >🇬🇧 EN</span>
+        ) : (
+          <a
+            class="language-link"
+            href={englishHref}
+            aria-label="Switch to English"
+          >🇬🇧 EN</a>
+        )}
       </div>
     </nav>
   </div>
