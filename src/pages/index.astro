@@ -193,7 +193,7 @@ import SocialLinks from '../components/SocialLinks.astro';
   type ApiRecord = Record<string, unknown>;
 
   const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-  const INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&year=2026&include_past=false&include_fallback=false&limit=5';
+  const INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&limit=5';
   const numberFormatter = new Intl.NumberFormat('sl-SI');
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -862,10 +862,29 @@ import SocialLinks from '../components/SocialLinks.astro';
 
   const INTEREST_ID_KEYS = ['event_id', 'eventId', 'race_id', 'raceId', 'edition_id', 'editionId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
 
+  const normalizeInterestEventId = (value: unknown) => {
+    const rawValue = String(value ?? '').trim();
+    if (!rawValue) return '';
+
+    const normalized = rawValue.toLocaleUpperCase('sl-SI').replace(/\s+/g, '');
+    const prefixedMatch = normalized.match(/^R0*(\d+)$/);
+    const numericMatch = normalized.match(/^0*(\d+)$/);
+    const numericPart = prefixedMatch?.[1] ?? numericMatch?.[1];
+
+    if (numericPart) {
+      const numberValue = Number.parseInt(numericPart, 10);
+      if (!Number.isFinite(numberValue) || numberValue <= 0) return '';
+      return `R${String(numberValue).padStart(6, '0')}`;
+    }
+
+    return /^[A-Z][A-Z0-9_-]{2,}$/.test(normalized) ? normalized : '';
+  };
+
   const eventIdValue = (event: ApiRecord) => {
     for (const key of INTEREST_ID_KEYS) {
       const value = getEventField(event, key);
-      if (value) return value;
+      const normalizedId = normalizeInterestEventId(value);
+      if (normalizedId) return normalizedId;
     }
     return '';
   };
@@ -900,7 +919,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
   const getInterestPreviewRaces = async (masterRows: ApiRecord[], limit = 5) => {
     const payload = await loadInterestPreviewPayload();
-    const interestItems = toArray(payload).slice(0, limit);
+    const interestItems = getRecordArray(payload, 'items').slice(0, limit);
     if (!interestItems.length) return [];
 
     const todayValue = todayStartValue();
