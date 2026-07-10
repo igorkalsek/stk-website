@@ -1,4 +1,5 @@
 const UPSTREAM_INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&limit=5';
+const UPSTREAM_TIMEOUT_MS = 8000;
 
 const jsonResponse = (payload: unknown, init: ResponseInit = {}) => new Response(JSON.stringify(payload), {
   ...init,
@@ -34,9 +35,15 @@ const sanitizeInterestItem = (item: Record<string, unknown>) => ({
 });
 
 export async function onRequestGet() {
+  const upstreamAbort = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
+
   try {
     const upstreamResponse = await fetch(UPSTREAM_INTEREST_PREVIEW_URL, {
-      headers: { accept: 'application/json' }
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'stk-website-interest-preview/1.0'
+      },
+      signal: upstreamAbort
     });
 
     if (!upstreamResponse.ok) {
@@ -56,6 +63,9 @@ export async function onRequestGet() {
       items: recordItems(payload.items).map(sanitizeInterestItem)
     });
   } catch (error) {
-    return jsonResponse({ ok: false, error: 'interest_preview_unavailable' }, { status: 502, headers: { 'cache-control': 'no-store' } });
+    const reason = error instanceof Error && error.name === 'TimeoutError'
+      ? 'interest_preview_upstream_timeout'
+      : 'interest_preview_unavailable';
+    return jsonResponse({ ok: false, error: reason }, { status: 502, headers: { 'cache-control': 'no-store' } });
   }
 }
