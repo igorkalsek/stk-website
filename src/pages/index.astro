@@ -999,7 +999,7 @@ import SocialLinks from '../components/SocialLinks.astro';
       if (identity) selectedIds.add(identity);
       fallbackEvents.push(event);
     }
-    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents];
+    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents].sort(compareEventDateThenTitle);
 
     if (titleElement) {
       titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
