@@ -904,26 +904,6 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
 
-  const interestPreviewLastKnownPayload = () => ({
-    ok: true,
-    endpoint: 'site-analytics',
-    type: 'interest_preview',
-    filters: {
-      year: 2026,
-      include_past: false,
-      include_fallback: false,
-      min_interest: 1,
-      limit: 5
-    },
-    items: [
-      { event_id: 'R000175', event_name: '18. Aninski tek' },
-      { event_id: 'R000187', event_name: 'Triglav Trail Run' },
-      { event_id: 'R000196', event_name: '4. Trail Velika Planina' },
-      { event_id: 'R000173', event_name: 'Gorišnica teče in hodi 2026' },
-      { event_id: 'R000182', event_name: 'Kranjskogorska 10ka' }
-    ]
-  });
-
   const loadInterestPreviewPayload = async () => {
     const response = await fetch(INTEREST_PREVIEW_URL, { headers: { accept: 'application/json' } });
     const payload = await response.json().catch(() => null);
@@ -948,13 +928,7 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5) => {
-    let payload: ApiRecord;
-    try {
-      payload = await loadInterestPreviewPayload();
-    } catch (error) {
-      if (debugEnabled) console.warn('STK interest preview proxy unavailable; using last-known public preview IDs.', error);
-      payload = interestPreviewLastKnownPayload();
-    }
+    const payload = await loadInterestPreviewPayload();
     const interestItems = getRecordArray(payload, 'items');
     if (!interestItems.length) return [];
 
@@ -1401,7 +1375,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         setDebug('top', 'yes');
         setDebugTopDetails(interestEvents, interestEvents);
         renderEvents(interestEvents, { interestPreview: true });
-        setStatus('top', 'Izbor uporablja javni pregled zanimanja obiskovalcev. Prikazani so samo teki, ki jih lahko varno povežemo z obstoječim koledarjem.');
+        setStatus('top', 'Izbor temelji na zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid.');
         return;
       }
     } catch (error) {
@@ -1421,7 +1395,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
       setDebugTopDetails(topEvents, rawTopEvents);
       renderEvents(topEvents, { interestPreview: false });
-      setStatus('top', 'Pregled zanimanja trenutno ni dosegljiv, zato prikazujemo obstoječi seznam glasovanih prihajajočih tekov.');
+      setStatus('top', 'Pregled zanimanja trenutno ni dosegljiv, zato prikazujemo obstoječe izpostavljene prihajajoče teke.');
     } catch (error) {
       setDebug('top', 'no');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
