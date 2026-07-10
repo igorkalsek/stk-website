@@ -8,8 +8,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <span class="eyebrow">Iskalnik tekov</span>
       <h1 id="search-title">Poiščite svoj naslednji tek</h1>
       <p>
-        Preverite potrjene javne tekaške prireditve za izbrano leto. Iščete lahko po imenu teka ali kraju,
-        izbor pa zožite po mesecu, regiji, podlagi in družinski prijaznosti.
+        Preverite potrjene javne tekaške prireditve za izbrano leto. Iščete lahko po imenu teka ali kraju.
+        Izbor lahko zožite po mesecu, regiji, podlagi, razdalji in družinski prijaznosti.
       </p>
       <div class="year-switcher" aria-label="Izbira leta koledarja">
         <a class="year-switcher-link" href="/iskalnik-tekov/" data-year-link="2026">Koledar 2026</a>
@@ -23,7 +23,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="filters-title">Filtri</h2>
-            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
+            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo, podlago ali razdaljo.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -891,7 +891,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti katerega od filtrov ali počistite filtre.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -919,15 +919,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         console.warn('Iskalnik tekov additional data skipped', error);
       }
 
-      try {
-        if (activeYear !== DEFAULT_PUBLIC_YEAR) throw new Error('Vote enrichment is enabled only for the default public year');
-        const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
-        if (topResponse.ok) {
-          const topPayload = await topResponse.json();
-          events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+      if (activeYear === DEFAULT_PUBLIC_YEAR) {
+        try {
+          const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
+          if (topResponse.ok) {
+            const topPayload = await topResponse.json();
+            events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+          }
+        } catch (error) {
+          console.warn('Iskalnik tekov vote enrichment skipped', error);
         }
-      } catch (error) {
-        console.warn('Iskalnik tekov vote enrichment skipped', error);
       }
 
       state.events = events;

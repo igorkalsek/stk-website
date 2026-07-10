@@ -32,7 +32,7 @@ const englishNavItems = [
       <span class="eyebrow">Find races</span>
       <h1 id="search-title">Find your next race</h1>
       <p>
-        Search confirmed public running events in Slovenia for the selected year. Search by race name, town or region, then narrow the list by month, region, surface and family-friendly information.
+        Search confirmed public running events in Slovenia for the selected year. Narrow the list by month, region, surface, distance and family-friendly information.
       </p>
       <div class="year-switcher" aria-label="Calendar year selection">
         <a class="year-switcher-link" href="/en/find-races/" data-year-link="2026">2026 calendar</a>
@@ -46,7 +46,7 @@ const englishNavItems = [
         <div class="section-heading search-heading">
           <div>
             <h2 id="filters-title">Filters</h2>
-            <p>Search by race name, town or region, then choose a month, region or surface.</p>
+            <p>Search by race name, town or region, then choose a month, region, surface or distance.</p>
           </div>
           <p class="result-count" data-result-count>Loading races …</p>
         </div>
@@ -973,7 +973,7 @@ const englishNavItems = [
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('No races match the selected filters.', filters.quickPick ? 'Too many filters are selected. Try turning off one of the quick picks or clearing the filters.' : 'Try removing the entry fee, route or elevation gain filter.', 'Filters', true);
+      renderEmptyState('No races match the selected filters.', filters.quickPick ? 'Too many filters are selected. Try turning off one of the quick picks or clearing the filters.' : 'Try removing one of the filters or clearing all filters.', 'Filters', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -1001,15 +1001,16 @@ const englishNavItems = [
         console.warn('Find races additional data skipped', error);
       }
 
-      try {
-        if (activeYear !== DEFAULT_PUBLIC_YEAR) throw new Error('Vote enrichment is enabled only for the default public year');
-        const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
-        if (topResponse.ok) {
-          const topPayload = await topResponse.json();
-          events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+      if (activeYear === DEFAULT_PUBLIC_YEAR) {
+        try {
+          const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
+          if (topResponse.ok) {
+            const topPayload = await topResponse.json();
+            events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+          }
+        } catch (error) {
+          console.warn('Find races vote enrichment skipped', error);
         }
-      } catch (error) {
-        console.warn('Find races vote enrichment skipped', error);
       }
 
       state.events = events;
