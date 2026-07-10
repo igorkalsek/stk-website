@@ -32,8 +32,13 @@ const englishNavItems = [
       <span class="eyebrow">Find races</span>
       <h1 id="search-title">Find your next race</h1>
       <p>
-        Search confirmed public running events in Slovenia for 2026. Search by race name, town or region, then narrow the list by month, region, surface and family-friendly information.
+        Search confirmed public running events in Slovenia for the selected year. Search by race name, town or region, then narrow the list by month, region, surface and family-friendly information.
       </p>
+      <div class="year-switcher" aria-label="Calendar year selection">
+        <a class="year-switcher-link" href="/en/find-races/" data-year-link="2026">2026 calendar</a>
+        <a class="year-switcher-link" href="/en/find-races/?year=2027" data-year-link="2027">2027 calendar</a>
+      </div>
+      <p class="calendar-year-notice" data-year-notice hidden>The 2027 calendar is being updated.</p>
     </section>
 
     <section class="section container" aria-labelledby="filters-title">
@@ -88,6 +93,18 @@ const englishNavItems = [
             <span>Surface</span>
             <select name="surface" data-filter="surface" disabled>
               <option value="">All surfaces</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Distance</span>
+            <select name="distance" data-filter="distance">
+              <option value="all">All distances</option>
+              <option value="up-to-5">Up to 5 km</option>
+              <option value="over-5-to-10">Over 5 to 10 km</option>
+              <option value="over-10-to-half">Over 10 to 21.1 km</option>
+              <option value="over-half-to-marathon">Over 21.1 to 42.2 km</option>
+              <option value="ultra">Over 42.2 km</option>
             </select>
           </label>
 
@@ -195,10 +212,12 @@ const englishNavItems = [
   import { filtersToAnalyticsJson, trackStkEvent } from '../../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../../utils-distance-filter';
   import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../utils-vote';
+  import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, type PublicYear } from '../../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -226,13 +245,17 @@ const englishNavItems = [
     additionalData?: AdditionalEventData | null;
   };
 
-  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const activeYear = getPublicYearFromSearchParams(new URLSearchParams(window.location.search));
+  const additionalDataEnabled = isAdditionalDataEnabledForYear(activeYear);
+  const API_URL = `${API_BASE}${buildMasterApiPath(activeYear)}`;
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
   const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  const state: { events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
+  const state: { activeYear: PublicYear; events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
+    activeYear,
     events: [],
     filtered: [],
     apiAvailable: true,
@@ -251,6 +274,7 @@ const englishNavItems = [
   const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
   const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
   const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+  const distanceSelect = document.querySelector<HTMLSelectElement>('[data-filter="distance"]');
   const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
   const deadlineSelect = document.querySelector<HTMLSelectElement>('[data-filter="deadline"]');
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
@@ -259,6 +283,18 @@ const englishNavItems = [
   const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
+  const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
+  const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+
+  const initializeYearUi = () => {
+    yearLinkElements.forEach((link) => {
+      const isActive = link.dataset.yearLink === activeYear;
+      link.classList.toggle('is-active', isActive);
+      if (isActive) link.setAttribute('aria-current', 'page');
+    });
+    if (yearNoticeElement) yearNoticeElement.hidden = activeYear !== '2027';
+  };
+
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
@@ -434,13 +470,7 @@ const englishNavItems = [
     return true;
   };
 
-  const getMaxKnownDistanceKm = (event: RaceEvent) => {
-    if (!event.distances) return null;
-    const distances = [...event.distances.replace(/,/g, '.').matchAll(/\d+(?:\.\d+)?/g)]
-      .map((match) => Number(match[0]))
-      .filter((distance) => Number.isFinite(distance) && distance > 0 && distance < 500);
-    return distances.length ? Math.max(...distances) : null;
-  };
+  const getMaxKnownDistanceKm = (event: RaceEvent) => getMaxRaceDistanceKm(event.distances);
 
   const hasTrailChallengeName = (event: RaceEvent) => {
     const searchableName = `${event.title} ${event.naziv_prireditve}`
@@ -581,6 +611,7 @@ const englishNavItems = [
     month: monthSelect?.value ?? '',
     region: regionSelect?.value ?? '',
     surface: surfaceSelect?.value ?? '',
+    distance: distanceSelect?.value ?? 'all',
     registrationFee: registrationFeeSelect?.value ?? '',
     deadlineFilter: deadlineSelect?.value ?? '',
     sort: sortSelect?.value ?? 'date',
@@ -694,6 +725,7 @@ const englishNavItems = [
       month: filters.month,
       region: filters.region,
       surface: filters.surface,
+      distanceFilter: filters.distance === 'all' ? '' : filters.distance,
       priceFilter: filters.registrationFee,
       deadlineFilter: filters.deadlineFilter,
       sortBy: filters.sort,
@@ -755,7 +787,7 @@ const englishNavItems = [
         const publicNotes = pick(item, 'opombe_javne');
 
         if (!date || Number.isNaN(dateValue) || !title) return null;
-        if (!date.startsWith('2026-')) return null;
+        if (!date.startsWith(`${activeYear}-`)) return null;
         if (dateValue < today) return null;
         if (normalize(pick(item, 'status_dogodka')) !== 'potrjeno') return null;
         if (pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') !== 'DA') return null;
@@ -870,7 +902,7 @@ const englishNavItems = [
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="2026">
+      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Family-friendly</span>' : ''}
@@ -899,7 +931,7 @@ const englishNavItems = [
     if (!state.events.length) {
       setStatus('There are no upcoming confirmed public races to show.');
       setCount('0 races');
-      renderEmptyState('No races to show', 'There are currently no confirmed upcoming races for 2026.', '2026');
+      renderEmptyState('No races to show', `There are currently no confirmed upcoming races for ${activeYear}.`, activeYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -909,6 +941,7 @@ const englishNavItems = [
       if (filters.month && event.month !== filters.month) return false;
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
+      if (!matchesRaceDistanceFilter(event.distances, filters.distance)) return false;
       if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
       if (filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
       if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
@@ -935,7 +968,7 @@ const englishNavItems = [
         ? 'Showing races that match the selected registration deadline filter. Deadlines include pre-registration and cheaper-entry deadlines.'
         : statusMessages[filters.sort] ?? 'Confirmed public races from today onward are shown, sorted by the selected entry fee.';
     setStatus(statusMessage);
-    if (additionalNoteElement) additionalNoteElement.hidden = !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
+    if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
     if (!count) {
@@ -961,12 +994,15 @@ const englishNavItems = [
       let events = getPublicUpcomingEvents(toArray(payload));
 
       try {
-        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+        if (additionalDataEnabled) {
+          events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+        }
       } catch (error) {
         console.warn('Find races additional data skipped', error);
       }
 
       try {
+        if (activeYear !== DEFAULT_PUBLIC_YEAR) throw new Error('Vote enrichment is enabled only for the default public year');
         const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
         if (topResponse.ok) {
           const topPayload = await topResponse.json();
@@ -1028,5 +1064,6 @@ const englishNavItems = [
   });
 
   updateAdvancedFiltersSummary();
+  initializeYearUi();
   loadEvents();
 </script>
