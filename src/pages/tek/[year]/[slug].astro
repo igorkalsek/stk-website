@@ -8,6 +8,7 @@ import { formatSloveneDistances } from '../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../utils-site-url';
+import { buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -67,11 +68,6 @@ if (event && year === '2026') {
 }
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
-const formatStartTime = (value: string) => {
-  const match = value.trim().match(/^(\d{1,2}):(\d{2})(.*)$/);
-  return match ? `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}` : value.trim();
-};
-const formatSurface = (value: string) => value.trim().toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
 const calendarOptions = event ? {
   googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
   icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
@@ -113,14 +109,6 @@ const getDateStatus = (value: string) => {
   if (days > 0) return `Prihaja čez ${days} ${days === 1 ? 'dan' : days === 2 ? 'dni' : 'dni'}`;
   return 'Dogodek je že mimo';
 };
-const formatContextualDeadline = (label: string, value: string, expiredLabel: string) => {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value ? `${label}: ${value}` : '';
-  const deadlineTime = new Date(`${value}T00:00:00`).getTime();
-  const now = new Date();
-  const todayTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const formatted = formatDate(value);
-  return deadlineTime < todayTime ? `${expiredLabel}: ${formatted}` : `${label}: ${formatted}`;
-};
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
 const eventStatus = event ? getDateStatus(event.date) : '';
@@ -141,49 +129,16 @@ const parseRegistrationAmount = (value: string) => {
   return Number.isFinite(amount) ? amount : null;
 };
 
+const primaryActions = event ? buildPrimaryActions(event, 'sl') : [];
 const heroBadges = event ? [
-  event.surface ? { label: 'Podlaga', value: formatSurface(event.surface) } : null,
-  event.distances ? { label: 'Razdalje', value: formatSloveneDistances(event.distances) } : null,
-  event.startTime ? { label: 'Start', value: `Start ${formatStartTime(event.startTime)}` } : null,
-  event.cup ? { label: 'Pokal', value: event.cup } : null
+  event.surface ? { label: 'Podlaga', value: formatDetailSurface(event.surface, 'sl') } : null,
+  event.familyFriendly ? { label: 'Družine', value: 'Družinam prijazno' } : null
 ].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
-
-const hasText = (value: string | undefined | null) => Boolean(value?.trim());
-const formatMoneyRange = (minValue = '', maxValue = '') => {
-  const normalizeAmount = (value: string) => {
-    const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
-    return Number.isFinite(amount) ? amount : null;
-  };
-  const formatAmount = (amount: number) => amount.toLocaleString('sl-SI', { maximumFractionDigits: 2, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
-  const min = normalizeAmount(minValue);
-  const max = normalizeAmount(maxValue);
-  if (min === null && max === null) return '';
-  if (min !== null && max !== null && min !== max) return `${formatAmount(min)}–${formatAmount(max)} €`;
-  return `${formatAmount(min ?? max ?? 0)} €`;
-};
-const formatYesNo = (value: string) => {
-  const normalized = value.trim().toLocaleLowerCase('sl-SI');
-  if (['da', 'yes', 'true'].includes(normalized)) return 'Da';
-  if (['ne', 'no', 'false'].includes(normalized)) return 'Ne';
-  return value.trim();
-};
-const detailItems = event ? [
-  { icon: '📅', label: 'Datum', value: formatDate(event.date) },
-  { icon: '📍', label: 'Kraj', value: [event.place, event.region].filter(Boolean).join(' · ') },
-  { icon: '👟', label: 'Razdalje', value: event.distances ? formatSloveneDistances(event.distances) : '' },
-  { icon: '🕘', label: 'Start', value: event.startTime ? formatStartTime(event.startTime) : '' },
-  { icon: '🏆', label: 'Pokal/serija', value: event.cup }
-].filter((item) => hasText(item.value)) : [];
-const registrationItems = event?.additionalData ? [
-  { label: 'Startnina', value: formatMoneyRange(event.additionalData.registrationMinEur, event.additionalData.registrationMaxEur) },
-  { label: 'Rok prijave', value: formatContextualDeadline('Rok prijave', event.additionalData.registrationDeadline, 'Rok prijave je potekel') },
-  { label: 'Cenejša prijava', value: formatContextualDeadline('Cenejša prijava do', event.additionalData.earlyRegistrationDeadline, 'Cenejša prijava je potekla') },
-  { label: 'Prijave na dan dogodka', value: formatYesNo(event.additionalData.dayOfRegistration) === 'Da' ? 'Prijave na dan dogodka so možne' : formatYesNo(event.additionalData.dayOfRegistration) }
-].filter((item) => hasText(item.value)) : [];
-const routeItems = event?.additionalData ? [
-  { label: 'GPX / zemljevid', value: event.additionalData.routeUrl },
-  { label: 'Višinski metri', value: event.additionalData.elevationGain ? `${event.additionalData.elevationGain.trim()} m+` : '' }
-].filter((item) => hasText(item.value)) : [];
+const detailItems = event ? buildKeyFacts(event, 'sl') : [];
+const registrationItems = event ? buildRegistrationRows(event, 'sl', formatDate) : [];
+const routeItems = event ? buildCourseRows(event, 'sl') : [];
+const familyInfo = event ? buildFamilyInfo(event, 'sl') : [];
+const publicNotes = event ? buildPublicNotes(event, 'sl', familyInfo) : '';
 const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
 const jsonLd = event ? {
   '@context': 'https://schema.org',
@@ -241,8 +196,14 @@ const jsonLd = event ? {
             )}
             <div class="event-detail-status-row">
               {eventStatus && <span class="pill event-detail-status-pill">{eventStatus}</span>}
-              {event.familyFriendly && <span class="pill pill-family">Družinam prijazno</span>}
             </div>
+            {primaryActions.length > 0 && (
+              <div class="event-detail-primary-actions event-detail-action-list" aria-label="Glavne povezave">
+                {primaryActions.map((action) => (
+                  <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -254,7 +215,6 @@ const jsonLd = event ? {
                 <div class="event-detail-summary-grid" aria-label="Kratek povzetek teka">
                   {detailItems.map((item) => (
                     <div class="event-detail-summary-item">
-                      <span class="event-detail-summary-icon" aria-hidden="true">{item.icon}</span>
                       <span class="event-detail-summary-content">
                         <span class="event-detail-summary-label">{item.label}</span>
                         <strong>{item.value}</strong>
@@ -264,9 +224,9 @@ const jsonLd = event ? {
                 </div>
               </article>
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🎟</span> Prijava in stroški</h2>
-                {registrationItems.length > 0 ? (
+              {registrationItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">🎟</span> Prijava in udeležba</h2>
                   <dl class="event-detail-list">
                     {registrationItems.map((item) => (
                       <div>
@@ -275,40 +235,49 @@ const jsonLd = event ? {
                       </div>
                     ))}
                   </dl>
-                ) : <p>Podatki o startnini in prijavnih rokih trenutno niso dodani.</p>}
-              </article>
+                </article>
+              )}
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🗺</span> Trasa</h2>
-                {routeItems.length > 0 ? (
+              {routeItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">🗺</span> Trasa</h2>
                   <dl class="event-detail-list">
                     {routeItems.map((item) => (
                       <div>
                         <dt>{item.label}</dt>
-                        <dd>{item.label === 'GPX / zemljevid' ? <a class="button button-small button-secondary-light event-detail-inline-action event-detail-icon-button" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa" aria-label="Odpri GPX ali zemljevid trase"><span aria-hidden="true">🗺</span></a> : item.value}</dd>
+                        <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
                       </div>
                     ))}
                   </dl>
-                ) : <p>Trasa še ni dodana. Organizator lahko pošlje GPX ali povezavo do trase.</p>}
-              </article>
+                </article>
+              )}
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">ℹ️</span> Opombe in vir</h2>
-                {event.publicNotes ? <p>{event.publicNotes}</p> : <p>Javne opombe niso dodane.</p>}
-                <p class="data-note">Koledar je informativen. Pred prijavo vedno preverite uradne informacije organizatorja.</p>
-                {event.noticeUrl && <p class="data-note">Vir: uradni razpis organizatorja.</p>}
-              </article>
+              {familyInfo.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">👨‍👩‍👧‍👦</span> Družine in otroci</h2>
+                  {familyInfo.map((text) => <p>{text}</p>)}
+                </article>
+              )}
+
+              {publicNotes && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">ℹ️</span> Opombe</h2>
+                  <p>{publicNotes}</p>
+                </article>
+              )}
+
+              <p class="data-note event-detail-disclaimer">Podatki so informativni. Pred prijavo preverite uradni razpis ali stran organizatorja.</p>
             </div>
 
             <aside class="info-card event-detail-action-panel" aria-label="Glavne povezave">
-              <div>
-                <h2>Glavne povezave</h2>
-                <div class="event-detail-action-list">
-                  {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>}
-                  {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>}
-                  {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>}
+              {voteUrl && (
+                <div>
+                  <h2>Glasovanje</h2>
+                  <div class="event-detail-action-list">
+                    <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div class="event-detail-organizer-panel">
                 <h2>Ste organizator tega teka?</h2>

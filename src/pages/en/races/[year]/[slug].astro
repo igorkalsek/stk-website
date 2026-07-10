@@ -5,10 +5,10 @@ import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOu
 import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMatchesEvent, toApiRecords, type PublicRaceEvent } from '../../../../utils-event-detail';
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
 import { formatSloveneDistances } from '../../../../utils-slovenian';
-import { formatEnglishPublicNotes, formatEnglishSurface } from '../../../../utils-english';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
+import { buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -68,11 +68,6 @@ if (event && year === '2026') {
 }
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
-const formatStartTime = (value: string) => {
-  const match = value.trim().match(/^(\d{1,2}):(\d{2})(.*)$/);
-  return match ? `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}` : value.trim();
-};
-const formatSurface = formatEnglishSurface;
 const calendarOptions = event ? {
   googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
   icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
@@ -114,14 +109,6 @@ const getDateStatus = (value: string) => {
   if (days > 0) return `Coming in ${days} ${days === 1 ? 'day' : 'days'}`;
   return 'This race has already passed';
 };
-const formatContextualDeadline = (label: string, value: string, expiredLabel: string) => {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value ? `${label}: ${value}` : '';
-  const deadlineTime = new Date(`${value}T00:00:00`).getTime();
-  const now = new Date();
-  const todayTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const formatted = formatDate(value);
-  return deadlineTime < todayTime ? `${expiredLabel}: ${formatted}` : `${label}: ${formatted}`;
-};
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
 const eventStatus = event ? getDateStatus(event.date) : '';
@@ -142,49 +129,16 @@ const parseRegistrationAmount = (value: string) => {
   return Number.isFinite(amount) ? amount : null;
 };
 
+const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
 const heroBadges = event ? [
-  event.surface ? { label: 'Surface', value: formatSurface(event.surface) } : null,
-  event.distances ? { label: 'Distances', value: formatSloveneDistances(event.distances) } : null,
-  event.startTime ? { label: 'Start', value: `Start ${formatStartTime(event.startTime)}` } : null,
-  event.cup ? { label: 'Series', value: event.cup } : null
+  event.surface ? { label: 'Surface', value: formatDetailSurface(event.surface, 'en') } : null,
+  event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
 ].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
-
-const hasText = (value: string | undefined | null) => Boolean(value?.trim());
-const formatMoneyRange = (minValue = '', maxValue = '') => {
-  const normalizeAmount = (value: string) => {
-    const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
-    return Number.isFinite(amount) ? amount : null;
-  };
-  const formatAmount = (amount: number) => amount.toLocaleString('sl-SI', { maximumFractionDigits: 2, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
-  const min = normalizeAmount(minValue);
-  const max = normalizeAmount(maxValue);
-  if (min === null && max === null) return '';
-  if (min !== null && max !== null && min !== max) return `${formatAmount(min)}–${formatAmount(max)} €`;
-  return `${formatAmount(min ?? max ?? 0)} €`;
-};
-const formatYesNo = (value: string) => {
-  const normalized = value.trim().toLocaleLowerCase('sl-SI');
-  if (['da', 'yes', 'true'].includes(normalized)) return 'Yes';
-  if (['ne', 'no', 'false'].includes(normalized)) return 'No';
-  return value.trim();
-};
-const detailItems = event ? [
-  { icon: '📅', label: 'Date', value: formatDate(event.date) },
-  { icon: '📍', label: 'Location', value: [event.place, event.region].filter(Boolean).join(' · ') },
-  { icon: '👟', label: 'Distances', value: event.distances ? formatSloveneDistances(event.distances) : '' },
-  { icon: '🕘', label: 'Start', value: event.startTime ? formatStartTime(event.startTime) : '' },
-  { icon: '🏆', label: 'Cup/series', value: event.cup }
-].filter((item) => hasText(item.value)) : [];
-const registrationItems = event?.additionalData ? [
-  { label: 'Entry fee', value: formatMoneyRange(event.additionalData.registrationMinEur, event.additionalData.registrationMaxEur) },
-  { label: 'Registration deadline', value: formatContextualDeadline('Registration deadline', event.additionalData.registrationDeadline, 'Registration deadline has passed') },
-  { label: 'Cheaper entry', value: formatContextualDeadline('Cheaper entry until', event.additionalData.earlyRegistrationDeadline, 'Cheaper-entry deadline has passed') },
-  { label: 'Race-day registration', value: formatYesNo(event.additionalData.dayOfRegistration) === 'Yes' ? 'Race-day registration is available' : formatYesNo(event.additionalData.dayOfRegistration) }
-].filter((item) => hasText(item.value)) : [];
-const routeItems = event?.additionalData ? [
-  { label: 'GPX / map', value: event.additionalData.routeUrl },
-  { label: 'Elevation gain', value: event.additionalData.elevationGain ? `${event.additionalData.elevationGain.trim()} m+` : '' }
-].filter((item) => hasText(item.value)) : [];
+const detailItems = event ? buildKeyFacts(event, 'en') : [];
+const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
+const routeItems = event ? buildCourseRows(event, 'en') : [];
+const familyInfo = event ? buildFamilyInfo(event, 'en') : [];
+const publicNotes = event ? buildPublicNotes(event, 'en', familyInfo) : '';
 const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
 const jsonLd = event ? {
   '@context': 'https://schema.org',
@@ -242,8 +196,14 @@ const jsonLd = event ? {
             )}
             <div class="event-detail-status-row">
               {eventStatus && <span class="pill event-detail-status-pill">{eventStatus}</span>}
-              {event.familyFriendly && <span class="pill pill-family">Family-friendly</span>}
             </div>
+            {primaryActions.length > 0 && (
+              <div class="event-detail-primary-actions event-detail-action-list" aria-label="Main links">
+                {primaryActions.map((action) => (
+                  <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -255,7 +215,6 @@ const jsonLd = event ? {
                 <div class="event-detail-summary-grid" aria-label="Short race summary">
                   {detailItems.map((item) => (
                     <div class="event-detail-summary-item">
-                      <span class="event-detail-summary-icon" aria-hidden="true">{item.icon}</span>
                       <span class="event-detail-summary-content">
                         <span class="event-detail-summary-label">{item.label}</span>
                         <strong>{item.value}</strong>
@@ -265,9 +224,9 @@ const jsonLd = event ? {
                 </div>
               </article>
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🎟</span> Registration and fees</h2>
-                {registrationItems.length > 0 ? (
+              {registrationItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">🎟</span> Registration and participation</h2>
                   <dl class="event-detail-list">
                     {registrationItems.map((item) => (
                       <div>
@@ -276,40 +235,49 @@ const jsonLd = event ? {
                       </div>
                     ))}
                   </dl>
-                ) : <p>Entry fee and registration deadline details are not listed yet.</p>}
-              </article>
+                </article>
+              )}
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">🗺</span> Course</h2>
-                {routeItems.length > 0 ? (
+              {routeItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">🗺</span> Course</h2>
                   <dl class="event-detail-list">
                     {routeItems.map((item) => (
                       <div>
                         <dt>{item.label}</dt>
-                        <dd>{item.label === 'GPX / map' ? <a class="button button-small button-secondary-light event-detail-inline-action event-detail-icon-button" href={item.value} target="_blank" rel="noopener noreferrer" data-analytics-link-type="trasa" aria-label="Open GPX or course map"><span aria-hidden="true">🗺</span></a> : item.value}</dd>
+                        <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
                       </div>
                     ))}
                   </dl>
-                ) : <p>Course details are not listed yet. The organizer can send a GPX file or course link.</p>}
-              </article>
+                </article>
+              )}
 
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">ℹ️</span> Notes and source</h2>
-                {event.publicNotes ? <p>{formatEnglishPublicNotes(event.publicNotes)}</p> : <p>Public notes are not listed.</p>}
-                <p class="data-note">The calendar is informative. Always check the organizer's official information before registering.</p>
-                {event.noticeUrl && <p class="data-note">Source: organizer's official notice.</p>}
-              </article>
+              {familyInfo.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">👨‍👩‍👧‍👦</span> Families and children</h2>
+                  {familyInfo.map((text) => <p>{text}</p>)}
+                </article>
+              )}
+
+              {publicNotes && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">ℹ️</span> Notes</h2>
+                  <p>{publicNotes}</p>
+                </article>
+              )}
+
+              <p class="data-note event-detail-disclaimer">Information is provided for guidance. Before registering, check the official announcement or organizer’s website.</p>
             </div>
 
             <aside class="info-card event-detail-action-panel" aria-label="Main links">
-              <div>
-                <h2>Main links</h2>
-                <div class="event-detail-action-list">
-                  {event.noticeUrl && <a class="button button-primary" href={event.noticeUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Official notice</span></a>}
-                  {event.registrationUrl && <a class="button button-primary" href={event.registrationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>}
-                  {voteUrl && <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Vote for ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>}
+              {voteUrl && (
+                <div>
+                  <h2>Voting</h2>
+                  <div class="event-detail-action-list">
+                    <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Vote for ${event.title}`}><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div class="event-detail-organizer-panel">
                 <h2>Are you the organizer of this race?</h2>
