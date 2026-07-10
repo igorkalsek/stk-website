@@ -8,8 +8,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <span class="eyebrow">Iskalnik tekov</span>
       <h1 id="search-title">Poiščite svoj naslednji tek</h1>
       <p>
-        Preverite potrjene javne tekaške prireditve za izbrano leto. Iščete lahko po imenu teka ali kraju,
-        izbor pa zožite po mesecu, regiji, podlagi in družinski prijaznosti.
+        Preverite potrjene javne tekaške prireditve za izbrano leto. Iščete lahko po imenu teka ali kraju.
+        Izbor lahko zožite po mesecu, regiji, podlagi, razdalji in družinski prijaznosti.
       </p>
       <div class="year-switcher" aria-label="Izbira leta koledarja">
         <a class="year-switcher-link" href="/iskalnik-tekov/" data-year-link="2026">Koledar 2026</a>
@@ -23,7 +23,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="filters-title">Filtri</h2>
-            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
+            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo, podlago ali razdaljo.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -70,6 +70,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span>Podlaga</span>
             <select name="surface" data-filter="surface" disabled>
               <option value="">Vse podlage</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Razdalja</span>
+            <select name="distance" data-filter="distance">
+              <option value="all">Vse razdalje</option>
+              <option value="up-to-5">Do 5 km</option>
+              <option value="over-5-to-10">Nad 5 do 10 km</option>
+              <option value="over-10-to-half">Nad 10 do 21,1 km</option>
+              <option value="over-half-to-marathon">Nad 21,1 do 42,2 km</option>
+              <option value="ultra">Nad 42,2 km</option>
             </select>
           </label>
 
@@ -178,6 +190,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildEventDetailPath, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
+  import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
@@ -219,6 +232,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const monthSelect = document.querySelector<HTMLSelectElement>('[data-filter="month"]');
   const regionSelect = document.querySelector<HTMLSelectElement>('[data-filter="region"]');
   const surfaceSelect = document.querySelector<HTMLSelectElement>('[data-filter="surface"]');
+  const distanceSelect = document.querySelector<HTMLSelectElement>('[data-filter="distance"]');
   const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
   const deadlineSelect = document.querySelector<HTMLSelectElement>('[data-filter="deadline"]');
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
@@ -395,13 +409,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     return true;
   };
 
-  const getMaxKnownDistanceKm = (event: RaceEvent) => {
-    if (!event.distances) return null;
-    const distances = [...event.distances.replace(/,/g, '.').matchAll(/\d+(?:\.\d+)?/g)]
-      .map((match) => Number(match[0]))
-      .filter((distance) => Number.isFinite(distance) && distance > 0 && distance < 500);
-    return distances.length ? Math.max(...distances) : null;
-  };
+  const getMaxKnownDistanceKm = (event: RaceEvent) => getMaxRaceDistanceKm(event.distances);
 
   const hasTrailChallengeName = (event: RaceEvent) => {
     const searchableName = `${event.title} ${event.naziv_prireditve}`
@@ -542,6 +550,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     month: monthSelect?.value ?? '',
     region: regionSelect?.value ?? '',
     surface: surfaceSelect?.value ?? '',
+    distance: distanceSelect?.value ?? 'all',
     registrationFee: registrationFeeSelect?.value ?? '',
     deadlineFilter: deadlineSelect?.value ?? '',
     sort: sortSelect?.value ?? 'date',
@@ -655,6 +664,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       month: filters.month,
       region: filters.region,
       surface: filters.surface,
+      distanceFilter: filters.distance === 'all' ? '' : filters.distance,
       priceFilter: filters.registrationFee,
       deadlineFilter: filters.deadlineFilter,
       sortBy: filters.sort,
@@ -849,6 +859,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.month && event.month !== filters.month) return false;
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
+      if (!matchesRaceDistanceFilter(event.distances, filters.distance)) return false;
       if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
       if (filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
       if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
@@ -880,7 +891,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti filter startnine, trase ali višinskih metrov.', 'Filtri', true);
+      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti katerega od filtrov ali počistite filtre.', 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -908,15 +919,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         console.warn('Iskalnik tekov additional data skipped', error);
       }
 
-      try {
-        if (activeYear !== DEFAULT_PUBLIC_YEAR) throw new Error('Vote enrichment is enabled only for the default public year');
-        const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
-        if (topResponse.ok) {
-          const topPayload = await topResponse.json();
-          events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+      if (activeYear === DEFAULT_PUBLIC_YEAR) {
+        try {
+          const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
+          if (topResponse.ok) {
+            const topPayload = await topResponse.json();
+            events = enrichEventsWithVoteUrls(events, toArray(topPayload));
+          }
+        } catch (error) {
+          console.warn('Iskalnik tekov vote enrichment skipped', error);
         }
-      } catch (error) {
-        console.warn('Iskalnik tekov vote enrichment skipped', error);
       }
 
       state.events = events;
