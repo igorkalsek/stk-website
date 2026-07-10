@@ -1,4 +1,4 @@
-const UPSTREAM_INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&limit=5';
+const UPSTREAM_INTEREST_PREVIEW_URL = 'https://script.google.com/macros/s/AKfycbwjCQ14kRPm0Iu3goO7aiX50j_JWbw5g_E25O7JV1I/exec?endpoint=site-analytics&scope=interest-preview&year=2026&include_past=false&include_fallback=false&min_interest=1&limit=20';
 const UPSTREAM_TIMEOUT_MS = 8000;
 
 const jsonResponse = (payload: unknown, init: ResponseInit = {}) => new Response(JSON.stringify(payload), {

@@ -861,7 +861,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
 
 
-  const INTEREST_ID_KEYS = ['event_id', 'eventId', 'race_id', 'raceId', 'edition_id', 'editionId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
+  const INTEREST_ID_KEYS = ['event_id', 'eventId'];
 
   const normalizeInterestEventId = (value: unknown) => {
     const rawValue = String(value ?? '').trim();
@@ -869,16 +869,11 @@ import SocialLinks from '../components/SocialLinks.astro';
 
     const normalized = rawValue.toLocaleUpperCase('sl-SI').replace(/\s+/g, '');
     const prefixedMatch = normalized.match(/^R0*(\d+)$/);
-    const numericMatch = normalized.match(/^0*(\d+)$/);
-    const numericPart = prefixedMatch?.[1] ?? numericMatch?.[1];
+    if (!prefixedMatch) return '';
 
-    if (numericPart) {
-      const numberValue = Number.parseInt(numericPart, 10);
-      if (!Number.isFinite(numberValue) || numberValue <= 0) return '';
-      return `R${String(numberValue).padStart(6, '0')}`;
-    }
-
-    return /^[A-Z][A-Z0-9_-]{2,}$/.test(normalized) ? normalized : '';
+    const numberValue = Number.parseInt(prefixedMatch[1], 10);
+    if (!Number.isFinite(numberValue) || numberValue <= 0) return '';
+    return `R${String(numberValue).padStart(6, '0')}`;
   };
 
   const eventIdValue = (event: ApiRecord) => {
@@ -922,14 +917,22 @@ import SocialLinks from '../components/SocialLinks.astro';
     return record;
   };
 
-  const getInterestPreviewRaces = async (masterRows: ApiRecord[], limit = 5) => {
+  const isValidInterestPreviewMasterEvent = (event: ApiRecord, todayValue: number) => {
+    if (!isConfirmedPublicUpcomingEvent(event, todayValue)) return false;
+    if (getEventYear(event) !== '2026') return false;
+    if (!getDisplayEventTitle(getEventTitle(event, '')).trim()) return false;
+    if (!getEventField(event, 'datum', ['date', 'event_date', 'Datum'])) return false;
+    return Boolean(eventDetailPath(event));
+  };
+
+  const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5) => {
     const payload = await loadInterestPreviewPayload();
-    const interestItems = getRecordArray(payload, 'items').slice(0, limit);
+    const interestItems = getRecordArray(payload, 'items');
     if (!interestItems.length) return [];
 
     const todayValue = todayStartValue();
     const masterEventsById = buildUniqueEventIdIndex(
-      masterRows.filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
+      masterRows.filter((event) => isValidInterestPreviewMasterEvent(event, todayValue))
     );
     const selectedIds = new Set<string>();
     const rankedEvents: ApiRecord[] = [];
@@ -941,10 +944,10 @@ import SocialLinks from '../components/SocialLinks.astro';
       if (!match) continue;
       selectedIds.add(id);
       rankedEvents.push({ ...match, __interest_preview_ranked: true });
-      if (rankedEvents.length >= limit) break;
+      if (rankedEvents.length >= displayLimit) break;
     }
 
-    if (enableApiDebug) {
+    if (debugEnabled) {
       const interestIds = interestItems.map(eventIdValue).filter(Boolean);
       console.warn('STK interest preview match summary', {
         interestItemCount: interestItems.length,
