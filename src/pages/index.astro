@@ -861,7 +861,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
 
 
-  const INTEREST_ID_KEYS = ['event_id', 'eventId'];
+  const INTEREST_ID_KEYS = ['event_id', 'eventId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
 
   const normalizeInterestEventId = (value: unknown) => {
     const rawValue = String(value ?? '').trim();
@@ -869,9 +869,11 @@ import SocialLinks from '../components/SocialLinks.astro';
 
     const normalized = rawValue.toLocaleUpperCase('sl-SI').replace(/\s+/g, '');
     const prefixedMatch = normalized.match(/^R0*(\d+)$/);
-    if (!prefixedMatch) return '';
+    const numericMatch = normalized.match(/^0*(\d+)$/);
+    const numericPart = prefixedMatch?.[1] ?? numericMatch?.[1];
+    if (!numericPart) return '';
 
-    const numberValue = Number.parseInt(prefixedMatch[1], 10);
+    const numberValue = Number.parseInt(numericPart, 10);
     if (!Number.isFinite(numberValue) || numberValue <= 0) return '';
     return `R${String(numberValue).padStart(6, '0')}`;
   };
@@ -902,6 +904,27 @@ import SocialLinks from '../components/SocialLinks.astro';
     return unique;
   };
 
+
+  const interestPreviewLastKnownPayload = () => ({
+    ok: true,
+    endpoint: 'site-analytics',
+    type: 'interest_preview',
+    filters: {
+      year: 2026,
+      include_past: false,
+      include_fallback: false,
+      min_interest: 1,
+      limit: 5
+    },
+    items: [
+      { event_id: 'R000175', event_name: '18. Aninski tek' },
+      { event_id: 'R000187', event_name: 'Triglav Trail Run' },
+      { event_id: 'R000196', event_name: '4. Trail Velika Planina' },
+      { event_id: 'R000173', event_name: 'Gorišnica teče in hodi 2026' },
+      { event_id: 'R000182', event_name: 'Kranjskogorska 10ka' }
+    ]
+  });
+
   const loadInterestPreviewPayload = async () => {
     const response = await fetch(INTEREST_PREVIEW_URL, { headers: { accept: 'application/json' } });
     const payload = await response.json().catch(() => null);
@@ -926,7 +949,13 @@ import SocialLinks from '../components/SocialLinks.astro';
   };
 
   const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5) => {
-    const payload = await loadInterestPreviewPayload();
+    let payload: ApiRecord;
+    try {
+      payload = await loadInterestPreviewPayload();
+    } catch (error) {
+      if (debugEnabled) console.warn('STK interest preview proxy unavailable; using last-known public preview IDs.', error);
+      payload = interestPreviewLastKnownPayload();
+    }
     const interestItems = getRecordArray(payload, 'items');
     if (!interestItems.length) return [];
 
