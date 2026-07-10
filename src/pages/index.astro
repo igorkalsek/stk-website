@@ -828,7 +828,6 @@ import SocialLinks from '../components/SocialLinks.astro';
 
   const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
 
-  const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
   const normalizeTopUpcomingRace = (event: ApiRecord) => {
     const votes = getTopEventVotes(event);
@@ -990,19 +989,8 @@ import SocialLinks from '../components/SocialLinks.astro';
     return rankedEvents;
   };
 
-  const hasConfirmedPublicFields = (event: ApiRecord) => {
-    const status = getEventField(event, 'status_dogodka');
-    if (status && normalize(status) !== 'potrjeno') return false;
 
-    const isPublic = getEventField(event, 'vidno_v_javnem_koledarju');
-    if (isPublic && isPublic.toLocaleUpperCase('sl-SI') !== 'DA') return false;
-
-    return true;
-  };
-
-  const removeHeroVotes = (event: ApiRecord) => ({ ...event, votes_total: undefined });
-
-  const renderHeroPreview = (topEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
+  const renderHeroPreview = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
     const titleElement = document.querySelector('[data-hero-preview-title]');
     const helperElement = document.querySelector('[data-hero-preview-helper]');
     const listElement = document.querySelector('[data-hero-preview-list]');
@@ -1010,30 +998,17 @@ import SocialLinks from '../components/SocialLinks.astro';
 
     const todayValue = todayStartValue();
     const cutoffValue = daysFromToday(14);
-    const votedEvents = topEvents
-      .filter((event) => {
-        const dateValue = eventDateValue(event);
-        return (
-          dateValue !== null &&
-          dateValue >= todayValue &&
-          dateValue <= cutoffValue &&
-          hasConfirmedPublicFields(event) &&
-          (getHeroPreviewVotes(event) ?? 0) > 0
-        );
-      })
-      .sort((a, b) => {
-        const voteDifference = (getHeroPreviewVotes(b) ?? 0) - (getHeroPreviewVotes(a) ?? 0);
-        if (voteDifference !== 0) return voteDifference;
-        return compareEventDateThenTitle(a, b);
-      });
     const selectedIds = new Set<string>();
-    const votedSelection: ApiRecord[] = [];
-    for (const event of votedEvents) {
-      if (votedSelection.length >= 3) break;
+    const upcomingInterestEvents: ApiRecord[] = [];
+
+    for (const event of interestEvents) {
+      if (upcomingInterestEvents.length >= 3) break;
+      const dateValue = eventDateValue(event);
+      if (dateValue === null || dateValue < todayValue || dateValue > cutoffValue) continue;
       const identity = eventIdentity(event);
       if (identity && selectedIds.has(identity)) continue;
       if (identity) selectedIds.add(identity);
-      votedSelection.push(event);
+      upcomingInterestEvents.push(event);
     }
 
     const fallbackEvents: ApiRecord[] = [];
@@ -1044,20 +1019,19 @@ import SocialLinks from '../components/SocialLinks.astro';
       })
       .sort(compareEventDateThenTitle);
     for (const event of nearestFallbackEvents) {
-      if (votedSelection.length + fallbackEvents.length >= 3) break;
+      if (upcomingInterestEvents.length + fallbackEvents.length >= 3) break;
       const identity = eventIdentity(event);
       if (identity && selectedIds.has(identity)) continue;
       if (identity) selectedIds.add(identity);
-      fallbackEvents.push(removeHeroVotes(event));
+      fallbackEvents.push(event);
     }
-    const previewEvents = [...votedSelection, ...fallbackEvents];
-    const useVoteOnlyHelper = previewEvents.length > 0 && fallbackEvents.length === 0;
+    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents];
 
     if (titleElement) {
       titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
     }
     if (helperElement) {
-      helperElement.textContent = useVoteOnlyHelper ? 'Največ glasov med prihajajočimi teki.' : 'Po glasovih tekačev, dopolnjeno z najbližjimi teki.';
+      helperElement.textContent = 'Najbližji prihajajoči teki z največ zanimanja.';
     }
 
     if (!previewEvents.length) {
@@ -1067,10 +1041,8 @@ import SocialLinks from '../components/SocialLinks.astro';
 
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const votes = getHeroPreviewVotes(event);
-      const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
       const detailPath = eventDetailPath(event);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</a>${voteCount}</strong></li>`;
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</a></strong></li>`;
     }).join('');
   };
 
@@ -1278,10 +1250,7 @@ import SocialLinks from '../components/SocialLinks.astro';
     if (!container) return;
 
     try {
-      const [payload, topUpcomingResult] = await Promise.all([
-        loadJson('/'),
-        getTopUpcomingRaces().catch(() => ({ events: [], rawEvents: [] }))
-      ]);
+      const payload = await loadJson('/');
       const todayValue = todayStartValue();
       const events = toArray(payload)
         .filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
@@ -1294,7 +1263,8 @@ import SocialLinks from '../components/SocialLinks.astro';
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      renderHeroPreview(topUpcomingResult.events, events);
+      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
+      renderHeroPreview(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1403,13 +1373,13 @@ import SocialLinks from '../components/SocialLinks.astro';
         const date = formatDate(dateValue);
         const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
-        const metaItems = [
-          options.interestPreview
-            ? '<span class="event-chip pill-orange">Zanimanje obiskovalcev</span>'
-            : votes !== null
-              ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
-              : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
-        ].filter(Boolean).join('');
+        const metaItems = options.interestPreview
+          ? ''
+          : [
+              votes !== null
+                ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
+                : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
+            ].filter(Boolean).join('');
 
         return `
           <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
