@@ -1005,7 +1005,9 @@ import SocialLinks from '../components/SocialLinks.astro';
       titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
     }
     if (helperElement) {
-      helperElement.textContent = 'Najbližji prihajajoči teki z največ zanimanja.';
+      helperElement.textContent = upcomingInterestEvents.length
+        ? 'Najbližji prihajajoči teki z največ zanimanja.'
+        : 'Najbližji prihajajoči teki.';
     }
 
     if (!previewEvents.length) {
