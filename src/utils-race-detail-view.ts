@@ -79,7 +79,11 @@ export const formatDetailSurface = (value: string, language: DetailLanguage) =>
 
 export const formatDetailMoneyRange = (minValue = '', maxValue = '', language: DetailLanguage = 'sl') => {
   const normalizeAmount = (value: string) => {
-    const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const normalized = trimmed.replace(',', '.').replace(/\s*(€|eur)\s*$/iu, '').trim();
+    if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
+    const amount = Number(normalized);
     return Number.isFinite(amount) ? amount : null;
   };
   const formatAmount = (amount: number) => amount.toLocaleString(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 2, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
@@ -159,6 +163,24 @@ export const buildCourseRows = (event: DetailEvent, language: DetailLanguage): D
     data.elevationGain ? { label: labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
   ];
   return rows.filter((item): item is DetailRow => Boolean(item && hasText(item.value)));
+};
+
+
+export const buildCourseHeading = (event: DetailEvent, language: DetailLanguage): string => {
+  const data = event.additionalData;
+  if (!data) return '';
+  const hasRoute = Boolean(normalizeDetailUrl(data.routeUrl));
+  const hasElevation = hasText(data.elevationGain);
+  if (language === 'en') {
+    if (hasRoute && hasElevation) return 'Course and elevation';
+    if (hasRoute) return 'Course';
+    if (hasElevation) return 'Elevation';
+    return '';
+  }
+  if (hasRoute && hasElevation) return 'Trasa in višinski podatki';
+  if (hasRoute) return 'Trasa';
+  if (hasElevation) return 'Višinski podatki';
+  return '';
 };
 
 export const buildFamilyInfo = (event: DetailEvent, language: DetailLanguage): string[] => {

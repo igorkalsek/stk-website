@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  buildCourseHeading,
   buildCourseRows,
   buildFamilyInfo,
   buildKeyFacts,
   buildPrimaryActions,
   buildPublicNotes,
-  buildRegistrationRows
+  buildRegistrationRows,
+  formatDetailMoneyRange
 } from '../.cache/dist-test/utils-race-detail-view.js';
 
 const baseEvent = {
@@ -30,6 +32,41 @@ describe('race detail view model', () => {
 
   it('omits blank public notes', () => {
     assert.equal(buildPublicNotes({ ...baseEvent, publicNotes: '   ' }, 'sl', []), '');
+  });
+
+  it('formats money ranges without inferring zero from blank or malformed values', () => {
+    assert.equal(formatDetailMoneyRange('', ''), '');
+    assert.equal(formatDetailMoneyRange('   ', '   '), '');
+    assert.equal(formatDetailMoneyRange('0', ''), '0 €');
+    assert.equal(formatDetailMoneyRange('0,00', ''), '0 €');
+    assert.equal(formatDetailMoneyRange('', '0.00'), '0 €');
+    assert.equal(formatDetailMoneyRange('', '20'), '20 €');
+    assert.equal(formatDetailMoneyRange('10', ''), '10 €');
+    assert.equal(formatDetailMoneyRange('10', '10'), '10 €');
+    assert.equal(formatDetailMoneyRange('10', '20'), '10–20 €');
+    assert.equal(formatDetailMoneyRange('free', 'unknown'), '');
+    assert.equal(formatDetailMoneyRange('free', '20', 'en'), '20 €');
+    assert.equal(formatDetailMoneyRange('10.5', '20.75', 'en'), '10.50–20.75 €');
+  });
+
+  it('omits blank fee rows and full registration sections when no registration fields are usable', () => {
+    const event = { ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '', registrationMaxEur: '   ', registrationDeadline: '', earlyRegistrationDeadline: '', dayOfRegistration: '' } };
+    assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), []);
+    const withDeadline = { ...event, additionalData: { ...event.additionalData, registrationDeadline: '2026-05-01' } };
+    assert.deepEqual(buildRegistrationRows(withDeadline, 'en', fmt).map((row) => row.label), ['Registration deadline']);
+  });
+
+  it('chooses route and elevation headings based on visible course rows', () => {
+    const routeOnly = { ...baseEvent, additionalData: { ...richAdditional, elevationGain: '' } };
+    const elevationOnly = { ...baseEvent, additionalData: { ...richAdditional, routeUrl: '' } };
+    const both = { ...baseEvent, additionalData: richAdditional };
+    assert.equal(buildCourseHeading(routeOnly, 'sl'), 'Trasa');
+    assert.equal(buildCourseHeading(elevationOnly, 'sl'), 'Višinski podatki');
+    assert.equal(buildCourseHeading(both, 'sl'), 'Trasa in višinski podatki');
+    assert.equal(buildCourseHeading(routeOnly, 'en'), 'Course');
+    assert.equal(buildCourseHeading(elevationOnly, 'en'), 'Elevation');
+    assert.equal(buildCourseHeading(both, 'en'), 'Course and elevation');
+    assert.equal(buildCourseRows(elevationOnly, 'en').length, 1);
   });
 
   it('renders family information only from explicit source fields', () => {

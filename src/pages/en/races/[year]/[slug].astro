@@ -8,7 +8,7 @@ import { formatSloveneDistances } from '../../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
-import { buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -137,6 +137,7 @@ const heroBadges = event ? [
 const detailItems = event ? buildKeyFacts(event, 'en') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
 const routeItems = event ? buildCourseRows(event, 'en') : [];
+const courseHeading = event ? buildCourseHeading(event, 'en') : '';
 const familyInfo = event ? buildFamilyInfo(event, 'en') : [];
 const publicNotes = event ? buildPublicNotes(event, 'en', familyInfo) : '';
 const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
@@ -240,7 +241,7 @@ const jsonLd = event ? {
 
               {routeItems.length > 0 && (
                 <article class="info-card event-detail-panel">
-                  <h2><span aria-hidden="true">🗺</span> Course</h2>
+                  <h2><span aria-hidden="true">🗺</span> {courseHeading}</h2>
                   <dl class="event-detail-list">
                     {routeItems.map((item) => (
                       <div>
