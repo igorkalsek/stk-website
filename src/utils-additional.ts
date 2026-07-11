@@ -27,6 +27,7 @@ export type EventWithAdditionalRow = {
 };
 
 const ADDITIONAL_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/additional';
+const ADDITIONAL_API_TIMEOUT_MS = 15_000;
 const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'additional'];
 const HIGH_RELIABILITY = 'visoka';
 const TITLE_STOP_WORDS = new Set([
@@ -175,9 +176,19 @@ const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: Ad
 };
 
 export const fetchAdditionalEventData = async () => {
-  const response = await fetch(ADDITIONAL_API_URL, { headers: { Accept: 'application/json' } });
-  if (!response.ok) throw new Error(`Additional API status ${response.status}`);
-  return toAdditionalArray(await response.json()).map(mapAdditionalRow);
+  const started = performance.now();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ADDITIONAL_API_TIMEOUT_MS);
+  try {
+    const response = await fetch(ADDITIONAL_API_URL, { headers: { Accept: 'application/json' }, signal: controller.signal });
+    if (!response.ok) throw new Error(`Additional API status ${response.status}`);
+    return toAdditionalArray(await response.json()).map(mapAdditionalRow);
+  } catch (error) {
+    console.warn(`[additional-data] API fetch failed after ${Math.round(performance.now() - started)}ms: ${error instanceof Error ? error.message : String(error)}`);
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 };
 
 export const attachAdditionalDataByMasterRow = <TEvent extends EventWithAdditionalRow>(

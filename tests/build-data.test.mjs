@@ -1,0 +1,167 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import {
+  __resetBuildDataCachesForTests,
+  fetchMasterYearPayload,
+  getAdditionalEventDataCached,
+  getDetailStaticPaths,
+  getTopVoteRowsCached,
+  timedFetchJson,
+} from '../.cache/dist-test/utils-build-data.js';
+
+const jsonResponse = (payload, init = {}) => new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' }, ...init });
+
+test('master year payload fetch is memoized per year and rejected promises are cleared', async () => {
+  __resetBuildDataCachesForTests();
+  let calls = 0;
+  const fetchImpl = async () => {
+    calls += 1;
+    return jsonResponse({ rows: [{ row: calls }] });
+  };
+
+  const [first, second] = await Promise.all([
+    fetchMasterYearPayload('2026', fetchImpl),
+    fetchMasterYearPayload('2026', fetchImpl),
+  ]);
+
+  assert.equal(calls, 1);
+  assert.deepEqual(first, second);
+
+  __resetBuildDataCachesForTests();
+  let failed = false;
+  const retryFetch = async () => {
+    calls += 1;
+    if (!failed) {
+      failed = true;
+      throw new Error('temporary network error');
+    }
+    return jsonResponse({ ok: true });
+  };
+
+  await assert.rejects(fetchMasterYearPayload('2027', retryFetch), /temporary network error/);
+  assert.deepEqual(await fetchMasterYearPayload('2027', retryFetch), { ok: true });
+});
+
+test('timedFetchJson aborts slow build-time requests', async () => {
+  __resetBuildDataCachesForTests();
+  const slowFetch = (_url, init) => new Promise((_resolve, reject) => {
+    init.signal.addEventListener('abort', () => reject(init.signal.reason ?? new Error('aborted')), { once: true });
+  });
+
+  await assert.rejects(
+    timedFetchJson('https://example.test/slow', { label: 'slow endpoint', timeoutMs: 10, fetchImpl: slowFetch }),
+    /aborted|AbortError|This operation was aborted/i,
+  );
+});
+
+test('top vote rows are fetched once for concurrent callers and retry after rejection', async () => {
+  __resetBuildDataCachesForTests();
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls += 1;
+    return jsonResponse({ top: [{ row: calls, vote_url: 'https://example.com/vote' }] });
+  };
+
+  try {
+    const [first, second] = await Promise.all([
+      getTopVoteRowsCached(),
+      getTopVoteRowsCached(),
+    ]);
+
+    assert.equal(calls, 1);
+    assert.deepEqual(first, second);
+
+    __resetBuildDataCachesForTests();
+    let failed = false;
+    calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      if (!failed) {
+        failed = true;
+        throw new Error('temporary top error');
+      }
+      return jsonResponse({ top: [{ row: '2', vote_url: 'https://example.com/retry' }] });
+    };
+
+    await assert.rejects(getTopVoteRowsCached(), /temporary top error/);
+    assert.deepEqual(await getTopVoteRowsCached(), [{ row: '2', vote_url: 'https://example.com/retry' }]);
+    assert.equal(calls, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('additional event data is fetched once for concurrent callers and retry after rejection', async () => {
+  __resetBuildDataCachesForTests();
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls += 1;
+    return jsonResponse({ additional: [] });
+  };
+
+  try {
+    const [first, second] = await Promise.all([
+      getAdditionalEventDataCached(),
+      getAdditionalEventDataCached(),
+    ]);
+
+    assert.equal(calls, 1);
+    assert.deepEqual(first, second);
+
+    __resetBuildDataCachesForTests();
+    let failed = false;
+    calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      if (!failed) {
+        failed = true;
+        throw new Error('temporary additional error');
+      }
+      return jsonResponse({ additional: [] });
+    };
+
+    await assert.rejects(getAdditionalEventDataCached(), /temporary additional error/);
+    assert.deepEqual(await getAdditionalEventDataCached(), []);
+    assert.equal(calls, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Slovenian and English detail paths reuse the same year data cache', async () => {
+  __resetBuildDataCachesForTests();
+  const originalFetch = globalThis.fetch;
+  const requestedUrls = [];
+  globalThis.fetch = async (url) => {
+    requestedUrls.push(String(url));
+    const year = String(url).includes('year=2027') ? '2027' : '2026';
+    return jsonResponse({
+      rows: [{
+        row: year === '2027' ? '2027' : '2026',
+        datum: `${year}-12-01`,
+        naziv_prireditve: `Testni tek ${year}`,
+        kraj: 'Ljubljana',
+        regija: 'Osrednjeslovenska',
+        tip_podlage: 'cesta',
+        razdalje_km: '10',
+        status_dogodka: 'potrjeno',
+        vidno_v_javnem_koledarju: 'DA',
+      }],
+    });
+  };
+
+  try {
+    const slPaths = await getDetailStaticPaths('sl');
+    const enPaths = await getDetailStaticPaths('en');
+
+    assert.equal(slPaths.length, 2);
+    assert.equal(enPaths.length, 2);
+    assert.equal(requestedUrls.length, 2);
+    assert.equal(new Set(requestedUrls).size, 2);
+    assert.deepEqual(slPaths.map((path) => path.params), enPaths.map((path) => path.params));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

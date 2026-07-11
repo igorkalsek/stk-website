@@ -1,45 +1,22 @@
 ---
 import RelatedRaceCards from '../../../../components/RelatedRaceCards.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
-import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from '../../../../utils-additional';
+import { type AdditionalEventData } from '../../../../utils-additional';
 import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../../utils-calendar';
-import { buildEnglishEventDetailPath, buildEventDetailPath, buildEventDetailSlug, mapPublicRaceEvent, slugMatchesEvent, toApiRecords, type PublicRaceEvent } from '../../../../utils-event-detail';
-import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
+import { buildEnglishEventDetailPath, buildEventDetailPath, slugMatchesEvent, type PublicRaceEvent } from '../../../../utils-event-detail';
+import { isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
 import { formatSloveneDistances } from '../../../../utils-slovenian';
-import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
+import { isVoteUrlSafeForEvent } from '../../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
-import { buildRelatedRaceCards, buildRelatedRaces, getTodayIsoInLjubljana, type RelatedRaceCard } from '../../../../utils-related-races';
+import { type RelatedRaceCard } from '../../../../utils-related-races';
+import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../../utils-build-data';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
-const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-const TOP_API_URL = `${API_BASE}/top?scope=upcoming&limit=1000`;
-
 export async function getStaticPaths() {
-  const paths = [];
-  for (const year of SUPPORTED_PUBLIC_YEARS) {
-    let response: Response;
-    try {
-      response = await fetch(`https://stk-master-api.igor-kalsek.workers.dev${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } });
-    } catch (error) {
-      console.warn(`English detail pages getStaticPaths skipped ${year}`, error);
-      continue;
-    }
-    if (!response.ok) continue;
-    const todayIso = getTodayIsoInLjubljana();
-    const today = new Date(`${todayIso}T00:00:00`).getTime();
-    const events = toApiRecords(await response.json())
-      .map((item) => mapPublicRaceEvent(item, year, today))
-      .filter((event): event is PublicRaceEvent => Boolean(event))
-      .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
-    paths.push(...events.map((event) => ({
-      params: { year, slug: buildEventDetailSlug(event) },
-      props: { event, year, relatedRaces: buildRelatedRaceCards(buildRelatedRaces({ currentEvent: event, candidates: events, todayIso, limit: 3 }), 'en') }
-    })));
-  }
-  return paths;
+  return getDetailStaticPaths('en');
 }
 
 const { event: baseEvent, year, relatedRaces = [] } = Astro.props as { event?: PublicRaceEvent; year?: PublicYear; relatedRaces?: RelatedRaceCard[] };
@@ -50,7 +27,7 @@ let event: DetailEvent | null = baseEvent && isValidYear && slugMatchesEvent(slu
 
 if (event && eventYear && isAdditionalDataEnabledForYear(eventYear)) {
   try {
-    const [withAdditional] = attachAdditionalDataByMasterRow([event], await fetchAdditionalEventData());
+    const [withAdditional] = await attachAdditionalDataCached([event]);
     event = withAdditional;
   } catch (error) {
     console.warn('English detail pages additional data skipped', error);
@@ -59,15 +36,14 @@ if (event && eventYear && isAdditionalDataEnabledForYear(eventYear)) {
 
 if (event && year === '2026') {
   try {
-    const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
-    if (topResponse.ok) {
-      const [withVoteUrl] = enrichEventsWithVoteUrls([event], toApiRecords(await topResponse.json()));
-      event = withVoteUrl;
-    }
+    const [withVoteUrl] = await enrichEventsWithVoteUrlsCached([event]);
+    event = withVoteUrl;
   } catch (error) {
     console.warn('English detail pages vote enrichment skipped', error);
   }
 }
+
+maybePrintBuildTiming();
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
 const calendarOptions = event ? {

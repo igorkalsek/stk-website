@@ -3,7 +3,7 @@ import {
   normalizeEventDashes,
   normalizeEventMatchText,
   normalizeEventWhitespace,
-} from "./utils-events";
+} from "./utils-events.js";
 
 type ApiRecord = Record<string, unknown>;
 
