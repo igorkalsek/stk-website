@@ -1278,7 +1278,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3><a href="${escapeHtml(eventDetailPath(event))}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(title)}</a></h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
             ${links ? `<div class="event-actions">${links}</div>` : ''}
@@ -1361,7 +1361,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3><a href="${escapeHtml(eventDetailPath(event))}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(title)}</a></h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
             ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}

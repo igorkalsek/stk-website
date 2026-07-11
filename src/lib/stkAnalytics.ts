@@ -36,6 +36,35 @@ const MAX_FIELD_LENGTH = 500;
 const MAX_JSON_FIELD_LENGTH = 1000;
 const MAX_QUERY_LENGTH = 120;
 const STK_ANALYTICS_OPT_OUT_KEY = 'stkAnalyticsOptOut';
+const isStkAnalyticsDev = () => Boolean((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV);
+
+const STK_CANONICAL_HOSTS = new Set(['tekaski-koledar.si', 'www.tekaski-koledar.si']);
+const STK_LOCAL_HOSTS = new Set(['localhost', '127.0.0.1']);
+const STK_PAGES_HOST = 'stk-website.pages.dev';
+
+const isStkPagesHost = (hostname: string) => hostname === STK_PAGES_HOST || hostname.endsWith(`.${STK_PAGES_HOST}`);
+const isRecognizedStkHost = (hostname: string) => STK_CANONICAL_HOSTS.has(hostname) || STK_LOCAL_HOSTS.has(hostname) || isStkPagesHost(hostname);
+
+export const isInternalStkNavigationTarget = (href: string, currentHref?: string): boolean => {
+  const rawHref = typeof href === 'string' ? href.trim() : '';
+  if (!rawHref || /[\u0000-\u001f\s]/.test(rawHref)) return false;
+
+  const browserHref = typeof window !== 'undefined' ? window.location.href : '';
+  const baseHref = currentHref || browserHref || 'https://tekaski-koledar.si/';
+
+  try {
+    const currentUrl = new URL(baseHref);
+    const targetUrl = new URL(rawHref, currentUrl);
+    if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') return false;
+
+    const currentHost = currentUrl.hostname.toLowerCase();
+    const targetHost = targetUrl.hostname.toLowerCase();
+    if (targetUrl.origin === currentUrl.origin && isRecognizedStkHost(currentHost)) return true;
+    return isRecognizedStkHost(targetHost);
+  } catch {
+    return false;
+  }
+};
 
 let hasProcessedAnalyticsToggle = false;
 
@@ -209,11 +238,12 @@ export const trackStkEvent = (payload: StkAnalyticsPayload) => {
   if (!ALLOWED_EVENT_TYPES.has(payload.event_type)) return;
 
   const body = buildBody(payload);
+  if (body.event_type === 'external_link_clicked' && body.target_url && isInternalStkNavigationTarget(body.target_url)) return;
   if ((body.event_type === 'search_performed' || body.event_type === 'no_results_search') && !body.search_query && !body.filters_json) return;
 
   try {
     sendBody(body);
-    if (import.meta.env.DEV) console.debug('[STK analytics]', body);
+    if (isStkAnalyticsDev()) console.debug('[STK analytics]', body);
   } catch {
     // Analytics must fail silently.
   }
