@@ -153,3 +153,90 @@ export const getRacePreferenceReasonLabels = (reasonKeys: RacePreferenceReasonKe
   } as const;
   return REASON_PRIORITY.filter((key) => reasonKeys.includes(key)).slice(0, 3).map((key) => labels[language][key]);
 };
+
+export type RacePreferenceLanguage = 'sl' | 'en';
+export type RacePreferencePanelState = 'empty' | 'active' | 'inactive' | 'editing';
+export type RaceFinderSortValue = 'date' | 'registration-deadline' | 'registration-min' | 'registration-max' | 'my-races' | string;
+
+const DISTANCE_LABELS: Record<RacePreferenceLanguage, Record<RacePreferenceDistanceBucket, string>> = {
+  sl: { 'up-to-5': 'Do 5 km', 'over-5-to-10': '5–10 km', 'over-10-to-half': '10–21,1 km', 'over-half-to-marathon': '21,1–42,2 km', ultra: 'Nad 42,2 km' },
+  en: { 'up-to-5': 'Up to 5 km', 'over-5-to-10': '5–10 km', 'over-10-to-half': '10–21.1 km', 'over-half-to-marathon': '21.1–42.2 km', ultra: 'Over 42.2 km' }
+};
+
+const SURFACE_LABELS: Record<RacePreferenceLanguage, Record<RacePreferenceSurfaceCategory, string>> = {
+  sl: { road: 'Cesta', trail: 'Trail', mountain: 'Gorski tek' },
+  en: { road: 'Road', trail: 'Trail', mountain: 'Mountain' }
+};
+
+const slCountLabel = (count: number, singular: string, dual: string, few: string, many: string) => {
+  const mod100 = Math.abs(count) % 100;
+  if (mod100 === 1) return `${count} ${singular}`;
+  if (mod100 === 2) return `${count} ${dual}`;
+  if (mod100 === 3 || mod100 === 4) return `${count} ${few}`;
+  return `${count} ${many}`;
+};
+
+export const getRacePreferenceCountLabel = (count: number, group: 'distance' | 'surface' | 'region', language: RacePreferenceLanguage) => {
+  if (language === 'en') {
+    const labels = { distance: 'distance group', surface: 'surface', region: 'region' } as const;
+    return `${count} ${labels[group]}${count === 1 ? '' : 's'}`;
+  }
+  if (group === 'distance') return slCountLabel(count, 'razdalja', 'razdalji', 'razdalje', 'razdalj');
+  if (group === 'region') return slCountLabel(count, 'regija', 'regiji', 'regije', 'regij');
+  return slCountLabel(count, 'podlaga', 'podlagi', 'podlage', 'podlag');
+};
+
+export const getRacePreferenceDistanceLabel = (bucket: RacePreferenceDistanceBucket, language: RacePreferenceLanguage) => DISTANCE_LABELS[language][bucket];
+export const getRacePreferenceSurfaceLabel = (category: RacePreferenceSurfaceCategory, language: RacePreferenceLanguage) => SURFACE_LABELS[language][category];
+
+export const summarizeRacePreferences = (preferences: RacePreferencesV1, language: RacePreferenceLanguage) => {
+  const validated = validateRacePreferences(preferences);
+  if (!validated || !hasMeaningfulRacePreferences(validated)) return { visible: '', accessible: '' };
+  const visibleParts: string[] = [];
+  const accessibleParts: string[] = [];
+  if (validated.distanceBuckets.length === 1) visibleParts.push(getRacePreferenceDistanceLabel(validated.distanceBuckets[0], language));
+  else if (validated.distanceBuckets.length > 1) visibleParts.push(getRacePreferenceCountLabel(validated.distanceBuckets.length, 'distance', language));
+  accessibleParts.push(...validated.distanceBuckets.map((bucket) => getRacePreferenceDistanceLabel(bucket, language)));
+
+  if (validated.surfaceCategories.length === 1) visibleParts.push(getRacePreferenceSurfaceLabel(validated.surfaceCategories[0], language));
+  else if (validated.surfaceCategories.length > 1) visibleParts.push(getRacePreferenceCountLabel(validated.surfaceCategories.length, 'surface', language));
+  accessibleParts.push(...validated.surfaceCategories.map((category) => getRacePreferenceSurfaceLabel(category, language)));
+
+  if (validated.regions.length === 1) visibleParts.push(validated.regions[0]);
+  else if (validated.regions.length === 2) visibleParts.push(validated.regions.join(' · '));
+  else if (validated.regions.length > 2) visibleParts.push(getRacePreferenceCountLabel(validated.regions.length, 'region', language));
+  accessibleParts.push(...validated.regions);
+
+  if (validated.familyFriendly) {
+    const familyLabel = language === 'en' ? 'Family-friendly' : 'Družinam prijazno';
+    visibleParts.push(familyLabel);
+    accessibleParts.push(familyLabel);
+  }
+  return { visible: visibleParts.join(' · '), accessible: accessibleParts.join(' · ') };
+};
+
+export const getRacePreferencePanelState = ({ preferences, editing }: { preferences: RacePreferencesV1; editing: boolean }): RacePreferencePanelState => {
+  if (editing) return 'editing';
+  if (!hasMeaningfulRacePreferences(preferences)) return 'empty';
+  return preferences.active ? 'active' : 'inactive';
+};
+
+export const getRaceFinderResultDescription = (sort: RaceFinderSortValue, language: RacePreferenceLanguage) => {
+  const descriptions: Record<RacePreferenceLanguage, Record<string, string>> = {
+    sl: {
+      'my-races': 'Prikazani so potrjeni javni dogodki od danes naprej, razvrščeni po ujemanju z vašimi preferencami.',
+      date: 'Prikazani so potrjeni javni dogodki od danes naprej, razvrščeni po datumu.',
+      'registration-deadline': 'Prikazani so potrjeni javni dogodki od danes naprej, razvrščeni po roku prijave.',
+      'registration-min': 'Prikazani so potrjeni javni dogodki od danes naprej, od najnižje znane startnine.',
+      'registration-max': 'Prikazani so potrjeni javni dogodki od danes naprej, od najvišje znane startnine.'
+    },
+    en: {
+      'my-races': 'Confirmed public races from today onward are shown, ranked by how well they match your preferences.',
+      date: 'Confirmed public races from today onward are shown, sorted by date.',
+      'registration-deadline': 'Confirmed public races from today onward are shown, sorted by registration deadline.',
+      'registration-min': 'Confirmed public races from today onward are shown, starting with the lowest known entry fee.',
+      'registration-max': 'Confirmed public races from today onward are shown, starting with the highest known entry fee.'
+    }
+  };
+  return descriptions[language][sort] ?? descriptions[language].date;
+};

@@ -66,3 +66,31 @@ test('surface, region, family, stable tie-breaks, labels and sparse 2027 work', 
   assert.deepEqual(getRacePreferenceReasonLabels(matches[0].reasonKeys, 'sl'), ['Želena razdalja','Izbrana podlaga','Izbrana regija']);
   assert.equal(matches.some((m) => m.event.id === 'x'), false);
 });
+
+test('presentation helpers build localized panel states, summaries and result descriptions', async () => {
+  const mod = await import('../.cache/dist-test/utils-race-preferences.js');
+  const active = pref({ distanceBuckets: ['over-5-to-10', 'up-to-5'], surfaceCategories: ['mountain'], regions: ['Goriška', 'Gorenjska', 'Podravska'], familyFriendly: true, active: true });
+  const inactive = pref({ distanceBuckets: ['over-5-to-10'], surfaceCategories: ['mountain'], regions: ['Goriška'], active: false });
+  const empty = pref({ active: true });
+
+  assert.equal(mod.getRacePreferencePanelState({ preferences: empty, editing: false }), 'empty');
+  assert.equal(mod.getRacePreferencePanelState({ preferences: active, editing: false }), 'active');
+  assert.equal(mod.getRacePreferencePanelState({ preferences: inactive, editing: false }), 'inactive');
+  assert.equal(mod.getRacePreferencePanelState({ preferences: inactive, editing: true }), 'editing');
+
+  assert.equal(mod.getRacePreferenceDistanceLabel('over-10-to-half', 'sl'), '10–21,1 km');
+  assert.equal(mod.getRacePreferenceDistanceLabel('over-10-to-half', 'en'), '10–21.1 km');
+  assert.equal(mod.getRacePreferenceCountLabel(1, 'distance', 'sl'), '1 razdalja');
+  assert.equal(mod.getRacePreferenceCountLabel(2, 'distance', 'sl'), '2 razdalji');
+  assert.equal(mod.getRacePreferenceCountLabel(3, 'region', 'sl'), '3 regije');
+  assert.equal(mod.getRacePreferenceCountLabel(5, 'region', 'sl'), '5 regij');
+
+  assert.equal(mod.summarizeRacePreferences(active, 'sl').visible, '2 razdalji · Gorski tek · 3 regije · Družinam prijazno');
+  assert.equal(mod.summarizeRacePreferences(inactive, 'en').visible, '5–10 km · Mountain · Goriška');
+
+  assert.equal(mod.getRaceFinderResultDescription('my-races', 'en'), 'Confirmed public races from today onward are shown, ranked by how well they match your preferences.');
+  assert.equal(mod.getRaceFinderResultDescription('date', 'sl'), 'Prikazani so potrjeni javni dogodki od danes naprej, razvrščeni po datumu.');
+  assert.equal(mod.getRaceFinderResultDescription('registration-deadline', 'en'), 'Confirmed public races from today onward are shown, sorted by registration deadline.');
+  assert.equal(mod.getRaceFinderResultDescription('registration-min', 'sl'), 'Prikazani so potrjeni javni dogodki od danes naprej, od najnižje znane startnine.');
+  assert.equal(mod.getRaceFinderResultDescription('registration-max', 'en'), 'Confirmed public races from today onward are shown, starting with the highest known entry fee.');
+});
