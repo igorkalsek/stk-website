@@ -73,3 +73,105 @@ describe('saved races UI source contract', () => {
     assert.match(client, /else if \(!iconOnly\) button\.textContent/);
   });
 });
+
+const createMemoryStorage = () => {
+  const values = new Map();
+  return {
+    getItem: (key) => values.has(key) ? values.get(key) : null,
+    setItem: (key, value) => { values.set(key, String(value)); },
+    removeItem: (key) => { values.delete(key); }
+  };
+};
+
+class FakeButton {
+  constructor({ language = 'sl', iconOnly = false, eventId = 'r000173', year = '2026' } = {}) {
+    this.dataset = { savedRaceButton: '', eventId, eventYear: year, eventDate: `${year}-05-10`, eventTitle: 'Testni tek', language };
+    if (iconOnly) this.dataset.savedRaceIconOnly = 'true';
+    this.attributes = new Map([['aria-pressed', 'false'], ['aria-label', language === 'en' ? 'Save race' : 'Shrani tek']]);
+    this.icon = { textContent: '☆' };
+    this.label = iconOnly ? null : { textContent: language === 'en' ? 'Save race' : 'Shrani tek' };
+    this.listeners = new Map();
+    this.classNames = new Set();
+    this.classList = { toggle: (name, force) => force ? this.classNames.add(name) : this.classNames.delete(name) };
+  }
+  setAttribute(name, value) { this.attributes.set(name, value); }
+  getAttribute(name) { return this.attributes.get(name) ?? null; }
+  querySelector(selector) {
+    if (selector === '.action-icon') return this.icon;
+    if (selector === '[data-saved-race-label]') return this.label;
+    return null;
+  }
+  addEventListener(type, listener) { this.listeners.set(type, listener); }
+  click() { this.listeners.get('click')?.({ preventDefault() {}, stopPropagation() {} }); }
+}
+
+const createFakeDocument = (buttons) => ({
+  readyState: 'loading',
+  addEventListener() {},
+  querySelectorAll(selector) {
+    if (selector === '[data-saved-race-button]') return buttons;
+    const eventId = selector.match(/data-event-id="([^"]+)"/)?.[1];
+    const year = selector.match(/data-event-year="([^"]+)"/)?.[1];
+    return buttons.filter((button) => button.dataset.eventId === eventId && button.dataset.eventYear === year);
+  }
+});
+
+const setupSavedRaceUi = async (buttons) => {
+  globalThis.window = { localStorage: createMemoryStorage() };
+  globalThis.document = createFakeDocument(buttons);
+  globalThis.CSS = { escape: (value) => String(value) };
+  const { initSavedRaceButtons } = await import('../.cache/dist-test/saved-races-client.js');
+  initSavedRaceButtons(globalThis.document);
+};
+
+describe('saved races UI interactions', () => {
+  it('updates regular and icon-only icons, labels, and aria labels in Slovenian', async () => {
+    const regular = new FakeButton({ language: 'sl' });
+    const iconOnly = new FakeButton({ language: 'sl', iconOnly: true });
+    await setupSavedRaceUi([regular, iconOnly]);
+
+    assert.equal(regular.icon.textContent, '☆');
+    assert.equal(regular.label.textContent, 'Shrani tek');
+    assert.equal(regular.getAttribute('aria-label'), 'Shrani tek');
+    iconOnly.click();
+
+    assert.equal(regular.icon.textContent, '★');
+    assert.equal(iconOnly.icon.textContent, '★');
+    assert.equal(regular.label.textContent, 'Shranjeno');
+    assert.equal(regular.getAttribute('aria-label'), 'Odstrani iz Mojih tekov');
+    assert.equal(iconOnly.getAttribute('aria-label'), 'Odstrani iz Mojih tekov');
+  });
+
+  it('updates regular and icon-only icons, labels, and aria labels in English', async () => {
+    const regular = new FakeButton({ language: 'en' });
+    const iconOnly = new FakeButton({ language: 'en', iconOnly: true });
+    await setupSavedRaceUi([regular, iconOnly]);
+
+    assert.equal(regular.icon.textContent, '☆');
+    assert.equal(regular.label.textContent, 'Save race');
+    assert.equal(regular.getAttribute('aria-label'), 'Save race');
+    regular.click();
+
+    assert.equal(regular.icon.textContent, '★');
+    assert.equal(iconOnly.icon.textContent, '★');
+    assert.equal(regular.label.textContent, 'Saved');
+    assert.equal(regular.getAttribute('aria-label'), 'Remove from My races');
+    assert.equal(iconOnly.getAttribute('aria-label'), 'Remove from My races');
+  });
+
+  it('keeps all buttons for the same event synchronized without changing other events', async () => {
+    const first = new FakeButton({ eventId: 'same' });
+    const second = new FakeButton({ eventId: 'same', iconOnly: true });
+    const other = new FakeButton({ eventId: 'other' });
+    await setupSavedRaceUi([first, second, other]);
+
+    first.click();
+
+    assert.equal(first.icon.textContent, '★');
+    assert.equal(second.icon.textContent, '★');
+    assert.equal(first.getAttribute('aria-pressed'), 'true');
+    assert.equal(second.getAttribute('aria-pressed'), 'true');
+    assert.equal(other.icon.textContent, '☆');
+    assert.equal(other.getAttribute('aria-pressed'), 'false');
+  });
+});

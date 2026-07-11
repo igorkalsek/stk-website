@@ -1,9 +1,9 @@
-import { isRaceSaved, readSavedRaces, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races';
+import { isRaceSaved, readSavedRaces, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races.js';
 
 type Language = 'sl' | 'en';
 const LABELS = {
-  sl: { unsaved: 'Shrani tek', saved: 'Shranjeno', saveAria: 'Shrani tek', removeAria: 'Odstrani shranjen tek' },
-  en: { unsaved: 'Save race', saved: 'Saved', saveAria: 'Save race', removeAria: 'Remove saved race' }
+  sl: { unsaved: 'Shrani tek', saved: 'Shranjeno', saveAria: 'Shrani tek', removeAria: 'Odstrani iz Mojih tekov' },
+  en: { unsaved: 'Save race', saved: 'Saved', saveAria: 'Save race', removeAria: 'Remove from My races' }
 } as const;
 
 const getStorage = (): MinimalStorage | null => {
@@ -27,7 +27,7 @@ const setButtonState = (button: HTMLButtonElement, saved: boolean) => {
   button.setAttribute('aria-label', saved ? button.dataset.savedRaceRemoveLabel || labels.removeAria : labels.saveAria);
   button.classList.toggle('saved-race-button-saved', saved);
   const icon = button.querySelector<HTMLElement>('.action-icon');
-  if (iconOnly && icon) icon.textContent = saved ? '★' : '☆';
+  if (icon) icon.textContent = saved ? '★' : '☆';
   const label = button.querySelector<HTMLElement>('[data-saved-race-label]');
   if (label) label.textContent = saved ? labels.saved : labels.unsaved;
   else if (!iconOnly) button.textContent = saved ? labels.saved : labels.unsaved;
