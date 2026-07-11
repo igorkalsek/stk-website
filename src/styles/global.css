@@ -2614,3 +2614,73 @@ main {
   max-width: 100%;
   white-space: normal;
 }
+
+.related-races-section {
+  margin-top: var(--space-xl, 2rem);
+}
+
+.related-races-section h2 {
+  margin-bottom: 1rem;
+}
+
+.related-races-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.related-race-card {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 0.55rem;
+  border: 1px solid var(--color-border, #d9e2df);
+  border-radius: 1rem;
+  padding: 1rem;
+  color: inherit;
+  text-decoration: none;
+  background: var(--color-surface, #fff);
+  overflow-wrap: anywhere;
+}
+
+.related-race-card:hover,
+.related-race-card:focus-visible {
+  border-color: var(--color-primary, #0f766e);
+  box-shadow: 0 10px 24px rgb(15 118 110 / 12%);
+}
+
+.related-race-card time {
+  color: var(--color-text-muted, #5f6f6b);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.related-race-meta {
+  color: var(--color-text-muted, #5f6f6b);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.related-race-reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.related-race-reasons span {
+  border: 1px solid var(--color-border, #d9e2df);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: var(--color-background-soft, #f3faf7);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.related-race-view {
+  margin-top: auto;
+  font-weight: 800;
+  color: var(--color-primary, #0f766e);
+}

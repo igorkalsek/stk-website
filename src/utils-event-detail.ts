@@ -1,4 +1,4 @@
-import { getDisplayEventTitle } from './utils-events';
+import { getDisplayEventTitle } from './utils-events.js';
 
 export type PublicRaceEvent = {
   id: string;

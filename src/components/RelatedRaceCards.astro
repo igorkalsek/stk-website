@@ -1,0 +1,46 @@
+---
+import type { RelatedRaceCard, RelatedRaceLanguage } from '../utils-related-races';
+import { formatSloveneDistances } from '../utils-slovenian';
+
+type Props = { races: RelatedRaceCard[]; language: RelatedRaceLanguage };
+const { races, language } = Astro.props as Props;
+const copy = language === 'en'
+  ? { heading: 'You may also be interested in', view: 'View race', aria: 'Related races', at: 'at' }
+  : { heading: 'Morda vas zanimajo tudi', view: 'Poglejte tek', aria: 'Sorodni teki', at: 'v kraju' };
+const headingId = `related-races-${language}`;
+const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+---
+{races.length > 0 && (
+  <section class="related-races-section" aria-labelledby={headingId}>
+    <h2 id={headingId}>{copy.heading}</h2>
+    <ul class="related-races-grid" aria-label={copy.aria}>
+      {races.map((race) => (
+        <li class="related-race-item">
+          <a
+            class="related-race-card"
+            href={race.detailPath}
+            aria-label={`${copy.view}: ${race.title}${race.place ? ` ${copy.at} ${race.place}` : ''}`}
+            data-analytics-event-type="external_link_clicked"
+            data-analytics-action-type="event_card_click"
+            data-stk-event-id={race.id}
+            data-stk-event-name={race.title}
+            data-stk-event-date={race.date}
+            data-stk-event-year={race.date.slice(0, 4)}
+          >
+            <time datetime={race.date}>{formatDate(race.date)}</time>
+            <strong>{race.title}</strong>
+            <span class="related-race-meta">
+              {[race.place, race.region, race.surface, race.distances ? formatSloveneDistances(race.distances) : ''].filter(Boolean).join(' · ')}
+            </span>
+            {race.reasonLabels.length > 0 && (
+              <span class="related-race-reasons" aria-label={language === 'en' ? 'Why it is related' : 'Zakaj je sorodno'}>
+                {race.reasonLabels.map((label) => <span>{label}</span>)}
+              </span>
+            )}
+            <span class="related-race-view">{copy.view} <span aria-hidden="true">→</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

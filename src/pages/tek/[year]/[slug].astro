@@ -1,4 +1,5 @@
 ---
+import RelatedRaceCards from '../../../components/RelatedRaceCards.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from '../../../utils-additional';
 import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../utils-calendar';
@@ -8,6 +9,7 @@ import { formatSloveneDistances } from '../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../utils-site-url';
+import { buildRelatedRaceCards, buildRelatedRaces, getTodayIsoInLjubljana, type RelatedRaceCard } from '../../../utils-related-races';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
@@ -26,21 +28,21 @@ export async function getStaticPaths() {
       continue;
     }
     if (!response.ok) continue;
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const todayIso = getTodayIsoInLjubljana();
+    const today = new Date(`${todayIso}T00:00:00`).getTime();
     const events = toApiRecords(await response.json())
       .map((item) => mapPublicRaceEvent(item, year, today))
       .filter((event): event is PublicRaceEvent => Boolean(event))
       .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
     paths.push(...events.map((event) => ({
       params: { year, slug: buildEventDetailSlug(event) },
-      props: { event, year }
+      props: { event, year, relatedRaces: buildRelatedRaceCards(buildRelatedRaces({ currentEvent: event, candidates: events, todayIso, limit: 3 }), 'sl') }
     })));
   }
   return paths;
 }
 
-const { event: baseEvent, year } = Astro.props as { event?: PublicRaceEvent; year?: PublicYear };
+const { event: baseEvent, year, relatedRaces = [] } = Astro.props as { event?: PublicRaceEvent; year?: PublicYear; relatedRaces?: RelatedRaceCard[] };
 const slug = Astro.params.slug ?? '';
 const isValidYear = SUPPORTED_PUBLIC_YEARS.includes(year as PublicYear);
 const eventYear = isValidYear ? year as PublicYear : undefined;
@@ -332,6 +334,7 @@ const jsonLd = event ? {
               )}
             </aside>
           </div>
+          <RelatedRaceCards races={relatedRaces} language="sl" />
           <p class="event-detail-back"><a class="button button-secondary-light" href={searchPath}>Nazaj na iskalnik tekov</a></p>
         </section>
       </>
