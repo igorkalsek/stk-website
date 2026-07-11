@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const englishNavItems = [
+  { href: '/en/', label: 'Home' },
+  { href: '/en/find-races/', label: 'Find' },
+  { href: '/en/my-races/', label: 'My races' },
+  { href: '/en/family-friendly-races/', label: 'Family-friendly' },
+  { href: '/en/group-runs/', label: 'Group runs' },
+  { href: '/en/most-voted-races/', label: 'Most voted' },
+  { href: '/en/personal-calendar/', label: 'Calendar' },
+  { href: '/en/stk-tekobot/', label: 'STK Tekobot' }
+];
+---
+
+<BaseLayout title="My races | Slovenski Tekaški Koledar" description="A list of races saved in this browser." lang="en" languageSwitchHref="/moji-teki/" navItems={englishNavItems} brandHref="/en/" brandLabel="Slovenski Tekaški Koledar - English home" navLabel="Main navigation" menuLabel="Menu">
+  <main class="page-section my-races-page">
+    <div class="container narrow-container">
+      <p class="eyebrow">My races</p>
+      <h1>My races</h1>
+      <p class="lead">These are the races you saved while browsing the calendar.</p>
+      <div data-my-races-app data-language="en" class="my-races-app" aria-live="polite"></div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { initMyRacesPage } from '../../../my-races-client';
+  initMyRacesPage();
+</script>

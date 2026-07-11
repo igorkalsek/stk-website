@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Moji teki | Slovenski Tekaški Koledar" description="Seznam tekov, ki ste jih shranili v tem brskalniku." languageSwitchHref="/en/my-races/">
+  <main class="page-section my-races-page">
+    <div class="container narrow-container">
+      <p class="eyebrow">Moji teki</p>
+      <h1>Moji teki</h1>
+      <p class="lead">Tu so zbrani teki, ki ste jih shranili med brskanjem po koledarju.</p>
+      <div data-my-races-app data-language="sl" class="my-races-app" aria-live="polite"></div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { initMyRacesPage } from '../my-races-client';
+  initMyRacesPage();
+</script>
