@@ -2798,3 +2798,20 @@ main {
   margin: 0.25rem 0 0.75rem;
   font-size: 1rem;
 }
+
+.saved-race-button {
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.saved-race-button-saved,
+.saved-race-button[aria-pressed="true"] {
+  border-color: rgba(22, 101, 52, 0.35);
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.saved-race-button-saved .action-icon,
+.saved-race-button[aria-pressed="true"] .action-icon {
+  color: #15803d;
+}

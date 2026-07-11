@@ -242,12 +242,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
-  import { buildEventDetailPath, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
+  import { buildEventDetailPath, getStableEventId, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
   import { buildPrimaryActions } from '../utils-race-detail-view';
+  import { initSavedRaceButtons } from '../saved-races-client';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
@@ -965,6 +966,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, kidsRaces: event.kidsRaces });
     const links = [
       ...buildPrimaryActions(event, 'sl').map(renderPrimaryActionLink),
+      `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>`,
       `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>Podrobnosti teka</span></a>`,
       renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
@@ -1056,7 +1058,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       return;
     }
 
-    if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+    if (resultsElement) {
+      resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+      initSavedRaceButtons(resultsElement);
+    }
     if (moreElement) moreElement.hidden = visibleCount >= count;
     updateQuickPickStates();
   };
