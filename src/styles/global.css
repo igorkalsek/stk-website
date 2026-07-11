@@ -2846,6 +2846,32 @@ main {
   margin-top: 2rem;
 }
 
+
+.my-races-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 1rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 0.9rem;
+  background: rgba(248, 253, 250, 0.86);
+}
+
+.my-races-toolbar p {
+  margin: 0.4rem 0 0;
+  color: var(--muted-text-color, #5f6f66);
+  font-size: 0.92rem;
+}
+
+.my-races-toolbar .notice {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+
 .my-race-list {
   display: grid;
   gap: 1rem;
