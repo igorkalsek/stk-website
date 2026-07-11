@@ -29,6 +29,10 @@ type TimedFetchJsonOptions = {
 type BuildStats = {
   masterRequests: number;
   masterDurations: Partial<Record<PublicYear, number>>;
+  topRequests: number;
+  topDurationMs: number;
+  additionalRequests: number;
+  additionalDurationMs: number;
   processedEvents: Partial<Record<PublicYear, number>>;
   detailPaths: Record<Language, Partial<Record<PublicYear, number>>>;
   relatedPrepMs: Partial<Record<PublicYear, number>>;
@@ -41,7 +45,7 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 const timingEnabled = () => process.env.STK_BUILD_TIMING === '1';
 const now = () => performance.now();
 
-const stats: BuildStats = { masterRequests: 0, masterDurations: {}, processedEvents: {}, detailPaths: { sl: {}, en: {} }, relatedPrepMs: {}, keyPrepMs: 0 };
+const stats: BuildStats = { masterRequests: 0, masterDurations: {}, topRequests: 0, topDurationMs: 0, additionalRequests: 0, additionalDurationMs: 0, processedEvents: {}, detailPaths: { sl: {}, en: {} }, relatedPrepMs: {}, keyPrepMs: 0 };
 const masterPayloadCache = new Map<PublicYear, Promise<unknown>>();
 const yearDataCache = new Map<PublicYear, Promise<YearData>>();
 let additionalDataPromise: Promise<AdditionalEventData[]> | null = null;
@@ -126,20 +130,30 @@ export const getDetailStaticPaths = async (language: Language) => {
     console.warn(`[build-data] detail paths skipped ${year}: ${error instanceof Error ? error.message : String(error)}`);
     return null;
   })));
-  maybePrintBuildTiming();
+  if (data.every((item) => !item)) maybePrintBuildTiming();
   return data.flatMap((item) => item ? (language === 'en' ? item.enPaths : item.slPaths) : []);
 };
 
 export const getAdditionalEventDataCached = () => {
   if (additionalDataPromise) return additionalDataPromise;
-  additionalDataPromise = fetchAdditionalEventData();
+  stats.additionalRequests += 1;
+  const started = now();
+  additionalDataPromise = fetchAdditionalEventData().finally(() => {
+    stats.additionalDurationMs = now() - started;
+  });
   additionalDataPromise.catch(() => { additionalDataPromise = null; });
   return additionalDataPromise;
 };
 
 export const getTopVoteRowsCached = () => {
   if (topRowsPromise) return topRowsPromise;
-  topRowsPromise = timedFetchJson(TOP_API_URL, { label: 'top votes' }).then(toApiRecords);
+  stats.topRequests += 1;
+  const started = now();
+  topRowsPromise = timedFetchJson(TOP_API_URL, { label: 'top votes' })
+    .then(toApiRecords)
+    .finally(() => {
+      stats.topDurationMs = now() - started;
+    });
   topRowsPromise.catch(() => { topRowsPromise = null; });
   return topRowsPromise;
 };
@@ -155,6 +169,10 @@ export const maybePrintBuildTiming = () => {
   timingPrinted = true;
   console.info(`[build-timing] master_requests=${stats.masterRequests}`);
   console.info(`[build-timing] master_durations_ms=${JSON.stringify(Object.fromEntries(Object.entries(stats.masterDurations).map(([year, ms]) => [year, Math.round(ms ?? 0)])))}`);
+  console.info(`[build-timing] top_requests=${stats.topRequests}`);
+  console.info(`[build-timing] top_duration_ms=${Math.round(stats.topDurationMs)}`);
+  console.info(`[build-timing] additional_requests=${stats.additionalRequests}`);
+  console.info(`[build-timing] additional_duration_ms=${Math.round(stats.additionalDurationMs)}`);
   console.info(`[build-timing] processed_events=${JSON.stringify(stats.processedEvents)}`);
   console.info(`[build-timing] detail_paths=${JSON.stringify(stats.detailPaths)}`);
   console.info(`[build-timing] related_prep_ms=${JSON.stringify(Object.fromEntries(Object.entries(stats.relatedPrepMs).map(([year, ms]) => [year, Math.round(ms ?? 0)])))}`);
@@ -169,6 +187,10 @@ export const __resetBuildDataCachesForTests = () => {
   timingPrinted = false;
   stats.masterRequests = 0;
   stats.masterDurations = {};
+  stats.topRequests = 0;
+  stats.topDurationMs = 0;
+  stats.additionalRequests = 0;
+  stats.additionalDurationMs = 0;
   stats.processedEvents = {};
   stats.detailPaths = { sl: {}, en: {} };
   stats.relatedPrepMs = {};
