@@ -1,4 +1,5 @@
 import type { PublicRaceEvent } from './utils-event-detail';
+import { parseRaceDistancesKm } from './utils-distance-filter.js';
 
 const safeHttpUrl = (value: string) => {
   if (!value) return '';
@@ -102,6 +103,25 @@ const formatYesNo = (value: string, language: DetailLanguage) => {
 };
 
 const normalizeNote = (value: string) => value.replace(/\s+/g, ' ').trim().toLocaleLowerCase('sl-SI');
+const uniqueDistances = (value: string) => [...new Set(parseRaceDistancesKm(value))].sort((a, b) => a - b);
+const parseElevationGain = (value: string | undefined | null) => {
+  const trimmed = value?.trim() ?? '';
+  if (!/^\d+$/.test(trimmed)) return null;
+  const elevation = Number(trimmed);
+  return Number.isFinite(elevation) && elevation > 0 ? elevation : null;
+};
+const parseRegistrationFeeAmount = (value: string | undefined | null) => {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed) return null;
+  const normalized = trimmed.replace(',', '.').replace(/\s*(€|eur)\s*$/iu, '').trim();
+  if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
+  const amount = Number(normalized);
+  return Number.isFinite(amount) ? amount : null;
+};
+const isExplicitYes = (value: string | undefined | null) => ['da', 'yes', 'true'].includes((value ?? '').trim().toLocaleLowerCase('sl-SI'));
+const hasTrailOrMountainSurface = (value: string) => /trail|gorsk|hrib|planin|mountain/iu.test(value.trim());
+const formatHighlightDistance = (value: number, language: DetailLanguage) =>
+  value.toLocaleString(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 1, minimumFractionDigits: 0 });
 
 const familyNoteSentences = (notes: string) => notes
   .split(/(?<=[.!?])\s+/)
@@ -191,6 +211,67 @@ export const buildFamilyInfo = (event: DetailEvent, language: DetailLanguage): s
   if (event.familyFriendly) return [language === 'en' ? 'Family-friendly race.' : 'Družinam prijazno.'];
   if (event.kidsRaces) return [language === 'en' ? 'Children’s races are listed by the organizer.' : 'Organizator navaja otroške teke.'];
   return [];
+};
+
+export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage): string[] => {
+  const distances = uniqueDistances(event.distances);
+  const longestDistance = distances.length ? distances[distances.length - 1] : null;
+  const shortestDistance = distances.length ? distances[0] : null;
+  const elevation = parseElevationGain(event.additionalData?.elevationGain);
+  const hasStrongUltra = longestDistance !== null && longestDistance >= 80;
+  const hasUltra = longestDistance !== null && longestDistance > 42.2;
+  const hasShortSteep = longestDistance !== null && longestDistance <= 12 && elevation !== null && elevation >= 800 && hasTrailOrMountainSurface(event.surface);
+  const hasChildren = event.kidsRaces;
+  const hasFamily = event.familyFriendly;
+  const hasFreeFee = [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].some((value) => parseRegistrationFeeAmount(value) === 0);
+  const hasRaceDayRegistration = isExplicitYes(event.additionalData?.dayOfRegistration);
+  const hasRoute = Boolean(normalizeDetailUrl(event.additionalData?.routeUrl));
+  const highlights: Array<{ key: string; text: string }> = [];
+  const add = (key: string, text: string) => {
+    if (highlights.length >= 3 || highlights.some((item) => item.key === key)) return;
+    highlights.push({ key, text });
+  };
+
+  if (hasStrongUltra && longestDistance !== null) {
+    add('ultra', language === 'en'
+      ? `The longest course is ${formatHighlightDistance(longestDistance, language)} km, offering a substantial ultra challenge.`
+      : `Najdaljša trasa meri ${formatHighlightDistance(longestDistance, language)} km in predstavlja izrazit ultra izziv.`);
+  } else if (hasUltra) {
+    add('ultra', language === 'en' ? 'The event also includes an ultra-distance race.' : 'Dogodek vključuje tudi ultra razdaljo.');
+  }
+  if (hasShortSteep) {
+    add('short-steep', language === 'en' ? 'A short distance is combined with substantial climbing.' : 'Kratka razdalja je združena z izrazitim vzponom.');
+  }
+  if (!hasShortSteep && elevation !== null && elevation >= 500) {
+    if (elevation >= 1000) {
+      add('elevation', language === 'en' ? `${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih ${elevation} m+ vzpona.`);
+    } else {
+      add('elevation', language === 'en' ? `Around ${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih približno ${elevation} m+ vzpona.`);
+    }
+  }
+  if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
+    add('distances', language === 'en'
+      ? `Several distances are available, from ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km.`
+      : `Na voljo je več razdalj: od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km.`);
+  }
+  if (hasChildren) {
+    add('family', language === 'en' ? 'The organizer lists children’s races or categories.' : 'Organizator navaja otroške teke ali kategorije.');
+  } else if (hasFamily) {
+    add('family', language === 'en' ? 'The event is explicitly marked as family-friendly.' : 'Dogodek je izrecno označen kot družinam prijazen.');
+  }
+  if (event.cup.trim()) {
+    add('cup', language === 'en' ? `The race is part of the ${event.cup.trim()} series or cup.` : `Tek je del serije oziroma pokala ${event.cup.trim()}.`);
+  }
+  if (hasFreeFee) {
+    add('free-fee', language === 'en' ? 'A free participation option is listed for part of the programme.' : 'Za del programa je navedena brezplačna udeležba.');
+  }
+  if (hasRaceDayRegistration) {
+    add('race-day-registration', language === 'en' ? 'Race-day registration is listed as available.' : 'Prijava je predvidena tudi na dan dogodka.');
+  }
+  if (hasRoute) {
+    add('route', language === 'en' ? 'A route or map link is available.' : 'Na voljo je povezava do trase ali zemljevida.');
+  }
+  return highlights.map((item) => item.text);
 };
 
 export const buildPublicNotes = (event: DetailEvent, language: DetailLanguage, familyInfo: string[]): string => {
