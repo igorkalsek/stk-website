@@ -3,7 +3,7 @@ import RelatedRaceCards from '../../../../components/RelatedRaceCards.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { type AdditionalEventData } from '../../../../utils-additional';
 import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../../utils-calendar';
-import { buildEnglishEventDetailPath, buildEventDetailPath, slugMatchesEvent, type PublicRaceEvent } from '../../../../utils-event-detail';
+import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, slugMatchesEvent, type PublicRaceEvent } from '../../../../utils-event-detail';
 import { isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../../utils-public-year';
 import { formatSloveneDistances } from '../../../../utils-slovenian';
 import { isVoteUrlSafeForEvent } from '../../../../utils-vote';
@@ -108,6 +108,7 @@ const parseRegistrationAmount = (value: string) => {
 };
 
 const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
+const savedRaceEventId = event ? getStableEventId(event) : '';
 const heroBadges = event ? [
   event.surface ? { label: 'Surface', value: formatDetailSurface(event.surface, 'en') } : null,
   event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
@@ -177,13 +178,12 @@ const jsonLd = event ? {
             <div class="event-detail-status-row">
               {eventStatus && <span class="pill event-detail-status-pill">{eventStatus}</span>}
             </div>
-            {primaryActions.length > 0 && (
-              <div class="event-detail-primary-actions event-detail-action-list" aria-label="Main links">
-                {primaryActions.map((action) => (
-                  <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
-                ))}
-              </div>
-            )}
+            <div class="event-detail-primary-actions event-detail-action-list" aria-label="Main links">
+              {primaryActions.map((action) => (
+                <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+              ))}
+              <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
+            </div>
           </div>
         </section>
 
@@ -326,6 +326,8 @@ const jsonLd = event ? {
 </BaseLayout>
 
 <script>
+  import { initSavedRaceButtons } from '../../../../saved-races-client';
+  initSavedRaceButtons();
   const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
   const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
