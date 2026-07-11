@@ -15,6 +15,16 @@ export type CalendarEventLinkInput = {
   language?: 'sl' | 'en';
 };
 
+export type MultiIcsCalendarEventInput = CalendarEventLinkInput & {
+  uid: string;
+};
+
+export type MultiIcsCalendarInput = {
+  events: MultiIcsCalendarEventInput[];
+  language?: 'sl' | 'en';
+  dtstamp?: Date | string;
+};
+
 const formatGoogleCalendarDate = (value: string) => value.replace(/-/g, '');
 
 const getNextDate = (value: string) => {
@@ -65,6 +75,50 @@ const getEventDetails = ({
 };
 
 const hasValidAllDayDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date);
+
+const formatIcsDateTime = (value: Date | string = new Date()) => {
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+};
+
+const buildIcsEventLines = ({
+  title,
+  date,
+  location = '',
+  noticeUrl = '',
+  registrationUrl = '',
+  language = 'sl',
+  uid,
+  dtstamp = new Date()
+}: CalendarEventLinkInput & { uid: string; dtstamp?: Date | string }) => {
+  if (!title || !hasValidAllDayDate(date) || !uid) return [];
+
+  const nextDate = getNextDate(date);
+  if (!nextDate) return [];
+
+  return [
+    'BEGIN:VEVENT',
+    `UID:${escapeIcsText(uid)}`,
+    `DTSTAMP:${formatIcsDateTime(dtstamp)}`,
+    `DTSTART;VALUE=DATE:${formatGoogleCalendarDate(date)}`,
+    `DTEND;VALUE=DATE:${formatGoogleCalendarDate(nextDate)}`,
+    `SUMMARY:${escapeIcsText(title)}`,
+    location ? `LOCATION:${escapeIcsText(location)}` : '',
+    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl, language }))}`,
+    'END:VEVENT'
+  ].filter(Boolean);
+};
+
+const buildIcsCalendarLines = (language: 'sl' | 'en', veventLines: string[]) => [
+  'BEGIN:VCALENDAR',
+  'VERSION:2.0',
+  `PRODID:-//Slovenski Tekaski Koledar//STK Website//${language === 'en' ? 'EN' : 'SL'}`,
+  'CALSCALE:GREGORIAN',
+  'METHOD:PUBLISH',
+  ...veventLines,
+  'END:VCALENDAR'
+].map(foldIcsLine);
+
 
 export const buildGoogleCalendarEventUrl = ({
   title,
@@ -132,30 +186,35 @@ export const buildIcsCalendarEvent = ({
   registrationUrl = '',
   language = 'sl'
 }: CalendarEventLinkInput) => {
-  if (!title || !hasValidAllDayDate(date)) return '';
+  const veventLines = buildIcsEventLines({
+    title,
+    date,
+    location,
+    noticeUrl,
+    registrationUrl,
+    language,
+    uid: `${date}-${slugifyFilenamePart(title)}@slovenski-tekaski-koledar`
+  });
+  if (!veventLines.length) return '';
 
-  const nextDate = getNextDate(date);
-  if (!nextDate) return '';
+  return `${buildIcsCalendarLines(language, veventLines).join('\r\n')}\r\n`;
+};
 
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    `PRODID:-//Slovenski Tekaski Koledar//STK Website//${language === 'en' ? 'EN' : 'SL'}`,
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'BEGIN:VEVENT',
-    `UID:${date}-${slugifyFilenamePart(title)}@slovenski-tekaski-koledar`,
-    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')}`,
-    `DTSTART;VALUE=DATE:${formatGoogleCalendarDate(date)}`,
-    `DTEND;VALUE=DATE:${formatGoogleCalendarDate(nextDate)}`,
-    `SUMMARY:${escapeIcsText(title)}`,
-    location ? `LOCATION:${escapeIcsText(location)}` : '',
-    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl, language }))}`,
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].filter(Boolean).map(foldIcsLine);
+export const buildIcsCalendar = ({ events, language = 'sl', dtstamp = new Date() }: MultiIcsCalendarInput) => {
+  const seen = new Set<string>();
+  const prepared = events
+    .filter((event) => event.title && hasValidAllDayDate(event.date) && event.uid && getNextDate(event.date))
+    .filter((event) => {
+      if (seen.has(event.uid)) return false;
+      seen.add(event.uid);
+      return true;
+    })
+    .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title, language === 'en' ? 'en' : 'sl-SI'));
 
-  return `${lines.join('\r\n')}\r\n`;
+  if (!prepared.length) return '';
+
+  const veventLines = prepared.flatMap((event) => buildIcsEventLines({ ...event, language: event.language ?? language, dtstamp }));
+  return `${buildIcsCalendarLines(language, veventLines).join('\r\n')}\r\n`;
 };
 
 export const buildIcsDataUrl = (event: CalendarEventLinkInput) => {
