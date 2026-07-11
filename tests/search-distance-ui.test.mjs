@@ -77,10 +77,12 @@ describe('race search analytics source cleanup', () => {
     assert.doesNotMatch(slovenePage, /search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"[^`]*(data-analytics-event-type|data-analytics-action-type|data-analytics-link-type|data-stk-action)/);
   });
 
-  it('retains external registration and announcement link metadata in race finders', () => {
-    for (const page of [slovenePage, englishPage]) {
-      assert.match(page, /data-analytics-link-type="prijava"/);
-      assert.match(page, /data-analytics-link-type="razpis"/);
-    }
+  it('uses shared race actions for combined registration and announcement links in race finders', () => {
+    assert.match(slovenePage, /buildPrimaryActions\(event, 'sl'\)\.map\(renderPrimaryActionLink\)/);
+    assert.match(englishPage, /buildPrimaryActions\(event, 'en'\)\.map\(renderPrimaryActionLink\)/);
+    assert.match(slovenePage, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
+    assert.match(englishPage, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
+    assert.match(slovenePage, /escapeHtml\(action\.label\)/);
+    assert.match(englishPage, /escapeHtml\(action\.label\)/);
   });
 });

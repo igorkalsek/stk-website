@@ -6,6 +6,7 @@ import {
   buildCourseRows,
   buildFamilyInfo,
   buildKeyFacts,
+  areEquivalentPublicActionUrls,
   buildPrimaryActions,
   buildRaceHighlights,
   buildPublicNotes,
@@ -82,10 +83,33 @@ describe('race detail view model', () => {
     assert.equal(buildPublicNotes(event, 'sl', family), '');
   });
 
-  it('renders valid primary links only and deduplicates identical URLs', () => {
-    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'javascript:alert(1)', noticeUrl: '' }, 'sl'), []);
-    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/a', noticeUrl: 'https://example.com/a' }, 'en').map((a) => a.label), ['Registration']);
-    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/reg', noticeUrl: 'https://example.com/info' }, 'en').map((a) => a.analyticsType), ['prijava', 'razpis']);
+  it('renders valid primary action combinations with combined labels and analytics', () => {
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/reg', noticeUrl: '' }, 'sl').map((a) => a.label), ['Prijava']);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: '', noticeUrl: 'https://example.com/info' }, 'en').map((a) => a.label), ['Official info']);
+    const distinct = buildPrimaryActions({ registrationUrl: 'https://example.com/reg', noticeUrl: 'https://example.com/info' }, 'en');
+    assert.deepEqual(distinct.map((a) => a.label), ['Registration', 'Official info']);
+    assert.deepEqual(distinct.map((a) => a.analyticsType), ['prijava', 'razpis']);
+    const combinedSl = buildPrimaryActions({ registrationUrl: 'https://example.com/a', noticeUrl: 'https://example.com/a' }, 'sl');
+    assert.deepEqual(combinedSl.map((a) => a.label), ['Razpis in prijava']);
+    assert.equal(combinedSl[0].analyticsType, 'prijava');
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/a', noticeUrl: 'https://example.com/a/' }, 'en').map((a) => a.label), ['Official info and registration']);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/a#registration', noticeUrl: 'https://example.com/a' }, 'en').map((a) => a.label), ['Official info and registration']);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/a?b=2&a=1', noticeUrl: 'https://example.com/a?a=1&b=2' }, 'en').map((a) => a.label), ['Official info and registration']);
+    assert.equal(buildPrimaryActions({ registrationUrl: 'https://example.com/a?type=registration', noticeUrl: 'https://example.com/a?type=notice' }, 'en').length, 2);
+    assert.equal(buildPrimaryActions({ registrationUrl: 'https://registration.example.com/a', noticeUrl: 'https://example.com/a' }, 'en').length, 2);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'javascript:alert(1)', noticeUrl: 'https://example.com/info' }, 'sl').map((a) => a.label), ['Razpis']);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'https://example.com/reg', noticeUrl: 'notaurl' }, 'sl').map((a) => a.label), ['Prijava']);
+    assert.deepEqual(buildPrimaryActions({ registrationUrl: 'notaurl', noticeUrl: 'javascript:alert(1)' }, 'sl'), []);
+  });
+
+  it('compares public action URLs deterministically without broad equivalence', () => {
+    assert.equal(areEquivalentPublicActionUrls('https://example.si/event', 'https://example.si/event/'), true);
+    assert.equal(areEquivalentPublicActionUrls('https://example.si/event?a=1&b=2', 'https://example.si/event?b=2&a=1'), true);
+    assert.equal(areEquivalentPublicActionUrls('https://example.si/event#registration', 'https://example.si/event'), true);
+    assert.equal(areEquivalentPublicActionUrls('https://example.si/event?type=registration', 'https://example.si/event?type=notice'), false);
+    assert.equal(areEquivalentPublicActionUrls('https://registration.example.si/event', 'https://example.si/event'), false);
+    assert.equal(areEquivalentPublicActionUrls('http://example.si/event', 'https://example.si/event'), false);
+    assert.equal(areEquivalentPublicActionUrls('notaurl', 'https://example.si/event'), false);
   });
 
   it('supports 2027 sparse events without 2026-only enrichment data', () => {

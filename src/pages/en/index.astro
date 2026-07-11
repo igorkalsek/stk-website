@@ -207,6 +207,7 @@ const englishNavItems = [
 
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
+  import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { getDisplayEventTitle } from '../../utils-events';
 
   type ApiRecord = Record<string, unknown>;
@@ -703,6 +704,10 @@ const englishNavItems = [
     }
   };
 
+
+  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${action.kind === 'registration' ? '✍️' : '📄'}</span><span>${escapeHtml(action.label)}</span></a>`;
+
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
     date: string;
@@ -1195,8 +1200,7 @@ const englishNavItems = [
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
         const links = [
-          noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(noticeUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">📄</span><span>Official info</span></a>`,
-          registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(registrationUrl)}" target="_blank" rel="noopener noreferrer"><span class="action-icon" aria-hidden="true">✍️</span><span>Registration</span></a>`,
+          ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'en').map(renderPrimaryActionLink),
           calendarOptions
         ].filter(Boolean).join('');
 
