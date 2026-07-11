@@ -325,7 +325,7 @@ main {
 
 .hero-preview-list li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 10px;
   align-items: center;
   border-radius: 14px;
@@ -333,7 +333,7 @@ main {
   padding: 8px;
 }
 
-.hero-preview-list span {
+.hero-preview-list > li > span {
   min-width: 4.7rem;
   border-radius: 999px;
   background: rgba(240, 160, 48, 0.92);
@@ -359,6 +359,28 @@ main {
 .hero-preview-list strong a:hover,
 .hero-preview-list strong a:focus-visible {
   text-decoration-color: currentColor;
+}
+
+
+.hero-preview-list .saved-race-icon-button {
+  min-width: 36px;
+  min-height: 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  justify-content: center;
+  border-color: rgba(243, 251, 244, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f3fbf4;
+}
+
+.hero-preview-list .saved-race-icon-button:hover,
+.hero-preview-list .saved-race-icon-button:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hero-preview-list .saved-race-icon-button .action-icon {
+  margin: 0;
 }
 
 .hero-preview-votes {

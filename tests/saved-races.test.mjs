@@ -66,4 +66,10 @@ describe('saved races UI source contract', () => {
   it('sets aria-pressed on saved race buttons', () => files.forEach((file) => assert.match(sources[file], /aria-pressed="false"/)));
   it('adds buttons to both search pages and both detail routes', () => files.forEach((file) => assert.match(sources[file], /data-saved-race-button/)));
   it('does not add analytics for saving races', () => files.forEach((file) => assert.doesNotMatch(sources[file], /saved-race-button[^`\n>]*(data-analytics|trackStkEvent)/)));
+  it('updates icon-only buttons without replacing them with text', () => {
+    const client = readFileSync(new URL('../src/saved-races-client.ts', import.meta.url), 'utf8');
+    assert.match(client, /savedRaceIconOnly/);
+    assert.match(client, /saved \? '★' : '☆'/);
+    assert.match(client, /else if \(!iconOnly\) button\.textContent/);
+  });
 });

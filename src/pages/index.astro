@@ -187,7 +187,8 @@ import SocialLinks from '../components/SocialLinks.astro';
 <script>
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildPrimaryActions } from '../utils-race-detail-view';
-  import { buildEventDetailPath } from '../utils-event-detail';
+  import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
+  import { initSavedRaceButtons } from '../saved-races-client';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
 
@@ -668,6 +669,20 @@ import SocialLinks from '../components/SocialLinks.astro';
 
   const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
 
+  const getEventStableId = (event: ApiRecord, title: string, date: string, place: string) => getStableEventId({
+    row: pickPath(event, ['row', 'event.row', 'race.row', 'data.row']),
+    date,
+    naziv_prireditve: getEventTitle(event, title),
+    place
+  });
+
+  const renderSavedRaceButton = (event: ApiRecord, title: string, date: string, place: string, iconOnly = false) => {
+    const eventId = getEventStableId(event, title, date, place);
+    const year = getEventYear(event) || date.slice(0, 4);
+    if (!eventId || !/^202[67]$/.test(year)) return '';
+    return `<button class="button button-small button-secondary-light saved-race-button${iconOnly ? ' saved-race-icon-button' : ''}" type="button" data-saved-race-button${iconOnly ? ' data-saved-race-icon-only="true" data-saved-race-remove-label="Odstrani iz Mojih tekov"' : ''} data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Shrani tek</span>'}</button>`;
+  };
+
   const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
 
   const safeUrl = (value: string) => {
@@ -1023,8 +1038,11 @@ import SocialLinks from '../components/SocialLinks.astro';
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
       const detailPath = eventDetailPath(event);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}</a></strong></li>`;
+      const title = getDisplayEventTitle(getEventTitle(event));
+      const place = getEventField(event, 'kraj', ['place', 'city', 'location']);
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
     }).join('');
+    initSavedRaceButtons(listElement);
   };
 
   type DeadlineType = 'early' | 'registration';
@@ -1275,7 +1293,8 @@ import SocialLinks from '../components/SocialLinks.astro';
         const summary = joinParts([location, region]);
         const links = [
           ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'sl').map(renderPrimaryActionLink),
-          calendarOptions
+          calendarOptions,
+          renderSavedRaceButton(event, title, dateValue, location)
         ].filter(Boolean).join('');
 
         return `
@@ -1291,6 +1310,7 @@ import SocialLinks from '../components/SocialLinks.astro';
       }).join('');
 
       container.innerHTML = eventCards;
+      initSavedRaceButtons(container);
       setStatus('nearest', '');
     } catch (error) {
       container.innerHTML = `
@@ -1369,6 +1389,7 @@ import SocialLinks from '../components/SocialLinks.astro';
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
             ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+            ${renderSavedRaceButton(event, title, dateValue, location) ? `<div class="event-actions">${renderSavedRaceButton(event, title, dateValue, location)}</div>` : ''}
           </article>
         `;
       }).join('');
@@ -1381,6 +1402,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         setDebug('top', 'yes');
         setDebugTopDetails(interestEvents, interestEvents);
         renderEvents(interestEvents, { interestPreview: true });
+        initSavedRaceButtons(container);
         setStatus('top', 'Izbor temelji na zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid.');
         return;
       }
@@ -1401,6 +1423,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
       setDebugTopDetails(topEvents, rawTopEvents);
       renderEvents(topEvents, { interestPreview: false });
+      initSavedRaceButtons(container);
       setStatus('top', 'Pregled zanimanja trenutno ni dosegljiv, zato prikazujemo obstoječe izpostavljene prihajajoče teke.');
     } catch (error) {
       setDebug('top', 'no');

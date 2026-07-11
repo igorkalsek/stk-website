@@ -114,6 +114,8 @@ const englishNavItems = [
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { filtersToAnalyticsJson, trackStkEvent } from '../../lib/stkAnalytics';
   import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
+  import { getStableEventId } from '../../utils-event-detail';
+  import { initSavedRaceButtons } from '../../saved-races-client';
   import { getDisplayEventTitle } from '../../utils-events';
   import { DEFAULT_PUBLIC_YEAR } from '../../utils-public-year';
   import { formatSloveneDistances } from '../../utils-slovenian';
@@ -264,6 +266,13 @@ const englishNavItems = [
     };
 
     return String(value).replace(/[&<>"']/g, (character) => characters[character]);
+  };
+
+  const renderSavedRaceButton = (event: { row: string; date: string; title: string; place: string }) => {
+    const eventId = getStableEventId({ row: event.row, date: event.date, naziv_prireditve: event.title, place: event.place });
+    const year = DEFAULT_PUBLIC_YEAR;
+    if (!eventId || !/^202[67]$/.test(year)) return '';
+    return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>`;
   };
 
   const safeUrl = (value: string) => {
@@ -544,7 +553,8 @@ const englishNavItems = [
     const links = [
       ...buildPrimaryActions(event, 'en').map(renderPrimaryActionLink),
       event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
-      calendarOptions
+      calendarOptions,
+      renderSavedRaceButton(event)
     ].filter(Boolean).join('');
 
     return `
@@ -641,7 +651,10 @@ const englishNavItems = [
       return;
     }
 
-    if (resultsElement) resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+    if (resultsElement) {
+      resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+      initSavedRaceButtons(resultsElement);
+    }
     if (moreElement) moreElement.hidden = visibleCount >= count;
   };
 
