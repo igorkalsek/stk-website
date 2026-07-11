@@ -2829,6 +2829,19 @@ main {
   gap: 1rem;
 }
 
+.my-race-date {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0;
+  border: 1px solid rgba(16, 64, 80, 0.14);
+  border-radius: 999px;
+  background: rgba(200, 230, 201, 0.72);
+  color: var(--deep-teal);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 6px 10px;
+}
+
 .my-race-card {
   display: grid;
   gap: 1rem;
