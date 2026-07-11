@@ -243,12 +243,10 @@ export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage
     add('short-steep', language === 'en' ? 'A short distance is combined with substantial climbing.' : 'Kratka razdalja je združena z izrazitim vzponom.');
   }
   if (!hasShortSteep && elevation !== null && elevation >= 500) {
-    if (elevation >= 2000) {
-      add('elevation', language === 'en' ? `The longest course includes ${elevation} m of elevation gain.` : `Najdaljša trasa vključuje ${elevation} m+ vzpona.`);
-    } else if (elevation >= 1000) {
-      add('elevation', language === 'en' ? `The race offers a substantial mountain challenge with ${elevation} m of elevation gain.` : `Dogodek ponuja izrazit gorski izziv z ${elevation} m+ vzpona.`);
+    if (elevation >= 1000) {
+      add('elevation', language === 'en' ? `${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih ${elevation} m+ vzpona.`);
     } else {
-      add('elevation', language === 'en' ? `The course includes around ${elevation} m of elevation gain.` : `Trasa vključuje približno ${elevation} m+ vzpona.`);
+      add('elevation', language === 'en' ? `Around ${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih približno ${elevation} m+ vzpona.`);
     }
   }
   if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {

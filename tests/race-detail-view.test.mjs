@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import {
   buildCourseHeading,
@@ -102,6 +103,15 @@ describe('race detail view model', () => {
     assert.equal(buildCourseRows(event, 'en')[0].analyticsType, 'trasa');
   });
 
+  it('uses the updated highlight headings in Slovenian and English detail routes', () => {
+    const slovenePage = readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8');
+    const englishPage = readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8');
+    assert.match(slovenePage, /Kaj izstopa pri tem teku\?/);
+    assert.doesNotMatch(slovenePage, /Zakaj je ta tek zanimiv\?/);
+    assert.match(englishPage, /What stands out about this race/);
+    assert.doesNotMatch(englishPage, /Why this race stands out/);
+  });
+
   it('builds no highlights for sparse events without qualifying facts', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '5', surface: 'CESTA' }, 'sl'), []);
   });
@@ -110,7 +120,7 @@ describe('race detail view model', () => {
     const event = { ...baseEvent, distances: '5;10;85', cup: 'PGT Pokal', kidsRaces: true, additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
     assert.deepEqual(buildRaceHighlights(event, 'en'), [
       'The longest course is 85 km, offering a substantial ultra challenge.',
-      'The longest course includes 2500 m of elevation gain.',
+      '2500 m of elevation gain is listed for the event.',
       'Several distances are available, from 5 to 85 km.'
     ]);
   });
@@ -131,7 +141,16 @@ describe('race detail view model', () => {
       'Prijava je predvidena tudi na dan dogodka.',
       'Na voljo je povezava do trase ali zemljevida.'
     ]);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1200' } }, 'en')[0], 'The race offers a substantial mountain challenge with 1200 m of elevation gain.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1200' } }, 'en')[0], '1200 m of elevation gain is listed for the event.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl')[0], 'Za dogodek je navedenih 2500 m+ vzpona.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'en')[0], '2500 m of elevation gain is listed for the event.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'sl')[0], 'Za dogodek je navedenih približno 600 m+ vzpona.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'en')[0], 'Around 600 m of elevation gain is listed for the event.');
+    const generated = [
+      ...buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl'),
+      ...buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'en')
+    ].join(' ');
+    assert.doesNotMatch(generated, /Najdaljša trasa vključuje|The longest course includes/);
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1.200' } }, 'en'), [
       'Race-day registration is listed as available.',
       'A route or map link is available.'
