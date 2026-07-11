@@ -8,7 +8,7 @@ import { isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear
 import { formatSloveneDistances } from '../../../utils-slovenian';
 import { isVoteUrlSafeForEvent } from '../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../utils-race-copy';
-import { getCanonicalOrigin } from '../../../utils-site-url';
+import { buildRaceShareUrls } from '../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../utils-build-data';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
@@ -59,9 +59,9 @@ const description = event
 const title = event ? `${event.title} | Slovenski Tekaški Koledar` : 'Tek ni najden | Slovenski Tekaški Koledar';
 const canonicalPath = event ? buildEventDetailPath(event) : `/iskalnik-tekov/${year === '2027' ? '?year=2027' : ''}`;
 const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-tekov/';
-const canonicalOrigin = getCanonicalOrigin(Astro.url.origin);
 const copyDescription = event ? buildRaceCopyDescription({ event, language: 'sl', formatDate }) : '';
-const shareUrl = event ? new URL(buildEventDetailPath(event), canonicalOrigin).href : '';
+const shareLinks = event ? buildRaceShareUrls({ event, language: 'sl', formatDate }) : null;
+const shareUrl = shareLinks?.detailUrl ?? '';
 const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl: string) => {
   const params = new URLSearchParams({
     event: event.title,
@@ -90,17 +90,6 @@ const getDateStatus = (value: string) => {
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
 const eventStatus = event ? getDateStatus(event.date) : '';
-const shareText = event ? `${event.title} – ${formatDate(event.date)}${event.place ? `, ${event.place}` : ''}. Več na Slovenskem Tekaškem Koledarju:` : 'Slovenski Tekaški Koledar:';
-const encodedShareUrl = encodeURIComponent(shareUrl);
-const encodedShareText = encodeURIComponent(`${shareText} ${shareUrl}`);
-const encodedShareTitle = encodeURIComponent(event?.title ?? 'Slovenski Tekaški Koledar');
-const shareLinks = shareUrl ? {
-  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}`,
-  whatsapp: `https://wa.me/?text=${encodedShareText}`,
-  twitter: `https://twitter.com/intent/tweet?text=${encodedShareText}`,
-  email: `mailto:?subject=${encodedShareTitle}&body=${encodedShareText}`
-} : null;
-
 const parseRegistrationAmount = (value: string) => {
   if (!value) return null;
   const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
@@ -282,10 +271,10 @@ const jsonLd = event ? {
                   <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Kopiraj opis</button>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-facebook-share-button data-copy-share-text={copyDescription} data-facebook-copy-success="Opis je kopiran. Prilepite ga v Facebook objavo." data-facebook-copy-failure="Facebook je odprt. Za opis uporabite gumb Kopiraj opis." data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" data-analytics-target-url={shareUrl} aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" data-analytics-target-url={shareUrl} aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" data-analytics-target-url={shareUrl} aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
+                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" data-analytics-target-url={shareUrl} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
                   </div>
                   <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
                 </div>
@@ -330,6 +319,8 @@ const jsonLd = event ? {
   initSavedRaceButtons();
   const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
   const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
+
+  const facebookShareButtons = document.querySelectorAll<HTMLAnchorElement>('[data-facebook-share-button]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
 
   const setShareFeedback = (message: string) => {
@@ -356,6 +347,19 @@ const jsonLd = event ? {
     if (!copied) throw new Error('copy failed');
     return true;
   };
+
+
+  facebookShareButtons.forEach((shareButton) => {
+    shareButton.addEventListener('click', async () => {
+      const shareText = shareButton.getAttribute('data-copy-share-text') || '';
+      try {
+        await copyWithFallback(shareText);
+        setShareFeedback(shareButton.getAttribute('data-facebook-copy-success') || '');
+      } catch {
+        setShareFeedback(shareButton.getAttribute('data-facebook-copy-failure') || '');
+      }
+    });
+  });
 
   copyLinkButtons.forEach((copyButton) => {
     copyButton.addEventListener('click', async () => {

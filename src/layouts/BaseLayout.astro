@@ -45,6 +45,8 @@ const {
 const pageTitle = title === 'Slovenski Tekaški Koledar' || title.includes('|') ? title : `${title} | Slovenski Tekaški Koledar`;
 const canonicalUrl = canonicalUrlOverride ?? new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
 const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
+const openGraphImageUrl = 'https://tekaski-koledar.si/stk-logo.jpeg';
+const openGraphImageAlt = lang === 'en' ? 'Slovenski Tekaški Koledar logo' : 'Logotip Slovenskega Tekaškega Koledarja';
 ---
 
 <!doctype html>
@@ -66,6 +68,8 @@ const openGraphLocale = lang === 'en' ? 'en_US' : 'sl_SI';
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Slovenski Tekaški Koledar" />
     <meta property="og:locale" content={openGraphLocale} />
+    <meta property="og:image" content={openGraphImageUrl} />
+    <meta property="og:image:alt" content={openGraphImageAlt} />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />

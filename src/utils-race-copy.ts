@@ -1,6 +1,6 @@
-import { formatSloveneDistances } from './utils-slovenian';
-import { PUBLIC_SITE_URL } from './utils-site-url';
-import { buildEnglishEventDetailPath, buildEventDetailPath, type PublicRaceEvent } from './utils-event-detail';
+import { formatSloveneDistances } from './utils-slovenian.js';
+import { PUBLIC_SITE_URL } from './utils-site-url.js';
+import { buildEnglishEventDetailPath, buildEventDetailPath, type PublicRaceEvent } from './utils-event-detail.js';
 
 type RaceCopyLanguage = 'sl' | 'en';
 
