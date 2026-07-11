@@ -8,7 +8,7 @@ import { formatSloveneDistances } from '../../../../utils-slovenian';
 import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../../../utils-vote';
 import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { getCanonicalOrigin } from '../../../../utils-site-url';
-import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 
@@ -135,6 +135,7 @@ const heroBadges = event ? [
   event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
 ].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
 const detailItems = event ? buildKeyFacts(event, 'en') : [];
+const raceHighlights = event ? buildRaceHighlights(event, 'en') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
 const routeItems = event ? buildCourseRows(event, 'en') : [];
 const courseHeading = event ? buildCourseHeading(event, 'en') : '';
@@ -224,6 +225,15 @@ const jsonLd = event ? {
                   ))}
                 </div>
               </article>
+              {raceHighlights.length > 0 && (
+                <article class="info-card event-detail-panel event-detail-highlights" aria-labelledby="race-highlights-title">
+                  <h2 id="race-highlights-title">Why this race stands out</h2>
+                  <ul>
+                    {raceHighlights.map((highlight) => <li>{highlight}</li>)}
+                  </ul>
+                </article>
+              )}
+
 
               {registrationItems.length > 0 && (
                 <article class="info-card event-detail-panel">
