@@ -1,7 +1,8 @@
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildEventDetailSlug, mapPublicRaceEvent, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
 import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
-import { buildRelatedRaceCards, buildRelatedRaces, getTodayIsoInLjubljana, type RelatedRaceCard } from './utils-related-races.js';
+import { getTodayIsoInLjubljana } from './utils-date.js';
+import { buildRelatedRaceCards, buildRelatedRaces, type RelatedRaceCard } from './utils-related-races.js';
 import { enrichEventsWithVoteUrls } from './utils-vote.js';
 
 type Language = 'sl' | 'en';
