@@ -210,6 +210,8 @@ const englishNavItems = [
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { getDisplayEventTitle } from '../../utils-events';
+  import { getStableEventId } from '../../utils-event-detail';
+  import { initSavedRaceButtons } from '../../saved-races-client';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -681,6 +683,20 @@ const englishNavItems = [
 
   const joinParts = (parts: string[]) => parts.filter(Boolean).join(' · ');
 
+  const getEventStableId = (event: ApiRecord, title: string, date: string, place: string) => getStableEventId({
+    row: pickPath(event, ['row', 'event.row', 'race.row', 'data.row']),
+    date,
+    naziv_prireditve: getEventTitle(event, title),
+    place
+  });
+
+  const renderSavedRaceButton = (event: ApiRecord, title: string, date: string, place: string, iconOnly = false) => {
+    const eventId = getEventStableId(event, title, date, place);
+    const year = date.slice(0, 4) || '2026';
+    if (!eventId || !/^202[67]$/.test(year)) return '';
+    return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Save race</span>'}</button>`;
+  };
+
   const normalizeDescription = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC').replace(/\s+/g, ' ').trim();
 
   const RECENT_UPDATE_DESCRIPTIONS: Record<string, string> = {
@@ -950,6 +966,7 @@ const englishNavItems = [
       const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
       return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
     }).join('');
+    initSavedRaceButtons(listElement);
   };
 
   type DeadlineType = 'early' | 'registration';
@@ -1202,7 +1219,8 @@ const englishNavItems = [
         const summary = joinParts([location, region]);
         const links = [
           ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'en').map(renderPrimaryActionLink),
-          calendarOptions
+          calendarOptions,
+          renderSavedRaceButton(event, title, dateValue, location)
         ].filter(Boolean).join('');
 
         return `
@@ -1218,6 +1236,7 @@ const englishNavItems = [
       }).join('');
 
       container.innerHTML = eventCards;
+      initSavedRaceButtons(container);
       setStatus('nearest', '');
     } catch (error) {
       container.innerHTML = `
@@ -1304,9 +1323,11 @@ const englishNavItems = [
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
             ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+            ${renderSavedRaceButton(event, title, dateValue, location) ? `<div class="event-actions">${renderSavedRaceButton(event, title, dateValue, location)}</div>` : ''}
           </article>
         `;
       }).join('');
+      initSavedRaceButtons(container);
       setStatus('top', 'The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.');
     } catch (error) {
       setDebug('top', 'no');

@@ -7,6 +7,8 @@ export type RelatedRaceReasonKey = 'same-cup' | 'same-surface' | 'similar-distan
 export type RelatedRaceResult = { event: PublicRaceEvent; score: number; reasonKeys: RelatedRaceReasonKey[] };
 export type RelatedRaceCard = {
   id: string;
+  stableEventId: string;
+  year: string;
   title: string;
   date: string;
   place: string;
@@ -152,8 +154,12 @@ export const getRelatedRaceReasonLabels = (reasonKeys: RelatedRaceReasonKey[], l
   return REASON_PRIORITY.filter((key) => reasonKeys.includes(key)).slice(0, 2).map((key) => labels[language][key]);
 };
 
-export const buildRelatedRaceCards = (results: RelatedRaceResult[], language: RelatedRaceLanguage): RelatedRaceCard[] => results.map(({ event, reasonKeys }) => ({
-  id: event.id || getStableEventId(event),
+export const buildRelatedRaceCards = (results: RelatedRaceResult[], language: RelatedRaceLanguage): RelatedRaceCard[] => results.map(({ event, reasonKeys }) => {
+  const stableEventId = getStableEventId(event);
+  return {
+  id: event.id || stableEventId,
+  stableEventId,
+  year: event.year,
   title: event.title,
   date: event.date,
   place: event.place,
@@ -163,4 +169,5 @@ export const buildRelatedRaceCards = (results: RelatedRaceResult[], language: Re
   familyFriendly: event.familyFriendly,
   detailPath: language === 'en' ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event),
   reasonLabels: getRelatedRaceReasonLabels(reasonKeys, language)
-}));
+  };
+});
