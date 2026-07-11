@@ -68,3 +68,19 @@ describe('race preference compact UX wiring', () => {
     }
   });
 });
+
+
+describe('race search analytics source cleanup', () => {
+  it('does not mark Slovenian race-title or detail links as external analytics clicks', () => {
+    assert.doesNotMatch(slovenePage, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*external_link_clicked/);
+    assert.doesNotMatch(slovenePage, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*event_card_click/);
+    assert.doesNotMatch(slovenePage, /search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"[^`]*(data-analytics-event-type|data-analytics-action-type|data-analytics-link-type|data-stk-action)/);
+  });
+
+  it('retains external registration and announcement link metadata in race finders', () => {
+    for (const page of [slovenePage, englishPage]) {
+      assert.match(page, /data-analytics-link-type="prijava"/);
+      assert.match(page, /data-analytics-link-type="razpis"/);
+    }
+  });
+});

@@ -972,7 +972,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Družinam prijazno</span>' : ''}
         </div>
-        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(event.title)}</a></h3>
+        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
