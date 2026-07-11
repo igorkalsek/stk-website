@@ -23,11 +23,14 @@ const buttonsForRace = (race: Pick<SavedRaceInput, 'eventId' | 'year'>) => Array
 const setButtonState = (button: HTMLButtonElement, saved: boolean) => {
   const labels = LABELS[getLanguage(button)];
   button.setAttribute('aria-pressed', saved ? 'true' : 'false');
-  button.setAttribute('aria-label', saved ? labels.removeAria : labels.saveAria);
+  const iconOnly = button.dataset.savedRaceIconOnly === 'true';
+  button.setAttribute('aria-label', saved ? button.dataset.savedRaceRemoveLabel || labels.removeAria : labels.saveAria);
   button.classList.toggle('saved-race-button-saved', saved);
+  const icon = button.querySelector<HTMLElement>('.action-icon');
+  if (iconOnly && icon) icon.textContent = saved ? '★' : '☆';
   const label = button.querySelector<HTMLElement>('[data-saved-race-label]');
   if (label) label.textContent = saved ? labels.saved : labels.unsaved;
-  else button.textContent = saved ? labels.saved : labels.unsaved;
+  else if (!iconOnly) button.textContent = saved ? labels.saved : labels.unsaved;
 };
 
 export const initSavedRaceButtons = (root: ParentNode = document) => {

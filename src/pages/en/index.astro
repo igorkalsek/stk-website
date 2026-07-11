@@ -694,7 +694,7 @@ const englishNavItems = [
     const eventId = getEventStableId(event, title, date, place);
     const year = date.slice(0, 4) || '2026';
     if (!eventId || !/^202[67]$/.test(year)) return '';
-    return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Save race</span>'}</button>`;
+    return `<button class="button button-small button-secondary-light saved-race-button${iconOnly ? ' saved-race-icon-button' : ''}" type="button" data-saved-race-button${iconOnly ? ' data-saved-race-icon-only="true" data-saved-race-remove-label="Remove from My races"' : ''} data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Save race</span>'}</button>`;
   };
 
   const normalizeDescription = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC').replace(/\s+/g, ' ').trim();
@@ -964,7 +964,9 @@ const englishNavItems = [
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
       const votes = getHeroPreviewVotes(event);
       const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(getDisplayEventTitle(getEventTitle(event)))}${voteCount}</strong></li>`;
+      const title = getDisplayEventTitle(getEventTitle(event));
+      const place = getEventField(event, 'kraj', ['place', 'city', 'location']);
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(title)}${voteCount}</strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
     }).join('');
     initSavedRaceButtons(listElement);
   };

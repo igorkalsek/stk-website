@@ -680,7 +680,7 @@ import SocialLinks from '../components/SocialLinks.astro';
     const eventId = getEventStableId(event, title, date, place);
     const year = getEventYear(event) || date.slice(0, 4);
     if (!eventId || !/^202[67]$/.test(year)) return '';
-    return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Shrani tek</span>'}</button>`;
+    return `<button class="button button-small button-secondary-light saved-race-button${iconOnly ? ' saved-race-icon-button' : ''}" type="button" data-saved-race-button${iconOnly ? ' data-saved-race-icon-only="true" data-saved-race-remove-label="Odstrani iz Mojih tekov"' : ''} data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(date)}" data-event-title="${escapeHtml(title)}" data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span>${iconOnly ? '' : '<span data-saved-race-label>Shrani tek</span>'}</button>`;
   };
 
   const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');

@@ -49,6 +49,23 @@ describe('saved race button surfaces', () => {
     });
   });
 
+
+
+  it('uses icon-only saved race buttons in the compact homepage hero preview only', () => {
+    assert.match(files.homeSl, /renderSavedRaceButton\(event, title, dateValue, place, true\)/);
+    assert.match(files.homeEn, /renderSavedRaceButton\(event, title, dateValue, place, true\)/);
+    assert.match(files.homeSl, /data-saved-race-icon-only="true"/);
+    assert.match(files.homeEn, /data-saved-race-icon-only="true"/);
+    assert.match(files.homeSl, /data-saved-race-remove-label="Odstrani iz Mojih tekov"/);
+    assert.match(files.homeEn, /data-saved-race-remove-label="Remove from My races"/);
+    assert.match(files.homeSl, /iconOnly \? '' : '<span data-saved-race-label>Shrani tek<\/span>'/);
+    assert.match(files.homeEn, /iconOnly \? '' : '<span data-saved-race-label>Save race<\/span>'/);
+    [files.familySl, files.familyEn, files.votedSl, files.votedEn, files.related].forEach((source) => {
+      assert.doesNotMatch(source, /data-saved-race-icon-only/);
+      assert.doesNotMatch(source, /saved-race-icon-button/);
+    });
+  });
+
   it('uses the updated Slovenian navigation label', () => {
     assert.match(files.header, /label: 'Osebni koledar'/);
     assert.doesNotMatch(files.header, /href: '\/osebni-koledar\/', label: 'Koledar'/);
