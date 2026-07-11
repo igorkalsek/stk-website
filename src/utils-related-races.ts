@@ -1,6 +1,7 @@
 import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, normalizeSloveneText, parsePublicDateValue, type PublicRaceEvent } from './utils-event-detail.js';
 import { parseRaceDistancesKm } from './utils-distance-filter.js';
 import { formatDetailSurface, type DetailLanguage } from './utils-race-detail-view.js';
+export { getTodayIsoInLjubljana } from './utils-date.js';
 
 export type RelatedRaceLanguage = 'sl' | 'en';
 export type RelatedRaceReasonKey = 'same-cup' | 'same-surface' | 'similar-distance' | 'same-region' | 'family-friendly';
@@ -144,7 +145,6 @@ export const buildRelatedRaces = ({ currentEvent, candidates, todayIso, limit = 
     .map(({ candidate, scored }) => ({ event: candidate.event, score: scored.score, reasonKeys: REASON_PRIORITY.filter((key) => scored.reasonKeys.includes(key)) }));
 };
 
-export const getTodayIsoInLjubljana = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Ljubljana', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
 
 export const getRelatedRaceReasonLabels = (reasonKeys: RelatedRaceReasonKey[], language: RelatedRaceLanguage) => {
   const labels: Record<RelatedRaceLanguage, Record<RelatedRaceReasonKey, string>> = {

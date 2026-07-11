@@ -3,9 +3,9 @@ import { getSavedRaceDetailPath, resolveSavedRaces, sortResolvedSavedRaces } fro
 import { getSavedRaceKey, readSavedRaces, removeSavedRaceFromStorage, type MinimalStorage, type SavedRace } from './utils-saved-races.js';
 import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { buildPrimaryActions } from './utils-race-detail-view.js';
+import { getTodayIsoInLjubljana } from './utils-date.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-const todayIso = () => new Date().toISOString().slice(0, 10);
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
 
@@ -100,7 +100,7 @@ export const initMyRacesPage = async (root = document) => {
     try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } }); if (!response.ok) throw new Error(String(response.status)); payloads[year] = await response.json(); }
     catch { apiOk = false; }
   }));
-  const resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso()));
+  const resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, getTodayIsoInLjubljana()));
   const upcoming = resolved.filter((item) => item.status === 'upcoming');
   const exportableUpcoming = getExportableUpcomingRaceEvents(upcoming, language);
   const other = resolved.filter((item) => item.status !== 'upcoming');
