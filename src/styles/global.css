@@ -2815,3 +2815,65 @@ main {
 .saved-race-button[aria-pressed="true"] .action-icon {
   color: #15803d;
 }
+
+.my-races-page .lead {
+  max-width: 44rem;
+}
+
+.my-races-app {
+  margin-top: 2rem;
+}
+
+.my-race-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.my-race-date {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0;
+  border: 1px solid rgba(16, 64, 80, 0.14);
+  border-radius: 999px;
+  background: rgba(200, 230, 201, 0.72);
+  color: var(--deep-teal);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 6px 10px;
+}
+
+.my-race-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color, #d8e2dc);
+  border-radius: 1rem;
+  background: var(--surface-color, #fff);
+}
+
+.my-race-card.is-muted,
+.my-races-secondary {
+  opacity: 0.82;
+}
+
+.my-race-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.muted-note {
+  color: var(--muted-text-color, #5f6f66);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 720px) {
+  .my-race-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .my-race-actions {
+    justify-content: flex-end;
+  }
+}
