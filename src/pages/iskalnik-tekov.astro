@@ -40,6 +40,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
+        <section class="race-preferences-panel" data-race-preferences-panel aria-labelledby="race-preferences-title-sl">
+          <div class="race-preferences-header">
+            <div>
+              <h3 id="race-preferences-title-sl">Teki zame</h3>
+              <p>Izberite, kakšni teki vas zanimajo. Nastavitve ostanejo samo v tem brskalniku.</p>
+              <p class="race-preferences-privacy">Preference se shranijo samo v lokalni shrambi tega brskalnika. STK jih ne prejme in jih ne uporablja za analitiko.</p>
+            </div>
+            <p class="race-preferences-active" data-preferences-active hidden>Teki zame so aktivni.</p>
+          </div>
+          <div class="race-preferences-summary" data-preferences-summary aria-live="polite"></div>
+          <p class="race-preferences-message" data-preferences-message aria-live="polite"></p>
+          <div class="race-preferences-grid">
+            <fieldset class="preference-fieldset">
+              <legend>Želene razdalje</legend>
+              <label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Do 5 km</span></label>
+              <label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>Nad 5 do 10 km</span></label>
+              <label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>Nad 10 do 21,1 km</span></label>
+              <label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>Nad 21,1 do 42,2 km</span></label>
+              <label><input type="checkbox" data-preference-distance="ultra" /> <span>Nad 42,2 km</span></label>
+            </fieldset>
+            <fieldset class="preference-fieldset">
+              <legend>Želene podlage</legend>
+              <label><input type="checkbox" data-preference-surface="road" /> <span>Cesta</span></label>
+              <label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label>
+              <label><input type="checkbox" data-preference-surface="mountain" /> <span>Gorski tek</span></label>
+              <label><input type="checkbox" data-preference-family /> <span>Prednost družinam prijaznim tekom</span></label>
+            </fieldset>
+            <fieldset class="preference-fieldset preference-regions">
+              <legend>Želene regije</legend>
+              <details>
+                <summary>Izberite regije</summary>
+                <div class="preference-region-list" data-preference-regions></div>
+              </details>
+            </fieldset>
+          </div>
+          <div class="race-preferences-actions">
+            <button class="button button-small button-primary" type="button" data-save-preferences>Shrani in prikaži teke zame</button>
+            <button class="button button-small button-secondary-light" type="button" data-reset-preferences>Ponastavi preference</button>
+          </div>
+        </section>
+
         <form class="filters-grid" data-search-form>
           <label class="field field-wide">
             <span>Iskanje</span>
@@ -117,6 +158,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <span>Razvrsti po</span>
                 <select name="sort" data-filter="sort">
                   <option value="date">Datumu</option>
+                  <option value="my-races" disabled>Teki zame</option>
                   <option value="registration-deadline">Roki prijav najprej</option>
                   <option value="registration-min">Najcenejši najprej</option>
                   <option value="registration-max">Najdražji najprej</option>
@@ -193,6 +235,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
+  import { getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencesV1 } from '../utils-race-preferences';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
@@ -243,6 +286,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
   const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+  const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
+  const preferenceSummaryElement = document.querySelector<HTMLElement>('[data-preferences-summary]');
+  const preferenceMessageElement = document.querySelector<HTMLElement>('[data-preferences-message]');
+  const preferenceActiveElement = document.querySelector<HTMLElement>('[data-preferences-active]');
+  const preferenceRegionList = document.querySelector<HTMLElement>('[data-preference-regions]');
+  const savePreferencesButton = document.querySelector<HTMLButtonElement>('[data-save-preferences]');
+  const resetPreferencesButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences]');
+  const preferenceDistanceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-distance]')];
+  const preferenceSurfaceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-surface]')];
+  const preferenceFamilyInput = document.querySelector<HTMLInputElement>('[data-preference-family]');
+  const initialPreferenceRead = (() => { try { return readRacePreferences(window.localStorage); } catch { return readRacePreferences(null); } })();
+  let racePreferences: RacePreferencesV1 = initialPreferenceRead.preferences;
+  let preferencesPersistent = initialPreferenceRead.persistent;
+  const preferenceMatches = new Map<string, RacePreferenceMatch>();
+
 
   const initializeYearUi = () => {
     yearLinkElements.forEach((link) => {
@@ -751,6 +809,46 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
 
+
+  const getStorage = () => { try { return window.localStorage; } catch { return null; } };
+  const getPreferenceRegions = () => [...document.querySelectorAll<HTMLInputElement>('[data-preference-region]')].filter((input) => input.checked).map((input) => input.value);
+  const collectPreferenceControls = (active = racePreferences.active) => validateRacePreferences({
+    version: 1,
+    distanceBuckets: preferenceDistanceInputs.filter((input) => input.checked).map((input) => input.dataset.preferenceDistance),
+    surfaceCategories: preferenceSurfaceInputs.filter((input) => input.checked).map((input) => input.dataset.preferenceSurface),
+    regions: getPreferenceRegions(),
+    familyFriendly: Boolean(preferenceFamilyInput?.checked),
+    active
+  });
+  const hasPreferences = () => Boolean(validateRacePreferences(racePreferences)?.distanceBuckets.length || validateRacePreferences(racePreferences)?.surfaceCategories.length || validateRacePreferences(racePreferences)?.regions.length || validateRacePreferences(racePreferences)?.familyFriendly);
+  const setPreferenceMessage = (message: string) => { if (preferenceMessageElement) preferenceMessageElement.textContent = message; };
+  const updatePreferenceSortOption = () => { const option = sortSelect?.querySelector<HTMLOptionElement>('option[value="my-races"]'); if (option) option.disabled = !hasPreferences(); };
+  const summarizePreferences = () => {
+    const parts = [];
+    const distanceLabels: Record<string,string> = { 'up-to-5':'Do 5 km', 'over-5-to-10':'5–10 km', 'over-10-to-half':'10–21,1 km', 'over-half-to-marathon':'21,1–42,2 km', ultra:'Nad 42,2 km' };
+    const surfaceLabels: Record<string,string> = { road:'Cesta', trail:'Trail', mountain:'Gorski tek' };
+    if (racePreferences.distanceBuckets.length === 1) parts.push(distanceLabels[racePreferences.distanceBuckets[0]]); else if (racePreferences.distanceBuckets.length > 1) parts.push(`${racePreferences.distanceBuckets.length} razdalje`);
+    if (racePreferences.surfaceCategories.length === 1) parts.push(surfaceLabels[racePreferences.surfaceCategories[0]]); else if (racePreferences.surfaceCategories.length > 1) parts.push(`${racePreferences.surfaceCategories.length} podlage`);
+    if (racePreferences.regions.length === 1) parts.push(racePreferences.regions[0]); else if (racePreferences.regions.length > 1) parts.push(`${racePreferences.regions.length} regije`);
+    if (racePreferences.familyFriendly) parts.push('Družinam prijazno');
+    return parts.length ? `Izbrano: ${parts.slice(0, 4).join(' · ')}` : '';
+  };
+  const syncPreferenceControls = () => {
+    preferenceDistanceInputs.forEach((input) => { input.checked = racePreferences.distanceBuckets.includes(input.dataset.preferenceDistance as any); });
+    preferenceSurfaceInputs.forEach((input) => { input.checked = racePreferences.surfaceCategories.includes(input.dataset.preferenceSurface as any); });
+    if (preferenceFamilyInput) preferenceFamilyInput.checked = racePreferences.familyFriendly;
+    document.querySelectorAll<HTMLInputElement>('[data-preference-region]').forEach((input) => { input.checked = racePreferences.regions.includes(input.value); });
+    updatePreferenceSortOption();
+    if (racePreferences.active && hasPreferences() && sortSelect) sortSelect.value = 'my-races';
+    if (preferenceActiveElement) preferenceActiveElement.hidden = !(racePreferences.active && sortSelect?.value === 'my-races');
+    if (preferenceSummaryElement) preferenceSummaryElement.textContent = summarizePreferences();
+  };
+  const populatePreferenceRegions = () => {
+    if (!preferenceRegionList) return;
+    const regions = [...new Set([...state.events.map((event) => event.region).filter(Boolean), ...racePreferences.regions])].sort((a,b)=>a.localeCompare(b,'sl-SI'));
+    preferenceRegionList.innerHTML = regions.map((region, index) => `<label><input id="pref-region-sl-${index}" type="checkbox" value="${escapeHtml(region)}" data-preference-region /> <span>${escapeHtml(region)} </span></label>`).join('');
+    syncPreferenceControls();
+  };
   const populateFilters = () => {
     const months = [...new Set(state.events.map((event) => event.month))].sort();
     const regions = [...new Set(state.events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
@@ -759,6 +857,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     renderOptions(monthSelect, months, 'Vsi meseci', monthLabel);
     renderOptions(regionSelect, regions, 'Vse regije');
     renderOptions(surfaceSelect, surfaces, 'Vse podlage', formatSurfaceOption);
+    populatePreferenceRegions();
   };
 
   const renderEmptyState = (title: string, message: string, pill = 'Iskalnik', showClearAction = false) => {
@@ -792,6 +891,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const renderEvent = (event: RaceEvent) => {
+    const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
       event.place && `<span class="event-chip"><strong>Kraj:</strong> ${escapeHtml(event.place)}</span>`,
@@ -801,6 +901,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
 
+
+    const preferenceReasonLabels = preferenceMatch ? getRacePreferenceReasonLabels(preferenceMatch.reasonKeys, 'sl') : [];
+    const preferenceReasons = preferenceReasonLabels.length ? `<div class="preference-reasons" aria-label="Ujema se z vašimi preferencami">${preferenceReasonLabels.map((reason) => `<span class="pill preference-reason-pill">${escapeHtml(reason)}</span>`).join('')}</div>` : '';
     const calendarOptions = renderCalendarOptions({
       title: event.title,
       date: event.date,
@@ -828,6 +931,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}" data-analytics-event-type="external_link_clicked" data-analytics-action-type="event_card_click">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
+        ${preferenceReasons}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
@@ -869,13 +973,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       if (filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
       return true;
     });
-    state.filtered = sortEvents(state.filtered, filters.sort);
+    preferenceMatches.clear();
+    if (filters.sort === 'my-races' && hasPreferences()) {
+      const matches = rankRacesForPreferences({ events: state.filtered as any, preferences: racePreferences });
+      matches.forEach((match) => preferenceMatches.set(match.event.id, match));
+      state.filtered = matches.map((match) => match.event as unknown as RaceEvent);
+    } else {
+      state.filtered = sortEvents(state.filtered, filters.sort);
+    }
 
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
-    setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
+    setCount(filters.sort === 'my-races' ? (count === 1 ? '1 tek se ujema z vašimi preferencami.' : `${count} tekov se ujema z vašimi preferencami.`) : count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     const statusMessages: Record<string, string> = {
       date: 'Prikazani so potrjeni javni dogodki od danes naprej, privzeto urejeni po datumu.',
       'registration-deadline': 'Najprej so prikazani teki z najbližjimi znanimi roki prijav ali cenejših prijav. Teki brez znanega roka so prikazani spodaj.'
@@ -891,7 +1002,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti katerega od filtrov ali počistite filtre.', 'Filtri', true);
+      if (filters.sort === 'my-races') {
+        renderEmptyState('Ni tekov, ki bi se ujemali z izbranimi preferencami.', 'Uredite preference ali prikažite vse teke brez osebnega razvrščanja.', 'Teki zame', false);
+        resultsElement?.querySelector('.event-meta')?.insertAdjacentHTML('afterend', '<div class="event-actions"><button class="button button-small button-secondary-light" type="button" data-edit-preferences>Uredite preference</button><button class="button button-small button-primary" type="button" data-show-all-races>Prikažite vse teke</button></div>');
+      } else {
+        renderEmptyState('Ni dogodkov, ki bi ustrezali izbranim filtrom.', filters.quickPick ? 'Preveč izbranih filtrov. Poskusite izklopiti katerega od hitrih izborov ali počistite filtre.' : 'Poskusite odstraniti katerega od filtrov ali počistite filtre.', 'Filtri', true);
+      }
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -955,6 +1071,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     resetVisibleResults();
   };
 
+  savePreferencesButton?.addEventListener('click', () => {
+    const next = collectPreferenceControls(true);
+    if (!next || (!next.distanceBuckets.length && !next.surfaceCategories.length && !next.regions.length && !next.familyFriendly)) { setPreferenceMessage('Izberite vsaj eno preferenco.'); return; }
+    const result = writeRacePreferences(getStorage(), next);
+    racePreferences = result.preferences; preferencesPersistent = result.persistent;
+    if (!preferencesPersistent) setPreferenceMessage('Preference delujejo v tej seji, vendar jih ni bilo mogoče trajno shraniti.'); else setPreferenceMessage('Preference so shranjene.');
+    if (sortSelect) sortSelect.value = 'my-races';
+    syncPreferenceControls(); resetVisibleResults();
+  });
+  resetPreferencesButton?.addEventListener('click', () => {
+    resetRacePreferences(getStorage()); racePreferences = validateRacePreferences({ version: 1, distanceBuckets: [], surfaceCategories: [], regions: [], familyFriendly: false, active: false })!;
+    preferencesPersistent = false;
+    if (sortSelect?.value === 'my-races') sortSelect.value = 'date';
+    syncPreferenceControls(); setPreferenceMessage('Preference so ponastavljene.'); resetVisibleResults();
+  });
+  sortSelect?.addEventListener('change', () => {
+    if (!hasPreferences()) return;
+    const next = { ...racePreferences, active: sortSelect.value === 'my-races' };
+    const validated = validateRacePreferences(next); if (validated) { const result = writeRacePreferences(getStorage(), validated); racePreferences = result.preferences; preferencesPersistent = result.persistent; syncPreferenceControls(); }
+  });
+
   formElement?.addEventListener('input', resetVisibleResults);
   formElement?.addEventListener('change', resetVisibleResults);
   formElement?.addEventListener('submit', (event) => {
@@ -980,6 +1117,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
     if (target) clearFilters();
+    const editTarget = event.target instanceof Element ? event.target.closest('[data-edit-preferences]') : null;
+    if (editTarget) preferencePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const showAllTarget = event.target instanceof Element ? event.target.closest('[data-show-all-races]') : null;
+    if (showAllTarget) { if (sortSelect) sortSelect.value = 'date'; racePreferences = { ...racePreferences, active: false }; writeRacePreferences(getStorage(), racePreferences); syncPreferenceControls(); resetVisibleResults(); }
   });
 
   updateAdvancedFiltersSummary();
