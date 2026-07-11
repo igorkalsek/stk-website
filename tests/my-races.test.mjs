@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
+import { getStorage, initMyRacesPage, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
 
 const saved = (eventId, year = '2026', date = `${year}-05-10`, title = 'Saved') => ({ version: 1, eventId, year, date, title });
 const apiEvent = ({ row = '173', year = '2026', date = `${year}-05-10`, title = 'Testni tek', status = 'potrjeno', visible = 'DA' } = {}) => ({ row, datum: date, naziv_prireditve: title, kraj: 'Kranj', regija: 'Gorenjska', status_dogodka: status, vidno_v_javnem_koledarju: visible, povezava_razpis: 'https://example.com/info', povezava_prijava: 'https://example.com/register' });
@@ -36,6 +37,55 @@ describe('my races resolver', () => {
   });
 });
 
+
+describe('my races primary actions', () => {
+  const event = (noticeUrl, registrationUrl) => ({ noticeUrl, registrationUrl });
+
+  it('renders one combined action for equivalent notice and registration URLs', () => {
+    const html = renderPrimaryActionLinks(event('https://example.com/race?b=2&a=1', 'https://example.com/race?a=1&b=2'), 'sl');
+    assert.equal((html.match(/<a /g) ?? []).length, 1);
+    assert.match(html, /Razpis in prijava/);
+    assert.match(html, /rel="noopener noreferrer"/);
+  });
+
+  it('renders two actions for distinct notice and registration URLs', () => {
+    const html = renderPrimaryActionLinks(event('https://example.com/info', 'https://example.com/register'), 'sl');
+    assert.equal((html.match(/<a /g) ?? []).length, 2);
+    assert.match(html, /Razpis/);
+    assert.match(html, /Prijava/);
+  });
+
+  it('renders localized English labels for combined and distinct actions', () => {
+    assert.match(renderPrimaryActionLinks(event('https://example.com/race', 'https://example.com/race/'), 'en'), /Official info and registration/);
+    const distinct = renderPrimaryActionLinks(event('https://example.com/info', 'https://example.com/register'), 'en');
+    assert.match(distinct, /Official info/);
+    assert.match(distinct, /Registration/);
+  });
+});
+
+describe('my races storage fallback', () => {
+  const originalWindow = globalThis.window;
+  const originalFetch = globalThis.fetch;
+
+  it('returns null when window.localStorage access throws', () => {
+    globalThis.window = Object.defineProperty({}, 'localStorage', { get() { throw new Error('blocked'); } });
+    assert.equal(getStorage(), null);
+    globalThis.window = originalWindow;
+  });
+
+  it('does not crash or render remove buttons when storage is blocked', async () => {
+    globalThis.window = Object.defineProperty({}, 'localStorage', { get() { throw new Error('blocked'); } });
+    globalThis.fetch = () => { throw new Error('fetch should not run without storage'); };
+    const mount = { dataset: { language: 'en' }, innerHTML: '', querySelectorAll: () => [] };
+    const root = { querySelector: () => mount };
+    await assert.doesNotReject(() => initMyRacesPage(root));
+    assert.match(mount.innerHTML, /The browser currently does not allow access to saved races\./);
+    assert.doesNotMatch(mount.innerHTML, /data-remove-saved-race/);
+    globalThis.fetch = originalFetch;
+    globalThis.window = originalWindow;
+  });
+});
+
 describe('my races page source contract', () => {
   const sl = readFileSync(new URL('../src/pages/moji-teki.astro', import.meta.url), 'utf8');
   const en = readFileSync(new URL('../src/pages/en/my-races/index.astro', import.meta.url), 'utf8');
@@ -51,5 +101,6 @@ describe('my races page source contract', () => {
   it('includes fallback copy for API outages and local-only storage', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
     assert.match(client, /does not sync between devices/);
+    assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
   });
 });
