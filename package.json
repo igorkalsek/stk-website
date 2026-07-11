@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "rm -rf .cache/dist-test && tsc src/utils-events.ts src/utils-event-detail.ts src/utils-slovenian.ts src/utils-distance-filter.ts src/utils-race-detail-view.ts src/utils-related-races.ts --outDir .cache/dist-test --module ES2022 --target ES2022 --moduleResolution Bundler --skipLibCheck && node --experimental-specifier-resolution=node --test tests/*.test.mjs"
+    "test": "rm -rf .cache/dist-test && tsc src/utils-events.ts src/utils-event-detail.ts src/utils-slovenian.ts src/utils-distance-format.ts src/utils-distance-filter.ts src/utils-race-detail-view.ts src/utils-related-races.ts --outDir .cache/dist-test --module ES2022 --target ES2022 --moduleResolution Bundler --skipLibCheck && node --experimental-specifier-resolution=node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

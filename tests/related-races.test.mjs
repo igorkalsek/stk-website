@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
+import { formatRaceDistances } from '../.cache/dist-test/utils-distance-format.js';
 import { buildRelatedRaceCards, buildRelatedRaces, getRelatedRaceReasonLabels } from '../.cache/dist-test/utils-related-races.js';
 
 const ev = (overrides = {}) => ({
@@ -71,5 +73,20 @@ describe('buildRelatedRaces', () => {
 
   it('supports sparse 2027 candidate sets', () => {
     assert.deepEqual(related(ev({ year: '2027', date: '2027-05-01' }), [ev({ year: '2027', title: 'Sparse', date: '2027-06-01', surface: 'road', distances: '100' })], '2027-01-01'), []);
+  });
+});
+
+describe('related race rendering helpers', () => {
+  it('does not mark related race links as external analytics clicks', () => {
+    const source = readFileSync(new URL('../src/components/RelatedRaceCards.astro', import.meta.url), 'utf8');
+    assert(!source.includes('data-analytics-event-type="external_link_clicked"'));
+    assert(!source.includes('data-analytics-action-type="event_card_click"'));
+  });
+
+  it('formats distances with Slovenian decimal commas and English decimal points', () => {
+    assert.equal(formatRaceDistances('21.1', 'sl'), '21,1 km');
+    assert.equal(formatRaceDistances('21,1', 'en'), '21.1 km');
+    assert.equal(formatRaceDistances('5; 10; 21,1', 'en'), '5 km · 10 km · 21.1 km');
+    assert.equal(formatRaceDistances('5; 10; 21.1', 'sl'), '5 km · 10 km · 21,1 km');
   });
 });

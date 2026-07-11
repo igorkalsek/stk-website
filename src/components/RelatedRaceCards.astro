@@ -1,6 +1,6 @@
 ---
 import type { RelatedRaceCard, RelatedRaceLanguage } from '../utils-related-races';
-import { formatSloveneDistances } from '../utils-slovenian';
+import { formatRaceDistances } from '../utils-distance-format';
 
 type Props = { races: RelatedRaceCard[]; language: RelatedRaceLanguage };
 const { races, language } = Astro.props as Props;
@@ -20,8 +20,6 @@ const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' 
             class="related-race-card"
             href={race.detailPath}
             aria-label={`${copy.view}: ${race.title}${race.place ? ` ${copy.at} ${race.place}` : ''}`}
-            data-analytics-event-type="external_link_clicked"
-            data-analytics-action-type="event_card_click"
             data-stk-event-id={race.id}
             data-stk-event-name={race.title}
             data-stk-event-date={race.date}
@@ -30,7 +28,7 @@ const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' 
             <time datetime={race.date}>{formatDate(race.date)}</time>
             <strong>{race.title}</strong>
             <span class="related-race-meta">
-              {[race.place, race.region, race.surface, race.distances ? formatSloveneDistances(race.distances) : ''].filter(Boolean).join(' · ')}
+              {[race.place, race.region, race.surface, race.distances ? formatRaceDistances(race.distances, language) : ''].filter(Boolean).join(' · ')}
             </span>
             {race.reasonLabels.length > 0 && (
               <span class="related-race-reasons" aria-label={language === 'en' ? 'Why it is related' : 'Zakaj je sorodno'}>
