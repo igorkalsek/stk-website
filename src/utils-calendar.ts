@@ -1,6 +1,8 @@
+import { areEquivalentPublicActionUrls, normalizeDetailUrl } from './utils-race-detail-view.js';
 export const GOOGLE_CALENDAR_SUBSCRIPTION_URL = 'https://calendar.google.com/calendar/u/0/r?cid=ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92@group.calendar.google.com';
 export const ICAL_SUBSCRIPTION_URL = 'https://calendar.google.com/calendar/ical/ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92%40group.calendar.google.com/public/basic.ics';
 export const WEBCAL_SUBSCRIPTION_URL = 'webcal://calendar.google.com/calendar/ical/ebc83d7c094e5c61db2b0682a4da13734af4f2f381bafec7ccb37df56bdb1c92%40group.calendar.google.com/public/basic.ics';
+
 
 const GOOGLE_CALENDAR_EVENT_URL = 'https://calendar.google.com/calendar/render';
 
@@ -32,12 +34,14 @@ const EVENT_DETAILS = {
   sl: {
     intro: 'Dodano iz Slovenskega Tekaškega Koledarja. Pred prijavo preverite uradni razpis ali stran organizatorja.',
     notice: 'Razpis:',
-    registration: 'Prijava:'
+    registration: 'Prijava:',
+    combined: 'Razpis in prijava:'
   },
   en: {
     intro: 'Added from Slovenski Tekaški Koledar. Before registering, check the official race announcement or the organizer’s website.',
-    notice: 'Official notice:',
-    registration: 'Registration:'
+    notice: 'Official info:',
+    registration: 'Registration:',
+    combined: 'Official info and registration:'
   }
 } as const;
 
@@ -48,11 +52,16 @@ const getEventDetails = ({
 }: Pick<CalendarEventLinkInput, 'noticeUrl' | 'registrationUrl' | 'language'>) => {
   const labels = EVENT_DETAILS[language] ?? EVENT_DETAILS.sl;
 
-  return [
-    labels.intro,
-    noticeUrl ? `${labels.notice} ${noticeUrl}` : '',
-    registrationUrl ? `${labels.registration} ${registrationUrl}` : ''
-  ].filter(Boolean).join('\n');
+  const normalizedNoticeUrl = normalizeDetailUrl(noticeUrl);
+  const normalizedRegistrationUrl = normalizeDetailUrl(registrationUrl);
+  const linkLines = areEquivalentPublicActionUrls(normalizedRegistrationUrl, normalizedNoticeUrl)
+    ? [`${labels.combined} ${normalizedRegistrationUrl}`]
+    : [
+      normalizedNoticeUrl ? `${labels.notice} ${normalizedNoticeUrl}` : '',
+      normalizedRegistrationUrl ? `${labels.registration} ${normalizedRegistrationUrl}` : ''
+    ];
+
+  return [labels.intro, ...linkLines].filter(Boolean).join('\n');
 };
 
 const hasValidAllDayDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date);

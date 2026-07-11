@@ -66,7 +66,25 @@ export type DetailAction = { kind: 'registration' | 'notice'; label: string; url
 export type DetailRow = { label: string; value: string; url?: string; analyticsType?: string; ariaLabel?: string };
 
 const hasText = (value: string | undefined | null) => Boolean(value?.trim());
-const sameUrl = (a: string, b: string) => a && b && a === b;
+const normalizePublicActionUrlForComparison = (value: string | undefined | null) => {
+  const normalized = safeHttpUrl(value ?? '');
+  if (!normalized) return '';
+  const url = new URL(normalized);
+  url.hash = '';
+  if (url.pathname.length > 1) url.pathname = url.pathname.replace(/\/$/, '');
+  const sortedParams = [...url.searchParams.entries()].sort(([aName, aValue], [bName, bValue]) =>
+    aName.localeCompare(bName) || aValue.localeCompare(bValue)
+  );
+  url.search = '';
+  sortedParams.forEach(([name, value]) => url.searchParams.append(name, value));
+  return url.href;
+};
+
+export const areEquivalentPublicActionUrls = (first: string | undefined | null, second: string | undefined | null): boolean => {
+  const firstComparable = normalizePublicActionUrlForComparison(first);
+  const secondComparable = normalizePublicActionUrlForComparison(second);
+  return Boolean(firstComparable && secondComparable && firstComparable === secondComparable);
+};
 
 export const normalizeDetailUrl = (value: string | undefined | null) => safeHttpUrl(value ?? '');
 
@@ -132,9 +150,9 @@ export const buildPrimaryActions = (event: Pick<DetailEvent, 'registrationUrl' |
   const registrationUrl = normalizeDetailUrl(event.registrationUrl);
   const noticeUrl = normalizeDetailUrl(event.noticeUrl);
   const labels = language === 'en'
-    ? { registration: 'Registration', notice: 'Official info' }
-    : { registration: 'Prijava', notice: 'Razpis' };
-  if (registrationUrl && sameUrl(registrationUrl, noticeUrl)) return [{ kind: 'registration', label: labels.registration, url: registrationUrl, analyticsType: 'prijava' }];
+    ? { registration: 'Registration', notice: 'Official info', combined: 'Official info and registration' }
+    : { registration: 'Prijava', notice: 'Razpis', combined: 'Razpis in prijava' };
+  if (areEquivalentPublicActionUrls(registrationUrl, noticeUrl)) return [{ kind: 'registration', label: labels.combined, url: registrationUrl, analyticsType: 'prijava' }];
   return [
     registrationUrl ? { kind: 'registration', label: labels.registration, url: registrationUrl, analyticsType: 'prijava' } : null,
     noticeUrl ? { kind: 'notice', label: labels.notice, url: noticeUrl, analyticsType: 'razpis' } : null

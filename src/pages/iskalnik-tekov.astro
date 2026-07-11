@@ -247,6 +247,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
+  import { buildPrimaryActions } from '../utils-race-detail-view';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
@@ -581,6 +582,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       return compareByDate(a, b);
     });
+
+
+  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${action.kind === 'registration' ? '✍️' : '📄'}</span><span>${escapeHtml(action.label)}</span></a>`;
 
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
@@ -959,9 +964,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, kidsRaces: event.kidsRaces });
     const links = [
-      event.registrationUrl && `<a class="button button-small button-primary" href="${escapeHtml(event.registrationUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="prijava"><span class="action-icon" aria-hidden="true">✍️</span><span>Prijava</span></a>`,
+      ...buildPrimaryActions(event, 'sl').map(renderPrimaryActionLink),
       `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>Podrobnosti teka</span></a>`,
-      event.noticeUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.noticeUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="razpis"><span class="action-icon" aria-hidden="true">📄</span><span>Razpis</span></a>`,
       renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
       calendarOptions
     ].filter(Boolean).join('');
