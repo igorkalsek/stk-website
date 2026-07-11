@@ -63,6 +63,58 @@ const englishNavItems = [
           </div>
         </div>
 
+        <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-en">
+          <div class="race-preferences-static">
+            <h3 id="race-preferences-title-en">Races for me</h3>
+            <p data-preferences-intro>Choose the distances, surfaces and regions you are interested in.</p>
+            <p class="race-preferences-privacy">Preferences stay only in this browser and are not sent to STK.</p>
+          </div>
+          <div class="race-preferences-dynamic">
+            <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
+              <p class="race-preferences-state" data-preferences-state-text></p>
+              <p class="race-preferences-summary" data-preferences-summary></p>
+              <div class="race-preferences-actions race-preferences-compact-actions">
+                <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Show races for me</button>
+                <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-en">Edit preferences</button>
+                <button class="button button-small button-secondary-light preference-reset-compact" type="button" data-reset-preferences>Reset</button>
+              </div>
+            </div>
+            <div class="race-preferences-form" id="race-preferences-form-en" data-preferences-form hidden>
+              <h4 class="race-preferences-form-heading" tabindex="-1" data-preferences-form-heading>Choose preferences</h4>
+              <div class="race-preferences-grid">
+                <fieldset class="preference-fieldset">
+                  <legend>Preferred distances</legend>
+                  <label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Up to 5 km</span></label>
+                  <label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>5–10 km</span></label>
+                  <label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>10–21.1 km</span></label>
+                  <label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>21.1–42.2 km</span></label>
+                  <label><input type="checkbox" data-preference-distance="ultra" /> <span>Over 42.2 km</span></label>
+                </fieldset>
+                <fieldset class="preference-fieldset">
+                  <legend>Preferred surfaces</legend>
+                  <label><input type="checkbox" data-preference-surface="road" /> <span>Road</span></label>
+                  <label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label>
+                  <label><input type="checkbox" data-preference-surface="mountain" /> <span>Mountain</span></label>
+                  <label><input type="checkbox" data-preference-family /> <span>Prefer family-friendly races</span></label>
+                </fieldset>
+                <fieldset class="preference-fieldset preference-regions">
+                  <legend>Preferred regions</legend>
+                  <details>
+                    <summary>Choose regions</summary>
+                    <div class="preference-region-list" data-preference-regions></div>
+                  </details>
+                </fieldset>
+              </div>
+              <div class="race-preferences-actions">
+                <button class="button button-small button-primary" type="button" data-save-preferences>Save and show races for me</button>
+                <button class="button button-small button-secondary-light" type="button" data-cancel-preferences hidden>Cancel editing</button>
+                <button class="button button-small button-secondary-light" type="button" data-reset-preferences-form hidden>Reset preferences</button>
+              </div>
+            </div>
+          </div>
+          <p class="race-preferences-message visually-hidden" data-preferences-message aria-live="polite"></p>
+        </section>
+
         <form class="filters-grid" data-search-form>
           <label class="field field-wide">
             <span>Search</span>
@@ -140,6 +192,7 @@ const englishNavItems = [
                 <span>Sort by</span>
                 <select name="sort" data-filter="sort">
                   <option value="date">Date</option>
+                  <option value="my-races" disabled>Races for me</option>
                   <option value="registration-deadline">Registration deadlines first</option>
                   <option value="registration-min">Cheapest first</option>
                   <option value="registration-max">Most expensive first</option>
@@ -217,6 +270,7 @@ const englishNavItems = [
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../utils-vote';
+  import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../../utils-race-preferences';
   import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, type PublicYear } from '../../utils-public-year';
 
   type ApiRecord = Record<string, unknown>;
@@ -285,6 +339,30 @@ const englishNavItems = [
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
   const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
   const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+  const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
+  const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
+  const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
+  const preferenceFormHeading = document.querySelector<HTMLElement>('[data-preferences-form-heading]');
+  const preferenceStateTextElement = document.querySelector<HTMLElement>('[data-preferences-state-text]');
+  const preferenceSummaryElement = document.querySelector<HTMLElement>('[data-preferences-summary]');
+  const preferenceMessageElement = document.querySelector<HTMLElement>('[data-preferences-message]');
+  const preferenceRegionList = document.querySelector<HTMLElement>('[data-preference-regions]');
+  const savePreferencesButton = document.querySelector<HTMLButtonElement>('[data-save-preferences]');
+  const activatePreferencesButton = document.querySelector<HTMLButtonElement>('[data-activate-preferences]');
+  const editPreferencesButton = document.querySelector<HTMLButtonElement>('[data-edit-preferences]');
+  const cancelPreferencesButton = document.querySelector<HTMLButtonElement>('[data-cancel-preferences]');
+  const resetPreferencesButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences]');
+  const resetPreferencesFormButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences-form]');
+  const preferenceDistanceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-distance]')];
+  const preferenceSurfaceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-surface]')];
+  const preferenceFamilyInput = document.querySelector<HTMLInputElement>('[data-preference-family]');
+  const initialPreferenceRead = (() => { try { return readRacePreferences(window.localStorage); } catch { return readRacePreferences(null); } })();
+  let racePreferences: RacePreferencesV1 = initialPreferenceRead.preferences;
+  let preferencesPersistent = initialPreferenceRead.persistent;
+  let preferencesEditing = false;
+  let previousPreferencePanelState: RacePreferencePanelState = racePreferences.active ? 'active' : 'inactive';
+  const preferenceMatches = new Map<string, RacePreferenceMatch>();
+
 
   const initializeYearUi = () => {
     yearLinkElements.forEach((link) => {
@@ -835,6 +913,70 @@ const englishNavItems = [
   const formatSurfaceOption = formatSurface;
 
 
+
+  const getStorage = () => { try { return window.localStorage; } catch { return null; } };
+  const preferenceLanguage = 'en' as const;
+  const getPreferenceRegions = () => [...document.querySelectorAll<HTMLInputElement>('[data-preference-region]')].filter((input) => input.checked).map((input) => input.value);
+  const collectPreferenceControls = (active = racePreferences.active) => validateRacePreferences({
+    version: 1,
+    distanceBuckets: preferenceDistanceInputs.filter((input) => input.checked).map((input) => input.dataset.preferenceDistance),
+    surfaceCategories: preferenceSurfaceInputs.filter((input) => input.checked).map((input) => input.dataset.preferenceSurface),
+    regions: getPreferenceRegions(),
+    familyFriendly: Boolean(preferenceFamilyInput?.checked),
+    active
+  });
+  const hasPreferences = () => Boolean(validateRacePreferences(racePreferences)?.distanceBuckets.length || validateRacePreferences(racePreferences)?.surfaceCategories.length || validateRacePreferences(racePreferences)?.regions.length || validateRacePreferences(racePreferences)?.familyFriendly);
+  const setPreferenceMessage = (message: string) => { if (preferenceMessageElement) preferenceMessageElement.textContent = message; };
+  const updatePreferenceSortOption = () => { const option = sortSelect?.querySelector<HTMLOptionElement>('option[value="my-races"]'); if (option) option.disabled = !hasPreferences(); };
+  const syncPreferenceControls = () => {
+    preferenceDistanceInputs.forEach((input) => { input.checked = racePreferences.distanceBuckets.includes(input.dataset.preferenceDistance as any); });
+    preferenceSurfaceInputs.forEach((input) => { input.checked = racePreferences.surfaceCategories.includes(input.dataset.preferenceSurface as any); });
+    if (preferenceFamilyInput) preferenceFamilyInput.checked = racePreferences.familyFriendly;
+    document.querySelectorAll<HTMLInputElement>('[data-preference-region]').forEach((input) => { input.checked = racePreferences.regions.includes(input.value); });
+  };
+  const setPreferenceFormFocusable = (enabled: boolean) => {
+    preferenceFormElement?.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>('input, button, select, textarea').forEach((control) => { control.tabIndex = enabled ? 0 : -1; });
+  };
+  const setPreferencePanelState = (state: RacePreferencePanelState, focusTarget: 'none' | 'compact' | 'edit' | 'form' = 'none') => {
+    const hasSaved = hasPreferences();
+    const summary = summarizeRacePreferences(racePreferences, preferenceLanguage);
+    preferencePanel?.setAttribute('data-preferences-ready', 'true');
+    preferencePanel?.setAttribute('data-preferences-state', state);
+    updatePreferenceSortOption();
+    if (sortSelect && racePreferences.active && hasSaved) sortSelect.value = 'my-races';
+    const showForm = state === 'empty' || state === 'editing';
+    if (preferenceCompactElement) preferenceCompactElement.hidden = showForm;
+    if (preferenceFormElement) preferenceFormElement.hidden = !showForm;
+    setPreferenceFormFocusable(showForm);
+    if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'active' ? 'Races for me is active' : 'Preferences are saved';
+    if (preferenceSummaryElement) { preferenceSummaryElement.textContent = summary.visible; preferenceSummaryElement.setAttribute('aria-label', summary.accessible || summary.visible); }
+    if (activatePreferencesButton) activatePreferencesButton.hidden = state !== 'inactive';
+    if (editPreferencesButton) { editPreferencesButton.hidden = !hasSaved; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
+    if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved; resetPreferencesButton.textContent = 'Reset'; }
+    if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing' || !hasSaved;
+    if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = !hasSaved;
+    if (focusTarget === 'form') preferenceFormHeading?.focus();
+    else if (focusTarget === 'edit') editPreferencesButton?.focus();
+    else if (focusTarget === 'compact') preferenceCompactElement?.focus();
+  };
+  const refreshPreferencePanel = (focusTarget: 'none' | 'compact' | 'edit' | 'form' = 'none') => {
+    const state = getRacePreferencePanelState({ preferences: racePreferences, editing: preferencesEditing });
+    setPreferencePanelState(state, focusTarget);
+  };
+  const persistPreferenceActiveState = (active: boolean) => {
+    const validated = validateRacePreferences({ ...racePreferences, active });
+    if (!validated) return;
+    const result = writeRacePreferences(getStorage(), validated);
+    racePreferences = result.preferences;
+    preferencesPersistent = result.persistent;
+  };
+  const populatePreferenceRegions = () => {
+    if (!preferenceRegionList) return;
+    const regions = [...new Set([...state.events.map((event) => event.region).filter(Boolean), ...racePreferences.regions])].sort((a,b)=>a.localeCompare(b,'sl-SI'));
+    preferenceRegionList.innerHTML = regions.map((region, index) => `<label><input id="pref-region-en-${index}" type="checkbox" value="${escapeHtml(region)}" data-preference-region /> <span>${escapeHtml(region)} </span></label>`).join('');
+    syncPreferenceControls();
+    refreshPreferencePanel();
+  };
   const populateFilters = () => {
     const months = [...new Set(state.events.map((event) => event.month))].sort();
     const regions = [...new Set(state.events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
@@ -843,6 +985,7 @@ const englishNavItems = [
     renderOptions(monthSelect, months, 'All months', monthLabel);
     renderOptions(regionSelect, regions, 'All regions');
     renderOptions(surfaceSelect, surfaces, 'All surfaces', formatSurfaceOption);
+    populatePreferenceRegions();
   };
 
   const renderEmptyState = (title: string, message: string, pill = 'Search', showClearAction = false) => {
@@ -876,6 +1019,7 @@ const englishNavItems = [
   };
 
   const renderEvent = (event: RaceEvent) => {
+    const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
       event.place && `<span class="event-chip"><strong>Town:</strong> ${escapeHtml(event.place)}</span>`,
@@ -885,6 +1029,9 @@ const englishNavItems = [
       event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
 
+
+    const preferenceReasonLabels = preferenceMatch ? getRacePreferenceReasonLabels(preferenceMatch.reasonKeys, 'en') : [];
+    const preferenceReasons = preferenceReasonLabels.length ? `<div class="preference-reasons" aria-label="Matches your preferences">${preferenceReasonLabels.map((reason) => `<span class="pill preference-reason-pill">${escapeHtml(reason)}</span>`).join('')}</div>` : '';
     const calendarOptions = renderCalendarOptions({
       title: event.title,
       date: event.date,
@@ -910,6 +1057,7 @@ const englishNavItems = [
         <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
+        ${preferenceReasons}
         ${links ? `<div class="event-actions">${links}</div>` : ''}
       </article>
     `;
@@ -951,29 +1099,37 @@ const englishNavItems = [
       if (filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
       return true;
     });
-    state.filtered = sortEvents(state.filtered, filters.sort);
+    preferenceMatches.clear();
+    if (filters.sort === 'my-races' && hasPreferences()) {
+      const matches = rankRacesForPreferences({ events: state.filtered as any, preferences: racePreferences });
+      matches.forEach((match) => preferenceMatches.set(match.event.id, match));
+      state.filtered = matches.map((match) => match.event as unknown as RaceEvent);
+    } else {
+      state.filtered = sortEvents(state.filtered, filters.sort);
+    }
 
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
-    setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
-    const statusMessages: Record<string, string> = {
-      date: 'Confirmed public races from today onward are shown, sorted by date by default.',
-      'registration-deadline': 'Races with the nearest known registration or cheaper-entry deadlines are shown first. Races without a known deadline are shown below.'
-    };
+    setCount(filters.sort === 'my-races' ? (count === 1 ? '1 race matches your preferences.' : `${count} races match your preferences.`) : count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
     const statusMessage = filters.quickPick
       ? 'Showing races that match the selected quick pick and filters.'
       : filters.deadlineFilter
         ? 'Showing races that match the selected registration deadline filter. Deadlines include pre-registration and cheaper-entry deadlines.'
-        : statusMessages[filters.sort] ?? 'Confirmed public races from today onward are shown, sorted by the selected entry fee.';
+        : getRaceFinderResultDescription(filters.sort, preferenceLanguage);
     setStatus(statusMessage);
     if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
 
     if (!count) {
       updateQuickPickStates();
-      renderEmptyState('No races match the selected filters.', filters.quickPick ? 'Too many filters are selected. Try turning off one of the quick picks or clearing the filters.' : 'Try removing one of the filters or clearing all filters.', 'Filters', true);
+      if (filters.sort === 'my-races') {
+        renderEmptyState('No races match the selected preferences.', 'Edit preferences or show all races without personalized ranking.', 'Races for me', false);
+        resultsElement?.querySelector('.event-meta')?.insertAdjacentHTML('afterend', '<div class="event-actions"><button class="button button-small button-secondary-light" type="button" data-edit-preferences>Edit preferences</button><button class="button button-small button-primary" type="button" data-show-all-races>Show all races</button></div>');
+      } else {
+        renderEmptyState('No races match the selected filters.', filters.quickPick ? 'Too many filters are selected. Try turning off one of the quick picks or clearing the filters.' : 'Try removing one of the filters or clearing all filters.', 'Filters', true);
+      }
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -1037,6 +1193,56 @@ const englishNavItems = [
     resetVisibleResults();
   };
 
+  savePreferencesButton?.addEventListener('click', () => {
+    const next = collectPreferenceControls(true);
+    if (!next || (!next.distanceBuckets.length && !next.surfaceCategories.length && !next.regions.length && !next.familyFriendly)) { setPreferenceMessage('Choose at least one preference.'); return; }
+    const result = writeRacePreferences(getStorage(), next);
+    racePreferences = result.preferences; preferencesPersistent = result.persistent;
+    preferencesEditing = false;
+    setPreferenceMessage(preferencesPersistent ? 'Preferences saved.' : 'Preferences work for this page session, but could not be saved permanently.');
+    if (sortSelect) sortSelect.value = 'my-races';
+    syncPreferenceControls();
+    refreshPreferencePanel('compact');
+    resetVisibleResults();
+  });
+  activatePreferencesButton?.addEventListener('click', () => {
+    persistPreferenceActiveState(true);
+    preferencesEditing = false;
+    if (sortSelect) sortSelect.value = 'my-races';
+    refreshPreferencePanel('compact');
+    resetVisibleResults();
+  });
+  editPreferencesButton?.addEventListener('click', () => {
+    previousPreferencePanelState = getRacePreferencePanelState({ preferences: racePreferences, editing: false });
+    preferencesEditing = true;
+    syncPreferenceControls();
+    refreshPreferencePanel('form');
+  });
+  cancelPreferencesButton?.addEventListener('click', () => {
+    preferencesEditing = false;
+    syncPreferenceControls();
+    setPreferencePanelState(previousPreferencePanelState, 'edit');
+  });
+  const resetPreferenceFeature = () => {
+    resetRacePreferences(getStorage());
+    racePreferences = validateRacePreferences({ version: 1, distanceBuckets: [], surfaceCategories: [], regions: [], familyFriendly: false, active: false })!;
+    preferencesPersistent = false;
+    preferencesEditing = false;
+    if (sortSelect?.value === 'my-races') sortSelect.value = 'date';
+    syncPreferenceControls();
+    refreshPreferencePanel('form');
+    setPreferenceMessage('Preferences reset.');
+    resetVisibleResults();
+  };
+  resetPreferencesButton?.addEventListener('click', resetPreferenceFeature);
+  resetPreferencesFormButton?.addEventListener('click', resetPreferenceFeature);
+  sortSelect?.addEventListener('change', () => {
+    if (!hasPreferences()) { refreshPreferencePanel(); return; }
+    persistPreferenceActiveState(sortSelect.value === 'my-races');
+    preferencesEditing = false;
+    refreshPreferencePanel();
+  });
+
   formElement?.addEventListener('input', resetVisibleResults);
   formElement?.addEventListener('change', resetVisibleResults);
   formElement?.addEventListener('submit', (event) => {
@@ -1062,9 +1268,15 @@ const englishNavItems = [
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
     if (target) clearFilters();
+    const editTarget = event.target instanceof Element ? event.target.closest('[data-edit-preferences]') : null;
+    if (editTarget && editTarget !== editPreferencesButton) { previousPreferencePanelState = getRacePreferencePanelState({ preferences: racePreferences, editing: false }); preferencesEditing = true; syncPreferenceControls(); refreshPreferencePanel('form'); }
+    const showAllTarget = event.target instanceof Element ? event.target.closest('[data-show-all-races]') : null;
+    if (showAllTarget) { if (sortSelect) sortSelect.value = 'date'; persistPreferenceActiveState(false); preferencesEditing = false; refreshPreferencePanel(); resetVisibleResults(); }
   });
 
   updateAdvancedFiltersSummary();
   initializeYearUi();
+  syncPreferenceControls();
+  refreshPreferencePanel();
   loadEvents();
 </script>

@@ -33,3 +33,38 @@ describe('race search distance filter UI wiring', () => {
     assert.match(englishPage, /The 2027 calendar is being updated\./);
   });
 });
+
+describe('race preference compact UX wiring', () => {
+  it('uses distinct intro and privacy sentences with correct compact/reset action labels', () => {
+    assert.equal((slovenePage.match(/Izberite razdalje, podlage in regije, ki vas zanimajo\./g) ?? []).length, 1);
+    assert.equal((slovenePage.match(/Preference ostanejo samo v tem brskalniku in se ne pošiljajo STK\./g) ?? []).length, 1);
+    assert.equal((englishPage.match(/Choose the distances, surfaces and regions you are interested in\./g) ?? []).length, 1);
+    assert.equal((englishPage.match(/Preferences stay only in this browser and are not sent to STK\./g) ?? []).length, 1);
+    assert.match(slovenePage, /data-reset-preferences>Ponastavite<\/button>/);
+    assert.match(slovenePage, /data-cancel-preferences hidden>Prekličite urejanje<\/button>/);
+    assert.match(englishPage, /data-reset-preferences>Reset<\/button>/);
+    for (const label of ['Do 5 km', '5–10 km', '10–21,1 km', '21,1–42,2 km', 'Nad 42,2 km']) assert.match(slovenePage, new RegExp(`>${label}<`));
+    for (const label of ['Up to 5 km', '5–10 km', '10–21.1 km', '21.1–42.2 km', 'Over 42.2 km']) assert.match(englishPage, new RegExp(`>${label.replace('.', '\.')}<`));
+  });
+
+  it('defines compact active, inactive, editing and reset controls without exposing reset for first render', () => {
+    for (const page of [slovenePage, englishPage]) {
+      assert.match(page, /data-preferences-ready="false"/);
+      assert.match(page, /data-preferences-compact/);
+      assert.match(page, /data-preferences-form hidden/);
+      assert.match(page, /data-activate-preferences hidden/);
+      assert.match(page, /data-cancel-preferences hidden/);
+      assert.match(page, /data-reset-preferences-form hidden/);
+      assert.match(page, /aria-expanded="false"/);
+      assert.match(page, /aria-controls="race-preferences-form-/);
+    }
+  });
+
+  it('uses dynamic result descriptions for every sort mode', () => {
+    for (const page of [slovenePage, englishPage]) {
+      assert.match(page, /getRaceFinderResultDescription\(filters\.sort, preferenceLanguage\)/);
+      assert.doesNotMatch(page, /sorted by the selected entry fee/);
+      assert.doesNotMatch(page, /urejeni po izbrani startnini/);
+    }
+  });
+});
