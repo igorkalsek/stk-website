@@ -311,7 +311,7 @@ export const trackStkEvent = (payload: StkAnalyticsPayload) => {
 };
 
 const getCard = (element: Element) =>
-  element.closest<HTMLElement>('[data-analytics-event-name], [data-event-row], .event-card');
+  element.closest<HTMLElement>('[data-stk-event-id], [data-stk-event-name], [data-analytics-event-name], [data-event-row], .event-card, .related-race-card');
 
 const getCardValue = (card: HTMLElement | null, key: string) => card?.dataset[key] ?? '';
 
@@ -357,10 +357,10 @@ const inferLinkType = (link: HTMLAnchorElement) => {
 const getEventContext = (element: HTMLElement) => {
   const card = getCard(element);
   return {
-    event_id: element.dataset.stkEventId || getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
-    event_name: element.dataset.stkEventName || getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
-    event_date: element.dataset.stkEventDate || getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || '',
-    event_year: element.dataset.stkEventYear || getCardValue(card, 'analyticsEventYear')
+    event_id: element.dataset.stkEventId || getCardValue(card, 'stkEventId') || getCardValue(card, 'analyticsEventId') || getCardValue(card, 'eventRow'),
+    event_name: element.dataset.stkEventName || getCardValue(card, 'stkEventName') || getCardValue(card, 'analyticsEventName') || card?.querySelector('h3')?.textContent || '',
+    event_date: element.dataset.stkEventDate || getCardValue(card, 'stkEventDate') || getCardValue(card, 'analyticsEventDate') || card?.querySelector('time')?.getAttribute('datetime') || '',
+    event_year: element.dataset.stkEventYear || getCardValue(card, 'stkEventYear') || getCardValue(card, 'analyticsEventYear')
   };
 };
 
