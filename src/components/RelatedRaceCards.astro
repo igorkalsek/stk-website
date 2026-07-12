@@ -16,7 +16,7 @@ const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' 
     <ul class="related-races-grid" aria-label={copy.aria}>
       {races.map((race) => (
         <li class="related-race-item">
-          <article class="related-race-card" data-stk-event-id={race.id} data-stk-event-name={race.title} data-stk-event-date={race.date} data-stk-event-year={race.year}>
+          <article class="related-race-card" data-stk-event-id={race.id} data-stk-event-name={race.title} data-stk-event-date={race.date} data-stk-event-year={race.year} data-analytics-placement="related_races">
           <a
             class="related-race-card-link"
             href={race.detailPath}

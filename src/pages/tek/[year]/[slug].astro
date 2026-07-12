@@ -171,13 +171,13 @@ const jsonLd = event ? {
               {primaryActions.map((action) => (
                 <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
               ))}
-              <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
+              <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
             </div>
           </div>
         </section>
 
         <section class="section container event-detail-section" aria-label="Podrobnosti teka">
-          <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year}>
+          <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year} data-analytics-placement="race_detail" data-event-detail-view>
             <div class="event-detail-main-column">
               <article class="info-card event-detail-panel">
                 <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
@@ -315,8 +315,20 @@ const jsonLd = event ? {
 </BaseLayout>
 
 <script>
+  import { trackStkPageLoadEventOnce } from '../../../lib/stkAnalytics';
   import { initSavedRaceButtons } from '../../../saved-races-client';
   initSavedRaceButtons();
+  const detailRoot = document.querySelector<HTMLElement>('[data-event-detail-view]');
+  if (detailRoot) {
+    trackStkPageLoadEventOnce(`event_detail_viewed:${detailRoot.dataset.analyticsEventYear}:${detailRoot.dataset.analyticsEventId}`, {
+      event_type: 'event_detail_viewed',
+      event_id: detailRoot.dataset.analyticsEventId || '',
+      event_name: detailRoot.dataset.analyticsEventName || '',
+      event_date: detailRoot.dataset.analyticsEventDate || '',
+      event_year: detailRoot.dataset.analyticsEventYear || '',
+      placement: 'race_detail'
+    });
+  }
   const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
   const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
 
