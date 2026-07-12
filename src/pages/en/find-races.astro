@@ -934,6 +934,7 @@ const englishNavItems = [
     active
   });
   const hasPreferences = () => Boolean(validateRacePreferences(racePreferences)?.distanceBuckets.length || validateRacePreferences(racePreferences)?.surfaceCategories.length || validateRacePreferences(racePreferences)?.regions.length || validateRacePreferences(racePreferences)?.familyFriendly);
+  let personalizedResultsLastSignature = '';
   const setPreferenceMessage = (message: string) => { if (preferenceMessageElement) preferenceMessageElement.textContent = message; };
   const updatePreferenceSortOption = () => { const option = sortSelect?.querySelector<HTMLOptionElement>('option[value="my-races"]'); if (option) option.disabled = !hasPreferences(); };
   const syncPreferenceControls = () => {
@@ -1108,10 +1109,12 @@ const englishNavItems = [
       return true;
     });
     preferenceMatches.clear();
+    let personalizedResultsSignature = '';
     if (filters.sort === 'my-races' && hasPreferences()) {
       const matches = rankRacesForPreferences({ events: state.filtered as any, preferences: racePreferences });
       matches.forEach((match) => preferenceMatches.set(match.event.id, match));
       state.filtered = matches.map((match) => match.event as unknown as RaceEvent);
+      personalizedResultsSignature = JSON.stringify({ filters: { ...filters, search: '' }, results: matches.map((match) => match.event.id) });
     } else {
       state.filtered = sortEvents(state.filtered, filters.sort);
     }
@@ -1129,7 +1132,8 @@ const englishNavItems = [
     setStatus(statusMessage);
     if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
-    if (filters.sort === 'my-races' && hasPreferences()) {
+    if (personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
+      personalizedResultsLastSignature = personalizedResultsSignature;
       const { search, ...safePersonalizedFilters } = filters;
       trackStkEvent({
         event_type: 'personalized_results_used',
