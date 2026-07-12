@@ -1057,7 +1057,7 @@ const englishNavItems = [
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
+      <article class="event-card search-event-card" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Family-friendly</span>' : ''}
@@ -1129,6 +1129,16 @@ const englishNavItems = [
     setStatus(statusMessage);
     if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
     trackSearchResult(filters, count);
+    if (filters.sort === 'my-races' && hasPreferences()) {
+      const { search, ...safePersonalizedFilters } = filters;
+      trackStkEvent({
+        event_type: 'personalized_results_used',
+        filters_json: filtersToAnalyticsJson({ ...safePersonalizedFilters, sortBy: 'my-races' }),
+        results_count: count,
+        language: 'en',
+        placement: 'personalized_results'
+      });
+    }
 
     if (!count) {
       updateQuickPickStates();

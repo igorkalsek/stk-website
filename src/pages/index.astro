@@ -1287,6 +1287,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         const date = formatDate(dateValue);
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
         const region = getEventField(event, 'regija', ['region']);
+        const analyticsEventId = getEventStableId(event, title, dateValue, location);
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
@@ -1298,7 +1299,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         ].filter(Boolean).join('');
 
         return `
-          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
+          <article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
@@ -1371,6 +1372,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
         const dateValue = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
         const date = formatDate(dateValue);
+        const analyticsEventId = getEventStableId(event, title, dateValue, location);
         const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
         const metaItems = options.interestPreview
@@ -1382,7 +1384,7 @@ import SocialLinks from '../components/SocialLinks.astro';
             ].filter(Boolean).join('');
 
         return `
-          <article class="event-card" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
+          <article class="event-card" data-analytics-placement="home_interest" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>

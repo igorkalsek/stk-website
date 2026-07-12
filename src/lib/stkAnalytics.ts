@@ -7,7 +7,29 @@ type StkAnalyticsEventType =
   | 'tekobot_clicked'
   | 'share_clicked'
   | 'correction_clicked'
-  | 'copy_clicked';
+  | 'copy_clicked'
+  | 'race_saved'
+  | 'race_unsaved'
+  | 'event_detail_viewed'
+  | 'event_card_clicked'
+  | 'related_race_clicked'
+  | 'my_races_viewed'
+  | 'my_races_bulk_ics_exported'
+  | 'personalized_results_used';
+
+export type StkAnalyticsPlacement =
+  | 'home_featured'
+  | 'home_this_week'
+  | 'home_interest'
+  | 'finder_results'
+  | 'family_results'
+  | 'most_voted_results'
+  | 'race_detail'
+  | 'related_races'
+  | 'my_races'
+  | 'personalized_results'
+  | 'personal_calendar'
+  | 'unknown';
 
 type UserAgentGroup = 'mobile' | 'tablet' | 'desktop' | 'unknown';
 
@@ -29,6 +51,7 @@ export type StkAnalyticsPayload = {
   referrer?: string;
   user_agent_group?: UserAgentGroup;
   notes?: string;
+  placement?: StkAnalyticsPlacement | string;
 };
 
 const STK_SITE_EVENTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwSm--BvE-xGB9ZMMjyXFZRh9wNeHUEpUeJyM6aJAUEsV-HIoarel4_bN1Tlf8gG-Z3/exec';
@@ -77,7 +100,30 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'tekobot_clicked',
   'share_clicked',
   'correction_clicked',
-  'copy_clicked'
+  'copy_clicked',
+  'race_saved',
+  'race_unsaved',
+  'event_detail_viewed',
+  'event_card_clicked',
+  'related_race_clicked',
+  'my_races_viewed',
+  'my_races_bulk_ics_exported',
+  'personalized_results_used'
+]);
+
+const ALLOWED_PLACEMENTS = new Set<StkAnalyticsPlacement>([
+  'home_featured',
+  'home_this_week',
+  'home_interest',
+  'finder_results',
+  'family_results',
+  'most_voted_results',
+  'race_detail',
+  'related_races',
+  'my_races',
+  'personalized_results',
+  'personal_calendar',
+  'unknown'
 ]);
 
 
@@ -136,6 +182,11 @@ const processStkAnalyticsToggleParam = () => {
   } catch {
     // Analytics controls must fail silently.
   }
+};
+
+const normalizePlacement = (value: unknown): StkAnalyticsPlacement | '' => {
+  const placement = typeof value === 'string' ? value.trim() : '';
+  return ALLOWED_PLACEMENTS.has(placement as StkAnalyticsPlacement) ? placement as StkAnalyticsPlacement : '';
 };
 
 const trimText = (value: unknown, maxLength = MAX_FIELD_LENGTH) => {
@@ -204,7 +255,8 @@ const buildBody = (payload: StkAnalyticsPayload) => ({
   calendar_type: trimText(payload.calendar_type, 80),
   referrer: trimText(payload.referrer || getReferrer()),
   user_agent_group: payload.user_agent_group || getUserAgentGroup(),
-  notes: trimText(payload.notes)
+  notes: trimText(payload.notes),
+  placement: normalizePlacement(payload.placement)
 });
 
 const sendBody = (body: ReturnType<typeof buildBody>) => {
@@ -253,6 +305,8 @@ const getCard = (element: Element) =>
   element.closest<HTMLElement>('[data-analytics-event-name], [data-event-row], .event-card');
 
 const getCardValue = (card: HTMLElement | null, key: string) => card?.dataset[key] ?? '';
+
+const getPlacement = (element: HTMLElement) => normalizePlacement(element.dataset.analyticsPlacement || getCardValue(getCard(element), 'analyticsPlacement')) || 'unknown';
 
 const inferCalendarType = (link: HTMLAnchorElement) => {
   const explicit = link.dataset.analyticsCalendarType;
@@ -311,8 +365,12 @@ const isTekobotHref = (href: string) => {
   }
 };
 
+let hasInitializedStkAnalyticsClickTracking = false;
+const pageLoadTrackedEvents = new Set<string>();
+
 export const initializeStkAnalyticsClickTracking = () => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || hasInitializedStkAnalyticsClickTracking) return;
+  hasInitializedStkAnalyticsClickTracking = true;
 
   processStkAnalyticsToggleParam();
 
@@ -337,6 +395,14 @@ export const initializeStkAnalyticsClickTracking = () => {
 
     const link = clickedElement instanceof HTMLAnchorElement ? clickedElement : null;
     if (!link) return;
+
+    const placement = getPlacement(link);
+    const rawHref = link.getAttribute('href') || '';
+    if (/^\/(?:en\/races|tek)\/\d{4}\//.test(rawHref) && !link.target) {
+      const eventType = placement === 'related_races' ? 'related_race_clicked' : 'event_card_clicked';
+      trackStkEvent({ event_type: eventType, ...getEventContext(link), placement });
+      return;
+    }
 
     if (isTekobotHref(link.getAttribute('href') ?? '')) {
       trackStkEvent({ event_type: 'tekobot_clicked' });
@@ -374,4 +440,11 @@ export const filtersToAnalyticsJson = (filters: Record<string, string | boolean>
     Object.entries(filters).filter(([, value]) => Boolean(value) && value !== 'date')
   );
   return Object.keys(selected).length ? JSON.stringify(selected) : '';
+};
+
+
+export const trackStkPageLoadEventOnce = (key: string, payload: StkAnalyticsPayload) => {
+  if (!key || pageLoadTrackedEvents.has(key)) return;
+  pageLoadTrackedEvents.add(key);
+  trackStkEvent(payload);
 };

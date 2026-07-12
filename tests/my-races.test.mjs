@@ -117,14 +117,16 @@ describe('my races page source contract', () => {
   });
 
   it('uses the existing saved races storage key through utilities', () => assert.match(client, /readSavedRaces/));
-  it('implements only upcoming local ICS export without changing storage or adding analytics', () => {
+  it('implements only upcoming local ICS export without changing storage', () => {
     assert.match(client, /data-download-upcoming-races-ics/);
     assert.match(client, /moji-teki\.ics/);
     assert.match(client, /my-races\.ics/);
     assert.match(client, /Blob\(\[ics\]/);
     assert.match(client, /URL\.createObjectURL/);
     assert.match(client, /URL\.revokeObjectURL/);
-    assert.doesNotMatch(client, /allSaved|bulkIcs|analytics/i);
+    assert.doesNotMatch(client, /allSaved|bulkIcs/i);
+    assert.match(client, /my_races_bulk_ics_exported/);
+    assert.match(client, /results_count: events.length/);
     assert.match(client, /addEventListener\('click', \(\) => downloadUpcomingRacesIcs\(exportableUpcoming/);
   });
   it('includes fallback copy for API outages and local-only storage', () => {

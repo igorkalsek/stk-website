@@ -1,3 +1,4 @@
+import { trackStkEvent } from './lib/stkAnalytics.js';
 import { isRaceSaved, readSavedRaces, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races.js';
 
 type Language = 'sl' | 'en';
@@ -11,6 +12,7 @@ const getStorage = (): MinimalStorage | null => {
 };
 
 const getLanguage = (button: HTMLElement): Language => button.dataset.language === 'en' ? 'en' : 'sl';
+const getPlacement = (button: HTMLElement) => button.dataset.analyticsPlacement || (typeof button.closest === 'function' ? button.closest<HTMLElement>('[data-analytics-placement]')?.dataset.analyticsPlacement : '') || 'unknown';
 const getRace = (button: HTMLElement): SavedRaceInput | null => {
   const eventId = button.dataset.eventId?.trim() ?? '';
   const year = button.dataset.eventYear?.trim() ?? '';
@@ -46,8 +48,19 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
       event.stopPropagation();
       const clickedRace = getRace(button);
       if (!clickedRace) return;
+      const before = isRaceSaved(readSavedRaces(getStorage()).state, clickedRace);
       const result = toggleSavedRaceInStorage(getStorage(), clickedRace);
+      if (before === result.saved) return;
       buttonsForRace(clickedRace).forEach((relatedButton) => setButtonState(relatedButton, result.saved));
+      trackStkEvent({
+        event_type: result.saved ? 'race_saved' : 'race_unsaved',
+        event_id: clickedRace.eventId,
+        event_name: clickedRace.title,
+        event_date: clickedRace.date,
+        event_year: clickedRace.year,
+        language: getLanguage(button),
+        placement: getPlacement(button)
+      });
     });
   });
 };

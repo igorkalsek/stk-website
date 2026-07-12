@@ -1,3 +1,4 @@
+import { trackStkEvent, trackStkPageLoadEventOnce } from './lib/stkAnalytics.js';
 import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, type MultiIcsCalendarEventInput } from './utils-calendar.js';
 import { getSavedRaceDetailPath, resolveSavedRaces, sortResolvedSavedRaces } from './utils-my-races.js';
 import { getSavedRaceKey, readSavedRaces, removeSavedRaceFromStorage, type MinimalStorage, type SavedRace } from './utils-saved-races.js';
@@ -52,6 +53,7 @@ export const getExportableUpcomingRaceEvents = (items: ReturnType<typeof resolve
 const renderExportToolbar = (events: MultiIcsCalendarEventInput[], labels: Labels) => events.length ? `<div class="my-races-toolbar"><div><button class="button button-small" type="button" data-download-upcoming-races-ics><span aria-hidden="true">📅</span> ${escapeHtml(labels.downloadAll)}</button><p>${escapeHtml(labels.downloadAllNote)}</p></div><p class="notice warning" data-calendar-export-status aria-live="polite" hidden></p></div>` : '';
 
 const downloadUpcomingRacesIcs = (events: MultiIcsCalendarEventInput[], labels: Labels, filename: string, status: HTMLElement | null) => {
+  if (!events.length) return;
   try {
     const ics = buildIcsCalendar({ events, language: events[0]?.language ?? 'sl' });
     if (!ics) throw new Error('Empty calendar');
@@ -66,6 +68,7 @@ const downloadUpcomingRacesIcs = (events: MultiIcsCalendarEventInput[], labels: 
     link.remove();
     URL.revokeObjectURL(url);
     if (status) { status.textContent = ''; status.hidden = true; }
+    trackStkEvent({ event_type: 'my_races_bulk_ics_exported', results_count: events.length, calendar_type: 'ics', placement: 'my_races' });
   } catch {
     if (status) { status.textContent = labels.calendarError; status.hidden = false; }
   }
@@ -81,7 +84,7 @@ const renderEvent = (item: ReturnType<typeof resolveSavedRaces>[number], labels:
   const google = buildGoogleCalendarEventUrl(cal);
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
-  return `<article class="my-race-card" data-key="${escapeHtml(item.key)}"><div><p class="my-race-date">${escapeHtml(formatDate(event.date, language))}</p><h3><a href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${escapeHtml(event.title)}</a></h3><p>${escapeHtml(location)}</p></div><div class="my-race-actions"><a class="button button-small" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${labels.details}</a>${renderPrimaryActionLinks(event, language)}${google ? `<a class="button button-small button-secondary-light" href="${escapeHtml(google)}" target="_blank" rel="noopener">${labels.google}</a>` : ''}${ics ? `<a class="button button-small button-secondary-light" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${labels.apple}</a>` : ''}${outlook ? `<a class="button button-small button-secondary-light" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${labels.outlook}</a>` : ''}<button class="button button-small button-secondary-light" type="button" data-remove-saved-race data-event-id="${escapeHtml(item.savedRace.eventId)}" data-event-year="${escapeHtml(item.savedRace.year)}">${labels.remove}</button></div></article>`;
+  return `<article class="my-race-card" data-key="${escapeHtml(item.key)}" data-analytics-placement="my_races" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div><p class="my-race-date">${escapeHtml(formatDate(event.date, language))}</p><h3><a href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${escapeHtml(event.title)}</a></h3><p>${escapeHtml(location)}</p></div><div class="my-race-actions"><a class="button button-small" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${labels.details}</a>${renderPrimaryActionLinks(event, language)}${google ? `<a class="button button-small button-secondary-light" href="${escapeHtml(google)}" target="_blank" rel="noopener">${labels.google}</a>` : ''}${ics ? `<a class="button button-small button-secondary-light" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${labels.apple}</a>` : ''}${outlook ? `<a class="button button-small button-secondary-light" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${labels.outlook}</a>` : ''}<button class="button button-small button-secondary-light" type="button" data-remove-saved-race data-event-id="${escapeHtml(item.savedRace.eventId)}" data-event-year="${escapeHtml(item.savedRace.year)}">${labels.remove}</button></div></article>`;
 };
 
 export const initMyRacesPage = async (root = document) => {
@@ -90,8 +93,11 @@ export const initMyRacesPage = async (root = document) => {
   const language = mount.dataset.language === 'en' ? 'en' : 'sl';
   const labels = LABELS[language];
   const storage = getStorage();
-  if (!storage) { mount.innerHTML = `<p class="notice warning">${labels.storageError}</p><p class="muted-note">${labels.local}</p>`; return; }
+  if (!storage) {
+    trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races' });
+    mount.innerHTML = `<p class="notice warning">${labels.storageError}</p><p class="muted-note">${labels.local}</p>`; return; }
   const saved = readSavedRaces(storage).state.races;
+  trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
   if (!saved.length) { mount.innerHTML = `<p>${labels.empty}</p><a class="button" href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a><p class="muted-note">${labels.local}</p>`; return; }
   mount.textContent = labels.loading;
   const payloads: Record<string, unknown> = {};
