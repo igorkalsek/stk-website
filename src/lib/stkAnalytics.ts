@@ -238,6 +238,14 @@ export const getStkTargetDomain = (href: string) => {
   }
 };
 
+const EVENT_SCOPED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
+  'race_saved',
+  'race_unsaved',
+  'event_detail_viewed',
+  'event_card_clicked',
+  'related_race_clicked'
+]);
+
 const buildBody = (payload: StkAnalyticsPayload) => ({
   event_type: ALLOWED_EVENT_TYPES.has(payload.event_type) ? payload.event_type : 'external_link_clicked',
   page_path: trimText(payload.page_path || getPagePath()),
@@ -290,6 +298,7 @@ export const trackStkEvent = (payload: StkAnalyticsPayload) => {
   if (!ALLOWED_EVENT_TYPES.has(payload.event_type)) return;
 
   const body = buildBody(payload);
+  if (EVENT_SCOPED_EVENT_TYPES.has(body.event_type) && (!/^\d{4}$/.test(body.event_year) || (!body.event_id && (!body.event_name || !body.event_date)))) return;
   if (body.event_type === 'external_link_clicked' && body.target_url && isInternalStkNavigationTarget(body.target_url)) return;
   if ((body.event_type === 'search_performed' || body.event_type === 'no_results_search') && !body.search_query && !body.filters_json) return;
 
@@ -366,7 +375,7 @@ const isTekobotHref = (href: string) => {
 };
 
 let hasInitializedStkAnalyticsClickTracking = false;
-const pageLoadTrackedEvents = new Set<string>();
+const pageLoadTrackedEventsByScope = new WeakMap<object, Set<string>>();
 
 export const initializeStkAnalyticsClickTracking = () => {
   if (typeof document === 'undefined' || hasInitializedStkAnalyticsClickTracking) return;
@@ -443,8 +452,16 @@ export const filtersToAnalyticsJson = (filters: Record<string, string | boolean>
 };
 
 
-export const trackStkPageLoadEventOnce = (key: string, payload: StkAnalyticsPayload) => {
-  if (!key || pageLoadTrackedEvents.has(key)) return;
-  pageLoadTrackedEvents.add(key);
+const getCurrentPageLoadScope = (): object | null => {
+  if (typeof document !== 'undefined') return document.body || document.documentElement || document;
+  return null;
+};
+
+export const trackStkPageLoadEventOnce = (key: string, payload: StkAnalyticsPayload, scope: object | null = getCurrentPageLoadScope()) => {
+  if (!key || !scope) return;
+  const trackedEvents = pageLoadTrackedEventsByScope.get(scope) ?? new Set<string>();
+  if (trackedEvents.has(key)) return;
+  trackedEvents.add(key);
+  pageLoadTrackedEventsByScope.set(scope, trackedEvents);
   trackStkEvent(payload);
 };

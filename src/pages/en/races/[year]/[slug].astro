@@ -315,7 +315,7 @@ const jsonLd = event ? {
 </BaseLayout>
 
 <script>
-  import { trackStkPageLoadEventOnce } from '../../../lib/stkAnalytics';
+  import { trackStkPageLoadEventOnce } from '../../../../lib/stkAnalytics';
   import { initSavedRaceButtons } from '../../../../saved-races-client';
   initSavedRaceButtons();
   const detailRoot = document.querySelector<HTMLElement>('[data-event-detail-view]');

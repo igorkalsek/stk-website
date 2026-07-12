@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
-import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
+import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, removeSavedRaceFromMyRaces, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
 
 const saved = (eventId, year = '2026', date = `${year}-05-10`, title = 'Saved') => ({ version: 1, eventId, year, date, title });
 const apiEvent = ({ row = '173', year = '2026', date = `${year}-05-10`, title = 'Testni tek', status = 'potrjeno', visible = 'DA' } = {}) => ({ row, datum: date, naziv_prireditve: title, kraj: 'Kranj', regija: 'Gorenjska', status_dogodka: status, vidno_v_javnem_koledarju: visible, povezava_razpis: 'https://example.com/info', povezava_prijava: 'https://example.com/register' });
@@ -80,6 +80,56 @@ describe('my races ICS export event selection', () => {
     const items = resolveSavedRaces([saved('r000173', '2026'), saved('r000173', '2026'), saved('r000173', '2027')], { 2026: [apiEvent({ year: '2026', date: '2026-06-01' })], 2027: [apiEvent({ year: '2027', date: '2027-06-01' })] }, '2026-01-01');
     const exportable = getExportableUpcomingRaceEvents(items, 'sl');
     assert.deepEqual(exportable.map((event) => event.uid), ['2026-r000173-20260601@slovenski-tekaski-koledar', '2027-r000173-20270601@slovenski-tekaski-koledar']);
+  });
+});
+
+
+describe('my races remove analytics', () => {
+  const originalWindow = globalThis.window;
+  const originalDocument = globalThis.document;
+  const originalNavigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const storageWith = (races) => {
+    let value = JSON.stringify({ version: 1, races: races.map((item) => ({ version: 1, ...item })) });
+    return { getItem: () => value, setItem: (_key, next) => { value = next; }, removeItem() {} };
+  };
+  const installAnalyticsBrowser = () => {
+    const payloads = [];
+    globalThis.window = { location: { pathname: '/moji-teki/', search: '', href: 'https://tekaski-koledar.si/moji-teki/' }, localStorage: { getItem: () => null }, setTimeout: (callback) => { callback(); return 0; } };
+    globalThis.document = { referrer: '', body: {} };
+    Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { userAgent: 'node-test', maxTouchPoints: 0, sendBeacon: (_url, blob) => { payloads.push(blob.text().then((text) => JSON.parse(text))); return true; } } });
+    return payloads;
+  };
+  const restoreBrowser = () => {
+    globalThis.window = originalWindow;
+    globalThis.document = originalDocument;
+    if (originalNavigatorDescriptor) Object.defineProperty(globalThis, 'navigator', originalNavigatorDescriptor);
+    else delete globalThis.navigator;
+  };
+
+  it('emits one race_unsaved after a successful local removal', async () => {
+    const payloads = installAnalyticsBrowser();
+    const storage = storageWith([saved('r000173', '2026', '2026-05-10', 'Saved title')]);
+    assert.equal(removeSavedRaceFromMyRaces(storage, { eventId: 'r000173', year: '2026' }, { eventName: 'Resolved title', eventDate: '2026-05-10', language: 'sl' }), true);
+    const sent = await Promise.all(payloads);
+    assert.equal(sent.length, 1);
+    assert.deepEqual({ event_type: sent[0].event_type, event_id: sent[0].event_id, event_name: sent[0].event_name, event_date: sent[0].event_date, event_year: sent[0].event_year, language: sent[0].language, placement: sent[0].placement }, { event_type: 'race_unsaved', event_id: 'r000173', event_name: 'Resolved title', event_date: '2026-05-10', event_year: '2026', language: 'sl', placement: 'my_races' });
+    restoreBrowser();
+  });
+
+  it('does not emit race_unsaved for a missing saved race', async () => {
+    const payloads = installAnalyticsBrowser();
+    const storage = storageWith([saved('r000173')]);
+    assert.equal(removeSavedRaceFromMyRaces(storage, { eventId: 'r999999', year: '2026' }, { language: 'sl' }), false);
+    assert.equal((await Promise.all(payloads)).length, 0);
+    restoreBrowser();
+  });
+
+  it('does not emit race_unsaved when storage write fails', async () => {
+    const payloads = installAnalyticsBrowser();
+    const storage = { getItem: () => JSON.stringify({ version: 1, races: [{ version: 1, ...saved('r000173') }] }), setItem: () => { throw new Error('blocked'); }, removeItem() {} };
+    assert.equal(removeSavedRaceFromMyRaces(storage, { eventId: 'r000173', year: '2026' }, { language: 'sl' }), false);
+    assert.equal((await Promise.all(payloads)).length, 0);
+    restoreBrowser();
   });
 });
 

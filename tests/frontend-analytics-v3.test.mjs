@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
+import { trackStkEvent, trackStkPageLoadEventOnce } from '../.cache/dist-test/lib/stkAnalytics.js';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const analytics = read('src/lib/stkAnalytics.ts');
@@ -11,6 +12,35 @@ const enFinder = read('src/pages/en/find-races.astro');
 const related = read('src/components/RelatedRaceCards.astro');
 const slDetail = read('src/pages/tek/[year]/[slug].astro');
 const enDetail = read('src/pages/en/races/[year]/[slug].astro');
+const slFamily = read('src/pages/druzinam-prijazni-teki.astro');
+const enFamily = read('src/pages/en/family-friendly-races.astro');
+
+const originalWindow = globalThis.window;
+const originalDocument = globalThis.document;
+const originalNavigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+
+const installAnalyticsBrowser = () => {
+  const payloads = [];
+  globalThis.window = {
+    location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' },
+    localStorage: { getItem: () => null },
+    setTimeout: (callback) => { callback(); return 0; }
+  };
+  globalThis.document = { referrer: '', body: {} };
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: {
+    userAgent: 'node-test',
+    maxTouchPoints: 0,
+    sendBeacon: (_url, blob) => { payloads.push(blob.text().then((text) => JSON.parse(text))); return true; }
+  } });
+  return payloads;
+};
+
+afterEach(() => {
+  globalThis.window = originalWindow;
+  globalThis.document = originalDocument;
+  if (originalNavigatorDescriptor) Object.defineProperty(globalThis, 'navigator', originalNavigatorDescriptor);
+  else delete globalThis.navigator;
+});
 
 describe('frontend analytics v3 contract', () => {
   it('keeps existing events and allows all new frontend event types', () => {
@@ -32,7 +62,7 @@ describe('frontend analytics v3 contract', () => {
   });
 
   it('deduplicates page-load detail and my-races views without localStorage', () => {
-    assert.match(analytics, /const pageLoadTrackedEvents = new Set<string>\(\)/);
+    assert.match(analytics, /pageLoadTrackedEventsByScope = new WeakMap<object, Set<string>>/);
     assert.match(slDetail, /event_detail_viewed/);
     assert.match(enDetail, /event_detail_viewed/);
     assert.match(myRacesClient, /my_races_viewed/);
@@ -41,6 +71,8 @@ describe('frontend analytics v3 contract', () => {
   it('assigns placements for finder cards, related races, my races, and personalized results', () => {
     assert.match(slFinder, /data-analytics-placement="finder_results"/);
     assert.match(enFinder, /data-analytics-placement="finder_results"/);
+    assert.match(slFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.date\.slice\(0, 4\)\)\}"/);
+    assert.match(enFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.date\.slice\(0, 4\)\)\}"/);
     assert.match(related, /data-analytics-placement="related_races"/);
     assert.match(myRacesClient, /data-analytics-placement="my_races"/);
     assert.match(slFinder, /placement: 'personalized_results'/);
@@ -51,6 +83,24 @@ describe('frontend analytics v3 contract', () => {
     assert.match(analytics, /placement === 'related_races' \? 'related_race_clicked' : 'event_card_clicked'/);
     assert.match(analytics, /getEventContext\(link\)/);
     assert.match(analytics, /hasInitializedStkAnalyticsClickTracking/);
+  });
+
+  it('allows the same page-load event again for a new page-load scope', async () => {
+    const payloads = installAnalyticsBrowser();
+    const eventPayload = { event_type: 'my_races_viewed', language: 'sl', placement: 'my_races' };
+    const firstScope = {};
+    const secondScope = {};
+    trackStkPageLoadEventOnce('my-races', eventPayload, firstScope);
+    trackStkPageLoadEventOnce('my-races', eventPayload, firstScope);
+    trackStkPageLoadEventOnce('my-races', eventPayload, secondScope);
+    assert.deepEqual((await Promise.all(payloads)).map((payload) => payload.event_type), ['my_races_viewed', 'my_races_viewed']);
+  });
+
+  it('suppresses invalid event-scoped payloads without blocking valid fallbacks', async () => {
+    const payloads = installAnalyticsBrowser();
+    trackStkEvent({ event_type: 'event_card_clicked', event_id: 'r000001', event_name: 'Missing year', event_date: '2026-05-10', placement: 'finder_results' });
+    trackStkEvent({ event_type: 'event_card_clicked', event_name: 'Fallback race', event_date: '2026-05-10', event_year: '2026', placement: 'finder_results' });
+    assert.deepEqual((await Promise.all(payloads)).map((payload) => payload.event_name), ['Fallback race']);
   });
 
   it('tracks bulk ICS export count and omits free search text from personalized-results payloads', () => {
