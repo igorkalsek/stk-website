@@ -223,6 +223,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </section>
 
     <section class="section container" aria-labelledby="results-title">
+
+      <div class="active-filters" data-active-filters hidden>
+        <div class="active-filters-heading">
+          <strong data-active-filters-title>Aktivni filtri</strong>
+          <span data-active-filters-count></span>
+        </div>
+        <div class="active-filter-list" data-active-filter-list></div>
+      </div>
       <div class="section-heading">
         <h2 id="results-title">Rezultati</h2>
         <p data-search-status>Nalagamo potrjene javne dogodke …</p>
@@ -257,6 +265,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
   import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
+  import { formatActiveFinderFilterCount, getActiveFinderFilters, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = PublicRaceEvent & {
@@ -310,6 +319,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const languageSwitchLinks = document.querySelectorAll<HTMLAnchorElement>('[data-language-switch]');
   const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
   const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+  const activeFiltersElement = document.querySelector<HTMLElement>('[data-active-filters]');
+  const activeFilterCountElement = document.querySelector<HTMLElement>('[data-active-filters-count]');
+  const activeFilterListElement = document.querySelector<HTMLElement>('[data-active-filter-list]');
   const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
   const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
   const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
@@ -349,6 +361,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
+  let directFinderState: FinderUrlState = stateForYear(initialUrlState, activeYear);
+
 
   const toArray = toApiRecords;
 
@@ -657,32 +671,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   });
 
 
-  const getFinderUrlStateFromControls = (): FinderUrlState => ({
-    year: activeYear,
-    q: searchInput?.value ?? '',
-    month: monthSelect?.value ?? '',
-    region: regionSelect?.value ?? '',
-    surface: surfaceSelect?.value ?? '',
-    distance: distanceSelect?.value ?? 'all',
-    fee: registrationFeeSelect?.value ?? '',
-    deadline: deadlineSelect?.value ?? '',
-    sort: sortSelect?.value === 'my-races' ? 'date' : (sortSelect?.value as FinderUrlState['sort'] ?? 'date'),
-    family: Boolean(familyInput?.checked),
-    raceDay: Boolean(dayOfRegistrationInput?.checked),
-    route: Boolean(routeInput?.checked),
-    elevation: elevationSelect?.value ?? '',
-    quick: getActiveQuickPickValues()
-  });
+  const updateDirectFinderStateFromControl = (control: EventTarget | null) => {
+    directFinderState = { ...directFinderState, year: activeYear, quick: [] };
+    if (control === searchInput) directFinderState.q = searchInput?.value ?? '';
+    else if (control === monthSelect) directFinderState.month = monthSelect?.value ?? '';
+    else if (control === regionSelect) directFinderState.region = regionSelect?.value ?? '';
+    else if (control === surfaceSelect) directFinderState.surface = surfaceSelect?.value ?? '';
+    else if (control === distanceSelect) directFinderState.distance = distanceSelect?.value ?? 'all';
+    else if (control === registrationFeeSelect) directFinderState.fee = registrationFeeSelect?.value ?? '';
+    else if (control === deadlineSelect) directFinderState.deadline = deadlineSelect?.value ?? '';
+    else if (control === sortSelect) directFinderState.sort = sortSelect?.value === 'my-races' ? 'date' : (sortSelect?.value as FinderUrlState['sort'] ?? 'date');
+    else if (control === familyInput) directFinderState.family = Boolean(familyInput?.checked);
+    else if (control === dayOfRegistrationInput) directFinderState.raceDay = Boolean(dayOfRegistrationInput?.checked);
+    else if (control === routeInput) directFinderState.route = Boolean(routeInput?.checked);
+    else if (control === elevationSelect) directFinderState.elevation = elevationSelect?.value ?? '';
+  };
 
-  const canonicalPathForState = (finderState = getFinderUrlStateFromControls()) => buildFinderUrl('/iskalnik-tekov/', finderState, window.location.origin);
+  const getFinderUrlStateForUrl = (): FinderUrlState => ({ ...directFinderState, year: activeYear, quick: getActiveQuickPickValues() });
 
-  const syncUrlFromControls = (finderState = getFinderUrlStateFromControls()) => {
+  const canonicalPathForState = (finderState = getFinderUrlStateForUrl()) => buildFinderUrl('/iskalnik-tekov/', finderState, window.location.origin);
+
+  const syncUrlFromControls = (finderState = getFinderUrlStateForUrl()) => {
     const nextPath = canonicalPathForState(finderState);
     if (`${window.location.pathname}${window.location.search}` !== nextPath) history.replaceState(null, '', nextPath);
     updateDerivedFinderLinks(finderState);
+    renderActiveFilters(finderState);
   };
 
-  const updateDerivedFinderLinks = (finderState = getFinderUrlStateFromControls()) => {
+  const updateDerivedFinderLinks = (finderState = getFinderUrlStateForUrl()) => {
     yearLinkElements.forEach((link) => {
       const year = link.dataset.yearLink === '2027' ? '2027' : '2026';
       link.href = buildFinderUrlForYear('/iskalnik-tekov/', finderState, year);
@@ -691,6 +707,46 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const targetLanguage = link.getAttribute('hreflang') === 'en' ? 'en' : 'sl';
       link.href = buildFinderUrlForLanguage(finderState, targetLanguage);
     });
+  };
+
+  const getSelectLabelMap = (select: HTMLSelectElement | null) => Object.fromEntries([...select?.options ?? []].filter((option) => option.value).map((option) => [option.value, option.textContent?.trim() ?? option.value]));
+
+  const getActiveFilterLabelLookup = (): ActiveFilterLabelLookup => ({
+    month: getSelectLabelMap(monthSelect),
+    region: getSelectLabelMap(regionSelect),
+    surface: getSelectLabelMap(surfaceSelect),
+    distance: getSelectLabelMap(distanceSelect),
+    fee: getSelectLabelMap(registrationFeeSelect),
+    deadline: getSelectLabelMap(deadlineSelect),
+    sort: getSelectLabelMap(sortSelect),
+    elevation: getSelectLabelMap(elevationSelect)
+  });
+
+  const renderActiveFilters = (finderState = getFinderUrlStateForUrl()) => {
+    if (!activeFiltersElement || !activeFilterListElement) return;
+    const chips = getActiveFinderFilters(stateForYear(finderState, activeYear), 'sl', getActiveFilterLabelLookup());
+    activeFiltersElement.hidden = chips.length === 0;
+    if (activeFilterCountElement) activeFilterCountElement.textContent = chips.length ? formatActiveFinderFilterCount(chips.length, 'sl') : '';
+    activeFilterListElement.innerHTML = chips.map((filter) => `
+      <button type="button" class="active-filter-chip" data-remove-filter="${escapeHtml(filter.kind)}" data-remove-filter-value="${escapeHtml(filter.value)}" aria-label="${escapeHtml(filter.ariaLabel)}">
+        <span>${escapeHtml(filter.label)}</span>
+        <span aria-hidden="true">×</span>
+      </button>
+    `).join('');
+  };
+
+  const removeActiveFilterChip = (kind: string, value: string) => {
+    if (!isActiveFilterKind(kind)) {
+      if (import.meta.env.DEV) console.warn('Invalid active filter chip kind', kind);
+      return;
+    }
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
+    state.userInteracted = true;
+    state.visibleCount = PAGE_SIZE;
+    const nextState = removeActiveFinderFilter(getFinderUrlStateForUrl(), kind, value);
+    rebuildControlsFromFinderState(stateForYear(nextState, activeYear));
+    renderResults();
+    syncUrlFromControls();
   };
 
   const applyPublicSortState = (finderState: FinderUrlState, preservePersonalSort = true) => {
@@ -706,7 +762,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
   };
 
-  const applyFinderUrlStateToControls = (finderState: FinderUrlState) => {
+  const stripQuickPickDerivedFilters = (finderState: FinderUrlState): FinderUrlState => {
+    const next = { ...finderState, quick: [...finderState.quick] };
+    if (next.quick.includes('deadlines-soon')) {
+      if (next.deadline === 'within-14') next.deadline = '';
+      if (next.sort === 'registration-deadline') next.sort = 'date';
+    }
+    if (next.quick.includes('budget') && next.fee === '20') next.fee = '';
+    if (next.quick.includes('first-race') && ['cesta', 'cesta/trail'].includes(normalize(next.surface))) next.surface = '';
+    if (next.quick.includes('kids')) next.family = false;
+    if (next.quick.includes('route')) next.route = false;
+    return next;
+  };
+
+  const applyDirectFinderStateToControls = (finderState: FinderUrlState) => {
     if (searchInput) searchInput.value = finderState.q;
     if (monthSelect) monthSelect.value = [...monthSelect.options].some((option) => option.value === finderState.month) ? finderState.month : '';
     if (regionSelect) regionSelect.value = [...regionSelect.options].some((option) => option.value === finderState.region) ? finderState.region : '';
@@ -719,11 +788,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (dayOfRegistrationInput) dayOfRegistrationInput.checked = activeYear !== '2027' && finderState.raceDay;
     if (routeInput) routeInput.checked = activeYear !== '2027' && finderState.route;
     if (elevationSelect) elevationSelect.value = activeYear === '2027' ? '' : finderState.elevation;
+  };
+
+  const rebuildControlsFromFinderState = (finderState: FinderUrlState) => {
+    const normalizedState = stateForYear(finderState, activeYear);
+    directFinderState = stripQuickPickDerivedFilters({ ...normalizedState, quick: [] });
+    applyDirectFinderStateToControls(directFinderState);
     selectedQuickPicks.clear();
     stateForYear(finderState, activeYear).quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
     for (const quickPick of selectedQuickPicks) applyQuickPick(quickPick);
     updateQuickPickStates();
   };
+
+  const applyFinderUrlStateToControls = rebuildControlsFromFinderState;
 
   const restoreFromCurrentUrl = () => {
     state.userInteracted = false;
@@ -1222,6 +1299,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const clearFilters = () => {
     formElement?.reset();
+    directFinderState = clearFinderUrlState(activeYear);
     selectedQuickPicks.clear();
     updateQuickPickStates();
     syncUrlFromControls(clearFinderUrlState(activeYear));
@@ -1282,6 +1360,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   searchInput?.addEventListener('input', () => {
     state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
+    updateDirectFinderStateFromControl(searchInput);
     if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
     searchUrlTimer = window.setTimeout(() => {
       renderResults();
@@ -1290,10 +1369,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   });
   formElement?.addEventListener('input', (event) => {
     if (event.target === searchInput) return;
+    updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('change', (event) => {
     if (event.target === searchInput) return;
+    updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('submit', (event) => {
@@ -1313,6 +1394,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       state.userInteracted = true;
       state.visibleCount = PAGE_SIZE;
       toggleQuickPick(button.dataset.quickPick ?? '');
+      rebuildControlsFromFinderState({ ...directFinderState, year: activeYear, quick: [...selectedQuickPicks] });
       renderResults();
       syncUrlFromControls();
     });
@@ -1321,6 +1403,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
     if (target) clearFilters();
+    const removeFilterTarget = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-remove-filter]') : null;
+    if (removeFilterTarget) removeActiveFilterChip(removeFilterTarget.dataset.removeFilter ?? '', removeFilterTarget.dataset.removeFilterValue ?? '');
     const editTarget = event.target instanceof Element ? event.target.closest('[data-edit-preferences]') : null;
     if (editTarget && editTarget !== editPreferencesButton) { previousPreferencePanelState = getRacePreferencePanelState({ preferences: racePreferences, editing: false }); preferencesEditing = true; syncPreferenceControls(); refreshPreferencePanel('form'); }
     const showAllTarget = event.target instanceof Element ? event.target.closest('[data-show-all-races]') : null;
