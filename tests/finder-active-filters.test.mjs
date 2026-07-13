@@ -6,8 +6,10 @@ import { readFileSync } from 'node:fs';
 
 const full = parseFinderUrlState(new URLSearchParams('year=2027&q=Triglav&month=08&region=Gorenjska&surface=Trail&distance=over-10-to-half&fee=20&deadline=within-14&sort=registration-deadline&family=1&raceDay=1&route=1&elevation=max-800&quick=deadlines-soon,budget,trail,kids'));
 const lookup = { surface: { Trail: 'Trail' }, fee: { 20: 'Do 20 €' }, deadline: { 'within-14': 'Rok v 14 dneh' }, sort: { 'registration-deadline': 'Roki prijav najprej' }, elevation: { 'max-800': 'Do 800 m+' } };
-const sl = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
-const en = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
+const sl = readFileSync(new URL('../src/finder/race-finder-controller.ts', import.meta.url), 'utf8');
+const en = sl;
+const slPage = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
+const enPage = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
 
 describe('active finder filters utility', () => {
   it('empty state returns no active filters', () => assert.deepEqual(getActiveFinderFilters({}, 'sl'), []));
@@ -33,7 +35,11 @@ describe('active finder filters page wiring', () => {
   it('URL hydration restores chips', () => { for (const page of [sl,en]) assert.match(page, /applyFinderUrlStateToControls\(stateForYear\(initialUrlState, activeYear\)\)[\s\S]*renderResults\(\);[\s\S]*syncUrlFromControls\(\)/); });
   it('popstate restores chips without analytics', () => { for (const page of [sl,en]) { const i = page.indexOf('restoreFromCurrentUrl'); assert.match(page.slice(i, i + 500), /state\.userInteracted = false/); assert.doesNotMatch(page.slice(i, i + 500), /trackStkEvent/); } });
   it('clear hides the active filter block via canonical state', () => { for (const page of [sl,en]) assert.match(page, /syncUrlFromControls\(clearFinderUrlState\(activeYear\)\)/); });
-  it('Slovenian and English finder use the same active filter utility', () => { for (const page of [sl,en]) assert.match(page, /utils-finder-active-filters/); });
+  it('Slovenian and English finder use the same controller and active filter utility', () => {
+    assert.match(slPage, /initializeRaceFinder\(sloveneRaceFinderLocale\)/);
+    assert.match(enPage, /initializeRaceFinder\(englishRaceFinderLocale\)/);
+    assert.match(sl, /utils-finder-active-filters/);
+  });
   it('chip listener has no manual analytics call', () => { for (const page of [sl,en]) { const i = page.indexOf('removeActiveFilterChip'); assert.doesNotMatch(page.slice(i, i + 900), /trackStkEvent/); } });
   it('search debounce is cancelled before removing a filter', () => { for (const page of [sl,en]) assert.match(page, /const removeActiveFilterChip[\s\S]*if \(searchUrlTimer\) window\.clearTimeout\(searchUrlTimer\)/); });
 });
@@ -42,7 +48,7 @@ describe('quick-pick derived filter rebuild contract', () => {
   const pages = [sl, en];
   it('empty finder block is hidden and CSS removes its layout space', () => {
     const css = readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf8');
-    for (const page of pages) assert.match(page, /<div class="active-filters" data-active-filters hidden>/);
+    for (const page of [slPage, enPage]) assert.match(page, /<div class="active-filters" data-active-filters hidden>/);
     assert.match(css, /\.active-filters\[hidden\]\s*{\s*display:\s*none;/);
   });
   it('quick trail creates only its quick chip in the visual summary', () => assert.deepEqual(getActiveFinderFilters({ quick: ['trail'] }, 'sl').map((chip) => chip.label), ['Trail izzivi']));

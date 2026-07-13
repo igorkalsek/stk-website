@@ -8,8 +8,8 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 const analytics = read('src/lib/stkAnalytics.ts');
 const savedClient = read('src/saved-races-client.ts');
 const myRacesClient = read('src/my-races-client.ts');
-const slFinder = read('src/pages/iskalnik-tekov.astro');
-const enFinder = read('src/pages/en/find-races.astro');
+const slFinder = read('src/finder/race-finder-controller.ts');
+const enFinder = slFinder;
 const related = read('src/components/RelatedRaceCards.astro');
 const slDetail = read('src/pages/tek/[year]/[slug].astro');
 const enDetail = read('src/pages/en/races/[year]/[slug].astro');
@@ -127,12 +127,10 @@ describe('frontend analytics v3 contract', () => {
 
 
   it('links English finder card titles and Race details CTA to the same delegated detail URL', () => {
-    assert.match(enFinder, /import \{ buildEnglishEventDetailPath, getStableEventId \} from '\.\.\/\.\.\/utils-event-detail'/);
-    assert.match(enFinder, /year: PublicYear/);
-    assert.match(enFinder, /year: activeYear/);
-    assert.match(enFinder, /const detailPath = buildEnglishEventDetailPath\(event\)/);
+    assert.match(enFinder, /import \{ getStableEventId, mapPublicRaceEvent/);
+    assert.match(enFinder, /const detailPath = locale\.buildDetailPath\(event\)/);
     assert.match(enFinder, /<h3 class="search-event-title"><a class="search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(event\.title\)\}<\/a><\/h3>/);
-    assert.match(enFinder, /<a class="button button-small button-primary search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"><span class="action-icon" aria-hidden="true">🔎<\/span><span>Race details<\/span><\/a>/);
+    assert.match(enFinder, /<a class="button button-small button-primary search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"><span class="action-icon" aria-hidden="true">🔎<\/span><span>\$\{locale.detailLabel\}<\/span><\/a>/);
     assert.doesNotMatch(enFinder, /search-detail-cta[\s\S]{0,140}target="_blank"/);
     assert.doesNotMatch(enFinder, /search-event-title-link[\s\S]{0,140}target="_blank"/);
   });

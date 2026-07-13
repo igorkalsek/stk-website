@@ -37,15 +37,21 @@ describe('finder URL state utility', () => {
 });
 
 describe('finder pages share URL state wiring', () => {
-  const sl = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
-  const en = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
+  const sl = readFileSync(new URL('../src/finder/race-finder-controller.ts', import.meta.url), 'utf8');
+  const en = sl;
+  const slPage = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
+  const enPage = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
   it('applies URL state after populateFilters', () => { for (const page of [sl,en]) assert.match(page, /populateFilters\(\);\s*applyFinderUrlStateToControls/); });
   it('initial hydration does not mark userInteracted', () => { for (const page of [sl,en]) assert.match(page, /userInteracted: false/); });
   it('input and change use replaceState', () => { for (const page of [sl,en]) assert.match(page, /history\.replaceState/); });
   it('clear removes params', () => { for (const page of [sl,en]) assert.match(page, /clearFinderUrlState\(activeYear\)/); });
   it('quick picks are restored', () => { for (const page of [sl,en]) assert.match(page, /stateForYear\(finderState, activeYear\)\.quick\.forEach/); });
   it('popstate reapplies state', () => { for (const page of [sl,en]) assert.match(page, /addEventListener\('popstate', restoreFromCurrentUrl\)/); });
-  it('Slovenian and English use the same utility', () => { for (const page of [sl,en]) assert.match(page, /utils-finder-url-state/); });
+  it('Slovenian and English use the same controller and URL utility', () => {
+    assert.match(slPage, /initializeRaceFinder\(sloveneRaceFinderLocale\)/);
+    assert.match(enPage, /initializeRaceFinder\(englishRaceFinderLocale\)/);
+    assert.match(sl, /utils-finder-url-state/);
+  });
   it('Copy link has no manual analytics call nearby', () => { for (const page of [sl,en]) { const start = page.indexOf("copyLinkButton?.addEventListener"); assert.doesNotMatch(page.slice(start, start + 700), /trackStkEvent/); } });
   it('preferences are not written to URL', () => { for (const page of [sl,en]) assert.doesNotMatch(page, /preferenceDistanceInputs[\s\S]{0,300}syncUrlFromControls/); });
 
@@ -71,8 +77,8 @@ describe('finder pages share URL state wiring', () => {
     for (const page of [sl,en]) assert.match(page, /if \(event\.target === searchInput\) return;/);
   });
   it('Clipboard API rejection shows fallback text without execCommand', () => {
-    assert.match(sl, /catch \{[\s\S]*Povezavo kopirajte iz naslovne vrstice\./);
-    assert.match(en, /catch \{[\s\S]*Copy the link from the address bar\./);
+    assert.match(sl, /catch \{[\s\S]*copyFallback/);
+    assert.match(en, /catch \{[\s\S]*copyFallback/);
     for (const page of [sl,en]) assert.doesNotMatch(page, /document\.execCommand/);
   });
 
