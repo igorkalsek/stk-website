@@ -1,0 +1,55 @@
+name: Finder browser regressions
+
+on:
+  pull_request:
+    paths:
+      - 'src/pages/iskalnik-tekov.astro'
+      - 'src/pages/en/find-races.astro'
+      - 'src/utils-finder-url-state.ts'
+      - 'src/utils-finder-active-filters.ts'
+      - 'src/styles/global.css'
+      - 'tests/browser/finder.spec.ts'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/finder-browser-regressions.yml'
+
+jobs:
+  finder-browser-regressions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run finder browser regressions
+        run: npm run test:browser:finder
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

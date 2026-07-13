@@ -6,11 +6,14 @@ const ANALYTICS_HOST = 'https://script.google.com';
 const races2026 = [
   race('101', '2026-08-15', 'Ljubljana 10K Trail', 'Ljubljana', 'Osrednjeslovenska', 'trail', '10', 'družinam prijazno otroški tek'),
   race('102', '2026-09-20', 'Maribor Road 5K', 'Maribor', 'Podravska', 'cesta', '5', ''),
-  race('103', '2026-10-10', 'Soča Mountain Ultra', 'Bovec', 'Goriška', 'gorski tek', '55', '')
+  race('103', '2026-10-10', 'Soča Mountain Ultra', 'Bovec', 'Goriška', 'gorski tek', '55', ''),
+  race('104', '2026-11-08', 'Celje City Run', 'Celje', 'Savinjska', 'cesta', '21.1', '')
 ];
 
 const races2027 = [
-  race('201', '2027-05-01', 'Koper Spring Run', 'Koper', 'Obalno-kraška', 'cesta', '10', '')
+  race('201', '2027-05-01', 'Koper Spring Run', 'Koper', 'Obalno-kraška', 'cesta', '10', ''),
+  race('202', '2027-06-12', 'Pohorje Trail', 'Maribor', 'Podravska', 'trail', '25', ''),
+  race('203', '2027-09-04', 'Bled Family Run', 'Bled', 'Gorenjska', 'cesta/trail', '5;10', 'družinam prijazno otroški tek')
 ];
 
 const additional2026 = [
@@ -23,8 +26,8 @@ function race(row: string, datum: string, naziv_prireditve: string, kraj: string
   return { row, datum, naziv_prireditve, kraj, regija, tip_podlage, razdalje_km, opombe_javne, status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/notice', povezava_prijava: 'https://example.com/register' };
 }
 
-function additional(master_row: string, datum: string, naziv_prireditve: string, prijavnina_min_eur: string, prijavnina_max_eur: string, rok_prijave: string, rok_cenejse_prijave: string, prijava_na_dan: string, visinski_metri: string, povezava_trasa: string) {
-  return { master_row, datum, naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur, prijavnina_max_eur, rok_prijave, rok_cenejse_prijave, prijava_na_dan, visinski_metri, povezava_trasa };
+function additional(master_row: string, datum: string, naziv_prireditve: string, prijavnina_min_eur: string, prijavnina_max_eur: string, rok_prijave: string, rok_cenejse_prijave: string, prijave_na_dan_dogodka: string, visinski_m_plus: string, trasa_url: string) {
+  return { master_row, datum, naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur, prijavnina_max_eur, rok_prijave, rok_cenejse_prijave, prijave_na_dan_dogodka, visinski_m_plus, trasa_url };
 }
 
 async function mockFinderApis(page: Page) {
@@ -80,6 +83,27 @@ test('removes individual chips and preserves direct filters distinct from quick 
   await expect(page.locator('[data-quick-pick="budget"]')).toHaveAttribute('aria-pressed', 'false');
   await expect(chips(page)).toContainText(['Up to €20']);
 });
+
+test('exercises production additional-data fields for direct filters', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800');
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+  await expect(page.locator('[data-filter="deadline"]')).toHaveValue('within-14');
+  await expect(page.locator('[data-filter="day-of-registration"]')).toBeChecked();
+  await expect(page.locator('[data-filter="route"]')).toBeChecked();
+  await expect(page.locator('[data-filter="elevation"]')).toHaveValue('max-800');
+  await expect(chips(page)).toContainText(['Up to €20', 'Deadline within 14 days', 'Race-day registration', 'With route', 'Up to 800 m+']);
+  await expect(page.locator('[data-search-results]')).toContainText('Ljubljana 10K Trail');
+});
+
+test('hydrates 2027 filters from a sparse future-year master payload', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?year=2027&month=06&region=Podravska&surface=trail');
+  await expect(page.locator('[data-filter="month"]')).toHaveValue('06');
+  await expect(page.locator('[data-filter="region"]')).toHaveValue('Podravska');
+  await expect(page.locator('[data-filter="surface"]')).toHaveValue('trail');
+  await expect(page.locator('[data-search-results]')).toContainText('Pohorje Trail');
+  await expect(page.locator('[data-search-results]')).not.toContainText('Koper Spring Run');
+});
+
 
 test('supports Back/Forward URL restoration without duplicate search analytics', async ({ page }) => {
   const analytics = await mockFinderApis(page);
