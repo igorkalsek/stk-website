@@ -119,6 +119,26 @@ describe('frontend analytics v3 contract', () => {
     assert.doesNotMatch(slFinder, /personalized_results_used[\s\S]{0,240}search_query/);
     assert.doesNotMatch(enFinder, /personalized_results_used[\s\S]{0,240}search_query/);
   });
+
+
+  it('links English finder card titles and Race details CTA to the same delegated detail URL', () => {
+    assert.match(enFinder, /import \{ buildEnglishEventDetailPath, getStableEventId \} from '\.\.\/\.\.\/utils-event-detail'/);
+    assert.match(enFinder, /year: PublicYear/);
+    assert.match(enFinder, /year: activeYear/);
+    assert.match(enFinder, /const detailPath = buildEnglishEventDetailPath\(event\)/);
+    assert.match(enFinder, /<h3 class="search-event-title"><a class="search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(event\.title\)\}<\/a><\/h3>/);
+    assert.match(enFinder, /<a class="button button-small button-primary search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"><span class="action-icon" aria-hidden="true">🔎<\/span><span>Race details<\/span><\/a>/);
+    assert.doesNotMatch(enFinder, /search-detail-cta[\s\S]{0,140}target="_blank"/);
+    assert.doesNotMatch(enFinder, /search-event-title-link[\s\S]{0,140}target="_blank"/);
+  });
+
+  it('keeps English finder detail links on delegated analytics without inline tracking', () => {
+    assert.match(analytics, /rawHref\) && !link\.target/);
+    assert.match(analytics, /eventType = placement === 'related_races' \? 'related_race_clicked' : 'event_card_clicked'/);
+    assert.doesNotMatch(enFinder, /trackStkEvent\([\s\S]{0,220}(detailPath|search-detail-cta|search-event-title-link)/);
+  });
+
+
   it('tracks one related-race child-link click with target related card identity', async () => {
     const payloads = [];
     let clickHandler;

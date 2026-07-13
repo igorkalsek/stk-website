@@ -257,7 +257,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../../utils-distance-filter';
   import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
-  import { getStableEventId } from '../../utils-event-detail';
+  import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../../utils-vote';
@@ -270,6 +270,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   type RaceEvent = {
     id: string;
     row: string;
+    year: PublicYear;
     date: string;
     dateValue: number;
     month: string;
@@ -873,6 +874,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         return {
           id: row || `${date}-${title}-${place}`,
           row,
+          year: activeYear,
           date,
           dateValue,
           month: date.slice(5, 7),
@@ -1037,11 +1039,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
+    const detailPath = buildEnglishEventDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: 'en', kidsRaces: event.kidsRaces });
     const links = [
       ...buildPrimaryActions(event, 'en').map(renderPrimaryActionLink),
       `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>`,
+      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>Race details</span></a>`,
       renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
       calendarOptions
     ].filter(Boolean).join('');
@@ -1052,7 +1056,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? '<span class="pill pill-family">Family-friendly</span>' : ''}
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.title)}</h3>
+        <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
