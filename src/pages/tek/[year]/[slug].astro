@@ -11,9 +11,10 @@ import { buildRaceCopyDescription } from '../../../utils-race-copy';
 import { buildRaceShareUrls } from '../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../utils-build-data';
-import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
+type HeroFact = { label: string; value: string; datetime?: string; isDate?: boolean };
 
 export async function getStaticPaths() {
   return getDetailStaticPaths('sl');
@@ -46,6 +47,14 @@ if (event && year === '2026') {
 maybePrintBuildTiming();
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+const formatDateParts = (value: string) => {
+  const date = new Date(`${value}T00:00:00`);
+  return {
+    day: new Intl.DateTimeFormat('sl-SI', { day: 'numeric' }).format(date),
+    month: new Intl.DateTimeFormat('sl-SI', { month: 'short' }).format(date).replace('.', ''),
+    year: new Intl.DateTimeFormat('sl-SI', { year: 'numeric' }).format(date)
+  };
+};
 const calendarOptions = event ? {
   googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
   icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl }),
@@ -98,12 +107,20 @@ const parseRegistrationAmount = (value: string) => {
 
 const primaryActions = event ? buildPrimaryActions(event, 'sl') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
+const heroDateParts = event ? formatDateParts(event.date) : null;
+const heroFacts: HeroFact[] = event ? [
+  ...(event.startTime ? [{ label: 'Ura', value: event.startTime }] : []),
+  ...(event.place ? [{ label: 'Kraj', value: event.place }] : []),
+  ...(event.distances ? [{ label: 'Razdalje', value: formatSloveneDistances(event.distances) }] : []),
+  ...(event.surface ? [{ label: 'Podlaga', value: formatDetailSurface(event.surface, 'sl') }] : [])
+] : [];
 const heroBadges = event ? [
-  event.surface ? { label: 'Podlaga', value: formatDetailSurface(event.surface, 'sl') } : null,
+  event.region ? { label: 'Regija', value: event.region } : null,
+  event.cup ? { label: 'Pokal ali serija', value: event.cup } : null,
   event.familyFriendly ? { label: 'Družine', value: 'Družinam prijazno' } : null
-].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
+].filter((item): item is { label: string; value: string; featured?: boolean } => Boolean(item)) : [];
 const detailItems = event ? buildKeyFacts(event, 'sl') : [];
-const raceHighlights = event ? buildRaceHighlights(event, 'sl') : [];
+const raceHighlights = event ? buildRaceHighlightCards(event, 'sl') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'sl', formatDate) : [];
 const routeItems = event ? buildCourseRows(event, 'sl') : [];
 const courseHeading = event ? buildCourseHeading(event, 'sl') : '';
@@ -153,14 +170,33 @@ const jsonLd = event ? {
               <span>{event.title}</span>
             </nav>
             <div class="event-detail-language-switch"><span class="eyebrow">Profil teka · {year}</span><a href={englishPath} hreflang="en">English</a></div>
-            <h1 id="event-detail-title">{event.title}</h1>
-            <p class="event-detail-date-line">
-              <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
-            </p>
+            <div class="event-detail-hero-layout">
+              {heroDateParts && (
+                <time class="event-detail-date-card" datetime={event.date} aria-label={formatDate(event.date)}>
+                  <span class="event-detail-date-card-day">{heroDateParts.day}</span>
+                  <span class="event-detail-date-card-month">{heroDateParts.month}</span>
+                  <span class="event-detail-date-card-year">{heroDateParts.year}</span>
+                </time>
+              )}
+              <div class="event-detail-hero-copy">
+                <h1 id="event-detail-title">{event.title}</h1>
+                <p class="event-detail-date-line">
+                  <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
+                </p>
+                <dl class="event-detail-hero-facts" aria-label="Najpomembnejši podatki">
+                  {heroFacts.map((fact) => (
+                    <div class="event-detail-hero-fact">
+                      <dt>{fact.label}</dt>
+                      <dd>{fact.datetime ? <time datetime={fact.datetime}>{fact.value}</time> : fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
             {heroBadges.length > 0 && (
               <div class="event-detail-hero-badges" aria-label="Povzetek teka">
                 {heroBadges.map((badge) => (
-                  <span class="event-chip event-detail-hero-chip" aria-label={`${badge.label}: ${badge.value}`}>{badge.value}</span>
+                  <span class={badge.featured ? 'event-chip event-detail-hero-chip event-detail-hero-chip-featured' : 'event-chip event-detail-hero-chip'} aria-label={`${badge.label}: ${badge.value}`}><strong>{badge.label}</strong>{badge.value}</span>
                 ))}
               </div>
             )}
@@ -169,7 +205,7 @@ const jsonLd = event ? {
             </div>
             <div class="event-detail-primary-actions event-detail-action-list" aria-label="Glavne povezave">
               {primaryActions.map((action) => (
-                <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+                <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
               ))}
               <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
             </div>
@@ -179,59 +215,73 @@ const jsonLd = event ? {
         <section class="section container event-detail-section" aria-label="Podrobnosti teka">
           <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year} data-analytics-placement="race_detail" data-event-detail-view>
             <div class="event-detail-main-column">
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
-                <div class="event-detail-summary-grid" aria-label="Kratek povzetek teka">
-                  {detailItems.map((item) => (
-                    <div class="event-detail-summary-item">
-                      <span class="event-detail-summary-content">
-                        <span class="event-detail-summary-label">{item.label}</span>
-                        <strong>{item.value}</strong>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </article>
+              {detailItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">⚡</span> Hitri podatki</h2>
+                  <div class="event-detail-summary-grid" aria-label="Kratek povzetek teka">
+                    {detailItems.map((item) => (
+                      <div class="event-detail-summary-item">
+                        <span class="event-detail-summary-content">
+                          <span class="event-detail-summary-label">{item.label}</span>
+                          <strong>{item.value}</strong>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              )}
               {raceHighlights.length > 0 && (
                 <article class="info-card event-detail-panel event-detail-highlights" aria-labelledby="race-highlights-title">
                   <h2 id="race-highlights-title">Kaj izstopa pri tem teku?</h2>
-                  <ul>
-                    {raceHighlights.map((highlight) => <li>{highlight}</li>)}
-                  </ul>
+                  <div class="event-detail-highlight-grid">
+                    {raceHighlights.map((highlight) => (
+                      <div class="event-detail-highlight-card">
+                        <span class="event-detail-highlight-icon" aria-hidden="true">{highlight.icon}</span>
+                        <span class="event-detail-highlight-text">
+                          <strong>{highlight.label}</strong>
+                          <span>{highlight.value}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               )}
 
 
+              {(registrationItems.length > 0 || routeItems.length > 0) && (
+                <div class="event-detail-info-card-grid">
               {registrationItems.length > 0 && (
-                <article class="info-card event-detail-panel">
-                  <h2><span aria-hidden="true">🎟</span> Prijava in udeležba</h2>
-                  <dl class="event-detail-list">
-                    {registrationItems.map((item) => (
-                      <div>
-                        <dt>{item.label}</dt>
-                        <dd>{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </article>
-              )}
+                    <article class="info-card event-detail-panel">
+                      <h2><span aria-hidden="true">🎟</span> Prijava in udeležba</h2>
+                      <dl class="event-detail-list">
+                        {registrationItems.map((item) => (
+                          <div>
+                            <dt>{item.label}</dt>
+                            <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </article>
+                  )}
 
-              {routeItems.length > 0 && (
-                <article class="info-card event-detail-panel">
-                  <h2><span aria-hidden="true">🗺</span> {courseHeading}</h2>
-                  <dl class="event-detail-list">
-                    {routeItems.map((item) => (
-                      <div>
-                        <dt>{item.label}</dt>
-                        <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </article>
+                  {routeItems.length > 0 && (
+                    <article class="info-card event-detail-panel">
+                      <h2><span aria-hidden="true">🗺</span> {courseHeading}</h2>
+                      <dl class="event-detail-list">
+                        {routeItems.map((item) => (
+                          <div>
+                            <dt>{item.label}</dt>
+                            <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </article>
+                  )}
+                </div>
               )}
 
               {familyInfo.length > 0 && (
-                <article class="info-card event-detail-panel">
+                <article class="info-card event-detail-panel event-detail-family-callout">
                   <h2><span aria-hidden="true">👨‍👩‍👧‍👦</span> Družine in otroci</h2>
                   {familyInfo.map((text) => <p>{text}</p>)}
                 </article>
@@ -265,9 +315,11 @@ const jsonLd = event ? {
                 </div>
               </div>
 
-              {shareLinks && (
+              <div class="event-detail-tools-panel">
+                <h2>Uporabna orodja</h2>
+                {shareLinks && (
                 <div class="event-detail-share-panel">
-                  <h2>Deli tek</h2>
+                  <h3>Deljenje</h3>
                   <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Kopiraj opis</button>
                   <div class="event-detail-share-options" aria-label="Možnosti deljenja">
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Kopiraj povezavo"><span aria-hidden="true">🔗</span></button>
@@ -282,21 +334,22 @@ const jsonLd = event ? {
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
-                  <h2>Dodaj v svoj koledar</h2>
+                  <h3>Koledar</h3>
                   <div class="event-detail-calendar-actions">
-                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span></a>}
-                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span></a>}
-                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span></a>}
+                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span><span>Google koledar</span></a>}
+                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span><span>iCal</span></a>}
+                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span><span>Outlook</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span><span>Outlook</span></a>}
                   </div>
                 </div>
               )}
 
               {locationUrl && (
                 <div class="event-detail-location-panel">
-                  <h2>Lokacija</h2>
-                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Odpri lokacijo"><span aria-hidden="true">📍</span></a>
+                  <h3>Lokacija</h3>
+                  <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Odpri lokacijo"><span aria-hidden="true">📍</span><span>Odpri zemljevid</span></a>
                 </div>
               )}
+              </div>
             </aside>
           </div>
           <RelatedRaceCards races={relatedRaces} language="sl" />
