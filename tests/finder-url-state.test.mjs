@@ -63,7 +63,7 @@ describe('finder pages share URL state wiring', () => {
       assert.match(page, /let searchUrlTimer: number \| undefined/);
       assert.match(page, /searchInput\?\.addEventListener\('input'/);
       assert.match(page, /window\.setTimeout\(\(\) => \{[\s\S]*renderResults\(\);[\s\S]*syncUrlFromControls\(\);[\s\S]*\}, 250\)/);
-      assert.match(page, /formElement\?\.addEventListener\('change', resetVisibleResults\)/);
+      assert.match(page, /formElement\?\.addEventListener\('change', \(event\) => \{[\s\S]*if \(event\.target === searchInput\) return;[\s\S]*resetVisibleResults\(\);[\s\S]*\}\)/);
       assert.match(page, /quickPickButtons\.forEach/);
     }
   });
@@ -75,6 +75,25 @@ describe('finder pages share URL state wiring', () => {
     assert.match(en, /catch \{[\s\S]*Copy the link from the address bar\./);
     for (const page of [sl,en]) assert.doesNotMatch(page, /document\.execCommand/);
   });
+
+  it('restoreFromCurrentUrl suppresses analytics state before rendering and clears pending search debounce', () => {
+    for (const page of [sl,en]) {
+      assert.match(page, /const restoreFromCurrentUrl = \(\) => \{[\s\S]*state\.userInteracted = false;[\s\S]*state\.lastLoggedSearchSignature = '';[\s\S]*if \(searchUrlTimer\) window\.clearTimeout\(searchUrlTimer\);[\s\S]*renderResults\(\);[\s\S]*syncUrlFromControls\(\);[\s\S]*\};/);
+    }
+  });
+  it('popstate and pageshow reuse analytics-suppressed URL restoration', () => {
+    for (const page of [sl,en]) {
+      assert.match(page, /window\.addEventListener\('popstate', restoreFromCurrentUrl\)/);
+      assert.match(page, /window\.addEventListener\('pageshow', \(event\) => \{ if \(event\.persisted\) restoreFromCurrentUrl\(\); \}\)/);
+    }
+  });
+  it('generic change listener also ignores searchInput', () => {
+    for (const page of [sl,en]) assert.match(page, /formElement\?\.addEventListener\('change', \(event\) => \{[\s\S]*if \(event\.target === searchInput\) return;[\s\S]*resetVisibleResults\(\);[\s\S]*\}\)/);
+  });
+  it('submit cancels pending debounce before immediate render', () => {
+    for (const page of [sl,en]) assert.match(page, /formElement\?\.addEventListener\('submit', \(event\) => \{[\s\S]*event\.preventDefault\(\);[\s\S]*if \(searchUrlTimer\) window\.clearTimeout\(searchUrlTimer\);[\s\S]*resetVisibleResults\(\);[\s\S]*\}\)/);
+  });
+
   it('Slovenian and English finder keep identical sort, debounce and clipboard behavior', () => {
     for (const token of ['applyPublicSortState', 'searchUrlTimer', 'event.target === searchInput', 'navigator.clipboard.writeText']) {
       assert.equal(sl.includes(token), true);

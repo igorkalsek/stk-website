@@ -779,6 +779,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   };
 
   const restoreFromCurrentUrl = () => {
+    state.userInteracted = false;
+    state.lastLoggedSearchSignature = '';
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
     applyFinderUrlStateToControls(stateForYear(parseFinderUrlState(new URLSearchParams(window.location.search)), activeYear));
     state.visibleCount = PAGE_SIZE;
     renderResults();
@@ -1366,9 +1369,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (event.target === searchInput) return;
     resetVisibleResults();
   });
-  formElement?.addEventListener('change', resetVisibleResults);
+  formElement?.addEventListener('change', (event) => {
+    if (event.target === searchInput) return;
+    resetVisibleResults();
+  });
   formElement?.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
     resetVisibleResults();
   });
 
