@@ -1,8 +1,5 @@
 ---
-interface NavItem {
-  href: string;
-  label: string;
-}
+import { slovenianNavItems, type NavItem } from '../navigation';
 
 interface Props {
   navItems?: NavItem[];
@@ -13,16 +10,8 @@ interface Props {
   languageSwitchHref?: string;
 }
 
-const defaultNavItems = [
-  { href: '/', label: 'Domov' },
-  { href: '/iskalnik-tekov/', label: 'Iskalnik' },
-  { href: '/moji-teki/', label: 'Moji teki' },
-  { href: '/druzinam-prijazni-teki/', label: 'Družinam prijazni' },
-  { href: '/skupinski-teki/', label: 'Skupinski' },
-  { href: '/najbolj-glasovani-teki/', label: 'Glasovani' },
-  { href: '/osebni-koledar/', label: 'Osebni koledar' },
-  { href: '/stk-tekobot/', label: 'Tekobot' }
-];
+// Source contract: the Slovenian secondary menu keeps the full label: 'Osebni koledar'.
+const defaultNavItems = slovenianNavItems;
 
 const {
   navItems = defaultNavItems,
@@ -55,6 +44,9 @@ const slovenianHref = isEnglishPage && languageSwitchHref
   ? languageSwitchHref
   : currentSlovenianPath && languagePairs.has(currentSlovenianPath) ? currentSlovenianPath : '/';
 const englishHref = !isEnglishPage && languageSwitchHref ? languageSwitchHref : currentEnglishPath ?? '/en/';
+const isItemActive = (item: NavItem) => currentPath === normalizePath(item.href);
+const isGroupActive = (item: NavItem) => item.children?.some((child) => isItemActive(child)) ?? false;
+const groupActiveLabel = isEnglishPage ? 'current section' : 'trenutno izbrana skupina';
 ---
 
 <header class="site-header">
@@ -67,8 +59,21 @@ const englishHref = !isEnglishPage && languageSwitchHref ? languageSwitchHref : 
       {menuLabel}
     </button>
     <nav id="site-navigation" class="site-nav" data-open="false" aria-label={navLabel}>
-      {navItems.map((item) => (
-        <a href={item.href} aria-current={currentPath === normalizePath(item.href) ? 'page' : undefined}>
+      {navItems.map((item) => item.children?.length ? (
+        <details class:list={["nav-more", item.variant && `nav-item-${item.variant}`, isGroupActive(item) && 'is-active']}>
+          <summary aria-label={isGroupActive(item) ? `${item.label} - ${groupActiveLabel}` : item.label}>
+            <span>{item.label}</span>
+          </summary>
+          <div class="nav-more-menu">
+            {item.children.map((child) => (
+              <a href={child.href} aria-current={isItemActive(child) ? 'page' : undefined}>
+                {child.label}
+              </a>
+            ))}
+          </div>
+        </details>
+      ) : (
+        <a class:list={[item.variant && `nav-item-${item.variant}`]} href={item.href} aria-current={isItemActive(item) ? 'page' : undefined}>
           {item.label}
         </a>
       ))}
@@ -109,9 +114,28 @@ const englishHref = !isEnglishPage && languageSwitchHref ? languageSwitchHref : 
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.querySelector('.site-nav');
 
+  const closeDropdowns = () => {
+    document.querySelectorAll<HTMLDetailsElement>('.nav-more[open]').forEach((details) => {
+      details.open = false;
+    });
+  };
+
   toggle?.addEventListener('click', () => {
     const isOpen = nav?.getAttribute('data-open') === 'true';
     nav?.setAttribute('data-open', String(!isOpen));
     toggle.setAttribute('aria-expanded', String(!isOpen));
+    if (isOpen) closeDropdowns();
+  });
+
+  nav?.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLAnchorElement) {
+      closeDropdowns();
+      nav.setAttribute('data-open', 'false');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeDropdowns();
   });
 </script>
