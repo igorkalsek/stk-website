@@ -222,9 +222,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             </div>
           </details>
 
-          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
-            Clear filters
-          </button>
+          <div class="filter-actions">
+            <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
+              Clear filters
+            </button>
+            <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>
+              Copy link
+            </button>
+            <span class="muted-note" data-copy-link-status aria-live="polite"></span>
+          </div>
         </form>
       </div>
     </section>
@@ -265,6 +271,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, type PublicYear } from '../../utils-public-year';
+  import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../../utils-finder-url-state';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -294,6 +301,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   };
 
   const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const initialUrlState = parseFinderUrlState(new URLSearchParams(window.location.search));
   const activeYear = getPublicYearFromSearchParams(new URLSearchParams(window.location.search));
   const additionalDataEnabled = isAdditionalDataEnabledForYear(activeYear);
   const API_URL = `${API_BASE}${buildMasterApiPath(activeYear)}`;
@@ -331,6 +339,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
   const elevationSelect = document.querySelector<HTMLSelectElement>('[data-filter="elevation"]');
   const additionalNoteElement = document.querySelector<HTMLElement>('[data-additional-note]');
+  const copyLinkButton = document.querySelector<HTMLButtonElement>('[data-copy-link]');
+  const copyLinkStatus = document.querySelector<HTMLElement>('[data-copy-link-status]');
+  const languageSwitchLinks = document.querySelectorAll<HTMLAnchorElement>('[data-language-switch]');
   const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
   const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
   const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
@@ -697,6 +708,69 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     route: Boolean(routeInput?.checked),
     quickPick: getActiveQuickPickValues().join(',')
   });
+
+
+  const getFinderUrlStateFromControls = (): FinderUrlState => ({
+    year: activeYear,
+    q: searchInput?.value ?? '',
+    month: monthSelect?.value ?? '',
+    region: regionSelect?.value ?? '',
+    surface: surfaceSelect?.value ?? '',
+    distance: distanceSelect?.value ?? 'all',
+    fee: registrationFeeSelect?.value ?? '',
+    deadline: deadlineSelect?.value ?? '',
+    sort: sortSelect?.value === 'my-races' ? 'date' : (sortSelect?.value as FinderUrlState['sort'] ?? 'date'),
+    family: Boolean(familyInput?.checked),
+    raceDay: Boolean(dayOfRegistrationInput?.checked),
+    route: Boolean(routeInput?.checked),
+    elevation: elevationSelect?.value ?? '',
+    quick: getActiveQuickPickValues()
+  });
+
+  const canonicalPathForState = (finderState = getFinderUrlStateFromControls()) => buildFinderUrl('/en/find-races/', finderState, window.location.origin);
+
+  const syncUrlFromControls = (finderState = getFinderUrlStateFromControls()) => {
+    const nextPath = canonicalPathForState(finderState);
+    if (`${window.location.pathname}${window.location.search}` !== nextPath) history.replaceState(null, '', nextPath);
+    updateDerivedFinderLinks(finderState);
+  };
+
+  const updateDerivedFinderLinks = (finderState = getFinderUrlStateFromControls()) => {
+    yearLinkElements.forEach((link) => {
+      const year = link.dataset.yearLink === '2027' ? '2027' : '2026';
+      link.href = buildFinderUrlForYear('/en/find-races/', finderState, year);
+    });
+    languageSwitchLinks.forEach((link) => {
+      const targetLanguage = link.getAttribute('hreflang') === 'en' ? 'en' : 'sl';
+      link.href = buildFinderUrlForLanguage(finderState, targetLanguage);
+    });
+  };
+
+  const applyFinderUrlStateToControls = (finderState: FinderUrlState) => {
+    if (searchInput) searchInput.value = finderState.q;
+    if (monthSelect) monthSelect.value = [...monthSelect.options].some((option) => option.value === finderState.month) ? finderState.month : '';
+    if (regionSelect) regionSelect.value = [...regionSelect.options].some((option) => option.value === finderState.region) ? finderState.region : '';
+    if (surfaceSelect) surfaceSelect.value = [...surfaceSelect.options].some((option) => option.value === finderState.surface) ? finderState.surface : '';
+    if (distanceSelect) distanceSelect.value = finderState.distance;
+    if (registrationFeeSelect) registrationFeeSelect.value = activeYear === '2027' ? '' : finderState.fee;
+    if (deadlineSelect) deadlineSelect.value = activeYear === '2027' ? '' : finderState.deadline;
+    if (sortSelect && finderState.sort !== 'date') sortSelect.value = finderState.sort;
+    if (familyInput) familyInput.checked = finderState.family;
+    if (dayOfRegistrationInput) dayOfRegistrationInput.checked = activeYear !== '2027' && finderState.raceDay;
+    if (routeInput) routeInput.checked = activeYear !== '2027' && finderState.route;
+    if (elevationSelect) elevationSelect.value = activeYear === '2027' ? '' : finderState.elevation;
+    selectedQuickPicks.clear();
+    stateForYear(finderState, activeYear).quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
+    for (const quickPick of selectedQuickPicks) applyQuickPick(quickPick);
+    updateQuickPickStates();
+  };
+
+  const restoreFromCurrentUrl = () => {
+    applyFinderUrlStateToControls(stateForYear(parseFinderUrlState(new URLSearchParams(window.location.search)), activeYear));
+    state.visibleCount = PAGE_SIZE;
+    renderResults();
+    syncUrlFromControls();
+  };
 
   const pickFirstAvailableSurface = (preferredSurfaces: string[]) => {
     const availableSurfaces = new Map([...new Set(state.events.map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
@@ -1190,7 +1264,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       state.events = events;
       state.apiAvailable = true;
       populateFilters();
+      applyFinderUrlStateToControls(stateForYear(initialUrlState, activeYear));
       renderResults();
+      syncUrlFromControls();
     } catch (error) {
       console.error('Find races API error', error);
       state.apiAvailable = false;
@@ -1202,12 +1278,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
     renderResults();
+    syncUrlFromControls();
   };
 
   const clearFilters = () => {
     formElement?.reset();
     selectedQuickPicks.clear();
     updateQuickPickStates();
+    syncUrlFromControls(clearFinderUrlState(activeYear));
     resetVisibleResults();
   };
 
@@ -1280,6 +1358,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       state.visibleCount = PAGE_SIZE;
       toggleQuickPick(button.dataset.quickPick ?? '');
       renderResults();
+      syncUrlFromControls();
     });
   });
 
@@ -1291,6 +1370,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const showAllTarget = event.target instanceof Element ? event.target.closest('[data-show-all-races]') : null;
     if (showAllTarget) { if (sortSelect) sortSelect.value = 'date'; persistPreferenceActiveState(false); preferencesEditing = false; refreshPreferencePanel(); resetVisibleResults(); }
   });
+
+  copyLinkButton?.addEventListener('click', async () => {
+    const canonicalUrl = new URL(canonicalPathForState(), window.location.origin).toString();
+    if (!navigator.clipboard?.writeText) { if (copyLinkStatus) copyLinkStatus.textContent = 'Copy the link from the address bar.'; return; }
+    await navigator.clipboard.writeText(canonicalUrl);
+    if (copyLinkStatus) copyLinkStatus.textContent = 'Link copied.';
+  });
+
+  window.addEventListener('popstate', restoreFromCurrentUrl);
+  window.addEventListener('pageshow', (event) => { if (event.persisted) restoreFromCurrentUrl(); });
 
   updateAdvancedFiltersSummary();
   initializeYearUi();
