@@ -49,6 +49,7 @@ export type DetailEvent = PublicRaceEvent & { additionalData?: DetailAdditionalD
 
 export type DetailAction = { kind: 'registration' | 'notice'; label: string; url: string; analyticsType: 'prijava' | 'razpis' };
 export type DetailRow = { label: string; value: string; url?: string; analyticsType?: string; ariaLabel?: string };
+export type DetailHighlightCard = { key: string; label: string; value: string; icon: string };
 
 const hasText = (value: string | undefined | null) => Boolean(value?.trim());
 const normalizePublicActionUrlForComparison = (value: string | undefined | null) => {
@@ -166,6 +167,26 @@ const familyNoteSentences = (notes: string) => notes
   .map((sentence) => sentence.trim())
   .filter((sentence) => sentence && /družinam prijazno|otro(?:ški|ška|ških|kom|ci|cih|ke)|kids?|children(?:’s|'s)?/iu.test(sentence));
 
+const extractChildrenDistancesLabel = (notes: string, language: DetailLanguage) => {
+  const match = notes.match(/otroški teki\s+((?:\d+(?:[,.]\d+)?\s*(?:m|km)\/?)+)/iu);
+  if (!match) return language === 'en' ? 'Listed by the organizer' : 'Navedeni pri organizatorju';
+  const distances = match[1]
+    .replace(/\b(\d+(?:\.\d+)?)\s*km\b/giu, (_match, amount: string) => `${amount.replace('.', language === 'sl' ? ',' : '.')} km`)
+    .split('/')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (distances.length === 0) return language === 'en' ? 'Listed by the organizer' : 'Navedeni pri organizatorju';
+  if (distances.length === 1) return distances[0];
+  return language === 'en'
+    ? `${distances.slice(0, -1).join(', ')} and ${distances[distances.length - 1]}`
+    : `${distances.slice(0, -1).join(', ')} in ${distances[distances.length - 1]}`;
+};
+
+const formatDistanceRangeValue = (shortestDistance: number, longestDistance: number, language: DetailLanguage) => language === 'en'
+  ? `From ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km`
+  : `Od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km`;
+
+
 export const buildPrimaryActions = (event: Pick<DetailEvent, 'registrationUrl' | 'noticeUrl'>, language: DetailLanguage): DetailAction[] => {
   const registrationUrl = normalizeDetailUrl(event.registrationUrl);
   const noticeUrl = normalizeDetailUrl(event.noticeUrl);
@@ -241,7 +262,7 @@ export const buildFamilyInfo = (event: DetailEvent, language: DetailLanguage): s
   return [];
 };
 
-export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage): string[] => {
+export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLanguage): DetailHighlightCard[] => {
   const distances = uniqueDistances(event.distances);
   const longestDistance = distances.length ? distances[distances.length - 1] : null;
   const shortestDistance = distances.length ? distances[0] : null;
@@ -253,50 +274,52 @@ export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage
   const hasFamily = event.familyFriendly;
   const hasFreeFee = [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].some((value) => parseRegistrationFeeAmount(value) === 0);
   const hasRaceDayRegistration = isExplicitYes(event.additionalData?.dayOfRegistration);
-  const highlights: Array<{ key: string; text: string }> = [];
-  const add = (key: string, text: string) => {
-    if (highlights.length >= 4 || highlights.some((item) => item.key === key)) return;
-    highlights.push({ key, text });
+  const labels = language === 'en'
+    ? {
+      ultra: 'Ultra distance', steep: 'Steep course', elevation: 'Elevation gain', children: 'Children’s races', family: 'Family-friendly', cup: 'Cup', distances: 'Distances', free: 'Free option', raceDay: 'Race-day registration', yes: 'Yes'
+    }
+    : {
+      ultra: 'Ultra razdalja', steep: 'Strm tek', elevation: 'Višinska razlika', children: 'Otroški teki', family: 'Družinam prijazno', cup: 'Pokal', distances: 'Razdalje', free: 'Brezplačna možnost', raceDay: 'Prijava na dan', yes: 'Da'
+    };
+  const highlights: DetailHighlightCard[] = [];
+  const add = (card: DetailHighlightCard) => {
+    if (highlights.length >= 4 || highlights.some((item) => item.key === card.key)) return;
+    highlights.push(card);
   };
 
   if (hasStrongUltra && longestDistance !== null) {
-    add('ultra', language === 'en'
-      ? `The longest course is ${formatHighlightDistance(longestDistance, language)} km, offering a substantial ultra challenge.`
-      : `Najdaljša trasa meri ${formatHighlightDistance(longestDistance, language)} km in predstavlja izrazit ultra izziv.`);
-  } else if (hasUltra) {
-    add('ultra', language === 'en' ? 'The event also includes an ultra-distance race.' : 'Dogodek vključuje tudi ultra razdaljo.');
+    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, icon: '↗' });
+  } else if (hasUltra && longestDistance !== null) {
+    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, icon: '↗' });
   }
   if (hasShortSteep) {
-    add('short-steep', language === 'en' ? 'A short distance is combined with substantial climbing.' : 'Kratka razdalja je združena z izrazitim vzponom.');
+    add({ key: 'short-steep', label: labels.steep, value: language === 'en' ? 'Short and steep' : 'Kratko in strmo', icon: '△' });
   }
   if (!hasShortSteep && elevation !== null && elevation >= 500) {
-    if (elevation >= 1000) {
-      add('elevation', language === 'en' ? `${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih ${elevation} m+ vzpona.`);
-    } else {
-      add('elevation', language === 'en' ? `Around ${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih približno ${elevation} m+ vzpona.`);
-    }
+    add({ key: 'elevation', label: labels.elevation, value: `${elevation} m+`, icon: '△' });
   }
   if (hasChildren) {
-    add('family', language === 'en' ? 'The organizer lists children’s races or categories.' : 'Organizator navaja otroške teke ali kategorije.');
+    add({ key: 'family', label: labels.children, value: extractChildrenDistancesLabel(event.publicNotes || '', language), icon: '★' });
   } else if (hasFamily) {
-    add('family', language === 'en' ? 'The event is explicitly marked as family-friendly.' : 'Dogodek je izrecno označen kot družinam prijazen.');
+    add({ key: 'family', label: labels.family, value: language === 'en' ? 'Explicitly listed' : 'Izrecno navedeno', icon: '★' });
   }
   if (event.cup.trim()) {
-    add('cup', language === 'en' ? `The race is part of the ${event.cup.trim()} series or cup.` : `Tek je del serije oziroma pokala ${event.cup.trim()}.`);
+    add({ key: 'cup', label: labels.cup, value: event.cup.trim(), icon: '🏆' });
   }
   if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
-    add('distances', language === 'en'
-      ? `Several distances are available, from ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km.`
-      : `Na voljo je več razdalj: od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km.`);
+    add({ key: 'distances', label: labels.distances, value: formatDistanceRangeValue(shortestDistance, longestDistance, language), icon: '↔' });
   }
   if (hasFreeFee) {
-    add('free-fee', language === 'en' ? 'A free participation option is listed for part of the programme.' : 'Za del programa je navedena brezplačna udeležba.');
+    add({ key: 'free-fee', label: labels.free, value: language === 'en' ? 'Listed for part of the programme' : 'Za del programa', icon: '€' });
   }
   if (hasRaceDayRegistration) {
-    add('race-day-registration', language === 'en' ? 'Race-day registration is listed as available.' : 'Prijava je predvidena tudi na dan dogodka.');
+    add({ key: 'race-day-registration', label: labels.raceDay, value: labels.yes, icon: '✓' });
   }
-  return highlights.map((item) => item.text);
+  return highlights.length >= 2 ? highlights : [];
 };
+
+export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage): string[] => buildRaceHighlightCards(event, language).map((highlight) => `${highlight.label}: ${highlight.value}`);
+
 
 export const buildPublicNotes = (event: DetailEvent, language: DetailLanguage, familyInfo: string[]): string => {
   const notes = event.publicNotes.trim();

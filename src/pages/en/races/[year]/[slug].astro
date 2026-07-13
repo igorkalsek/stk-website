@@ -11,7 +11,7 @@ import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { buildRaceShareUrls } from '../../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../../utils-build-data';
-import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 type HeroFact = { label: string; value: string; datetime?: string; isDate?: boolean };
@@ -47,6 +47,14 @@ if (event && year === '2026') {
 maybePrintBuildTiming();
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+const formatDateParts = (value: string) => {
+  const date = new Date(`${value}T00:00:00`);
+  return {
+    day: new Intl.DateTimeFormat('en-GB', { day: 'numeric' }).format(date),
+    month: new Intl.DateTimeFormat('en-GB', { month: 'short' }).format(date),
+    year: new Intl.DateTimeFormat('en-GB', { year: 'numeric' }).format(date)
+  };
+};
 const calendarOptions = event ? {
   googleUrl: buildGoogleCalendarEventUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
   icsUrl: buildIcsDataUrl({ title: event.title, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: 'en' }),
@@ -99,20 +107,20 @@ const parseRegistrationAmount = (value: string) => {
 
 const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
+const heroDateParts = event ? formatDateParts(event.date) : null;
 const heroFacts: HeroFact[] = event ? [
-  { label: 'Date', value: formatDate(event.date), datetime: event.date, isDate: true },
   ...(event.startTime ? [{ label: 'Time', value: event.startTime }] : []),
   ...(event.place ? [{ label: 'Location', value: event.place }] : []),
-  ...(event.region ? [{ label: 'Region', value: event.region }] : [])
+  ...(event.distances ? [{ label: 'Distances', value: formatSloveneDistances(event.distances) }] : []),
+  ...(event.surface ? [{ label: 'Surface', value: formatDetailSurface(event.surface, 'en') }] : [])
 ] : [];
 const heroBadges = event ? [
-  event.distances ? { label: 'Distances', value: formatSloveneDistances(event.distances), featured: true } : null,
-  event.surface ? { label: 'Surface', value: formatDetailSurface(event.surface, 'en') } : null,
+  event.region ? { label: 'Region', value: event.region } : null,
   event.cup ? { label: 'Cup or series', value: event.cup } : null,
   event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
 ].filter((item): item is { label: string; value: string; featured?: boolean } => Boolean(item)) : [];
 const detailItems = event ? buildKeyFacts(event, 'en') : [];
-const raceHighlights = event ? buildRaceHighlights(event, 'en') : [];
+const raceHighlights = event ? buildRaceHighlightCards(event, 'en') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
 const routeItems = event ? buildCourseRows(event, 'en') : [];
 const courseHeading = event ? buildCourseHeading(event, 'en') : '';
@@ -163,20 +171,27 @@ const jsonLd = event ? {
             </nav>
             <div class="event-detail-language-switch"><span class="eyebrow">Race profile · {year}</span><a href={slovenePath} hreflang="sl">Slovenščina</a></div>
             <div class="event-detail-hero-layout">
+              {heroDateParts && (
+                <time class="event-detail-date-card" datetime={event.date} aria-label={formatDate(event.date)}>
+                  <span class="event-detail-date-card-day">{heroDateParts.day}</span>
+                  <span class="event-detail-date-card-month">{heroDateParts.month}</span>
+                  <span class="event-detail-date-card-year">{heroDateParts.year}</span>
+                </time>
+              )}
               <div class="event-detail-hero-copy">
                 <h1 id="event-detail-title">{event.title}</h1>
                 <p class="event-detail-date-line">
                   <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
                 </p>
+                <dl class="event-detail-hero-facts" aria-label="Key race facts">
+                  {heroFacts.map((fact) => (
+                    <div class="event-detail-hero-fact">
+                      <dt>{fact.label}</dt>
+                      <dd>{fact.datetime ? <time datetime={fact.datetime}>{fact.value}</time> : fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-              <dl class="event-detail-hero-facts" aria-label="Key race facts">
-                {heroFacts.map((fact) => (
-                  <div class={fact.isDate ? 'event-detail-hero-fact event-detail-hero-fact-date' : 'event-detail-hero-fact'}>
-                    <dt>{fact.label}</dt>
-                    <dd>{fact.datetime ? <time datetime={fact.datetime}>{fact.value}</time> : fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
             </div>
             {heroBadges.length > 0 && (
               <div class="event-detail-hero-badges" aria-label="Race summary">
@@ -218,43 +233,55 @@ const jsonLd = event ? {
               {raceHighlights.length > 0 && (
                 <article class="info-card event-detail-panel event-detail-highlights" aria-labelledby="race-highlights-title">
                   <h2 id="race-highlights-title">What stands out about this race</h2>
-                  <ul>
-                    {raceHighlights.map((highlight) => <li>{highlight}</li>)}
-                  </ul>
+                  <div class="event-detail-highlight-grid">
+                    {raceHighlights.map((highlight) => (
+                      <div class="event-detail-highlight-card">
+                        <span class="event-detail-highlight-icon" aria-hidden="true">{highlight.icon}</span>
+                        <span class="event-detail-highlight-text">
+                          <strong>{highlight.label}</strong>
+                          <span>{highlight.value}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </article>
               )}
 
 
+              {(registrationItems.length > 0 || routeItems.length > 0) && (
+                <div class="event-detail-info-card-grid">
               {registrationItems.length > 0 && (
-                <article class="info-card event-detail-panel">
-                  <h2><span aria-hidden="true">🎟</span> Registration and participation</h2>
-                  <dl class="event-detail-list">
-                    {registrationItems.map((item) => (
-                      <div>
-                        <dt>{item.label}</dt>
-                        <dd>{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </article>
-              )}
+                    <article class="info-card event-detail-panel">
+                      <h2><span aria-hidden="true">🎟</span> Registration and participation</h2>
+                      <dl class="event-detail-list">
+                        {registrationItems.map((item) => (
+                          <div>
+                            <dt>{item.label}</dt>
+                            <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </article>
+                  )}
 
-              {routeItems.length > 0 && (
-                <article class="info-card event-detail-panel">
-                  <h2><span aria-hidden="true">🗺</span> {courseHeading}</h2>
-                  <dl class="event-detail-list">
-                    {routeItems.map((item) => (
-                      <div>
-                        <dt>{item.label}</dt>
-                        <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </article>
+                  {routeItems.length > 0 && (
+                    <article class="info-card event-detail-panel">
+                      <h2><span aria-hidden="true">🗺</span> {courseHeading}</h2>
+                      <dl class="event-detail-list">
+                        {routeItems.map((item) => (
+                          <div>
+                            <dt>{item.label}</dt>
+                            <dd>{item.url ? <a class="button button-small button-secondary-light event-detail-inline-action" href={item.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={item.analyticsType} aria-label={item.ariaLabel}>{item.value}</a> : item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </article>
+                  )}
+                </div>
               )}
 
               {familyInfo.length > 0 && (
-                <article class="info-card event-detail-panel">
+                <article class="info-card event-detail-panel event-detail-family-callout">
                   <h2><span aria-hidden="true">👨‍👩‍👧‍👦</span> Families and children</h2>
                   {familyInfo.map((text) => <p>{text}</p>)}
                 </article>
@@ -288,9 +315,11 @@ const jsonLd = event ? {
                 </div>
               </div>
 
-              {shareLinks && (
+              <div class="event-detail-tools-panel">
+                <h2>Useful tools</h2>
+                {shareLinks && (
                 <div class="event-detail-share-panel">
-                  <h2>Share race</h2>
+                  <h3>Sharing</h3>
                   <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Copy description</button>
                   <div class="event-detail-share-options" aria-label="Sharing options">
                     <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Copy link"><span aria-hidden="true">🔗</span></button>
@@ -305,7 +334,7 @@ const jsonLd = event ? {
 
               {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
                 <div class="event-detail-calendar-panel">
-                  <h2>Add to your calendar</h2>
+                  <h3>Calendar</h3>
                   <div class="event-detail-calendar-actions">
                     {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Add to Google Calendar"><span aria-hidden="true">G</span><span>Google Calendar</span></a>}
                     {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download iCal file"><span aria-hidden="true"></span><span>iCal</span></a>}
@@ -316,10 +345,11 @@ const jsonLd = event ? {
 
               {locationUrl && (
                 <div class="event-detail-location-panel">
-                  <h2>Location</h2>
+                  <h3>Location</h3>
                   <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Open location"><span aria-hidden="true">📍</span><span>Open map</span></a>
                 </div>
               )}
+              </div>
             </aside>
           </div>
           <RelatedRaceCards races={relatedRaces} language="en" />

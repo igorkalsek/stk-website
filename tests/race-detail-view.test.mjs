@@ -9,6 +9,7 @@ import {
   areEquivalentPublicActionUrls,
   buildPrimaryActions,
   buildRaceHighlights,
+  buildRaceHighlightCards,
   buildPublicNotes,
   buildRegistrationRows,
   formatDetailMoneyRange,
@@ -192,65 +193,73 @@ describe('race detail view model', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '5', surface: 'CESTA' }, 'sl'), []);
   });
 
-  it('limits highlights to four useful items using deterministic priority', () => {
+  it('limits highlight cards to four useful items using deterministic priority', () => {
     const event = { ...baseEvent, distances: '5;10;85', cup: 'PGT Pokal', kidsRaces: true, additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
-    assert.deepEqual(buildRaceHighlights(event, 'en'), [
-      'The longest course is 85 km, offering a substantial ultra challenge.',
-      '2500 m of elevation gain is listed for the event.',
-      'The organizer lists children’s races or categories.',
-      'The race is part of the PGT Pokal series or cup.'
+    assert.deepEqual(buildRaceHighlightCards(event, 'en').map(({ label, value }) => `${label}: ${value}`), [
+      'Ultra distance: 85 km',
+      'Elevation gain: 2500 m+',
+      'Children’s races: Listed by the organizer',
+      'Cup: PGT Pokal'
+    ]);
+  });
+
+  it('uses short localized labels and values for family-friendly highlight cards', () => {
+    const event = { ...baseEvent, kidsRaces: true, publicNotes: 'družinam prijazno: otroški teki 100 m/500 m/1.6 km; vsak tretji otrok iz družine brezplačen.', cup: 'PGT Pokal' };
+    assert.deepEqual(buildRaceHighlightCards(event, 'sl').map(({ label, value }) => `${label}: ${value}`), [
+      'Otroški teki: 100 m, 500 m in 1,6 km',
+      'Pokal: PGT Pokal'
+    ]);
+    assert.deepEqual(buildRaceHighlightCards(event, 'en').map(({ label, value }) => `${label}: ${value}`), [
+      'Children’s races: 100 m, 500 m and 1.6 km',
+      'Cup: PGT Pokal'
     ]);
   });
 
   it('parses multiple distances, ignores malformed entries and formats decimals by language', () => {
     const event = { ...baseEvent, distances: 'abc;5;0;-2;10 km;21,1;5-10' };
-    assert.deepEqual(buildRaceHighlights(event, 'sl'), ['Na voljo je več razdalj: od 5 do 21,1 km.']);
-    assert.deepEqual(buildRaceHighlights(event, 'en'), ['Several distances are available, from 5 to 21.1 km.']);
+    assert.deepEqual(buildRaceHighlights(event, 'sl'), []);
+    assert.deepEqual(buildRaceHighlights(event, 'en'), []);
   });
 
   it('uses the longest valid distance for strong ultra wording', () => {
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '10;80,5' }, 'sl'), ['Najdaljša trasa meri 80,5 km in predstavlja izrazit ultra izziv.']);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '10;43' }, 'en'), ['The event also includes an ultra-distance race.']);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '10;80,5' }, 'sl'), []);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '10;43' }, 'en'), []);
   });
 
   it('uses only valid positive elevation values and thresholds', () => {
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '0' } }, 'sl'), [
-      'Prijava je predvidena tudi na dan dogodka.'
-    ]);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1200' } }, 'en')[0], '1200 m of elevation gain is listed for the event.');
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl')[0], 'Za dogodek je navedenih 2500 m+ vzpona.');
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'en')[0], '2500 m of elevation gain is listed for the event.');
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'sl')[0], 'Za dogodek je navedenih približno 600 m+ vzpona.');
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'en')[0], 'Around 600 m of elevation gain is listed for the event.');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '0' } }, 'sl'), []);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1200' } }, 'en')[0], 'Elevation gain: 1200 m+');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl')[0], 'Višinska razlika: 2500 m+');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'en')[0], 'Elevation gain: 2500 m+');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'sl')[0], 'Višinska razlika: 600 m+');
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '600' } }, 'en')[0], 'Elevation gain: 600 m+');
     const generated = [
       ...buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl'),
       ...buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'en')
     ].join(' ');
     assert.doesNotMatch(generated, /Najdaljša trasa vključuje|The longest course includes/);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1.200' } }, 'en'), [
-      'Race-day registration is listed as available.'
-    ]);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1.200' } }, 'en'), []);
   });
 
   it('uses short-and-steep wording and suppresses duplicate elevation highlights', () => {
     const event = { ...baseEvent, distances: '5;10', surface: 'gorski', additionalData: { ...richAdditional, elevationGain: '900', routeUrl: '' } };
-    assert.deepEqual(buildRaceHighlights(event, 'en'), ['A short distance is combined with substantial climbing.', 'Race-day registration is listed as available.']);
+    assert.deepEqual(buildRaceHighlights(event, 'en'), ['Steep course: Short and steep', 'Race-day registration: Yes']);
   });
 
   it('requires explicit family or children data and never infers it from short distance alone', () => {
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '1;5;10' }, 'en'), ['Several distances are available, from 1 to 10 km.']);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, familyFriendly: true }, 'sl'), ['Dogodek je izrecno označen kot družinam prijazen.']);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, kidsRaces: true, familyFriendly: true }, 'en'), ['The organizer lists children’s races or categories.']);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '1;5;10' }, 'en'), []);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, familyFriendly: true }, 'sl'), []);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, kidsRaces: true, familyFriendly: true }, 'en'), []);
   });
 
   it('creates free-participation highlights only from explicit zero fee data', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '', registrationMaxEur: '', dayOfRegistration: '', elevationGain: '', routeUrl: '' } }, 'sl'), []);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '0,00', registrationMaxEur: '', dayOfRegistration: '', elevationGain: '', routeUrl: '' } }, 'sl'), ['Za del programa je navedena brezplačna udeležba.']);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '0,00', registrationMaxEur: '', dayOfRegistration: '', elevationGain: '', routeUrl: '' } }, 'sl'), []);
   });
 
   it('requires explicit positive race-day registration values', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, dayOfRegistration: 'NE', elevationGain: '', routeUrl: '' } }, 'en'), []);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, dayOfRegistration: 'yes', elevationGain: '', routeUrl: '' } }, 'en'), ['Race-day registration is listed as available.']);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, dayOfRegistration: 'yes', elevationGain: '', routeUrl: '' } }, 'en'), []);
   });
 
   it('requires valid HTTP or HTTPS route URLs without turning route availability into a generic highlight', () => {
@@ -261,22 +270,22 @@ describe('race detail view model', () => {
   it('preserves cup names and returns equivalent Slovenian and English categories', () => {
     const event = { ...baseEvent, distances: '5;10;21,1', cup: 'PGT Pokal VERTIKAL', familyFriendly: true };
     assert.deepEqual(buildRaceHighlights(event, 'sl'), [
-      'Dogodek je izrecno označen kot družinam prijazen.',
-      'Tek je del serije oziroma pokala PGT Pokal VERTIKAL.',
-      'Na voljo je več razdalj: od 5 do 21,1 km.'
+      'Družinam prijazno: Izrecno navedeno',
+      'Pokal: PGT Pokal VERTIKAL',
+      'Razdalje: Od 5 do 21,1 km'
     ]);
     assert.deepEqual(buildRaceHighlights(event, 'en'), [
-      'The event is explicitly marked as family-friendly.',
-      'The race is part of the PGT Pokal VERTIKAL series or cup.',
-      'Several distances are available, from 5 to 21.1 km.'
+      'Family-friendly: Explicitly listed',
+      'Cup: PGT Pokal VERTIKAL',
+      'Distances: From 5 to 21.1 km'
     ]);
   });
 
   it('supports 2027 highlights without additional data and avoids duplicate concepts', () => {
     const event2027 = { ...baseEvent, year: '2027', distances: '5;10;21,1;21.1', cup: 'Slovenija teče', additionalData: null };
     assert.deepEqual(buildRaceHighlights(event2027, 'en'), [
-      'The race is part of the Slovenija teče series or cup.',
-      'Several distances are available, from 5 to 21.1 km.'
+      'Cup: Slovenija teče',
+      'Distances: From 5 to 21.1 km'
     ]);
   });
 });
