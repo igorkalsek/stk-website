@@ -14,6 +14,7 @@ import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailSt
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
+type HeroFact = { label: string; value: string; datetime?: string; isDate?: boolean };
 
 export async function getStaticPaths() {
   return getDetailStaticPaths('en');
@@ -98,10 +99,18 @@ const parseRegistrationAmount = (value: string) => {
 
 const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
+const heroFacts: HeroFact[] = event ? [
+  { label: 'Date', value: formatDate(event.date), datetime: event.date, isDate: true },
+  ...(event.startTime ? [{ label: 'Time', value: event.startTime }] : []),
+  ...(event.place ? [{ label: 'Location', value: event.place }] : []),
+  ...(event.region ? [{ label: 'Region', value: event.region }] : [])
+] : [];
 const heroBadges = event ? [
+  event.distances ? { label: 'Distances', value: formatSloveneDistances(event.distances), featured: true } : null,
   event.surface ? { label: 'Surface', value: formatDetailSurface(event.surface, 'en') } : null,
+  event.cup ? { label: 'Cup or series', value: event.cup } : null,
   event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
-].filter((item): item is { label: string; value: string } => Boolean(item)) : [];
+].filter((item): item is { label: string; value: string; featured?: boolean } => Boolean(item)) : [];
 const detailItems = event ? buildKeyFacts(event, 'en') : [];
 const raceHighlights = event ? buildRaceHighlights(event, 'en') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
@@ -153,14 +162,26 @@ const jsonLd = event ? {
               <span>{event.title}</span>
             </nav>
             <div class="event-detail-language-switch"><span class="eyebrow">Race profile · {year}</span><a href={slovenePath} hreflang="sl">Slovenščina</a></div>
-            <h1 id="event-detail-title">{event.title}</h1>
-            <p class="event-detail-date-line">
-              <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
-            </p>
+            <div class="event-detail-hero-layout">
+              <div class="event-detail-hero-copy">
+                <h1 id="event-detail-title">{event.title}</h1>
+                <p class="event-detail-date-line">
+                  <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
+                </p>
+              </div>
+              <dl class="event-detail-hero-facts" aria-label="Key race facts">
+                {heroFacts.map((fact) => (
+                  <div class={fact.isDate ? 'event-detail-hero-fact event-detail-hero-fact-date' : 'event-detail-hero-fact'}>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.datetime ? <time datetime={fact.datetime}>{fact.value}</time> : fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
             {heroBadges.length > 0 && (
               <div class="event-detail-hero-badges" aria-label="Race summary">
                 {heroBadges.map((badge) => (
-                  <span class="event-chip event-detail-hero-chip" aria-label={`${badge.label}: ${badge.value}`}>{badge.value}</span>
+                  <span class={badge.featured ? 'event-chip event-detail-hero-chip event-detail-hero-chip-featured' : 'event-chip event-detail-hero-chip'} aria-label={`${badge.label}: ${badge.value}`}><strong>{badge.label}</strong>{badge.value}</span>
                 ))}
               </div>
             )}
@@ -169,7 +190,7 @@ const jsonLd = event ? {
             </div>
             <div class="event-detail-primary-actions event-detail-action-list" aria-label="Main links">
               {primaryActions.map((action) => (
-                <a class="button button-primary" href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+                <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
               ))}
               <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
             </div>

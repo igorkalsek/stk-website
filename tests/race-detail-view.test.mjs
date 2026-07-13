@@ -143,6 +143,26 @@ describe('race detail view model', () => {
     assert.doesNotMatch(englishPage, /Why this race stands out/);
   });
 
+  it('keeps equivalent UX hierarchy, split CTA styling and analytics attributes on both detail routes', () => {
+    const slovenePage = readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8');
+    const englishPage = readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8');
+    for (const page of [slovenePage, englishPage]) {
+      assert.match(page, /event-detail-hero-layout/);
+      assert.match(page, /event-detail-hero-facts/);
+      assert.match(page, /event-detail-hero-chip-featured/);
+      assert.match(page, /action.kind === 'registration' \? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'/);
+      assert.match(page, /data-analytics-link-type=\{action\.analyticsType\}/);
+      assert.match(page, /data-analytics-calendar-type="google"/);
+      assert.match(page, /data-analytics-event-type="share_clicked"/);
+      assert.match(page, /data-analytics-event-type="correction_clicked"/);
+      assert.match(page, /data-saved-race-button/);
+    }
+    assert.match(slovenePage, /aria-label="Najpomembnejši podatki"/);
+    assert.match(slovenePage, /label: 'Razdalje'/);
+    assert.match(englishPage, /aria-label="Key race facts"/);
+    assert.match(englishPage, /label: 'Distances'/);
+  });
+
   it('builds no highlights for sparse events without qualifying facts', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '5', surface: 'CESTA' }, 'sl'), []);
   });
