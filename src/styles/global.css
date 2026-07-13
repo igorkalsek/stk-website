@@ -517,6 +517,29 @@ main {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
+
+.stats-intro {
+  display: grid;
+  gap: 5px;
+  max-width: 760px;
+  margin: 2px auto -4px;
+  text-align: center;
+}
+
+.stats-intro h2 {
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: clamp(1.08rem, 3vw, 1.35rem);
+  letter-spacing: -0.03em;
+}
+
+.stats-intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .stats-strip {
   display: grid;
   gap: 12px;
