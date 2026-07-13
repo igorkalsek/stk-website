@@ -200,19 +200,21 @@ const jsonLd = event ? {
         <section class="section container event-detail-section" aria-label="Race details">
           <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year} data-analytics-placement="race_detail" data-event-detail-view>
             <div class="event-detail-main-column">
-              <article class="info-card event-detail-panel">
-                <h2><span aria-hidden="true">⚡</span> Quick facts</h2>
-                <div class="event-detail-summary-grid" aria-label="Short race summary">
-                  {detailItems.map((item) => (
-                    <div class="event-detail-summary-item">
-                      <span class="event-detail-summary-content">
-                        <span class="event-detail-summary-label">{item.label}</span>
-                        <strong>{item.value}</strong>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </article>
+              {detailItems.length > 0 && (
+                <article class="info-card event-detail-panel">
+                  <h2><span aria-hidden="true">⚡</span> Quick facts</h2>
+                  <div class="event-detail-summary-grid" aria-label="Short race summary">
+                    {detailItems.map((item) => (
+                      <div class="event-detail-summary-item">
+                        <span class="event-detail-summary-content">
+                          <span class="event-detail-summary-label">{item.label}</span>
+                          <strong>{item.value}</strong>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              )}
               {raceHighlights.length > 0 && (
                 <article class="info-card event-detail-panel event-detail-highlights" aria-labelledby="race-highlights-title">
                   <h2 id="race-highlights-title">What stands out about this race</h2>
@@ -305,9 +307,9 @@ const jsonLd = event ? {
                 <div class="event-detail-calendar-panel">
                   <h2>Add to your calendar</h2>
                   <div class="event-detail-calendar-actions">
-                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Add to Google Calendar"><span aria-hidden="true">G</span></a>}
-                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download iCal file"><span aria-hidden="true"></span></a>}
-                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Add to Outlook"><span aria-hidden="true">O</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download Outlook iCal file"><span aria-hidden="true">O</span></a>}
+                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Add to Google Calendar"><span aria-hidden="true">G</span><span>Google Calendar</span></a>}
+                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download iCal file"><span aria-hidden="true"></span><span>iCal</span></a>}
+                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Add to Outlook"><span aria-hidden="true">O</span><span>Outlook</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Download Outlook iCal file"><span aria-hidden="true">O</span><span>Outlook</span></a>}
                   </div>
                 </div>
               )}
@@ -315,7 +317,7 @@ const jsonLd = event ? {
               {locationUrl && (
                 <div class="event-detail-location-panel">
                   <h2>Location</h2>
-                  <a class="button button-small button-secondary-light event-detail-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Open location"><span aria-hidden="true">📍</span></a>
+                  <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Open location"><span aria-hidden="true">📍</span><span>Open map</span></a>
                 </div>
               )}
             </aside>

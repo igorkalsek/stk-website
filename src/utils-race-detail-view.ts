@@ -11,21 +11,6 @@ const safeHttpUrl = (value: string) => {
   }
 };
 
-const formatSloveneDistancePart = (value: string) => {
-  const trimmed = value.trim();
-  if (!trimmed) return '';
-  const withoutKm = trimmed.replace(/\s*km\b/gi, '').trim();
-  if (!/^\d+(?:[.,]\d+)?$/.test(withoutKm)) return trimmed.replace(/\./g, ',');
-  return `${withoutKm.replace('.', ',')} km`;
-};
-
-const formatSloveneDistances = (value: string) => value
-  .trim()
-  .split(';')
-  .map(formatSloveneDistancePart)
-  .filter(Boolean)
-  .join(' · ');
-
 const formatEnglishPublicNotes = (value: string) => {
   const trimmed = value.trim();
   if (!trimmed) return '';
@@ -86,12 +71,24 @@ export const areEquivalentPublicActionUrls = (first: string | undefined | null, 
   return Boolean(firstComparable && secondComparable && firstComparable === secondComparable);
 };
 
+const normalizeSameResourceUrlForComparison = (value: string | undefined | null) => {
+  const normalized = safeHttpUrl(value ?? '');
+  if (!normalized) return '';
+  const url = new URL(normalized);
+  url.hash = '';
+  if (url.pathname.length > 1) url.pathname = url.pathname.replace(/\/$/, '');
+  return url.href;
+};
+
+const areSameDetailResources = (first: string | undefined | null, second: string | undefined | null): boolean => {
+  const firstComparable = normalizeSameResourceUrlForComparison(first);
+  const secondComparable = normalizeSameResourceUrlForComparison(second);
+  return Boolean(firstComparable && secondComparable && firstComparable === secondComparable);
+};
+
 export const normalizeDetailUrl = (value: string | undefined | null) => safeHttpUrl(value ?? '');
 
-const formatStartTime = (value: string) => {
-  const match = value.trim().match(/^(\d{1,2}):(\d{2})(.*)$/);
-  return match ? `${match[1].padStart(2, '0')}:${match[2]}${match[3] ?? ''}` : value.trim();
-};
+
 
 export const formatDetailSurface = (value: string, language: DetailLanguage) =>
   language === 'en' ? formatEnglishSurface(value) : value.trim().toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
@@ -141,6 +138,29 @@ const hasTrailOrMountainSurface = (value: string) => /trail|gorsk|hrib|planin|mo
 const formatHighlightDistance = (value: number, language: DetailLanguage) =>
   value.toLocaleString(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 1, minimumFractionDigits: 0 });
 
+export const formatFamilyPublicNote = (value: string, language: DetailLanguage = 'sl') => {
+  const trimmed = value.replace(/\s+/g, ' ').trim();
+  if (!trimmed) return '';
+  const isRecognizedFamilyNote = /družinam prijazno|otroški teki|vsak tretji otrok iz družine/iu.test(trimmed);
+  if (!isRecognizedFamilyNote) return trimmed;
+
+  if (language === 'en') return formatEnglishPublicNotes(trimmed);
+
+  let formatted = trimmed
+    .replace(/^družinam prijazno:/iu, 'Družinam prijazno:')
+    .replace(/\b(\d+(?:\.\d+)?)\s*km\b/giu, (_match, amount: string) => `${amount.replace('.', ',')} km`)
+    .replace(/\s*\/\s*/g, '/')
+    .replace(/otroški teki\s+((?:\d+(?:[,.]\d+)?\s*(?:m|km)\/?)+)/iu, (_match, distances: string) => {
+      const parts = distances.split('/').map((part) => part.trim()).filter(Boolean);
+      if (parts.length === 0) return 'otroški teki';
+      if (parts.length === 1) return `otroški teki na ${parts[0]}`;
+      return `otroški teki na ${parts.slice(0, -1).join(', ')} in ${parts[parts.length - 1]}`;
+    })
+    .replace(/vsak tretji otrok iz družine brezplačen/iu, 'vsak tretji otrok iz iste družine nastopi brezplačno');
+
+  return formatted.replace(/\s+([.;,])/g, '$1');
+};
+
 const familyNoteSentences = (notes: string) => notes
   .split(/(?<=[.!?])\s+/)
   .map((sentence) => sentence.trim())
@@ -159,19 +179,8 @@ export const buildPrimaryActions = (event: Pick<DetailEvent, 'registrationUrl' |
   ].filter((item): item is DetailAction => Boolean(item));
 };
 
-export const buildKeyFacts = (event: DetailEvent, language: DetailLanguage): DetailRow[] => {
-  const labels = language === 'en'
-    ? { distances: 'Distances', start: 'Start time', surface: 'Surface', location: 'Location', region: 'Region', cup: 'Cup or series' }
-    : { distances: 'Razdalje', start: 'Čas začetka', surface: 'Podlaga', location: 'Kraj', region: 'Regija', cup: 'Pokal ali serija' };
-  return [
-    event.distances ? { label: labels.distances, value: formatSloveneDistances(event.distances) } : null,
-    event.startTime ? { label: labels.start, value: formatStartTime(event.startTime) } : null,
-    event.surface ? { label: labels.surface, value: formatDetailSurface(event.surface, language) } : null,
-    event.place ? { label: labels.location, value: event.place } : null,
-    event.region ? { label: labels.region, value: event.region } : null,
-    event.cup ? { label: labels.cup, value: event.cup } : null
-  ].filter((item): item is DetailRow => Boolean(item && hasText(item.value)));
-};
+export const buildKeyFacts = (_event: DetailEvent, _language: DetailLanguage): DetailRow[] => [];
+
 
 export const buildRegistrationRows = (event: DetailEvent, language: DetailLanguage, formatDate: (value: string) => string): DetailRow[] => {
   const data = event.additionalData;
@@ -193,11 +202,12 @@ export const buildCourseRows = (event: DetailEvent, language: DetailLanguage): D
   const data = event.additionalData;
   if (!data) return [];
   const labels = language === 'en'
-    ? { route: 'Route or map', elevation: 'Elevation gain', aria: 'Open route or map' }
-    : { route: 'Trasa ali zemljevid', elevation: 'Višinska razlika', aria: 'Odpri traso ali zemljevid' };
+    ? { route: 'Route or map', routeIncluded: 'Course is included in the race information', routeOpen: 'Open route or map', elevation: 'Elevation gain', aria: 'Open route or map', ariaIncluded: 'Open race information with course details' }
+    : { route: 'Trasa ali zemljevid', routeIncluded: 'Trasa je vključena v razpis', routeOpen: 'Odpri traso ali zemljevid', elevation: 'Višinska razlika', aria: 'Odpri traso ali zemljevid', ariaIncluded: 'Odpri razpis s podatki o trasi' };
   const routeUrl = normalizeDetailUrl(data.routeUrl);
+  const routeIsNotice = areSameDetailResources(data.routeUrl, event.noticeUrl);
   const rows: Array<DetailRow | null> = [
-    routeUrl ? { label: labels.route, value: labels.route, url: routeUrl, analyticsType: 'trasa', ariaLabel: labels.aria } : null,
+    routeUrl ? { label: labels.route, value: routeIsNotice ? labels.routeIncluded : labels.routeOpen, url: routeUrl, analyticsType: 'trasa', ariaLabel: routeIsNotice ? labels.ariaIncluded : labels.aria } : null,
     data.elevationGain ? { label: labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
   ];
   return rows.filter((item): item is DetailRow => Boolean(item && hasText(item.value)));
@@ -225,7 +235,7 @@ export const buildFamilyInfo = (event: DetailEvent, language: DetailLanguage): s
   const notes = event.publicNotes || '';
   if (!event.familyFriendly && !event.kidsRaces) return [];
   const sentences = familyNoteSentences(notes);
-  if (sentences.length) return sentences.map((sentence) => language === 'en' ? formatEnglishPublicNotes(sentence) : sentence);
+  if (sentences.length) return sentences.map((sentence) => formatFamilyPublicNote(sentence, language));
   if (event.familyFriendly) return [language === 'en' ? 'Family-friendly race.' : 'Družinam prijazno.'];
   if (event.kidsRaces) return [language === 'en' ? 'Children’s races are listed by the organizer.' : 'Organizator navaja otroške teke.'];
   return [];
@@ -243,10 +253,9 @@ export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage
   const hasFamily = event.familyFriendly;
   const hasFreeFee = [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].some((value) => parseRegistrationFeeAmount(value) === 0);
   const hasRaceDayRegistration = isExplicitYes(event.additionalData?.dayOfRegistration);
-  const hasRoute = Boolean(normalizeDetailUrl(event.additionalData?.routeUrl));
   const highlights: Array<{ key: string; text: string }> = [];
   const add = (key: string, text: string) => {
-    if (highlights.length >= 3 || highlights.some((item) => item.key === key)) return;
+    if (highlights.length >= 4 || highlights.some((item) => item.key === key)) return;
     highlights.push({ key, text });
   };
 
@@ -267,11 +276,6 @@ export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage
       add('elevation', language === 'en' ? `Around ${elevation} m of elevation gain is listed for the event.` : `Za dogodek je navedenih približno ${elevation} m+ vzpona.`);
     }
   }
-  if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
-    add('distances', language === 'en'
-      ? `Several distances are available, from ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km.`
-      : `Na voljo je več razdalj: od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km.`);
-  }
   if (hasChildren) {
     add('family', language === 'en' ? 'The organizer lists children’s races or categories.' : 'Organizator navaja otroške teke ali kategorije.');
   } else if (hasFamily) {
@@ -280,14 +284,16 @@ export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage
   if (event.cup.trim()) {
     add('cup', language === 'en' ? `The race is part of the ${event.cup.trim()} series or cup.` : `Tek je del serije oziroma pokala ${event.cup.trim()}.`);
   }
+  if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
+    add('distances', language === 'en'
+      ? `Several distances are available, from ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km.`
+      : `Na voljo je več razdalj: od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km.`);
+  }
   if (hasFreeFee) {
     add('free-fee', language === 'en' ? 'A free participation option is listed for part of the programme.' : 'Za del programa je navedena brezplačna udeležba.');
   }
   if (hasRaceDayRegistration) {
     add('race-day-registration', language === 'en' ? 'Race-day registration is listed as available.' : 'Prijava je predvidena tudi na dan dogodka.');
-  }
-  if (hasRoute) {
-    add('route', language === 'en' ? 'A route or map link is available.' : 'Na voljo je povezava do trase ali zemljevida.');
   }
   return highlights.map((item) => item.text);
 };
@@ -297,6 +303,10 @@ export const buildPublicNotes = (event: DetailEvent, language: DetailLanguage, f
   if (!notes) return '';
   const formattedNotes = language === 'en' ? formatEnglishPublicNotes(notes) : notes;
   const normalizedFamily = new Set(familyInfo.map(normalizeNote));
-  const remaining = formattedNotes.split(/(?<=[.!?])\s+/).filter((sentence) => !normalizedFamily.has(normalizeNote(sentence))).join(' ').trim();
+  const remaining = formattedNotes
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => !normalizedFamily.has(normalizeNote(formatFamilyPublicNote(sentence, language))))
+    .join(' ')
+    .trim();
   return remaining === formattedNotes && familyInfo.some((family) => normalizeNote(family) === normalizeNote(formattedNotes)) ? '' : remaining;
 };

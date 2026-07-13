@@ -11,7 +11,8 @@ import {
   buildRaceHighlights,
   buildPublicNotes,
   buildRegistrationRows,
-  formatDetailMoneyRange
+  formatDetailMoneyRange,
+  formatFamilyPublicNote
 } from '../.cache/dist-test/utils-race-detail-view.js';
 import { buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
 
@@ -78,10 +79,29 @@ describe('race detail view model', () => {
     assert.deepEqual(buildFamilyInfo({ ...baseEvent, familyFriendly: true, publicNotes: 'Družinam prijazno: otroški teki.' }, 'sl'), ['Družinam prijazno: otroški teki.']);
   });
 
+  it('formats recognized family public notes for display without mutating the source note', () => {
+    const raw = 'družinam prijazno: otroški teki 100 m/500 m/1.6 km; vsak tretji otrok iz družine brezplačen.';
+    assert.equal(formatFamilyPublicNote(raw, 'sl'), 'Družinam prijazno: otroški teki na 100 m, 500 m in 1,6 km; vsak tretji otrok iz iste družine nastopi brezplačno.');
+    assert.equal(raw, 'družinam prijazno: otroški teki 100 m/500 m/1.6 km; vsak tretji otrok iz družine brezplačen.');
+    assert.equal(formatFamilyPublicNote('https://example.com/otroški-teki 1.6 km', 'sl'), 'https://example.com/otroški-teki 1.6 km');
+  });
+
+  it('labels route links that point to the same notice URL without changing analytics', () => {
+    const same = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf/' } };
+    const different = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf?type=notice', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf?type=route' } };
+    assert.equal(buildCourseRows(same, 'sl')[0].value, 'Trasa je vključena v razpis');
+    assert.equal(buildCourseRows(same, 'en')[0].value, 'Course is included in the race information');
+    assert.equal(buildCourseRows(same, 'sl')[0].analyticsType, 'trasa');
+    assert.equal(buildCourseRows(different, 'sl')[0].value, 'Odpri traso ali zemljevid');
+    assert.equal(buildCourseRows(different, 'en')[0].value, 'Open route or map');
+  });
+
   it('does not display duplicated family text in public notes', () => {
     const event = { ...baseEvent, familyFriendly: true, publicNotes: 'Družinam prijazno: otroški teki.' };
     const family = buildFamilyInfo(event, 'sl');
     assert.equal(buildPublicNotes(event, 'sl', family), '');
+    const rawEvent = { ...baseEvent, familyFriendly: true, publicNotes: 'družinam prijazno: otroški teki 100 m/500 m/1.6 km; vsak tretji otrok iz družine brezplačen.' };
+    assert.equal(buildPublicNotes(rawEvent, 'sl', buildFamilyInfo(rawEvent, 'sl')), '');
   });
 
   it('renders valid primary action combinations with combined labels and analytics', () => {
@@ -115,15 +135,15 @@ describe('race detail view model', () => {
 
   it('supports 2027 sparse events without 2026-only enrichment data', () => {
     const event2027 = { ...baseEvent, year: '2027', additionalData: null, voteUrl: '' };
-    assert.ok(buildKeyFacts(event2027, 'en').length > 0);
+    assert.deepEqual(buildKeyFacts(event2027, 'en'), []);
     assert.deepEqual(buildRegistrationRows(event2027, 'en', fmt), []);
     assert.deepEqual(buildRaceHighlights(event2027, 'en'), []);
   });
 
   it('uses equivalent Slovenian and English structure and preserves tracked action types', () => {
     const event = { ...baseEvent, registrationUrl: 'https://example.com/reg', noticeUrl: 'https://example.com/info', additionalData: richAdditional };
-    assert.deepEqual(buildKeyFacts(event, 'sl').map((row) => row.label), ['Razdalje', 'Čas začetka', 'Podlaga', 'Kraj', 'Regija']);
-    assert.deepEqual(buildKeyFacts(event, 'en').map((row) => row.label), ['Distances', 'Start time', 'Surface', 'Location', 'Region']);
+    assert.deepEqual(buildKeyFacts(event, 'sl'), []);
+    assert.deepEqual(buildKeyFacts(event, 'en'), []);
     assert.deepEqual(buildPrimaryActions(event, 'sl').map((a) => a.analyticsType), ['prijava', 'razpis']);
     assert.equal(buildCourseRows(event, 'en')[0].analyticsType, 'trasa');
   });
@@ -153,26 +173,32 @@ describe('race detail view model', () => {
       assert.match(page, /action.kind === 'registration' \? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'/);
       assert.match(page, /data-analytics-link-type=\{action\.analyticsType\}/);
       assert.match(page, /data-analytics-calendar-type="google"/);
+      assert.match(page, /detailItems.length > 0/);
       assert.match(page, /data-analytics-event-type="share_clicked"/);
       assert.match(page, /data-analytics-event-type="correction_clicked"/);
       assert.match(page, /data-saved-race-button/);
     }
     assert.match(slovenePage, /aria-label="Najpomembnejši podatki"/);
     assert.match(slovenePage, /label: 'Razdalje'/);
+    assert.match(slovenePage, /Google koledar/);
+    assert.match(slovenePage, /Odpri zemljevid/);
     assert.match(englishPage, /aria-label="Key race facts"/);
     assert.match(englishPage, /label: 'Distances'/);
+    assert.match(englishPage, /Google Calendar/);
+    assert.match(englishPage, /Open map/);
   });
 
   it('builds no highlights for sparse events without qualifying facts', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '5', surface: 'CESTA' }, 'sl'), []);
   });
 
-  it('limits highlights to three using deterministic priority', () => {
+  it('limits highlights to four useful items using deterministic priority', () => {
     const event = { ...baseEvent, distances: '5;10;85', cup: 'PGT Pokal', kidsRaces: true, additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
     assert.deepEqual(buildRaceHighlights(event, 'en'), [
       'The longest course is 85 km, offering a substantial ultra challenge.',
       '2500 m of elevation gain is listed for the event.',
-      'Several distances are available, from 5 to 85 km.'
+      'The organizer lists children’s races or categories.',
+      'The race is part of the PGT Pokal series or cup.'
     ]);
   });
 
@@ -189,8 +215,7 @@ describe('race detail view model', () => {
 
   it('uses only valid positive elevation values and thresholds', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '0' } }, 'sl'), [
-      'Prijava je predvidena tudi na dan dogodka.',
-      'Na voljo je povezava do trase ali zemljevida.'
+      'Prijava je predvidena tudi na dan dogodka.'
     ]);
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1200' } }, 'en')[0], '1200 m of elevation gain is listed for the event.');
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '2500' } }, 'sl')[0], 'Za dogodek je navedenih 2500 m+ vzpona.');
@@ -203,8 +228,7 @@ describe('race detail view model', () => {
     ].join(' ');
     assert.doesNotMatch(generated, /Najdaljša trasa vključuje|The longest course includes/);
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, elevationGain: '1.200' } }, 'en'), [
-      'Race-day registration is listed as available.',
-      'A route or map link is available.'
+      'Race-day registration is listed as available.'
     ]);
   });
 
@@ -229,30 +253,30 @@ describe('race detail view model', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, dayOfRegistration: 'yes', elevationGain: '', routeUrl: '' } }, 'en'), ['Race-day registration is listed as available.']);
   });
 
-  it('requires valid HTTP or HTTPS route URLs', () => {
+  it('requires valid HTTP or HTTPS route URLs without turning route availability into a generic highlight', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, routeUrl: 'ftp://example.com/route', dayOfRegistration: '', elevationGain: '' } }, 'sl'), []);
-    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, routeUrl: 'https://example.com/route', dayOfRegistration: '', elevationGain: '' } }, 'sl'), ['Na voljo je povezava do trase ali zemljevida.']);
+    assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, routeUrl: 'https://example.com/route', dayOfRegistration: '', elevationGain: '' } }, 'sl'), []);
   });
 
   it('preserves cup names and returns equivalent Slovenian and English categories', () => {
     const event = { ...baseEvent, distances: '5;10;21,1', cup: 'PGT Pokal VERTIKAL', familyFriendly: true };
     assert.deepEqual(buildRaceHighlights(event, 'sl'), [
-      'Na voljo je več razdalj: od 5 do 21,1 km.',
       'Dogodek je izrecno označen kot družinam prijazen.',
-      'Tek je del serije oziroma pokala PGT Pokal VERTIKAL.'
+      'Tek je del serije oziroma pokala PGT Pokal VERTIKAL.',
+      'Na voljo je več razdalj: od 5 do 21,1 km.'
     ]);
     assert.deepEqual(buildRaceHighlights(event, 'en'), [
-      'Several distances are available, from 5 to 21.1 km.',
       'The event is explicitly marked as family-friendly.',
-      'The race is part of the PGT Pokal VERTIKAL series or cup.'
+      'The race is part of the PGT Pokal VERTIKAL series or cup.',
+      'Several distances are available, from 5 to 21.1 km.'
     ]);
   });
 
   it('supports 2027 highlights without additional data and avoids duplicate concepts', () => {
     const event2027 = { ...baseEvent, year: '2027', distances: '5;10;21,1;21.1', cup: 'Slovenija teče', additionalData: null };
     assert.deepEqual(buildRaceHighlights(event2027, 'en'), [
-      'Several distances are available, from 5 to 21.1 km.',
-      'The race is part of the Slovenija teče series or cup.'
+      'The race is part of the Slovenija teče series or cup.',
+      'Several distances are available, from 5 to 21.1 km.'
     ]);
   });
 });

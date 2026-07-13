@@ -2747,6 +2747,14 @@ main {
   padding: 0.55rem;
 }
 
+.event-detail-text-icon-button {
+  aspect-ratio: auto;
+  gap: 0.45rem;
+  min-width: 0;
+  padding-inline: 0.8rem;
+  white-space: normal;
+}
+
 .event-detail-icon-button span[aria-hidden='true'] {
   align-items: center;
   display: inline-flex;
