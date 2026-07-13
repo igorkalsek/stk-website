@@ -925,14 +925,17 @@ main {
   line-height: 1.18;
 }
 
-.event-card h3 a {
+.event-card h3 a,
+.update-card h3 a {
   color: inherit;
   text-decoration-color: rgba(16, 64, 80, 0.28);
   text-underline-offset: 0.14em;
 }
 
 .event-card h3 a:hover,
-.event-card h3 a:focus-visible {
+.event-card h3 a:focus-visible,
+.update-card h3 a:hover,
+.update-card h3 a:focus-visible {
   text-decoration-color: currentColor;
 }
 
