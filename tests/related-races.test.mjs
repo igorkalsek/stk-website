@@ -83,6 +83,27 @@ describe('related race rendering helpers', () => {
     assert(!source.includes('data-analytics-action-type="event_card_click"'));
   });
 
+  it('renders related cards with separated date, heading, metadata, reasons and footer actions', () => {
+    const source = readFileSync(new URL('../src/components/RelatedRaceCards.astro', import.meta.url), 'utf8');
+    assert.match(source, /<time class="related-race-date" datetime=\{race\.date\}>/);
+    assert.match(source, /<h3 class="related-race-title">[\s\S]*class="related-race-card-link"/);
+    assert.match(source, /<div class="related-race-meta"[\s\S]*getMetaParts\(race\)\.map\(\(part\) => <span>\{part\}<\/span>\)/);
+    assert.match(source, /<div class="related-race-reasons"[\s\S]*<span class="related-race-reason">\{label\}<\/span>/);
+    assert.match(source, /<div class="related-race-footer">[\s\S]*class="related-race-view"[\s\S]*data-saved-race-button/);
+    assert.doesNotMatch(source, /<a[^>]*class="related-race-card-link[^"]*"[\s\S]*data-saved-race-button[\s\S]*<\/a>/);
+  });
+
+  it('keeps localized related-card labels and analytics/saved-race hooks', () => {
+    const source = readFileSync(new URL('../src/components/RelatedRaceCards.astro', import.meta.url), 'utf8');
+    assert.match(source, /Morda vas zanimajo tudi/);
+    assert.match(source, /You may also be interested in/);
+    assert.match(source, /Poglejte tek/);
+    assert.match(source, /View race/);
+    assert.match(source, /data-analytics-placement="related_races"/);
+    assert.match(source, /data-saved-race-button/);
+    assert.match(source, /aria-label=\{copy\.save\}/);
+  });
+
   it('formats distances with Slovenian decimal commas and English decimal points', () => {
     assert.equal(formatRaceDistances('21.1', 'sl'), '21,1 km');
     assert.equal(formatRaceDistances('21,1', 'en'), '21.1 km');
