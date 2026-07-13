@@ -15,6 +15,8 @@ const slDetail = read('src/pages/tek/[year]/[slug].astro');
 const enDetail = read('src/pages/en/races/[year]/[slug].astro');
 const slFamily = read('src/pages/druzinam-prijazni-teki.astro');
 const enFamily = read('src/pages/en/family-friendly-races.astro');
+const slTop = read('src/pages/najbolj-glasovani-teki.astro');
+const enTop = read('src/pages/en/most-voted-races.astro');
 
 const originalWindow = globalThis.window;
 const originalDocument = globalThis.document;
@@ -80,8 +82,8 @@ describe('frontend analytics v3 contract', () => {
   it('assigns placements for finder cards, related races, my races, and personalized results', () => {
     assert.match(slFinder, /data-analytics-placement="finder_results"/);
     assert.match(enFinder, /data-analytics-placement="finder_results"/);
-    assert.match(slFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.date\.slice\(0, 4\)\)\}"/);
-    assert.match(enFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.date\.slice\(0, 4\)\)\}"/);
+    assert.match(slFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.year\)\}"/);
+    assert.match(enFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.year\)\}"/);
     assert.match(related, /data-analytics-placement="related_races"/);
     assert.match(myRacesClient, /data-analytics-placement="my_races"/);
     assert.match(slFinder, /placement: 'personalized_results'/);
@@ -130,6 +132,20 @@ describe('frontend analytics v3 contract', () => {
     assert.match(enFinder, /<a class="button button-small button-primary search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"><span class="action-icon" aria-hidden="true">🔎<\/span><span>Race details<\/span><\/a>/);
     assert.doesNotMatch(enFinder, /search-detail-cta[\s\S]{0,140}target="_blank"/);
     assert.doesNotMatch(enFinder, /search-event-title-link[\s\S]{0,140}target="_blank"/);
+  });
+
+  it('links collection card titles to delegated detail URLs without new tabs', () => {
+    assert.match(slFamily, /import \{ buildEventDetailPath, getStableEventId \} from '\.\.\/utils-event-detail'/);
+    assert.match(enFamily, /import \{ buildEnglishEventDetailPath, getStableEventId \} from '\.\.\/\.\.\/utils-event-detail'/);
+    assert.match(slFamily, /const detailPath = buildEventDetailPath\(/);
+    assert.match(enFamily, /const detailPath = buildEnglishEventDetailPath\(/);
+    assert.match(slTop, /const detailPath = buildEventDetailPath\(/);
+    assert.match(enTop, /const detailPath = buildEnglishEventDetailPath\(/);
+    for (const source of [slFamily, enFamily, slTop, enTop]) {
+      assert.match(source, /<h3 class="search-event-title">\$\{titleHtml\}<\/h3>/);
+      assert.match(source, /class="search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"/);
+      assert.doesNotMatch(source, /search-event-title-link[\s\S]{0,140}target="_blank"/);
+    }
   });
 
   it('keeps English finder detail links on delegated analytics without inline tracking', () => {

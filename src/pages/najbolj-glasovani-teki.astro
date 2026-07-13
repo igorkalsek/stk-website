@@ -91,7 +91,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildPrimaryActions } from '../utils-race-detail-view';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
-  import { getStableEventId } from '../utils-event-detail';
+  import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { getDisplayEventTitle } from '../utils-events';
   import { DEFAULT_PUBLIC_YEAR } from '../utils-public-year';
@@ -109,6 +109,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     row: string;
     rank: number;
     date: string;
+    year: string;
     dateValue: number;
     month: string;
     title: string;
@@ -229,6 +230,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const formatPublicTitleForDisplay = getDisplayEventTitle;
 
   const formatVisibleEventTitle = (title: string) => title.replace(/\s+-\s+/gu, ' – ');
+
+  const getSupportedEventYear = (date: string) => {
+    const year = date.slice(0, 4);
+    return /^(?:2026|2027)$/.test(year) ? year : '';
+  };
 
   const formatSurface = (value: string) => {
     const trimmed = value.trim();
@@ -391,6 +397,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const displayTitle = formatVisibleEventTitle(title);
     const date = enrichValue(row, match, ['datum', 'date']) || voteDetails.date;
     const dateValue = parseDateValue(date);
+    const year = getSupportedEventYear(date);
     const place = enrichValue(row, match, ['kraj', 'place']);
     const region = enrichValue(row, match, ['regija', 'region']);
     const surface = enrichValue(row, match, ['tip_podlage', 'podlaga', 'surface']);
@@ -401,13 +408,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const registrationUrl = safeUrl(enrichValue(row, match, ['povezava_prijava', 'prijava_url', 'registration_url']));
     const masterRow = match ? getFieldValue(match, 'row') : '';
 
-    if (!sourceTitle || sourceTitle === 'Naziv teka ni na voljo') return null;
+    if (!sourceTitle || sourceTitle === 'Naziv teka ni na voljo' || !year) return null;
 
     return {
       id: voteDetails.eventId || masterRow || `${date}-${sourceTitle}-${index}`,
       row: masterRow,
       rank: index + 1,
       date,
+      year,
       dateValue,
       month: Number.isNaN(dateValue) ? '' : String(new Date(dateValue).getMonth() + 1),
       title,
@@ -539,6 +547,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml);
+    const detailPath = buildEventDetailPath({
+      year: event.year,
+      row: event.row,
+      date: event.date,
+      title: event.title,
+      naziv_prireditve: event.title,
+      place: event.place
+    });
+    const titleHtml = `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.displayTitle)}</a>`;
     const links = [
       ...buildPrimaryActions(event, 'sl').map(renderPrimaryActionLink),
       event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
@@ -547,13 +564,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card ranked-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(DEFAULT_PUBLIC_YEAR)}">
+      <article class="event-card search-event-card ranked-event-card" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}">
         <div class="ranked-event-top">
           <span class="rank-badge" aria-label="Uvrstitev">#${escapeHtml(event.rank)}</span>
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           <span class="pill pill-orange">${escapeHtml(event.voteLabel)}</span>
         </div>
-        <h3 class="search-event-title">${escapeHtml(event.displayTitle)}</h3>
+        <h3 class="search-event-title">${titleHtml}</h3>
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}

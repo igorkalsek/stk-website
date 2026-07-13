@@ -92,7 +92,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildPrimaryActions } from '../utils-race-detail-view';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
-  import { getStableEventId } from '../utils-event-detail';
+  import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
@@ -103,6 +103,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     id: string;
     row: string;
     date: string;
+    year: string;
     dateValue: number;
     month: string;
     title: string;
@@ -192,6 +193,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const formatDateBadge = formatSloveneDateBadge;
 
   const formatPublicTitleForDisplay = (value: string) => value.replace(/\s+-\s+/gu, ' – ');
+
+  const getSupportedEventYear = (date: string) => {
+    const year = date.slice(0, 4);
+    return /^(?:2026|2027)$/.test(year) ? year : '';
+  };
 
   const formatStartTime = (value: string) => {
     const trimmed = value.trim();
@@ -442,12 +448,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     if (!date || Number.isNaN(dateValue) || !title) return null;
 
+    const year = getSupportedEventYear(date);
+    if (!year) return null;
+
     const row = pick(item, 'row');
 
     return {
       id: row || `${date}-${title}-${place}`,
       row,
       date,
+      year,
       dateValue,
       month: date.slice(5, 7),
       title: getDisplayEventTitle(title),
@@ -548,6 +558,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       eventDate: event.date,
       registrationFeeLabel: 'Najnižja znana prijavnina'
     });
+    const detailPath = buildEventDetailPath({
+      year: event.year,
+      row: event.row,
+      date: event.date,
+      title: event.title,
+      naziv_prireditve: event.title,
+      place: event.place
+    });
+    const titleHtml = `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(formatPublicTitleForDisplay(event.title))}</a>`;
     const links = [
       ...buildPrimaryActions(event, 'sl').map(renderPrimaryActionLink),
       event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Glasujte za ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Glasuj</span></a>`,
@@ -556,11 +575,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     ].filter(Boolean).join('');
 
     return `
-      <article class="event-card search-event-card" data-analytics-placement="family_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(formatPublicTitleForDisplay(event.title))}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.date.slice(0, 4))}">
+      <article class="event-card search-event-card" data-analytics-placement="family_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(formatPublicTitleForDisplay(event.title))}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}">
         <div class="search-event-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
         </div>
-        <h3 class="search-event-title">${escapeHtml(formatPublicTitleForDisplay(event.title))}</h3>
+        <h3 class="search-event-title">${titleHtml}</h3>
         ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Za družine</strong></div><p>${escapeHtml(familyNote)}</p></div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataBlock}
