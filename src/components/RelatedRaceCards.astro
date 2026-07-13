@@ -5,10 +5,11 @@ import { formatRaceDistances } from '../utils-distance-format';
 type Props = { races: RelatedRaceCard[]; language: RelatedRaceLanguage };
 const { races, language } = Astro.props as Props;
 const copy = language === 'en'
-  ? { heading: 'You may also be interested in', view: 'View race', aria: 'Related races', at: 'at', save: 'Save race' }
-  : { heading: 'Morda vas zanimajo tudi', view: 'Poglejte tek', aria: 'Sorodni teki', at: 'v kraju', save: 'Shrani tek' };
+  ? { heading: 'You may also be interested in', view: 'View race', aria: 'Related races', at: 'at', save: 'Save race', why: 'Why it is related' }
+  : { heading: 'Morda vas zanimajo tudi', view: 'Poglejte tek', aria: 'Sorodni teki', at: 'v kraju', save: 'Shrani tek', why: 'Zakaj je sorodno' };
 const headingId = `related-races-${language}`;
 const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+const metadata = (race: RelatedRaceCard) => [race.place, race.region, race.surface, race.distances ? formatRaceDistances(race.distances, language) : ''].filter(Boolean);
 ---
 {races.length > 0 && (
   <section class="related-races-section" aria-labelledby={headingId}>
@@ -17,26 +18,36 @@ const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' 
       {races.map((race) => (
         <li class="related-race-item">
           <article class="related-race-card" data-stk-event-id={race.id} data-stk-event-name={race.title} data-stk-event-date={race.date} data-stk-event-year={race.year} data-analytics-placement="related_races">
-          <a
-            class="related-race-card-link"
-            href={race.detailPath}
-            aria-label={`${copy.view}: ${race.title}${race.place ? ` ${copy.at} ${race.place}` : ''}`}
-          >
-            <time datetime={race.date}>{formatDate(race.date)}</time>
-            <strong>{race.title}</strong>
-            <span class="related-race-meta">
-              {[race.place, race.region, race.surface, race.distances ? formatRaceDistances(race.distances, language) : ''].filter(Boolean).join(' · ')}
-            </span>
-            {race.reasonLabels.length > 0 && (
-              <span class="related-race-reasons" aria-label={language === 'en' ? 'Why it is related' : 'Zakaj je sorodno'}>
-                {race.reasonLabels.map((label) => <span>{label}</span>)}
-              </span>
-            )}
-            <span class="related-race-view">{copy.view} <span aria-hidden="true">→</span></span>
-          </a>
-          {race.stableEventId && (
-            <button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id={race.stableEventId} data-event-year={race.year} data-event-date={race.date} data-event-title={race.title} data-language={language} aria-pressed="false" aria-label={copy.save}><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>{copy.save}</span></button>
-          )}
+            <div class="related-race-card-body">
+              <time class="related-race-date" datetime={race.date}>{formatDate(race.date)}</time>
+              <h3 class="related-race-title">
+                <a
+                  class="related-race-card-link"
+                  href={race.detailPath}
+                  aria-label={`${copy.view}: ${race.title}${race.place ? ` ${copy.at} ${race.place}` : ''}`}
+                >
+                  {race.title}
+                </a>
+              </h3>
+              {metadata(race).length > 0 && (
+                <div class="related-race-meta">
+                  {metadata(race).map((item) => <span>{item}</span>)}
+                </div>
+              )}
+              {race.reasonLabels.length > 0 && (
+                <div class="related-race-reasons" aria-label={copy.why}>
+                  {race.reasonLabels.map((label) => <span class="related-race-reason">{label}</span>)}
+                </div>
+              )}
+            </div>
+            <div class="related-race-footer">
+              <a class="related-race-view" href={race.detailPath} aria-label={`${copy.view}: ${race.title}${race.place ? ` ${copy.at} ${race.place}` : ''}`}>
+                {copy.view} <span aria-hidden="true">→</span>
+              </a>
+              {race.stableEventId && (
+                <button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id={race.stableEventId} data-event-year={race.year} data-event-date={race.date} data-event-title={race.title} data-language={language} aria-pressed="false" aria-label={copy.save}><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>{copy.save}</span></button>
+              )}
+            </div>
           </article>
         </li>
       ))}

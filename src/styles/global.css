@@ -2925,36 +2925,78 @@ main {
   padding: 0;
 }
 
+.related-race-item {
+  min-width: 0;
+}
+
 .related-race-card {
   display: flex;
   min-height: 100%;
   flex-direction: column;
-  gap: 0.55rem;
+  justify-content: space-between;
+  gap: 1rem;
   border: 1px solid var(--color-border, #d9e2df);
   border-radius: 1rem;
   padding: 1rem;
-  color: inherit;
-  text-decoration: none;
   background: var(--color-surface, #fff);
   overflow-wrap: anywhere;
 }
 
 .related-race-card:hover,
-.related-race-card:focus-visible {
+.related-race-card:focus-within {
   border-color: var(--color-primary, #0f766e);
   box-shadow: 0 10px 24px rgb(15 118 110 / 12%);
 }
 
-.related-race-card time {
+.related-race-card-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.related-race-date {
   color: var(--color-text-muted, #5f6f6b);
   font-size: 0.9rem;
   font-weight: 700;
 }
 
+.related-race-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.related-race-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.related-race-card-link:hover,
+.related-race-card-link:focus-visible,
+.related-race-view:hover,
+.related-race-view:focus-visible {
+  color: var(--color-primary, #0f766e);
+  text-decoration: underline;
+}
+
 .related-race-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
   color: var(--color-text-muted, #5f6f6b);
   font-size: 0.94rem;
   line-height: 1.45;
+}
+
+.related-race-meta span {
+  min-width: 0;
+}
+
+.related-race-meta span:not(:last-child)::after {
+  content: '·';
+  margin-left: 0.5rem;
+  color: var(--color-border-strong, #9aa8a4);
 }
 
 .related-race-reasons {
@@ -2963,7 +3005,7 @@ main {
   gap: 0.4rem;
 }
 
-.related-race-reasons span {
+.related-race-reason {
   border: 1px solid var(--color-border, #d9e2df);
   border-radius: 999px;
   padding: 0.2rem 0.55rem;
@@ -2972,10 +3014,34 @@ main {
   font-weight: 700;
 }
 
-.related-race-view {
+.related-race-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-top: auto;
+}
+
+.related-race-view {
   font-weight: 800;
   color: var(--color-primary, #0f766e);
+  text-decoration: none;
+}
+
+.related-race-footer .saved-race-button {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 520px) {
+  .related-race-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .related-race-footer .saved-race-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .race-preferences-panel {

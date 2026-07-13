@@ -89,4 +89,36 @@ describe('related race rendering helpers', () => {
     assert.equal(formatRaceDistances('5; 10; 21,1', 'en'), '5 km · 10 km · 21.1 km');
     assert.equal(formatRaceDistances('5; 10; 21.1', 'sl'), '5 km · 10 km · 21,1 km');
   });
+
+  it('renders semantic related race cards without nested interactive controls', () => {
+    const source = readFileSync(new URL('../src/components/RelatedRaceCards.astro', import.meta.url), 'utf8');
+    assert.match(source, /<time class="related-race-date" datetime=\{race\.date\}>/);
+    assert.match(source, /<h3 class="related-race-title">[\s\S]*<a[\s\S]*class="related-race-card-link"[\s\S]*href=\{race\.detailPath\}/);
+    assert.match(source, /<div class="related-race-meta">[\s\S]*metadata\(race\)\.map\(\(item\) => <span>\{item\}<\/span>\)/);
+    assert.match(source, /<div class="related-race-reasons"[\s\S]*<span class="related-race-reason">\{label\}<\/span>/);
+    assert.match(source, /<div class="related-race-footer">[\s\S]*<a class="related-race-view" href=\{race\.detailPath\}/);
+    assert.match(source, /<button class="button button-small button-secondary-light saved-race-button"/);
+    assert.doesNotMatch(source, /<a[\s\S]*<button[\s\S]*<\/a>/);
+    assert.doesNotMatch(source, /<button[\s\S]*<a[\s\S]*<\/button>/);
+  });
+
+  it('preserves related race analytics, localization and saved race data contracts', () => {
+    const source = readFileSync(new URL('../src/components/RelatedRaceCards.astro', import.meta.url), 'utf8');
+    assert.match(source, /data-stk-event-id=\{race\.id\}/);
+    assert.match(source, /data-stk-event-name=\{race\.title\}/);
+    assert.match(source, /data-stk-event-date=\{race\.date\}/);
+    assert.match(source, /data-stk-event-year=\{race\.year\}/);
+    assert.match(source, /data-analytics-placement="related_races"/);
+    assert.match(source, /Poglejte tek/);
+    assert.match(source, /View race/);
+    assert.match(source, /Shrani tek/);
+    assert.match(source, /Save race/);
+    assert.match(source, /data-saved-race-button/);
+    assert.match(source, /data-event-id=\{race\.stableEventId\}/);
+    assert.match(source, /data-event-year=\{race\.year\}/);
+    assert.match(source, /data-event-date=\{race\.date\}/);
+    assert.match(source, /data-event-title=\{race\.title\}/);
+    assert.match(source, /data-language=\{language\}/);
+  });
+
 });
