@@ -219,6 +219,7 @@ describe('race detail view model', () => {
     assert.equal(formatHighlightDistanceWithUnit(0.1, 'sl'), '100 m');
     assert.equal(formatHighlightDistanceWithUnit(0.5, 'sl'), '500 m');
     assert.equal(formatHighlightDistanceWithUnit(1.6, 'sl'), '1,6 km');
+    assert.equal(formatHighlightDistanceWithUnit(1.6, 'en'), '1.6 km');
     const event = { ...baseEvent, distances: '0.1;0.5;10', cup: 'PGT Pokal' };
     assert.deepEqual(buildRaceHighlights(event, 'sl'), [
       'Pokal: PGT Pokal',
