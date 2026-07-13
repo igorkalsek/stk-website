@@ -106,7 +106,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { getDisplayEventTitle } from '../../utils-events';
-  import { DEFAULT_PUBLIC_YEAR } from '../../utils-public-year';
   import { formatSloveneDistances } from '../../utils-slovenian';
 
   type ApiRecord = Record<string, unknown>;
@@ -126,6 +125,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     month: string;
     title: string;
     displayTitle: string;
+    canonicalTitle: string;
     place: string;
     region: string;
     surface: string;
@@ -263,10 +263,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     return String(value).replace(/[&<>"']/g, (character) => characters[character]);
   };
 
-  const renderSavedRaceButton = (event: { row: string; date: string; title: string; place: string }) => {
+  const renderSavedRaceButton = (event: { row: string; year: string; date: string; title: string; place: string }) => {
     const eventId = getStableEventId({ row: event.row, date: event.date, naziv_prireditve: event.title, place: event.place });
-    const year = DEFAULT_PUBLIC_YEAR;
-    if (!eventId || !/^202[67]$/.test(year)) return '';
+    const year = event.year;
+    if (!eventId || !/^(?:2026|2027)$/.test(year)) return '';
     return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(year)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>`;
   };
 
@@ -395,6 +395,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const sourceTitle = buildDisplayTitle(row, match, voteDetails);
     const title = formatPublicTitleForDisplay(sourceTitle);
     const displayTitle = formatVisibleEventTitle(title);
+    const canonicalTitle = match ? getDirectTitle(match) : '';
     const date = enrichValue(row, match, ['datum', 'date']) || voteDetails.date;
     const dateValue = parseDateValue(date);
     const year = getSupportedEventYear(date);
@@ -420,6 +421,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       month: Number.isNaN(dateValue) ? '' : String(new Date(dateValue).getMonth() + 1),
       title,
       displayTitle,
+      canonicalTitle,
       place,
       region,
       surface,
@@ -547,15 +549,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       registrationUrl: event.registrationUrl
     });
     const additionalDataBlock = renderAdditionalDataBlock(event.additionalData, escapeHtml, { eventDate: event.date, language: 'en' });
-    const detailPath = buildEnglishEventDetailPath({
+    const detailPath = event.row && event.canonicalTitle && !Number.isNaN(event.dateValue) ? buildEnglishEventDetailPath({
       year: event.year,
       row: event.row,
       date: event.date,
-      title: event.title,
-      naziv_prireditve: event.title,
+      title: event.canonicalTitle,
+      naziv_prireditve: event.canonicalTitle,
       place: event.place
-    });
-    const titleHtml = `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.displayTitle)}</a>`;
+    }) : '';
+    const titleHtml = detailPath
+      ? `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.displayTitle)}</a>`
+      : escapeHtml(event.displayTitle);
     const links = [
       ...buildPrimaryActions(event, 'en').map(renderPrimaryActionLink),
       event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
@@ -620,7 +624,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (!state.apiAvailable) {
       setStatus('Race data is currently unavailable. Please try again in a few minutes.');
       setCount('Data unavailable');
-      renderEmptyState('Race data is currently unavailable', 'Most voted racesh tekov trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.', 'Calendar');
+      renderEmptyState('Race data is currently unavailable', 'Most voted races cannot be displayed right now. Please try again in a few minutes.', 'Calendar');
       if (moreElement) moreElement.hidden = true;
       return;
     }

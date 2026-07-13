@@ -17,6 +17,9 @@ const slFamily = read('src/pages/druzinam-prijazni-teki.astro');
 const enFamily = read('src/pages/en/family-friendly-races.astro');
 const slTop = read('src/pages/najbolj-glasovani-teki.astro');
 const enTop = read('src/pages/en/most-voted-races.astro');
+const slGroupRuns = read('src/pages/skupinski-teki.astro');
+const enGroupRuns = read('src/pages/en/group-runs.astro');
+const eventDetailUtils = read('src/utils-event-detail.ts');
 
 const originalWindow = globalThis.window;
 const originalDocument = globalThis.document;
@@ -134,18 +137,49 @@ describe('frontend analytics v3 contract', () => {
     assert.doesNotMatch(enFinder, /search-event-title-link[\s\S]{0,140}target="_blank"/);
   });
 
-  it('links collection card titles to delegated detail URLs without new tabs', () => {
+  it('links collection card titles only when detail identity is reliable', () => {
     assert.match(slFamily, /import \{ buildEventDetailPath, getStableEventId \} from '\.\.\/utils-event-detail'/);
     assert.match(enFamily, /import \{ buildEnglishEventDetailPath, getStableEventId \} from '\.\.\/\.\.\/utils-event-detail'/);
-    assert.match(slFamily, /const detailPath = buildEventDetailPath\(/);
-    assert.match(enFamily, /const detailPath = buildEnglishEventDetailPath\(/);
-    assert.match(slTop, /const detailPath = buildEventDetailPath\(/);
-    assert.match(enTop, /const detailPath = buildEnglishEventDetailPath\(/);
+    assert.match(slFamily, /const detailPath = event\.row \? buildEventDetailPath\(/);
+    assert.match(enFamily, /const detailPath = event\.row \? buildEnglishEventDetailPath\(/);
+    assert.match(slTop, /const canonicalTitle = match \? getDirectTitle\(match\) : ''/);
+    assert.match(enTop, /const canonicalTitle = match \? getDirectTitle\(match\) : ''/);
+    assert.match(slTop, /const detailPath = event\.row && event\.canonicalTitle && !Number\.isNaN\(event\.dateValue\) \? buildEventDetailPath\(/);
+    assert.match(enTop, /const detailPath = event\.row && event\.canonicalTitle && !Number\.isNaN\(event\.dateValue\) \? buildEnglishEventDetailPath\(/);
     for (const source of [slFamily, enFamily, slTop, enTop]) {
       assert.match(source, /<h3 class="search-event-title">\$\{titleHtml\}<\/h3>/);
+      assert.match(source, /const titleHtml = detailPath[\s\S]{0,160}search-event-title-link[\s\S]{0,160}: escapeHtml/);
       assert.match(source, /class="search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"/);
+      assert.doesNotMatch(source, /href=""|href="#"/);
       assert.doesNotMatch(source, /search-event-title-link[\s\S]{0,140}target="_blank"/);
     }
+  });
+
+  it('keeps top fallback rows visible without master-row detail links and uses event years for saving', () => {
+    assert.match(slTop, /if \(!sourceTitle \|\| sourceTitle === 'Naziv teka ni na voljo' \|\| !year\) return null;/);
+    assert.doesNotMatch(slTop, /!masterRow\) return null/);
+    assert.doesNotMatch(enTop, /!masterRow\) return null/);
+    assert.match(slTop, /const titleHtml = detailPath[\s\S]{0,180}: escapeHtml\(event\.displayTitle\)/);
+    assert.match(enTop, /const titleHtml = detailPath[\s\S]{0,180}: escapeHtml\(event\.displayTitle\)/);
+    assert.match(slTop, /const renderSavedRaceButton = \(event: \{ row: string; year: string; date: string; title: string; place: string \}\)/);
+    assert.match(enTop, /const renderSavedRaceButton = \(event: \{ row: string; year: string; date: string; title: string; place: string \}\)/);
+    assert.match(slTop, /const year = event\.year/);
+    assert.match(enTop, /const year = event\.year/);
+    assert.doesNotMatch(slTop, /DEFAULT_PUBLIC_YEAR/);
+    assert.doesNotMatch(enTop, /DEFAULT_PUBLIC_YEAR/);
+  });
+
+  it('keeps localized collection paths, English error copy, and group-runs source unchanged', () => {
+    assert.match(slFamily, /buildEventDetailPath/);
+    assert.match(slTop, /buildEventDetailPath/);
+    assert.match(enFamily, /buildEnglishEventDetailPath/);
+    assert.match(enTop, /buildEnglishEventDetailPath/);
+    assert.match(eventDetailUtils, /`\/tek\/\$\{event\.year\}\//);
+    assert.match(eventDetailUtils, /`\/en\/races\/\$\{event\.year\}\//);
+    assert.match(enTop, /Most voted races cannot be displayed right now\. Please try again in a few minutes\./);
+    assert.doesNotMatch(enTop, /Most voted racesh tekov trenutno ne moremo prikazati/);
+    assert.doesNotMatch(slGroupRuns, /buildEventDetailPath|search-event-title-link/);
+    assert.doesNotMatch(enGroupRuns, /buildEnglishEventDetailPath|search-event-title-link/);
   });
 
   it('keeps English finder detail links on delegated analytics without inline tracking', () => {

@@ -537,15 +537,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       eventDate: event.date,
       language: 'en'
     });
-    const detailPath = buildEnglishEventDetailPath({
+    const displayTitle = formatPublicTitleForDisplay(event.title);
+    const detailPath = event.row ? buildEnglishEventDetailPath({
       year: event.year,
       row: event.row,
       date: event.date,
       title: event.title,
       naziv_prireditve: event.title,
       place: event.place
-    });
-    const titleHtml = `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(formatPublicTitleForDisplay(event.title))}</a>`;
+    }) : '';
+    const titleHtml = detailPath
+      ? `<a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(displayTitle)}</a>`
+      : escapeHtml(displayTitle);
     const links = [
       ...buildPrimaryActions(event, 'en').map(renderPrimaryActionLink),
       event.voteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(event.voteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(`Vote for ${event.title}`)}"><span class="action-icon" aria-hidden="true">👍</span><span>Vote</span></a>`,
