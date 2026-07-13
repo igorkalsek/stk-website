@@ -56,19 +56,30 @@ async function openFinder(page: Page, path = '/en/find-races/') {
   await expect(page.locator('[data-result-count]')).toContainText(/race|tek/i);
 }
 
-const chips = (page: Page) => page.locator('[data-active-filter-list] [data-remove-filter]');
+const chip = (page: Page, kind: string, value?: string) => {
+  const selector = value
+    ? `[data-remove-filter="${kind}"][data-remove-filter-value="${value}"]`
+    : `[data-remove-filter="${kind}"]`;
+
+  return page.locator(selector);
+};
 
 test('@smoke restores shareable URL filters, chips and language/year links', async ({ page }) => {
   await openFinder(page, '/en/find-races/?q=Ljubljana&month=08&surface=trail&distance=over-5-to-10&quick=route');
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
   await expect(page.locator('[data-filter="month"]')).toHaveValue('08');
   await expect(page.locator('[data-quick-pick="route"]')).toHaveAttribute('aria-pressed', 'true');
-  await expect(chips(page)).toContainText(['Ljubljana', 'August', 'Trail', 'Over 5 to 10 km', 'With route']);
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
+  await expect(chip(page, 'month', '08')).toContainText('August');
+  await expect(chip(page, 'surface', 'trail')).toContainText('Trail');
+  await expect(chip(page, 'distance', 'over-5-to-10')).toContainText('Over 5 to 10 km');
+  await expect(chip(page, 'quick', 'route')).toContainText('With route');
   await expect(page.locator('a[hreflang="sl"]')).toHaveAttribute('href', /\/iskalnik-tekov\/\?q=Ljubljana/);
   await expect(page.locator('[data-year-link="2027"]')).toHaveAttribute('href', /year=2027/);
   await page.reload();
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
-  await expect(chips(page)).toContainText(['Ljubljana', 'With route']);
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
+  await expect(chip(page, 'quick', 'route')).toContainText('With route');
 });
 
 test('removes individual chips and preserves direct filters distinct from quick picks', async ({ page }) => {
@@ -81,7 +92,7 @@ test('removes individual chips and preserves direct filters distinct from quick 
   await page.locator('[data-filter="registration-fee"]').selectOption('20');
   await expect(page).toHaveURL(/fee=20/);
   await expect(page.locator('[data-quick-pick="budget"]')).toHaveAttribute('aria-pressed', 'false');
-  await expect(chips(page)).toContainText(['Up to €20']);
+  await expect(chip(page, 'fee', '20')).toContainText('Up to €20');
 });
 
 test('exercises production additional-data fields for direct filters', async ({ page }) => {
@@ -91,7 +102,11 @@ test('exercises production additional-data fields for direct filters', async ({ 
   await expect(page.locator('[data-filter="day-of-registration"]')).toBeChecked();
   await expect(page.locator('[data-filter="route"]')).toBeChecked();
   await expect(page.locator('[data-filter="elevation"]')).toHaveValue('max-800');
-  await expect(chips(page)).toContainText(['Up to €20', 'Deadline within 14 days', 'Race-day registration', 'With route', 'Up to 800 m+']);
+  await expect(chip(page, 'fee', '20')).toContainText('Up to €20');
+  await expect(chip(page, 'deadline', 'within-14')).toContainText('Deadline within 14 days');
+  await expect(chip(page, 'raceDay')).toContainText('Race-day registration');
+  await expect(chip(page, 'route')).toContainText('Has route / map');
+  await expect(chip(page, 'elevation', 'max-800')).toContainText('Up to 800 m+');
   await expect(page.locator('[data-search-results]')).toContainText('Ljubljana 10K Trail');
 });
 
@@ -107,20 +122,32 @@ test('hydrates 2027 filters from a sparse future-year master payload', async ({ 
 
 test('supports Back/Forward URL restoration without duplicate search analytics', async ({ page }) => {
   const analytics = await mockFinderApis(page);
-  await page.goto('/en/find-races/');
+  await page.goto('/en/find-races/?q=Ljubljana');
   await expect(page.locator('[data-result-count]')).toContainText(/race/i);
-  await page.locator('[data-filter="search"]').fill('Ljubljana');
-  await expect(page).toHaveURL(/q=Ljubljana/);
-  await page.locator('[data-filter="distance"]').selectOption('over-5-to-10');
-  await expect(page).toHaveURL(/distance=over-5-to-10/);
-  await page.waitForTimeout(900);
+
+  const searchEventsBeforeNavigation = analytics.filter((event: any) => event.event_type === 'search_performed').length;
+
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/en/find-races/?q=Ljubljana&distance=over-5-to-10');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+
+  await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
+  await expect(page.locator('[data-filter="distance"]')).toHaveValue('over-5-to-10');
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
+  await expect(chip(page, 'distance', 'over-5-to-10')).toContainText('Over 5 to 10 km');
+  await expect(page.locator('[data-search-results]')).toContainText('Ljubljana 10K Trail');
+
   await page.goBack();
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
   await expect(page.locator('[data-filter="distance"]')).toHaveValue('all');
+  await expect(chip(page, 'distance', 'over-5-to-10')).toHaveCount(0);
+
   await page.goForward();
   await expect(page.locator('[data-filter="distance"]')).toHaveValue('over-5-to-10');
-  await page.waitForTimeout(900);
-  expect(analytics.filter((event: any) => event.event_type === 'search_performed')).toHaveLength(2);
+  await expect(chip(page, 'distance', 'over-5-to-10')).toContainText('Over 5 to 10 km');
+
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'search_performed').length).toBe(searchEventsBeforeNavigation);
 });
 
 test('keeps Races for me private while emitting only safe personalized analytics', async ({ page }) => {
@@ -132,9 +159,7 @@ test('keeps Races for me private while emitting only safe personalized analytics
   await page.locator('[data-save-preferences]').click();
   await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
   await expect(page).not.toHaveURL(/my-races/);
-  await page.waitForTimeout(100);
-  const stored = await page.evaluate(() => localStorage.getItem('stkRacePreferencesV1') ?? '');
-  expect(stored).toContain('over-5-to-10');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('stkRacePreferencesV1') ?? '')).toContain('over-5-to-10');
   const personalized = analytics.find((event: any) => event.event_type === 'personalized_results_used') as any;
   expect(personalized).toBeTruthy();
   expect(personalized.filters_json).not.toContain('private-query');
