@@ -1,0 +1,108 @@
+---
+import { googleProposalFormContract } from '../proposal-form/proposal-form-contract';
+import { readProposalPrefill, buildGoogleFormsFallbackUrl } from '../proposal-form/proposal-form-controller';
+import { proposalFormLocales, proposalTypeOptions } from '../proposal-form/proposal-form-locales';
+import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
+
+const { lang = 'sl' } = Astro.props as { lang?: ProposalLanguage };
+const copy = proposalFormLocales[lang];
+const prefill = readProposalPrefill(Astro.url.searchParams, lang);
+const fallbackUrl = buildGoogleFormsFallbackUrl(prefill);
+const isCorrection = Boolean(prefill.eventTitle);
+const typeOptions = proposalTypeOptions(lang);
+const selectedType = isCorrection ? googleProposalFormContract.values.proposalTypes[1] : '';
+---
+<section class="page-hero container proposal-hero" aria-labelledby="page-title">
+  <span class="eyebrow">{copy.eyebrow}</span>
+  <h1 id="page-title">{copy.title}</h1>
+  <p>{copy.intro}</p>
+  <p class="proposal-note">{copy.notAuto}</p>
+</section>
+
+{isCorrection && (
+  <section class="section container correction-context" aria-labelledby="selected-race-title">
+    <article class="info-card correction-context-card" data-correction-card>
+      <span class="eyebrow">{copy.selected}</span>
+      <h2 id="selected-race-title" data-prefill-title>{prefill.eventTitle}</h2>
+      <p>{[prefill.date || prefill.year, prefill.place].filter(Boolean).join(' · ')}</p>
+      {prefill.safeReturnUrl && <a class="correction-context-back" href={prefill.safeReturnUrl}>{copy.back}</a>}
+    </article>
+  </section>
+)}
+
+<section class="section container" aria-labelledby="form-title">
+  <div class="proposal-panel">
+    <div class="section-heading compact-heading">
+      <h2 id="form-title">{copy.chooseType}</h2>
+      <p>{copy.noSource}</p>
+    </div>
+    <div class="form-status" data-error-summary hidden tabindex="-1" role="alert"></div>
+    <div class="form-status success" data-submit-status aria-live="polite" hidden></div>
+    <form class="proposal-form" method="post" action={googleProposalFormContract.responseUrl} target="proposal-form-target" data-proposal-form novalidate>
+      <fieldset class="proposal-type-fieldset">
+        <legend>{copy.labels.proposalType}<span aria-hidden="true"> *</span></legend>
+        <div class="proposal-type-grid">
+          {typeOptions.map((option) => (
+            <label class="proposal-choice">
+              <input type="radio" name={googleProposalFormContract.fields.proposalType} value={option.value} required checked={option.value === selectedType} />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="form-grid">
+        <label>{copy.labels.date}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} /></label>
+        <label>{copy.labels.title}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" /></label>
+        <label>{copy.labels.place}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" /></label>
+        <label>{copy.labels.region}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{r}</option>)}</select></label>
+        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.source} data-source-url /></label>
+        <label class="full-span">{copy.labels.description}<span aria-hidden="true"> *</span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description}>{prefill.description}</textarea></label>
+        <label>{copy.labels.organizer}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{v}</option>)}</select></label>
+        <label>{copy.labels.officialAnnouncement2026}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{v}</option>)}</select></label>
+        <label class="full-span">{copy.labels.email}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" /></label>
+        <fieldset class="full-span optional-fieldset">
+          <legend>{copy.labels.additionalData}</legend>
+          <div class="checkbox-grid">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{v}</span></label>)}</div>
+        </fieldset>
+      </div>
+      <div class="cta-row proposal-actions">
+        <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
+        <button class="button button-secondary-light" type="reset" data-reset-button>{copy.another}</button>
+        <a class="button button-secondary" href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link data-analytics-link-type="correction_form">{copy.fallback}</a>
+      </div>
+    </form>
+    <iframe name="proposal-form-target" title="Google Forms submission target" hidden data-submit-target></iframe>
+  </div>
+</section>
+<script is:inline define:vars={{ copy }}>
+  const form = document.querySelector('[data-proposal-form]');
+  const button = document.querySelector('[data-submit-button]');
+  const status = document.querySelector('[data-submit-status]');
+  const errors = document.querySelector('[data-error-summary]');
+  const source = document.querySelector('[data-source-url]');
+  const setError = (message, field) => { if (errors) { errors.hidden = false; errors.textContent = message; errors.focus(); } field?.setAttribute('aria-invalid', 'true'); };
+  source?.addEventListener('input', () => source.setCustomValidity(source.value && !/^https?:\/\//i.test(source.value) ? copy.sourceError : ''));
+  form?.addEventListener('submit', (event) => {
+    source?.dispatchEvent(new Event('input'));
+    form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    if (!form.checkValidity()) { event.preventDefault(); const first = form.querySelector(':invalid'); setError(copy.errorTitle, first); first?.focus(); return; }
+    if (errors) errors.hidden = true;
+    if (button) { button.disabled = true; button.textContent = copy.submitting; }
+    if (status) { status.hidden = false; status.textContent = copy.submitting; }
+  });
+  document.querySelector('[data-submit-target]')?.addEventListener('load', () => {
+    if (button) { button.disabled = false; button.textContent = copy.submit; }
+    if (status) { status.hidden = false; status.textContent = copy.sent; }
+  });
+</script>
+<style>
+  .proposal-hero { padding-bottom: 24px; } .proposal-note { font-weight: 700; color: var(--green-dark); }
+  .correction-context { padding-top: 0; } .correction-context-card { display:grid; gap:8px; padding:20px; border-color:rgba(50,121,61,.22); background:linear-gradient(135deg,rgba(200,230,201,.62),rgba(255,255,255,.94)),var(--white); }
+  .correction-context-card h2,.correction-context-card p{margin:0}.correction-context-back{width:fit-content;font-weight:700;color:var(--green-dark)}
+  .proposal-panel{padding:22px;border:1px solid rgba(16,64,80,.1);border-radius:var(--radius-lg);background:rgba(255,255,255,.92);box-shadow:0 16px 40px rgba(16,64,80,.08)}
+  .proposal-form{display:grid;gap:18px}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
+  .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
+  .form-grid{display:grid;gap:16px}.form-grid label{display:grid;gap:7px;font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
+  @media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.proposal-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checkbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
