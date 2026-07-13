@@ -1,16 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const englishNavItems = [
-  { href: '/en/', label: 'Home' },
-  { href: '/en/find-races/', label: 'Find' },
-  { href: '/en/my-races/', label: 'My races' },
-  { href: '/en/family-friendly-races/', label: 'Family-friendly' },
-  { href: '/en/group-runs/', label: 'Group runs' },
-  { href: '/en/most-voted-races/', label: 'Most voted' },
-  { href: '/en/personal-calendar/', label: 'Calendar' },
-  { href: '/en/stk-tekobot/', label: 'STK Tekobot' }
-];
 ---
 
 <BaseLayout
@@ -22,7 +12,6 @@ const englishNavItems = [
     { lang: 'sl', href: '/najbolj-glasovani-teki/' },
     { lang: 'en', href: '/en/most-voted-races/' }
   ]}
-  navItems={englishNavItems}
   brandHref="/en/"
   brandLabel="Slovenski Tekaški Koledar - English home"
   navLabel="Main navigation"

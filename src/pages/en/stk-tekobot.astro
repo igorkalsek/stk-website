@@ -3,17 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const tekobotUrl = 'https://chatgpt.com/g/g-6a04db599d108191b139cab3429ef3fa-stk-tekobot';
 
-const englishNavItems = [
-  { href: '/en/', label: 'Home' },
-  { href: '/en/find-races/', label: 'Find' },
-  { href: '/en/my-races/', label: 'My races' },
-  { href: '/en/family-friendly-races/', label: 'Family-friendly' },
-  { href: '/en/group-runs/', label: 'Group runs' },
-  { href: '/en/most-voted-races/', label: 'Most voted' },
-  { href: '/en/personal-calendar/', label: 'Calendar' },
-  { href: '/en/stk-tekobot/', label: 'STK Tekobot' }
-];
-
 const questionExamples = [
   'Which races are happening in Slovenia this weekend?',
   'Find trail races in July.',
@@ -41,7 +30,6 @@ const capabilities = [
     { lang: 'sl', href: '/stk-tekobot/' },
     { lang: 'en', href: '/en/stk-tekobot/' }
   ]}
-  navItems={englishNavItems}
   brandHref="/en/"
   brandLabel="Slovenski Tekaški Koledar - English home"
   navLabel="Main navigation"
