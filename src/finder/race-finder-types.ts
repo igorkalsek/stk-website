@@ -10,6 +10,8 @@ export type RaceFinderLocale = {
   formatDateBadge: (value: string) => string;
   formatSurface: (value: string) => string;
   formatMonthLabel: (month: string, year: PublicYear) => string;
+  formatResultCount: (count: number) => string;
+  formatVisibleResultCount: (visibleCount: number, totalCount: number) => string;
   buildDetailPath: (event: Pick<PublicRaceEvent, 'year' | 'row' | 'date' | 'title' | 'naziv_prireditve' | 'place'>) => string;
   advancedFiltersLabel: string;
   allMonthsLabel: string;

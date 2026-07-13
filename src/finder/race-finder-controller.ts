@@ -12,6 +12,7 @@
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
   import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
   import { formatActiveFinderFilterCount, getActiveFinderFilters, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
+import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
 
   type ApiRecord = Record<string, unknown>;
@@ -356,7 +357,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     noticeUrl?: string;
     registrationUrl?: string;
   }) => {
-    const event = { title, date, location, noticeUrl, registrationUrl };
+    const event = buildRaceFinderCalendarEventInput(locale, { title, date, location, noticeUrl, registrationUrl });
     const googleUrl = buildGoogleCalendarEventUrl(event);
     const icsUrl = buildIcsDataUrl(event);
     const icsFilename = buildIcsFilename(event);
@@ -386,9 +387,6 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const setCount = (message: string) => {
     if (countElement) countElement.textContent = message;
   };
-
-  const pluralizeEvents = (count: number) =>
-    `${count} ${count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count < 5 ? 'dogodki' : 'dogodkov'}`;
 
   const getFilters = () => ({
     search: normalize(searchInput?.value ?? ''),
@@ -725,17 +723,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   };
 
 
-  const formatSurfaceOption = (value: string) => {
-    const labels: Record<string, string> = {
-      cesta: 'Cesta',
-      'cesta/trail': 'Cesta/trail',
-      gorski: 'Gorski',
-      oviratlon: 'Oviratlon',
-      stopnice: 'Stopnice',
-      trail: 'Trail'
-    };
-    return labels[normalize(value)] ?? formatSurface(value);
-  };
+  const formatSurfaceOption = (value: string) => locale.formatSurface(value);
+
 
 
 
@@ -799,7 +788,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const populatePreferenceRegions = () => {
     if (!preferenceRegionList) return;
     const regions = [...new Set([...state.events.map((event) => event.region).filter(Boolean), ...racePreferences.regions])].sort((a,b)=>a.localeCompare(b,'sl-SI'));
-    preferenceRegionList.innerHTML = regions.map((region, index) => `<label><input id="pref-region-sl-${index}" type="checkbox" value="${escapeHtml(region)}" data-preference-region /> <span>${escapeHtml(region)} </span></label>`).join('');
+    preferenceRegionList.innerHTML = regions.map((region, index) => `<label><input id="${buildPreferenceRegionInputId(locale.language, index)}" type="checkbox" value="${escapeHtml(region)}" data-preference-region /> <span>${escapeHtml(region)} </span></label>`).join('');
     syncPreferenceControls();
     refreshPreferencePanel();
   };
@@ -942,7 +931,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
 
-    setCount(filters.sort === 'my-races' ? String((locale.messages.myRacesCount as (count: string | number) => string)(count)) : count > visibleCount ? String((locale.messages.visibleCount as (visible: string | number) => string)(visibleCount)).replace('{total}', pluralizeEvents(count)) : pluralizeEvents(count));
+    setCount(filters.sort === 'my-races' ? String((locale.messages.myRacesCount as (count: string | number) => string)(count)) : count > visibleCount ? locale.formatVisibleResultCount(visibleCount, count) : locale.formatResultCount(count));
     const statusMessage = filters.quickPick
       ? locale.messages.quickPickStatus
       : filters.deadlineFilter

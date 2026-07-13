@@ -50,10 +50,13 @@ async function mockFinderApis(page: Page) {
   return analytics;
 }
 
-async function openFinder(page: Page, path = '/en/find-races/') {
+type FinderLanguage = 'sl' | 'en';
+
+async function openFinder(page: Page, path = '/en/find-races/', language: FinderLanguage = path.startsWith('/en/') ? 'en' : 'sl') {
   await mockFinderApis(page);
   await page.goto(path);
-  await expect(page.locator('[data-result-count]')).toContainText(/race|tek/i);
+  const expectedCountPattern = language === 'en' ? /race/i : /dogodek|dogodka|dogodki|dogodkov|tek/i;
+  await expect(page.locator('[data-result-count]')).toContainText(expectedCountPattern);
 }
 
 const chip = (page: Page, kind: string, value?: string) => {
@@ -63,6 +66,17 @@ const chip = (page: Page, kind: string, value?: string) => {
 
   return page.locator(selector);
 };
+
+
+test('localizes single English result count as 1 race', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?q=Maribor', 'en');
+  await expect(page.locator('[data-result-count]')).toHaveText('1 race');
+});
+
+test('localizes single Slovenian result count as 1 dogodek', async ({ page }) => {
+  await openFinder(page, '/iskalnik-tekov/?q=Maribor', 'sl');
+  await expect(page.locator('[data-result-count]')).toHaveText('1 dogodek');
+});
 
 test('@smoke restores shareable URL filters, chips and language/year links', async ({ page }) => {
   await openFinder(page, '/en/find-races/?q=Ljubljana&month=08&surface=trail&distance=over-5-to-10&quick=route');
