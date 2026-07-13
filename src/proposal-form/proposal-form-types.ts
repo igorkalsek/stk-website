@@ -7,6 +7,7 @@ export interface ProposalPrefill {
   date: string;
   place: string;
   source: string;
+  officialSourceUrl: string;
   returnUrl: string;
   lang: ProposalLanguage;
   safeReturnUrl: string;

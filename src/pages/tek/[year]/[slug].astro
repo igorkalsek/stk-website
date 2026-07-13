@@ -83,7 +83,7 @@ const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl
   });
   return `/dodaj-ali-popravi-tek/?${params.toString()}`;
 };
-const correctionUrl = event ? buildCorrectionUrl(event, 'sl', shareUrl) : '/dodaj-ali-popravi-tek/';
+const correctionUrl = event ? buildCorrectionUrl(event, 'sl', canonicalPath) : '/dodaj-ali-popravi-tek/';
 const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/');
 
 const getDateStatus = (value: string) => {

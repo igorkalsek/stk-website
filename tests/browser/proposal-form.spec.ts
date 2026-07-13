@@ -52,6 +52,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('heading', { name: 'Add or correct a race' })).toBeVisible();
     await expect(page.getByText('Selected race for correction')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Back to race page' })).toHaveAttribute('href', '/tek/2027/dolgi-tek/');
+    await expect(page.getByLabel(/Official source link/)).toHaveValue('https://example.com/zelo-dolg-url/razpis');
     await expect(page.getByLabel('Correction or update for an existing race')).toBeChecked();
     await page.getByLabel(/Region/).selectOption('Osrednjeslovenska');
     await page.getByLabel(/Are you/).selectOption('Da');
@@ -66,7 +67,8 @@ test.describe('native proposal form', () => {
   });
 
   test('unsafe returnUrl is not rendered', async ({ page }) => {
-    await page.goto('/dodaj-ali-popravi-tek/?event=Tek&returnUrl=https://evil.test/&date=2026-02-02&place=Kraj');
+    await page.goto('/dodaj-ali-popravi-tek/?event=Tek&source=detail&returnUrl=https://evil.test/&date=2026-02-02&place=Kraj');
     await expect(page.getByRole('link', { name: 'Nazaj na stran teka' })).toHaveCount(0);
+    await expect(page.getByLabel(/Povezava/)).toHaveValue('');
   });
 });

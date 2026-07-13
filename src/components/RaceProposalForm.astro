@@ -56,7 +56,7 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
         <label>{copy.labels.title}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" /></label>
         <label>{copy.labels.place}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" /></label>
         <label>{copy.labels.region}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{r}</option>)}</select></label>
-        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.source} data-source-url /></label>
+        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.officialSourceUrl} data-source-url /></label>
         <label class="full-span">{copy.labels.description}<span aria-hidden="true"> *</span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description}>{prefill.description}</textarea></label>
         <label>{copy.labels.organizer}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{v}</option>)}</select></label>
         <label>{copy.labels.officialAnnouncement2026}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{v}</option>)}</select></label>
@@ -81,6 +81,7 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const status = document.querySelector('[data-submit-status]');
   const errors = document.querySelector('[data-error-summary]');
   const source = document.querySelector('[data-source-url]');
+  let hasSubmittedToGoogle = false;
   const setError = (message, field) => { if (errors) { errors.hidden = false; errors.textContent = message; errors.focus(); } field?.setAttribute('aria-invalid', 'true'); };
   source?.addEventListener('input', () => source.setCustomValidity(source.value && !/^https?:\/\//i.test(source.value) ? copy.sourceError : ''));
   form?.addEventListener('submit', (event) => {
@@ -89,9 +90,17 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
     if (!form.checkValidity()) { event.preventDefault(); const first = form.querySelector(':invalid'); setError(copy.errorTitle, first); first?.focus(); return; }
     if (errors) errors.hidden = true;
     if (button) { button.disabled = true; button.textContent = copy.submitting; }
+    hasSubmittedToGoogle = true;
     if (status) { status.hidden = false; status.textContent = copy.submitting; }
   });
+  form?.addEventListener('reset', () => {
+    hasSubmittedToGoogle = false;
+    if (errors) errors.hidden = true;
+    if (status) { status.hidden = true; status.textContent = ''; }
+    form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+  });
   document.querySelector('[data-submit-target]')?.addEventListener('load', () => {
+    if (!hasSubmittedToGoogle) return;
     if (button) { button.disabled = false; button.textContent = copy.submit; }
     if (status) { status.hidden = false; status.textContent = copy.sent; }
   });

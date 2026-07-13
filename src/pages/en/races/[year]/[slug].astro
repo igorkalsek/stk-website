@@ -83,7 +83,7 @@ const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl
   });
   return `/en/add-or-correct-race/?${params.toString()}`;
 };
-const correctionUrl = event ? buildCorrectionUrl(event, 'en', shareUrl) : '/en/add-or-correct-race/';
+const correctionUrl = event ? buildCorrectionUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
 const getDateStatus = (value: string) => {
