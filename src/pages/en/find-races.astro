@@ -236,6 +236,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </section>
 
     <section class="section container" aria-labelledby="results-title">
+
+      <div class="active-filters" data-active-filters hidden>
+        <div class="active-filters-heading">
+          <strong data-active-filters-title>Active filters</strong>
+          <span data-active-filters-count></span>
+        </div>
+        <div class="active-filter-list" data-active-filter-list></div>
+      </div>
       <div class="section-heading">
         <h2 id="results-title">Results</h2>
         <p data-search-status>Loading confirmed public races …</p>
@@ -272,6 +280,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, type PublicYear } from '../../utils-public-year';
   import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../../utils-finder-url-state';
+  import { formatActiveFinderFilterCount, getActiveFinderFilters, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../../utils-finder-active-filters';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -344,6 +353,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const languageSwitchLinks = document.querySelectorAll<HTMLAnchorElement>('[data-language-switch]');
   const yearNoticeElement = document.querySelector<HTMLElement>('[data-year-notice]');
   const yearLinkElements = document.querySelectorAll<HTMLAnchorElement>('[data-year-link]');
+  const activeFiltersElement = document.querySelector<HTMLElement>('[data-active-filters]');
+  const activeFilterCountElement = document.querySelector<HTMLElement>('[data-active-filters-count]');
+  const activeFilterListElement = document.querySelector<HTMLElement>('[data-active-filter-list]');
   const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
   const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
   const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
@@ -733,6 +745,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const nextPath = canonicalPathForState(finderState);
     if (`${window.location.pathname}${window.location.search}` !== nextPath) history.replaceState(null, '', nextPath);
     updateDerivedFinderLinks(finderState);
+    renderActiveFilters(finderState);
   };
 
   const updateDerivedFinderLinks = (finderState = getFinderUrlStateFromControls()) => {
@@ -744,6 +757,42 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const targetLanguage = link.getAttribute('hreflang') === 'en' ? 'en' : 'sl';
       link.href = buildFinderUrlForLanguage(finderState, targetLanguage);
     });
+  };
+
+  const getSelectLabelMap = (select: HTMLSelectElement | null) => Object.fromEntries([...select?.options ?? []].filter((option) => option.value).map((option) => [option.value, option.textContent?.trim() ?? option.value]));
+
+  const getActiveFilterLabelLookup = (): ActiveFilterLabelLookup => ({
+    month: getSelectLabelMap(monthSelect),
+    region: getSelectLabelMap(regionSelect),
+    surface: getSelectLabelMap(surfaceSelect),
+    distance: getSelectLabelMap(distanceSelect),
+    fee: getSelectLabelMap(registrationFeeSelect),
+    deadline: getSelectLabelMap(deadlineSelect),
+    sort: getSelectLabelMap(sortSelect),
+    elevation: getSelectLabelMap(elevationSelect)
+  });
+
+  const renderActiveFilters = (finderState = getFinderUrlStateFromControls()) => {
+    if (!activeFiltersElement || !activeFilterListElement) return;
+    const chips = getActiveFinderFilters(stateForYear(finderState, activeYear), 'en', getActiveFilterLabelLookup());
+    activeFiltersElement.hidden = chips.length === 0;
+    if (activeFilterCountElement) activeFilterCountElement.textContent = chips.length ? formatActiveFinderFilterCount(chips.length, 'en') : '';
+    activeFilterListElement.innerHTML = chips.map((filter) => `
+      <button type="button" class="active-filter-chip" data-remove-filter="${escapeHtml(filter.kind)}" data-remove-filter-value="${escapeHtml(filter.value)}" aria-label="${escapeHtml(filter.ariaLabel)}">
+        <span>${escapeHtml(filter.label)}</span>
+        <span aria-hidden="true">×</span>
+      </button>
+    `).join('');
+  };
+
+  const removeActiveFilterChip = (kind: string, value: string) => {
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
+    state.userInteracted = true;
+    state.visibleCount = PAGE_SIZE;
+    const nextState = removeActiveFinderFilter(getFinderUrlStateFromControls(), kind as Parameters<typeof removeActiveFinderFilter>[1], value);
+    applyFinderUrlStateToControls(stateForYear(nextState, activeYear));
+    renderResults();
+    syncUrlFromControls();
   };
 
   const applyPublicSortState = (finderState: FinderUrlState, preservePersonalSort = true) => {
@@ -1398,6 +1447,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-clear-filters]') : null;
     if (target) clearFilters();
+    const removeFilterTarget = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-remove-filter]') : null;
+    if (removeFilterTarget) removeActiveFilterChip(removeFilterTarget.dataset.removeFilter ?? '', removeFilterTarget.dataset.removeFilterValue ?? '');
     const editTarget = event.target instanceof Element ? event.target.closest('[data-edit-preferences]') : null;
     if (editTarget && editTarget !== editPreferencesButton) { previousPreferencePanelState = getRacePreferencePanelState({ preferences: racePreferences, editing: false }); preferencesEditing = true; syncPreferenceControls(); refreshPreferencePanel('form'); }
     const showAllTarget = event.target instanceof Element ? event.target.closest('[data-show-all-races]') : null;
