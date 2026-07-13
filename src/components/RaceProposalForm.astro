@@ -44,7 +44,7 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
         <div class="proposal-type-grid">
           {typeOptions.map((option) => (
             <label class="proposal-choice">
-              <input type="radio" name={googleProposalFormContract.fields.proposalType} value={option.value} required checked={option.value === selectedType} />
+              <input type="radio" name={googleProposalFormContract.fields.proposalType} value={option.value} required checked={option.value === selectedType} data-field-label={copy.labels.proposalType} />
               <span>{option.label}</span>
             </label>
           ))}
@@ -52,23 +52,24 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
       </fieldset>
 
       <div class="form-grid">
-        <label>{copy.labels.date}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} /></label>
-        <label>{copy.labels.title}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" /></label>
-        <label>{copy.labels.place}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" /></label>
-        <label>{copy.labels.region}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{r}</option>)}</select></label>
-        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.officialSourceUrl} data-source-url /></label>
-        <label class="full-span">{copy.labels.description}<span aria-hidden="true"> *</span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description}>{prefill.description}</textarea></label>
-        <label>{copy.labels.organizer}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{v}</option>)}</select></label>
-        <label>{copy.labels.officialAnnouncement2026}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{v}</option>)}</select></label>
-        <label class="full-span">{copy.labels.email}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" /></label>
+        <label>{copy.labels.date}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} /></label>
+        <label>{copy.labels.title}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" data-field-label={copy.labels.title} /></label>
+        <label>{copy.labels.place}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" data-field-label={copy.labels.place} /></label>
+        <label>{copy.labels.region}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required data-field-label={copy.labels.region}><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{copy.labelsForValues.regions[r]}</option>)}</select></label>
+        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.officialSourceUrl} data-source-url data-field-label={copy.labels.officialSource} /></label>
+        <label class="full-span">{copy.labels.description}<span aria-hidden="true"> *</span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description} data-field-label={copy.labels.description}>{prefill.description}</textarea></label>
+        <label>{copy.labels.organizer}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required data-field-label={copy.labels.organizer}><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{copy.labelsForValues.yesNo[v]}</option>)}</select></label>
+        <label>{copy.labels.officialAnnouncement2026}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required data-field-label={copy.labels.officialAnnouncement2026}><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{copy.labelsForValues.announcement[v]}</option>)}</select></label>
+        <label class="full-span">{copy.labels.email}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" data-field-label={copy.labels.email} /></label>
         <fieldset class="full-span optional-fieldset">
           <legend>{copy.labels.additionalData}</legend>
-          <div class="checkbox-grid">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{v}</span></label>)}</div>
+          <div class="checkbox-grid">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{copy.labelsForValues.additionalData[v]}</span></label>)}</div>
         </fieldset>
       </div>
       <div class="cta-row proposal-actions">
         <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
-        <button class="button button-secondary-light" type="reset" data-reset-button>{copy.another}</button>
+        <button class="button button-secondary-light" type="reset" data-reset-button>{copy.clear}</button>
+        <a class="button button-secondary-light" href={copy.cleanPath} data-new-proposal-link hidden>{copy.newProposal}</a>
         <a class="button button-secondary" href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link data-analytics-link-type="correction_form">{copy.fallback}</a>
       </div>
     </form>
@@ -79,17 +80,25 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const form = document.querySelector('[data-proposal-form]');
   const button = document.querySelector('[data-submit-button]');
   const status = document.querySelector('[data-submit-status]');
+  const newProposalLink = document.querySelector('[data-new-proposal-link]');
+  const resetButton = document.querySelector('[data-reset-button]');
   const errors = document.querySelector('[data-error-summary]');
   const source = document.querySelector('[data-source-url]');
   let hasSubmittedToGoogle = false;
-  const setError = (message, field) => { if (errors) { errors.hidden = false; errors.textContent = message; errors.focus(); } field?.setAttribute('aria-invalid', 'true'); };
+  const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
+  const showErrors = (fields) => {
+    const labels = [...new Set(fields.map(labelForField).filter(Boolean))];
+    if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); }
+    for (const field of fields) field?.setAttribute('aria-invalid', 'true');
+  };
   source?.addEventListener('input', () => source.setCustomValidity(source.value && !/^https?:\/\//i.test(source.value) ? copy.sourceError : ''));
   form?.addEventListener('submit', (event) => {
     source?.dispatchEvent(new Event('input'));
     form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-    if (!form.checkValidity()) { event.preventDefault(); const first = form.querySelector(':invalid'); setError(copy.errorTitle, first); first?.focus(); return; }
+    if (!form.checkValidity()) { event.preventDefault(); const invalidFields = Array.from(form.querySelectorAll(':invalid')); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
     if (errors) errors.hidden = true;
     if (button) { button.disabled = true; button.textContent = copy.submitting; }
+    if (resetButton) resetButton.hidden = true;
     hasSubmittedToGoogle = true;
     if (status) { status.hidden = false; status.textContent = copy.submitting; }
   });
@@ -97,11 +106,14 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
     hasSubmittedToGoogle = false;
     if (errors) errors.hidden = true;
     if (status) { status.hidden = true; status.textContent = ''; }
+    if (resetButton) resetButton.hidden = false;
+    if (newProposalLink) newProposalLink.hidden = true;
     form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
   });
   document.querySelector('[data-submit-target]')?.addEventListener('load', () => {
     if (!hasSubmittedToGoogle) return;
     if (button) { button.disabled = false; button.textContent = copy.submit; }
+    if (newProposalLink) newProposalLink.hidden = false;
     if (status) { status.hidden = false; status.textContent = copy.sent; }
   });
 </script>

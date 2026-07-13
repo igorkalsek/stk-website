@@ -13,8 +13,11 @@ describe('proposal form contract', () => {
     assert(googleProposalFormContract.values.regions.includes('Ne vem / nisem prepričan (navedem v opisu)'));
   });
   it('documents required website fields', () => assert.deepEqual([...requiredProposalFields], ['proposalType','date','title','place','region','description','organizer','officialAnnouncement2026','email']));
-  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.fallback, 'Odprite obrazec v Google Forms'); assert.equal(proposalFormLocales.en.fallback, 'Open the form in Google Forms'); });
-  it('prefills correction query safely', () => {
+  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.submit, 'Pošlji predlog'); assert.equal(proposalFormLocales.en.submit, 'Send proposal'); assert.equal(proposalFormLocales.sl.labels.additionalData, 'Katere dodatne podatke želite dopolniti? (neobvezno)'); assert.equal(proposalFormLocales.en.labelsForValues.yesNo.Da, 'Yes'); assert.equal(proposalFormLocales.en.labelsForValues.announcement['Ne vem'], 'I do not know'); assert.equal(proposalFormLocales.en.labelsForValues.additionalData['Trasa / zemljevid / GPX'], 'Route / map / GPX'); });
+  it('keeps empty forms empty and prefills correction query safely', () => {
+    const empty = readProposalPrefill(new URLSearchParams(''), 'en');
+    assert.equal(empty.description, '');
+    assert.equal(empty.eventTitle, '');
     const prefill = readProposalPrefill(new URLSearchParams('event=Šmarna gora&year=2027&date=2027-05-01&place=Ljubljana&source=detail&returnUrl=/tek/2027/test/&lang=en'), 'sl');
     assert.equal(prefill.eventTitle, 'Šmarna gora'); assert.equal(prefill.safeReturnUrl, '/tek/2027/test/'); assert.equal(prefill.officialSourceUrl, ''); assert.match(prefill.description, /Year: 2027/); assert.match(prefill.description, /Context source: detail/);
   });

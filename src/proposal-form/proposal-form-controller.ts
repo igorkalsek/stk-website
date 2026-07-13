@@ -28,7 +28,7 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const returnUrl = params.get('returnUrl')?.trim() ?? '';
   const lang = params.get('lang') === 'en' ? 'en' : pageLanguage;
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
-  const description = buildPrefillDescription({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl, lang });
+  const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl, lang }) : '';
   return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description };
 };
 
