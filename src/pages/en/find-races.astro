@@ -280,7 +280,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, type PublicYear } from '../../utils-public-year';
   import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../../utils-finder-url-state';
-  import { formatActiveFinderFilterCount, getActiveFinderFilters, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../../utils-finder-active-filters';
+  import { formatActiveFinderFilterCount, getActiveFinderFilters, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../../utils-finder-active-filters';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = {
@@ -393,6 +393,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
+  let directFinderState: FinderUrlState = stateForYear(initialUrlState, activeYear);
+
 
   const asRecord = (value: unknown): ApiRecord | null =>
     value && typeof value === 'object' && !Array.isArray(value) ? value as ApiRecord : null;
@@ -722,33 +724,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   });
 
 
-  const getFinderUrlStateFromControls = (): FinderUrlState => ({
-    year: activeYear,
-    q: searchInput?.value ?? '',
-    month: monthSelect?.value ?? '',
-    region: regionSelect?.value ?? '',
-    surface: surfaceSelect?.value ?? '',
-    distance: distanceSelect?.value ?? 'all',
-    fee: registrationFeeSelect?.value ?? '',
-    deadline: deadlineSelect?.value ?? '',
-    sort: sortSelect?.value === 'my-races' ? 'date' : (sortSelect?.value as FinderUrlState['sort'] ?? 'date'),
-    family: Boolean(familyInput?.checked),
-    raceDay: Boolean(dayOfRegistrationInput?.checked),
-    route: Boolean(routeInput?.checked),
-    elevation: elevationSelect?.value ?? '',
-    quick: getActiveQuickPickValues()
-  });
+  const updateDirectFinderStateFromControl = (control: EventTarget | null) => {
+    directFinderState = { ...directFinderState, year: activeYear, quick: [] };
+    if (control === searchInput) directFinderState.q = searchInput?.value ?? '';
+    else if (control === monthSelect) directFinderState.month = monthSelect?.value ?? '';
+    else if (control === regionSelect) directFinderState.region = regionSelect?.value ?? '';
+    else if (control === surfaceSelect) directFinderState.surface = surfaceSelect?.value ?? '';
+    else if (control === distanceSelect) directFinderState.distance = distanceSelect?.value ?? 'all';
+    else if (control === registrationFeeSelect) directFinderState.fee = registrationFeeSelect?.value ?? '';
+    else if (control === deadlineSelect) directFinderState.deadline = deadlineSelect?.value ?? '';
+    else if (control === sortSelect) directFinderState.sort = sortSelect?.value === 'my-races' ? 'date' : (sortSelect?.value as FinderUrlState['sort'] ?? 'date');
+    else if (control === familyInput) directFinderState.family = Boolean(familyInput?.checked);
+    else if (control === dayOfRegistrationInput) directFinderState.raceDay = Boolean(dayOfRegistrationInput?.checked);
+    else if (control === routeInput) directFinderState.route = Boolean(routeInput?.checked);
+    else if (control === elevationSelect) directFinderState.elevation = elevationSelect?.value ?? '';
+  };
 
-  const canonicalPathForState = (finderState = getFinderUrlStateFromControls()) => buildFinderUrl('/en/find-races/', finderState, window.location.origin);
+  const getFinderUrlStateForUrl = (): FinderUrlState => ({ ...directFinderState, year: activeYear, quick: getActiveQuickPickValues() });
 
-  const syncUrlFromControls = (finderState = getFinderUrlStateFromControls()) => {
+  const canonicalPathForState = (finderState = getFinderUrlStateForUrl()) => buildFinderUrl('/en/find-races/', finderState, window.location.origin);
+
+  const syncUrlFromControls = (finderState = getFinderUrlStateForUrl()) => {
     const nextPath = canonicalPathForState(finderState);
     if (`${window.location.pathname}${window.location.search}` !== nextPath) history.replaceState(null, '', nextPath);
     updateDerivedFinderLinks(finderState);
     renderActiveFilters(finderState);
   };
 
-  const updateDerivedFinderLinks = (finderState = getFinderUrlStateFromControls()) => {
+  const updateDerivedFinderLinks = (finderState = getFinderUrlStateForUrl()) => {
     yearLinkElements.forEach((link) => {
       const year = link.dataset.yearLink === '2027' ? '2027' : '2026';
       link.href = buildFinderUrlForYear('/en/find-races/', finderState, year);
@@ -772,7 +775,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     elevation: getSelectLabelMap(elevationSelect)
   });
 
-  const renderActiveFilters = (finderState = getFinderUrlStateFromControls()) => {
+  const renderActiveFilters = (finderState = getFinderUrlStateForUrl()) => {
     if (!activeFiltersElement || !activeFilterListElement) return;
     const chips = getActiveFinderFilters(stateForYear(finderState, activeYear), 'en', getActiveFilterLabelLookup());
     activeFiltersElement.hidden = chips.length === 0;
@@ -786,11 +789,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   };
 
   const removeActiveFilterChip = (kind: string, value: string) => {
+    if (!isActiveFilterKind(kind)) {
+      if (import.meta.env.DEV) console.warn('Invalid active filter chip kind', kind);
+      return;
+    }
     if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
     state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
-    const nextState = removeActiveFinderFilter(getFinderUrlStateFromControls(), kind as Parameters<typeof removeActiveFinderFilter>[1], value);
-    applyFinderUrlStateToControls(stateForYear(nextState, activeYear));
+    const nextState = removeActiveFinderFilter(getFinderUrlStateForUrl(), kind, value);
+    rebuildControlsFromFinderState(stateForYear(nextState, activeYear));
     renderResults();
     syncUrlFromControls();
   };
@@ -808,7 +815,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
   };
 
-  const applyFinderUrlStateToControls = (finderState: FinderUrlState) => {
+  const stripQuickPickDerivedFilters = (finderState: FinderUrlState): FinderUrlState => {
+    const next = { ...finderState, quick: [...finderState.quick] };
+    if (next.quick.includes('deadlines-soon')) {
+      if (next.deadline === 'within-14') next.deadline = '';
+      if (next.sort === 'registration-deadline') next.sort = 'date';
+    }
+    if (next.quick.includes('budget') && next.fee === '20') next.fee = '';
+    if (next.quick.includes('first-race') && ['cesta', 'cesta/trail'].includes(normalize(next.surface))) next.surface = '';
+    if (next.quick.includes('kids')) next.family = false;
+    if (next.quick.includes('route')) next.route = false;
+    return next;
+  };
+
+  const applyDirectFinderStateToControls = (finderState: FinderUrlState) => {
     if (searchInput) searchInput.value = finderState.q;
     if (monthSelect) monthSelect.value = [...monthSelect.options].some((option) => option.value === finderState.month) ? finderState.month : '';
     if (regionSelect) regionSelect.value = [...regionSelect.options].some((option) => option.value === finderState.region) ? finderState.region : '';
@@ -821,11 +841,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (dayOfRegistrationInput) dayOfRegistrationInput.checked = activeYear !== '2027' && finderState.raceDay;
     if (routeInput) routeInput.checked = activeYear !== '2027' && finderState.route;
     if (elevationSelect) elevationSelect.value = activeYear === '2027' ? '' : finderState.elevation;
+  };
+
+  const rebuildControlsFromFinderState = (finderState: FinderUrlState) => {
+    const normalizedState = stateForYear(finderState, activeYear);
+    directFinderState = stripQuickPickDerivedFilters({ ...normalizedState, quick: [] });
+    applyDirectFinderStateToControls(directFinderState);
     selectedQuickPicks.clear();
     stateForYear(finderState, activeYear).quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
     for (const quickPick of selectedQuickPicks) applyQuickPick(quickPick);
     updateQuickPickStates();
   };
+
+  const applyFinderUrlStateToControls = rebuildControlsFromFinderState;
 
   const restoreFromCurrentUrl = () => {
     state.userInteracted = false;
@@ -1348,6 +1376,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   const clearFilters = () => {
     formElement?.reset();
+    directFinderState = clearFinderUrlState(activeYear);
     selectedQuickPicks.clear();
     updateQuickPickStates();
     syncUrlFromControls(clearFinderUrlState(activeYear));
@@ -1408,6 +1437,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   searchInput?.addEventListener('input', () => {
     state.userInteracted = true;
     state.visibleCount = PAGE_SIZE;
+    updateDirectFinderStateFromControl(searchInput);
     if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
     searchUrlTimer = window.setTimeout(() => {
       renderResults();
@@ -1416,10 +1446,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   });
   formElement?.addEventListener('input', (event) => {
     if (event.target === searchInput) return;
+    updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('change', (event) => {
     if (event.target === searchInput) return;
+    updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('submit', (event) => {
@@ -1439,6 +1471,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       state.userInteracted = true;
       state.visibleCount = PAGE_SIZE;
       toggleQuickPick(button.dataset.quickPick ?? '');
+      rebuildControlsFromFinderState({ ...directFinderState, year: activeYear, quick: [...selectedQuickPicks] });
       renderResults();
       syncUrlFromControls();
     });

@@ -1,7 +1,9 @@
 import { FINDER_QUICK_ORDER, sanitizeFinderUrlState, type FinderUrlState } from './utils-finder-url-state.js';
 
 export type FinderLanguage = 'sl' | 'en';
-export type ActiveFilterKind = 'q' | 'month' | 'region' | 'surface' | 'distance' | 'fee' | 'deadline' | 'family' | 'raceDay' | 'route' | 'elevation' | 'sort' | 'quick';
+export const ACTIVE_FILTER_KINDS = ['q', 'month', 'region', 'surface', 'distance', 'fee', 'deadline', 'family', 'raceDay', 'route', 'elevation', 'sort', 'quick'] as const;
+export type ActiveFilterKind = typeof ACTIVE_FILTER_KINDS[number];
+export const isActiveFilterKind = (value: string): value is ActiveFilterKind => (ACTIVE_FILTER_KINDS as readonly string[]).includes(value);
 
 export interface ActiveFilterChip {
   kind: ActiveFilterKind;

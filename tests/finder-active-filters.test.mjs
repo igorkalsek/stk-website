@@ -37,3 +37,52 @@ describe('active finder filters page wiring', () => {
   it('chip listener has no manual analytics call', () => { for (const page of [sl,en]) { const i = page.indexOf('removeActiveFilterChip'); assert.doesNotMatch(page.slice(i, i + 900), /trackStkEvent/); } });
   it('search debounce is cancelled before removing a filter', () => { for (const page of [sl,en]) assert.match(page, /const removeActiveFilterChip[\s\S]*if \(searchUrlTimer\) window\.clearTimeout\(searchUrlTimer\)/); });
 });
+
+describe('quick-pick derived filter rebuild contract', () => {
+  const pages = [sl, en];
+  it('empty finder block is hidden and CSS removes its layout space', () => {
+    const css = readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf8');
+    for (const page of pages) assert.match(page, /<div class="active-filters" data-active-filters hidden>/);
+    assert.match(css, /\.active-filters\[hidden\]\s*{\s*display:\s*none;/);
+  });
+  it('quick trail creates only its quick chip in the visual summary', () => assert.deepEqual(getActiveFinderFilters({ quick: ['trail'] }, 'sl').map((chip) => chip.label), ['Trail izzivi']));
+  it('quick-derived ordinary chips are stripped when URL state is rebuilt', () => {
+    for (const page of pages) {
+      assert.match(page, /if \(next\.quick\.includes\('budget'\) && next\.fee === '20'\) next\.fee = ''/);
+      assert.match(page, /if \(next\.quick\.includes\('kids'\)\) next\.family = false/);
+      assert.match(page, /if \(next\.quick\.includes\('route'\)\) next\.route = false/);
+      assert.match(page, /if \(next\.quick\.includes\('deadlines-soon'\)\)[\s\S]*next\.deadline = ''[\s\S]*next\.sort = 'date'/);
+      assert.match(page, /if \(next\.quick\.includes\('first-race'\)[\s\S]*next\.surface = ''/);
+    }
+  });
+  it('removing a quick chip rebuilds from canonical URL state, renders once, and syncs once', () => {
+    for (const page of pages) {
+      const start = page.indexOf('const removeActiveFilterChip');
+      const body = page.slice(start, page.indexOf('  const applyPublicSortState', start));
+      assert.match(body, /removeActiveFinderFilter\(getFinderUrlStateForUrl\(\), kind, value\)/);
+      assert.match(body, /rebuildControlsFromFinderState\(stateForYear\(nextState, activeYear\)\)/);
+      assert.equal((body.match(/renderResults\(\)/g) ?? []).length, 1);
+      assert.equal((body.match(/syncUrlFromControls\(\)/g) ?? []).length, 1);
+    }
+  });
+  it('direct manual filters are stored separately from selected quick picks', () => {
+    for (const page of pages) {
+      assert.match(page, /let directFinderState: FinderUrlState/);
+      assert.match(page, /updateDirectFinderStateFromControl\(event\.target\)/);
+      assert.match(page, /rebuildControlsFromFinderState\(\{ \.\.\.directFinderState, year: activeYear, quick: \[\.\.\.selectedQuickPicks\] \}\)/);
+    }
+  });
+  it('invalid chip kinds are guarded before state changes', () => {
+    assert.equal(getActiveFinderFilters({ quick: ['trail'], surface: 'Trail' }, 'sl', { surface: { Trail: 'Trail' } }).map((chip) => chip.label).join('|'), 'Trail|Trail izzivi');
+    for (const page of pages) {
+      const start = page.indexOf('const removeActiveFilterChip');
+      const body = page.slice(start, page.indexOf('  const applyPublicSortState', start));
+      assert.match(body, /if \(!isActiveFilterKind\(kind\)\)/);
+      assert.match(body, /return;/);
+    }
+  });
+  it('Slovenian and English pages keep matching direct and derived rebuild logic', () => {
+    const snippets = ['stripQuickPickDerivedFilters', 'rebuildControlsFromFinderState', 'getFinderUrlStateForUrl', 'updateDirectFinderStateFromControl'];
+    for (const snippet of snippets) assert.equal(sl.includes(snippet), en.includes(snippet));
+  });
+});
