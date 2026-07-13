@@ -69,17 +69,17 @@ test('@smoke restores shareable URL filters, chips and language/year links', asy
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
   await expect(page.locator('[data-filter="month"]')).toHaveValue('08');
   await expect(page.locator('[data-quick-pick="route"]')).toHaveAttribute('aria-pressed', 'true');
-  await expect(chip(page, 'search')).toContainText('Ljubljana');
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
   await expect(chip(page, 'month', '08')).toContainText('August');
   await expect(chip(page, 'surface', 'trail')).toContainText('Trail');
   await expect(chip(page, 'distance', 'over-5-to-10')).toContainText('Over 5 to 10 km');
-  await expect(chip(page, 'quick', 'route')).toContainText('Has route / map');
+  await expect(chip(page, 'quick', 'route')).toContainText('With route');
   await expect(page.locator('a[hreflang="sl"]')).toHaveAttribute('href', /\/iskalnik-tekov\/\?q=Ljubljana/);
   await expect(page.locator('[data-year-link="2027"]')).toHaveAttribute('href', /year=2027/);
   await page.reload();
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
-  await expect(chip(page, 'search')).toContainText('Ljubljana');
-  await expect(chip(page, 'quick', 'route')).toContainText('Has route / map');
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
+  await expect(chip(page, 'quick', 'route')).toContainText('With route');
 });
 
 test('removes individual chips and preserves direct filters distinct from quick picks', async ({ page }) => {
@@ -134,7 +134,7 @@ test('supports Back/Forward URL restoration without duplicate search analytics',
 
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
   await expect(page.locator('[data-filter="distance"]')).toHaveValue('over-5-to-10');
-  await expect(chip(page, 'search')).toContainText('Ljubljana');
+  await expect(chip(page, 'q')).toContainText('Ljubljana');
   await expect(chip(page, 'distance', 'over-5-to-10')).toContainText('Over 5 to 10 km');
   await expect(page.locator('[data-search-results]')).toContainText('Ljubljana 10K Trail');
 
