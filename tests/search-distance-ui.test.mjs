@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 
 const slovenePage = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
 const englishPage = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
+const finderController = readFileSync(new URL('../src/finder/race-finder-controller.ts', import.meta.url), 'utf8');
 
 const options = ['all', 'up-to-5', 'over-5-to-10', 'over-10-to-half', 'over-half-to-marathon', 'ultra'];
 
@@ -20,16 +21,16 @@ describe('race search distance filter UI wiring', () => {
   });
 
   it('wires distance into filtering and existing analytics payloads', () => {
-    for (const page of [slovenePage, englishPage]) {
+    for (const page of [finderController]) {
       assert.match(page, /matchesRaceDistanceFilter\(event\.distances, filters\.distance\)/);
       assert.match(page, /distanceFilter: filters\.distance === 'all' \? '' : filters\.distance/);
     }
   });
 
   it('keeps English search year-aware for 2026 and 2027', () => {
-    assert.match(englishPage, /getPublicYearFromSearchParams/);
-    assert.match(englishPage, /buildMasterApiPath\(activeYear\)/);
-    assert.match(englishPage, /date\.startsWith\(`\$\{activeYear\}-`\)/);
+    assert.match(finderController, /getPublicYearFromSearchParams/);
+    assert.match(finderController, /buildMasterApiPath\(activeYear\)/);
+    assert.match(finderController, /mapPublicRaceEvent\(item, activeYear, today\)/);
     assert.match(englishPage, /The 2027 calendar is being updated\./);
   });
 });
@@ -61,7 +62,7 @@ describe('race preference compact UX wiring', () => {
   });
 
   it('uses dynamic result descriptions for every sort mode', () => {
-    for (const page of [slovenePage, englishPage]) {
+    for (const page of [finderController]) {
       assert.match(page, /getRaceFinderResultDescription\(filters\.sort, preferenceLanguage\)/);
       assert.doesNotMatch(page, /sorted by the selected entry fee/);
       assert.doesNotMatch(page, /urejeni po izbrani startnini/);
@@ -72,17 +73,14 @@ describe('race preference compact UX wiring', () => {
 
 describe('race search analytics source cleanup', () => {
   it('does not mark Slovenian race-title or detail links as external analytics clicks', () => {
-    assert.doesNotMatch(slovenePage, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*external_link_clicked/);
-    assert.doesNotMatch(slovenePage, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*event_card_click/);
-    assert.doesNotMatch(slovenePage, /search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"[^`]*(data-analytics-event-type|data-analytics-action-type|data-analytics-link-type|data-stk-action)/);
+    assert.doesNotMatch(finderController, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*external_link_clicked/);
+    assert.doesNotMatch(finderController, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"[^`]*event_card_click/);
+    assert.doesNotMatch(finderController, /search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"[^`]*(data-analytics-event-type|data-analytics-action-type|data-analytics-link-type|data-stk-action)/);
   });
 
   it('uses shared race actions for combined registration and announcement links in race finders', () => {
-    assert.match(slovenePage, /buildPrimaryActions\(event, 'sl'\)\.map\(renderPrimaryActionLink\)/);
-    assert.match(englishPage, /buildPrimaryActions\(event, 'en'\)\.map\(renderPrimaryActionLink\)/);
-    assert.match(slovenePage, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
-    assert.match(englishPage, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
-    assert.match(slovenePage, /escapeHtml\(action\.label\)/);
-    assert.match(englishPage, /escapeHtml\(action\.label\)/);
+    assert.match(finderController, /buildPrimaryActions\(event, locale\.language\)\.map\(renderPrimaryActionLink\)/);
+    assert.match(finderController, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
+    assert.match(finderController, /escapeHtml\(action\.label\)/);
   });
 });

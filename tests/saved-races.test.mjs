@@ -57,11 +57,11 @@ describe('saved races storage model', () => {
 });
 
 describe('saved races UI source contract', () => {
-  const files = ['src/pages/iskalnik-tekov.astro', 'src/pages/en/find-races.astro', 'src/pages/tek/[year]/[slug].astro', 'src/pages/en/races/[year]/[slug].astro'];
+  const files = ['src/finder/race-finder-controller.ts', 'src/pages/tek/[year]/[slug].astro', 'src/pages/en/races/[year]/[slug].astro'];
   const sources = Object.fromEntries(files.map((file) => [file, readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')]));
   it('contains Slovenian and English labels', () => {
-    assert.match(sources['src/pages/iskalnik-tekov.astro'], /Shrani tek/);
-    assert.match(sources['src/pages/en/find-races.astro'], /Save race/);
+    assert.match(readFileSync(new URL('../src/finder/race-finder-locales.ts', import.meta.url), 'utf8'), /Shrani tek/);
+    assert.match(readFileSync(new URL('../src/finder/race-finder-locales.ts', import.meta.url), 'utf8'), /Save race/);
   });
   it('sets aria-pressed on saved race buttons', () => files.forEach((file) => assert.match(sources[file], /aria-pressed="false"/)));
   it('adds buttons to both search pages and both detail routes', () => files.forEach((file) => assert.match(sources[file], /data-saved-race-button/)));
