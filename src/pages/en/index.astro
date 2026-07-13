@@ -39,7 +39,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
         <aside class="hero-preview" aria-label="Calendar preview">
           <div class="hero-preview-heading">
             <span class="hero-preview-kicker" data-hero-preview-title>Highlighted in the next days</span>
-            <p class="hero-preview-helper" data-hero-preview-helper>Based on runner votes, filled with nearby upcoming races.</p>
+            <p class="hero-preview-helper" data-hero-preview-helper>Nearby upcoming races attracting the most interest.</p>
           </div>
           <ol class="hero-preview-list" data-hero-preview-list>
             <li><span>loading</span><strong>Upcoming races will appear here.</strong></li>
@@ -125,24 +125,23 @@ import SocialLinks from '../../components/SocialLinks.astro';
     <section class="section container" aria-labelledby="voted-title">
       <div class="section-heading section-heading-with-action">
         <div>
-          <h2 id="voted-title">Most voted upcoming races</h2>
-          <p>A compact ranking of upcoming races that received the most runner votes. You can vote for your race from the race search.</p>
+          <h2 id="voted-title">Races attracting the most interest</h2>
+          <p data-top-description>Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.</p>
         </div>
         <div class="section-heading-actions">
-          <a class="button button-secondary-light" href="/en/most-voted-races/">View full ranking</a>
-          <a class="button button-secondary-muted" href="/en/find-races/">Vote for your race</a>
+          <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
         </div>
       </div>
       <div class="card-grid" data-top-events>
         <article class="event-card">
           <h3>Loading data</h3>
-          <p>Most voted upcoming races will be shown here.</p>
+          <p>Races attracting the most interest will be shown here.</p>
           <div class="event-meta">
-            <span class="pill">Runner votes</span>
+            <span class="pill">Visitor interest</span>
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="top">The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.</p>
+      <p class="data-note" data-status="top">The selection is based on visitor interest in registration, official information, calendar and route links.</p>
     </section>
 
     <section class="section container" aria-labelledby="organizer-cta-title">
@@ -209,12 +208,13 @@ import SocialLinks from '../../components/SocialLinks.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { getDisplayEventTitle } from '../../utils-events';
-  import { getStableEventId } from '../../utils-event-detail';
+  import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
   import { initSavedRaceButtons } from '../../saved-races-client';
 
   type ApiRecord = Record<string, unknown>;
 
   const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  const INTEREST_PREVIEW_URL = '/api/interest-preview';
   const numberFormatter = new Intl.NumberFormat('en-US');
   const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -858,6 +858,104 @@ import SocialLinks from '../../components/SocialLinks.astro';
       .join('|');
   };
 
+  const detailEventData = (event: ApiRecord) => ({
+    year: getEventYear(event),
+    row: rowKey(event),
+    date: getEventField(event, 'datum', ['date', 'event_date', 'Datum']),
+    title: getDisplayEventTitle(getEventTitle(event)),
+    naziv_prireditve: getDisplayEventTitle(getEventTitle(event)),
+    place: getEventField(event, 'kraj', ['place', 'city', 'location'])
+  });
+
+  const canonicalDetailEvent = (event: ApiRecord) => asRecord(event.__master_event) ?? event;
+
+  const eventDetailPath = (event: ApiRecord) => buildEnglishEventDetailPath(detailEventData(canonicalDetailEvent(event)));
+
+  const INTEREST_ID_KEYS = ['event_id', 'eventId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
+
+  const normalizeInterestEventId = (value: unknown) => {
+    if (value === undefined || value === null) return '';
+    const normalized = String(value).trim().toLocaleUpperCase('sl-SI').replace(/[\s_-]+/g, '');
+    if (!normalized) return '';
+
+    const prefixedMatch = normalized.match(/^R0*(\d+)$/);
+    const numericMatch = normalized.match(/^0*(\d+)$/);
+    const numericPart = prefixedMatch?.[1] ?? numericMatch?.[1];
+    if (!numericPart) return '';
+
+    const numberValue = Number.parseInt(numericPart, 10);
+    if (!Number.isFinite(numberValue) || numberValue <= 0) return '';
+    return `R${String(numberValue).padStart(6, '0')}`;
+  };
+
+  const eventIdValue = (event: ApiRecord) => {
+    for (const key of INTEREST_ID_KEYS) {
+      const value = getEventField(event, key);
+      const normalizedId = normalizeInterestEventId(value);
+      if (normalizedId) return normalizedId;
+    }
+    return '';
+  };
+
+  const buildUniqueEventIdIndex = (events: ApiRecord[]) => {
+    const candidates = new Map<string, ApiRecord[]>();
+    for (const event of events) {
+      const id = eventIdValue(event);
+      if (!id) continue;
+      const bucket = candidates.get(id) ?? [];
+      bucket.push(event);
+      candidates.set(id, bucket);
+    }
+
+    const unique = new Map<string, ApiRecord>();
+    for (const [id, matches] of candidates.entries()) {
+      if (matches.length === 1) unique.set(id, matches[0]);
+    }
+    return unique;
+  };
+
+  const loadInterestPreviewPayload = async () => {
+    const response = await fetch(INTEREST_PREVIEW_URL, { headers: { accept: 'application/json' } });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) throw new Error(`Interest preview request failed: ${response.status}`);
+    const record = asRecord(payload);
+    if (!record || record.ok !== true || record.type !== 'interest_preview') throw new Error('Interest preview response was not valid.');
+    return record;
+  };
+
+  const isValidInterestPreviewMasterEvent = (event: ApiRecord, todayValue: number) => {
+    if (!isConfirmedPublicUpcomingEvent(event, todayValue)) return false;
+    if (getEventYear(event) !== '2026') return false;
+    if (!getDisplayEventTitle(getEventTitle(event, '')).trim()) return false;
+    if (!getEventField(event, 'datum', ['date', 'event_date', 'Datum'])) return false;
+    return Boolean(eventDetailPath(event));
+  };
+
+  const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5) => {
+    const payload = await loadInterestPreviewPayload();
+    const interestItems = getRecordArray(payload, 'items');
+    if (!interestItems.length) return [];
+
+    const todayValue = todayStartValue();
+    const masterEventsById = buildUniqueEventIdIndex(
+      masterRows.filter((event) => isValidInterestPreviewMasterEvent(event, todayValue))
+    );
+    const selectedIds = new Set<string>();
+    const rankedEvents: ApiRecord[] = [];
+
+    for (const item of interestItems) {
+      const id = eventIdValue(item);
+      if (!id || selectedIds.has(id)) continue;
+      const match = masterEventsById.get(id);
+      if (!match) continue;
+      selectedIds.add(id);
+      rankedEvents.push({ ...match, __interest_preview_ranked: true });
+      if (rankedEvents.length >= displayLimit) break;
+    }
+
+    return rankedEvents;
+  };
+
   const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
   const normalizeTopUpcomingRace = (event: ApiRecord) => {
@@ -896,7 +994,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
   const removeHeroVotes = (event: ApiRecord) => ({ ...event, votes_total: undefined });
 
-  const renderHeroPreview = (topEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
+  const renderHeroPreview = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
     const titleElement = document.querySelector('[data-hero-preview-title]');
     const helperElement = document.querySelector('[data-hero-preview-helper]');
     const listElement = document.querySelector('[data-hero-preview-list]');
@@ -904,30 +1002,17 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
     const todayValue = todayStartValue();
     const cutoffValue = daysFromToday(14);
-    const votedEvents = topEvents
-      .filter((event) => {
-        const dateValue = eventDateValue(event);
-        return (
-          dateValue !== null &&
-          dateValue >= todayValue &&
-          dateValue <= cutoffValue &&
-          hasConfirmedPublicFields(event) &&
-          (getHeroPreviewVotes(event) ?? 0) > 0
-        );
-      })
-      .sort((a, b) => {
-        const voteDifference = (getHeroPreviewVotes(b) ?? 0) - (getHeroPreviewVotes(a) ?? 0);
-        if (voteDifference !== 0) return voteDifference;
-        return compareEventDateThenTitle(a, b);
-      });
     const selectedIds = new Set<string>();
-    const votedSelection: ApiRecord[] = [];
-    for (const event of votedEvents) {
-      if (votedSelection.length >= 3) break;
+    const upcomingInterestEvents: ApiRecord[] = [];
+
+    for (const event of interestEvents) {
+      if (upcomingInterestEvents.length >= 3) break;
+      const dateValue = eventDateValue(event);
+      if (dateValue === null || dateValue < todayValue || dateValue > cutoffValue) continue;
       const identity = eventIdentity(event);
       if (identity && selectedIds.has(identity)) continue;
       if (identity) selectedIds.add(identity);
-      votedSelection.push(event);
+      upcomingInterestEvents.push(event);
     }
 
     const fallbackEvents: ApiRecord[] = [];
@@ -938,20 +1023,21 @@ import SocialLinks from '../../components/SocialLinks.astro';
       })
       .sort(compareEventDateThenTitle);
     for (const event of nearestFallbackEvents) {
-      if (votedSelection.length + fallbackEvents.length >= 3) break;
+      if (upcomingInterestEvents.length + fallbackEvents.length >= 3) break;
       const identity = eventIdentity(event);
       if (identity && selectedIds.has(identity)) continue;
       if (identity) selectedIds.add(identity);
       fallbackEvents.push(removeHeroVotes(event));
     }
-    const previewEvents = [...votedSelection, ...fallbackEvents];
-    const useVoteOnlyHelper = previewEvents.length > 0 && fallbackEvents.length === 0;
+    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents].sort(compareEventDateThenTitle);
 
     if (titleElement) {
       titleElement.textContent = 'Highlighted in the next days';
     }
     if (helperElement) {
-      helperElement.textContent = useVoteOnlyHelper ? 'Most votes among upcoming races.' : 'Based on runner votes, filled with nearby upcoming races.';
+      helperElement.textContent = upcomingInterestEvents.length
+        ? 'Nearby upcoming races attracting the most interest.'
+        : 'Nearby upcoming races.';
     }
 
     if (!previewEvents.length) {
@@ -961,11 +1047,10 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
     listElement.innerHTML = previewEvents.map((event) => {
       const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const votes = getHeroPreviewVotes(event);
-      const voteCount = votes !== null ? ` <small class="hero-preview-votes">· ${escapeHtml(formatVoteCount(votes))}</small>` : '';
+      const detailPath = eventDetailPath(event);
       const title = getDisplayEventTitle(getEventTitle(event));
       const place = getEventField(event, 'kraj', ['place', 'city', 'location']);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong>${escapeHtml(title)}${voteCount}</strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
+      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
     }).join('');
     initSavedRaceButtons(listElement);
   };
@@ -1157,6 +1242,14 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
   const apiRequestCache = new Map<string, Promise<unknown>>();
 
+  async function getMasterRaceRows() {
+    const payload = await loadJson('/');
+    const rows = getMasterRows(payload);
+    setDebug('master', 'yes');
+    setDebug('master-count', String(rows.length));
+    return rows;
+  }
+
   async function loadJson(path: string): Promise<unknown> {
     if (!apiRequestCache.has(path)) {
       apiRequestCache.set(path, fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } }).then((response) => {
@@ -1174,10 +1267,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
     if (!container) return;
 
     try {
-      const [payload, topUpcomingResult] = await Promise.all([
-        loadJson('/'),
-        getTopUpcomingRaces().catch(() => ({ events: [], rawEvents: [] }))
-      ]);
+      const payload = await loadJson('/');
       const todayValue = todayStartValue();
       const events = toArray(payload)
         .filter((event) => isConfirmedPublicUpcomingEvent(event, todayValue))
@@ -1190,7 +1280,8 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      renderHeroPreview(topUpcomingResult.events, events);
+      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
+      renderHeroPreview(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1290,22 +1381,11 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
   async function loadTopEvents() {
     const container = document.querySelector('[data-top-events]');
+    const description = document.querySelector('[data-top-description]');
     if (!container) return;
 
-    try {
-      const topUpcomingResult = await getTopUpcomingRaces();
-      const topEvents = topUpcomingResult.events.slice(0, 4);
-      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 4);
-      setDebug('top', 'yes');
-      if (!topEvents.length) {
-        setDebugTopDetails(topEvents, rawTopEvents);
-        setStatus('top', 'No most voted upcoming races are shown right now.');
-        return;
-      }
-
-      setDebugTopDetails(topEvents, rawTopEvents);
-
-      container.innerHTML = topEvents.map((event) => {
+    const renderEvents = (events: ApiRecord[], options: { interestPreview: boolean }) => {
+      container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenia');
         const region = pickPath(event, ['regija', 'event.regija', 'race.regija', 'data.regija', 'region'], '');
@@ -1314,15 +1394,19 @@ import SocialLinks from '../../components/SocialLinks.astro';
         const analyticsEventId = getEventStableId(event, title, dateValue, location);
         const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
-        const metaItems = [
-          votes !== null ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>` : '<span class="event-chip pill-orange">Voting open</span>'
-        ].filter(Boolean).join('');
+        const metaItems = options.interestPreview
+          ? ''
+          : [
+              votes !== null
+                ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
+                : '<span class="event-chip pill-orange">Voting open</span>'
+            ].filter(Boolean).join('');
 
         return `
-          <article class="event-card" data-analytics-placement="home_interest" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
+          <article class="event-card" data-analytics-placement="home_interest" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3>${escapeHtml(title)}</h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
             ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
@@ -1330,11 +1414,43 @@ import SocialLinks from '../../components/SocialLinks.astro';
           </article>
         `;
       }).join('');
+    };
+
+    try {
+      const masterRows = await getMasterRaceRows();
+      const interestEvents = await getInterestPreviewRaces(masterRows, 5);
+      if (interestEvents.length) {
+        setDebug('top', 'yes');
+        setDebugTopDetails(interestEvents, interestEvents);
+        renderEvents(interestEvents, { interestPreview: true });
+        initSavedRaceButtons(container);
+        if (description) description.textContent = 'Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.';
+        setStatus('top', 'The selection is based on visitor interest in registration, official information, calendar and route links.');
+        return;
+      }
+    } catch (error) {
+      if (import.meta.env.DEV) console.warn('STK interest preview unavailable, falling back to voted races.', error);
+    }
+
+    try {
+      const topUpcomingResult = await getTopUpcomingRaces();
+      const topEvents = topUpcomingResult.events.slice(0, 5);
+      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 5);
+      setDebug('top', 'yes');
+      if (!topEvents.length) {
+        setDebugTopDetails(topEvents, rawTopEvents);
+        setStatus('top', 'No races attracting interest are shown right now.');
+        return;
+      }
+
+      setDebugTopDetails(topEvents, rawTopEvents);
+      renderEvents(topEvents, { interestPreview: false });
       initSavedRaceButtons(container);
-      setStatus('top', 'The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.');
+      if (description) description.textContent = 'Upcoming races with the most runner votes.';
+      setStatus('top', 'This view is based on runner votes. If vote counts are tied, nearer upcoming races are shown first.');
     } catch (error) {
       setDebug('top', 'no');
-      setStatus('top', 'The list is currently unavailable, so the fallback view remains.');
+      setStatus('top', 'The list is currently unavailable.');
     }
   }
 
