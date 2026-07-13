@@ -37,19 +37,14 @@ const englishNavItems = [
           <h1 id="hero-title">Find your next race in Slovenia</h1>
           <p class="hero-lead">A clean starting point for confirmed races, practical details and official race links across Slovenia.</p>
           <p class="hero-sublead">
-            Start with race search or ask STK Tekobot in natural language.
+            Search by date, region, terrain or distance.
           </p>
           <div class="hero-actions" aria-label="Main links">
             <div class="cta-row cta-primary-row">
-              <a class="button button-primary" href="/en/find-races/">Find a race</a>
-              <a class="button button-primary" href="/en/stk-tekobot/">Ask STK Tekobot</a>
+              <a class="button button-primary hero-primary-cta" href="/en/find-races/">Find a race</a>
             </div>
-            <nav class="hero-secondary-links" aria-label="Additional links">
-              <a href="/en/personal-calendar/">Add races to your calendar</a>
-              <a href="/en/family-friendly-races/">Family-friendly races</a>
-              <a href="/en/group-runs/">Group runs</a>
-              <a href="/en/most-voted-races/">Most voted races</a>
-            </nav>
+            <p class="hero-helper-link">Not sure what to choose? <a href="/en/stk-tekobot/">Ask STK Tekobot.</a></p>
+            <p class="hero-helper-link hero-my-races-link">Save interesting races and find them later in <a href="/en/my-races/">My races</a>.</p>
           </div>
         </div>
         <aside class="hero-preview" aria-label="Calendar preview">
@@ -63,6 +58,10 @@ const englishNavItems = [
         </aside>
       </div>
 
+      <div class="stats-intro">
+        <h2>2026 calendar at a glance</h2>
+        <p>The figures cover the full public calendar from January to December 2026.</p>
+      </div>
       <div class="stats-strip" aria-label="Calendar statistics">
         <article class="stat-card stat-card-races">
           <span class="stat-mark" aria-hidden="true"></span>
@@ -155,6 +154,17 @@ const englishNavItems = [
         </article>
       </div>
       <p class="data-note" data-status="top">The ranking is sorted by vote count. If votes are tied, nearer upcoming races come first.</p>
+    </section>
+
+    <section class="section container" aria-labelledby="organizer-cta-title">
+      <article class="info-card organizer-cta-card">
+        <div>
+          <span class="eyebrow eyebrow-light">For organisers</span>
+          <h2 id="organizer-cta-title">Organising a race?</h2>
+          <p>Add a new event or correct race details so runners can find accurate information more easily. The form is currently available in Slovenian.</p>
+        </div>
+        <a class="button button-secondary-light" href="/dodaj-ali-popravi-tek/">Add or correct a race</a>
+      </article>
     </section>
 
     <section class="section container" aria-labelledby="trust-title">
