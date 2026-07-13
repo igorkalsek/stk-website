@@ -30,8 +30,15 @@ describe('English home interest section', () => {
   it('keeps interest analytics and links cards to English race detail pages', () => {
     assert.ok(source.includes('data-analytics-placement="home_interest"'));
     assert.ok(source.includes('data-analytics-placement=\"home_interest\"'));
-    assert.match(source, /buildEnglishEventDetailPath/);
+    assert.match(source, /buildEnglishHomepageEventDetailPath/);
     assert.ok(source.includes('<h3><a href="${escapeHtml(eventDetailPath(event))}">'));
+  });
+
+  it('links all homepage event title surfaces through English detail paths', () => {
+    assert.ok(source.includes('<strong><a href="${escapeHtml(eventDetailPath(item.event))}">${escapeHtml(item.title)}</a></strong>'));
+    assert.ok(source.includes('<strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>'));
+    assert.ok(source.includes('<h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>'));
+    assert.doesNotMatch(source, /buildEventDetailPath/);
   });
 });
 

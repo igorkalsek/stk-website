@@ -208,7 +208,8 @@ import SocialLinks from '../../components/SocialLinks.astro';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { getDisplayEventTitle } from '../../utils-events';
-  import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
+  import { getStableEventId } from '../../utils-event-detail';
+  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
 
   type ApiRecord = Record<string, unknown>;
@@ -221,12 +222,17 @@ import SocialLinks from '../../components/SocialLinks.astro';
   const ARRAY_KEYS = ['events', 'next_week', 'updates', 'recent_updates', 'recent', 'data', 'items', 'rows', 'changes', 'results'];
   const STATS_CONTAINERS = ['stats', 'totals', 'summary', 'data', 'counts'];
   const TITLE_CONTAINERS = ['event', 'race', 'data', 'item', 'row', 'fields'];
-  const enableApiDebug = import.meta.env.DEV;
+  const isPreviewHost = window.location.hostname.endsWith('.pages.dev');
+  const enableApiDebug = import.meta.env.DEV || isPreviewHost;
   const debugEnabled = enableApiDebug && new URLSearchParams(window.location.search).get('debug') === '1';
 
   const setStatus = (name: string, message: string) => {
     const element = document.querySelector(`[data-status="${name}"]`);
     if (element) element.textContent = message;
+  };
+
+  const logDebugError = (context: string, error: unknown) => {
+    if (enableApiDebug) console.error(`[STK English home] ${context}`, error);
   };
 
   const asRecord = (value: unknown): ApiRecord | null =>
@@ -468,6 +474,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
     enriched.__master_matched = Boolean(match);
     enriched.__matched_master_row = match ? rowKey(match) : '';
     enriched.__matched_master_title = match ? getFieldValue(match, 'naziv_prireditve') : '';
+    enriched.__canonical_master_event = match ?? undefined;
     enriched.__vote_url_title = voteUrlTitle;
     enriched.__title_source = topTitle !== 'Race name unavailable' && topTitle !== voteUrlTitle ? 'top' : 'not detected';
 
@@ -840,6 +847,9 @@ import SocialLinks from '../../components/SocialLinks.astro';
   };
 
   const eventRowKey = (event: ApiRecord) => {
+    const matchedMasterRow = pick(event, ['__matched_master_row']);
+    if (matchedMasterRow) return matchedMasterRow;
+
     const row = rowKey(event);
     if (row) return row;
 
@@ -847,29 +857,33 @@ import SocialLinks from '../../components/SocialLinks.astro';
   };
 
   const eventIdentity = (event: ApiRecord) => {
-    const row = eventRowKey(event);
+    const canonicalEvent = canonicalDetailEvent(event);
+    const row = eventRowKey(canonicalEvent);
     if (row) return `row:${row}`;
 
-    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-    const place = getEventField(event, 'kraj', ['place', 'city', 'location', 'Kraj']);
-    return [date, getDisplayEventTitle(getEventTitle(event)), place]
+    const date = getEventField(canonicalEvent, 'datum', ['date', 'event_date', 'Datum']);
+    const place = getEventField(canonicalEvent, 'kraj', ['place', 'city', 'location', 'Kraj']);
+    return [date, getDisplayEventTitle(getEventTitle(canonicalEvent)), place]
       .map((part) => normalizedText(part))
       .filter(Boolean)
       .join('|');
   };
 
-  const detailEventData = (event: ApiRecord) => ({
-    year: getEventYear(event),
-    row: rowKey(event),
-    date: getEventField(event, 'datum', ['date', 'event_date', 'Datum']),
-    title: getDisplayEventTitle(getEventTitle(event)),
-    naziv_prireditve: getDisplayEventTitle(getEventTitle(event)),
-    place: getEventField(event, 'kraj', ['place', 'city', 'location'])
+  const getEventYear = (event: ApiRecord) => {
+    const explicitYear = getEventField(event, 'year', ['leto']);
+    if (/^202[67]$/.test(explicitYear)) return explicitYear;
+
+    const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+    return date.match(/^(202[67])-/)?.[1] ?? '';
+  };
+
+  const canonicalDetailEvent = (event: ApiRecord) => getCanonicalHomepageEvent(event) as ApiRecord;
+
+  const eventDetailPath = (event: ApiRecord) => buildEnglishHomepageEventDetailPath(event, {
+    rowKey: eventRowKey,
+    getTitle: getEventTitle,
+    getDisplayTitle: getDisplayEventTitle
   });
-
-  const canonicalDetailEvent = (event: ApiRecord) => asRecord(event.__master_event) ?? event;
-
-  const eventDetailPath = (event: ApiRecord) => buildEnglishEventDetailPath(detailEventData(canonicalDetailEvent(event)));
 
   const INTEREST_ID_KEYS = ['event_id', 'eventId', 'id', 'row', 'Row', 'master_row', 'masterRow'];
 
@@ -956,7 +970,6 @@ import SocialLinks from '../../components/SocialLinks.astro';
     return rankedEvents;
   };
 
-  const getHeroPreviewVotes = (event: ApiRecord) => parsePositiveInteger(event?.votes_total);
 
   const normalizeTopUpcomingRace = (event: ApiRecord) => {
     const votes = getTopEventVotes(event);
@@ -982,15 +995,6 @@ import SocialLinks from '../../components/SocialLinks.astro';
     return { events, rawEvents };
   };
 
-  const hasConfirmedPublicFields = (event: ApiRecord) => {
-    const status = getEventField(event, 'status_dogodka');
-    if (status && normalize(status) !== 'potrjeno') return false;
-
-    const isPublic = getEventField(event, 'vidno_v_javnem_koledarju');
-    if (isPublic && isPublic.toLocaleUpperCase('sl-SI') !== 'DA') return false;
-
-    return true;
-  };
 
   const removeHeroVotes = (event: ApiRecord) => ({ ...event, votes_total: undefined });
 
@@ -1207,7 +1211,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
         <div class="registration-deadlines-line">
           <time datetime="${escapeHtml(item.deadlineDate)}">${escapeHtml(deadlineBadge)}</time>
           <span aria-hidden="true">·</span>
-          <strong>${escapeHtml(item.title)}</strong>
+          <strong><a href="${escapeHtml(eventDetailPath(item.event))}">${escapeHtml(item.title)}</a></strong>
           ${price ? `<span class="registration-price-chip">${escapeHtml(price)}</span>` : ''}
         </div>
         <p>${escapeHtml(label)}</p>
@@ -1235,6 +1239,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       list.innerHTML = renderRegistrationDeadlineItems(deadlineEvents);
       section.hidden = false;
     } catch (error) {
+      logDebugError('Registration deadlines failed', error);
       section.hidden = true;
       list.innerHTML = '';
     }
@@ -1317,10 +1322,10 @@ import SocialLinks from '../../components/SocialLinks.astro';
         ].filter(Boolean).join('');
 
         return `
-          <article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="2026">
+          <article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
             <div class="event-card-heading">
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
-              <h3>${escapeHtml(title)}</h3>
+              <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
             ${links ? `<div class="event-actions">${links}</div>` : ''}
@@ -1332,6 +1337,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       initSavedRaceButtons(container);
       setStatus('nearest', '');
     } catch (error) {
+      logDebugError('This week races failed', error);
       container.innerHTML = `
         <article class="event-card">
           <h3>The list is currently unavailable</h3>
@@ -1374,6 +1380,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
         setStatus('stats', 'One or more statistic values are currently missing.');
       }
     } catch (error) {
+      logDebugError('Stats failed', error);
       setDebug('stats', 'no');
       setStatus('stats', 'Statistics are currently unavailable, so the basic view is shown.');
     }
@@ -1429,6 +1436,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
         return;
       }
     } catch (error) {
+      logDebugError('Interest preview failed before voted fallback', error);
       if (import.meta.env.DEV) console.warn('STK interest preview unavailable, falling back to voted races.', error);
     }
 
@@ -1449,6 +1457,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       if (description) description.textContent = 'Upcoming races with the most runner votes.';
       setStatus('top', 'This view is based on runner votes. If vote counts are tied, nearer upcoming races are shown first.');
     } catch (error) {
+      logDebugError('Interest section voted fallback failed', error);
       setDebug('top', 'no');
       setStatus('top', 'The list is currently unavailable.');
     }
@@ -1509,6 +1518,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       }).join('');
       setStatus('updates', '');
     } catch (error) {
+      logDebugError('Recent updates failed', error);
       setDebug('recent', 'no');
       setStatus('updates', 'Latest updates are currently unavailable, so the fallback view remains.');
     }
