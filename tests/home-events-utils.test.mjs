@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   buildEnglishHomepageEventDetailPath,
+  buildHomepageEventDetailPath,
+  buildHomepageMasterEventIndex,
+  matchRecentUpdateToMasterEvent,
   getCanonicalHomepageEvent,
   getHomepageEventYear
 } from '../.cache/dist-test/utils-home-events.js';
@@ -50,5 +53,55 @@ describe('homepage event detail helpers', () => {
       buildEnglishHomepageEventDetailPath(interestEvent, helpers),
       '/en/races/2027/r000025-master-trail/'
     );
+  });
+});
+
+
+describe('recent update matching helpers', () => {
+  const masterEvents = [
+    { row: '175', datum: '2026-05-16', naziv_prireditve: '12. Testni tek', kraj: 'Ljubljana' },
+    { row: '176', datum: '2026-06-01', naziv_prireditve: 'Gorski tek', kraj: 'Bled' },
+    { row: '177', datum: '2026-06-01', naziv_prireditve: 'Gorski tek', kraj: 'Bled' }
+  ];
+
+  it('matches recent updates by row', () => {
+    const match = matchRecentUpdateToMasterEvent({ row: '175' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.reason, 'row');
+    assert.equal(match.event?.row, '175');
+  });
+
+  it('matches recent updates by master_row', () => {
+    const match = matchRecentUpdateToMasterEvent({ master_row: '176' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.reason, 'row');
+    assert.equal(match.event?.row, '176');
+  });
+
+  it('matches recent updates by stable event ID', () => {
+    const match = matchRecentUpdateToMasterEvent({ event_id: 'r000175' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.reason, 'event_id');
+    assert.equal(match.event?.row, '175');
+  });
+
+  it('matches recent updates by exact date, title and place', () => {
+    const match = matchRecentUpdateToMasterEvent({ datum: '2026-05-16', naziv_prireditve: '12. Testni tek', kraj: 'Ljubljana' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.reason, 'date_title_place');
+    assert.equal(match.event?.row, '175');
+  });
+
+  it('does not link ambiguous date, title and place matches', () => {
+    const match = matchRecentUpdateToMasterEvent({ datum: '2026-06-01', naziv_prireditve: 'Gorski tek', kraj: 'Bled' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.event, null);
+  });
+
+  it('does not link missing identity updates', () => {
+    const match = matchRecentUpdateToMasterEvent({ naziv_prireditve: 'Brez datuma' }, buildHomepageMasterEventIndex(masterEvents));
+    assert.equal(match.event, null);
+    assert.equal(match.reason, 'missing_identity');
+  });
+
+  it('builds Slovenian and English detail paths from canonical master events', () => {
+    const event = { row: '175', datum: '2026-05-16', naziv_prireditve: '12. Testni tek', kraj: 'Ljubljana' };
+    assert.equal(buildHomepageEventDetailPath(event, helpers), '/tek/2026/r000175-testni-tek/');
+    assert.equal(buildEnglishHomepageEventDetailPath(event, helpers), '/en/races/2026/r000175-testni-tek/');
   });
 });

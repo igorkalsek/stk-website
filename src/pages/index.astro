@@ -200,6 +200,7 @@ import SocialLinks from '../components/SocialLinks.astro';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
+  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath } from '../utils-home-events';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -1447,8 +1448,16 @@ import SocialLinks from '../components/SocialLinks.astro';
     if (!container) return;
 
     try {
-      const payload = await loadJson('/recent_updates?days=7&limit=20');
-      const { updatedEvents, newEvents, confirmedEvents } = getRecentUpdateGroups(payload);
+      const [recentResult, masterResult] = await Promise.allSettled([
+        loadJson('/recent_updates?days=7&limit=20'),
+        loadJson('/')
+      ]);
+      if (recentResult.status === 'rejected') throw recentResult.reason;
+      const { updatedEvents, newEvents, confirmedEvents } = getRecentUpdateGroups(recentResult.value);
+      const masterIndex = masterResult.status === 'fulfilled'
+        ? buildHomepageMasterEventIndex(getMasterRows(masterResult.value))
+        : null;
+      if (masterResult.status === 'rejected') setDebug('master', 'no');
       const updates = [
         ...updatedEvents,
         ...newEvents,
@@ -1486,10 +1495,25 @@ import SocialLinks from '../components/SocialLinks.astro';
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
         const place = joinParts([location, region && region !== location ? region : '']);
 
+        const matchedEvent = masterIndex ? matchRecentUpdateToMasterEvent(update, masterIndex) : { event: null, reason: 'master_unavailable' };
+        const detailPath = matchedEvent.event ? buildHomepageEventDetailPath(matchedEvent.event, {
+          rowKey: eventRowKey,
+          getTitle: getEventTitle,
+          getDisplayTitle: getDisplayEventTitle
+        }) : '';
+        const canonicalTitle = matchedEvent.event ? getDisplayEventTitle(getEventTitle(matchedEvent.event, title)) : title;
+        const canonicalDate = matchedEvent.event ? getEventField(matchedEvent.event, 'datum', ['date', 'event_date', 'Datum']) : '';
+        const canonicalYear = matchedEvent.event ? getEventYear(matchedEvent.event) : '';
+        const analyticsEventId = matchedEvent.event && canonicalDate ? getEventStableId(matchedEvent.event, canonicalTitle, canonicalDate, getEventField(matchedEvent.event, 'kraj', ['place', 'city', 'location'])) : '';
+        if (!detailPath && debugEnabled) console.debug('[STK home] Recent update not linked', matchedEvent.reason, update);
+        const analyticsAttributes = detailPath
+          ? ` data-analytics-placement="home_updates" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(canonicalTitle)}" data-analytics-event-date="${escapeHtml(canonicalDate)}" data-analytics-event-year="${escapeHtml(canonicalYear)}"`
+          : '';
+
         return `
-          <article class="update-card">
+          <article class="update-card"${analyticsAttributes}>
             ${updateDateMeta ? `<p class="update-meta">${escapeHtml(updateDateMeta)}</p>` : ''}
-            <h3>${escapeHtml(title)}</h3>
+            <h3>${detailPath ? `<a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a>` : escapeHtml(title)}</h3>
             ${place ? `<p>${escapeHtml(place)}</p>` : ''}
             ${changed ? `<p>${escapeHtml(changed)}</p>` : ''}
           </article>
