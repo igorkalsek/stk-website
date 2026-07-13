@@ -13,6 +13,7 @@ import {
   buildRegistrationRows,
   formatDetailMoneyRange
 } from '../.cache/dist-test/utils-race-detail-view.js';
+import { buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
 
 const baseEvent = {
   id: 'r1', row: '1', year: '2026', date: '2026-05-10', dateValue: 0,
@@ -125,6 +126,12 @@ describe('race detail view model', () => {
     assert.deepEqual(buildKeyFacts(event, 'en').map((row) => row.label), ['Distances', 'Start time', 'Surface', 'Location', 'Region']);
     assert.deepEqual(buildPrimaryActions(event, 'sl').map((a) => a.analyticsType), ['prijava', 'razpis']);
     assert.equal(buildCourseRows(event, 'en')[0].analyticsType, 'trasa');
+  });
+
+
+  it('builds English detail paths for 2026 and 2027 with the event year', () => {
+    assert.equal(buildEnglishEventDetailPath(baseEvent), '/en/races/2026/r000001-testni-tek/');
+    assert.equal(buildEnglishEventDetailPath({ ...baseEvent, year: '2027', date: '2027-05-10' }), '/en/races/2027/r000001-testni-tek/');
   });
 
   it('uses the updated highlight headings in Slovenian and English detail routes', () => {
