@@ -136,6 +136,14 @@ const parseRegistrationFeeAmount = (value: string | undefined | null) => {
 };
 const isExplicitYes = (value: string | undefined | null) => ['da', 'yes', 'true'].includes((value ?? '').trim().toLocaleLowerCase('sl-SI'));
 const hasTrailOrMountainSurface = (value: string) => /trail|gorsk|hrib|planin|mountain/iu.test(value.trim());
+export const formatHighlightDistanceWithUnit = (value: number, language: DetailLanguage) => {
+  const locale = language === 'en' ? 'en-GB' : 'sl-SI';
+  if (value < 1) {
+    return `${Math.round(value * 1000).toLocaleString(locale, { maximumFractionDigits: 0 })} m`;
+  }
+  return `${value.toLocaleString(locale, { maximumFractionDigits: 1, minimumFractionDigits: 0 })} km`;
+};
+
 const formatHighlightDistance = (value: number, language: DetailLanguage) =>
   value.toLocaleString(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 1, minimumFractionDigits: 0 });
 
@@ -183,8 +191,8 @@ const extractChildrenDistancesLabel = (notes: string, language: DetailLanguage) 
 };
 
 const formatDistanceRangeValue = (shortestDistance: number, longestDistance: number, language: DetailLanguage) => language === 'en'
-  ? `From ${formatHighlightDistance(shortestDistance, language)} to ${formatHighlightDistance(longestDistance, language)} km`
-  : `Od ${formatHighlightDistance(shortestDistance, language)} do ${formatHighlightDistance(longestDistance, language)} km`;
+  ? `From ${formatHighlightDistanceWithUnit(shortestDistance, language)} to ${formatHighlightDistanceWithUnit(longestDistance, language)}`
+  : `Od ${formatHighlightDistanceWithUnit(shortestDistance, language)} do ${formatHighlightDistanceWithUnit(longestDistance, language)}`;
 
 
 export const buildPrimaryActions = (event: Pick<DetailEvent, 'registrationUrl' | 'noticeUrl'>, language: DetailLanguage): DetailAction[] => {
@@ -307,7 +315,7 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
     add({ key: 'cup', label: labels.cup, value: event.cup.trim(), icon: '🏆' });
   }
   if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
-    add({ key: 'distances', label: labels.distances, value: formatDistanceRangeValue(shortestDistance, longestDistance, language), icon: '↔' });
+    add({ key: 'distances', label: labels.distances, value: formatDistanceRangeValue(shortestDistance, longestDistance, language), icon: '🏃' });
   }
   if (hasFreeFee) {
     add({ key: 'free-fee', label: labels.free, value: language === 'en' ? 'Listed for part of the programme' : 'Za del programa', icon: '€' });

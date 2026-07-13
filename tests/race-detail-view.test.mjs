@@ -13,7 +13,8 @@ import {
   buildPublicNotes,
   buildRegistrationRows,
   formatDetailMoneyRange,
-  formatFamilyPublicNote
+  formatFamilyPublicNote,
+  formatHighlightDistanceWithUnit
 } from '../.cache/dist-test/utils-race-detail-view.js';
 import { buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
 
@@ -267,17 +268,35 @@ describe('race detail view model', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, additionalData: { ...richAdditional, routeUrl: 'https://example.com/route', dayOfRegistration: '', elevationGain: '' } }, 'sl'), []);
   });
 
+
+  it('formats highlight distance ranges with metres below one kilometre', () => {
+    assert.equal(formatHighlightDistanceWithUnit(0.1, 'sl'), '100 m');
+    assert.equal(formatHighlightDistanceWithUnit(0.5, 'sl'), '500 m');
+    assert.equal(formatHighlightDistanceWithUnit(1.6, 'sl'), '1,6 km');
+    assert.equal(formatHighlightDistanceWithUnit(1.6, 'en'), '1.6 km');
+    const event = { ...baseEvent, distances: '0.1;0.5;10', familyFriendly: true };
+    assert.deepEqual(buildRaceHighlights(event, 'sl'), [
+      'Družinam prijazno: Izrecno navedeno',
+      'Razdalje: Od 100 m do 10 km'
+    ]);
+    assert.deepEqual(buildRaceHighlights(event, 'en'), [
+      'Family-friendly: Explicitly listed',
+      'Distances: From 100 m to 10 km'
+    ]);
+    assert.equal(buildRaceHighlightCards(event, 'sl').find((card) => card.key === 'distances').icon, '🏃');
+  });
+
   it('preserves cup names and returns equivalent Slovenian and English categories', () => {
     const event = { ...baseEvent, distances: '5;10;21,1', cup: 'PGT Pokal VERTIKAL', familyFriendly: true };
     assert.deepEqual(buildRaceHighlights(event, 'sl'), [
       'Družinam prijazno: Izrecno navedeno',
       'Pokal: PGT Pokal VERTIKAL',
-      'Razdalje: Od 5 do 21,1 km'
+      'Razdalje: Od 5 km do 21,1 km'
     ]);
     assert.deepEqual(buildRaceHighlights(event, 'en'), [
       'Family-friendly: Explicitly listed',
       'Cup: PGT Pokal VERTIKAL',
-      'Distances: From 5 to 21.1 km'
+      'Distances: From 5 km to 21.1 km'
     ]);
   });
 
@@ -285,7 +304,7 @@ describe('race detail view model', () => {
     const event2027 = { ...baseEvent, year: '2027', distances: '5;10;21,1;21.1', cup: 'Slovenija teče', additionalData: null };
     assert.deepEqual(buildRaceHighlights(event2027, 'en'), [
       'Cup: Slovenija teče',
-      'Distances: From 5 to 21.1 km'
+      'Distances: From 5 km to 21.1 km'
     ]);
   });
 });
