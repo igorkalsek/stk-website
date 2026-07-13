@@ -14,20 +14,17 @@ import SocialLinks from '../components/SocialLinks.astro';
           <h1 id="hero-title">Poiščite svoj naslednji tek</h1>
           <p class="hero-lead">Slovenski Tekaški Koledar na enem mestu zbira potrjene tekaške prireditve, koristne podatke in povezave do uradnih razpisov.</p>
           <p class="hero-sublead">
-            Za hiter začetek odprite iskalnik ali vprašajte STK Tekobota.
+            Začnite z iskalnikom tekov, nato si zanimive prireditve shranite za pozneje.
           </p>
           <div class="hero-actions" aria-label="Glavne povezave">
             <div class="cta-row cta-primary-row">
-              <a class="button button-primary" href="/iskalnik-tekov/">Poiščite tek</a>
-              <a class="button button-primary" href="/stk-tekobot/">STK Tekobot</a>
+              <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Poišči tek</a>
             </div>
-            <nav class="hero-secondary-links" aria-label="Dodatne povezave">
-              <a href="/osebni-koledar/">Dodajte koledar v telefon</a>
-              <a href="/druzinam-prijazni-teki/">Družinam prijazni teki</a>
-              <a href="/skupinski-teki/">Skupinski teki</a>
-              <a href="/najbolj-glasovani-teki/">Glasovani teki</a>
-              <a href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
+            <nav class="hero-quick-paths" aria-label="Hitre poti">
+              <a href="/druzinam-prijazni-teki/">Z otroki</a>
             </nav>
+            <p class="hero-helper-link">Ne veste, kateri tek izbrati? <a href="/stk-tekobot/">Vprašajte Tekobota.</a></p>
+            <p class="hero-helper-link hero-my-races-link">Shranite zanimive teke in jih pozneje najdete med <a href="/moji-teki/">Mojimi teki</a>.</p>
           </div>
         </div>
         <aside class="hero-preview" aria-label="Predogled koledarja">
@@ -134,6 +131,17 @@ import SocialLinks from '../components/SocialLinks.astro';
       <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
     </section>
 
+
+    <section class="section container" aria-labelledby="organizer-cta-title">
+      <article class="info-card organizer-cta-card">
+        <div>
+          <span class="eyebrow eyebrow-light">Za organizatorje</span>
+          <h2 id="organizer-cta-title">Organizirate tek?</h2>
+          <p>Dodajte nov dogodek ali popravite podatke, da tekači lažje najdejo točne informacije.</p>
+        </div>
+        <a class="button button-secondary-light" href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
+      </article>
+    </section>
 
     <section class="section container" aria-labelledby="trust-title">
       <article class="info-card trust-card">
