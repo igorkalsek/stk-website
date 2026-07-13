@@ -693,6 +693,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     });
   };
 
+  const applyPublicSortState = (finderState: FinderUrlState, preservePersonalSort = true) => {
+    if (!sortSelect) return;
+
+    const keepPersonalSort =
+      preservePersonalSort &&
+      sortSelect.value === 'my-races' &&
+      finderState.sort === 'date';
+
+    if (!keepPersonalSort) {
+      sortSelect.value = finderState.sort;
+    }
+  };
+
   const applyFinderUrlStateToControls = (finderState: FinderUrlState) => {
     if (searchInput) searchInput.value = finderState.q;
     if (monthSelect) monthSelect.value = [...monthSelect.options].some((option) => option.value === finderState.month) ? finderState.month : '';
@@ -701,7 +714,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     if (distanceSelect) distanceSelect.value = finderState.distance;
     if (registrationFeeSelect) registrationFeeSelect.value = activeYear === '2027' ? '' : finderState.fee;
     if (deadlineSelect) deadlineSelect.value = activeYear === '2027' ? '' : finderState.deadline;
-    if (sortSelect && finderState.sort !== 'date') sortSelect.value = finderState.sort;
+    applyPublicSortState(finderState);
     if (familyInput) familyInput.checked = finderState.family;
     if (dayOfRegistrationInput) dayOfRegistrationInput.checked = activeYear !== '2027' && finderState.raceDay;
     if (routeInput) routeInput.checked = activeYear !== '2027' && finderState.route;
@@ -1262,7 +1275,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     refreshPreferencePanel();
   });
 
-  formElement?.addEventListener('input', resetVisibleResults);
+  let searchUrlTimer: number | undefined;
+  searchInput?.addEventListener('input', () => {
+    state.userInteracted = true;
+    state.visibleCount = PAGE_SIZE;
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
+    searchUrlTimer = window.setTimeout(() => {
+      renderResults();
+      syncUrlFromControls();
+    }, 250);
+  });
+  formElement?.addEventListener('input', (event) => {
+    if (event.target === searchInput) return;
+    resetVisibleResults();
+  });
   formElement?.addEventListener('change', resetVisibleResults);
   formElement?.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -1297,8 +1323,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   copyLinkButton?.addEventListener('click', async () => {
     const canonicalUrl = new URL(canonicalPathForState(), window.location.origin).toString();
     if (!navigator.clipboard?.writeText) { if (copyLinkStatus) copyLinkStatus.textContent = 'Povezavo kopirajte iz naslovne vrstice.'; return; }
-    await navigator.clipboard.writeText(canonicalUrl);
-    if (copyLinkStatus) copyLinkStatus.textContent = 'Povezava je kopirana.';
+    try {
+      await navigator.clipboard.writeText(canonicalUrl);
+      if (copyLinkStatus) copyLinkStatus.textContent = 'Povezava je kopirana.';
+    } catch {
+      if (copyLinkStatus) copyLinkStatus.textContent = 'Povezavo kopirajte iz naslovne vrstice.';
+    }
   });
 
   window.addEventListener('popstate', restoreFromCurrentUrl);

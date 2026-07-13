@@ -27,6 +27,13 @@ describe('finder URL state utility', () => {
   it('preserves parameters during language switching', () => assert.equal(buildFinderUrlForLanguage({ month: '08', surface: 'trail', family: true }, 'en'), '/en/find-races/?month=08&surface=trail&family=1'));
   it('clear keeps only active 2027', () => assert.equal(buildFinderUrl('/iskalnik-tekov/', clearFinderUrlState('2027')), '/iskalnik-tekov/?year=2027'));
   it('year URL builder keeps compatible filters for 2027', () => assert.equal(buildFinderUrlForYear('/iskalnik-tekov/', { q: 'tek', fee: '20', quick: ['budget', 'trail'] }, '2027'), '/iskalnik-tekov/?year=2027&q=tek&quick=trail'));
+
+  it('resets public sort back to date and switches between public non-default sorts', () => {
+    assert.equal(parseFinderUrlState(new URLSearchParams('sort=registration-min')).sort, 'registration-min');
+    assert.equal(parseFinderUrlState(new URLSearchParams('')).sort, 'date');
+    assert.equal(parseFinderUrlState(new URLSearchParams('sort=registration-max')).sort, 'registration-max');
+  });
+  it('keeps local my-races private during serialization', () => assert.equal(qs({ sort: 'my-races' }), ''));
 });
 
 describe('finder pages share URL state wiring', () => {
@@ -41,4 +48,37 @@ describe('finder pages share URL state wiring', () => {
   it('Slovenian and English use the same utility', () => { for (const page of [sl,en]) assert.match(page, /utils-finder-url-state/); });
   it('Copy link has no manual analytics call nearby', () => { for (const page of [sl,en]) { const start = page.indexOf("copyLinkButton?.addEventListener"); assert.doesNotMatch(page.slice(start, start + 700), /trackStkEvent/); } });
   it('preferences are not written to URL', () => { for (const page of [sl,en]) assert.doesNotMatch(page, /preferenceDistanceInputs[\s\S]{0,300}syncUrlFromControls/); });
+
+  it('public sort is always applied while preserving local my-races for default URL sort', () => {
+    for (const page of [sl,en]) {
+      assert.match(page, /const applyPublicSortState = \(finderState: FinderUrlState, preservePersonalSort = true\)/);
+      assert.match(page, /sortSelect\.value === 'my-races' &&[\s\S]*finderState\.sort === 'date'/);
+      assert.match(page, /sortSelect\.value = finderState\.sort/);
+      assert.match(page, /applyPublicSortState\(finderState\)/);
+      assert.doesNotMatch(page, /finderState\.sort !== 'date'\) sortSelect\.value/);
+    }
+  });
+  it('search input uses debounce and other filters remain immediate', () => {
+    for (const page of [sl,en]) {
+      assert.match(page, /let searchUrlTimer: number \| undefined/);
+      assert.match(page, /searchInput\?\.addEventListener\('input'/);
+      assert.match(page, /window\.setTimeout\(\(\) => \{[\s\S]*renderResults\(\);[\s\S]*syncUrlFromControls\(\);[\s\S]*\}, 250\)/);
+      assert.match(page, /formElement\?\.addEventListener\('change', resetVisibleResults\)/);
+      assert.match(page, /quickPickButtons\.forEach/);
+    }
+  });
+  it('search input is not handled twice by the generic form input listener', () => {
+    for (const page of [sl,en]) assert.match(page, /if \(event\.target === searchInput\) return;/);
+  });
+  it('Clipboard API rejection shows fallback text without execCommand', () => {
+    assert.match(sl, /catch \{[\s\S]*Povezavo kopirajte iz naslovne vrstice\./);
+    assert.match(en, /catch \{[\s\S]*Copy the link from the address bar\./);
+    for (const page of [sl,en]) assert.doesNotMatch(page, /document\.execCommand/);
+  });
+  it('Slovenian and English finder keep identical sort, debounce and clipboard behavior', () => {
+    for (const token of ['applyPublicSortState', 'searchUrlTimer', 'event.target === searchInput', 'navigator.clipboard.writeText']) {
+      assert.equal(sl.includes(token), true);
+      assert.equal(en.includes(token), true);
+    }
+  });
 });
