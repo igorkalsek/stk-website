@@ -42,6 +42,7 @@ test.describe('native proposal form', () => {
 
     await page.getByRole('radio', { name: 'Nov tek' }).check();
     await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Kraj' })).toHaveAttribute('required', '');
     await expect(page.getByLabel('Datum')).toHaveAttribute('required', '');
     await page.getByRole('textbox', { name: 'Uradni vir (neobvezno)' }).fill('organizator.si/razpis');
     await page.getByRole('textbox', { name: 'Uradni vir (neobvezno)' }).blur();
@@ -120,14 +121,22 @@ test.describe('native proposal form', () => {
     await page.goto('/dodaj-ali-popravi-tek/');
     await page.getByRole('radio', { name: 'Dopolnitev dodatnih podatkov' }).check();
     await expect(page.getByText('Kaj želite dopolniti?')).toBeVisible();
+    await expect(page.getByText('Označite podatke, ki jih želite dodati ali popraviti. Nato njihove vrednosti vpišite v polje »Vrednosti in pojasnila«.')).toBeVisible();
     await expect(page.getByLabel('Datum')).toBeVisible();
     await expect(page.getByLabel('Datum')).toHaveAttribute('required', '');
     await expect(page.getByRole('textbox', { name: 'Naziv prireditve' })).toHaveAttribute('required', '');
-    await expect(page.getByRole('textbox', { name: 'Kraj' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Kraj' })).not.toHaveAttribute('required', '');
+    await expect(page.getByRole('textbox', { name: 'Kraj (neobvezno)' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Kraj (neobvezno)' })).not.toHaveAttribute('required', '');
     await expect(page.getByRole('combobox', { name: 'Regija' })).toBeHidden();
     await expect(page.getByRole('combobox', { name: 'Ali ste organizator?' })).toBeHidden();
     await expect(page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' })).toBeHidden();
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveAttribute('required', '');
+    await expect(page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Vrednosti in pojasnila' })).toHaveAttribute('placeholder', 'Primer: prijavnina 20 € do 1. avgusta; rok prijave 10. avgust; višinski metri 650 m; trasa: https://…');
+    const additionalBox = await page.locator('[data-additional-section]').boundingBox();
+    const descriptionBox = await page.getByRole('textbox', { name: 'Vrednosti in pojasnila' }).boundingBox();
+    expect(additionalBox && descriptionBox && additionalBox.y < descriptionBox.y).toBeTruthy();
 
     await page.getByRole('textbox', { name: 'Vrednosti in pojasnila' }).fill('Prijavnina 20 €.');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -142,6 +151,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('checkbox', { name: 'Prijavnina / startnina' }).check();
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina' })).not.toHaveAttribute('aria-invalid', 'true');
     await expect(page.getByRole('alert')).toBeHidden();
+    await page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka' }).check();
     await page.getByRole('checkbox', { name: /Drugo/ }).check();
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
 
@@ -151,7 +161,7 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.date)).toBe('2026-09-12');
     expect(payload?.get(contract.fields.title)).toBe('Tek z dodatnimi podatki');
     expect(payload?.get(contract.fields.description)).toBe('Prijavnina 20 €.');
-    expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Drugo']);
+    expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka', 'Drugo']);
     expect(payload?.has(contract.fields.organizer)).toBe(false);
     expect(payload?.has(contract.fields.officialAnnouncement2026)).toBe(false);
     expect(payload?.has(contract.fields.region)).toBe(false);

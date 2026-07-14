@@ -61,6 +61,11 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
           <small id="proposal-source-error" class="field-error" data-source-error hidden>{copy.sourceError}</small>
           <small id="proposal-source-warning" class="field-warning" data-source-warning hidden>{copy.sourceWarning}</small>
         </div>
+        <fieldset class="full-span optional-fieldset" data-additional-section hidden>
+          <legend>{copy.labels.additionalData}</legend>
+          <p id="proposal-additional-helper" class="field-helper">{copy.helpers.additionalData}</p>
+          <div class="checkbox-grid" aria-describedby="proposal-additional-helper">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{copy.labelsForValues.additionalData[v]}</span></label>)}</div>
+        </fieldset>
         <div class="full-span" data-field-row="description">
           <label for="proposal-description" data-label-text>{copy.labels.description}</label><span data-required-mark aria-hidden="true"> *</span>
           <textarea id="proposal-description" name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description} data-field-label={copy.labels.description} aria-describedby="proposal-description-helper">{prefill.description}</textarea>
@@ -73,11 +78,6 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
           <input id="proposal-email" name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" data-field-label={copy.labels.email} aria-describedby="proposal-email-helper" />
           <small id="proposal-email-helper" class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small>
         </div>
-        <fieldset class="full-span optional-fieldset" data-additional-section hidden>
-          <legend>{copy.labels.additionalData}</legend>
-          <p id="proposal-additional-helper" class="field-helper">{copy.helpers.additionalData}</p>
-          <div class="checkbox-grid" aria-describedby="proposal-additional-helper">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{copy.labelsForValues.additionalData[v]}</span></label>)}</div>
-        </fieldset>
       </div>
       <div class="cta-row proposal-actions">
         <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
@@ -104,6 +104,7 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const additionalSection = document.querySelector('[data-additional-section]');
   const description = form?.elements.namedItem(contract.fields.description);
   const descriptionLabel = document.querySelector('[data-field-row="description"] [data-label-text]');
+  const placeLabel = document.querySelector('[data-field-row="place"] [data-label-text]');
   const descriptionHelper = document.querySelector('[data-description-helper]');
   let hasSubmittedToGoogle = false;
   let submissionComplete = false;
@@ -127,7 +128,8 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
     if (!row || !control) return; row.hidden = !visible; control.required = Boolean(visible && required); control.disabled = !visible; control.removeAttribute('aria-invalid'); control.setCustomValidity('');
     const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(visible && required);
   };
-  const setDescriptionCopy = (label, helper) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) description.dataset.fieldLabel = label; };
+  const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
+  const setVisualOrder = (key, order) => { const row = key === 'additional' ? additionalSection : document.querySelector(`[data-field-row="${key}"]`); if (row) row.style.order = order || ''; };
   const applyTypeUx = () => {
     const type = currentType(); const [newType, correctionType, additionalType, otherType] = contract.values.proposalTypes;
     const isNew = type === newType, isCorrection = type === correctionType, isAdditional = type === additionalType, isOther = type === otherType;
@@ -138,11 +140,15 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
     setRow('place', !isOther, needsIdentity);
     setRow('region', !isOther && !isAdditional, needsIdentity);
     setRow('organizer', isNew, isNew); setRow('announcement', isNew, isNew); setRow('source', true, false); setRow('description', true, true); setRow('email', true, true);
+    if (placeLabel) placeLabel.textContent = isAdditional ? (copy.cleanPath.startsWith('/en/') ? 'Place (optional)' : 'Kraj (neobvezno)') : copy.labels.place;
+    const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
+    ['date','title','place','region','source','description','organizer','announcement','email','additional'].forEach((key) => setVisualOrder(key, ''));
+    if (isAdditional) { setVisualOrder('date', '1'); setVisualOrder('title', '2'); setVisualOrder('place', '3'); setVisualOrder('additional', '4'); setVisualOrder('description', '5'); setVisualOrder('source', '6'); setVisualOrder('email', '7'); }
     if (additionalSection) additionalSection.hidden = !isAdditional;
     form?.querySelectorAll(`input[name="${contract.fields.additionalData}"]`).forEach((box) => { box.disabled = !isAdditional; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
     if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription);
     else if (isCorrection) setDescriptionCopy(copy.dynamicLabels.correctionDescription, copy.helpers.correctionDescription);
-    else if (isAdditional) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription);
+    else if (isAdditional) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, copy.placeholders.additionalDescription);
     else setDescriptionCopy(copy.labels.description, copy.placeholders.description);
   };
   const applyRuntimePrefill = () => {
