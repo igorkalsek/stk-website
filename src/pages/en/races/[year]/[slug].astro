@@ -81,9 +81,9 @@ const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl
     lang: language,
     returnUrl
   });
-  return `/dodaj-ali-popravi-tek/?${params.toString()}`;
+  return `/en/add-or-correct-race/?${params.toString()}`;
 };
-const correctionUrl = event ? buildCorrectionUrl(event, 'en', shareUrl) : '/dodaj-ali-popravi-tek/';
+const correctionUrl = event ? buildCorrectionUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
 const getDateStatus = (value: string) => {

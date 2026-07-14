@@ -1,0 +1,46 @@
+name: Proposal form browser tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/components/RaceProposalForm.astro'
+      - 'src/pages/dodaj-ali-popravi-tek.astro'
+      - 'src/pages/en/add-or-correct-race.astro'
+      - 'src/proposal-form/**'
+      - 'tests/browser/proposal-form.spec.ts'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/proposal-form-browser.yml'
+  workflow_dispatch:
+
+jobs:
+  proposal-form-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser:proposal-form
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proposal-form-playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proposal-form-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
