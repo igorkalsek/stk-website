@@ -1,6 +1,37 @@
 import { googleProposalFormContract } from './proposal-form-contract.js';
 import type { ProposalLanguage, ProposalPrefill } from './proposal-form-types.js';
 
+
+export const frontendProposalTypes = ['new', 'existing', 'other'] as const;
+export type FrontendProposalType = typeof frontendProposalTypes[number];
+
+export const basicChangeCategoryValues = ['basic-date-time', 'basic-title-place', 'basic-distance-surface', 'basic-official-source', 'basic-cup-series'] as const;
+export const additionalOnlyChangeCategoryValues = googleProposalFormContract.values.additionalData.filter((value) => value !== 'Drugo');
+export const allowedAdditionalDataValues = googleProposalFormContract.values.additionalData;
+
+export const mapExistingChangeSelectionToProposalType = (selectedValues: readonly string[]) => {
+  const selected = selectedValues.filter(Boolean);
+  const additionalOnly = selected.length > 0 && selected.every((value) => additionalOnlyChangeCategoryValues.includes(value as typeof additionalOnlyChangeCategoryValues[number]));
+  return additionalOnly ? googleProposalFormContract.values.proposalTypes[2] : googleProposalFormContract.values.proposalTypes[1];
+};
+
+export const additionalDataValuesForChangeSelection = (selectedValues: readonly string[]) => selectedValues.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number]));
+
+export const changeDescriptionPrefix = (lang: ProposalLanguage) => lang === 'en' ? 'Selected changes:' : 'Izbrane vrste sprememb:';
+
+export const stripStructuredChangeHeader = (value: string) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\r?\n\r?\n|$)/s, '').trimStart();
+
+export const buildStructuredChangeDescription = ({ labels, userText, lang }: { labels: readonly string[]; userText: string; lang: ProposalLanguage }) => {
+  const cleanText = stripStructuredChangeHeader(userText).trim();
+  const header = `${changeDescriptionPrefix(lang)} ${labels.join('; ')}`.trim();
+  return cleanText ? `${header}\n\n${cleanText}` : header;
+};
+
+export const buildChangePlaceholder = ({ labels, lang }: { labels: readonly string[]; lang: ProposalLanguage }) => {
+  if (!labels.length) return lang === 'en' ? 'Enter the missing or correct detail.' : 'Navedite manjkajoči ali pravilen podatek.';
+  return labels.map((label) => `${label}:`).join('\n');
+};
+
 export const requiredProposalFields = ['proposalType', 'date', 'title', 'place', 'region', 'description', 'organizer', 'officialAnnouncement2026', 'email'] as const;
 
 export const isSafeInternalReturnUrl = (value: string | null | undefined): value is string => {

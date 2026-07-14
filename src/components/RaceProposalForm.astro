@@ -1,6 +1,6 @@
 ---
 import { googleProposalFormContract } from '../proposal-form/proposal-form-contract';
-import { readProposalPrefill, buildGoogleFormsFallbackUrl } from '../proposal-form/proposal-form-controller';
+import { readProposalPrefill, buildGoogleFormsFallbackUrl, basicChangeCategoryValues } from '../proposal-form/proposal-form-controller';
 import { proposalFormLocales, proposalTypeOptions } from '../proposal-form/proposal-form-locales';
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
 
@@ -10,7 +10,14 @@ const prefill = readProposalPrefill(Astro.url.searchParams, lang);
 const fallbackUrl = buildGoogleFormsFallbackUrl(prefill);
 const isCorrection = Boolean(prefill.eventTitle);
 const typeOptions = proposalTypeOptions(lang);
-const selectedType = isCorrection ? googleProposalFormContract.values.proposalTypes[1] : '';
+const selectedType = isCorrection ? 'existing' : '';
+const additionalValues = googleProposalFormContract.values.additionalData;
+const changeLabelFor = (value: string) => copy.labelsForValues.changeCategories[value as keyof typeof copy.labelsForValues.changeCategories];
+const changeGroups = [
+  { title: lang === 'en' ? 'Basic details' : 'Osnovni podatki', options: [...basicChangeCategoryValues].map((value) => ({ value, label: changeLabelFor(value) })) },
+  { title: lang === 'en' ? 'Additional details' : 'Dodatni podatki', options: additionalValues.filter((value) => value !== 'Drugo').map((value) => ({ value, label: changeLabelFor(value) })) },
+  { title: lang === 'en' ? 'Other' : 'Drugo', options: ['Drugo'].map((value) => ({ value, label: changeLabelFor(value) })) }
+];
 ---
 <section class="page-hero container proposal-hero" aria-labelledby="page-title">
   <span class="eyebrow">{copy.eyebrow}</span>
@@ -42,12 +49,14 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
         <div class="proposal-type-grid">
           {typeOptions.map((option) => (
             <label class="proposal-choice">
-              <input type="radio" name={googleProposalFormContract.fields.proposalType} value={option.value} required checked={option.value === selectedType} data-field-label={copy.labels.proposalType} />
+              <input type="radio" name="proposal-type-ui" value={option.value} required checked={option.value === selectedType} data-proposal-type-ui data-field-label={copy.labels.proposalType} />
               <span>{option.label}</span>
             </label>
           ))}
         </div>
       </fieldset>
+      <input type="hidden" name={googleProposalFormContract.fields.proposalType} value="" data-backend-proposal-type />
+      <div data-additional-hidden-inputs></div>
 
       <div class="form-grid">
         <div data-field-row="date"><label for="proposal-date" data-label-text>{copy.labels.date}</label><span data-required-mark aria-hidden="true"> *</span><input id="proposal-date" name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} /></div>
@@ -61,11 +70,18 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
           <small id="proposal-source-error" class="field-error" data-source-error hidden>{copy.sourceError}</small>
           <small id="proposal-source-warning" class="field-warning" data-source-warning hidden>{copy.sourceWarning}</small>
         </div>
-        <fieldset class="full-span optional-fieldset" data-additional-section hidden>
+        <fieldset class="full-span optional-fieldset" data-additional-section hidden aria-describedby="proposal-additional-helper proposal-additional-error">
           <legend>{copy.labels.additionalData}</legend>
           <p id="proposal-additional-helper" class="field-helper">{copy.helpers.additionalData}</p>
-          <div class="checkbox-grid" aria-describedby="proposal-additional-helper">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{copy.labelsForValues.additionalData[v]}</span></label>)}</div>
+          {changeGroups.map((group) => (
+            <div class="change-category-group">
+              <p class="change-category-title">{group.title}</p>
+              <div class="checkbox-grid">{group.options.map((option) => <label><input type="checkbox" name="proposal-change-category" value={option.value} data-change-category /> <span>{option.label}</span></label>)}</div>
+            </div>
+          ))}
+          <p id="proposal-additional-error" class="field-error" data-additional-error hidden>{copy.changeError}</p>
         </fieldset>
+        <p class="change-summary full-span" data-change-summary aria-live="polite" hidden></p>
         <div class="full-span" data-field-row="description">
           <label for="proposal-description" data-label-text>{copy.labels.description}</label><span data-required-mark aria-hidden="true"> *</span>
           <textarea id="proposal-description" name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description} data-field-label={copy.labels.description} aria-describedby="proposal-description-helper">{prefill.description}</textarea>
@@ -102,10 +118,17 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const sourceError = document.querySelector('[data-source-error]');
   const sourceWarning = document.querySelector('[data-source-warning]');
   const additionalSection = document.querySelector('[data-additional-section]');
+  const additionalError = document.querySelector('[data-additional-error]');
+  const additionalHiddenInputs = document.querySelector('[data-additional-hidden-inputs]');
+  const backendProposalType = document.querySelector('[data-backend-proposal-type]');
+  const changeSummary = document.querySelector('[data-change-summary]');
   const description = form?.elements.namedItem(contract.fields.description);
   const descriptionLabel = document.querySelector('[data-field-row="description"] [data-label-text]');
   const placeLabel = document.querySelector('[data-field-row="place"] [data-label-text]');
   const descriptionHelper = document.querySelector('[data-description-helper]');
+  const isEnglish = copy.cleanPath.startsWith('/en/');
+  const additionalOnlyValues = contract.values.additionalData.filter((value) => value !== 'Drugo');
+  const allowedAdditionalValues = contract.values.additionalData;
   let hasSubmittedToGoogle = false;
   let submissionComplete = false;
   const setFieldValue = (name, value) => { const field = form?.elements.namedItem(name); if (field && 'value' in field) field.value = value || ''; };
@@ -115,66 +138,79 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const isStkUrl = () => { try { const url = new URL(source.value); const host = url.hostname.replace(/^www\./, ''); return host === 'tekaski-koledar.si'; } catch { return false; } };
   const validateSource = () => { addProtocol(); const value = source?.value.trim() || ''; const invalid = Boolean(value && !isSafeHttpUrl(value)); source?.setCustomValidity(invalid ? copy.sourceError : ''); if (!invalid) source?.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = !invalid; if (sourceWarning) sourceWarning.hidden = !value || !isStkUrl(); return !invalid; };
   const buildDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl }) => {
-    const isEnglish = copy.cleanPath.startsWith('/en/');
     const lines = isEnglish ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', ''] : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
     const details = isEnglish ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]] : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
     for (const [label, value] of details) if (value) lines.push(`${label}: ${value}`);
     lines.push('', isEnglish ? 'Please add below which detail should be corrected or updated.' : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
     return lines.join('\n');
   };
-  const currentType = () => form?.querySelector(`input[name="${contract.fields.proposalType}"]:checked`)?.value || '';
-  const setRow = (key, visible, required) => {
+  const currentType = () => form?.querySelector('input[name="proposal-type-ui"]:checked')?.value || '';
+  const selectedChangeBoxes = () => Array.from(form?.querySelectorAll('input[name="proposal-change-category"]:checked') || []);
+  const selectedChangeValues = () => selectedChangeBoxes().map((box) => box.value);
+  const selectedChangeLabels = () => selectedChangeBoxes().map((box) => box.closest('label')?.querySelector('span')?.textContent?.trim()).filter(Boolean);
+  const mapExistingType = () => { const selected = selectedChangeValues(); return selected.length && selected.every((value) => additionalOnlyValues.includes(value)) ? contract.values.proposalTypes[2] : contract.values.proposalTypes[1]; };
+  const backendTypeForCurrentSelection = () => currentType() === 'new' ? contract.values.proposalTypes[0] : currentType() === 'other' ? contract.values.proposalTypes[3] : mapExistingType();
+  const setBackendType = () => { if (backendProposalType) backendProposalType.value = backendTypeForCurrentSelection(); };
+  const clearAdditionalHiddenInputs = () => { if (additionalHiddenInputs) additionalHiddenInputs.innerHTML = ''; };
+  const syncAdditionalHiddenInputs = () => { clearAdditionalHiddenInputs(); for (const value of selectedChangeValues().filter((value) => allowedAdditionalValues.includes(value))) { const input = document.createElement('input'); input.type = 'hidden'; input.name = contract.fields.additionalData; input.value = value; additionalHiddenInputs?.append(input); } };
+  const listText = (labels) => labels.join('; ');
+  const genericChangePlaceholder = () => isEnglish ? 'Enter the missing or correct detail.' : 'Navedite manjkajoči ali pravilen podatek.';
+  const buildChangePlaceholder = () => { const labels = selectedChangeLabels(); return labels.length ? labels.map((label) => `${label}:`).join('\n') : genericChangePlaceholder(); };
+  const stripStructuredHeader = (value) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\n\n|$)/s, '').trimStart();
+  const buildStructuredDescription = () => { const labels = selectedChangeLabels(); const header = `${isEnglish ? 'Selected changes:' : 'Izbrane vrste sprememb:'} ${listText(labels)}`.trim(); const userText = stripStructuredHeader(description?.value || '').trim(); return userText ? `${header}\n\n${userText}` : header; };
+  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; changeSummary.textContent = labels.length ? `${copy.selectedChanges} ${listText(labels)}.` : ''; } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); };
+  const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
+  const setRow = (key, visible, required, options = {}) => {
     const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea');
-    if (!row || !control) return; row.hidden = !visible; control.required = Boolean(visible && required); control.disabled = !visible; control.removeAttribute('aria-invalid'); control.setCustomValidity('');
+    if (!row || !control) return; row.hidden = !visible; control.required = Boolean(visible && required); control.disabled = !visible && !options.keepEnabledWhenHidden; control.removeAttribute('aria-invalid'); control.setCustomValidity('');
     const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(visible && required);
   };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
-  const setVisualOrder = (key, order) => { const row = key === 'additional' ? additionalSection : document.querySelector(`[data-field-row="${key}"]`); if (row) row.style.order = order || ''; };
+  const hasSafePrefillIdentity = () => Boolean(!document.querySelector('[data-correction-context]')?.hidden && (form?.elements.namedItem(contract.fields.title)?.value || '').trim());
   const applyTypeUx = () => {
-    const type = currentType(); const [newType, correctionType, additionalType, otherType] = contract.values.proposalTypes;
-    const isNew = type === newType, isCorrection = type === correctionType, isAdditional = type === additionalType, isOther = type === otherType;
-    const hasSafePrefill = !document.querySelector('[data-correction-context]')?.hidden;
-    const needsIdentity = isNew || (isCorrection && !hasSafePrefill);
-    setRow('date', !isOther, isAdditional || needsIdentity);
-    setRow('title', !isOther, isAdditional || needsIdentity);
-    setRow('place', !isOther, needsIdentity);
-    setRow('region', !isOther && !isAdditional, needsIdentity);
+    const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const prefilled = isExisting && hasSafePrefillIdentity();
+    setRow('date', isNew || (isExisting && !prefilled), isNew || (isExisting && !prefilled), { keepEnabledWhenHidden: prefilled });
+    setRow('title', isNew || (isExisting && !prefilled), isNew || (isExisting && !prefilled), { keepEnabledWhenHidden: prefilled });
+    setRow('place', isNew || (isExisting && !prefilled), isNew, { keepEnabledWhenHidden: prefilled });
+    setRow('region', isNew, isNew);
     setRow('organizer', isNew, isNew); setRow('announcement', isNew, isNew); setRow('source', true, false); setRow('description', true, true); setRow('email', true, true);
-    if (placeLabel) placeLabel.textContent = isAdditional ? (copy.cleanPath.startsWith('/en/') ? 'Place (optional)' : 'Kraj (neobvezno)') : copy.labels.place;
+    if (placeLabel) placeLabel.textContent = isExisting ? copy.labels.placeOptional : copy.labels.place;
     const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
-    ['date','title','place','region','source','description','organizer','announcement','email','additional'].forEach((key) => setVisualOrder(key, ''));
-    if (isAdditional) { setVisualOrder('date', '1'); setVisualOrder('title', '2'); setVisualOrder('place', '3'); setVisualOrder('additional', '4'); setVisualOrder('description', '5'); setVisualOrder('source', '6'); setVisualOrder('email', '7'); }
-    if (additionalSection) additionalSection.hidden = !isAdditional;
-    form?.querySelectorAll(`input[name="${contract.fields.additionalData}"]`).forEach((box) => { box.disabled = !isAdditional; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
+    if (additionalSection) additionalSection.hidden = !isExisting;
+    form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.disabled = !isExisting; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
     if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription);
-    else if (isCorrection) setDescriptionCopy(copy.dynamicLabels.correctionDescription, copy.helpers.correctionDescription);
-    else if (isAdditional) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, copy.placeholders.additionalDescription);
+    else if (isExisting) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, buildChangePlaceholder());
     else setDescriptionCopy(copy.labels.description, copy.placeholders.description);
+    if (!isExisting) { clearChangeError(); clearAdditionalHiddenInputs(); if (changeSummary) changeSummary.hidden = true; }
+    updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
   };
   const applyRuntimePrefill = () => {
     const params = new URLSearchParams(window.location.search); const eventTitle = params.get('event')?.trim() || ''; if (!eventTitle) return;
     const year = params.get('year')?.trim() || ''; const date = params.get('date')?.trim() || ''; const place = params.get('place')?.trim() || ''; const sourceValue = params.get('source')?.trim() || ''; const officialSourceUrl = isSafeHttpUrl(sourceValue) ? sourceValue : ''; const returnUrl = params.get('returnUrl')?.trim() || ''; const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : ''; const prefillDescription = buildDescription({ eventTitle, year, date, place, source: sourceValue, officialSourceUrl, safeReturnUrl });
-    const correctionRadio = form?.querySelector(`input[name="${contract.fields.proposalType}"][value="${contract.values.proposalTypes[1]}"]`); if (correctionRadio) correctionRadio.checked = true;
+    const correctionRadio = form?.querySelector('input[name="proposal-type-ui"][value="existing"]'); if (correctionRadio) correctionRadio.checked = true;
     setFieldValue(contract.fields.date, date); setFieldValue(contract.fields.title, eventTitle); setFieldValue(contract.fields.place, place); setFieldValue(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]); setFieldValue(contract.fields.officialSource, officialSourceUrl); setFieldValue(contract.fields.description, prefillDescription);
     const context = document.querySelector('[data-correction-context]'); const title = document.querySelector('[data-prefill-title]'); const meta = document.querySelector('[data-prefill-meta]'); const back = document.querySelector('[data-prefill-return]'); if (context) context.hidden = false; if (title) title.textContent = eventTitle; if (meta) meta.textContent = [date || year, place].filter(Boolean).join(' · '); if (back) { back.hidden = !safeReturnUrl; if (safeReturnUrl) back.href = safeReturnUrl; }
   };
-  applyRuntimePrefill(); applyTypeUx(); validateSource();
-  form?.querySelectorAll(`input[name="${contract.fields.proposalType}"]`).forEach((radio) => radio.addEventListener('change', () => { applyTypeUx(); if (errors) errors.hidden = true; }));
-  source?.addEventListener('blur', validateSource);
-  source?.addEventListener('input', () => { source.removeAttribute('aria-invalid'); if (isSafeHttpUrl(source.value.trim()) || !source.value.trim()) source.setCustomValidity(''); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; });
-  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) field.removeAttribute('aria-invalid'); });
-  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) field.removeAttribute('aria-invalid'); if (field?.name === contract.fields.additionalData) { const checked = form.querySelectorAll(`input[name="${contract.fields.additionalData}"]:checked`).length; form.querySelectorAll(`input[name="${contract.fields.additionalData}"]`).forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (errors && checked && visibleInvalidFields().length === 0) errors.hidden = true; } });
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
   const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
+  const updateErrorSummary = () => { if (!errors || errors.hidden) return; const invalidFields = visibleInvalidFields(); if (!invalidFields.length) { errors.hidden = true; return; } errors.textContent = `${copy.errorTitle} ${[...new Set(invalidFields.map(labelForField).filter(Boolean))].join(', ')}`; };
   const showErrors = (fields) => { const labels = [...new Set(fields.map(labelForField).filter(Boolean))]; if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); } for (const field of fields) field?.setAttribute('aria-invalid', 'true'); };
+  applyRuntimePrefill(); applyTypeUx(); validateSource();
+  form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', applyTypeUx));
+  source?.addEventListener('blur', validateSource);
+  source?.addEventListener('input', () => { source.removeAttribute('aria-invalid'); if (isSafeHttpUrl(source.value.trim()) || !source.value.trim()) source.setCustomValidity(''); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); });
+  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.removeAttribute('aria-invalid'); if (field.checkValidity?.()) field.setCustomValidity(''); updateErrorSummary(); } });
+  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) field.removeAttribute('aria-invalid'); if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); updateChangeSummary(); updateErrorSummary(); } });
   form?.addEventListener('submit', (event) => {
     if (submissionComplete) { event.preventDefault(); return; }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-    if (currentType() === contract.values.proposalTypes[2]) { const checked = form.querySelectorAll(`input[name="${contract.fields.additionalData}"]:checked`).length; const first = form.querySelector(`input[name="${contract.fields.additionalData}"]`); first?.setCustomValidity(checked ? '' : copy.labels.additionalData); if (!checked) form.querySelectorAll(`input[name="${contract.fields.additionalData}"]`).forEach((box) => box.setAttribute('aria-invalid', 'true')); }
+    if (currentType() === 'existing') { const checked = selectedChangeValues().length; const first = form.querySelector('input[name="proposal-change-category"]'); first?.setCustomValidity(checked ? '' : copy.changeError); if (!checked) { if (additionalError) additionalError.hidden = false; form.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => box.setAttribute('aria-invalid', 'true')); } else { clearChangeError(); } }
+    setBackendType(); syncAdditionalHiddenInputs();
     const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
+    if (currentType() === 'existing' && description) description.value = buildStructuredDescription();
     if (errors) errors.hidden = true; if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; hasSubmittedToGoogle = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
   });
-  form?.addEventListener('reset', (event) => { if (document.querySelector('[data-correction-context]') && !document.querySelector('[data-correction-context]').hidden && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); applyRuntimePrefill(); applyTypeUx(); }, 0); });
+  form?.addEventListener('reset', (event) => { if (document.querySelector('[data-correction-context]') && !document.querySelector('[data-correction-context]').hidden && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); applyRuntimePrefill(); applyTypeUx(); }, 0); });
   document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!hasSubmittedToGoogle) return; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
 </script>
 <style>
