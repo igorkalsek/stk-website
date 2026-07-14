@@ -19,16 +19,14 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   <p class="proposal-note">{copy.notAuto}</p>
 </section>
 
-{isCorrection && (
-  <section class="section container correction-context" aria-labelledby="selected-race-title">
-    <article class="info-card correction-context-card" data-correction-card>
-      <span class="eyebrow">{copy.selected}</span>
-      <h2 id="selected-race-title" data-prefill-title>{prefill.eventTitle}</h2>
-      <p>{[prefill.date || prefill.year, prefill.place].filter(Boolean).join(' · ')}</p>
-      {prefill.safeReturnUrl && <a class="correction-context-back" href={prefill.safeReturnUrl}>{copy.back}</a>}
-    </article>
-  </section>
-)}
+<section class="section container correction-context" aria-labelledby="selected-race-title" data-correction-context hidden={!isCorrection}>
+  <article class="info-card correction-context-card" data-correction-card>
+    <span class="eyebrow">{copy.selected}</span>
+    <h2 id="selected-race-title" data-prefill-title>{prefill.eventTitle}</h2>
+    <p data-prefill-meta>{[prefill.date || prefill.year, prefill.place].filter(Boolean).join(' · ')}</p>
+    <a class="correction-context-back" href={prefill.safeReturnUrl || '#'} data-prefill-return hidden={!prefill.safeReturnUrl}>{copy.back}</a>
+  </article>
+</section>
 
 <section class="section container" aria-labelledby="form-title">
   <div class="proposal-panel">
@@ -76,7 +74,7 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
     <iframe name="proposal-form-target" title="Google Forms submission target" hidden data-submit-target></iframe>
   </div>
 </section>
-<script is:inline define:vars={{ copy }}>
+<script is:inline define:vars={{ copy, contract: googleProposalFormContract }}>
   const form = document.querySelector('[data-proposal-form]');
   const button = document.querySelector('[data-submit-button]');
   const status = document.querySelector('[data-submit-status]');
@@ -85,6 +83,69 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const errors = document.querySelector('[data-error-summary]');
   const source = document.querySelector('[data-source-url]');
   let hasSubmittedToGoogle = false;
+  const setFieldValue = (name, value) => {
+    const field = form?.elements.namedItem(name);
+    if (field && 'value' in field) field.value = value || '';
+  };
+  const isSafeInternalReturnUrl = (value) => Boolean(value && value.startsWith('/') && !value.startsWith('//') && !/^https?:\/\//i.test(value));
+  const isSafeHttpUrl = (value) => {
+    try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; } catch { return false; }
+  };
+  const buildDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl }) => {
+    const isEnglish = copy.cleanPath.startsWith('/en/');
+    const lines = isEnglish
+      ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
+      : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
+    const details = isEnglish
+      ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]]
+      : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
+    for (const [label, value] of details) if (value) lines.push(`${label}: ${value}`);
+    lines.push('', isEnglish ? 'Please add below which detail should be corrected or updated.' : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
+    return lines.join('\n');
+  };
+  const applyRuntimePrefill = () => {
+    const params = new URLSearchParams(window.location.search);
+    const eventTitle = params.get('event')?.trim() || '';
+    if (!eventTitle) return;
+    const year = params.get('year')?.trim() || '';
+    const date = params.get('date')?.trim() || '';
+    const place = params.get('place')?.trim() || '';
+    const sourceValue = params.get('source')?.trim() || '';
+    const officialSourceUrl = isSafeHttpUrl(sourceValue) ? sourceValue : '';
+    const returnUrl = params.get('returnUrl')?.trim() || '';
+    const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
+    const description = buildDescription({ eventTitle, year, date, place, source: sourceValue, officialSourceUrl, safeReturnUrl });
+    const correctionRadio = form?.querySelector(`input[name="${contract.fields.proposalType}"][value="${contract.values.proposalTypes[1]}"]`);
+    if (correctionRadio) correctionRadio.checked = true;
+    setFieldValue(contract.fields.date, date);
+    setFieldValue(contract.fields.title, eventTitle);
+    setFieldValue(contract.fields.place, place);
+    setFieldValue(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]);
+    setFieldValue(contract.fields.officialSource, officialSourceUrl);
+    setFieldValue(contract.fields.description, description);
+    const context = document.querySelector('[data-correction-context]');
+    const title = document.querySelector('[data-prefill-title]');
+    const meta = document.querySelector('[data-prefill-meta]');
+    const back = document.querySelector('[data-prefill-return]');
+    if (context) context.hidden = false;
+    if (title) title.textContent = eventTitle;
+    if (meta) meta.textContent = [date || year, place].filter(Boolean).join(' · ');
+    if (back) { back.hidden = !safeReturnUrl; if (safeReturnUrl) back.href = safeReturnUrl; }
+    const fallback = document.querySelector('[data-correction-form-link]');
+    if (fallback) {
+      const fallbackUrl = new URL(contract.viewUrl);
+      fallbackUrl.searchParams.set('usp', 'pp_url');
+      fallbackUrl.searchParams.set(contract.fields.proposalType, contract.values.proposalTypes[1]);
+      if (date) fallbackUrl.searchParams.set(contract.fields.date, date);
+      fallbackUrl.searchParams.set(contract.fields.title, eventTitle);
+      if (place) fallbackUrl.searchParams.set(contract.fields.place, place);
+      fallbackUrl.searchParams.set(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]);
+      if (officialSourceUrl) fallbackUrl.searchParams.set(contract.fields.officialSource, officialSourceUrl);
+      fallbackUrl.searchParams.set(contract.fields.description, description);
+      fallback.href = fallbackUrl.href;
+    }
+  };
+  applyRuntimePrefill();
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
   const showErrors = (fields) => {
     const labels = [...new Set(fields.map(labelForField).filter(Boolean))];
