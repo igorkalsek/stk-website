@@ -5,6 +5,7 @@ import { proposalFormLocales, proposalTypeOptions } from '../proposal-form/propo
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
 
 const { lang = 'sl' } = Astro.props as { lang?: ProposalLanguage };
+const emailPattern = String.raw`[^@\s]+@[^@\s]+\.[^@\s]+`;
 const copy = proposalFormLocales[lang];
 const prefill = readProposalPrefill(Astro.url.searchParams, lang);
 const fallbackUrl = buildGoogleFormsFallbackUrl(prefill);
@@ -92,7 +93,7 @@ const changeGroups = [
         <div data-field-row="announcement"><label for="proposal-announcement" data-label-text>{copy.labels.officialAnnouncement2026}</label><span data-required-mark aria-hidden="true"> *</span><select id="proposal-announcement" name={googleProposalFormContract.fields.officialAnnouncement2026} required data-field-label={copy.labels.officialAnnouncement2026}><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{copy.labelsForValues.announcement[v]}</option>)}</select></div>
         <div class="full-span" data-field-row="email">
           <label for="proposal-email" data-label-text>{copy.labels.email}</label><span data-required-mark aria-hidden="true"> *</span>
-          <input id="proposal-email" name={googleProposalFormContract.fields.email} type="email" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" required autocomplete="email" data-field-label={copy.labels.email} aria-describedby="proposal-email-helper" />
+          <input id="proposal-email" name={googleProposalFormContract.fields.email} type="email" pattern={emailPattern} required autocomplete="email" data-field-label={copy.labels.email} aria-describedby="proposal-email-helper" />
           <small id="proposal-email-helper" class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small>
         </div>
       </div>
@@ -138,7 +139,7 @@ const changeGroups = [
   const isSafeHttpUrl = (value) => { try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; } catch { return false; } };
   const addProtocol = () => { if (!source) return; const value = source.value.trim(); if (value && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) source.value = `https://${value}`; };
   const isStkUrl = () => { try { const url = new URL(source.value); const host = url.hostname.replace(/^www\./, ''); return host === 'tekaski-koledar.si'; } catch { return false; } };
-  const validateSource = () => { addProtocol(); const value = source?.value.trim() || ''; const invalid = Boolean(value && !isSafeHttpUrl(value)); source?.setCustomValidity(invalid ? copy.sourceError : ''); if (!invalid) source?.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = !invalid; if (sourceWarning) sourceWarning.hidden = !value || !isStkUrl(); return !invalid; };
+  const validateSource = () => { addProtocol(); const value = source?.value.trim() || ''; const invalid = Boolean(value && !isSafeHttpUrl(value)); source?.setCustomValidity(invalid ? copy.sourceError : ''); if (invalid) source?.setAttribute('aria-invalid', 'true'); else source?.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = !invalid; if (sourceWarning) sourceWarning.hidden = !value || !isStkUrl(); updateErrorSummary(); return !invalid; };
   const buildDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl }) => {
     const lines = isEnglish ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', ''] : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
     const details = isEnglish ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]] : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
@@ -201,9 +202,9 @@ const changeGroups = [
   applyRuntimePrefill(); applyTypeUx(); validateSource();
   form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', applyTypeUx));
   source?.addEventListener('blur', validateSource);
-  source?.addEventListener('input', () => { source.removeAttribute('aria-invalid'); if (isSafeHttpUrl(source.value.trim()) || !source.value.trim()) source.setCustomValidity(''); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); });
-  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.removeAttribute('aria-invalid'); if (field.checkValidity?.()) field.setCustomValidity(''); updateErrorSummary(); } });
-  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) field.removeAttribute('aria-invalid'); if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); updateChangeSummary(); updateErrorSummary(); } });
+  source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); });
+  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field === source) validateSource(); else updateErrorSummary(); } });
+  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); });
   form?.addEventListener('submit', (event) => {
     if (submissionComplete) { event.preventDefault(); return; }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));

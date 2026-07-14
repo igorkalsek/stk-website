@@ -58,6 +58,13 @@ test.describe('native proposal form', () => {
     await expect(page.getByText('Vnesite celoten spletni naslov')).toBeHidden();
     await expect(page.getByRole('textbox', { name: 'Uradni vir', exact: true })).not.toHaveAttribute('aria-invalid', 'true');
 
+    const emailValidity = async (value: string) => page.locator('#proposal-email').evaluate((input: HTMLInputElement, nextValue) => { input.value = nextValue as string; return { valid: input.checkValidity(), patternMismatch: input.validity.patternMismatch, valueMissing: input.validity.valueMissing }; }, value);
+    await expect.poll(async () => (await emailValidity('test@example.com')).valid).toBe(true);
+    await expect.poll(async () => (await emailValidity('review@example.com')).valid).toBe(true);
+    await expect.poll(async () => (await emailValidity('igor@gmail')).patternMismatch).toBe(true);
+    await expect.poll(async () => (await emailValidity('test@')).valid).toBe(false);
+    await expect.poll(async () => (await emailValidity('')).valueMissing).toBe(true);
+
     await page.locator('#proposal-date').fill('2026-09-12');
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Štajerski ultra tek z zelo zelo dolgim nazivom');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
@@ -143,7 +150,7 @@ test.describe('native proposal form', () => {
     expect(additionalBox && descriptionBox && additionalBox.y < descriptionBox.y).toBeTruthy();
 
     await page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' }).fill('Prijavnina 20 €.');
-    await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
+    await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('igor@gmail');
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect(page.getByRole('alert')).toContainText('Datum');
     await expect(page.getByRole('alert')).toContainText('Naziv prireditve');
@@ -159,6 +166,9 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true })).toHaveAttribute('aria-invalid', 'true');
     await page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true }).check();
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true })).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByRole('alert')).toContainText('Kontaktni e-naslov');
+    await expect(page.getByRole('alert')).not.toContainText('Kaj želite popraviti ali dopolniti?');
+    await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
     await expect(page.getByRole('alert')).toBeHidden();
     await page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka', exact: true }).check();
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
