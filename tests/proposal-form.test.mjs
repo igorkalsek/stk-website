@@ -13,7 +13,7 @@ describe('proposal form contract', () => {
     assert(googleProposalFormContract.values.regions.includes('Ne vem / nisem prepričan (navedem v opisu)'));
   });
   it('documents required website fields', () => assert.deepEqual([...requiredProposalFields], ['proposalType','date','title','place','region','description','organizer','officialAnnouncement2026','email']));
-  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.submit, 'Pošlji predlog'); assert.equal(proposalFormLocales.en.submit, 'Send proposal'); assert.equal(proposalFormLocales.sl.labels.additionalData, 'Katere dodatne podatke želite dopolniti? (neobvezno)'); assert.equal(proposalFormLocales.en.labelsForValues.yesNo.Da, 'Yes'); assert.equal(proposalFormLocales.en.labelsForValues.announcement['Ne vem'], 'I do not know'); assert.equal(proposalFormLocales.en.labelsForValues.additionalData['Trasa / zemljevid / GPX'], 'Route / map / GPX'); });
+  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.submit, 'Pošlji predlog'); assert.equal(proposalFormLocales.en.submit, 'Send proposal'); assert.equal(proposalFormLocales.sl.intro, 'Pošljite predlog za nov tek, popravek ali dopolnitev podatkov. Pred objavo bomo podatke pregledali in preverili.'); assert.equal(proposalFormLocales.sl.labels.additionalData, 'Kaj želite dopolniti?'); assert.equal(proposalFormLocales.sl.labels.officialSource, 'Uradni vir (neobvezno)'); assert.equal(proposalFormLocales.en.labels.officialSource, 'Official source (optional)'); assert.equal(proposalFormLocales.en.labelsForValues.yesNo.Da, 'Yes'); assert.equal(proposalFormLocales.en.labelsForValues.announcement['Ne vem'], 'I do not know'); assert.equal(proposalFormLocales.en.labelsForValues.additionalData['Trasa / zemljevid / GPX'], 'Route / map / GPX'); });
   it('keeps empty forms empty and prefills correction query safely', () => {
     const empty = readProposalPrefill(new URLSearchParams(''), 'en');
     assert.equal(empty.description, '');
@@ -28,7 +28,7 @@ describe('proposal form contract', () => {
     assert.match(url, /entry\.528776717=Tek/); assert.doesNotMatch(url, /entry\.600388817/); assert.doesNotMatch(url, /entry\.1673153264=detail/);
     const component = readFileSync(new URL('../src/components/RaceProposalForm.astro', import.meta.url), 'utf8');
     assert.doesNotMatch(component, /localStorage|history\.pushState|Master API|Additional API/);
-    assert.match(component, /data-analytics-link-type="correction_form"/);
+    assert.match(component, /data-analytics-link-type="correction_form"/); assert.match(component, /data-additional-section hidden/); assert.match(component, /data-source-warning/);
   });
   it('does not add direct master or API writes', () => {
     const sources = ['src/components/RaceProposalForm.astro','src/proposal-form/proposal-form-controller.ts'].map((f) => readFileSync(new URL(`../${f}`, import.meta.url),'utf8')).join('\n');

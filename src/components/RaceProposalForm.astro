@@ -50,17 +50,18 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
       </fieldset>
 
       <div class="form-grid">
-        <label>{copy.labels.date}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} /></label>
-        <label>{copy.labels.title}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" data-field-label={copy.labels.title} /></label>
-        <label>{copy.labels.place}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" data-field-label={copy.labels.place} /></label>
-        <label>{copy.labels.region}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required data-field-label={copy.labels.region}><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{copy.labelsForValues.regions[r]}</option>)}</select></label>
-        <label class="full-span">{copy.labels.officialSource}<input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" pattern="https?://.+" value={prefill.officialSourceUrl} data-source-url data-field-label={copy.labels.officialSource} /></label>
-        <label class="full-span">{copy.labels.description}<span aria-hidden="true"> *</span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description} data-field-label={copy.labels.description}>{prefill.description}</textarea></label>
-        <label>{copy.labels.organizer}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required data-field-label={copy.labels.organizer}><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{copy.labelsForValues.yesNo[v]}</option>)}</select></label>
-        <label>{copy.labels.officialAnnouncement2026}<span aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required data-field-label={copy.labels.officialAnnouncement2026}><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{copy.labelsForValues.announcement[v]}</option>)}</select></label>
-        <label class="full-span">{copy.labels.email}<span aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" data-field-label={copy.labels.email} /></label>
-        <fieldset class="full-span optional-fieldset">
+        <label data-field-row="date"><span data-label-text>{copy.labels.date}</span><span data-required-mark aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} /></label>
+        <label data-field-row="title"><span data-label-text>{copy.labels.title}</span><span data-required-mark aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" data-field-label={copy.labels.title} /></label>
+        <label data-field-row="place"><span data-label-text>{copy.labels.place}</span><span data-required-mark aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" data-field-label={copy.labels.place} /></label>
+        <label data-field-row="region"><span data-label-text>{copy.labels.region}</span><span data-required-mark aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.region} required data-field-label={copy.labels.region}><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{copy.labelsForValues.regions[r]}</option>)}</select></label>
+        <label class="full-span" data-field-row="source"><span data-label-text>{copy.labels.officialSource}</span><input name={googleProposalFormContract.fields.officialSource} type="url" inputmode="url" placeholder={copy.placeholders.officialSource} value={prefill.officialSourceUrl} data-source-url data-field-label={copy.labels.officialSource} /><small class="field-helper">{copy.helpers.officialSource}</small><small class="field-error" data-source-error hidden>{copy.sourceError}</small><small class="field-warning" data-source-warning hidden>{copy.sourceWarning}</small></label>
+        <label class="full-span" data-field-row="description"><span><span data-label-text>{copy.labels.description}</span><span data-required-mark aria-hidden="true"> *</span></span><textarea name={googleProposalFormContract.fields.description} required rows="7" placeholder={copy.placeholders.description} data-field-label={copy.labels.description}>{prefill.description}</textarea><small class="field-helper" data-description-helper>{copy.helpers.newDescription}</small></label>
+        <label data-field-row="organizer"><span data-label-text>{copy.labels.organizer}</span><span data-required-mark aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.organizer} required data-field-label={copy.labels.organizer}><option value=""></option>{googleProposalFormContract.values.yesNo.map((v) => <option value={v}>{copy.labelsForValues.yesNo[v]}</option>)}</select></label>
+        <label data-field-row="announcement"><span data-label-text>{copy.labels.officialAnnouncement2026}</span><span data-required-mark aria-hidden="true"> *</span><select name={googleProposalFormContract.fields.officialAnnouncement2026} required data-field-label={copy.labels.officialAnnouncement2026}><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{copy.labelsForValues.announcement[v]}</option>)}</select></label>
+        <label class="full-span" data-field-row="email"><span data-label-text>{copy.labels.email}</span><span data-required-mark aria-hidden="true"> *</span><input name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" data-field-label={copy.labels.email} /><small class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small></label>
+        <fieldset class="full-span optional-fieldset" data-additional-section hidden>
           <legend>{copy.labels.additionalData}</legend>
+          <p class="field-helper">{copy.helpers.additionalData}</p>
           <div class="checkbox-grid">{googleProposalFormContract.values.additionalData.map((v) => <label><input type="checkbox" name={googleProposalFormContract.fields.additionalData} value={v} /> <span>{copy.labelsForValues.additionalData[v]}</span></label>)}</div>
         </fieldset>
       </div>
@@ -68,8 +69,9 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
         <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
         <button class="button button-secondary-light" type="reset" data-reset-button>{copy.clear}</button>
         <a class="button button-secondary-light" href={copy.cleanPath} data-new-proposal-link hidden>{copy.newProposal}</a>
-        <a class="button button-secondary" href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link data-analytics-link-type="correction_form">{copy.fallback}</a>
+        <a class="button button-secondary-light" href={copy.calendarPath} data-calendar-link hidden>{copy.backToCalendar}</a>
       </div>
+      <p class="proposal-fallback"><a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link data-analytics-link-type="correction_form">{copy.fallback}</a></p>
     </form>
     <iframe name="proposal-form-target" title="Google Forms submission target" hidden data-submit-target></iframe>
   </div>
@@ -79,104 +81,78 @@ const selectedType = isCorrection ? googleProposalFormContract.values.proposalTy
   const button = document.querySelector('[data-submit-button]');
   const status = document.querySelector('[data-submit-status]');
   const newProposalLink = document.querySelector('[data-new-proposal-link]');
+  const calendarLink = document.querySelector('[data-calendar-link]');
   const resetButton = document.querySelector('[data-reset-button]');
   const errors = document.querySelector('[data-error-summary]');
   const source = document.querySelector('[data-source-url]');
+  const sourceError = document.querySelector('[data-source-error]');
+  const sourceWarning = document.querySelector('[data-source-warning]');
+  const additionalSection = document.querySelector('[data-additional-section]');
+  const description = form?.elements.namedItem(contract.fields.description);
+  const descriptionLabel = document.querySelector('[data-field-row="description"] [data-label-text]');
+  const descriptionHelper = document.querySelector('[data-description-helper]');
   let hasSubmittedToGoogle = false;
-  const setFieldValue = (name, value) => {
-    const field = form?.elements.namedItem(name);
-    if (field && 'value' in field) field.value = value || '';
-  };
+  let submissionComplete = false;
+  const setFieldValue = (name, value) => { const field = form?.elements.namedItem(name); if (field && 'value' in field) field.value = value || ''; };
   const isSafeInternalReturnUrl = (value) => Boolean(value && value.startsWith('/') && !value.startsWith('//') && !/^https?:\/\//i.test(value));
-  const isSafeHttpUrl = (value) => {
-    try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; } catch { return false; }
-  };
+  const isSafeHttpUrl = (value) => { try { const url = new URL(value); return url.protocol === 'http:' || url.protocol === 'https:'; } catch { return false; } };
+  const addProtocol = () => { if (!source) return; const value = source.value.trim(); if (value && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) source.value = `https://${value}`; };
+  const isStkUrl = () => { try { const url = new URL(source.value); const host = url.hostname.replace(/^www\./, ''); return host === 'tekaski-koledar.si'; } catch { return false; } };
+  const validateSource = () => { addProtocol(); const value = source?.value.trim() || ''; const invalid = Boolean(value && !isSafeHttpUrl(value)); source?.setCustomValidity(invalid ? copy.sourceError : ''); if (sourceError) sourceError.hidden = !invalid; if (sourceWarning) sourceWarning.hidden = !value || !isStkUrl(); return !invalid; };
   const buildDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl }) => {
     const isEnglish = copy.cleanPath.startsWith('/en/');
-    const lines = isEnglish
-      ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
-      : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
-    const details = isEnglish
-      ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]]
-      : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
+    const lines = isEnglish ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', ''] : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
+    const details = isEnglish ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]] : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
     for (const [label, value] of details) if (value) lines.push(`${label}: ${value}`);
     lines.push('', isEnglish ? 'Please add below which detail should be corrected or updated.' : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
     return lines.join('\n');
   };
+  const currentType = () => form?.querySelector(`input[name="${contract.fields.proposalType}"]:checked`)?.value || '';
+  const setRow = (key, visible, required) => {
+    const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea');
+    if (!row || !control) return; row.hidden = !visible; control.required = Boolean(visible && required); control.disabled = !visible; control.removeAttribute('aria-invalid'); control.setCustomValidity('');
+    const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(visible && required);
+  };
+  const setDescriptionCopy = (label, helper) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) description.dataset.fieldLabel = label; };
+  const applyTypeUx = () => {
+    const type = currentType(); const [newType, correctionType, additionalType, otherType] = contract.values.proposalTypes;
+    const isNew = type === newType, isCorrection = type === correctionType, isAdditional = type === additionalType, isOther = type === otherType;
+    const hasSafePrefill = !document.querySelector('[data-correction-context]')?.hidden;
+    const needsIdentity = isNew || (isCorrection && !hasSafePrefill);
+    setRow('date', !isOther, needsIdentity);
+    setRow('title', !isOther, needsIdentity);
+    setRow('place', !isOther, needsIdentity);
+    setRow('region', !isOther, needsIdentity);
+    setRow('organizer', isNew, isNew); setRow('announcement', isNew, isNew); setRow('source', true, false); setRow('description', true, true); setRow('email', true, true);
+    if (additionalSection) additionalSection.hidden = !isAdditional;
+    form?.querySelectorAll(`input[name="${contract.fields.additionalData}"]`).forEach((box) => { box.disabled = !isAdditional; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
+    if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription);
+    else if (isCorrection) setDescriptionCopy(copy.dynamicLabels.correctionDescription, copy.helpers.correctionDescription);
+    else if (isAdditional) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription);
+    else setDescriptionCopy(copy.labels.description, copy.placeholders.description);
+  };
   const applyRuntimePrefill = () => {
-    const params = new URLSearchParams(window.location.search);
-    const eventTitle = params.get('event')?.trim() || '';
-    if (!eventTitle) return;
-    const year = params.get('year')?.trim() || '';
-    const date = params.get('date')?.trim() || '';
-    const place = params.get('place')?.trim() || '';
-    const sourceValue = params.get('source')?.trim() || '';
-    const officialSourceUrl = isSafeHttpUrl(sourceValue) ? sourceValue : '';
-    const returnUrl = params.get('returnUrl')?.trim() || '';
-    const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
-    const description = buildDescription({ eventTitle, year, date, place, source: sourceValue, officialSourceUrl, safeReturnUrl });
-    const correctionRadio = form?.querySelector(`input[name="${contract.fields.proposalType}"][value="${contract.values.proposalTypes[1]}"]`);
-    if (correctionRadio) correctionRadio.checked = true;
-    setFieldValue(contract.fields.date, date);
-    setFieldValue(contract.fields.title, eventTitle);
-    setFieldValue(contract.fields.place, place);
-    setFieldValue(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]);
-    setFieldValue(contract.fields.officialSource, officialSourceUrl);
-    setFieldValue(contract.fields.description, description);
-    const context = document.querySelector('[data-correction-context]');
-    const title = document.querySelector('[data-prefill-title]');
-    const meta = document.querySelector('[data-prefill-meta]');
-    const back = document.querySelector('[data-prefill-return]');
-    if (context) context.hidden = false;
-    if (title) title.textContent = eventTitle;
-    if (meta) meta.textContent = [date || year, place].filter(Boolean).join(' · ');
-    if (back) { back.hidden = !safeReturnUrl; if (safeReturnUrl) back.href = safeReturnUrl; }
-    const fallback = document.querySelector('[data-correction-form-link]');
-    if (fallback) {
-      const fallbackUrl = new URL(contract.viewUrl);
-      fallbackUrl.searchParams.set('usp', 'pp_url');
-      fallbackUrl.searchParams.set(contract.fields.proposalType, contract.values.proposalTypes[1]);
-      if (date) fallbackUrl.searchParams.set(contract.fields.date, date);
-      fallbackUrl.searchParams.set(contract.fields.title, eventTitle);
-      if (place) fallbackUrl.searchParams.set(contract.fields.place, place);
-      fallbackUrl.searchParams.set(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]);
-      if (officialSourceUrl) fallbackUrl.searchParams.set(contract.fields.officialSource, officialSourceUrl);
-      fallbackUrl.searchParams.set(contract.fields.description, description);
-      fallback.href = fallbackUrl.href;
-    }
+    const params = new URLSearchParams(window.location.search); const eventTitle = params.get('event')?.trim() || ''; if (!eventTitle) return;
+    const year = params.get('year')?.trim() || ''; const date = params.get('date')?.trim() || ''; const place = params.get('place')?.trim() || ''; const sourceValue = params.get('source')?.trim() || ''; const officialSourceUrl = isSafeHttpUrl(sourceValue) ? sourceValue : ''; const returnUrl = params.get('returnUrl')?.trim() || ''; const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : ''; const prefillDescription = buildDescription({ eventTitle, year, date, place, source: sourceValue, officialSourceUrl, safeReturnUrl });
+    const correctionRadio = form?.querySelector(`input[name="${contract.fields.proposalType}"][value="${contract.values.proposalTypes[1]}"]`); if (correctionRadio) correctionRadio.checked = true;
+    setFieldValue(contract.fields.date, date); setFieldValue(contract.fields.title, eventTitle); setFieldValue(contract.fields.place, place); setFieldValue(contract.fields.region, contract.values.regions[contract.values.regions.length - 1]); setFieldValue(contract.fields.officialSource, officialSourceUrl); setFieldValue(contract.fields.description, prefillDescription);
+    const context = document.querySelector('[data-correction-context]'); const title = document.querySelector('[data-prefill-title]'); const meta = document.querySelector('[data-prefill-meta]'); const back = document.querySelector('[data-prefill-return]'); if (context) context.hidden = false; if (title) title.textContent = eventTitle; if (meta) meta.textContent = [date || year, place].filter(Boolean).join(' · '); if (back) { back.hidden = !safeReturnUrl; if (safeReturnUrl) back.href = safeReturnUrl; }
   };
-  applyRuntimePrefill();
+  applyRuntimePrefill(); applyTypeUx(); validateSource();
+  form?.querySelectorAll(`input[name="${contract.fields.proposalType}"]`).forEach((radio) => radio.addEventListener('change', () => { applyTypeUx(); if (errors) errors.hidden = true; }));
+  source?.addEventListener('blur', validateSource); source?.addEventListener('input', () => { source.setCustomValidity(''); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; });
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
-  const showErrors = (fields) => {
-    const labels = [...new Set(fields.map(labelForField).filter(Boolean))];
-    if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); }
-    for (const field of fields) field?.setAttribute('aria-invalid', 'true');
-  };
-  source?.addEventListener('input', () => source.setCustomValidity(source.value && !/^https?:\/\//i.test(source.value) ? copy.sourceError : ''));
+  const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
+  const showErrors = (fields) => { const labels = [...new Set(fields.map(labelForField).filter(Boolean))]; if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); } for (const field of fields) field?.setAttribute('aria-invalid', 'true'); };
   form?.addEventListener('submit', (event) => {
-    source?.dispatchEvent(new Event('input'));
-    form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-    if (!form.checkValidity()) { event.preventDefault(); const invalidFields = Array.from(form.querySelectorAll(':invalid')); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
-    if (errors) errors.hidden = true;
-    if (button) { button.disabled = true; button.textContent = copy.submitting; }
-    if (resetButton) resetButton.hidden = true;
-    hasSubmittedToGoogle = true;
-    if (status) { status.hidden = false; status.textContent = copy.submitting; }
+    if (submissionComplete) { event.preventDefault(); return; }
+    validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    if (currentType() === contract.values.proposalTypes[2]) { const checked = form.querySelectorAll(`input[name="${contract.fields.additionalData}"]:checked`).length; const first = form.querySelector(`input[name="${contract.fields.additionalData}"]`); first?.setCustomValidity(checked ? '' : copy.labels.additionalData); }
+    const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
+    if (errors) errors.hidden = true; if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; hasSubmittedToGoogle = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
   });
-  form?.addEventListener('reset', () => {
-    hasSubmittedToGoogle = false;
-    if (errors) errors.hidden = true;
-    if (status) { status.hidden = true; status.textContent = ''; }
-    if (resetButton) resetButton.hidden = false;
-    if (newProposalLink) newProposalLink.hidden = true;
-    form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-  });
-  document.querySelector('[data-submit-target]')?.addEventListener('load', () => {
-    if (!hasSubmittedToGoogle) return;
-    if (button) { button.disabled = false; button.textContent = copy.submit; }
-    if (newProposalLink) newProposalLink.hidden = false;
-    if (status) { status.hidden = false; status.textContent = copy.sent; }
-  });
+  form?.addEventListener('reset', (event) => { if (document.querySelector('[data-correction-context]') && !document.querySelector('[data-correction-context]').hidden && !window.confirm(copy.clear)) event.preventDefault(); setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); applyRuntimePrefill(); applyTypeUx(); }, 0); });
+  document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!hasSubmittedToGoogle) return; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
 </script>
 <style>
   .proposal-hero { padding-bottom: 24px; } .proposal-note { font-weight: 700; color: var(--green-dark); }
