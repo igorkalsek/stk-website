@@ -79,7 +79,15 @@ export const buildGoogleFormsFallbackUrl = (prefill: ProposalPrefill, proposalTy
   const url = new URL(googleProposalFormContract.viewUrl);
   url.searchParams.set('usp', 'pp_url');
   if (prefill.eventTitle) url.searchParams.set(googleProposalFormContract.fields.proposalType, proposalType);
-  if (prefill.date) url.searchParams.set(googleProposalFormContract.fields.date, prefill.date);
+  if (prefill.date) {
+    const [year, month, day] = prefill.date.split('-');
+    url.searchParams.set(googleProposalFormContract.fields.date, prefill.date);
+    if (year && month && day) {
+      url.searchParams.set(googleProposalFormContract.fields.dateYear, String(Number(year)));
+      url.searchParams.set(googleProposalFormContract.fields.dateMonth, String(Number(month)));
+      url.searchParams.set(googleProposalFormContract.fields.dateDay, String(Number(day)));
+    }
+  }
   if (prefill.eventTitle) url.searchParams.set(googleProposalFormContract.fields.title, prefill.eventTitle);
   if (prefill.place) url.searchParams.set(googleProposalFormContract.fields.place, prefill.place);
   if (prefill.officialSourceUrl) url.searchParams.set(googleProposalFormContract.fields.officialSource, prefill.officialSourceUrl);

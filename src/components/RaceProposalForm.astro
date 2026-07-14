@@ -57,9 +57,10 @@ const changeGroups = [
       </fieldset>
       <input type="hidden" name={googleProposalFormContract.fields.proposalType} value="" data-backend-proposal-type />
       <div data-additional-hidden-inputs></div>
+      <div data-date-hidden-inputs></div>
 
       <div class="form-grid">
-        <div data-field-row="date"><label for="proposal-date" data-label-text>{copy.labels.date}</label><span data-required-mark aria-hidden="true"> *</span><input id="proposal-date" name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} /></div>
+        <div data-field-row="date"><label for="proposal-date" data-label-text>{copy.labels.date}</label><span data-required-mark aria-hidden="true"> *</span><input id="proposal-date" name={googleProposalFormContract.fields.date} type="date" required value={prefill.date} data-field-label={copy.labels.date} data-date-input /></div>
         <div data-field-row="title"><label for="proposal-title" data-label-text>{copy.labels.title}</label><span data-required-mark aria-hidden="true"> *</span><input id="proposal-title" name={googleProposalFormContract.fields.title} required value={prefill.eventTitle} autocomplete="off" data-field-label={copy.labels.title} /></div>
         <div data-field-row="place"><label for="proposal-place" data-label-text>{copy.labels.place}</label><span data-required-mark aria-hidden="true"> *</span><input id="proposal-place" name={googleProposalFormContract.fields.place} required value={prefill.place} autocomplete="address-level2" data-field-label={copy.labels.place} /></div>
         <div data-field-row="region"><label for="proposal-region" data-label-text>{copy.labels.region}</label><span data-required-mark aria-hidden="true"> *</span><select id="proposal-region" name={googleProposalFormContract.fields.region} required data-field-label={copy.labels.region}><option value=""></option>{googleProposalFormContract.values.regions.map((r) => <option value={r} selected={isCorrection && r === googleProposalFormContract.values.regions.at(-1)}>{copy.labelsForValues.regions[r]}</option>)}</select></div>
@@ -91,7 +92,7 @@ const changeGroups = [
         <div data-field-row="announcement"><label for="proposal-announcement" data-label-text>{copy.labels.officialAnnouncement2026}</label><span data-required-mark aria-hidden="true"> *</span><select id="proposal-announcement" name={googleProposalFormContract.fields.officialAnnouncement2026} required data-field-label={copy.labels.officialAnnouncement2026}><option value=""></option>{googleProposalFormContract.values.announcement.map((v) => <option value={v}>{copy.labelsForValues.announcement[v]}</option>)}</select></div>
         <div class="full-span" data-field-row="email">
           <label for="proposal-email" data-label-text>{copy.labels.email}</label><span data-required-mark aria-hidden="true"> *</span>
-          <input id="proposal-email" name={googleProposalFormContract.fields.email} type="email" required autocomplete="email" data-field-label={copy.labels.email} aria-describedby="proposal-email-helper" />
+          <input id="proposal-email" name={googleProposalFormContract.fields.email} type="email" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" required autocomplete="email" data-field-label={copy.labels.email} aria-describedby="proposal-email-helper" />
           <small id="proposal-email-helper" class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small>
         </div>
       </div>
@@ -120,6 +121,7 @@ const changeGroups = [
   const additionalSection = document.querySelector('[data-additional-section]');
   const additionalError = document.querySelector('[data-additional-error]');
   const additionalHiddenInputs = document.querySelector('[data-additional-hidden-inputs]');
+  const dateHiddenInputs = document.querySelector('[data-date-hidden-inputs]');
   const backendProposalType = document.querySelector('[data-backend-proposal-type]');
   const changeSummary = document.querySelector('[data-change-summary]');
   const description = form?.elements.namedItem(contract.fields.description);
@@ -152,13 +154,14 @@ const changeGroups = [
   const backendTypeForCurrentSelection = () => currentType() === 'new' ? contract.values.proposalTypes[0] : currentType() === 'other' ? contract.values.proposalTypes[3] : mapExistingType();
   const setBackendType = () => { if (backendProposalType) backendProposalType.value = backendTypeForCurrentSelection(); };
   const clearAdditionalHiddenInputs = () => { if (additionalHiddenInputs) additionalHiddenInputs.innerHTML = ''; };
+  const syncDateHiddenInputs = () => { if (!dateHiddenInputs) return; dateHiddenInputs.innerHTML = ''; const value = form?.elements.namedItem(contract.fields.date)?.value || ''; const [year, month, day] = value.split('-'); const parts = [[contract.fields.dateYear, year], [contract.fields.dateMonth, month], [contract.fields.dateDay, day]]; if (!year || !month || !day) return; for (const [name, part] of parts) { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = String(Number(part)); dateHiddenInputs.append(input); } };
   const syncAdditionalHiddenInputs = () => { clearAdditionalHiddenInputs(); for (const value of selectedChangeValues().filter((value) => allowedAdditionalValues.includes(value))) { const input = document.createElement('input'); input.type = 'hidden'; input.name = contract.fields.additionalData; input.value = value; additionalHiddenInputs?.append(input); } };
   const listText = (labels) => labels.join('; ');
   const genericChangePlaceholder = () => isEnglish ? 'Enter the missing or correct detail.' : 'Navedite manjkajoči ali pravilen podatek.';
   const buildChangePlaceholder = () => { const labels = selectedChangeLabels(); return labels.length ? labels.map((label) => `${label}:`).join('\n') : genericChangePlaceholder(); };
   const stripStructuredHeader = (value) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\n\n|$)/s, '').trimStart();
   const buildStructuredDescription = () => { const labels = selectedChangeLabels(); const header = `${isEnglish ? 'Selected changes:' : 'Izbrane vrste sprememb:'} ${listText(labels)}`.trim(); const userText = stripStructuredHeader(description?.value || '').trim(); return userText ? `${header}\n\n${userText}` : header; };
-  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; changeSummary.textContent = labels.length ? `${copy.selectedChanges} ${listText(labels)}.` : ''; } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); };
+  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; changeSummary.textContent = labels.length ? `${copy.selectedChanges} ${listText(labels)}.` : ''; } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); };
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
   const setRow = (key, visible, required, options = {}) => {
     const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea');
@@ -166,15 +169,15 @@ const changeGroups = [
     const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(visible && required);
   };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
-  const hasSafePrefillIdentity = () => Boolean(!document.querySelector('[data-correction-context]')?.hidden && (form?.elements.namedItem(contract.fields.title)?.value || '').trim());
+  const hasSafePrefillIdentity = () => Boolean(!document.querySelector('[data-correction-context]')?.hidden && (form?.elements.namedItem(contract.fields.title)?.value || '').trim() && (form?.elements.namedItem(contract.fields.date)?.value || '').trim() && (form?.elements.namedItem(contract.fields.place)?.value || '').trim());
   const applyTypeUx = () => {
     const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const prefilled = isExisting && hasSafePrefillIdentity();
-    setRow('date', isNew || (isExisting && !prefilled), isNew || (isExisting && !prefilled), { keepEnabledWhenHidden: prefilled });
-    setRow('title', isNew || (isExisting && !prefilled), isNew || (isExisting && !prefilled), { keepEnabledWhenHidden: prefilled });
-    setRow('place', isNew || (isExisting && !prefilled), isNew, { keepEnabledWhenHidden: prefilled });
-    setRow('region', isNew, isNew);
-    setRow('organizer', isNew, isNew); setRow('announcement', isNew, isNew); setRow('source', true, false); setRow('description', true, true); setRow('email', true, true);
-    if (placeLabel) placeLabel.textContent = isExisting ? copy.labels.placeOptional : copy.labels.place;
+    setRow('date', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
+    setRow('title', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
+    setRow('place', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
+    setRow('region', true, true);
+    setRow('organizer', true, true); setRow('announcement', true, true); setRow('source', true, true); setRow('description', true, true); setRow('email', true, true);
+    if (placeLabel) placeLabel.textContent = copy.labels.place;
     const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
     if (additionalSection) additionalSection.hidden = !isExisting;
     form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.disabled = !isExisting; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
@@ -205,12 +208,12 @@ const changeGroups = [
     if (submissionComplete) { event.preventDefault(); return; }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
     if (currentType() === 'existing') { const checked = selectedChangeValues().length; const first = form.querySelector('input[name="proposal-change-category"]'); first?.setCustomValidity(checked ? '' : copy.changeError); if (!checked) { if (additionalError) additionalError.hidden = false; form.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => box.setAttribute('aria-invalid', 'true')); } else { clearChangeError(); } }
-    setBackendType(); syncAdditionalHiddenInputs();
+    setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs();
     const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
     if (currentType() === 'existing' && description) description.value = buildStructuredDescription();
     if (errors) errors.hidden = true; if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; hasSubmittedToGoogle = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
   });
-  form?.addEventListener('reset', (event) => { if (document.querySelector('[data-correction-context]') && !document.querySelector('[data-correction-context]').hidden && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); applyRuntimePrefill(); applyTypeUx(); }, 0); });
+  form?.addEventListener('reset', (event) => { if (document.querySelector('[data-correction-context]') && !document.querySelector('[data-correction-context]').hidden && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); if (dateHiddenInputs) dateHiddenInputs.innerHTML = ''; applyRuntimePrefill(); applyTypeUx(); }, 0); });
   document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!hasSubmittedToGoogle) return; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
 </script>
 <style>
