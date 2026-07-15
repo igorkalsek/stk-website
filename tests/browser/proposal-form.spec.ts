@@ -286,7 +286,8 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#proposal-date')).toBeHidden();
     await expect(page.getByRole('heading', { name: 'Enter changes' })).toBeVisible();
     await expect(page.locator('[data-published-details]')).toHaveCount(0);
-    await expect(page.getByText('1. 5. 2027 · Ljubljana · Osrednjeslovenska')).toBeVisible();
+    const context = page.getByRole('region', { name: 'Dolgi Šmarnogorski tek' });
+    await expect(context).toContainText('01/05/2027 · Ljubljana · Osrednjeslovenska');
     await expect(page.getByTestId('structured-basic-section')).toBeVisible();
     await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-title-place"])')).toBeHidden();
     await expect(page.getByTestId('basic-correction-place')).toHaveValue('');
@@ -520,7 +521,7 @@ test.describe('native proposal form', () => {
 
     await expect(page.locator('.proposal-type-fieldset')).toBeHidden();
     await expect(page.locator('[data-context-existing-radio]')).toBeChecked();
-    await expect(page.getByRole('heading', { name: 'Popravek ali dopolnitev za izbrani tek' }).first()).toBeVisible();
+    await expect(page.locator('[data-correction-context]')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Trenutno objavljeni podatki' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Popravi|Dopolni|Dopolnite manjkajoče podatke/ })).toHaveCount(0);
     await expect(page.getByText('Dolgi Šmarnogorski tek').first()).toBeVisible();
