@@ -309,7 +309,13 @@ test.describe('native proposal form', () => {
     await page.getByRole('button', { name: 'Dopolnite manjkajoče podatke' }).click();
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Razpis, prijavna povezava ali drug uradni vir', exact: true })).not.toBeChecked();
-    await expect(page.getByRole('checkbox', { name: 'Drugo – navedite v pojasnilu', exact: true })).not.toBeChecked();
+    const otherCheckbox = page.locator('input[name="proposal-change-category"][value="Drugo"]');
+    const otherLabel = page.locator('label:has(input[name="proposal-change-category"][value="Drugo"])');
+    await expect(otherCheckbox).not.toBeChecked();
+    await expect(otherLabel).toBeHidden();
+    await page.getByRole('button', { name: 'Prikažite vse možnosti' }).click();
+    await expect(otherLabel).toBeVisible();
+    await expect(otherCheckbox).not.toBeChecked();
   });
 
   test('general mode query parameter can preselect new or other without race context', async ({ page }) => {

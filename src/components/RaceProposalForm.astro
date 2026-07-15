@@ -234,7 +234,13 @@ const changeGroups = [
   const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
   const updateErrorSummary = () => { if (!errors || errors.hidden) return; const invalidFields = visibleInvalidFields(); if (!invalidFields.length) { errors.hidden = true; return; } errors.textContent = `${copy.errorTitle} ${[...new Set(invalidFields.map(labelForField).filter(Boolean))].join(', ')}`; };
   const showErrors = (fields) => { const labels = [...new Set(fields.map(labelForField).filter(Boolean))]; if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); } for (const field of fields) field?.setAttribute('aria-invalid', 'true'); };
-  const syncVisibleChangeOptions = () => { if (!hasRaceContext) { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (label) label.hidden = false; }); if (showAllChangesButton) showAllChangesButton.hidden = true; return; } form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (!label) return; label.hidden = !(showAllChangeOptions || commonContextChanges.includes(box.value) || box.checked); }); if (showAllChangesButton) { showAllChangesButton.hidden = showAllChangeOptions; showAllChangesButton.textContent = copy.showAllChanges; } };
+  const updateChangeGroupVisibility = () => {
+    document.querySelectorAll('.change-category-group').forEach((group) => {
+      const visibleLabels = Array.from(group.querySelectorAll('label')).filter((label) => !label.hidden);
+      group.hidden = visibleLabels.length === 0;
+    });
+  };
+  const syncVisibleChangeOptions = () => { if (!hasRaceContext) { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (label) label.hidden = false; }); if (showAllChangesButton) showAllChangesButton.hidden = true; updateChangeGroupVisibility(); return; } form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (!label) return; label.hidden = !(showAllChangeOptions || commonContextChanges.includes(box.value) || box.checked); }); if (showAllChangesButton) { showAllChangesButton.hidden = showAllChangeOptions; showAllChangesButton.textContent = copy.showAllChanges; } updateChangeGroupVisibility(); };
   const selectChangeCategory = (value) => { const box = form?.querySelector(`input[name="proposal-change-category"][value="${CSS.escape(value)}"]`); if (box) { box.closest('label').hidden = false; box.checked = true; } };
   const updatePublishedDetails = () => {
     if (!publishedList) return;
