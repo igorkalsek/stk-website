@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
 import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
+import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
 describe('proposal form contract', () => {
   it('keeps verified Google Forms entry mapping', () => {
@@ -104,8 +105,27 @@ describe('proposal form contract', () => {
     assert.doesNotMatch(component, /localStorage|history\.pushState|Master API|Additional API/);
     assert.match(component, /data-analytics-link-type="correction_form"/); assert.match(component, /data-additional-section hidden/); assert.match(component, /data-source-warning/);
   });
+
+  it('searches public races and builds correction context URLs', () => {
+    const base = { id: '1', row: '12', year: '2026', date: '2026-07-19', dateValue: Date.parse('2026-07-19T00:00:00'), title: '20. Gorski tek na Bevkov vrh – trail 2026', displayTitle: '20. Gorski tek na Bevkov vrh – trail 2026', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', place: 'Gorenje Jazne', region: 'Goriška', surface: 'trail', distances: '10.5', startTime: '10:00', noticeUrl: 'https://example.com/razpis', registrationUrl: 'https://example.com/prijava', voteUrl: '', publicNotes: '', cup: 'Pokal Primorske', familyFriendly: false, kidsRaces: false };
+    const races = [base, { ...base, row: '13', title: 'Šmarna gora', naziv_prireditve: 'Šmarna gora', place: 'Ljubljana', region: 'Osrednjeslovenska' }];
+    assert.equal(searchPublicRaces(races, 'bevkov')[0].row, '12');
+    assert.equal(searchPublicRaces(races, 'ljubljana')[0].row, '13');
+    assert.equal(searchPublicRaces(races, 'Smarna gora')[0].row, '13');
+    assert.equal(searchPublicRaces([{ ...base, date: '', title: '' }, ...races], 'tek', 1).length, 1);
+    const url = buildRaceCorrectionContextUrl({ ...base, additionalData: { masterRow: '12', registrationMinEur: '20', registrationMaxEur: '25', registrationDeadline: '2026-07-10', earlyRegistrationDeadline: '2026-06-30', dayOfRegistration: 'Da', elevationGain: '650', routeUrl: 'https://example.com/gpx' } }, 'sl', 'https://evil.test/');
+    const parsed = new URL(url, 'https://tekaski-koledar.si');
+    assert.equal(parsed.pathname, '/dodaj-ali-popravi-tek/');
+    assert.equal(parsed.searchParams.get('event'), base.title);
+    assert.equal(parsed.searchParams.get('eventKey'), 'r000012');
+    assert.equal(parsed.searchParams.get('distances'), '10,5 km');
+    assert.equal(parsed.searchParams.get('returnUrl'), '/tek/2026/r000012-20-gorski-tek-na-bevkov-vrh-trail-2026/');
+    assert.equal(parsed.searchParams.get('registrationFee'), '20–25');
+    assert.equal(parsed.searchParams.get('routeUrl'), 'https://example.com/gpx');
+  });
   it('does not add direct master or API writes', () => {
     const sources = ['src/components/RaceProposalForm.astro','src/proposal-form/proposal-form-controller.ts'].map((f) => readFileSync(new URL(`../${f}`, import.meta.url),'utf8')).join('\n');
-    assert.doesNotMatch(sources, /fetch\(|googleapis|spreadsheets|\bD1\b|\bKV\b|master_row|Master API|Additional API/i);
+    assert.doesNotMatch(sources, /googleapis|spreadsheets|\bD1\b|\bKV\b|master_row|Master API|Additional API/i);
+    assert.match(sources, /stk-master-api\.igor-kalsek\.workers\.dev/);
   });
 });
