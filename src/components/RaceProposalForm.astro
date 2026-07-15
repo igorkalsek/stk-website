@@ -472,7 +472,21 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (submissionState === 'submitting' || submissionState === 'submitted-unverified') return;
     submissionState = 'validating';
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-    if (currentType() === 'existing') { const checked = selectedChangeValues().length || hasStructured() || hasBasicCorrections(); const first = form.querySelector('[data-basic-correction-field]') || form.querySelector('input[name="proposal-change-category"]') || form.querySelector('[data-structured-field]'); first?.setCustomValidity(checked ? '' : currentChangeError()); if (!checked) { if (additionalError) { additionalError.textContent = currentChangeError(); additionalError.hidden = false; } first?.setAttribute('aria-invalid', 'true'); } else { clearChangeError(); } }
+    if (currentType() === 'existing') {
+      const hasCorrection = selectedChangeValues().length > 0 || hasStructured() || hasBasicCorrections();
+      const firstCorrectionControl = form.querySelector('[data-basic-correction-field]') || form.querySelector('input[name="proposal-change-category"]') || form.querySelector('[data-structured-field]');
+      if (!hasCorrection) {
+        if (additionalError) { additionalError.textContent = currentChangeError(); additionalError.hidden = false; }
+        firstCorrectionControl?.setCustomValidity(currentChangeError());
+        firstCorrectionControl?.setAttribute('aria-invalid', 'true');
+        submissionState = 'failed';
+        setStatus(currentChangeError());
+        firstCorrectionControl?.focus();
+        return;
+      }
+      firstCorrectionControl?.setCustomValidity('');
+      clearChangeError();
+    }
     setBackendType();
     const explicitInvalidFields = [...validateExplicitRequiredFields(), ...validateStructuredFields()];
     const hasValidDateParts = syncDateParts();

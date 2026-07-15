@@ -565,6 +565,8 @@ test.describe('native proposal form', () => {
 
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect(page.getByRole('alert')).toContainText('Vnesite vsaj en popravek ali dopolnitev');
+    await expect(page.getByRole('alert')).not.toContainText('Ali ste organizator?');
+    await expect(page.getByRole('alert')).not.toContainText('Kontaktni e-naslov');
     await expect.poll(() => form.getSubmissions()).toBe(0);
 
     await otherCheckbox.check();
@@ -576,6 +578,11 @@ test.describe('native proposal form', () => {
     await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeHidden();
     await page.getByTestId('additional-entry-fee').fill('25 €');
     await page.getByTestId('additional-correction-intent').selectOption('missing');
+    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await expect(page.getByRole('alert')).not.toContainText('Vnesite vsaj en popravek ali dopolnitev');
+    await expect(page.getByRole('alert')).toContainText('Ali ste organizator?');
+    await expect(page.getByRole('alert')).toContainText('Kontaktni e-naslov');
+    await expect.poll(() => form.getSubmissions()).toBe(0);
 
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
