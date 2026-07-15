@@ -17,6 +17,38 @@ export const mapExistingChangeSelectionToProposalType = (selectedValues: readonl
 
 export const additionalDataValuesForChangeSelection = (selectedValues: readonly string[]) => selectedValues.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number]));
 
+export const allowedChangeCategoryValues = [...basicChangeCategoryValues, ...allowedAdditionalDataValues] as const;
+
+export const parsePreselectedChangeCategories = (value: string | null | undefined) => {
+  const allowed = new Set<string>(allowedChangeCategoryValues);
+  const selected: string[] = [];
+  for (const raw of (value ?? '').split(',')) {
+    const item = raw.trim();
+    if (allowed.has(item) && !selected.includes(item)) selected.push(item);
+  }
+  return selected;
+};
+
+export const fieldCategoryMap = {
+  date: 'basic-date-time', startTime: 'basic-date-time', title: 'basic-title-place', place: 'basic-title-place', region: 'basic-title-place', distances: 'basic-distance-surface', surface: 'basic-distance-surface', noticeUrl: 'basic-official-source', registrationUrl: 'basic-official-source', cup: 'basic-cup-series', registrationFee: 'Prijavnina / startnina', registrationDeadline: 'Rok prijave', earlyRegistrationDeadline: 'Cenejša prijava / sprememba cene', dayOfRegistration: 'Prijave na dan dogodka', routeUrl: 'Trasa / zemljevid / GPX', elevationGain: 'Višinski metri'
+} as const;
+
+export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasCompleteRaceIdentity }: { frontendType: FrontendProposalType; hasRaceContext: boolean; hasCompleteRaceIdentity: boolean }) => {
+  const isExisting = frontendType === 'existing';
+  const hideIdentity = isExisting && hasRaceContext && hasCompleteRaceIdentity;
+  return {
+    date: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
+    title: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
+    place: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
+    region: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
+    source: { visible: true, required: false, disabled: false, keepEnabledWhenHidden: false },
+    description: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
+    organizer: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
+    announcement: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
+    email: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false }
+  } as const;
+};
+
 export const changeDescriptionPrefix = (lang: ProposalLanguage) => lang === 'en' ? 'Selected changes:' : 'Izbrane vrste sprememb:';
 
 export const stripStructuredChangeHeader = (value: string) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\r?\n\r?\n|$)/s, '').trimStart();
@@ -54,13 +86,17 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const year = params.get('year')?.trim() ?? '';
   const date = params.get('date')?.trim() ?? '';
   const place = params.get('place')?.trim() ?? '';
-  const source = params.get('source')?.trim() ?? '';
-  const officialSourceUrl = isSafeHttpUrl(source) ? source : '';
+  const legacySource = params.get('source')?.trim() ?? '';
+  const context = params.get('context')?.trim() || (!isSafeHttpUrl(legacySource) ? legacySource : '');
+  const officialSourceParam = params.get('officialSource')?.trim() ?? '';
+  const officialSourceUrl = isSafeHttpUrl(officialSourceParam) ? officialSourceParam : isSafeHttpUrl(legacySource) ? legacySource : '';
+  const source = legacySource;
   const returnUrl = params.get('returnUrl')?.trim() ?? '';
   const lang = params.get('lang') === 'en' ? 'en' : pageLanguage;
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
-  const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl, lang }) : '';
-  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description };
+  const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, source: '', officialSourceUrl, safeReturnUrl, lang }) : '';
+  const get = (key: string) => params.get(key)?.trim() ?? '';
+  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: get('noticeUrl'), registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
 };
 
 export const buildPrefillDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; source: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {
@@ -68,8 +104,8 @@ export const buildPrefillDescription = ({ eventTitle, year, date, place, source,
     ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
     : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];
   const details = lang === 'en'
-    ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Context source', source && !officialSourceUrl ? source : ''], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]]
-    : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Kontekst vira', source && !officialSourceUrl ? source : ''], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
+    ? [['Race', eventTitle], ['Year', year], ['Date', date], ['Place', place], ['Official source', officialSourceUrl], ['Race page', safeReturnUrl]]
+    : [['Tek', eventTitle], ['Leto', year], ['Datum', date], ['Kraj', place], ['Uradni vir', officialSourceUrl], ['Stran teka', safeReturnUrl]];
   for (const [label, value] of details) if (value) lines.push(`${label}: ${value}`);
   lines.push('', lang === 'en' ? 'Please add below which detail should be corrected or updated.' : 'Prosimo, spodaj dopišite, kateri podatek želite popraviti ali dopolniti.');
   return lines.join('\n');

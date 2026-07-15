@@ -12,4 +12,19 @@ export interface ProposalPrefill {
   lang: ProposalLanguage;
   safeReturnUrl: string;
   description: string;
+  eventKey: string;
+  context: string;
+  region: string;
+  startTime: string;
+  distances: string;
+  surface: string;
+  noticeUrl: string;
+  registrationUrl: string;
+  cup: string;
+  registrationFee: string;
+  registrationDeadline: string;
+  earlyRegistrationDeadline: string;
+  dayOfRegistration: string;
+  elevationGain: string;
+  routeUrl: string;
 }
