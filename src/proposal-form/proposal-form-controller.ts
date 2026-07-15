@@ -120,6 +120,53 @@ export const buildPrefillDescription = ({ eventTitle, year, date, place, officia
 };
 
 
+
+export type StructuredBasicCorrectionKey = 'date' | 'title' | 'place' | 'region' | 'startTime' | 'distances' | 'surface' | 'noticeUrl' | 'registrationUrl' | 'cup';
+export type StructuredBasicCorrections = Partial<Record<StructuredBasicCorrectionKey, string>>;
+export type StructuredBasicCurrentValues = Partial<Record<StructuredBasicCorrectionKey, string>>;
+
+export const structuredBasicCorrectionFields = [
+  { key: 'date', labels: { sl: 'Datum', en: 'Date' } },
+  { key: 'title', labels: { sl: 'Naziv', en: 'Race title' } },
+  { key: 'place', labels: { sl: 'Kraj', en: 'Place' } },
+  { key: 'region', labels: { sl: 'Regija', en: 'Region' } },
+  { key: 'startTime', labels: { sl: 'Čas začetka', en: 'Start time' } },
+  { key: 'distances', labels: { sl: 'Razdalje', en: 'Distances' } },
+  { key: 'surface', labels: { sl: 'Vrsta podlage', en: 'Surface' } },
+  { key: 'noticeUrl', labels: { sl: 'Uradni razpis', en: 'Official announcement URL' } },
+  { key: 'registrationUrl', labels: { sl: 'Prijavna povezava', en: 'Registration URL' } },
+  { key: 'cup', labels: { sl: 'Pokal ali serija', en: 'Cup or series' } }
+] as const;
+
+export const hasStructuredBasicCorrections = (details: StructuredBasicCorrections = {}) => structuredBasicCorrectionFields.some((field) => cleanSubmissionValue(details[field.key]).length > 0);
+
+export const isValidStructuredBasicDate = (value: string | undefined) => {
+  const clean = cleanSubmissionValue(value);
+  if (!clean) return true;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(clean)) return false;
+  const [year, month, day] = clean.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+};
+
+export const isValidStructuredBasicUrl = (value: string | undefined) => {
+  const clean = cleanSubmissionValue(value);
+  return !clean || isSafeHttpUrl(clean);
+};
+
+export const buildStructuredBasicCorrectionDescription = ({ corrections = {}, currentValues = {}, lang }: { corrections?: StructuredBasicCorrections; currentValues?: StructuredBasicCurrentValues; lang: ProposalLanguage }) => {
+  const lines: string[] = [];
+  for (const field of structuredBasicCorrectionFields) {
+    const proposed = cleanSubmissionValue(corrections[field.key]);
+    if (!proposed) continue;
+    lines.push(field.labels[lang], `${lang === 'en' ? 'Current' : 'Trenutno'}: ${cleanSubmissionValue(currentValues[field.key]) || '-'}`, `${lang === 'en' ? 'Proposed' : 'Predlagano'}: ${proposed}`);
+  }
+  if (!lines.length) return '';
+  const blocks: string[] = [];
+  for (let i = 0; i < lines.length; i += 3) blocks.push(lines.slice(i, i + 3).join('\n'));
+  return `${lang === 'en' ? 'Basic corrections' : 'Osnovni popravki'}:\n\n${blocks.join('\n\n')}`;
+};
+
 export type StructuredAdditionalDetails = {
   entryFee?: string;
   registrationDeadline?: string;
@@ -174,10 +221,11 @@ export const buildStructuredAdditionalDescription = ({ details = {}, lang }: { d
   return `${lang === 'en' ? 'Additional details:' : 'Dodatni podatki:'}\n\n${lines.join('\n')}`;
 };
 
-export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, lang }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; lang: ProposalLanguage }) => {
+export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, lang, structuredBasicCorrections = {}, structuredBasicCurrentValues = {} }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; lang: ProposalLanguage; structuredBasicCorrections?: StructuredBasicCorrections; structuredBasicCurrentValues?: StructuredBasicCurrentValues }) => {
+  const basic = buildStructuredBasicCorrectionDescription({ corrections: structuredBasicCorrections, currentValues: structuredBasicCurrentValues, lang });
   const base = cleanSubmissionValue(basicDescription);
   const structured = buildStructuredAdditionalDescription({ details: structuredDetails, lang });
-  return [base, structured].filter(Boolean).join('\n\n');
+  return [basic, base, structured].filter(Boolean).join('\n\n');
 };
 
 export type GoogleFormsSubmissionUrlInput = {
