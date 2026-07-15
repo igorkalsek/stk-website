@@ -116,7 +116,11 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
-  page.on('console', (msg) => { if (msg.type() === 'error') pageErrors.push(msg.text()); });
+  page.on('console', (msg) => {
+    if (msg.type() !== 'error') return;
+    const isExpectedAdditionalFailure = Boolean(options.additionalStatus && options.additionalStatus >= 400) && msg.text().includes('Failed to load resource');
+    if (!isExpectedAdditionalFailure) pageErrors.push(msg.text());
+  });
 
   const requestCounts = { master2026: 0, master2027: 0, additional: 0 };
   await page.route(`${API_HOST}/**`, async (route) => {
@@ -303,9 +307,11 @@ test('migrates V1 saved races to V2 and preserves the race', async ({ page }) =>
 
   await openMyRaces(page);
 
-  await expect(page.getByText('Ljubljana Test Run')).toBeVisible();
-  await expect(card(page, '2026:r000101').getByLabel('Moj status')).toHaveValue('following');
-  await expect(card(page, '2026:r000101').locator('[data-race-status-badge]')).toHaveText('Spremljam');
+  const migratedCard = card(page, '2026:r000101');
+  await expect(migratedCard).toBeVisible();
+  await expect(migratedCard.getByRole('link', { name: 'Ljubljana Test Run' })).toBeVisible();
+  await expect(migratedCard.getByLabel('Moj status')).toHaveValue('following');
+  await expect(migratedCard.locator('[data-race-status-badge]')).toHaveText('Spremljam');
   await expect(count(page, 'following')).toHaveText(/Spremljam\s+1/);
 
   const migrated = await readSavedRacesV2(page);
@@ -335,13 +341,13 @@ test('filters races, changes status and preserves it after reload', async ({ pag
 
   await filter(page, 'registered').click();
   await expect(filter(page, 'registered')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText('Celje Test Run')).toBeVisible();
-  await expect(page.getByText('Ljubljana Test Run')).toHaveCount(0);
-  await expect(page.getByText('Maribor Test Trail')).toHaveCount(0);
-  await expect(page.getByText('Past Test Run')).toHaveCount(0);
+  await expect(card(page, '2026:r000103')).toBeVisible();
+  await expect(card(page, '2026:r000101')).toHaveCount(0);
+  await expect(card(page, '2026:r000102')).toHaveCount(0);
+  await expect(card(page, '2026:r000104')).toHaveCount(0);
 
   await card(page, '2026:r000103').getByLabel('Moj status').selectOption('planning');
-  await expect(page.getByText('Celje Test Run')).toHaveCount(0);
+  await expect(card(page, '2026:r000103')).toHaveCount(0);
   await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toBeVisible();
   await expect(count(page, 'registered')).toHaveText(/Prijavljen\s+0/);
   await expect(count(page, 'planning')).toHaveText(/Planiram\s+2/);
