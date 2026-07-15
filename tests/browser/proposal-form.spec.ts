@@ -546,7 +546,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-notice-url')).toHaveValue('');
     await expect(page.getByText('Trenutno: 2027-05-01')).toBeVisible();
     await expect(page.getByText('Trenutno: Ljubljana')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Odpri trenutno povezavo: https:\/\/example.com\/razpis/ })).toBeVisible();
+    await expect(page.locator('[data-basic-card="noticeUrl"]')).toContainText('Trenutno: https://example.com/razpis');
 
     await expect(page.getByTestId('additional-entry-fee')).toHaveValue('');
     await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('');
