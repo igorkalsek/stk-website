@@ -207,6 +207,17 @@ const changeGroups = [
   const mapExistingType = () => { const selected = selectedChangeValues(); return selected.length && selected.every((value) => additionalOnlyValues.includes(value)) ? contract.values.proposalTypes[2] : contract.values.proposalTypes[1]; };
   const backendTypeForCurrentSelection = () => currentType() === 'new' ? contract.values.proposalTypes[0] : currentType() === 'other' ? contract.values.proposalTypes[3] : mapExistingType();
   const setBackendType = () => { if (backendProposalType) backendProposalType.value = backendTypeForCurrentSelection(); };
+
+  const buildCurrentGoogleFormsUrl = () => {
+    setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs();
+    const googleUrl = new URL(contract.viewUrl);
+    googleUrl.searchParams.set('usp', 'pp_url');
+    for (const [name, value] of new FormData(form).entries()) {
+      if (typeof value === 'string' && value && name.startsWith('entry.')) googleUrl.searchParams.append(name, value);
+    }
+    return googleUrl.href;
+  };
+  const syncFallbackUrl = () => { if (fallbackLink) fallbackLink.href = buildCurrentGoogleFormsUrl(); };
   const clearAdditionalHiddenInputs = () => { if (additionalHiddenInputs) additionalHiddenInputs.innerHTML = ''; };
   const syncDateHiddenInputs = () => { if (!dateHiddenInputs) return; dateHiddenInputs.innerHTML = ''; const value = form?.elements.namedItem(contract.fields.date)?.value || ''; const [year, month, day] = value.split('-'); const parts = [[contract.fields.dateYear, year], [contract.fields.dateMonth, month], [contract.fields.dateDay, day]]; if (!year || !month || !day) return; for (const [name, part] of parts) { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = String(Number(part)); dateHiddenInputs.append(input); } };
   const syncAdditionalHiddenInputs = () => { clearAdditionalHiddenInputs(); for (const value of selectedChangeValues().filter((value) => allowedAdditionalValues.includes(value))) { const input = document.createElement('input'); input.type = 'hidden'; input.name = contract.fields.additionalData; input.value = value; additionalHiddenInputs?.append(input); } };
@@ -215,7 +226,7 @@ const changeGroups = [
   const buildChangePlaceholder = () => { const labels = selectedChangeLabels(); return labels.length ? labels.map((label) => `${label}:`).join('\n') : genericChangePlaceholder(); };
   const stripStructuredHeader = (value) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\n\n|$)/s, '').trimStart();
   const buildStructuredDescription = () => { const labels = selectedChangeLabels(); const header = `${isEnglish ? 'Selected changes:' : 'Izbrane vrste sprememb:'} ${listText(labels)}`.trim(); const userText = stripStructuredHeader(description?.value || '').trim(); return userText ? `${header}\n\n${userText}` : header; };
-  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value && currentType() === 'existing') description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); };
+  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value && currentType() === 'existing') description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); syncFallbackUrl(); };
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
   const setRow = (key, rule) => { const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea'); if (!row || !control || !rule) return; row.hidden = !rule.visible; control.required = Boolean(rule.visible && rule.required); control.disabled = Boolean(rule.disabled || (!rule.visible && !rule.keepEnabledWhenHidden)); control.removeAttribute('aria-invalid'); control.setCustomValidity(''); const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(rule.visible && rule.required); };
   const getIdentityState = () => ({ date: Boolean(prefill.date), title: Boolean(prefill.eventTitle), place: Boolean(prefill.place), region: Boolean(prefill.region) });
@@ -234,7 +245,7 @@ const changeGroups = [
     else if (isExisting) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, buildChangePlaceholder());
     else setDescriptionCopy(copy.labels.description, copy.placeholders.otherDescription, copy.placeholders.otherDescription);
     if (!isExisting) { clearChangeError(); clearAdditionalHiddenInputs(); if (changeSummary) changeSummary.hidden = true; }
-    updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
+    updateChangeSummary(); setBackendType(); syncFallbackUrl(); if (errors) errors.hidden = true;
   };
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
   const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
@@ -293,7 +304,7 @@ const changeGroups = [
     const mode = parseProposalMode(params.get('mode'));
     if (!hasRaceContext && mode) { const modeRadio = form?.querySelector(`input[name="proposal-type-ui"][value="${mode}"]`); if (modeRadio) modeRadio.checked = true; }
     for (const value of parsePreselectedChangeCategories(params.get('changes'))) selectChangeCategory(value);
-    syncVisibleChangeOptions(); applyTypeUx(); validateSource();
+    syncVisibleChangeOptions(); applyTypeUx(); validateSource(); syncFallbackUrl();
     form?.setAttribute('data-proposal-runtime-ready', 'true');
   };
 
@@ -303,8 +314,8 @@ const changeGroups = [
   form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', applyTypeUx));
   source?.addEventListener('blur', validateSource);
   source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); });
-  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field === source) validateSource(); else updateErrorSummary(); } });
-  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); });
+  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field === source) validateSource(); else updateErrorSummary(); syncFallbackUrl(); } });
+  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); syncFallbackUrl(); });
   form?.addEventListener('submit', (event) => {
     if (submissionComplete) { event.preventDefault(); return; }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
@@ -313,11 +324,8 @@ const changeGroups = [
     const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
     if (currentType() === 'existing' && description) description.value = buildStructuredDescription();
     event.preventDefault();
-    const googleUrl = new URL(contract.viewUrl);
-    googleUrl.searchParams.set('usp', 'pp_url');
-    for (const [name, value] of new FormData(form).entries()) {
-      if (typeof value === 'string' && value && name.startsWith('entry.')) googleUrl.searchParams.append(name, value);
-    }
+    const googleUrl = new URL(buildCurrentGoogleFormsUrl());
+    syncFallbackUrl();
     if (errors) { errors.hidden = true; errors.textContent = ''; }
     if (button) { button.disabled = true; button.textContent = copy.submitting; }
     hasSubmittedToGoogle = true;

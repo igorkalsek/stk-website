@@ -37,6 +37,12 @@ async function waitForProposalRuntime(page: Page) {
   await expect(page.locator('[data-proposal-form]')).toHaveAttribute('data-proposal-runtime-ready', 'true');
 }
 
+async function fallbackParams(page: Page) {
+  const href = await page.getByRole('link', { name: 'Imate težave z oddajo? Odprite rezervni obrazec.' }).getAttribute('href');
+  expect(href).toBeTruthy();
+  return new URL(href!, page.url()).searchParams;
+}
+
 test.describe('native proposal form', () => {
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -45,6 +51,10 @@ test.describe('native proposal form', () => {
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
 
+    await expect(page.locator('[data-correction-context]')).toBeHidden();
+    await expect(page.locator('[data-published-details]')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Dopolni' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Dopolnite manjkajoče podatke' })).toBeHidden();
     await expect(page.getByText('Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.')).toBeVisible();
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
     await expect(page.getByText('Predlog še ne bo oddan, dokler ga ne pošljete v naslednjem koraku.')).toBeVisible();
@@ -89,6 +99,21 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
+    const fallbackBeforeOpen = await fallbackParams(page);
+    expect(fallbackBeforeOpen.get(contract.fields.proposalType)).toBe('Nov tek (dodajanje nove prireditve)');
+    expect(fallbackBeforeOpen.get(contract.fields.date)).toBe('2026-09-12');
+    expect(fallbackBeforeOpen.get(contract.fields.dateYear)).toBe('2026');
+    expect(fallbackBeforeOpen.get(contract.fields.dateMonth)).toBe('9');
+    expect(fallbackBeforeOpen.get(contract.fields.dateDay)).toBe('12');
+    expect(fallbackBeforeOpen.get(contract.fields.title)).toBe('Štajerski ultra tek z zelo zelo dolgim nazivom');
+    expect(fallbackBeforeOpen.get(contract.fields.place)).toBe('Maribor');
+    expect(fallbackBeforeOpen.get(contract.fields.region)).toBe('Podravska');
+    expect(fallbackBeforeOpen.get(contract.fields.officialSource)).toBe('https://example.com/razpis/2026?zelo=dolg-url');
+    expect(fallbackBeforeOpen.get(contract.fields.description)).toBe('Razdalje 10 km in 21 km, start ob 10.00.');
+    expect(fallbackBeforeOpen.get(contract.fields.organizer)).toBe('Ne');
+    expect(fallbackBeforeOpen.get(contract.fields.officialAnnouncement2026)).toBe('Da');
+    expect(fallbackBeforeOpen.get(contract.fields.email)).toBe('test@example.com');
+    expect(fallbackBeforeOpen.getAll(contract.fields.additionalData)).toEqual([]);
     await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
@@ -108,6 +133,14 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('link', { name: 'Oddajte nov predlog' })).toBeHidden();
     await expect(page.getByRole('link', { name: 'Nazaj na koledar' })).toBeHidden();
     await expect(page.locator('#proposal-title')).toHaveValue('Štajerski ultra tek z zelo zelo dolgim nazivom');
+    const fallbackAfterOpen = await fallbackParams(page);
+    expect(fallbackAfterOpen.toString()).toBe(fallbackBeforeOpen.toString());
+    await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Štajerski ultra tek z novejšim nazivom');
+    const fallbackAfterEdit = await fallbackParams(page);
+    expect(fallbackAfterEdit.get(contract.fields.title)).toBe('Štajerski ultra tek z novejšim nazivom');
+    await form.capturePopup(() => page.getByRole('button', { name: 'Znova odprite Google obrazec' }).click());
+    expect(form.getPayload()?.get(contract.fields.title)).toBe('Štajerski ultra tek z novejšim nazivom');
+    await expect(page.locator('[data-submit-status]')).not.toContainText('Oddaja je bila poslana.');
     await expect(page.getByRole('link', { name: 'Imate težave z oddajo? Odprite rezervni obrazec.' })).toHaveAttribute('data-analytics-link-type', 'correction_form');
     await assertNoConsoleErrors(page, errors);
   });
@@ -191,6 +224,8 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
     await expect(page.getByRole('alert')).toBeHidden();
     await page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka', exact: true }).check();
+    const correctionFallback = await fallbackParams(page);
+    expect(correctionFallback.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka']);
     await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
