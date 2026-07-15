@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
 
 describe('proposal form contract', () => {
@@ -13,7 +13,7 @@ describe('proposal form contract', () => {
     assert(googleProposalFormContract.values.regions.includes('Ne vem / nisem prepričan (navedem v opisu)'));
   });
   it('documents required website fields', () => assert.deepEqual([...requiredProposalFields], ['proposalType','date','title','place','region','description','organizer','officialAnnouncement2026','email']));
-  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.submit, 'Pošlji predlog'); assert.equal(proposalFormLocales.en.submit, 'Send proposal'); assert.equal(proposalFormLocales.sl.intro, 'Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.'); assert.deepEqual(proposalFormLocales.sl.typeLabels.sl, ['Nov tek', 'Popravek ali dopolnitev obstoječega teka', 'Drugo']); assert.deepEqual(proposalFormLocales.en.typeLabels.en, ['New race', 'Correct or add details to an existing race', 'Other']); assert.equal(proposalFormLocales.sl.labels.additionalData, 'Kaj želite popraviti ali dopolniti?'); assert.equal(proposalFormLocales.sl.labels.placeOptional, 'Kraj (neobvezno)'); assert.equal(proposalFormLocales.sl.labels.officialSource, 'Uradni vir (neobvezno)'); assert.equal(proposalFormLocales.en.labels.officialSource, 'Official source (optional)' ); assert.equal(proposalFormLocales.en.labelsForValues.yesNo.Da, 'Yes'); assert.equal(proposalFormLocales.en.labelsForValues.announcement['Ne vem'], 'I do not know'); assert.equal(proposalFormLocales.en.labelsForValues.additionalData['Trasa / zemljevid / GPX'], 'Route / map / GPX'); assert.equal(proposalFormLocales.sl.helpers.email, 'Uporabi se le za morebitna vprašanja o predlogu in se ne objavi.'); assert.equal(proposalFormLocales.sl.helpers.additionalData, 'Označite vse podatke, ki jih želite dodati ali popraviti.'); assert.equal(proposalFormLocales.en.helpers.additionalData, 'Select all the details you would like to add or correct.'); assert.equal(proposalFormLocales.sl.labelsForValues.changeCategories['Popravek napačnega dodatnega podatka'], 'Popravek že objavljenega dodatnega podatka'); assert.equal(proposalFormLocales.en.labelsForValues.changeCategories['Popravek napačnega dodatnega podatka'], 'Correction of already published additional data'); });
+  it('has SL/EN locale configuration', () => { assert.equal(proposalFormLocales.sl.submit, 'Pošlji predlog'); assert.equal(proposalFormLocales.en.submit, 'Send proposal'); assert.equal(proposalFormLocales.sl.intro, 'Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.'); assert.deepEqual(proposalFormLocales.sl.typeLabels.sl, ['Nov tek', 'Popravek ali dopolnitev obstoječega teka', 'Drugo']); assert.deepEqual(proposalFormLocales.en.typeLabels.en, ['New race', 'Correct or add details to an existing race', 'Other']); assert.equal(proposalFormLocales.sl.labels.additionalData, 'Kaj želite popraviti ali dopolniti?'); assert.equal(proposalFormLocales.sl.labels.placeOptional, 'Kraj (neobvezno)'); assert.equal(proposalFormLocales.sl.labels.officialSource, 'Uradni vir (neobvezno)'); assert.equal(proposalFormLocales.en.labels.officialSource, 'Official source (optional)' ); assert.equal(proposalFormLocales.en.labelsForValues.yesNo.Da, 'Yes'); assert.equal(proposalFormLocales.en.labelsForValues.announcement['Ne vem'], 'I do not know'); assert.equal(proposalFormLocales.en.labelsForValues.additionalData['Trasa / zemljevid / GPX'], 'Route / map / GPX'); assert.equal(proposalFormLocales.sl.helpers.email, 'Uporabi se le za morebitna vprašanja o predlogu in se ne objavi.'); assert.equal(proposalFormLocales.sl.helpers.additionalData, 'Izberite osnovni popravek ali spodaj vnesite dodatne podatke v ločena polja.'); assert.equal(proposalFormLocales.en.helpers.additionalData, 'Select a basic correction or enter additional details in the separate fields below.'); assert.equal(proposalFormLocales.sl.labelsForValues.changeCategories['Popravek napačnega dodatnega podatka'], 'Popravek že objavljenega dodatnega podatka'); assert.equal(proposalFormLocales.en.labelsForValues.changeCategories['Popravek napačnega dodatnega podatka'], 'Correction of already published additional data'); });
 
 
   it('parses safe preselected change categories and frontend mode only from allowlists', () => {
@@ -43,6 +43,37 @@ describe('proposal form contract', () => {
     assert.equal(buildChangePlaceholder({ labels: ['Prijavnina', 'Rok prijave'], lang: 'sl' }), 'Prijavnina:\nRok prijave:');
     assert.equal(buildChangePlaceholder({ labels: [], lang: 'en' }), 'Enter the missing or correct detail.');
   });
+
+  it('maps structured additional details to existing Google Forms values and descriptions', () => {
+    assert.deepEqual(additionalDataValuesForStructuredDetails({}), []);
+    assert.deepEqual(additionalDataValuesForStructuredDetails({ entryFee: '20 €', registrationDeadline: '2026-08-10', cheaperRegistration: 'nižja cena do 2026-07-31', raceDayRegistration: 'Da', elevationGain: '650', routeUrl: 'https://example.com/route', otherDetails: 'Otroški teki', correctionIntent: 'correcting' }), ['Prijavnina / startnina','Rok prijave','Cenejša prijava / sprememba cene','Prijave na dan dogodka','Višinski metri','Trasa / zemljevid / GPX','Drugo','Popravek napačnega dodatnega podatka']);
+    const sl = buildStructuredAdditionalDescription({ lang: 'sl', details: { entryFee: '20 €', elevationGain: '650' } });
+    assert.equal(sl, 'Dodatni podatki:\n\nPrijavnina / startnina: 20 €\nVišinski metri: 650 m+');
+    assert.doesNotMatch(sl, /Rok prijave|entry\./);
+    const en = buildStructuredAdditionalDescription({ lang: 'en', details: { routeUrl: 'https://example.com/route', raceDayRegistration: 'Yes' } });
+    assert.equal(en, 'Additional details:\n\nRace-day registration: Yes\nRoute, map or GPX: https://example.com/route');
+    const combined = combineCorrectionDescription({ lang: 'en', basicDescription: 'Date should be 2026-09-12.', structuredDetails: { entryFee: '€20' } });
+    assert.equal(combined, 'Date should be 2026-09-12.\n\nAdditional details:\n\nEntry fee: €20');
+  });
+
+  it('keeps structured business values identical between direct entries and fallback URL', () => {
+    const input = { proposalType: googleProposalFormContract.values.proposalTypes[2], date: '2026-09-12', title: 'Tek', place: 'Kranj', region: 'Gorenjska', officialSource: '', description: buildStructuredAdditionalDescription({ lang: 'sl', details: { entryFee: '20 €', routeUrl: 'https://example.com/trasa' } }), organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com', additionalData: additionalDataValuesForStructuredDetails({ entryFee: '20 €', routeUrl: 'https://example.com/trasa' }) };
+    const direct = new URLSearchParams(buildGoogleFormsSubmissionEntries(input));
+    const fallback = new URL(buildGoogleFormsSubmissionUrl(input)).searchParams;
+    assert.equal(direct.get(googleProposalFormContract.fields.description), fallback.get(googleProposalFormContract.fields.description));
+    assert.deepEqual(direct.getAll(googleProposalFormContract.fields.additionalData), fallback.getAll(googleProposalFormContract.fields.additionalData));
+  });
+
+  it('validates structured route URLs and elevation values', () => {
+    assert.equal(isValidStructuredRouteUrl('https://example.com/route'), true);
+    assert.equal(isValidStructuredRouteUrl('http://example.com/route'), true);
+    assert.equal(isValidStructuredRouteUrl('ftp://example.com/route'), false);
+    assert.equal(isValidElevationGain('0'), true);
+    assert.equal(isValidElevationGain('650'), true);
+    assert.equal(isValidElevationGain('-1'), false);
+    assert.equal(isValidElevationGain('1.5'), false);
+  });
+
   it('keeps empty forms empty and prefills correction query safely', () => {
     const empty = readProposalPrefill(new URLSearchParams(''), 'en');
     assert.equal(empty.description, '');
