@@ -579,10 +579,17 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('secret@example.com');
     await page.locator('[data-correction-form-link]').click();
     await expect.poll(() => analyticsPayloads.length).toBeGreaterThan(0);
+    const fallbackEvent = analyticsPayloads.find((payload): payload is Record<string, string> => {
+      if (!payload || typeof payload !== 'object') return false;
+      const eventPayload = payload as Record<string, string>;
+      return eventPayload.event_type === 'external_link_clicked' && eventPayload.action_type === 'google_form_click';
+    });
+    expect(fallbackEvent).toBeTruthy();
+    expect(fallbackEvent?.target_url).toContain('/viewform');
+    expect(fallbackEvent?.target_url).not.toContain('?');
+    expect(fallbackEvent?.target_domain).toBe('');
     const serialized = JSON.stringify(analyticsPayloads);
-    expect(serialized).toContain('/viewform');
-    expect(serialized).not.toContain('target_domain');
-    for (const sensitive of ['Zasebni naslov teka', 'Skrivni kraj', 'skrivni-vir', 'Zaseben opis', 'secret@example.com', '2026-09-12', 'entry.']) {
+    for (const sensitive of ['Zasebni naslov teka', 'Skrivni kraj', 'skrivni-vir', 'Zaseben opis', 'secret@example.com', '2026-09-12', 'entry.', 'usp=']) {
       expect(serialized).not.toContain(sensitive);
     }
   });

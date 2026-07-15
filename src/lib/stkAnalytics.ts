@@ -341,9 +341,14 @@ const ACTION_TYPE_MAP: Record<string, string> = {
 
 const normalizeActionType = (value: string) => ACTION_TYPE_MAP[value] || value;
 
-const inferLinkType = (link: HTMLAnchorElement) => {
+const getExplicitLinkType = (link: HTMLAnchorElement) => {
   const explicit = link.dataset.stkAction || link.dataset.analyticsActionType || link.dataset.analyticsLinkType;
-  if (explicit) return normalizeActionType(explicit);
+  return explicit ? normalizeActionType(explicit) : '';
+};
+
+const inferLinkType = (link: HTMLAnchorElement) => {
+  const explicit = getExplicitLinkType(link);
+  if (explicit) return explicit;
   const label = link.textContent?.toLocaleLowerCase('sl-SI') ?? '';
   const href = link.href.toLocaleLowerCase('sl-SI');
   if (label.includes('prijava') || label.includes('registration')) return 'registration_click';
@@ -434,6 +439,19 @@ export const initializeStkAnalyticsClickTracking = () => {
     }
 
     const context = getEventContext(link);
+    const explicitLinkType = getExplicitLinkType(link);
+    if (explicitLinkType) {
+      const targetUrl = getAnalyticsTargetUrl(link, link.href);
+      trackStkEvent({
+        event_type: 'external_link_clicked',
+        ...context,
+        action_type: explicitLinkType,
+        target_url: targetUrl,
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
+      });
+      return;
+    }
+
     const calendarType = inferCalendarType(link);
     if (calendarType) {
       trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType, action_type: `${calendarType}_calendar_click`, target_url: link.href, target_domain: getStkTargetDomain(link.href) });
