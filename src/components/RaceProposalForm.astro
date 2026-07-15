@@ -41,7 +41,7 @@ const changeGroups = [
 <section class="section container published-details" aria-labelledby="published-details-title" data-published-details hidden>
   <article class="info-card published-details-card">
     <h2 id="published-details-title">{copy.currentDetails}</h2>
-    <dl class="published-details-grid" data-published-details-list></dl>
+    <div class="published-details-groups" data-published-details-list></div>
     <button type="button" class="button button-secondary-light missing-details-action" data-missing-details-action hidden>{copy.addMissingDetails}</button>
   </article>
 </section>
@@ -86,13 +86,16 @@ const changeGroups = [
         <fieldset class="full-span optional-fieldset" data-additional-section hidden aria-describedby="proposal-additional-helper proposal-additional-error">
           <legend>{copy.labels.additionalData}</legend>
           <p id="proposal-additional-helper" class="field-helper">{copy.helpers.additionalData}</p>
-          <button type="button" class="button button-secondary-light show-all-changes" data-show-all-changes hidden>{copy.showAllChanges}</button>
-          {changeGroups.map((group) => (
-            <div class="change-category-group">
-              <p class="change-category-title">{group.title}</p>
-              <div class="checkbox-grid">{group.options.map((option) => <label><input type="checkbox" name="proposal-change-category" value={option.value} data-change-category /> <span>{option.label}</span></label>)}</div>
-            </div>
-          ))}
+          <details class="change-options-details" data-change-options-details open>
+            <summary>{copy.otherCorrectionOptions}</summary>
+            <button type="button" class="button button-secondary-light show-all-changes" data-show-all-changes hidden>{copy.showAllChanges}</button>
+            {changeGroups.map((group) => (
+              <div class="change-category-group">
+                <p class="change-category-title">{group.title}</p>
+                <div class="checkbox-grid">{group.options.map((option) => <label><input type="checkbox" name="proposal-change-category" value={option.value} data-change-category /> <span>{option.label}</span></label>)}</div>
+              </div>
+            ))}
+          </details>
           <p id="proposal-additional-error" class="field-error" data-additional-error hidden>{copy.changeError}</p>
         </fieldset>
         <div class="change-summary full-span" data-change-summary aria-live="polite" hidden><strong>{copy.selectedChanges}</strong><div class="change-chips" data-change-chips></div></div>
@@ -137,6 +140,7 @@ const changeGroups = [
   const publishedList = document.querySelector('[data-published-details-list]');
   const missingDetailsButton = document.querySelector('[data-missing-details-action]');
   const showAllChangesButton = document.querySelector('[data-show-all-changes]');
+  const changeOptionsDetails = document.querySelector('[data-change-options-details]');
   const button = document.querySelector('[data-submit-button]');
   const status = document.querySelector('[data-submit-status]');
   const newProposalLink = document.querySelector('[data-new-proposal-link]');
@@ -170,22 +174,22 @@ const changeGroups = [
   let commonContextChanges = [...basicChangeCategoryValues];
 
   const publishedFieldDefinitions = [
-    { key: 'date', labels: { sl: 'Datum', en: 'Date' }, category: fieldCategoryMap.date },
-    { key: 'eventTitle', labels: { sl: 'Naziv', en: 'Name' }, category: fieldCategoryMap.title },
-    { key: 'place', labels: { sl: 'Kraj', en: 'Place' }, category: fieldCategoryMap.place },
-    { key: 'region', labels: { sl: 'Regija', en: 'Region' }, category: fieldCategoryMap.region },
-    { key: 'startTime', labels: { sl: 'Čas začetka', en: 'Start time' }, category: fieldCategoryMap.startTime },
-    { key: 'distances', labels: { sl: 'Razdalje', en: 'Distances' }, category: fieldCategoryMap.distances },
-    { key: 'surface', labels: { sl: 'Vrsta podlage', en: 'Surface' }, category: fieldCategoryMap.surface },
-    { key: 'noticeUrl', labels: { sl: 'Uradni razpis', en: 'Official announcement' }, category: fieldCategoryMap.noticeUrl },
-    { key: 'registrationUrl', labels: { sl: 'Prijavna povezava', en: 'Registration link' }, category: fieldCategoryMap.registrationUrl },
-    { key: 'cup', labels: { sl: 'Pokal ali serija', en: 'Cup or series' }, category: fieldCategoryMap.cup },
-    { key: 'registrationFee', labels: { sl: 'Prijavnina', en: 'Entry fee' }, category: fieldCategoryMap.registrationFee },
-    { key: 'registrationDeadline', labels: { sl: 'Rok prijave', en: 'Registration deadline' }, category: fieldCategoryMap.registrationDeadline },
-    { key: 'earlyRegistrationDeadline', labels: { sl: 'Rok cenejše prijave', en: 'Cheaper registration deadline' }, category: fieldCategoryMap.earlyRegistrationDeadline },
-    { key: 'dayOfRegistration', labels: { sl: 'Prijave na dan dogodka', en: 'Race-day registration' }, category: fieldCategoryMap.dayOfRegistration },
-    { key: 'elevationGain', labels: { sl: 'Višinski metri', en: 'Elevation gain' }, category: fieldCategoryMap.elevationGain },
-    { key: 'routeUrl', labels: { sl: 'Trasa, zemljevid ali GPX', en: 'Route, map or GPX' }, category: fieldCategoryMap.routeUrl }
+    { key: 'date', group: 'basic', labels: { sl: 'Datum', en: 'Date' }, category: fieldCategoryMap.date },
+    { key: 'eventTitle', group: 'basic', labels: { sl: 'Naziv', en: 'Name' }, category: fieldCategoryMap.title },
+    { key: 'place', group: 'basic', labels: { sl: 'Kraj', en: 'Place' }, category: fieldCategoryMap.place },
+    { key: 'region', group: 'basic', labels: { sl: 'Regija', en: 'Region' }, category: fieldCategoryMap.region },
+    { key: 'startTime', group: 'basic', labels: { sl: 'Čas začetka', en: 'Start time' }, category: fieldCategoryMap.startTime },
+    { key: 'distances', group: 'basic', labels: { sl: 'Razdalje', en: 'Distances' }, category: fieldCategoryMap.distances },
+    { key: 'surface', group: 'basic', labels: { sl: 'Vrsta podlage', en: 'Surface' }, category: fieldCategoryMap.surface },
+    { key: 'noticeUrl', group: 'basic', linkLabels: { sl: 'Odpri razpis', en: 'Open announcement' }, labels: { sl: 'Uradni razpis', en: 'Official announcement' }, category: fieldCategoryMap.noticeUrl },
+    { key: 'registrationUrl', group: 'basic', linkLabels: { sl: 'Odpri prijavo', en: 'Open registration' }, labels: { sl: 'Prijavna povezava', en: 'Registration link' }, category: fieldCategoryMap.registrationUrl },
+    { key: 'cup', group: 'basic', labels: { sl: 'Pokal ali serija', en: 'Cup or series' }, category: fieldCategoryMap.cup },
+    { key: 'registrationFee', group: 'extra', labels: { sl: 'Prijavnina', en: 'Entry fee' }, category: fieldCategoryMap.registrationFee },
+    { key: 'registrationDeadline', group: 'extra', labels: { sl: 'Rok prijave', en: 'Registration deadline' }, category: fieldCategoryMap.registrationDeadline },
+    { key: 'earlyRegistrationDeadline', group: 'extra', labels: { sl: 'Rok cenejše prijave', en: 'Cheaper registration deadline' }, category: fieldCategoryMap.earlyRegistrationDeadline },
+    { key: 'dayOfRegistration', group: 'extra', labels: { sl: 'Prijave na dan dogodka', en: 'Race-day registration' }, category: fieldCategoryMap.dayOfRegistration },
+    { key: 'elevationGain', group: 'extra', labels: { sl: 'Višinski metri', en: 'Elevation gain' }, category: fieldCategoryMap.elevationGain },
+    { key: 'routeUrl', group: 'extra', linkLabels: { sl: 'Odpri traso', en: 'Open route' }, labels: { sl: 'Trasa, zemljevid ali GPX', en: 'Route, map or GPX' }, category: fieldCategoryMap.routeUrl }
   ];
   const clean = (value) => value && value !== '-' && value !== 'undefined' ? value : '';
   const valueForPublishedField = (key) => key === 'eventTitle' ? prefill.eventTitle : clean(prefill[key] || '');
@@ -210,7 +214,7 @@ const changeGroups = [
   const buildChangePlaceholder = () => { const labels = selectedChangeLabels(); return labels.length ? labels.map((label) => `${label}:`).join('\n') : genericChangePlaceholder(); };
   const stripStructuredHeader = (value) => value.replace(/^(Izbrane vrste sprememb:|Selected changes:).*?(?:\n\n|$)/s, '').trimStart();
   const buildStructuredDescription = () => { const labels = selectedChangeLabels(); const header = `${isEnglish ? 'Selected changes:' : 'Izbrane vrste sprememb:'} ${listText(labels)}`.trim(); const userText = stripStructuredHeader(description?.value || '').trim(); return userText ? `${header}\n\n${userText}` : header; };
-  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); };
+  const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value && currentType() === 'existing') description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); };
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
   const setRow = (key, rule) => { const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea'); if (!row || !control || !rule) return; row.hidden = !rule.visible; control.required = Boolean(rule.visible && rule.required); control.disabled = Boolean(rule.disabled || (!rule.visible && !rule.keepEnabledWhenHidden)); control.removeAttribute('aria-invalid'); control.setCustomValidity(''); const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(rule.visible && rule.required); };
   const getIdentityState = () => ({ date: Boolean(prefill.date), title: Boolean(prefill.eventTitle), place: Boolean(prefill.place), region: Boolean(prefill.region) });
@@ -223,10 +227,11 @@ const changeGroups = [
     if (placeLabel) placeLabel.textContent = copy.labels.place;
     const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
     if (additionalSection) additionalSection.hidden = !isExisting;
+    if (changeOptionsDetails) changeOptionsDetails.open = !hasRaceContext;
     form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.disabled = !isExisting; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); });
-    if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription);
+    if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription, copy.placeholders.newDescription);
     else if (isExisting) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, buildChangePlaceholder());
-    else setDescriptionCopy(copy.labels.description, copy.placeholders.description);
+    else setDescriptionCopy(copy.labels.description, copy.placeholders.otherDescription, copy.placeholders.otherDescription);
     if (!isExisting) { clearChangeError(); clearAdditionalHiddenInputs(); if (changeSummary) changeSummary.hidden = true; }
     updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
   };
@@ -240,20 +245,32 @@ const changeGroups = [
       group.hidden = visibleLabels.length === 0;
     });
   };
-  const syncVisibleChangeOptions = () => { if (!hasRaceContext) { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (label) label.hidden = false; }); if (showAllChangesButton) showAllChangesButton.hidden = true; updateChangeGroupVisibility(); return; } form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (!label) return; label.hidden = !(showAllChangeOptions || commonContextChanges.includes(box.value) || box.checked); }); if (showAllChangesButton) { showAllChangesButton.hidden = showAllChangeOptions; showAllChangesButton.textContent = copy.showAllChanges; } updateChangeGroupVisibility(); };
+  const syncVisibleChangeOptions = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { const label = box.closest('label'); if (label) label.hidden = false; }); if (showAllChangesButton) showAllChangesButton.hidden = true; updateChangeGroupVisibility(); };
   const selectChangeCategory = (value) => { const box = form?.querySelector(`input[name="proposal-change-category"][value="${CSS.escape(value)}"]`); if (box) { box.closest('label').hidden = false; box.checked = true; } };
+  const publishedGroupLabels = { basic: copy.basicDetails, extra: copy.extraDetails };
+  const isPublishedUrlField = (definition, value) => Boolean(definition.linkLabels && isSafeHttpUrl(value));
   const updatePublishedDetails = () => {
     if (!publishedList) return;
     publishedList.innerHTML = '';
     const missingRows = [];
-    for (const definition of publishedFieldDefinitions) {
-      const value = clean(valueForPublishedField(definition.key));
-      if (!value) missingRows.push(definition);
-      const item = document.createElement('div'); item.className = 'published-detail-item';
-      const dt = document.createElement('dt'); dt.textContent = definition.labels[isEnglish ? 'en' : 'sl'];
-      const dd = document.createElement('dd'); dd.textContent = value || copy.missing; if (!value) dd.classList.add('missing-value');
-      const action = document.createElement('button'); action.type = 'button'; action.className = 'field-action'; action.dataset.fieldChange = definition.category; action.textContent = value ? copy.correct : copy.add;
-      item.append(dt, dd, action); publishedList.append(item);
+    for (const groupKey of ['basic', 'extra']) {
+      const groupDefinitions = publishedFieldDefinitions.filter((definition) => definition.group === groupKey);
+      const section = document.createElement('section'); section.className = 'published-detail-group';
+      const heading = document.createElement('h3'); heading.textContent = publishedGroupLabels[groupKey];
+      const list = document.createElement('dl'); list.className = 'published-details-grid';
+      section.append(heading, list); publishedList.append(section);
+      for (const definition of groupDefinitions) {
+        const value = clean(valueForPublishedField(definition.key));
+        if (!value) missingRows.push(definition);
+        const item = document.createElement('div'); item.className = 'published-detail-item';
+        const dt = document.createElement('dt'); dt.textContent = definition.labels[isEnglish ? 'en' : 'sl'];
+        const dd = document.createElement('dd');
+        if (isPublishedUrlField(definition, value)) { const link = document.createElement('a'); link.href = value; link.title = value; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = definition.linkLabels[isEnglish ? 'en' : 'sl']; dd.append(link); }
+        else { dd.textContent = value || copy.missing; }
+        if (!value) dd.classList.add('missing-value');
+        const action = document.createElement('button'); action.type = 'button'; action.className = 'field-action'; action.dataset.fieldChange = definition.category; action.textContent = value ? copy.correct : copy.add;
+        item.append(dt, dd, action); list.append(item);
+      }
     }
     missingDirectCategories = [...new Set(missingRows.map((row) => row.category).filter((category) => !['basic-official-source', 'Drugo', 'Popravek napačnega dodatnega podatka'].includes(category)))];
     commonContextChanges = [...new Set([...basicChangeCategoryValues, ...missingRows.filter((row) => ['startTime', 'distances', 'surface', 'noticeUrl', 'registrationUrl', 'cup'].includes(row.key)).map((row) => row.category)])];
@@ -308,7 +325,7 @@ const changeGroups = [
   .proposal-form{display:grid;gap:18px}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
   .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
   .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
-  .published-details{padding-top:0}.published-details-card{padding:20px}.published-details-card h2{margin-top:0}.published-details-card dl{margin:0}.published-details-grid{display:grid;gap:10px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px;border:1px solid rgba(16,64,80,.1);border-radius:12px;background:var(--white);min-width:0}.published-detail-item dt{font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.25);border-radius:999px;background:rgba(200,230,201,.35);color:var(--green-dark);font-weight:800;padding:6px 10px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
+  .published-details{padding-top:0}.published-details-card{padding:18px}.published-details-card h2{margin-top:0}.published-details-card dl{margin:0}.published-details-groups{display:grid;gap:16px}.published-detail-group{display:grid;gap:8px}.published-detail-group h3{margin:0;font-size:1rem;color:var(--ink)}.published-details-grid{display:grid;gap:8px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 10px;border:1px solid rgba(16,64,80,.08);border-radius:10px;background:rgba(255,255,255,.82);min-width:0}.published-detail-item dt{font-size:.86rem;font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item dd a{font-weight:800;color:var(--green-dark);overflow-wrap:anywhere}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.22);border-radius:999px;background:rgba(200,230,201,.24);color:var(--green-dark);font-weight:800;padding:5px 9px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-options-details{border:1px solid rgba(16,64,80,.1);border-radius:12px;padding:10px;background:rgba(16,64,80,.025)}.change-options-details summary{cursor:pointer;font-weight:800;color:var(--green-dark)}.change-options-details[open]{display:grid;gap:12px}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
   @media(min-width:760px){.published-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.proposal-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checkbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
