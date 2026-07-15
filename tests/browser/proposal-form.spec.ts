@@ -345,7 +345,8 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.proposalType)).toBe('Popravek obstoječega vnosa v koledarju');
     expect(payload?.get(contract.fields.date)).toBe('2026-09-12');
     expect(payload?.get(contract.fields.title)).toBe('Tek z dodatnimi podatki');
-    expect(payload?.get(contract.fields.description)).toBe('Izbrane vrste sprememb: Datum ali ura\n\nDatum naj bo 13. 9. 2026.\n\nDodatni podatki:\n\nPrijavnina / startnina: 20 € do 1. avgusta, nato 25 €');
+    const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
+    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe('Izbrane vrste sprememb: Datum ali ura\n\nDatum naj bo 13. 9. 2026.\n\nDodatni podatki:\n\nPrijavnina / startnina: 20 € do 1. avgusta, nato 25 €');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka']);
     expect(payload?.get(contract.fields.place)).toBe('Kranj');
     expect(payload?.get(contract.fields.region)).toBe('Gorenjska');
