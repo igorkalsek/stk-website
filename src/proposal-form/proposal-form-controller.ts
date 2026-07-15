@@ -33,14 +33,19 @@ export const fieldCategoryMap = {
   date: 'basic-date-time', startTime: 'basic-date-time', title: 'basic-title-place', place: 'basic-title-place', region: 'basic-title-place', distances: 'basic-distance-surface', surface: 'basic-distance-surface', noticeUrl: 'basic-official-source', registrationUrl: 'basic-official-source', cup: 'basic-cup-series', registrationFee: 'Prijavnina / startnina', registrationDeadline: 'Rok prijave', earlyRegistrationDeadline: 'Cenejša prijava / sprememba cene', dayOfRegistration: 'Prijave na dan dogodka', routeUrl: 'Trasa / zemljevid / GPX', elevationGain: 'Višinski metri'
 } as const;
 
-export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasCompleteRaceIdentity }: { frontendType: FrontendProposalType; hasRaceContext: boolean; hasCompleteRaceIdentity: boolean }) => {
+export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasCompleteRaceIdentity, identity = {} }: { frontendType: FrontendProposalType; hasRaceContext: boolean; hasCompleteRaceIdentity: boolean; identity?: Partial<Record<'date' | 'title' | 'place' | 'region', boolean>> }) => {
   const isExisting = frontendType === 'existing';
-  const hideIdentity = isExisting && hasRaceContext && hasCompleteRaceIdentity;
+  const contextIdentity = isExisting && hasRaceContext;
+  const identityRule = (key: 'date' | 'title' | 'place' | 'region') => {
+    const known = hasCompleteRaceIdentity || Boolean(identity[key]);
+    const visible = !contextIdentity || !known;
+    return { visible, required: visible, disabled: false, keepEnabledWhenHidden: contextIdentity && known };
+  };
   return {
-    date: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
-    title: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
-    place: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
-    region: { visible: !hideIdentity, required: !hideIdentity, disabled: false, keepEnabledWhenHidden: hideIdentity },
+    date: identityRule('date'),
+    title: identityRule('title'),
+    place: identityRule('place'),
+    region: identityRule('region'),
     source: { visible: true, required: false, disabled: false, keepEnabledWhenHidden: false },
     description: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     organizer: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
@@ -48,6 +53,8 @@ export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasComplet
     email: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false }
   } as const;
 };
+
+export const parseProposalMode = (value: string | null | undefined): FrontendProposalType | '' => frontendProposalTypes.includes(value as FrontendProposalType) ? value as FrontendProposalType : '';
 
 export const changeDescriptionPrefix = (lang: ProposalLanguage) => lang === 'en' ? 'Selected changes:' : 'Izbrane vrste sprememb:';
 
@@ -94,12 +101,12 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const returnUrl = params.get('returnUrl')?.trim() ?? '';
   const lang = params.get('lang') === 'en' ? 'en' : pageLanguage;
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
-  const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, source: '', officialSourceUrl, safeReturnUrl, lang }) : '';
+  const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }) : '';
   const get = (key: string) => params.get(key)?.trim() ?? '';
   return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: get('noticeUrl'), registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
 };
 
-export const buildPrefillDescription = ({ eventTitle, year, date, place, source, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; source: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {
+export const buildPrefillDescription = ({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {
   const lines = lang === 'en'
     ? ['Language/context: English STK page.', 'Correction or update for an existing race in Slovenski Tekaški Koledar.', '']
     : ['Popravek ali dopolnitev za obstoječi tek v Slovenskem Tekaškem Koledarju.', ''];

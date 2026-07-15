@@ -1,6 +1,6 @@
 ---
 import { googleProposalFormContract } from '../proposal-form/proposal-form-contract';
-import { readProposalPrefill, buildGoogleFormsFallbackUrl, basicChangeCategoryValues, parsePreselectedChangeCategories, fieldCategoryMap } from '../proposal-form/proposal-form-controller';
+import { readProposalPrefill, buildGoogleFormsFallbackUrl, basicChangeCategoryValues, parsePreselectedChangeCategories, fieldCategoryMap, getProposalFieldRules, parseProposalMode } from '../proposal-form/proposal-form-controller';
 import { proposalFormLocales, proposalTypeOptions } from '../proposal-form/proposal-form-locales';
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
 
@@ -18,7 +18,12 @@ const publishedRows = [
 const preselectedChanges = parsePreselectedChangeCategories(Astro.url.searchParams.get('changes'));
 const commonContextChanges = new Set([...preselectedChanges, ...publishedRows.filter((row) => !row.value && ['startTime','distances','surface','noticeUrl','registrationUrl','cup'].includes(row.key)).map((row) => row.category), ...basicChangeCategoryValues]);
 const typeOptions = proposalTypeOptions(lang);
-const selectedType = isCorrection ? 'existing' : '';
+const selectedType = hasRaceContext ? 'existing' : parseProposalMode(Astro.url.searchParams.get('mode'));
+const identityState = { date: Boolean(prefill.date), title: Boolean(prefill.eventTitle), place: Boolean(prefill.place), region: Boolean(prefill.region) };
+const hasCompleteRaceIdentity = identityState.date && identityState.title && identityState.place && identityState.region;
+const fieldRulesByType = Object.fromEntries(['new', 'existing', 'other'].map((frontendType) => [frontendType, getProposalFieldRules({ frontendType: frontendType as 'new' | 'existing' | 'other', hasRaceContext, hasCompleteRaceIdentity, identity: identityState })]));
+const missingRows = publishedRows.filter((row) => !row.value);
+const missingDirectCategories = [...new Set(missingRows.map((row) => row.category).filter((category) => !['basic-official-source', 'Drugo', 'Popravek napačnega dodatnega podatka'].includes(category)))];
 const additionalValues = googleProposalFormContract.values.additionalData;
 const changeLabelFor = (value: string) => copy.labelsForValues.changeCategories[value as keyof typeof copy.labelsForValues.changeCategories];
 const changeGroups = [
@@ -39,14 +44,14 @@ const changeGroups = [
     <span class="eyebrow">{copy.contextTitle}</span>
     <h2 id="selected-race-title" data-prefill-title>{prefill.eventTitle}</h2>
     <p data-prefill-meta>{[prefill.date || prefill.year, prefill.place].filter(Boolean).join(' · ')}</p>
-    <a class="correction-context-back" href={prefill.safeReturnUrl || '#'} data-prefill-return hidden={!prefill.safeReturnUrl}>{copy.back}</a><div class="context-mini-links"><a href={copy.cleanPath}>{copy.addAnotherRace}</a><a href={copy.cleanPath}>{copy.sendOther}</a></div>
+    <a class="correction-context-back" href={prefill.safeReturnUrl || '#'} data-prefill-return hidden={!prefill.safeReturnUrl}>{copy.back}</a><div class="context-mini-links"><a href={`${copy.cleanPath}?mode=new`}>{copy.addAnotherRace}</a><a href={`${copy.cleanPath}?mode=other`}>{copy.sendOther}</a></div>
   </article>
 </section>
 
 <section class="section container published-details" aria-labelledby="published-details-title" hidden={!hasRaceContext}>
   <article class="info-card published-details-card">
     <h2 id="published-details-title">{copy.currentDetails}</h2>
-    <div class="published-details-grid">
+    <dl class="published-details-grid">
       {publishedRows.map((row) => (
         <div class="published-detail-item">
           <dt>{row.label}</dt>
@@ -54,7 +59,8 @@ const changeGroups = [
           <button type="button" class="field-action" data-field-change={row.category}>{row.value ? copy.correct : copy.add}</button>
         </div>
       ))}
-    </div>
+    </dl>
+    <button type="button" class="button button-secondary-light missing-details-action" data-missing-details hidden={missingDirectCategories.length === 0}>{copy.addMissingDetails}</button>
   </article>
 </section>
 
@@ -98,6 +104,7 @@ const changeGroups = [
         <fieldset class="full-span optional-fieldset" data-additional-section hidden aria-describedby="proposal-additional-helper proposal-additional-error">
           <legend>{copy.labels.additionalData}</legend>
           <p id="proposal-additional-helper" class="field-helper">{copy.helpers.additionalData}</p>
+          <button type="button" class="button button-secondary-light show-all-changes" data-show-all-changes hidden={!hasRaceContext}>{copy.showAllChanges}</button>
           {changeGroups.map((group) => (
             <div class="change-category-group">
               <p class="change-category-title">{group.title}</p>
@@ -131,7 +138,7 @@ const changeGroups = [
     <iframe name="proposal-form-target" title="Google Forms submission target" hidden data-submit-target></iframe>
   </div>
 </section>
-<script is:inline define:vars={{ copy, contract: googleProposalFormContract, hasRaceContext, preselectedChanges, commonContextChanges: [...commonContextChanges] }}>
+<script is:inline define:vars={{ copy, contract: googleProposalFormContract, hasRaceContext, preselectedChanges, commonContextChanges: [...commonContextChanges], missingDirectCategories, fieldRulesByType }}>
   const form = document.querySelector('[data-proposal-form]');
   const button = document.querySelector('[data-submit-button]');
   const status = document.querySelector('[data-submit-status]');
@@ -148,6 +155,9 @@ const changeGroups = [
   const dateHiddenInputs = document.querySelector('[data-date-hidden-inputs]');
   const backendProposalType = document.querySelector('[data-backend-proposal-type]');
   const changeSummary = document.querySelector('[data-change-summary]');
+  const showAllChangesButton = document.querySelector('[data-show-all-changes]');
+  const missingDetailsButton = document.querySelector('[data-missing-details]');
+  let showAllChangeOptions = false;
   const changeChips = document.querySelector('[data-change-chips]');
   const description = form?.elements.namedItem(contract.fields.description);
   const descriptionLabel = document.querySelector('[data-field-row="description"] [data-label-text]');
@@ -188,20 +198,17 @@ const changeGroups = [
   const buildStructuredDescription = () => { const labels = selectedChangeLabels(); const header = `${isEnglish ? 'Selected changes:' : 'Izbrane vrste sprememb:'} ${listText(labels)}`.trim(); const userText = stripStructuredHeader(description?.value || '').trim(); return userText ? `${header}\n\n${userText}` : header; };
   const updateChangeSummary = () => { const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs(); };
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
-  const setRow = (key, visible, required, options = {}) => {
+  const setRow = (key, rule) => {
     const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea');
-    if (!row || !control) return; row.hidden = !visible; control.required = Boolean(visible && required); control.disabled = !visible && !options.keepEnabledWhenHidden; control.removeAttribute('aria-invalid'); control.setCustomValidity('');
-    const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(visible && required);
+    if (!row || !control || !rule) return; row.hidden = !rule.visible; control.required = Boolean(rule.visible && rule.required); control.disabled = Boolean(rule.disabled || (!rule.visible && !rule.keepEnabledWhenHidden)); control.removeAttribute('aria-invalid'); control.setCustomValidity('');
+    const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(rule.visible && rule.required);
   };
+  const computeFieldRules = (type) => fieldRulesByType[type || 'new'] || fieldRulesByType.new;
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
-  const hasSafePrefillIdentity = () => Boolean(!document.querySelector('[data-correction-context]')?.hidden && (form?.elements.namedItem(contract.fields.title)?.value || '').trim() && (form?.elements.namedItem(contract.fields.date)?.value || '').trim() && (form?.elements.namedItem(contract.fields.place)?.value || '').trim());
   const applyTypeUx = () => {
-    const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const prefilled = isExisting && hasSafePrefillIdentity();
-    setRow('date', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
-    setRow('title', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
-    setRow('place', !prefilled, !prefilled, { keepEnabledWhenHidden: prefilled });
-    setRow('region', true, true);
-    setRow('organizer', true, true); setRow('announcement', true, true); setRow('source', true, false); setRow('description', true, true); setRow('email', true, true);
+    const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const rules = computeFieldRules(type);
+    setRow('date', rules.date); setRow('title', rules.title); setRow('place', rules.place); setRow('region', rules.region);
+    setRow('organizer', rules.organizer); setRow('announcement', rules.announcement); setRow('source', rules.source); setRow('description', rules.description); setRow('email', rules.email);
     if (placeLabel) placeLabel.textContent = copy.labels.place;
     const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
     if (additionalSection) additionalSection.hidden = !isExisting;
@@ -216,20 +223,24 @@ const changeGroups = [
     const params = new URLSearchParams(window.location.search); const eventTitle = params.get('event')?.trim() || ''; if (!eventTitle) return;
     const year = params.get('year')?.trim() || ''; const date = params.get('date')?.trim() || ''; const place = params.get('place')?.trim() || ''; const sourceValue = params.get('source')?.trim() || ''; const officialParam = params.get('officialSource')?.trim() || ''; const officialSourceUrl = isSafeHttpUrl(officialParam) ? officialParam : isSafeHttpUrl(sourceValue) ? sourceValue : ''; const returnUrl = params.get('returnUrl')?.trim() || ''; const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : ''; const prefillDescription = buildDescription({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl });
     const correctionRadio = form?.querySelector('input[name="proposal-type-ui"][value="existing"]'); if (correctionRadio) correctionRadio.checked = true;
-    setFieldValue(contract.fields.date, date); setFieldValue(contract.fields.title, eventTitle); setFieldValue(contract.fields.place, place); setFieldValue(contract.fields.region, params.get('region')?.trim() || contract.values.regions[contract.values.regions.length - 1]); setFieldValue(contract.fields.officialSource, officialSourceUrl); setFieldValue(contract.fields.description, prefillDescription);
+    setFieldValue(contract.fields.date, date); setFieldValue(contract.fields.title, eventTitle); setFieldValue(contract.fields.place, place); setFieldValue(contract.fields.region, params.get('region')?.trim() || ''); setFieldValue(contract.fields.officialSource, officialSourceUrl); setFieldValue(contract.fields.description, prefillDescription);
     const context = document.querySelector('[data-correction-context]'); const title = document.querySelector('[data-prefill-title]'); const meta = document.querySelector('[data-prefill-meta]'); const back = document.querySelector('[data-prefill-return]'); if (context) context.hidden = false; if (title) title.textContent = eventTitle; if (meta) meta.textContent = [date || year, place].filter(Boolean).join(' · '); if (back) { back.hidden = !safeReturnUrl; if (safeReturnUrl) back.href = safeReturnUrl; }
   };
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
   const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
   const updateErrorSummary = () => { if (!errors || errors.hidden) return; const invalidFields = visibleInvalidFields(); if (!invalidFields.length) { errors.hidden = true; return; } errors.textContent = `${copy.errorTitle} ${[...new Set(invalidFields.map(labelForField).filter(Boolean))].join(', ')}`; };
   const showErrors = (fields) => { const labels = [...new Set(fields.map(labelForField).filter(Boolean))]; if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); } for (const field of fields) field?.setAttribute('aria-invalid', 'true'); };
-  applyRuntimePrefill(); for (const value of preselectedChanges) { const box = form?.querySelector(`input[name=\"proposal-change-category\"][value=\"${CSS.escape(value)}\"]`); if (box) box.checked = true; } if (hasRaceContext) form?.querySelectorAll('input[name=\"proposal-change-category\"]').forEach((box) => { const group = box.closest('.change-category-group'); if (!commonContextChanges.includes(box.value)) box.closest('label').hidden = true; }); applyTypeUx(); validateSource();
-  document.querySelectorAll('[data-field-change]').forEach((button) => button.addEventListener('click', () => { const value = button.dataset.fieldChange; const box = form?.querySelector(`input[name=\"proposal-change-category\"][value=\"${CSS.escape(value)}\"]`); if (box) { box.closest('label').hidden = false; box.checked = true; clearChangeError(); updateChangeSummary(); } description?.scrollIntoView({ behavior: 'smooth', block: 'center' }); description?.focus({ preventScroll: true }); }));
+  const syncVisibleChangeOptions = () => { if (!hasRaceContext) return; form?.querySelectorAll('input[name=\"proposal-change-category\"]').forEach((box) => { const label = box.closest('label'); if (!label) return; label.hidden = !(showAllChangeOptions || commonContextChanges.includes(box.value) || box.checked); }); if (showAllChangesButton) { showAllChangesButton.hidden = showAllChangeOptions; showAllChangesButton.textContent = copy.showAllChanges; } };
+  const selectChangeCategory = (value) => { const box = form?.querySelector(`input[name=\"proposal-change-category\"][value=\"${CSS.escape(value)}\"]`); if (box) { box.closest('label').hidden = false; box.checked = true; } };
+  applyRuntimePrefill(); for (const value of preselectedChanges) selectChangeCategory(value); syncVisibleChangeOptions(); applyTypeUx(); validateSource();
+  showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions(); });
+  missingDetailsButton?.addEventListener('click', () => { for (const value of missingDirectCategories) selectChangeCategory(value); clearChangeError(); updateChangeSummary(); syncVisibleChangeOptions(); description?.scrollIntoView({ behavior: 'smooth', block: 'center' }); description?.focus({ preventScroll: true }); });
+  document.querySelectorAll('[data-field-change]').forEach((button) => button.addEventListener('click', () => { const value = button.dataset.fieldChange; selectChangeCategory(value); clearChangeError(); updateChangeSummary(); syncVisibleChangeOptions(); description?.scrollIntoView({ behavior: 'smooth', block: 'center' }); description?.focus({ preventScroll: true }); }));
   form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', applyTypeUx));
   source?.addEventListener('blur', validateSource);
   source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); });
   form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field === source) validateSource(); else updateErrorSummary(); } });
-  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); });
+  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); });
   form?.addEventListener('submit', (event) => {
     if (submissionComplete) { event.preventDefault(); return; }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
@@ -250,7 +261,7 @@ const changeGroups = [
   .proposal-form{display:grid;gap:18px}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
   .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
   .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
-  .published-details{padding-top:0}.published-details-card{padding:20px}.published-details-card h2{margin-top:0}.published-details-grid{display:grid;gap:10px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px;border:1px solid rgba(16,64,80,.1);border-radius:12px;background:var(--white);min-width:0}.published-detail-item dt{font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.25);border-radius:999px;background:rgba(200,230,201,.35);color:var(--green-dark);font-weight:800;padding:6px 10px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
+  .published-details{padding-top:0}.published-details-card{padding:20px}.published-details-card h2{margin-top:0}.published-details-card dl{margin:0}.published-details-grid{display:grid;gap:10px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px;border:1px solid rgba(16,64,80,.1);border-radius:12px;background:var(--white);min-width:0}.published-detail-item dt{font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.25);border-radius:999px;background:rgba(200,230,201,.35);color:var(--green-dark);font-weight:800;padding:6px 10px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
   @media(min-width:760px){.published-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.proposal-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checkbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
