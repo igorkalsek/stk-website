@@ -133,36 +133,41 @@ export type GoogleFormsSubmissionUrlInput = {
   additionalData?: readonly string[];
 };
 
-const setPrefillParam = (url: URL, name: string, value: string | undefined) => {
-  const cleanValue = value?.trim() ?? '';
-  if (cleanValue) url.searchParams.set(name, cleanValue);
+export type GoogleFormsSubmissionEntry = readonly [name: string, value: string];
+
+const cleanSubmissionValue = (value: string | undefined) => value?.trim() ?? '';
+const appendSubmissionEntry = (entries: GoogleFormsSubmissionEntry[], name: string, value: string | undefined, { includeEmpty = false } = {}) => {
+  const cleanValue = cleanSubmissionValue(value);
+  if (cleanValue || includeEmpty) entries.push([name, cleanValue]);
+};
+
+export const buildGoogleFormsSubmissionEntries = (submission: GoogleFormsSubmissionUrlInput = {}): GoogleFormsSubmissionEntry[] => {
+  const { fields } = googleProposalFormContract;
+  const entries: GoogleFormsSubmissionEntry[] = [];
+  appendSubmissionEntry(entries, fields.proposalType, submission.proposalType);
+  appendSubmissionEntry(entries, fields.date, submission.date);
+  if (submission.date && /^\d{4}-\d{2}-\d{2}$/.test(submission.date)) {
+    const [year, month, day] = submission.date.split('-');
+    entries.push([fields.dateYear, String(Number(year))], [fields.dateMonth, String(Number(month))], [fields.dateDay, String(Number(day))]);
+  }
+  appendSubmissionEntry(entries, fields.title, submission.title);
+  appendSubmissionEntry(entries, fields.place, submission.place);
+  appendSubmissionEntry(entries, fields.region, submission.region);
+  appendSubmissionEntry(entries, fields.officialSource, submission.officialSource, { includeEmpty: true });
+  appendSubmissionEntry(entries, fields.description, submission.description);
+  appendSubmissionEntry(entries, fields.organizer, submission.organizer);
+  appendSubmissionEntry(entries, fields.officialAnnouncement2026, submission.officialAnnouncement);
+  appendSubmissionEntry(entries, fields.email, submission.email);
+  for (const value of submission.additionalData ?? []) {
+    if (allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number])) entries.push([fields.additionalData, value]);
+  }
+  return entries;
 };
 
 export const buildGoogleFormsSubmissionUrl = (submission: GoogleFormsSubmissionUrlInput = {}) => {
   const url = new URL(googleProposalFormContract.viewUrl);
-  const { fields } = googleProposalFormContract;
   url.searchParams.set('usp', 'pp_url');
-  setPrefillParam(url, fields.proposalType, submission.proposalType);
-  setPrefillParam(url, fields.date, submission.date);
-  if (submission.date && /^\d{4}-\d{2}-\d{2}$/.test(submission.date)) {
-    const [year, month, day] = submission.date.split('-');
-    url.searchParams.set(fields.dateYear, String(Number(year)));
-    url.searchParams.set(fields.dateMonth, String(Number(month)));
-    url.searchParams.set(fields.dateDay, String(Number(day)));
-  }
-  setPrefillParam(url, fields.title, submission.title);
-  setPrefillParam(url, fields.place, submission.place);
-  setPrefillParam(url, fields.region, submission.region);
-  url.searchParams.set(fields.officialSource, submission.officialSource?.trim() ?? '');
-  setPrefillParam(url, fields.description, submission.description);
-  setPrefillParam(url, fields.organizer, submission.organizer);
-  setPrefillParam(url, fields.officialAnnouncement2026, submission.officialAnnouncement);
-  setPrefillParam(url, fields.email, submission.email);
-  for (const value of submission.additionalData ?? []) {
-    if (allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number])) {
-      url.searchParams.append(fields.additionalData, value);
-    }
-  }
+  for (const [name, value] of buildGoogleFormsSubmissionEntries(submission)) url.searchParams.append(name, value);
   return url.href;
 };
 

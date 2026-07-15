@@ -354,6 +354,18 @@ const inferLinkType = (link: HTMLAnchorElement) => {
   return '';
 };
 
+const getAnalyticsTargetUrl = (element: HTMLElement, targetUrl = '') => {
+  if (element.dataset.analyticsRedactTargetUrl === 'true') {
+    try {
+      const url = new URL(targetUrl || (element instanceof HTMLAnchorElement ? element.href : ''), window.location.href);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return '';
+    }
+  }
+  return targetUrl;
+};
+
 const getEventContext = (element: HTMLElement) => {
   const card = getCard(element);
   return {
@@ -391,7 +403,8 @@ export const initializeStkAnalyticsClickTracking = () => {
     const explicitActionType = clickedElement.dataset.analyticsActionType;
     const explicitContext = getEventContext(clickedElement);
     if (explicitEventType && ALLOWED_EVENT_TYPES.has(explicitEventType)) {
-      const targetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
+      const rawTargetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
+      const targetUrl = getAnalyticsTargetUrl(clickedElement, rawTargetUrl);
       trackStkEvent({
         event_type: explicitEventType,
         ...explicitContext,
@@ -433,11 +446,12 @@ export const initializeStkAnalyticsClickTracking = () => {
 
     const linkType = inferLinkType(link);
     if (linkType) {
+      const targetUrl = getAnalyticsTargetUrl(link, link.href);
       trackStkEvent({
         event_type: 'external_link_clicked',
         ...context,
         action_type: linkType,
-        target_url: link.href,
+        target_url: targetUrl,
         target_domain: getStkTargetDomain(link.href)
       });
     }

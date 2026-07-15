@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
 
 describe('proposal form contract', () => {
@@ -54,6 +54,18 @@ describe('proposal form contract', () => {
   });
   it('accepts only internal returnUrl paths and http source URLs', () => { assert.equal(isSafeInternalReturnUrl('/tek/2026/a/'), true); assert.equal(isSafeInternalReturnUrl('//evil'), false); assert.equal(isSafeInternalReturnUrl('https://evil.test'), false); assert.equal(isSafeHttpUrl('detail'), false); assert.equal(isSafeHttpUrl('https://example.com/razpis'), true); });
   it('keeps 2026 and 2027 context', () => { assert.equal(getYearContext('2026-01-01'), '2026'); assert.equal(getYearContext('2027'), '2027'); });
+
+  it('builds canonical Google Forms submission entries including repeated additional data', () => {
+    const entries = buildGoogleFormsSubmissionEntries({ proposalType: 'Popravek obstoječega vnosa v koledarju', date: '2026-09-12', title: 'Tek', place: 'Kranj', region: 'Gorenjska', officialSource: '', description: 'Izbrane vrste sprememb: Prijavnina / startnina\n\nPrijavnina 20 €.', organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com', additionalData: ['Prijavnina / startnina', 'basic-date-time', 'Popravek napačnega dodatnega podatka'] });
+    const params = new URLSearchParams(entries);
+    assert.equal(params.get(googleProposalFormContract.fields.officialSource), '');
+    assert.equal(params.get(googleProposalFormContract.fields.dateYear), '2026');
+    assert.equal(params.get(googleProposalFormContract.fields.dateMonth), '9');
+    assert.equal(params.get(googleProposalFormContract.fields.dateDay), '12');
+    assert.equal(params.get(googleProposalFormContract.fields.description), 'Izbrane vrste sprememb: Prijavnina / startnina\n\nPrijavnina 20 €.');
+    assert.deepEqual(params.getAll(googleProposalFormContract.fields.additionalData), ['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka']);
+  });
+
   it('preserves fallback prefill without storing private fields in URL/localStorage', () => {
     const url = buildGoogleFormsFallbackUrl(readProposalPrefill(new URLSearchParams('event=Tek&date=2026-03-02&place=Kranj&source=detail&returnUrl=/tek/2026/tek/'), 'sl'));
     assert.match(url, /entry\.528776717=Tek/); assert.doesNotMatch(url, /entry\.600388817/); assert.doesNotMatch(url, /entry\.1673153264=detail/);
