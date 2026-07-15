@@ -1,5 +1,5 @@
 import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, mapPublicRaceEvent, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
-import { getSavedRaceKey, type SavedRace } from './utils-saved-races.js';
+import { getSavedRaceKey, SAVED_RACE_STATUSES, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
 
 export type SavedRaceResolution = {
   savedRace: SavedRace;
@@ -36,3 +36,11 @@ export const sortResolvedSavedRaces = (items: SavedRaceResolution[]) => [...item
 
 export const getSavedRaceDetailPath = (event: PublicRaceEvent, language: 'sl' | 'en') =>
   language === 'en' ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event);
+
+export type MyRacesStatusFilter = SavedRaceStatus | 'all';
+export const countSavedRaceStatuses = (items: { savedRace: SavedRace }[] | SavedRace[]) => {
+  const counts = Object.fromEntries(SAVED_RACE_STATUSES.map((status) => [status, 0])) as Record<SavedRaceStatus, number>;
+  items.forEach((item) => { const race = 'savedRace' in item ? item.savedRace : item; counts[race.status] += 1; });
+  return counts;
+};
+export const filterSavedRaceResolutionsByStatus = <T extends { savedRace: SavedRace }>(items: T[], filter: MyRacesStatusFilter): T[] => filter === 'all' ? items : items.filter((item) => item.savedRace.status === filter);

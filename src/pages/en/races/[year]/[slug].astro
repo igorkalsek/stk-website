@@ -197,6 +197,18 @@ const jsonLd = event ? {
                 <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
               ))}
               <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
+
+              <div class="race-status-control" data-analytics-placement="race_detail">
+                <label for="race-detail-status-select">My status</label>
+                <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="en" aria-describedby="race-detail-status-helper">
+                  <option value="">Not in My races</option>
+                  <option value="following">Following</option>
+                  <option value="planning">Planning</option>
+                  <option value="registered">Registered</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <p id="race-detail-status-helper" class="muted-note">The status is stored only in this browser.</p>
+              </div>
             </div>
           </div>
         </section>

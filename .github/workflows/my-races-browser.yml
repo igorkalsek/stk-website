@@ -1,0 +1,30 @@
+name: My races browser tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/browser/my-races-statuses.spec.ts'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/my-races-browser.yml'
+
+jobs:
+  my-races-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser:my-races
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: my-races-playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
