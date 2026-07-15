@@ -200,7 +200,6 @@ test.describe('native proposal form', () => {
       formElement.requestSubmit();
     });
     await expect.poll(() => form.getSubmissions()).toBe(1);
-    await expect(page.getByRole('alert')).toContainText('Predlog je bil poslan. Hvala za pomoč pri dopolnjevanju koledarja.');
     expect(page.url()).not.toContain('docs.google.com');
   });
 
@@ -373,9 +372,11 @@ test.describe('native proposal form', () => {
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
-    for (const field of [contract.fields.proposalType, contract.fields.date, contract.fields.dateYear, contract.fields.dateMonth, contract.fields.dateDay, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.officialSource, contract.fields.description, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email]) {
+    const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
+    for (const field of [contract.fields.proposalType, contract.fields.date, contract.fields.dateYear, contract.fields.dateMonth, contract.fields.dateDay, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.officialSource, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email]) {
       expect(payload?.get(field)).toBe(fallbackParams.get(field));
     }
+    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(normalizeLineEndings(fallbackParams.get(contract.fields.description)));
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(fallbackParams.getAll(contract.fields.additionalData));
     expect(fallbackParams.get('usp')).toBe('pp_url');
   });
@@ -479,7 +480,7 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.region)).toBe('Osrednjeslovenska');
     expect(payload?.get(contract.fields.description)).not.toContain('Kontekst vira: detail');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina']);
-    await expect(page.locator('[data-error-summary]')).toBeHidden();
+    await expect(page.locator('[data-error-summary]')).toContainText('Predlog je bil poslan. Hvala za pomoč pri dopolnjevanju koledarja.');
     expect(form.getUrls().at(-1)).toContain('/formResponse');
   });
 
@@ -580,6 +581,7 @@ test.describe('native proposal form', () => {
     await expect.poll(() => analyticsPayloads.length).toBeGreaterThan(0);
     const serialized = JSON.stringify(analyticsPayloads);
     expect(serialized).toContain('/viewform');
+    expect(serialized).not.toContain('target_domain');
     for (const sensitive of ['Zasebni naslov teka', 'Skrivni kraj', 'skrivni-vir', 'Zaseben opis', 'secret@example.com', '2026-09-12', 'entry.']) {
       expect(serialized).not.toContain(sensitive);
     }

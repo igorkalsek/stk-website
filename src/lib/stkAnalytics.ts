@@ -354,8 +354,10 @@ const inferLinkType = (link: HTMLAnchorElement) => {
   return '';
 };
 
+const shouldRedactAnalyticsTargetUrl = (element: HTMLElement) => element.dataset.analyticsRedactTargetUrl === 'true';
+
 const getAnalyticsTargetUrl = (element: HTMLElement, targetUrl = '') => {
-  if (element.dataset.analyticsRedactTargetUrl === 'true') {
+  if (shouldRedactAnalyticsTargetUrl(element)) {
     try {
       const url = new URL(targetUrl || (element instanceof HTMLAnchorElement ? element.href : ''), window.location.href);
       return `${url.origin}${url.pathname}`;
@@ -410,7 +412,7 @@ export const initializeStkAnalyticsClickTracking = () => {
         ...explicitContext,
         action_type: explicitActionType,
         target_url: targetUrl,
-        target_domain: targetUrl ? getStkTargetDomain(targetUrl) : ''
+        target_domain: shouldRedactAnalyticsTargetUrl(clickedElement) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
       });
       return;
     }
@@ -452,7 +454,7 @@ export const initializeStkAnalyticsClickTracking = () => {
         ...context,
         action_type: linkType,
         target_url: targetUrl,
-        target_domain: getStkTargetDomain(link.href)
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
       });
     }
   }, { capture: true });
