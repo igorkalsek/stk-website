@@ -53,6 +53,12 @@ async function waitForProposalRuntime(page: Page) {
   await expect(page.locator('[data-proposal-form]')).toHaveAttribute('data-proposal-runtime-ready', 'true');
 }
 
+async function enterSlovenianManualCorrectionMode(page: Page) {
+  await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
+  await page.getByTestId('race-picker-manual').click();
+  await expect(page.locator('#proposal-date')).toBeVisible();
+}
+
 test.describe('native proposal form', () => {
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -410,7 +416,7 @@ test.describe('native proposal form', () => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
-    await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
+    await enterSlovenianManualCorrectionMode(page);
     await page.locator('#proposal-date').fill('2026-09-12');
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek za pariteto');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Kranj');
@@ -443,7 +449,7 @@ test.describe('native proposal form', () => {
   test('reset clears structured additional fields', async ({ page }) => {
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
-    await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
+    await enterSlovenianManualCorrectionMode(page);
     await page.getByTestId('additional-entry-fee').fill('20 €');
     await page.getByTestId('additional-registration-deadline').fill('2026-08-10');
     await page.getByTestId('additional-race-day-registration').selectOption('Da');
@@ -652,7 +658,7 @@ test.describe('native proposal form', () => {
     });
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
-    await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
+    await enterSlovenianManualCorrectionMode(page);
     await page.locator('#proposal-date').fill('2026-09-12');
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Zasebni naslov teka');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Skrivni kraj');
