@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
 import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
@@ -43,6 +43,30 @@ describe('proposal form contract', () => {
     assert.equal(buildStructuredChangeDescription({ labels: ['Entry fee'], userText: 'Selected changes: Entry fee\n\nEntry fee: €20', lang: 'en' }), 'Selected changes: Entry fee\n\nEntry fee: €20');
     assert.equal(buildChangePlaceholder({ labels: ['Prijavnina', 'Rok prijave'], lang: 'sl' }), 'Prijavnina:\nRok prijave:');
     assert.equal(buildChangePlaceholder({ labels: [], lang: 'en' }), 'Enter the missing or correct detail.');
+  });
+
+
+  it('builds structured basic correction descriptions deterministically', () => {
+    assert.equal(hasStructuredBasicCorrections({}), false);
+    assert.equal(hasStructuredBasicCorrections({ date: '2026-08-02' }), true);
+    assert.deepEqual(structuredBasicCorrectionFields.map((field) => field.key), ['date','title','place','region','startTime','distances','surface','noticeUrl','registrationUrl','cup']);
+    const currentValues = { date: '2026-08-01', title: 'Stari tek', place: 'Kranj', startTime: '18:00', registrationUrl: 'https://example.com/stara' };
+    const corrections = { registrationUrl: 'https://example.com/nova', date: '2026-08-02', startTime: '19:00', title: '' };
+    assert.equal(buildStructuredBasicCorrectionDescription({ lang: 'sl', currentValues, corrections }), 'Osnovni popravki:\n\nDatum\nTrenutno: 2026-08-01\nPredlagano: 2026-08-02\n\nČas začetka\nTrenutno: 18:00\nPredlagano: 19:00\n\nPrijavna povezava\nTrenutno: https://example.com/stara\nPredlagano: https://example.com/nova');
+    assert.equal(buildStructuredBasicCorrectionDescription({ lang: 'en', currentValues, corrections: { date: '2026-08-02' } }), 'Basic corrections:\n\nDate\nCurrent: 2026-08-01\nProposed: 2026-08-02');
+    assert.equal(isValidStructuredBasicDate('2026-02-30'), false);
+    assert.equal(isValidStructuredBasicDate('2026-02-28'), true);
+    assert.equal(isValidStructuredBasicUrl('javascript:alert(1)'), false);
+    assert.equal(isValidStructuredBasicUrl('https://example.com'), true);
+  });
+
+  it('combines basic corrections, explanation, and additional data in Google Forms description while preserving identity entries', () => {
+    const description = combineCorrectionDescription({ lang: 'sl', basicDescription: 'Dodatno pojasnilo.', structuredBasicCorrections: { date: '2026-08-02' }, structuredBasicCurrentValues: { date: '2026-08-01' }, structuredDetails: { entryFee: '20 €' } });
+    assert.equal(description, 'Osnovni popravki:\n\nDatum\nTrenutno: 2026-08-01\nPredlagano: 2026-08-02\n\nDodatno pojasnilo.\n\nDodatni podatki:\n\nPrijavnina / startnina: 20 €');
+    const entries = new URLSearchParams(buildGoogleFormsSubmissionEntries({ proposalType: googleProposalFormContract.values.proposalTypes[1], date: '2026-08-01', title: 'Stari tek', place: 'Kranj', region: 'Gorenjska', description, organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com' }));
+    assert.equal(entries.get(googleProposalFormContract.fields.date), '2026-08-01');
+    assert.equal(entries.get(googleProposalFormContract.fields.title), 'Stari tek');
+    assert.match(entries.get(googleProposalFormContract.fields.description), /Predlagano: 2026-08-02/);
   });
 
   it('maps structured additional details to existing Google Forms values and descriptions', () => {
