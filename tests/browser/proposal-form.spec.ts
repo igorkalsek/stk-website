@@ -6,15 +6,20 @@ const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=20
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationFee=20%20EUR&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa`;
 
-type InterceptedForm = { getPayloads: () => URLSearchParams[]; getPayload: () => URLSearchParams | undefined; getSubmissions: () => number };
+type InterceptedForm = { capturePopup: (click: () => Promise<unknown>) => Promise<URLSearchParams>; getPayloads: () => URLSearchParams[]; getPayload: () => URLSearchParams | undefined; getSubmissions: () => number };
 
 async function interceptForm(page: Page): Promise<InterceptedForm> {
   const payloads: URLSearchParams[] = [];
-  await page.route(contract.responseUrl, async (route) => {
-    payloads.push(new URLSearchParams(route.request().postData() ?? ''));
-    await route.fulfill({ status: 200, contentType: 'text/html', body: '<html>ok</html>' });
-  });
-  return { getPayloads: () => payloads, getPayload: () => payloads.at(-1), getSubmissions: () => payloads.length };
+  const capturePopup = async (click: () => Promise<unknown>) => {
+    const popupPromise = page.waitForEvent('popup');
+    await click();
+    const popup = await popupPromise;
+    const params = new URL(popup.url()).searchParams;
+    payloads.push(params);
+    await popup.close();
+    return params;
+  };
+  return { capturePopup, getPayloads: () => payloads, getPayload: () => payloads.at(-1), getSubmissions: () => payloads.length };
 }
 
 async function assertNoConsoleErrors(page: Page, errors: string[]) {
@@ -42,6 +47,7 @@ test.describe('native proposal form', () => {
 
     await expect(page.getByText('Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.')).toBeVisible();
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
+    await expect(page.getByText('Predlog še ne bo oddan, dokler ga ne pošljete v naslednjem koraku.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Oddajte nov predlog' })).toBeHidden();
     await expect(page.getByRole('link', { name: 'Nazaj na koledar' })).toBeHidden();
     await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
@@ -61,7 +67,7 @@ test.describe('native proposal form', () => {
     await page.locator('#proposal-source').blur();
     await expect(page.getByText('To je povezava na Slovenski Tekaški Koledar')).toBeVisible();
     await page.locator('#proposal-source').fill('notaurl://bad');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click();
     await expect(page.getByText('Vnesite celoten spletni naslov')).toBeVisible();
     await expect(page.locator('#proposal-source')).toHaveAttribute('aria-invalid', 'true');
     await page.locator('#proposal-source').fill('https://example.com/razpis/2026?zelo=dolg-url');
@@ -83,7 +89,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
@@ -97,12 +103,11 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.organizer)).toBe('Ne');
     expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Da');
     expect(payload?.get(contract.fields.email)).toBe('test@example.com');
-    await expect(page.locator('[data-submit-status]')).toContainText('Oddaja je bila poslana.');
-    await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeHidden();
-    await expect(page.getByRole('link', { name: 'Oddajte nov predlog' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Nazaj na koledar' })).toBeVisible();
-    await page.locator('[data-proposal-form]').evaluate((formElement: HTMLFormElement) => formElement.requestSubmit());
-    await expect.poll(() => form.getSubmissions()).toBe(1);
+    await expect(page.locator('[data-submit-status]')).toContainText('Google obrazec je odprt v novem zavihku.');
+    await expect(page.getByRole('button', { name: 'Znova odprite Google obrazec' })).toBeEnabled();
+    await expect(page.getByRole('link', { name: 'Oddajte nov predlog' })).toBeHidden();
+    await expect(page.getByRole('link', { name: 'Nazaj na koledar' })).toBeHidden();
+    await expect(page.locator('#proposal-title')).toHaveValue('Štajerski ultra tek z zelo zelo dolgim nazivom');
     await expect(page.getByRole('link', { name: 'Imate težave z oddajo? Odprite rezervni obrazec.' })).toHaveAttribute('data-analytics-link-type', 'correction_form');
     await assertNoConsoleErrors(page, errors);
   });
@@ -116,6 +121,7 @@ test.describe('native proposal form', () => {
 
     await expect(page.getByText('A proposal for a new race, correction or additional information is reviewed and verified before publication.')).toBeVisible();
     await expect(page.getByText('Submissions are not published automatically.')).toBeVisible();
+    await expect(page.getByText('The proposal is not submitted until you send it in the next step.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Back to race page' })).toHaveAttribute('href', '/tek/2027/dolgi-tek/');
     await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).toHaveValue('https://example.com/zelo-dolg-url/razpis');
@@ -131,12 +137,12 @@ test.describe('native proposal form', () => {
     page.once('dialog', async (dialog) => { expect(dialog.message()).toBe('Clear your changes and restore the selected race details?'); await dialog.dismiss(); });
     await page.getByRole('button', { name: 'Clear form' }).click();
     await expect(page.getByRole('textbox', { name: 'Enter the missing or correct details' })).toHaveValue('Place should be Ljubljana Center.');
-    await page.getByRole('button', { name: 'Send proposal' }).click();
+    await form.capturePopup(() => page.getByRole('button', { name: 'Continue to Google form' }).click());
 
     await expect.poll(() => form.getPayload()?.get(contract.fields.proposalType)).toBe('Popravek obstoječega vnosa v koledarju');
     expect(form.getPayload()?.get(contract.fields.date)).toBe('2027-05-01');
     expect(form.getPayload()?.get(contract.fields.description)).toContain('Place should be Ljubljana Center.');
-    await expect(page.locator('[data-submit-status]')).toContainText('The submission was sent.');
+    await expect(page.locator('[data-submit-status]')).toContainText('The Google form opened in a new tab.');
     await assertNoConsoleErrors(page, errors);
   });
 
@@ -165,7 +171,7 @@ test.describe('native proposal form', () => {
 
     await page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' }).fill('Prijavnina 20 €.');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('igor@gmail');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click();
     await expect(page.getByRole('alert')).toContainText('Datum');
     await expect(page.getByRole('alert')).toContainText('Naziv prireditve');
     await page.locator('#proposal-date').fill('2026-09-12');
@@ -175,7 +181,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne vem');
     await page.locator('#proposal-source').fill('https://example.com/vir');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click();
     await expect(page.getByRole('alert')).toContainText('Kaj želite popraviti ali dopolniti?');
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true })).toHaveAttribute('aria-invalid', 'true');
     await page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true }).check();
@@ -185,7 +191,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
     await expect(page.getByRole('alert')).toBeHidden();
     await page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka', exact: true }).check();
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
@@ -225,7 +231,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne vem');
     await page.getByRole('textbox', { name: 'Opis oziroma podrobnosti' }).fill('Splošno vprašanje o koledarju.');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('other@example.com');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
     expect(payload?.get(contract.fields.proposalType)).toBe('Drugo');
@@ -289,7 +295,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('context@example.com');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await form.capturePopup(() => page.getByRole('button', { name: 'Nadaljujte v Google obrazec' }).click());
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();

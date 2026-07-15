@@ -112,6 +112,7 @@ const changeGroups = [
           <small id="proposal-email-helper" class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small>
         </div>
       </div>
+      <p class="proposal-next-step">{copy.nextStepNotice}</p>
       <div class="cta-row proposal-actions">
         <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
         <button class="button button-secondary-light" type="reset" data-reset-button>{copy.clear}</button>
@@ -311,10 +312,21 @@ const changeGroups = [
     setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs();
     const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
     if (currentType() === 'existing' && description) description.value = buildStructuredDescription();
-    if (errors) { errors.hidden = true; errors.textContent = ''; } if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; hasSubmittedToGoogle = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
+    event.preventDefault();
+    const googleUrl = new URL(contract.viewUrl);
+    googleUrl.searchParams.set('usp', 'pp_url');
+    for (const [name, value] of new FormData(form).entries()) {
+      if (typeof value === 'string' && value && name.startsWith('entry.')) googleUrl.searchParams.append(name, value);
+    }
+    if (errors) { errors.hidden = true; errors.textContent = ''; }
+    if (button) { button.disabled = true; button.textContent = copy.submitting; }
+    hasSubmittedToGoogle = true;
+    if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
+    window.open(googleUrl.href, '_blank', 'noopener,noreferrer');
+    if (button) { button.disabled = false; button.textContent = copy.reopen; }
+    if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; }
   });
   form?.addEventListener('reset', (event) => { if (hasRaceContext && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); if (dateHiddenInputs) dateHiddenInputs.innerHTML = ''; applyRuntimeContext(); }, 0); });
-  document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!hasSubmittedToGoogle) return; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (errors) { errors.hidden = true; errors.textContent = ''; } if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
   applyRuntimeContext();
 </script>
 <style>
@@ -324,7 +336,7 @@ const changeGroups = [
   .proposal-hero [hidden],.correction-context[hidden],.published-details[hidden],.published-details [hidden],.proposal-panel [hidden]{display:none!important}.proposal-panel{padding:22px;border:1px solid rgba(16,64,80,.1);border-radius:var(--radius-lg);background:rgba(255,255,255,.92);box-shadow:0 16px 40px rgba(16,64,80,.08)}
   .proposal-form{display:grid;gap:18px}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
   .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
-  .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
+  .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-next-step{margin:0;color:var(--ink);font-weight:700}.proposal-actions{align-items:center}
   .published-details{padding-top:0}.published-details-card{padding:18px}.published-details-card h2{margin-top:0}.published-details-card dl{margin:0}.published-details-groups{display:grid;gap:16px}.published-detail-group{display:grid;gap:8px}.published-detail-group h3{margin:0;font-size:1rem;color:var(--ink)}.published-details-grid{display:grid;gap:8px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 10px;border:1px solid rgba(16,64,80,.08);border-radius:10px;background:rgba(255,255,255,.82);min-width:0}.published-detail-item dt{font-size:.86rem;font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item dd a{font-weight:800;color:var(--green-dark);overflow-wrap:anywhere}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.22);border-radius:999px;background:rgba(200,230,201,.24);color:var(--green-dark);font-weight:800;padding:5px 9px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-options-details{border:1px solid rgba(16,64,80,.1);border-radius:12px;padding:10px;background:rgba(16,64,80,.025)}.change-options-details summary{cursor:pointer;font-weight:800;color:var(--green-dark)}.change-options-details[open]{display:grid;gap:12px}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
   @media(min-width:760px){.published-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.proposal-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checkbox-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
