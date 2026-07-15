@@ -91,7 +91,6 @@ async function mockMyRacesApis(page: Page) {
   });
 
   await page.addInitScript(() => {
-    localStorage.clear();
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: undefined });
   });
 
@@ -100,13 +99,21 @@ async function mockMyRacesApis(page: Page) {
 
 async function seedLegacySavedRaces(page: Page, races: ReturnType<typeof legacyRace>[]) {
   await page.addInitScript(({ key, racesToSeed }) => {
+    const marker = 'stk-test-seeded-v1';
+    if (sessionStorage.getItem(marker) === 'true') return;
+    localStorage.clear();
     localStorage.setItem(key, JSON.stringify({ version: 1, races: racesToSeed }));
+    sessionStorage.setItem(marker, 'true');
   }, { key: V1_KEY, racesToSeed: races });
 }
 
 async function seedV2SavedRaces(page: Page, races: ReturnType<typeof v2Race>[]) {
   await page.addInitScript(({ key, racesToSeed }) => {
+    const marker = 'stk-test-seeded-v2';
+    if (sessionStorage.getItem(marker) === 'true') return;
+    localStorage.clear();
     localStorage.setItem(key, JSON.stringify({ version: 2, races: racesToSeed }));
+    sessionStorage.setItem(marker, 'true');
   }, { key: V2_KEY, racesToSeed: races });
 }
 
@@ -240,11 +247,11 @@ test('supports English labels, filters and persistence', async ({ page }) => {
 
   await openMyRaces(page, '/en/my-races/');
 
-  await expect(page.getByText('Following')).toBeVisible();
-  await expect(page.getByText('Planning')).toBeVisible();
-  await expect(page.getByText('Registered')).toBeVisible();
-  await expect(page.getByText('Completed')).toBeVisible();
-  await expect(page.getByRole('button', { name: /All/ })).toBeVisible();
+  await expect(count(page, 'following')).toHaveText(/^Following\s+1$/);
+  await expect(count(page, 'planning')).toHaveText(/^Planning\s+1$/);
+  await expect(count(page, 'registered')).toHaveText(/^Registered\s+1$/);
+  await expect(count(page, 'completed')).toHaveText(/^Completed\s+0$/);
+  await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.')).toBeVisible();
 
   const optionText = await page.locator('[data-race-status-control]').evaluateAll((controls) => controls.flatMap((control) => Array.from((control as HTMLSelectElement).options).map((option) => option.textContent || '')).join(' '));
