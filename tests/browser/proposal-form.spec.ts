@@ -553,8 +553,9 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('additional-route-url')).toHaveValue('');
     await expect(page.getByText('Trenutno: 20 EUR')).toBeVisible();
     await expect(page.getByText('Trenutno: 2027-04-20')).toBeVisible();
-    await expect(page.getByText('Trenutno: Ni podatka')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Odpri trenutno povezavo: https:\/\/example.com\/trasa/ })).toBeVisible();
+    await expect(page.getByText('Trenutno: 650')).toBeVisible();
+    const routeCard = page.getByTestId('additional-route-url').locator('xpath=..');
+    await expect(routeCard).toContainText('Trenutno: https://example.com/trasa');
 
     await expect(page.locator('[data-change-options-details]')).toBeHidden();
     await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-date-time"])')).toBeHidden();
