@@ -341,9 +341,14 @@ const ACTION_TYPE_MAP: Record<string, string> = {
 
 const normalizeActionType = (value: string) => ACTION_TYPE_MAP[value] || value;
 
-const inferLinkType = (link: HTMLAnchorElement) => {
+const getExplicitLinkType = (link: HTMLAnchorElement) => {
   const explicit = link.dataset.stkAction || link.dataset.analyticsActionType || link.dataset.analyticsLinkType;
-  if (explicit) return normalizeActionType(explicit);
+  return explicit ? normalizeActionType(explicit) : '';
+};
+
+const inferLinkType = (link: HTMLAnchorElement) => {
+  const explicit = getExplicitLinkType(link);
+  if (explicit) return explicit;
   const label = link.textContent?.toLocaleLowerCase('sl-SI') ?? '';
   const href = link.href.toLocaleLowerCase('sl-SI');
   if (label.includes('prijava') || label.includes('registration')) return 'registration_click';
@@ -352,6 +357,20 @@ const inferLinkType = (link: HTMLAnchorElement) => {
   if (label.includes('gpx') || href.includes('gpx')) return 'gpx_click';
   if (label.includes('trasa') || label.includes('route') || href.includes('strava') || href.includes('map')) return 'route_click';
   return '';
+};
+
+const shouldRedactAnalyticsTargetUrl = (element: HTMLElement) => element.dataset.analyticsRedactTargetUrl === 'true';
+
+const getAnalyticsTargetUrl = (element: HTMLElement, targetUrl = '') => {
+  if (shouldRedactAnalyticsTargetUrl(element)) {
+    try {
+      const url = new URL(targetUrl || (element instanceof HTMLAnchorElement ? element.href : ''), window.location.href);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return '';
+    }
+  }
+  return targetUrl;
 };
 
 const getEventContext = (element: HTMLElement) => {
@@ -391,13 +410,14 @@ export const initializeStkAnalyticsClickTracking = () => {
     const explicitActionType = clickedElement.dataset.analyticsActionType;
     const explicitContext = getEventContext(clickedElement);
     if (explicitEventType && ALLOWED_EVENT_TYPES.has(explicitEventType)) {
-      const targetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
+      const rawTargetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
+      const targetUrl = getAnalyticsTargetUrl(clickedElement, rawTargetUrl);
       trackStkEvent({
         event_type: explicitEventType,
         ...explicitContext,
         action_type: explicitActionType,
         target_url: targetUrl,
-        target_domain: targetUrl ? getStkTargetDomain(targetUrl) : ''
+        target_domain: shouldRedactAnalyticsTargetUrl(clickedElement) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
       });
       return;
     }
@@ -419,6 +439,19 @@ export const initializeStkAnalyticsClickTracking = () => {
     }
 
     const context = getEventContext(link);
+    const explicitLinkType = getExplicitLinkType(link);
+    if (explicitLinkType) {
+      const targetUrl = getAnalyticsTargetUrl(link, link.href);
+      trackStkEvent({
+        event_type: 'external_link_clicked',
+        ...context,
+        action_type: explicitLinkType,
+        target_url: targetUrl,
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
+      });
+      return;
+    }
+
     const calendarType = inferCalendarType(link);
     if (calendarType) {
       trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType, action_type: `${calendarType}_calendar_click`, target_url: link.href, target_domain: getStkTargetDomain(link.href) });
@@ -433,12 +466,13 @@ export const initializeStkAnalyticsClickTracking = () => {
 
     const linkType = inferLinkType(link);
     if (linkType) {
+      const targetUrl = getAnalyticsTargetUrl(link, link.href);
       trackStkEvent({
         event_type: 'external_link_clicked',
         ...context,
         action_type: linkType,
-        target_url: link.href,
-        target_domain: getStkTargetDomain(link.href)
+        target_url: targetUrl,
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
       });
     }
   }, { capture: true });

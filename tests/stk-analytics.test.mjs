@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import { isInternalStkNavigationTarget } from '../.cache/dist-test/lib/stkAnalytics.js';
 
 const analyticsSource = readFileSync(new URL('../src/lib/stkAnalytics.ts', import.meta.url), 'utf8');
+const proposalFormSource = readFileSync(new URL('../src/components/RaceProposalForm.astro', import.meta.url), 'utf8');
 
 describe('isInternalStkNavigationTarget', () => {
   const canonicalCurrent = 'https://tekaski-koledar.si/iskalnik-tekov/?year=2026';
@@ -66,7 +67,14 @@ describe('isInternalStkNavigationTarget', () => {
 describe('STK analytics internal navigation guard', () => {
   it('keeps external_link_clicked allowed and suppresses internal targets before sending', () => {
     assert.match(analyticsSource, /'external_link_clicked'/);
-    assert.match(analyticsSource, /body\.event_type === 'external_link_clicked' && body\.target_url && isInternalStkNavigationTarget\(body\.target_url\)\) return;\n\s+if \(\(body\.event_type === 'search_performed'/);
+    assert.ok(analyticsSource.includes("body.event_type === 'external_link_clicked' && body.target_url && isInternalStkNavigationTarget(body.target_url)) return;"));
     assert.ok(analyticsSource.indexOf('isInternalStkNavigationTarget(body.target_url)') < analyticsSource.indexOf('sendBody(body)'));
+  });
+
+  it('supports narrowly scoped analytics target URL redaction for prefilled fallback links', () => {
+    assert.match(analyticsSource, /shouldRedactAnalyticsTargetUrl = \(element: HTMLElement\) => element\.dataset\.analyticsRedactTargetUrl === 'true'/);
+    assert.match(analyticsSource, /`\$\{url\.origin\}\$\{url\.pathname\}`/);
+    assert.match(analyticsSource, /target_domain: shouldRedactAnalyticsTargetUrl\(link\) \? ''/);
+    assert.match(proposalFormSource, /data-analytics-redact-target-url="true"/);
   });
 });
