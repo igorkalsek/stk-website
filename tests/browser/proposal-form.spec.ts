@@ -27,12 +27,17 @@ function collectConsoleErrors(page: Page) {
   return errors;
 }
 
+async function waitForProposalRuntime(page: Page) {
+  await expect(page.locator('[data-proposal-form]')).toHaveAttribute('data-proposal-runtime-ready', 'true');
+}
+
 test.describe('native proposal form', () => {
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const form = await interceptForm(page);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/dodaj-ali-popravi-tek/');
+    await waitForProposalRuntime(page);
 
     await expect(page.getByText('Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.')).toBeVisible();
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
@@ -103,6 +108,7 @@ test.describe('native proposal form', () => {
     const form = await interceptForm(page);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`/en/add-or-correct-race/?${correctionQuery.replace('lang=sl','lang=en')}`);
+    await waitForProposalRuntime(page);
 
     await expect(page.getByText('A proposal for a new race, correction or additional information is reviewed and verified before publication.')).toBeVisible();
     await expect(page.getByText('Submissions are not published automatically.')).toBeVisible();
@@ -110,7 +116,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).toHaveValue('https://example.com/zelo-dolg-url/razpis');
     await expect(page.getByRole('textbox', { name: /Link to the race announcement/ })).toHaveCount(0);
-    await expect(page.locator('input[name="proposal-type-ui"][value="existing"]')).toBeChecked();
+    await expect(page.locator('[data-context-existing-radio]')).toBeChecked();
     await expect(page.locator('#proposal-date')).toBeHidden();
     await page.getByRole('checkbox', { name: 'Name or place', exact: true }).check();
     await page.getByRole('textbox', { name: 'Enter the missing or correct details' }).fill('Place should be Ljubljana Center.');
@@ -132,6 +138,7 @@ test.describe('native proposal form', () => {
   test('combined existing change requires race identity, maps categories, and posts exact payload', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/');
+    await waitForProposalRuntime(page);
     await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
     await expect(page.getByText('Kaj želite popraviti ali dopolniti?')).toBeVisible();
     await expect(page.getByText('Označite vse podatke, ki jih želite dodati ali popraviti.')).toBeVisible();
@@ -192,6 +199,7 @@ test.describe('native proposal form', () => {
   test('Other shows only relevant fields and posts exact payload without hidden blockers', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/');
+    await waitForProposalRuntime(page);
     await page.getByRole('radio', { name: 'Drugo', exact: true }).check();
     await expect(page.locator('#proposal-date')).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Naziv prireditve' })).toBeVisible();
@@ -229,9 +237,10 @@ test.describe('native proposal form', () => {
   test('context mode hides complete identity, supports field actions, changes preselect and payload', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto(`/dodaj-ali-popravi-tek/?${fullContextQuery}`);
+    await waitForProposalRuntime(page);
 
     await expect(page.locator('.proposal-type-fieldset')).toBeHidden();
-    await expect(page.locator('input[name="proposal-type-ui"][value="existing"]')).toBeChecked();
+    await expect(page.locator('[data-context-existing-radio]')).toBeChecked();
     await expect(page.getByRole('heading', { name: 'Popravek ali dopolnitev za izbrani tek' }).first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Trenutno objavljeni podatki' })).toBeVisible();
     await expect(page.getByText('Dolgi Šmarnogorski tek').first()).toBeVisible();
@@ -286,6 +295,7 @@ test.describe('native proposal form', () => {
 
   test('context changes preselect ignores invalid and keeps chips unique', async ({ page }) => {
     await page.goto(`/dodaj-ali-popravi-tek/?${fullContextQuery}&changes=basic-date-time,Vi%C5%A1inski%20metri,NEVELJAVNO,basic-date-time`);
+    await waitForProposalRuntime(page);
     await expect(page.getByRole('checkbox', { name: 'Datum ali ura', exact: true })).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Višinski metri', exact: true })).toBeChecked();
     await expect(page.locator('[data-change-summary] .change-chip')).toHaveText(['Datum ali ura', 'Višinski metri']);
@@ -294,6 +304,7 @@ test.describe('native proposal form', () => {
 
   test('context generic entry does not auto-select every missing category and missing-details action is conservative', async ({ page }) => {
     await page.goto(`/dodaj-ali-popravi-tek/?${fullContextQuery}`);
+    await waitForProposalRuntime(page);
     await expect(page.locator('input[name="proposal-change-category"]:checked')).toHaveCount(0);
     await page.getByRole('button', { name: 'Dopolnite manjkajoče podatke' }).click();
     await expect(page.getByRole('checkbox', { name: 'Prijavnina / startnina', exact: true })).toBeChecked();
@@ -303,13 +314,16 @@ test.describe('native proposal form', () => {
 
   test('general mode query parameter can preselect new or other without race context', async ({ page }) => {
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
+    await waitForProposalRuntime(page);
     await expect(page.getByRole('radio', { name: 'Nov tek' })).toBeChecked();
     await page.goto('/dodaj-ali-popravi-tek/?mode=other');
+    await waitForProposalRuntime(page);
     await expect(page.getByRole('radio', { name: 'Drugo', exact: true })).toBeChecked();
   });
 
   test('unsafe returnUrl is not rendered', async ({ page }) => {
     await page.goto('/dodaj-ali-popravi-tek/?event=Tek&source=detail&returnUrl=https://evil.test/&date=2026-02-02&place=Kraj');
+    await waitForProposalRuntime(page);
     await expect(page.getByRole('link', { name: 'Nazaj na stran teka' })).toHaveCount(0);
     await expect(page.locator('#proposal-source')).toHaveValue('');
   });

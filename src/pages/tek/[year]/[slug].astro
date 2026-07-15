@@ -71,31 +71,34 @@ const searchPath = year === '2027' ? '/iskalnik-tekov/?year=2027' : '/iskalnik-t
 const copyDescription = event ? buildRaceCopyDescription({ event, language: 'sl', formatDate }) : '';
 const shareLinks = event ? buildRaceShareUrls({ event, language: 'sl', formatDate }) : null;
 const shareUrl = shareLinks?.detailUrl ?? '';
+const addCorrectionParam = (params: URLSearchParams, key: string, value: string | undefined | null) => {
+  const cleanValue = value?.trim() ?? '';
+  if (cleanValue && cleanValue !== 'undefined') params.set(key, cleanValue);
+};
 const buildCorrectionUrl = (event: DetailEvent, language: 'sl' | 'en', returnUrl: string) => {
-  const params = new URLSearchParams({
-    event: event.title,
-    year: event.year,
-    date: event.date ?? '',
-    place: event.place ?? '',
-    context: 'detail',
-    eventKey: getStableEventId(event),
-    region: event.region ?? '',
-    startTime: event.startTime ?? '',
-    distances: event.distances ? formatSloveneDistances(event.distances) : '',
-    surface: event.surface ? formatDetailSurface(event.surface, 'sl') : '',
-    officialSource: event.noticeUrl ?? '',
-    noticeUrl: event.noticeUrl ?? '',
-    registrationUrl: event.registrationUrl ?? '',
-    cup: event.cup ?? '',
-    registrationFee: [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].filter(Boolean).join('–'),
-    registrationDeadline: event.additionalData?.registrationDeadline ?? '',
-    earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline ?? '',
-    dayOfRegistration: event.additionalData?.dayOfRegistration ?? '',
-    elevationGain: event.additionalData?.elevationGain ?? '',
-    routeUrl: event.additionalData?.routeUrl ?? '',
-    lang: language,
-    returnUrl
-  });
+  const params = new URLSearchParams();
+  addCorrectionParam(params, 'event', event.title);
+  addCorrectionParam(params, 'year', event.year);
+  addCorrectionParam(params, 'date', event.date);
+  addCorrectionParam(params, 'place', event.place);
+  addCorrectionParam(params, 'context', 'detail');
+  addCorrectionParam(params, 'eventKey', getStableEventId(event));
+  addCorrectionParam(params, 'region', event.region);
+  addCorrectionParam(params, 'startTime', event.startTime);
+  addCorrectionParam(params, 'distances', event.distances ? formatSloveneDistances(event.distances) : '');
+  addCorrectionParam(params, 'surface', event.surface ? formatDetailSurface(event.surface, language) : '');
+  addCorrectionParam(params, 'officialSource', event.noticeUrl);
+  addCorrectionParam(params, 'noticeUrl', event.noticeUrl);
+  addCorrectionParam(params, 'registrationUrl', event.registrationUrl);
+  addCorrectionParam(params, 'cup', event.cup);
+  addCorrectionParam(params, 'registrationFee', [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].filter(Boolean).join('–'));
+  addCorrectionParam(params, 'registrationDeadline', event.additionalData?.registrationDeadline);
+  addCorrectionParam(params, 'earlyRegistrationDeadline', event.additionalData?.earlyRegistrationDeadline);
+  addCorrectionParam(params, 'dayOfRegistration', event.additionalData?.dayOfRegistration);
+  addCorrectionParam(params, 'elevationGain', event.additionalData?.elevationGain);
+  addCorrectionParam(params, 'routeUrl', event.additionalData?.routeUrl);
+  addCorrectionParam(params, 'lang', language);
+  addCorrectionParam(params, 'returnUrl', returnUrl);
   return `/dodaj-ali-popravi-tek/?${params.toString()}`;
 };
 const correctionUrl = event ? buildCorrectionUrl(event, 'sl', canonicalPath) : '/dodaj-ali-popravi-tek/';
