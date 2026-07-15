@@ -53,6 +53,12 @@ export type SavedRaceDeadlineItem = SavedRaceResolution & {
   deadline: RegistrationDeadlineView;
 };
 
+export type SavedRaceDeadlineGroup = {
+  key: string;
+  event: SavedRaceDeadlineItem['event'];
+  items: SavedRaceDeadlineItem[];
+};
+
 const ACTIVE_DEADLINE_STATUSES = new Set<SavedRaceStatus>(['following', 'planning', 'registered']);
 
 export const getUpcomingSavedRaceDeadlines = ({
@@ -76,3 +82,18 @@ export const getUpcomingSavedRaceDeadlines = ({
   .filter((item) => item.deadline.daysRemaining >= 0 && item.deadline.daysRemaining <= windowDays)
   .sort((a, b) => a.deadline.date.localeCompare(b.deadline.date) || a.event.date.localeCompare(b.event.date) || a.event.title.localeCompare(b.event.title, 'sl-SI'))
   .slice(0, limit);
+
+
+export const groupUpcomingDeadlinesByRace = (items: SavedRaceDeadlineItem[]): SavedRaceDeadlineGroup[] => {
+  const groups = new Map<string, SavedRaceDeadlineGroup>();
+  items.forEach((item) => {
+    const key = item.key || `${item.event.year}:${getStableEventId(item.event)}`;
+    const group = groups.get(key);
+    if (group) group.items.push(item);
+    else groups.set(key, { key, event: item.event, items: [item] });
+  });
+  return [...groups.values()].map((group) => ({
+    ...group,
+    items: [...group.items].sort((a, b) => a.deadline.date.localeCompare(b.deadline.date) || a.deadline.kind.localeCompare(b.deadline.kind))
+  })).sort((a, b) => a.items[0].deadline.date.localeCompare(b.items[0].deadline.date) || a.event.date.localeCompare(b.event.date) || a.event.title.localeCompare(b.event.title, 'sl-SI'));
+};

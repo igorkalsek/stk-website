@@ -210,13 +210,15 @@ test('shows verified deadlines on the saved race card and in the upcoming panel'
 
   const raceCard = card(page, '2026:r000101');
   await expect(raceCard).toBeVisible();
-  await expect(raceCard).toContainText('Cenejša prijava se konča čez 3 dni');
-  await expect(raceCard).toContainText('Prijave se zaprejo čez 8 dni');
-  await expect(raceCard).toContainText('18. julij 2026');
-  await expect(raceCard).toContainText('23. julij 2026');
+  await expect(page.locator('[data-my-races-status-summary]')).toHaveCount(0);
+  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toHaveCount(1);
+  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toContainText('Cenejša prijava do 18. julija · še 3 dni');
+  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(0);
+  await expect(raceCard.locator('[data-race-calendar-menu]')).toHaveCount(1);
 
   const panel = page.locator('[data-upcoming-deadlines-panel]');
   await expect(panel).toContainText('Prihajajoči prijavni roki');
+  await expect(panel.locator('[data-upcoming-deadline-group]')).toHaveCount(1);
   await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(2);
   await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava se konča čez 3 dni');
   await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo čez 8 dni');
@@ -246,10 +248,10 @@ test('deduplicates identical early and final deadline dates', async ({ page }) =
   await openMyRaces(page);
 
   const raceCard = card(page, '2026:r000101');
-  await expect(raceCard.locator('[data-deadline-item]')).toHaveCount(1);
-  await expect(raceCard.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo jutri');
-  await expect(raceCard.locator('[data-deadline-kind="early"]')).toHaveCount(0);
-  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(1);
+  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toHaveCount(1);
+  await expect(raceCard.locator('[data-my-race-deadline-summary][data-deadline-kind="registration"]')).toContainText('Prijave do 16. julija · jutri');
+  await expect(raceCard.locator('[data-my-race-deadline-summary][data-deadline-kind="early"]')).toHaveCount(0);
+  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(0);
 
   const panel = page.locator('[data-upcoming-deadlines-panel]');
   await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(1);
@@ -264,20 +266,20 @@ test('updates upcoming deadline panel eligibility when saved status changes with
   await seedV2SavedRaces(page, [v2Race('r000101', 'planning')]);
 
   await openMyRaces(page);
-  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-item]')).toHaveCount(2);
+  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-group]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('completed');
   await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
-  await expect(card(page, '2026:r000101').locator('[data-deadline-item]')).toHaveCount(2);
+  await expect(card(page, '2026:r000101').locator('[data-my-race-deadline-summary]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('following');
-  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-item]')).toHaveCount(2);
+  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-group]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
