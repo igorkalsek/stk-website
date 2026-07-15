@@ -44,3 +44,35 @@ export const countSavedRaceStatuses = (items: { savedRace: SavedRace }[] | Saved
   return counts;
 };
 export const filterSavedRaceResolutionsByStatus = <T extends { savedRace: SavedRace }>(items: T[], filter: MyRacesStatusFilter): T[] => filter === 'all' ? items : items.filter((item) => item.savedRace.status === filter);
+
+import { buildRegistrationDeadlineViews, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
+import type { AdditionalEventData } from './utils-additional.js';
+
+export type SavedRaceDeadlineItem = SavedRaceResolution & {
+  event: PublicRaceEvent & { additionalData?: AdditionalEventData | null };
+  deadline: RegistrationDeadlineView;
+};
+
+const ACTIVE_DEADLINE_STATUSES = new Set<SavedRaceStatus>(['following', 'planning', 'registered']);
+
+export const getUpcomingSavedRaceDeadlines = ({
+  items,
+  todayIso,
+  windowDays = 30,
+  limit = 6
+}: {
+  items: Array<SavedRaceResolution & { event: (PublicRaceEvent & { additionalData?: AdditionalEventData | null }) | null }>;
+  todayIso: string;
+  windowDays?: number;
+  limit?: number;
+}): SavedRaceDeadlineItem[] => items
+  .filter((item): item is SavedRaceDeadlineItem => Boolean(item.event?.additionalData && ACTIVE_DEADLINE_STATUSES.has(item.savedRace.status)))
+  .flatMap((item) => buildRegistrationDeadlineViews({
+    todayIso,
+    eventDate: item.event.date,
+    registrationDeadline: item.event.additionalData?.registrationDeadline,
+    earlyRegistrationDeadline: item.event.additionalData?.earlyRegistrationDeadline
+  }).map((deadline) => ({ ...item, event: item.event, deadline })))
+  .filter((item) => item.deadline.daysRemaining >= 0 && item.deadline.daysRemaining <= windowDays)
+  .sort((a, b) => a.deadline.date.localeCompare(b.deadline.date) || a.event.date.localeCompare(b.event.date) || a.event.title.localeCompare(b.event.title, 'sl-SI'))
+  .slice(0, limit);

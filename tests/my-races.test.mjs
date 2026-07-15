@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
 import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, removeSavedRaceFromMyRaces, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
+import { attachAdditionalDataByMasterRow } from '../.cache/dist-test/utils-additional.js';
+import { getStableEventId } from '../.cache/dist-test/utils-event-detail.js';
 
 const saved = (eventId, year = '2026', date = `${year}-05-10`, title = 'Saved', status = 'following') => ({ version: 2, eventId, year, date, title, status });
 const apiEvent = ({ row = '173', year = '2026', date = `${year}-05-10`, title = 'Testni tek', status = 'potrjeno', visible = 'DA' } = {}) => ({ row, datum: date, naziv_prireditve: title, kraj: 'Kranj', regija: 'Gorenjska', status_dogodka: status, vidno_v_javnem_koledarju: visible, povezava_razpis: 'https://example.com/info', povezava_prijava: 'https://example.com/register' });
@@ -24,6 +26,19 @@ describe('my races resolver', () => {
   it('filters unconfirmed and hidden API events through the existing public event mapper', () => {
     const items = resolveSavedRaces([saved('r000173'), saved('r000174')], { 2026: [apiEvent({ row: '173', status: 'osnutek' }), apiEvent({ row: '174', visible: 'NE' })] }, '2026-01-01');
     assert.deepEqual(items.map((item) => item.event), [null, null]);
+  });
+
+
+
+  it('joins additional data back to saved-race resolutions with canonical stable event IDs', () => {
+    const [item] = resolveSavedRaces([saved('r000101', '2026', '2026-08-15', 'Ljubljana Test Run')], { 2026: [apiEvent({ row: '101', date: '2026-08-15', title: 'Ljubljana Test Run' })] }, '2026-07-01');
+    assert.equal(item.key, '2026:r000101');
+    assert.equal(getStableEventId(item.event), 'r000101');
+    const [attached] = attachAdditionalDataByMasterRow([item.event], [additional('2026-08-15', 'Ljubljana Test Run', '2026-07-23', '2026-07-18', 'visoka', '101')]);
+    const byKey = new Map([[`${attached.year}:${getStableEventId(attached)}`, attached]]);
+    const enriched = byKey.has(item.key) ? { ...item, event: byKey.get(item.key) } : item;
+    assert.equal(enriched.event.additionalData.registrationDeadline, '2026-07-23');
+    assert.equal(enriched.event.additionalData.earlyRegistrationDeadline, '2026-07-18');
   });
 
   it('keeps 2026 and 2027 saved races separate', () => {
@@ -207,5 +222,44 @@ describe('my races page source contract', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
     assert.match(client, /do not sync between devices/);
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
+  });
+});
+
+import { getUpcomingSavedRaceDeadlines } from '../.cache/dist-test/utils-my-races.js';
+
+const withAdditional = (item, additionalData) => ({ ...item, event: item.event ? { ...item.event, additionalData } : null });
+const additional = (date, title, registrationDeadline = '', earlyRegistrationDeadline = '', reliability = 'visoka', masterRow = '173') => ({ masterRow, masterRowNumber: Number(masterRow), reliability, date, eventTitle: title, registrationMinEur: '', registrationMaxEur: '', registrationDeadline, earlyRegistrationDeadline, dayOfRegistration: '', elevationGain: '', routeUrl: '' });
+
+describe('my races upcoming registration deadlines', () => {
+  it('selects active resolved saved race deadlines and excludes completed, unresolved, past and beyond window', () => {
+    const base = resolveSavedRaces([
+      saved('r000173', '2026', '2026-08-01', 'A', 'following'),
+      saved('r000174', '2026', '2026-08-02', 'B', 'planning'),
+      saved('r000175', '2026', '2026-08-03', 'C', 'registered'),
+      saved('r000176', '2026', '2026-08-04', 'D', 'completed'),
+      saved('r999999', '2026', '2026-08-05', 'Missing', 'following')
+    ], { 2026: [
+      apiEvent({ row: '173', date: '2026-08-01', title: 'A' }),
+      apiEvent({ row: '174', date: '2026-08-02', title: 'B' }),
+      apiEvent({ row: '175', date: '2026-08-03', title: 'C' }),
+      apiEvent({ row: '176', date: '2026-08-04', title: 'D' })
+    ] }, '2026-07-01');
+    const items = [
+      withAdditional(base[0], additional('2026-08-01', 'A', '2026-07-05')),
+      withAdditional(base[1], additional('2026-08-02', 'B', '2026-06-30')),
+      withAdditional(base[2], additional('2026-08-03', 'C', '2026-08-15')),
+      withAdditional(base[3], additional('2026-08-04', 'D', '2026-07-05')),
+      base[4]
+    ];
+    assert.deepEqual(getUpcomingSavedRaceDeadlines({ items, todayIso: '2026-07-01', windowDays: 30 }).map((item) => item.event.title), ['A']);
+  });
+  it('deduplicates same-date deadlines, sorts deterministically, limits to six and keeps escaped labels renderable', () => {
+    const races = Array.from({ length: 8 }, (_, index) => saved(`r${String(200 + index).padStart(6, '0')}`, '2026', `2026-08-${String(index + 10).padStart(2, '0')}`, `<Race ${index}>`, 'following'));
+    const payload = races.map((race, index) => apiEvent({ row: String(200 + index), date: race.date, title: race.title }));
+    const resolved = resolveSavedRaces(races, { 2026: payload }, '2026-07-01').map((item, index) => withAdditional(item, additional(item.event.date, item.event.title, `2026-07-${String(10 + index).padStart(2, '0')}`, `2026-07-${String(10 + index).padStart(2, '0')}`)));
+    const deadlines = getUpcomingSavedRaceDeadlines({ items: resolved, todayIso: '2026-07-01', limit: 6 });
+    assert.equal(deadlines.length, 6);
+    assert.deepEqual(deadlines.map((item) => item.deadline.kind), Array(6).fill('registration'));
+    assert.ok(deadlines[0].event.title.includes('<Race'));
   });
 });

@@ -2,7 +2,7 @@
 import RelatedRaceCards from '../../../components/RelatedRaceCards.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { type AdditionalEventData } from '../../../utils-additional';
-import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../../utils-calendar';
+import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, buildRegistrationDeadlineCalendarInput } from '../../../utils-calendar';
 import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, slugMatchesEvent, type PublicRaceEvent } from '../../../utils-event-detail';
 import { isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from '../../../utils-public-year';
 import { formatSloveneDistances } from '../../../utils-slovenian';
@@ -12,6 +12,7 @@ import { buildRaceShareUrls } from '../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../utils-build-data';
 import { buildRaceCorrectionContextUrl } from '../../../proposal-form/race-correction-context';
+import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../utils-registration-deadlines';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
@@ -111,6 +112,14 @@ const heroBadges = event ? [
 const detailItems = event ? buildKeyFacts(event, 'sl') : [];
 const raceHighlights = event ? buildRaceHighlightCards(event, 'sl') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'sl', formatDate) : [];
+const registrationDeadlineViews = event ? buildRegistrationDeadlineViews({ todayIso: event.date, eventDate: event.date, registrationDeadline: event.additionalData?.registrationDeadline, earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline }) : [];
+const deadlineCalendarLabels = { add: 'Dodaj rok v koledar', google: 'Google koledar', apple: 'Apple/iCal', outlook: 'Outlook' };
+const deadlineKindLabels = { early: 'Cenejša prijava', registration: 'Rok prijave' };
+const deadlineCalendarOptions = event ? registrationDeadlineViews.map((deadline) => {
+  const input = buildRegistrationDeadlineCalendarInput({ eventId: getStableEventId(event), eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl: canonicalPath, registrationUrl: event.registrationUrl, language: 'sl' });
+  return { deadline, googleUrl: buildGoogleCalendarEventUrl(input), icsUrl: buildIcsDataUrl(input), icsFilename: buildIcsFilename(input), outlookUrl: buildOutlookCalendarEventUrl(input) };
+}) : [];
+
 const routeItems = event ? buildCourseRows(event, 'sl') : [];
 const courseHeading = event ? buildCourseHeading(event, 'sl') : '';
 const familyInfo = event ? buildFamilyInfo(event, 'sl') : [];
@@ -259,6 +268,22 @@ const jsonLd = event ? {
                           <div>
                             <dt>{item.label}</dt>
                             <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                        {deadlineCalendarOptions.map(({ deadline, googleUrl, icsUrl, icsFilename, outlookUrl }) => (
+                          <div class={`registration-deadline-detail ${getRegistrationDeadlineCssState(deadline)}`}>
+                            <dt>{deadlineKindLabels[deadline.kind]}</dt>
+                            <dd>
+                              <span class="registration-deadline-absolute">{formatDate(deadline.date)}</span>
+                              <span class="registration-deadline-relative" data-registration-deadline data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
+                              {deadline.state !== 'past' && (
+                                <details class="deadline-calendar-menu"><summary>{deadlineCalendarLabels.add}</summary><div class="deadline-calendar-actions">
+                                  {googleUrl && <a href={googleUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.google}</a>}
+                                  {icsUrl && <a href={icsUrl} download={icsFilename}>{deadlineCalendarLabels.apple}</a>}
+                                  {outlookUrl && <a href={outlookUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.outlook}</a>}
+                                </div></details>
+                              )}
+                            </dd>
                           </div>
                         ))}
                       </dl>
@@ -450,4 +475,9 @@ const jsonLd = event ? {
       }
     });
   });
+</script>
+
+<script>
+  import { initRegistrationDeadlineCountdowns } from '../../../registration-deadlines-client';
+  initRegistrationDeadlineCountdowns();
 </script>
