@@ -3,41 +3,54 @@ import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import {
   SAVED_RACES_STORAGE_KEY,
+  LEGACY_SAVED_RACES_STORAGE_KEY,
   MAX_SAVED_RACES,
+  SAVED_RACE_STATUSES,
+  getSavedRaceStatus,
+  isSavedRaceStatus,
   addSavedRace,
   dedupeSavedRaces,
   isRaceSaved,
   parseSavedRacesJson,
   readSavedRaces,
   removeSavedRace,
+  setSavedRaceStatus,
   toggleSavedRace,
   writeSavedRaces
 } from '../.cache/dist-test/utils-saved-races.js';
 
 const race = (eventId = 'r000173', year = '2026') => ({ eventId, year, date: `${year}-05-10`, title: 'Testni tek' });
-const state = (races = []) => ({ version: 1, races: races.map((item) => ({ version: 1, ...item })) });
+const state = (races = []) => ({ version: 2, races: races.map((item) => ({ version: 2, status: 'following', ...item })) });
+const legacyState = (races = []) => ({ version: 1, races: races.map((item) => ({ version: 1, ...item })) });
 const memoryStorage = (initial = null) => {
-  let value = initial;
-  return { getItem: () => value, setItem: (_key, next) => { value = next; }, removeItem: () => { value = null; }, value: () => value };
+  const values = new Map();
+  if (initial) values.set(SAVED_RACES_STORAGE_KEY, initial);
+  return { getItem: (key) => values.has(key) ? values.get(key) : null, setItem: (key, next) => { values.set(key, next); }, removeItem: (key) => { values.delete(key); }, value: (key = SAVED_RACES_STORAGE_KEY) => values.get(key) ?? null, has: (key) => values.has(key) };
 };
 
 describe('saved races storage model', () => {
   it('handles empty storage', () => assert.deepEqual(readSavedRaces(memoryStorage()).state.races, []));
   it('reads valid records', () => assert.equal(readSavedRaces(memoryStorage(JSON.stringify(state([race()])))).state.races[0].eventId, 'r000173'));
   it('ignores invalid JSON', () => assert.deepEqual(parseSavedRacesJson('{nope'), null));
-  it('ignores wrong versions', () => assert.deepEqual(parseSavedRacesJson(JSON.stringify({ version: 2, races: [race()] })), null));
-  it('keeps valid records when some records are invalid', () => assert.deepEqual(parseSavedRacesJson(JSON.stringify({ version: 1, races: [{ nope: true }, { version: 1, ...race() }] })).races.map((item) => item.eventId), ['r000173']));
-  it('deduplicates by year and eventId', () => assert.equal(dedupeSavedRaces([{ version: 1, ...race() }, { version: 1, ...race(), title: 'Duplicate' }]).length, 1));
+  it('ignores wrong versions', () => assert.deepEqual(parseSavedRacesJson(JSON.stringify({ version: 1, races: [race()] })), null));
+  it('validates statuses', () => { assert.deepEqual(SAVED_RACE_STATUSES, ['following', 'planning', 'registered', 'completed']); assert.equal(isSavedRaceStatus('registered'), true); assert.equal(isSavedRaceStatus('bad'), false); });
+  it('defaults missing or invalid V2 status to following', () => assert.equal(parseSavedRacesJson(JSON.stringify({ version: 2, races: [{ version: 2, ...race(), status: 'bad' }, { version: 2, ...race('r000174') }] })).races[0].status, 'following'));
+  it('keeps valid records when some records are invalid', () => assert.deepEqual(parseSavedRacesJson(JSON.stringify({ version: 2, races: [{ nope: true }, { version: 2, ...race() }] })).races.map((item) => item.eventId), ['r000173']));
+  it('deduplicates by year and eventId', () => assert.equal(dedupeSavedRaces([{ version: 2, ...race() }, { version: 2, ...race(), title: 'Duplicate' }]).length, 1));
   it('treats same eventId in different years as distinct', () => {
     const saved = state([race('r000173', '2026'), race('r000173', '2027')]);
     assert.equal(isRaceSaved(saved, race('r000173', '2026')), true);
     assert.equal(isRaceSaved(saved, race('r000173', '2027')), true);
   });
-  it('adds a race', () => assert.equal(addSavedRace(state(), race()).races.length, 1));
+  it('adds a race with default following status', () => { const added = addSavedRace(state(), race()); assert.equal(added.races.length, 1); assert.equal(added.races[0].status, 'following'); });
+  it('adds a race with explicit status', () => assert.equal(addSavedRace(state(), { ...race(), status: 'registered' }).races[0].status, 'registered'));
+  it('gets and changes a race status without duplicating', () => { const changed = setSavedRaceStatus(state([race()]), race(), 'completed'); assert.equal(getSavedRaceStatus(changed, race()), 'completed'); assert.equal(changed.races.length, 1); });
+  it('setting status on an unsaved race adds it', () => assert.equal(setSavedRaceStatus(state(), race(), 'planning').races[0].status, 'planning'));
   it('removes a race', () => assert.equal(removeSavedRace(state([race()]), race()).races.length, 0));
   it('toggles a race on and off', () => {
     const on = toggleSavedRace(state(), race());
     assert.equal(on.saved, true);
+    assert.equal(on.state.races[0].status, 'following');
     const off = toggleSavedRace(on.state, race());
     assert.equal(off.saved, false);
     assert.equal(off.state.races.length, 0);
@@ -45,14 +58,33 @@ describe('saved races storage model', () => {
   it('handles storage getItem exceptions', () => assert.equal(readSavedRaces({ getItem: () => { throw new Error('blocked'); }, setItem() {}, removeItem() {} }).persistent, false));
   it('handles storage setItem exceptions', () => assert.equal(writeSavedRaces({ getItem: () => null, setItem: () => { throw new Error('full'); }, removeItem() {} }, state([race()])).persistent, false));
   it('caps the number of records', () => {
-    const races = Array.from({ length: MAX_SAVED_RACES + 20 }, (_, index) => ({ version: 1, ...race(`r${String(index).padStart(6, '0')}`) }));
+    const races = Array.from({ length: MAX_SAVED_RACES + 20 }, (_, index) => ({ version: 2, ...race(`r${String(index).padStart(6, '0')}`) }));
     assert.equal(dedupeSavedRaces(races).length, MAX_SAVED_RACES);
   });
+  it('migrates V1 to V2, defaults following, deduplicates, and removes legacy after write', () => {
+    const storage = memoryStorage();
+    storage.setItem(LEGACY_SAVED_RACES_STORAGE_KEY, JSON.stringify(legacyState([race(), race()])));
+    const result = readSavedRaces(storage);
+    assert.equal(result.state.version, 2);
+    assert.equal(result.state.races.length, 1);
+    assert.equal(result.state.races[0].status, 'following');
+    assert.equal(storage.has(LEGACY_SAVED_RACES_STORAGE_KEY), false);
+  });
+  it('keeps V1 when V2 persistence fails during migration', () => {
+    let removed = false;
+    const storage = { getItem: (key) => key === LEGACY_SAVED_RACES_STORAGE_KEY ? JSON.stringify(legacyState([race()])) : null, setItem: () => { throw new Error('full'); }, removeItem: () => { removed = true; } };
+    const result = readSavedRaces(storage);
+    assert.equal(result.persistent, false);
+    assert.equal(result.state.races[0].status, 'following');
+    assert.equal(removed, false);
+  });
+  it('valid V2 takes precedence over legacy V1', () => { const storage = memoryStorage(JSON.stringify(state([{ ...race('v2'), status: 'planning' }]))); storage.setItem(LEGACY_SAVED_RACES_STORAGE_KEY, JSON.stringify(legacyState([race('v1')]))); assert.equal(readSavedRaces(storage).state.races[0].eventId, 'v2'); });
+  it('corrupted V2 recovers from valid legacy V1', () => { const storage = memoryStorage('{bad'); storage.setItem(LEGACY_SAVED_RACES_STORAGE_KEY, JSON.stringify(legacyState([race('legacy')]))); assert.equal(readSavedRaces(storage).state.races[0].eventId, 'legacy'); });
   it('writes to the versioned localStorage key', () => {
     const storage = memoryStorage();
     writeSavedRaces(storage, state([race()]));
-    assert.match(storage.value(), /"version":1/);
-    assert.equal(SAVED_RACES_STORAGE_KEY, 'stkSavedRacesV1');
+    assert.match(storage.value(), /"version":2/);
+    assert.equal(SAVED_RACES_STORAGE_KEY, 'stkSavedRacesV2');
   });
 });
 

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
-import { resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
+import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
 import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, removeSavedRaceFromMyRaces, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
 
-const saved = (eventId, year = '2026', date = `${year}-05-10`, title = 'Saved') => ({ version: 1, eventId, year, date, title });
+const saved = (eventId, year = '2026', date = `${year}-05-10`, title = 'Saved', status = 'following') => ({ version: 2, eventId, year, date, title, status });
 const apiEvent = ({ row = '173', year = '2026', date = `${year}-05-10`, title = 'Testni tek', status = 'potrjeno', visible = 'DA' } = {}) => ({ row, datum: date, naziv_prireditve: title, kraj: 'Kranj', regija: 'Gorenjska', status_dogodka: status, vidno_v_javnem_koledarju: visible, povezava_razpis: 'https://example.com/info', povezava_prijava: 'https://example.com/register' });
 
 describe('my races resolver', () => {
@@ -37,6 +37,12 @@ describe('my races resolver', () => {
   });
 });
 
+
+describe('my races status helpers', () => {
+  const items = [saved('a', '2026', '2026-01-01', 'A', 'following'), saved('b', '2026', '2026-01-02', 'B', 'registered'), saved('c', '2026', '2026-01-03', 'C', 'completed')].map((savedRace) => ({ savedRace, event: null, key: `${savedRace.year}:${savedRace.eventId}`, status: 'past-or-unresolved' }));
+  it('counts statuses including unresolved references', () => assert.deepEqual(countSavedRaceStatuses(items), { following: 1, planning: 0, registered: 1, completed: 1 }));
+  it('supports All and individual status filters', () => { assert.equal(filterSavedRaceResolutionsByStatus(items, 'all').length, 3); assert.deepEqual(filterSavedRaceResolutionsByStatus(items, 'registered').map((item) => item.savedRace.eventId), ['b']); });
+});
 
 describe('my races primary actions', () => {
   const event = (noticeUrl, registrationUrl) => ({ noticeUrl, registrationUrl });
@@ -76,6 +82,8 @@ describe('my races ICS export event selection', () => {
     assert.deepEqual(getExportableUpcomingRaceEvents(items, 'en'), []);
   });
 
+  it('excludes completed upcoming races from export and includes active statuses', () => { const items = resolveSavedRaces([saved('r000173', '2026', '2026-05-10', 'Done', 'completed'), saved('r000174', '2026', '2026-05-11', 'Planning', 'planning'), saved('r000175', '2026', '2026-05-12', 'Registered', 'registered')], { 2026: [apiEvent({ row: '173', date: '2026-05-10' }), apiEvent({ row: '174', date: '2026-05-11' }), apiEvent({ row: '175', date: '2026-05-12' })] }, '2026-01-01'); assert.deepEqual(getExportableUpcomingRaceEvents(items, 'sl').map((event) => event.title), ['Testni tek', 'Testni tek']); });
+
   it('deduplicates by year:eventId and supports 2026 plus 2027 in one export list', () => {
     const items = resolveSavedRaces([saved('r000173', '2026'), saved('r000173', '2026'), saved('r000173', '2027')], { 2026: [apiEvent({ year: '2026', date: '2026-06-01' })], 2027: [apiEvent({ year: '2027', date: '2027-06-01' })] }, '2026-01-01');
     const exportable = getExportableUpcomingRaceEvents(items, 'sl');
@@ -89,7 +97,7 @@ describe('my races remove analytics', () => {
   const originalDocument = globalThis.document;
   const originalNavigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
   const storageWith = (races) => {
-    let value = JSON.stringify({ version: 1, races: races.map((item) => ({ version: 1, ...item })) });
+    let value = JSON.stringify({ version: 2, races: races.map((item) => ({ version: 2, ...item })) });
     return { getItem: () => value, setItem: (_key, next) => { value = next; }, removeItem() {} };
   };
   const installAnalyticsBrowser = () => {
@@ -126,7 +134,7 @@ describe('my races remove analytics', () => {
 
   it('does not emit race_unsaved when storage write fails', async () => {
     const payloads = installAnalyticsBrowser();
-    const storage = { getItem: () => JSON.stringify({ version: 1, races: [{ version: 1, ...saved('r000173') }] }), setItem: () => { throw new Error('blocked'); }, removeItem() {} };
+    const storage = { getItem: () => JSON.stringify({ version: 2, races: [{ version: 2, ...saved('r000173') }] }), setItem: () => { throw new Error('blocked'); }, removeItem() {} };
     assert.equal(removeSavedRaceFromMyRaces(storage, { eventId: 'r000173', year: '2026' }, { language: 'sl' }), false);
     assert.equal((await Promise.all(payloads)).length, 0);
     restoreBrowser();
@@ -181,7 +189,7 @@ describe('my races page source contract', () => {
   });
   it('includes fallback copy for API outages and local-only storage', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
-    assert.match(client, /does not sync between devices/);
+    assert.match(client, /do not sync between devices/);
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
   });
 });

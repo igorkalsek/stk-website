@@ -197,6 +197,18 @@ const jsonLd = event ? {
                 <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
               ))}
               <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
+
+              <div class="race-status-control" data-analytics-placement="race_detail">
+                <label for="race-detail-status-select">Moj status</label>
+                <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-describedby="race-detail-status-helper">
+                  <option value="">Ni v Mojih tekih</option>
+                  <option value="following">Spremljam</option>
+                  <option value="planning">Planiram</option>
+                  <option value="registered">Prijavljen</option>
+                  <option value="completed">Opravljen</option>
+                </select>
+                <p id="race-detail-status-helper" class="muted-note">Status je shranjen samo v tem brskalniku.</p>
+              </div>
             </div>
           </div>
         </section>
