@@ -46,7 +46,7 @@ export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasComplet
     title: identityRule('title'),
     place: identityRule('place'),
     region: identityRule('region'),
-    source: { visible: true, required: false, disabled: false, keepEnabledWhenHidden: false },
+    source: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     description: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     organizer: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     announcement: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
@@ -71,7 +71,7 @@ export const buildChangePlaceholder = ({ labels, lang }: { labels: readonly stri
   return labels.map((label) => `${label}:`).join('\n');
 };
 
-export const requiredProposalFields = ['proposalType', 'date', 'title', 'place', 'region', 'description', 'organizer', 'officialAnnouncement2026', 'email'] as const;
+export const requiredProposalFields = ['proposalType', 'date', 'title', 'place', 'region', 'officialSource', 'description', 'organizer', 'officialAnnouncement2026', 'email'] as const;
 
 export const isSafeInternalReturnUrl = (value: string | null | undefined): value is string => {
   if (!value) return false;
@@ -96,14 +96,15 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const legacySource = params.get('source')?.trim() ?? '';
   const context = params.get('context')?.trim() || (!isSafeHttpUrl(legacySource) ? legacySource : '');
   const officialSourceParam = params.get('officialSource')?.trim() ?? '';
-  const officialSourceUrl = isSafeHttpUrl(officialSourceParam) ? officialSourceParam : isSafeHttpUrl(legacySource) ? legacySource : '';
+  const noticeUrlParam = params.get('noticeUrl')?.trim() ?? '';
+  const officialSourceUrl = isSafeHttpUrl(officialSourceParam) ? officialSourceParam : isSafeHttpUrl(legacySource) ? legacySource : isSafeHttpUrl(noticeUrlParam) ? noticeUrlParam : '';
   const source = legacySource;
   const returnUrl = params.get('returnUrl')?.trim() ?? '';
   const lang = params.get('lang') === 'en' ? 'en' : pageLanguage;
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
   const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }) : '';
   const get = (key: string) => params.get(key)?.trim() ?? '';
-  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: get('noticeUrl'), registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
+  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: noticeUrlParam, registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
 };
 
 export const buildPrefillDescription = ({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {

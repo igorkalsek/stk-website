@@ -167,7 +167,11 @@ const changeGroups = [
   const proposalFieldset = document.querySelector('.proposal-type-fieldset');
   const additionalOnlyValues = contract.values.additionalData.filter((value) => value !== 'Drugo');
   const allowedAdditionalValues = contract.values.additionalData;
-  let hasSubmittedToGoogle = false;
+  let submissionState = 'idle';
+  let submissionAttemptId = 0;
+  let iframeSubmissionArmed = false;
+  let activeSubmissionAttemptId = 0;
+  let initialIframeLoadSeen = false;
   let submissionComplete = false;
   let showAllChangeOptions = false;
   let missingDirectCategories = [];
@@ -207,7 +211,8 @@ const changeGroups = [
   const backendTypeForCurrentSelection = () => currentType() === 'new' ? contract.values.proposalTypes[0] : currentType() === 'other' ? contract.values.proposalTypes[3] : mapExistingType();
   const setBackendType = () => { if (backendProposalType) backendProposalType.value = backendTypeForCurrentSelection(); };
   const clearAdditionalHiddenInputs = () => { if (additionalHiddenInputs) additionalHiddenInputs.innerHTML = ''; };
-  const syncDateHiddenInputs = () => { if (!dateHiddenInputs) return; dateHiddenInputs.innerHTML = ''; const value = form?.elements.namedItem(contract.fields.date)?.value || ''; const [year, month, day] = value.split('-'); const parts = [[contract.fields.dateYear, year], [contract.fields.dateMonth, month], [contract.fields.dateDay, day]]; if (!year || !month || !day) return; for (const [name, part] of parts) { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = String(Number(part)); dateHiddenInputs.append(input); } };
+  const isValidDateValue = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || '');
+  const syncDateHiddenInputs = () => { if (!dateHiddenInputs) return; dateHiddenInputs.innerHTML = ''; const value = form?.elements.namedItem(contract.fields.date)?.value || ''; if (!isValidDateValue(value)) return; const [year, month, day] = value.split('-'); const parts = [[contract.fields.dateYear, year], [contract.fields.dateMonth, month], [contract.fields.dateDay, day]]; for (const [name, part] of parts) { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = String(Number(part)); dateHiddenInputs.append(input); } };
   const syncAdditionalHiddenInputs = () => { clearAdditionalHiddenInputs(); for (const value of selectedChangeValues().filter((value) => allowedAdditionalValues.includes(value))) { const input = document.createElement('input'); input.type = 'hidden'; input.name = contract.fields.additionalData; input.value = value; additionalHiddenInputs?.append(input); } };
   const listText = (labels) => labels.join('; ');
   const genericChangePlaceholder = () => isEnglish ? 'Enter the missing or correct detail.' : 'Navedite manjkajoči ali pravilen podatek.';
@@ -236,7 +241,10 @@ const changeGroups = [
     updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
   };
   const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
-  const visibleInvalidFields = () => Array.from(form.querySelectorAll(':invalid')).filter((field) => !field.disabled && !field.closest('[hidden]'));
+  const isVisibleField = (field) => !field.disabled && !field.closest('[hidden]') && field.type !== 'hidden';
+  const visibleInvalidFields = () => Array.from(form.querySelectorAll('input,select,textarea')).filter((field) => isVisibleField(field) && !field.checkValidity());
+  const requiredFieldNames = [contract.fields.date, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.officialSource, contract.fields.description, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email];
+  const validateExplicitRequiredFields = () => { const invalid = []; const proposalTypeUi = form?.querySelector('input[name="proposal-type-ui"]:checked'); const visibleTypeRadios = Array.from(form?.querySelectorAll('input[name="proposal-type-ui"]') || []).filter(isVisibleField); if (!proposalTypeUi && visibleTypeRadios.length) { visibleTypeRadios[0].setCustomValidity(copy.errorTitle); invalid.push(visibleTypeRadios[0]); } else visibleTypeRadios.forEach((radio) => radio.setCustomValidity('')); setBackendType(); if (!backendProposalType?.value) invalid.push(backendProposalType); for (const name of requiredFieldNames) { const field = form?.elements.namedItem(name); if (field && isVisibleField(field) && !String(field.value || '').trim()) invalid.push(field); } const dateField = form?.elements.namedItem(contract.fields.date); if (dateField && isVisibleField(dateField) && !isValidDateValue(dateField.value)) { dateField.setCustomValidity(copy.dateError); if (!invalid.includes(dateField)) invalid.unshift(dateField); } return invalid.filter(Boolean); };
   const updateErrorSummary = () => { if (!errors || errors.hidden) return; const invalidFields = visibleInvalidFields(); if (!invalidFields.length) { errors.hidden = true; return; } errors.textContent = `${copy.errorTitle} ${[...new Set(invalidFields.map(labelForField).filter(Boolean))].join(', ')}`; };
   const showErrors = (fields) => { const labels = [...new Set(fields.map(labelForField).filter(Boolean))]; if (errors) { errors.hidden = false; errors.textContent = `${copy.errorTitle} ${labels.join(', ')}`; errors.focus(); } for (const field of fields) field?.setAttribute('aria-invalid', 'true'); };
   const updateChangeGroupVisibility = () => {
@@ -305,16 +313,19 @@ const changeGroups = [
   form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field === source) validateSource(); else updateErrorSummary(); } });
   form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else updateErrorSummary(); });
   form?.addEventListener('submit', (event) => {
-    if (submissionComplete) { event.preventDefault(); return; }
+    if (submissionComplete || submissionState === 'submitting') { event.preventDefault(); return; }
+    submissionState = 'validating'; iframeSubmissionArmed = false;
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
     if (currentType() === 'existing') { const checked = selectedChangeValues().length; const first = form.querySelector('input[name="proposal-change-category"]'); first?.setCustomValidity(checked ? '' : copy.changeError); if (!checked) { if (additionalError) additionalError.hidden = false; form.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => box.setAttribute('aria-invalid', 'true')); } else { clearChangeError(); } }
-    setBackendType(); syncAdditionalHiddenInputs(); syncDateHiddenInputs();
-    const invalidFields = visibleInvalidFields(); if (invalidFields.length) { event.preventDefault(); showErrors(invalidFields); invalidFields[0]?.focus(); return; }
+    setBackendType();
+    const explicitInvalidFields = validateExplicitRequiredFields();
+    if (!form.checkValidity() || explicitInvalidFields.length) { event.preventDefault(); submissionState = 'failed'; const invalidFields = [...new Set([...explicitInvalidFields, ...visibleInvalidFields()])]; showErrors(invalidFields); form.reportValidity(); invalidFields[0]?.focus(); return; }
+    syncAdditionalHiddenInputs(); syncDateHiddenInputs();
     if (currentType() === 'existing' && description) description.value = buildStructuredDescription();
-    if (errors) { errors.hidden = true; errors.textContent = ''; } if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; hasSubmittedToGoogle = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
+    if (errors) { errors.hidden = true; errors.textContent = ''; } if (button) { button.disabled = true; button.textContent = copy.submitting; } if (resetButton) resetButton.hidden = true; submissionState = 'submitting'; submissionAttemptId += 1; activeSubmissionAttemptId = submissionAttemptId; iframeSubmissionArmed = true; if (status) { status.hidden = false; status.classList.remove('success'); status.textContent = copy.submitting; }
   });
-  form?.addEventListener('reset', (event) => { if (hasRaceContext && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { hasSubmittedToGoogle = false; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); if (dateHiddenInputs) dateHiddenInputs.innerHTML = ''; applyRuntimeContext(); }, 0); });
-  document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!hasSubmittedToGoogle) return; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (errors) { errors.hidden = true; errors.textContent = ''; } if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
+  form?.addEventListener('reset', (event) => { if (hasRaceContext && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { submissionState = 'idle'; iframeSubmissionArmed = false; activeSubmissionAttemptId = 0; submissionComplete = false; if (errors) errors.hidden = true; if (status) { status.hidden = true; status.textContent = ''; } if (resetButton) resetButton.hidden = false; if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } if (newProposalLink) newProposalLink.hidden = true; if (calendarLink) calendarLink.hidden = true; form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); clearAdditionalHiddenInputs(); if (dateHiddenInputs) dateHiddenInputs.innerHTML = ''; applyRuntimeContext(); }, 0); });
+  document.querySelector('[data-submit-target]')?.addEventListener('load', () => { if (!initialIframeLoadSeen) { initialIframeLoadSeen = true; return; } const handledAttemptId = activeSubmissionAttemptId; if (!iframeSubmissionArmed || submissionState !== 'submitting' || handledAttemptId !== submissionAttemptId) return; iframeSubmissionArmed = false; submissionState = 'submitted-unverified'; submissionComplete = true; if (button) { button.disabled = true; button.hidden = true; } if (resetButton) resetButton.hidden = true; if (newProposalLink) newProposalLink.hidden = false; if (calendarLink) calendarLink.hidden = false; if (errors) { errors.hidden = true; errors.textContent = ''; } if (status) { status.hidden = false; status.classList.add('success'); status.textContent = copy.sent; } });
   applyRuntimeContext();
 </script>
 <style>
