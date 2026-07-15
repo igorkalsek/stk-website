@@ -119,25 +119,61 @@ export const buildPrefillDescription = ({ eventTitle, year, date, place, officia
   return lines.join('\n');
 };
 
-export const buildGoogleFormsFallbackUrl = (prefill: ProposalPrefill, proposalType = googleProposalFormContract.values.proposalTypes[1]) => {
+export type GoogleFormsSubmissionUrlInput = {
+  proposalType?: string;
+  date?: string;
+  title?: string;
+  place?: string;
+  region?: string;
+  officialSource?: string;
+  description?: string;
+  organizer?: string;
+  officialAnnouncement?: string;
+  email?: string;
+  additionalData?: readonly string[];
+};
+
+const setPrefillParam = (url: URL, name: string, value: string | undefined) => {
+  const cleanValue = value?.trim() ?? '';
+  if (cleanValue) url.searchParams.set(name, cleanValue);
+};
+
+export const buildGoogleFormsSubmissionUrl = (submission: GoogleFormsSubmissionUrlInput = {}) => {
   const url = new URL(googleProposalFormContract.viewUrl);
+  const { fields } = googleProposalFormContract;
   url.searchParams.set('usp', 'pp_url');
-  if (prefill.eventTitle) url.searchParams.set(googleProposalFormContract.fields.proposalType, proposalType);
-  if (prefill.date) {
-    const [year, month, day] = prefill.date.split('-');
-    url.searchParams.set(googleProposalFormContract.fields.date, prefill.date);
-    if (year && month && day) {
-      url.searchParams.set(googleProposalFormContract.fields.dateYear, String(Number(year)));
-      url.searchParams.set(googleProposalFormContract.fields.dateMonth, String(Number(month)));
-      url.searchParams.set(googleProposalFormContract.fields.dateDay, String(Number(day)));
+  setPrefillParam(url, fields.proposalType, submission.proposalType);
+  setPrefillParam(url, fields.date, submission.date);
+  if (submission.date && /^\d{4}-\d{2}-\d{2}$/.test(submission.date)) {
+    const [year, month, day] = submission.date.split('-');
+    url.searchParams.set(fields.dateYear, String(Number(year)));
+    url.searchParams.set(fields.dateMonth, String(Number(month)));
+    url.searchParams.set(fields.dateDay, String(Number(day)));
+  }
+  setPrefillParam(url, fields.title, submission.title);
+  setPrefillParam(url, fields.place, submission.place);
+  setPrefillParam(url, fields.region, submission.region);
+  url.searchParams.set(fields.officialSource, submission.officialSource?.trim() ?? '');
+  setPrefillParam(url, fields.description, submission.description);
+  setPrefillParam(url, fields.organizer, submission.organizer);
+  setPrefillParam(url, fields.officialAnnouncement2026, submission.officialAnnouncement);
+  setPrefillParam(url, fields.email, submission.email);
+  for (const value of submission.additionalData ?? []) {
+    if (allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number])) {
+      url.searchParams.append(fields.additionalData, value);
     }
   }
-  if (prefill.eventTitle) url.searchParams.set(googleProposalFormContract.fields.title, prefill.eventTitle);
-  if (prefill.place) url.searchParams.set(googleProposalFormContract.fields.place, prefill.place);
-  if (prefill.officialSourceUrl) url.searchParams.set(googleProposalFormContract.fields.officialSource, prefill.officialSourceUrl);
-  if (prefill.eventTitle) url.searchParams.set(googleProposalFormContract.fields.region, googleProposalFormContract.values.regions.at(-1)!);
-  if (prefill.description) url.searchParams.set(googleProposalFormContract.fields.description, prefill.description);
   return url.href;
 };
+
+export const buildGoogleFormsFallbackUrl = (prefill: ProposalPrefill, proposalType = googleProposalFormContract.values.proposalTypes[1]) => buildGoogleFormsSubmissionUrl({
+  proposalType: prefill.eventTitle ? proposalType : '',
+  date: prefill.date,
+  title: prefill.eventTitle,
+  place: prefill.place,
+  region: prefill.eventTitle ? prefill.region || googleProposalFormContract.values.regions.at(-1)! : prefill.region,
+  officialSource: prefill.officialSourceUrl,
+  description: prefill.description
+});
 
 export const getYearContext = (dateOrYear: string) => dateOrYear.includes('2027') ? '2027' : '2026';
