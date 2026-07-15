@@ -82,7 +82,23 @@ describe('my races ICS export event selection', () => {
     assert.deepEqual(getExportableUpcomingRaceEvents(items, 'en'), []);
   });
 
-  it('excludes completed upcoming races from export and includes active statuses', () => { const items = resolveSavedRaces([saved('r000173', '2026', '2026-05-10', 'Done', 'completed'), saved('r000174', '2026', '2026-05-11', 'Planning', 'planning'), saved('r000175', '2026', '2026-05-12', 'Registered', 'registered')], { 2026: [apiEvent({ row: '173', date: '2026-05-10' }), apiEvent({ row: '174', date: '2026-05-11' }), apiEvent({ row: '175', date: '2026-05-12' })] }, '2026-01-01'); assert.deepEqual(getExportableUpcomingRaceEvents(items, 'sl').map((event) => event.title), ['Testni tek', 'Testni tek']); });
+  it('excludes completed and past races while including active upcoming statuses and deduplicating', () => {
+    const items = resolveSavedRaces([
+      saved('r000171', '2026', '2026-05-08', 'Following saved', 'following'),
+      saved('r000172', '2026', '2026-05-09', 'Planning saved', 'planning'),
+      saved('r000173', '2026', '2026-05-10', 'Registered saved', 'registered'),
+      saved('r000174', '2026', '2026-05-11', 'Completed saved', 'completed'),
+      saved('r000175', '2026', '2025-05-12', 'Past saved', 'following'),
+      saved('r000172', '2026', '2026-05-09', 'Duplicate planning saved', 'planning')
+    ], { 2026: [
+      apiEvent({ row: '171', date: '2026-05-08', title: 'Following Export Run' }),
+      apiEvent({ row: '172', date: '2026-05-09', title: 'Planning Export Trail' }),
+      apiEvent({ row: '173', date: '2026-05-10', title: 'Registered Export Race' }),
+      apiEvent({ row: '174', date: '2026-05-11', title: 'Completed Export Race' }),
+      apiEvent({ row: '175', date: '2025-05-12', title: 'Past Export Race' })
+    ] }, '2026-01-01');
+    assert.deepEqual(getExportableUpcomingRaceEvents(items, 'sl').map((event) => event.title), ['Following Export Run', 'Planning Export Trail', 'Registered Export Race']);
+  });
 
   it('deduplicates by year:eventId and supports 2026 plus 2027 in one export list', () => {
     const items = resolveSavedRaces([saved('r000173', '2026'), saved('r000173', '2026'), saved('r000173', '2027')], { 2026: [apiEvent({ year: '2026', date: '2026-06-01' })], 2027: [apiEvent({ year: '2027', date: '2027-06-01' })] }, '2026-01-01');

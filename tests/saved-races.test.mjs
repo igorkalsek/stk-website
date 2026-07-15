@@ -115,9 +115,12 @@ const createMemoryStorage = () => {
   return {
     getItem: (key) => values.has(key) ? values.get(key) : null,
     setItem: (key, value) => { values.set(key, String(value)); },
-    removeItem: (key) => { values.delete(key); }
+    removeItem: (key) => { values.delete(key); },
+    value: (key = SAVED_RACES_STORAGE_KEY) => values.get(key) ?? null
   };
 };
+
+const readStoredState = (storage) => JSON.parse(storage.value() || '{"version":2,"races":[]}');
 
 class FakeButton {
   constructor({ language = 'sl', iconOnly = false, eventId = 'r000173', year = '2026' } = {}) {
@@ -137,34 +140,59 @@ class FakeButton {
     if (selector === '[data-saved-race-label]') return this.label;
     return null;
   }
+  closest() { return null; }
   addEventListener(type, listener) { this.listeners.set(type, listener); }
   click() { this.listeners.get('click')?.({ preventDefault() {}, stopPropagation() {} }); }
 }
 
-const createFakeDocument = (buttons) => ({
+class FakeSelect {
+  constructor({ language = 'sl', eventId = 'r000173', year = '2026' } = {}) {
+    this.dataset = { raceStatusControl: '', eventId, eventYear: year, eventDate: `${year}-05-10`, eventTitle: 'Testni tek', language };
+    this.value = '';
+    this.options = [];
+    this.listeners = new Map();
+  }
+  append(...options) { this.options.push(...options); }
+  closest() { return null; }
+  addEventListener(type, listener) { this.listeners.set(type, listener); }
+  change(value) { this.value = value; this.listeners.get('change')?.({}); }
+}
+
+const createFakeDocument = ({ buttons = [], controls = [] } = {}) => ({
   readyState: 'loading',
   addEventListener() {},
   querySelectorAll(selector) {
     if (selector === '[data-saved-race-button]') return buttons;
+    if (selector === '[data-race-status-control]') return controls;
     const eventId = selector.match(/data-event-id="([^"]+)"/)?.[1];
     const year = selector.match(/data-event-year="([^"]+)"/)?.[1];
-    return buttons.filter((button) => button.dataset.eventId === eventId && button.dataset.eventYear === year);
+    if (selector.startsWith('[data-saved-race-button]')) return buttons.filter((button) => button.dataset.eventId === eventId && button.dataset.eventYear === year);
+    if (selector.startsWith('[data-race-status-control]')) return controls.filter((control) => control.dataset.eventId === eventId && control.dataset.eventYear === year);
+    return [];
   }
 });
 
-const setupSavedRaceUi = async (buttons) => {
-  globalThis.window = { localStorage: createMemoryStorage() };
-  globalThis.document = createFakeDocument(buttons);
+const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createMemoryStorage() } = {}) => {
+  const payloads = [];
+  globalThis.window = { localStorage: storage, location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' }, setTimeout: (callback) => { callback(); return 0; } };
+  globalThis.document = createFakeDocument({ buttons, controls });
   globalThis.CSS = { escape: (value) => String(value) };
-  const { initSavedRaceButtons } = await import('../.cache/dist-test/saved-races-client.js');
+  globalThis.Option = class { constructor(text, value) { this.text = text; this.textContent = text; this.value = value; } };
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { userAgent: 'node-test', maxTouchPoints: 0, sendBeacon: (_url, blob) => { payloads.push(JSON.parse(blob.text ? '' : '{}')); return false; } } });
+  globalThis.fetch = async (_url, init = {}) => { if (init.body) payloads.push(JSON.parse(String(init.body))); return { ok: true }; };
+  const { initSavedRaceButtons } = await import(`../.cache/dist-test/saved-races-client.js?cache=${Date.now()}${Math.random()}`);
   initSavedRaceButtons(globalThis.document);
+  return { storage, payloads, initSavedRaceButtons };
 };
+
+const analyticsEvents = (payloads, type) => payloads.filter((payload) => payload.event_type === type);
+const assertNoStatusInAnalytics = (payloads) => assert.doesNotMatch(JSON.stringify(payloads), /following|planning|registered|completed|status/);
 
 describe('saved races UI interactions', () => {
   it('updates regular and icon-only icons, labels, and aria labels in Slovenian', async () => {
     const regular = new FakeButton({ language: 'sl' });
     const iconOnly = new FakeButton({ language: 'sl', iconOnly: true });
-    await setupSavedRaceUi([regular, iconOnly]);
+    await setupSavedRaceUi({ buttons: [regular, iconOnly] });
 
     assert.equal(regular.icon.textContent, '☆');
     assert.equal(regular.label.textContent, 'Shrani tek');
@@ -181,7 +209,7 @@ describe('saved races UI interactions', () => {
   it('updates regular and icon-only icons, labels, and aria labels in English', async () => {
     const regular = new FakeButton({ language: 'en' });
     const iconOnly = new FakeButton({ language: 'en', iconOnly: true });
-    await setupSavedRaceUi([regular, iconOnly]);
+    await setupSavedRaceUi({ buttons: [regular, iconOnly] });
 
     assert.equal(regular.icon.textContent, '☆');
     assert.equal(regular.label.textContent, 'Save race');
@@ -195,19 +223,119 @@ describe('saved races UI interactions', () => {
     assert.equal(iconOnly.getAttribute('aria-label'), 'Remove from My races');
   });
 
-  it('keeps all buttons for the same event synchronized without changing other events', async () => {
+  it('unsaved button click saves following, syncs selector, and emits race_saved once', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const { storage, payloads } = await setupSavedRaceUi({ buttons: [button], controls: [select] });
+
+    button.click();
+
+    assert.equal(button.getAttribute('aria-pressed'), 'true');
+    assert.equal(select.value, 'following');
+    assert.equal(readStoredState(storage).races[0].status, 'following');
+    assert.equal(analyticsEvents(payloads, 'race_saved').length, 1);
+    assertNoStatusInAnalytics(payloads);
+  });
+
+  it('saved button click removes the race, clears selector, and emits race_unsaved once', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([race()])));
+    const { payloads } = await setupSavedRaceUi({ buttons: [button], controls: [select], storage });
+
+    assert.equal(select.value, 'following');
+    button.click();
+
+    assert.equal(button.getAttribute('aria-pressed'), 'false');
+    assert.equal(select.value, '');
+    assert.equal(readStoredState(storage).races.length, 0);
+    assert.equal(analyticsEvents(payloads, 'race_unsaved').length, 1);
+    assertNoStatusInAnalytics(payloads);
+  });
+
+  it('blank selector to planning adds the race, syncs button, and emits race_saved once', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const { storage, payloads } = await setupSavedRaceUi({ buttons: [button], controls: [select] });
+
+    select.change('planning');
+
+    assert.equal(button.getAttribute('aria-pressed'), 'true');
+    assert.equal(getSavedRaceStatus(readStoredState(storage), race()), 'planning');
+    assert.equal(analyticsEvents(payloads, 'race_saved').length, 1);
+    assertNoStatusInAnalytics(payloads);
+  });
+
+  it('planning to registered updates the existing record without save or unsave analytics', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(), status: 'planning' }])));
+    const { payloads } = await setupSavedRaceUi({ buttons: [button], controls: [select], storage });
+
+    select.change('registered');
+
+    const stored = readStoredState(storage);
+    assert.equal(stored.races.length, 1);
+    assert.equal(stored.races[0].status, 'registered');
+    assert.equal(analyticsEvents(payloads, 'race_saved').length, 0);
+    assert.equal(analyticsEvents(payloads, 'race_unsaved').length, 0);
+    assertNoStatusInAnalytics(payloads);
+  });
+
+  it('saved selector to blank removes the race, syncs button, and emits race_unsaved once', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(), status: 'registered' }])));
+    const { payloads } = await setupSavedRaceUi({ buttons: [button], controls: [select], storage });
+
+    select.change('');
+
+    assert.equal(button.getAttribute('aria-pressed'), 'false');
+    assert.equal(readStoredState(storage).races.length, 0);
+    assert.equal(analyticsEvents(payloads, 'race_unsaved').length, 1);
+    assertNoStatusInAnalytics(payloads);
+  });
+
+  it('keeps all controls for the same event synchronized without changing other events', async () => {
     const first = new FakeButton({ eventId: 'same' });
     const second = new FakeButton({ eventId: 'same', iconOnly: true });
+    const firstSelect = new FakeSelect({ eventId: 'same' });
+    const secondSelect = new FakeSelect({ eventId: 'same' });
     const other = new FakeButton({ eventId: 'other' });
-    await setupSavedRaceUi([first, second, other]);
+    const otherSelect = new FakeSelect({ eventId: 'other' });
+    await setupSavedRaceUi({ buttons: [first, second, other], controls: [firstSelect, secondSelect, otherSelect] });
 
-    first.click();
+    firstSelect.change('planning');
 
-    assert.equal(first.icon.textContent, '★');
-    assert.equal(second.icon.textContent, '★');
     assert.equal(first.getAttribute('aria-pressed'), 'true');
     assert.equal(second.getAttribute('aria-pressed'), 'true');
-    assert.equal(other.icon.textContent, '☆');
+    assert.equal(firstSelect.value, 'planning');
+    assert.equal(secondSelect.value, 'planning');
     assert.equal(other.getAttribute('aria-pressed'), 'false');
+    assert.equal(otherSelect.value, '');
+  });
+
+  it('initializer is idempotent for buttons and status controls', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const { storage, payloads, initSavedRaceButtons } = await setupSavedRaceUi({ buttons: [button], controls: [select] });
+    initSavedRaceButtons(globalThis.document);
+
+    select.change('planning');
+
+    assert.equal(readStoredState(storage).races.length, 1);
+    assert.equal(analyticsEvents(payloads, 'race_saved').length, 1);
+  });
+
+  it('creates localized SL and EN selector options', async () => {
+    const sl = new FakeSelect({ language: 'sl' });
+    const en = new FakeSelect({ language: 'en', eventId: 'r000174' });
+    await setupSavedRaceUi({ controls: [sl, en] });
+
+    assert.deepEqual(sl.options.map((option) => option.textContent), ['Ni v Mojih tekih', 'Spremljam', 'Planiram', 'Prijavljen', 'Opravljen']);
+    assert.deepEqual(en.options.map((option) => option.textContent), ['Not in My races', 'Following', 'Planning', 'Registered', 'Completed']);
   });
 });
