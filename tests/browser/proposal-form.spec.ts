@@ -44,7 +44,8 @@ test.describe('native proposal form', () => {
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Oddajte nov predlog' })).toBeHidden();
     await expect(page.getByRole('link', { name: 'Nazaj na koledar' })).toBeHidden();
-    await expect(page.getByRole('textbox', { name: 'Uradni vir', exact: true })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
+    await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
     await expect(page.getByRole('textbox', { name: /Povezava do razpisa/ })).toHaveCount(0);
 
     await page.getByRole('radio', { name: 'Nov tek' }).check();
@@ -163,6 +164,32 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.email)).toBe('test@example.com');
   });
 
+
+  test('new race can submit with empty optional official source and EN label parity', async ({ page }) => {
+    const form = await interceptForm(page);
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new');
+    await waitForProposalRuntime(page);
+    await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
+    await page.locator('#proposal-date').fill('2026-11-15');
+    await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek brez vira');
+    await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Celje');
+    await page.getByRole('combobox', { name: 'Regija' }).selectOption('Savinjska');
+    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis teka brez uradnega vira.');
+    await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
+    await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne');
+    await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
+    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+
+    await expect.poll(() => form.getSubmissions()).toBe(1);
+    expect(form.getPayload()?.get(contract.fields.officialSource)).toBe('');
+
+    await page.goto('/en/add-or-correct-race/?mode=new');
+    await waitForProposalRuntime(page);
+    await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
+    await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
+  });
+
   test('iframe load cannot create false success before a valid armed submit', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
@@ -170,6 +197,7 @@ test.describe('native proposal form', () => {
     await page.locator('[data-submit-target]').evaluate((iframe: HTMLIFrameElement) => iframe.dispatchEvent(new Event('load')));
     await expect(page.locator('[data-submit-status]')).toBeHidden();
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await expect.poll(() => form.getSubmissions()).toBe(0);
     await page.locator('[data-submit-target]').evaluate((iframe: HTMLIFrameElement) => iframe.dispatchEvent(new Event('load')));
     await expect(page.locator('[data-submit-status]')).toBeHidden();
     await page.locator('#proposal-date').fill('2026-09-12');
@@ -186,6 +214,9 @@ test.describe('native proposal form', () => {
     await page.locator('[data-submit-target]').evaluate((iframe: HTMLIFrameElement) => iframe.dispatchEvent(new Event('load')));
     await expect(page.locator('[data-submit-status]')).toContainText('Predlog je bil poslan v Google obrazec.');
     await expect(page.locator('[data-submit-status]')).not.toContainText('Oddaja je bila uspešno zabeležena.');
+    await page.locator('[data-submit-target]').evaluate((iframe: HTMLIFrameElement) => iframe.dispatchEvent(new Event('load')));
+    await expect.poll(() => form.getSubmissions()).toBe(1);
+    await expect(page.locator('[data-submit-status]')).toContainText('Predlog je bil poslan v Google obrazec.');
   });
 
   test('EN prefilled correction keeps safe return URL, accessible names and reset cancel on desktop', async ({ page }) => {
@@ -198,7 +229,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByText('A proposal for a new race, correction or additional information is reviewed and verified before publication.')).toBeVisible();
     await expect(page.getByText('Submissions are not published automatically.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Back to race page' })).toHaveAttribute('href', '/tek/2027/dolgi-tek/');
-    await expect(page.getByRole('textbox', { name: 'Official source', exact: true })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).toHaveValue('https://example.com/zelo-dolg-url/razpis');
     await expect(page.getByRole('textbox', { name: /Link to the race announcement/ })).toHaveCount(0);
     await expect(page.locator('[data-context-existing-radio]')).toBeChecked();
@@ -236,7 +267,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('combobox', { name: 'Regija' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Ali ste organizator?' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Uradni vir', exact: true })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveAttribute('required', '');
     await expect(page.getByRole('checkbox', { name: 'Popravek že objavljenega dodatnega podatka', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' })).toHaveAttribute('placeholder', 'Navedite manjkajoči ali pravilen podatek.');
@@ -293,7 +324,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('combobox', { name: 'Regija' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Ali ste organizator?' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Uradni vir', exact: true })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Opis oziroma podrobnosti' })).toHaveAttribute('required', '');
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Napišite sporočilo ali pojasnite predlog.');
     await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveAttribute('required', '');
@@ -343,9 +374,9 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#proposal-place')).toHaveValue('Ljubljana');
     await expect(page.locator('#proposal-region')).toHaveValue('Osrednjeslovenska');
     await expect(page.locator('#proposal-source')).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Uradni vir', exact: true })).toBeVisible();
-    await expect(page.locator('#proposal-source')).toHaveAttribute('required', '');
-    await expect(page.locator('#proposal-source')).toHaveValue('');
+    await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
+    await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
+    await expect(page.locator('#proposal-source')).toHaveValue('https://example.com/razpis');
     await expect(page.locator('#proposal-description')).not.toHaveValue(/source=detail|Kontekst vira/);
 
     const advancedDetails = page.locator('[data-change-options-details]');

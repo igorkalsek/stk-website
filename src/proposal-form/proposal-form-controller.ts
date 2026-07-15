@@ -46,7 +46,7 @@ export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasComplet
     title: identityRule('title'),
     place: identityRule('place'),
     region: identityRule('region'),
-    source: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
+    source: { visible: true, required: false, disabled: false, keepEnabledWhenHidden: false },
     description: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     organizer: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
     announcement: { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false },
@@ -71,7 +71,7 @@ export const buildChangePlaceholder = ({ labels, lang }: { labels: readonly stri
   return labels.map((label) => `${label}:`).join('\n');
 };
 
-export const requiredProposalFields = ['proposalType', 'date', 'title', 'place', 'region', 'officialSource', 'description', 'organizer', 'officialAnnouncement2026', 'email'] as const;
+export const requiredProposalFields = ['proposalType', 'date', 'title', 'place', 'region', 'description', 'organizer', 'officialAnnouncement2026', 'email'] as const;
 
 export const isSafeInternalReturnUrl = (value: string | null | undefined): value is string => {
   if (!value) return false;
