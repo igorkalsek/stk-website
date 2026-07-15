@@ -284,20 +284,24 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: /Link to the race announcement/ })).toHaveCount(0);
     await expect(page.locator('[data-context-existing-radio]')).toBeChecked();
     await expect(page.locator('#proposal-date')).toBeHidden();
-    await page.getByRole('group', { name: 'What would you like to correct or add?' }).getByText('Other correction options').click();
-    await page.getByRole('checkbox', { name: 'Name or place', exact: true }).check();
-    await page.getByRole('textbox', { name: 'Enter the missing or correct details' }).fill('Place should be Ljubljana Center.');
+    await expect(page.getByTestId('structured-basic-section')).toBeVisible();
+    await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-title-place"])')).toBeHidden();
+    await expect(page.getByTestId('basic-correction-place')).toHaveValue('');
+    await page.getByTestId('basic-correction-place').fill('Ljubljana Center');
     await page.getByRole('combobox', { name: 'Are you the organizer?' }).selectOption('No');
     await page.getByRole('combobox', { name: 'Has the official announcement for the selected year already been published?' }).selectOption('I do not know');
     await page.getByRole('textbox', { name: 'Contact email' }).fill('review@example.com');
     page.once('dialog', async (dialog) => { expect(dialog.message()).toBe('Clear your changes and restore the selected race details?'); await dialog.dismiss(); });
-    await page.getByRole('button', { name: 'Clear form' }).click();
-    await expect(page.getByRole('textbox', { name: 'Enter the missing or correct details' })).toHaveValue('Place should be Ljubljana Center.');
+    await expect(page.getByRole('button', { name: 'Clear entered changes' })).toBeVisible();
+    await page.getByRole('button', { name: 'Clear entered changes' }).click();
+    await expect(page.getByTestId('basic-correction-place')).toHaveValue('Ljubljana Center');
     await page.getByRole('button', { name: 'Send proposal' }).click();
 
     await expect.poll(() => form.getPayload()?.get(contract.fields.proposalType)).toBe('Popravek obstoječega vnosa v koledarju');
     expect(form.getPayload()?.get(contract.fields.date)).toBe('2027-05-01');
-    expect(form.getPayload()?.get(contract.fields.description)).toContain('Place should be Ljubljana Center.');
+    expect(form.getPayload()?.get(contract.fields.place)).toBe('Ljubljana');
+    expect(form.getPayload()?.get(contract.fields.description)).toContain('Current: Ljubljana');
+    expect(form.getPayload()?.get(contract.fields.description)).toContain('Proposed: Ljubljana Center');
     expect(form.getUrls().at(-1)).toContain('/formResponse');
     await assertNoConsoleErrors(page, errors);
   });
@@ -371,7 +375,7 @@ test.describe('native proposal form', () => {
     const additionalBox = await page.locator('[data-additional-section]').boundingBox();
     const descriptionBox = await page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' }).boundingBox();
     expect(additionalBox && descriptionBox && additionalBox.y < descriptionBox.y).toBeTruthy();
-    await expect(page.locator('input[name="proposal-change-category"][value="Prijavnina / startnina"]')).toHaveCount(0);
+    await expect(page.getByRole('checkbox', { name: 'Datum ali ura', exact: true })).toBeVisible();
     await page.getByRole('checkbox', { name: 'Datum ali ura', exact: true }).check();
 
     await page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' }).fill('Datum naj bo 13. 9. 2026.');
@@ -531,7 +535,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
     await expect(page.locator('#proposal-source')).toHaveValue('https://example.com/razpis');
-    await expect(page.locator('#proposal-description')).not.toHaveValue(/source=detail|Kontekst vira/);
+    await expect(page.locator('#proposal-description')).toHaveValue('');
 
     const advancedDetails = page.locator('[data-change-options-details]');
     await expect(advancedDetails).not.toHaveAttribute('open', '');
@@ -543,17 +547,22 @@ test.describe('native proposal form', () => {
     await advancedDetails.getByText('Druge možnosti popravka').click();
     await expect(advancedDetails).not.toHaveAttribute('open', '');
 
+    await expect(page.getByTestId('structured-basic-section')).toBeVisible();
+    await expect(page.getByTestId('basic-correction-date')).toHaveValue('');
+    await expect(page.getByText('Trenutno: 2027-05-01')).toBeVisible();
     await page.locator('#proposal-description').fill('Obstoječe besedilo ostane.');
     await page.locator('.published-detail-item', { hasText: 'Datum' }).getByRole('button', { name: 'Popravi' }).click();
-    await expect(page.locator('input[name="proposal-change-category"][value="basic-date-time"]')).toBeChecked();
-    await expect(page.locator('[data-change-summary] .change-chip')).toContainText(['Datum ali ura']);
+    await expect(page.getByTestId('basic-correction-date')).toBeFocused();
+    await expect(page.getByTestId('basic-correction-date')).toHaveValue('');
+    await page.getByTestId('basic-correction-date').fill('2027-05-02');
+    await expect(page.locator('input[name="proposal-change-category"][value="basic-date-time"]')).not.toBeChecked();
     await expect(page.locator('#proposal-description')).toHaveValue('Obstoječe besedilo ostane.');
 
     await page.locator('.published-detail-item', { hasText: 'Prijavnina' }).getByRole('button', { name: 'Dopolni' }).click();
     await expect(page.getByTestId('additional-entry-fee')).toBeFocused();
     await page.getByTestId('additional-entry-fee').fill('20 €');
     await page.getByTestId('additional-correction-intent').selectOption('missing');
-    await expect(page.locator('[data-change-summary] .change-chip')).toContainText(['Datum ali ura']);
+    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(0);
 
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
@@ -567,6 +576,8 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.title)).toBe('Dolgi Šmarnogorski tek');
     expect(payload?.get(contract.fields.place)).toBe('Ljubljana');
     expect(payload?.get(contract.fields.region)).toBe('Osrednjeslovenska');
+    expect(payload?.get(contract.fields.description)).toContain('Trenutno: 2027-05-01');
+    expect(payload?.get(contract.fields.description)).toContain('Predlagano: 2027-05-02');
     expect(payload?.get(contract.fields.description)).not.toContain('Kontekst vira: detail');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina']);
     await expect(page.locator('[data-error-summary]')).toContainText('Predlog je bil poslan. Hvala za pomoč pri dopolnjevanju koledarja.');
@@ -576,10 +587,11 @@ test.describe('native proposal form', () => {
   test('context changes preselect ignores invalid and keeps chips unique', async ({ page }) => {
     await page.goto(`/dodaj-ali-popravi-tek/?${fullContextQuery}&changes=basic-date-time,NEVELJAVNO,basic-date-time`);
     await waitForProposalRuntime(page);
-    await expect(page.locator('input[name="proposal-change-category"][value="basic-date-time"]')).toBeChecked();
+    await expect(page.getByTestId('basic-correction-date')).toBeVisible();
+    await expect(page.getByTestId('basic-correction-date')).toHaveValue('');
+    await expect(page.locator('input[name="proposal-change-category"][value="basic-date-time"]')).not.toBeChecked();
     await expect(page.locator('input[name="proposal-change-category"][value="Višinski metri"]')).toHaveCount(0);
-    await expect(page.locator('[data-change-summary] .change-chip')).toHaveText(['Datum ali ura']);
-    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(1);
+    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(0);
   });
 
   test('context generic entry does not auto-select every missing category and missing-details action is conservative', async ({ page }) => {
@@ -589,7 +601,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('button', { name: 'Dopolnite manjkajoče podatke' }).click();
     await expect(page.locator('input[name="proposal-change-category"][value="Prijavnina / startnina"]')).toHaveCount(0);
     await expect(page.getByTestId('additional-entry-fee')).toBeFocused();
-    await expect(page.locator('input[name="proposal-change-category"][value="basic-official-source"]')).not.toBeChecked();
+    await expect(page.getByTestId('basic-correction-notice-url')).toHaveValue('');
     const otherCheckbox = page.locator('input[name="proposal-change-category"][value="Drugo"]');
     const otherLabel = page.locator('label:has(input[name="proposal-change-category"][value="Drugo"])');
     const advancedDetails = page.locator('[data-change-options-details]');
