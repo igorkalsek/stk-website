@@ -119,6 +119,67 @@ export const buildPrefillDescription = ({ eventTitle, year, date, place, officia
   return lines.join('\n');
 };
 
+
+export type StructuredAdditionalDetails = {
+  entryFee?: string;
+  registrationDeadline?: string;
+  cheaperRegistration?: string;
+  raceDayRegistration?: string;
+  elevationGain?: string;
+  routeUrl?: string;
+  otherDetails?: string;
+  correctionIntent?: string;
+};
+
+const structuredAdditionalFields = [
+  { key: 'entryFee', value: 'Prijavnina / startnina', labels: { sl: 'Prijavnina / startnina', en: 'Entry fee' }, suffix: '' },
+  { key: 'registrationDeadline', value: 'Rok prijave', labels: { sl: 'Rok prijave', en: 'Registration deadline' }, suffix: '' },
+  { key: 'cheaperRegistration', value: 'Cenejša prijava / sprememba cene', labels: { sl: 'Rok cenejše prijave ali sprememba cene', en: 'Cheaper registration deadline or price change' }, suffix: '' },
+  { key: 'raceDayRegistration', value: 'Prijave na dan dogodka', labels: { sl: 'Prijave na dan dogodka', en: 'Race-day registration' }, suffix: '' },
+  { key: 'elevationGain', value: 'Višinski metri', labels: { sl: 'Višinski metri', en: 'Elevation gain' }, suffix: ' m+' },
+  { key: 'routeUrl', value: 'Trasa / zemljevid / GPX', labels: { sl: 'Trasa, zemljevid ali GPX', en: 'Route, map or GPX' }, suffix: '' },
+  { key: 'otherDetails', value: 'Drugo', labels: { sl: 'Drugi dodatni podatki', en: 'Other additional details' }, suffix: '' }
+] as const;
+
+export const structuredCorrectionIntentValues = { missing: 'missing', correcting: 'correcting' } as const;
+
+export const hasStructuredAdditionalDetails = (details: StructuredAdditionalDetails = {}) => structuredAdditionalFields.some((field) => cleanSubmissionValue(details[field.key]).length > 0);
+
+export const additionalDataValuesForStructuredDetails = (details: StructuredAdditionalDetails = {}) => {
+  const values: string[] = [];
+  for (const field of structuredAdditionalFields) {
+    if (cleanSubmissionValue(details[field.key])) values.push(field.value);
+  }
+  if (details.correctionIntent === structuredCorrectionIntentValues.correcting) values.push('Popravek napačnega dodatnega podatka');
+  return values.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number]));
+};
+
+export const isValidElevationGain = (value: string | undefined) => {
+  const clean = cleanSubmissionValue(value);
+  return !clean || /^(0|[1-9]\d*)$/.test(clean);
+};
+
+export const isValidStructuredRouteUrl = (value: string | undefined) => {
+  const clean = cleanSubmissionValue(value);
+  return !clean || isSafeHttpUrl(clean);
+};
+
+export const buildStructuredAdditionalDescription = ({ details = {}, lang }: { details?: StructuredAdditionalDetails; lang: ProposalLanguage }) => {
+  const lines: string[] = [];
+  for (const field of structuredAdditionalFields) {
+    const value = cleanSubmissionValue(details[field.key]);
+    if (value) lines.push(`${field.labels[lang]}: ${value}${field.suffix}`);
+  }
+  if (!lines.length) return '';
+  return `${lang === 'en' ? 'Additional details:' : 'Dodatni podatki:'}\n\n${lines.join('\n')}`;
+};
+
+export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, lang }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; lang: ProposalLanguage }) => {
+  const base = cleanSubmissionValue(basicDescription);
+  const structured = buildStructuredAdditionalDescription({ details: structuredDetails, lang });
+  return [base, structured].filter(Boolean).join('\n\n');
+};
+
 export type GoogleFormsSubmissionUrlInput = {
   proposalType?: string;
   date?: string;
