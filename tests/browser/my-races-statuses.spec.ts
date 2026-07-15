@@ -57,6 +57,28 @@ const races2026 = [
   }
 ];
 
+const additional2026 = [
+  {
+    master_row: '101',
+    datum: '2026-08-15',
+    naziv_prireditve: 'Ljubljana Test Run',
+    zanesljivost: 'visoka',
+    rok_cenejse_prijave: '2026-07-18',
+    rok_prijave: '2026-07-23'
+  }
+];
+
+const duplicateAdditional2026 = [
+  {
+    master_row: '101',
+    datum: '2026-08-15',
+    naziv_prireditve: 'Ljubljana Test Run',
+    zanesljivost: 'visoka',
+    rok_cenejse_prijave: '2026-07-16',
+    rok_prijave: '2026-07-16'
+  }
+];
+
 const byId: Record<string, SavedRaceFixture> = {
   r000101: { eventId: 'r000101', year: '2026', date: '2026-08-15', title: 'Ljubljana Test Run' },
   r000102: { eventId: 'r000102', year: '2026', date: '2026-09-20', title: 'Maribor Test Trail' },
@@ -70,15 +92,48 @@ const card = (page: Page, key: string) => page.locator(`[data-key="${key}"]`);
 const count = (page: Page, status: SavedRaceStatus) => page.locator(`[data-my-races-status-count="${status}"]`);
 const filter = (page: Page, status: SavedRaceStatus | 'all') => page.locator(`[data-my-races-status-filter="${status}"]`);
 
-async function mockMyRacesApis(page: Page) {
+async function freezeLjubljanaDate(page: Page) {
+  const clock = (page as Page & { clock?: { setFixedTime: (date: Date) => Promise<void> } }).clock;
+  if (clock?.setFixedTime) {
+    await clock.setFixedTime(new Date('2026-07-15T10:00:00+02:00'));
+    return;
+  }
+  await page.addInitScript(() => {
+    const fixed = new Date('2026-07-15T08:00:00.000Z').getTime();
+    const RealDate = Date;
+    class MockDate extends RealDate {
+      constructor(...args: any[]) {
+        if (args.length === 0) super(fixed);
+        else super(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+      }
+      static now() { return fixed; }
+    }
+    Object.defineProperty(window, 'Date', { configurable: true, value: MockDate });
+  });
+}
+
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additionalStatus?: number } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('console', (msg) => { if (msg.type() === 'error') pageErrors.push(msg.text()); });
 
+  const requestCounts = { master2026: 0, master2027: 0, additional: 0 };
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
-    if (url.searchParams.get('year') === '2027') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+
+    if (url.pathname === '/additional') {
+      requestCounts.additional += 1;
+      if (options.additionalStatus && options.additionalStatus >= 400) return route.fulfill({ status: options.additionalStatus, contentType: 'application/json', body: JSON.stringify({ error: 'additional failed' }) });
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: options.additional ?? additional2026 }) });
+    }
+
+    if (url.searchParams.get('year') === '2027') {
+      requestCounts.master2027 += 1;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+    }
+
+    requestCounts.master2026 += 1;
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(races2026) });
   });
 
@@ -94,7 +149,7 @@ async function mockMyRacesApis(page: Page) {
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: undefined });
   });
 
-  return { analytics, pageErrors };
+  return { analytics, pageErrors, requestCounts };
 }
 
 async function seedLegacySavedRaces(page: Page, races: ReturnType<typeof legacyRace>[]) {
@@ -141,6 +196,106 @@ function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
   const serialized = JSON.stringify(analytics);
   expect(serialized).not.toMatch(/following|planning|registered|completed|status/);
 }
+
+test('shows verified deadlines on the saved race card and in the upcoming panel', async ({ page }) => {
+  await freezeLjubljanaDate(page);
+  const { pageErrors } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+
+  await openMyRaces(page);
+
+  const raceCard = card(page, '2026:r000101');
+  await expect(raceCard).toBeVisible();
+  await expect(raceCard).toContainText('Cenejša prijava se konča čez 3 dni');
+  await expect(raceCard).toContainText('Prijave se zaprejo čez 8 dni');
+  await expect(raceCard).toContainText('18. julij 2026');
+  await expect(raceCard).toContainText('23. julij 2026');
+
+  const panel = page.locator('[data-upcoming-deadlines-panel]');
+  await expect(panel).toContainText('Prihajajoči prijavni roki');
+  await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(2);
+  await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava se konča čez 3 dni');
+  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo čez 8 dni');
+
+  for (const deadline of [
+    { kind: 'early', googleDate: '20260718', outlookDate: '2026-07-18' },
+    { kind: 'registration', googleDate: '20260723', outlookDate: '2026-07-23' }
+  ]) {
+    const item = panel.locator(`[data-deadline-kind="${deadline.kind}"]`);
+    await expect(item.locator('summary')).toHaveText('Dodaj rok v koledar');
+    const hrefs = await item.locator('.deadline-calendar-actions a').evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href));
+    expect(hrefs).toHaveLength(3);
+    expect(hrefs.find((href) => href.includes('calendar.google.com'))).toContain(deadline.googleDate);
+    expect(hrefs.find((href) => href.startsWith('data:text/calendar'))).toContain(deadline.googleDate);
+    expect(hrefs.find((href) => href.includes('outlook.live.com'))).toContain(encodeURIComponent(deadline.outlookDate));
+    expect(hrefs.join(' ')).not.toContain('20260815');
+  }
+
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('deduplicates identical early and final deadline dates', async ({ page }) => {
+  await freezeLjubljanaDate(page);
+  const { pageErrors } = await mockMyRacesApis(page, { additional: duplicateAdditional2026 });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+
+  await openMyRaces(page);
+
+  const raceCard = card(page, '2026:r000101');
+  await expect(raceCard.locator('[data-deadline-item]')).toHaveCount(1);
+  await expect(raceCard.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo jutri');
+  await expect(raceCard.locator('[data-deadline-kind="early"]')).toHaveCount(0);
+  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(1);
+
+  const panel = page.locator('[data-upcoming-deadlines-panel]');
+  await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(1);
+  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo jutri');
+  await expect(panel.locator('.deadline-calendar-menu')).toHaveCount(1);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('updates upcoming deadline panel eligibility when saved status changes without API refetches', async ({ page }) => {
+  await freezeLjubljanaDate(page);
+  const { pageErrors, requestCounts } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000101', 'planning')]);
+
+  await openMyRaces(page);
+  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-item]')).toHaveCount(2);
+  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.master2026).toBe(1);
+  expect(requestCounts.master2027).toBe(1);
+
+  await card(page, '2026:r000101').getByLabel('Moj status').selectOption('completed');
+  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+  await expect(card(page, '2026:r000101').locator('[data-deadline-item]')).toHaveCount(2);
+  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.master2026).toBe(1);
+  expect(requestCounts.master2027).toBe(1);
+
+  await card(page, '2026:r000101').getByLabel('Moj status').selectOption('following');
+  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-item]')).toHaveCount(2);
+  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.master2026).toBe(1);
+  expect(requestCounts.master2027).toBe(1);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('keeps My races usable when optional additional API fails', async ({ page }) => {
+  await freezeLjubljanaDate(page);
+  const { pageErrors } = await mockMyRacesApis(page, { additionalStatus: 500 });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000102', 'planning')]);
+
+  await openMyRaces(page);
+
+  await expect(card(page, '2026:r000101')).toBeVisible();
+  await expect(card(page, '2026:r000102')).toBeVisible();
+  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+  await expect(page.getByText('API trenutno ni dosegljiv')).toHaveCount(0);
+  await filter(page, 'planning').click();
+  await expect(card(page, '2026:r000102')).toBeVisible();
+  await expect(card(page, '2026:r000101')).toHaveCount(0);
+  await expectNoUnexpectedErrors(pageErrors);
+});
 
 test('migrates V1 saved races to V2 and preserves the race', async ({ page }) => {
   const { pageErrors } = await mockMyRacesApis(page);

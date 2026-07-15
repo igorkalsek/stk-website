@@ -3,6 +3,7 @@ import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIc
 import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getSavedRaceDetailPath, getUpcomingSavedRaceDeadlines, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
 import { getSavedRaceKey, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUSES, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, type MinimalStorage, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
+import { getStableEventId } from './utils-event-detail.js';
 import { buildPrimaryActions } from './utils-race-detail-view.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
@@ -179,7 +180,7 @@ export const initMyRacesPage = async (root = document) => {
   try {
     if (additionalRows.length) {
       const attached = attachAdditionalDataByMasterRow(resolved.filter((item) => item.event && isAdditionalDataEnabledForYear(item.event.year as PublicYear)).map((item) => item.event!), additionalRows);
-      const byKey = new Map(attached.map((event) => [`${event.year}:${event.id}`, event]));
+      const byKey = new Map(attached.map((event) => [`${event.year}:${getStableEventId(event)}`, event]));
       resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
     }
   } catch { /* optional additional data */ }
