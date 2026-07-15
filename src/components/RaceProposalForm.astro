@@ -1,6 +1,7 @@
 ---
 import { googleProposalFormContract } from '../proposal-form/proposal-form-contract';
 import { buildGoogleFormsFallbackUrl, readProposalPrefill, basicChangeCategoryValues } from '../proposal-form/proposal-form-controller';
+import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS } from '../utils-public-year';
 import { proposalFormLocales, proposalTypeOptions } from '../proposal-form/proposal-form-locales';
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
 
@@ -15,6 +16,8 @@ const changeGroups = [
   { title: lang === 'en' ? 'Basic details' : 'Osnovni podatki', options: [...basicChangeCategoryValues].map((value) => ({ value, label: changeLabelFor(value) })) },
   { title: lang === 'en' ? 'Other' : 'Drugo', options: ['Drugo'].map((value) => ({ value, label: changeLabelFor(value) })) }
 ];
+const pickerCopy = lang === 'en' ? { heading: 'Select a race', label: 'Search by race name or place', placeholder: 'Start typing a race name or place …', loading: 'Loading races …', error: 'Race search could not be loaded. You can still enter details manually.', empty: 'No matching races found.', fallback: 'I cannot find the race – enter details manually', back: 'Back to race search' } : { heading: 'Izberite tek', label: 'Poiščite tek po nazivu ali kraju', placeholder: 'Začnite vnašati naziv ali kraj …', loading: 'Teke nalagamo …', error: 'Iskanja tekov ni bilo mogoče naložiti. Podatke lahko še vedno vnesete ročno.', empty: 'Ni ujemajočih se tekov.', fallback: 'Teka ne najdem – vnesem podatke ročno', back: 'Nazaj na iskanje teka' };
+const raceApiPaths = SUPPORTED_PUBLIC_YEARS.map((year) => ({ year, path: buildMasterApiPath(year) }));
 ---
 <section class="page-hero container proposal-hero" aria-labelledby="page-title">
   <span class="eyebrow">{copy.eyebrow}</span>
@@ -66,6 +69,18 @@ const changeGroups = [
       </fieldset>
       <input type="radio" name="proposal-type-ui" value="existing" hidden data-context-existing-radio data-proposal-type-ui data-field-label={copy.labels.proposalType} />
       <input type="hidden" name={googleProposalFormContract.fields.proposalType} value="" data-backend-proposal-type />
+
+      <section class="race-picker" data-race-picker data-testid="race-picker" hidden aria-labelledby="race-picker-title">
+        <h3 id="race-picker-title">{pickerCopy.heading}</h3>
+        <label for="proposal-race-search">{pickerCopy.label}</label>
+        <div class="race-picker-combobox" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-owns="proposal-race-results" data-race-combobox>
+          <input id="proposal-race-search" data-testid="race-picker-search" type="search" autocomplete="off" placeholder={pickerCopy.placeholder} aria-autocomplete="list" aria-controls="proposal-race-results" aria-describedby="proposal-race-picker-status" data-race-search />
+        </div>
+        <div id="proposal-race-results" class="race-picker-results" role="listbox" data-testid="race-picker-results" data-race-results hidden></div>
+        <p id="proposal-race-picker-status" class="field-helper" role="status" aria-live="polite" data-race-picker-status>{pickerCopy.loading}</p>
+        <button type="button" class="button button-secondary-light race-picker-fallback" data-testid="race-picker-manual" data-race-manual>{pickerCopy.fallback}</button>
+      </section>
+      <button type="button" class="button button-secondary-light race-search-back" data-testid="race-picker-back" data-race-search-back hidden>{pickerCopy.back}</button>
       <input type="hidden" name={googleProposalFormContract.fields.dateYear} value="" data-date-part="year" disabled />
       <input type="hidden" name={googleProposalFormContract.fields.dateMonth} value="" data-date-part="month" disabled />
       <input type="hidden" name={googleProposalFormContract.fields.dateDay} value="" data-date-part="day" disabled />
@@ -133,15 +148,20 @@ const changeGroups = [
     <form method="post" action={googleProposalFormContract.responseUrl} target="proposal-form-target" data-backend-submit-form hidden aria-hidden="true"></form>
   </div>
 </section>
+<script type="application/json" data-race-api-paths set:html={JSON.stringify(raceApiPaths)}></script>
 <script>
   // @ts-nocheck
   import { googleProposalFormContract as contract } from '../proposal-form/proposal-form-contract';
   import { proposalFormLocales } from '../proposal-form/proposal-form-locales';
   import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain } from '../proposal-form/proposal-form-controller';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from '../utils-additional';
+  import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
+  import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
 
   const form = document.querySelector('[data-proposal-form]');
   const isEnglish = document.documentElement.lang?.startsWith('en') || window.location.pathname.startsWith('/en/');
   const copy = proposalFormLocales[isEnglish ? 'en' : 'sl'];
+  const raceApiPaths = JSON.parse(document.querySelector('[data-race-api-paths]')?.textContent || '[]');
   const params = new URLSearchParams(window.location.search);
   const prefill = readProposalPrefill(params, isEnglish ? 'en' : 'sl');
   const hasRaceContext = Boolean(prefill.eventKey || (prefill.eventTitle && prefill.date && prefill.place));
@@ -180,7 +200,62 @@ const changeGroups = [
   let showAllChangeOptions = false;
   let missingDirectCategories = [];
   let commonContextChanges = [...basicChangeCategoryValues];
+  const racePicker = document.querySelector('[data-race-picker]');
+  const raceSearch = document.querySelector('[data-race-search]');
+  const raceResults = document.querySelector('[data-race-results]');
+  const raceStatus = document.querySelector('[data-race-picker-status]');
+  const raceManual = document.querySelector('[data-race-manual]');
+  const raceBack = document.querySelector('[data-race-search-back]');
+  const raceCombobox = document.querySelector('[data-race-combobox]');
+  const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+  let racePickerMode = 'search';
+  let racePickerEvents = [];
+  let racePickerMatches = [];
+  let racePickerActiveIndex = -1;
+  let racePickerLoaded = false;
 
+
+  const pickerMessages = isEnglish ? { loading: 'Loading races …', ready: 'Start typing to search public races.', error: 'Race search could not be loaded. You can still enter details manually.', empty: 'No matching races found.' } : { loading: 'Teke nalagamo …', ready: 'Začnite vnašati za iskanje javnih tekov.', error: 'Iskanja tekov ni bilo mogoče naložiti. Podatke lahko še vedno vnesete ročno.', empty: 'Ni ujemajočih se tekov.' };
+  const formatPickerDate = (value) => value ? new Intl.DateTimeFormat(isEnglish ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'numeric', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
+  const escapeHtml = (value) => String(value || '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+  const closeRaceResults = () => { if (raceResults) raceResults.hidden = true; raceCombobox?.setAttribute('aria-expanded', 'false'); raceSearch?.removeAttribute('aria-activedescendant'); racePickerActiveIndex = -1; };
+  const setRaceStatus = (message) => { if (raceStatus) raceStatus.textContent = message; };
+  const renderRaceResults = () => {
+    if (!raceResults) return;
+    raceResults.innerHTML = racePickerMatches.map((event, index) => `<button type="button" role="option" id="proposal-race-option-${index}" class="race-picker-option" data-race-result-index="${index}" aria-selected="${index === racePickerActiveIndex ? 'true' : 'false'}"><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml([formatPickerDate(event.date), event.place, event.region].filter(Boolean).join(' · '))}</span></button>`).join('');
+    raceResults.hidden = racePickerMatches.length === 0;
+    raceCombobox?.setAttribute('aria-expanded', racePickerMatches.length ? 'true' : 'false');
+    if (racePickerActiveIndex >= 0) raceSearch?.setAttribute('aria-activedescendant', `proposal-race-option-${racePickerActiveIndex}`); else raceSearch?.removeAttribute('aria-activedescendant');
+  };
+  const updateRaceSearch = () => {
+    const query = raceSearch?.value || '';
+    racePickerMatches = searchPublicRaces(racePickerEvents, query, 10);
+    racePickerActiveIndex = racePickerMatches.length ? 0 : -1;
+    renderRaceResults();
+    if (query.trim()) setRaceStatus(racePickerMatches.length ? `${racePickerMatches.length}` : pickerMessages.empty); else { closeRaceResults(); setRaceStatus(racePickerLoaded ? pickerMessages.ready : pickerMessages.loading); }
+  };
+  const selectRace = (event) => { window.location.href = buildRaceCorrectionContextUrl(event, isEnglish ? 'en' : 'sl'); };
+  const loadRacePickerEvents = async () => {
+    if (hasRaceContext || racePickerLoaded || !racePicker) return;
+    setRaceStatus(pickerMessages.loading);
+    try {
+      const yearly = await Promise.all(raceApiPaths.map(async ({ year, path }) => {
+        const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`API status ${response.status}`);
+        return toApiRecords(await response.json()).map((item) => mapPublicRaceEvent(item, year, 0)).filter(Boolean);
+      }));
+      let events = yearly.flat();
+      try { events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData()); } catch (error) { console.warn('Proposal race picker additional data skipped', error); }
+      racePickerEvents = events.sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
+      racePickerLoaded = true;
+      setRaceStatus(pickerMessages.ready);
+      updateRaceSearch();
+    } catch (error) {
+      console.error('Proposal race picker API error', error);
+      racePickerLoaded = true;
+      setRaceStatus(pickerMessages.error);
+    }
+  };
   const publishedFieldDefinitions = [
     { key: 'date', group: 'basic', labels: { sl: 'Datum', en: 'Date' }, category: fieldCategoryMap.date },
     { key: 'eventTitle', group: 'basic', labels: { sl: 'Naziv', en: 'Name' }, category: fieldCategoryMap.title },
@@ -280,7 +355,8 @@ const changeGroups = [
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
   const setRow = (key, rule) => { const row = document.querySelector(`[data-field-row="${key}"]`); const control = row?.querySelector('input,select,textarea'); if (!row || !control || !rule) return; row.hidden = !rule.visible; control.required = Boolean(rule.visible && rule.required); control.disabled = Boolean(rule.disabled || (!rule.visible && !rule.keepEnabledWhenHidden)); control.removeAttribute('aria-invalid'); control.setCustomValidity(''); const mark = row.querySelector('[data-required-mark]'); if (mark) mark.hidden = !(rule.visible && rule.required); };
   const getIdentityState = () => ({ date: Boolean(prefill.date), title: Boolean(prefill.eventTitle), place: Boolean(prefill.place), region: Boolean(prefill.region) });
-  const computeFieldRules = (type) => { const identity = getIdentityState(); return getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); };
+  const isPickerGateActive = () => currentType() === 'existing' && !hasRaceContext && racePickerMode !== 'manual';
+  const computeFieldRules = (type) => { const identity = getIdentityState(); const gated = type === 'existing' && !hasRaceContext && racePickerMode !== 'manual'; const rules = getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); return gated ? Object.fromEntries(Object.entries(rules).map(([key, rule]) => [key, { ...rule, visible: false, required: false, disabled: true }])) : rules; };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
   const applyTypeUx = () => {
     const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const rules = computeFieldRules(type);
@@ -288,11 +364,16 @@ const changeGroups = [
     setRow('organizer', rules.organizer); setRow('announcement', rules.announcement); setRow('source', rules.source); setRow('description', rules.description); setRow('email', rules.email);
     if (placeLabel) placeLabel.textContent = copy.labels.place;
     const place = form?.elements.namedItem(contract.fields.place); if (place) place.dataset.fieldLabel = placeLabel?.textContent || copy.labels.place;
-    if (additionalSection) additionalSection.hidden = !isExisting;
+    const pickerActive = isExisting && !hasRaceContext && racePickerMode !== 'manual';
+    if (racePicker) racePicker.hidden = !pickerActive;
+    if (raceBack) raceBack.hidden = !(isExisting && !hasRaceContext && racePickerMode === 'manual');
+    if (pickerActive) loadRacePickerEvents(); else closeRaceResults();
+    if (additionalSection) additionalSection.hidden = !isExisting || pickerActive;
     if (changeOptionsDetails) changeOptionsDetails.open = !hasRaceContext;
-    form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.disabled = !isExisting; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); }); structuredFields().forEach((field) => { field.disabled = !isExisting; field.removeAttribute('aria-invalid'); field.setCustomValidity?.(''); });
+    form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.disabled = !isExisting || pickerActive; box.required = false; box.removeAttribute('aria-invalid'); box.setCustomValidity(''); }); structuredFields().forEach((field) => { field.disabled = !isExisting || pickerActive; field.removeAttribute('aria-invalid'); field.setCustomValidity?.(''); });
     syncDescriptionRequirement();
-    if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription, copy.placeholders.newDescription);
+    if (pickerActive) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, buildChangePlaceholder());
+    else if (isNew) setDescriptionCopy(copy.dynamicLabels.newDescription, copy.helpers.newDescription, copy.placeholders.newDescription);
     else if (isExisting) setDescriptionCopy(copy.dynamicLabels.additionalDescription, copy.helpers.additionalDescription, buildChangePlaceholder());
     else setDescriptionCopy(copy.labels.description, copy.placeholders.otherDescription, copy.placeholders.otherDescription);
     if (!isExisting) { clearChangeError(); if (changeSummary) changeSummary.hidden = true; }
@@ -366,7 +447,19 @@ const changeGroups = [
   const focusStructuredField = (category) => { const map = { 'Prijavnina / startnina': 'entryFee', 'Rok prijave': 'registrationDeadline', 'Cenejša prijava / sprememba cene': 'cheaperRegistration', 'Prijave na dan dogodka': 'raceDayRegistration', 'Višinski metri': 'elevationGain', 'Trasa / zemljevid / GPX': 'routeUrl' }; const field = form?.querySelector(`[data-structured-field="${map[category] || 'entryFee'}"]`); field?.scrollIntoView({ behavior: 'smooth', block: 'center' }); field?.focus({ preventScroll: true }); };
   missingDetailsButton?.addEventListener('click', () => { if (additionalSection) additionalSection.hidden = false; clearChangeError(); updateChangeSummary(); focusStructuredField(missingDirectCategories[0]); });
   publishedList?.addEventListener('click', (event) => { const button = event.target?.closest?.('[data-field-change]'); if (!button) return; if (allowedAdditionalValues.includes(button.dataset.fieldChange) && button.dataset.fieldChange !== 'Drugo') { if (additionalSection) additionalSection.hidden = false; focusStructuredField(button.dataset.fieldChange); } else { selectChangeCategory(button.dataset.fieldChange); description?.scrollIntoView({ behavior: 'smooth', block: 'center' }); description?.focus({ preventScroll: true }); } clearChangeError(); updateChangeSummary(); syncVisibleChangeOptions(); });
-  form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', applyTypeUx));
+  form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', () => { racePickerMode = 'search'; if (raceSearch) raceSearch.value = ''; closeRaceResults(); applyTypeUx(); }));
+  raceSearch?.addEventListener('input', updateRaceSearch);
+  raceSearch?.addEventListener('keydown', (event) => {
+    if (!racePickerMatches.length && !['Escape'].includes(event.key)) return;
+    if (event.key === 'ArrowDown') { event.preventDefault(); racePickerActiveIndex = Math.min(racePickerActiveIndex + 1, racePickerMatches.length - 1); renderRaceResults(); }
+    else if (event.key === 'ArrowUp') { event.preventDefault(); racePickerActiveIndex = Math.max(racePickerActiveIndex - 1, 0); renderRaceResults(); }
+    else if (event.key === 'Enter' && racePickerActiveIndex >= 0) { event.preventDefault(); selectRace(racePickerMatches[racePickerActiveIndex]); }
+    else if (event.key === 'Escape') { closeRaceResults(); }
+  });
+  raceResults?.addEventListener('click', (event) => { const option = event.target?.closest?.('[data-race-result-index]'); if (!option) return; selectRace(racePickerMatches[Number(option.dataset.raceResultIndex)]); });
+  document.addEventListener('click', (event) => { if (racePicker && !racePicker.contains(event.target)) closeRaceResults(); });
+  raceManual?.addEventListener('click', () => { racePickerMode = 'manual'; closeRaceResults(); applyTypeUx(); form?.querySelector('[data-field-row="date"] input')?.focus(); });
+  raceBack?.addEventListener('click', () => { racePickerMode = 'search'; applyTypeUx(); raceSearch?.focus(); });
   source?.addEventListener('blur', () => { validateSource(); updateFallbackLink(); });
   source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); updateFallbackLink(); });
   form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field.dataset?.structuredField === 'routeUrl') { const routeError = document.querySelector('[data-route-error]'); if (routeError) routeError.hidden = true; } if (field.dataset?.structuredField === 'elevationGain') { const elevationError = document.querySelector('[data-elevation-error]'); if (elevationError) elevationError.hidden = true; } updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
@@ -404,7 +497,7 @@ const changeGroups = [
   .correction-context { padding-top: 0; } .correction-context-card { display:grid; gap:8px; padding:20px; border-color:rgba(50,121,61,.22); background:linear-gradient(135deg,rgba(200,230,201,.62),rgba(255,255,255,.94)),var(--white); }
   .correction-context-card h2,.correction-context-card p{margin:0}.correction-context-back{width:fit-content;font-weight:700;color:var(--green-dark)}
   .proposal-hero [hidden],.correction-context[hidden],.published-details[hidden],.published-details [hidden],.proposal-panel [hidden]{display:none!important}.proposal-panel{padding:22px;border:1px solid rgba(16,64,80,.1);border-radius:var(--radius-lg);background:rgba(255,255,255,.92);box-shadow:0 16px 40px rgba(16,64,80,.08)}
-  .proposal-form{display:grid;gap:18px}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
+  .proposal-form{display:grid;gap:18px}.race-picker{display:grid;gap:10px;padding:16px;border:1px solid rgba(50,121,61,.2);border-radius:14px;background:rgba(200,230,201,.18)}.race-picker h3{margin:0}.race-picker label{font-weight:800}.race-picker-results{display:grid;gap:8px}.race-picker-option{display:grid;gap:4px;width:100%;text-align:left;border:1px solid rgba(16,64,80,.12);border-radius:12px;background:var(--white);padding:11px;font:inherit;cursor:pointer}.race-picker-option[aria-selected='true'],.race-picker-option:hover{border-color:rgba(50,121,61,.45);box-shadow:0 0 0 3px rgba(50,121,61,.12)}.race-picker-option span{color:var(--muted)}.race-picker-fallback,.race-search-back{width:fit-content}.proposal-type-fieldset,.optional-fieldset{border:0;padding:0;margin:0}.proposal-type-fieldset legend,.optional-fieldset legend{font-weight:800;margin-bottom:10px}
   .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
   .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
   .published-details{padding-top:0}.published-details-card{padding:18px}.published-details-card h2{margin-top:0}.published-details-card dl{margin:0}.published-details-groups{display:grid;gap:16px}.published-detail-group{display:grid;gap:8px}.published-detail-group h3{margin:0;font-size:1rem;color:var(--ink)}.published-details-grid{display:grid;gap:8px}.published-detail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 10px;border:1px solid rgba(16,64,80,.08);border-radius:10px;background:rgba(255,255,255,.82);min-width:0}.published-detail-item dt{font-size:.86rem;font-weight:800;color:var(--green-dark)}.published-detail-item dd{margin:0;overflow-wrap:anywhere;word-break:break-word}.published-detail-item dd a{font-weight:800;color:var(--green-dark);overflow-wrap:anywhere}.published-detail-item .field-action{grid-column:2;grid-row:1/3;align-self:center;border:1px solid rgba(50,121,61,.22);border-radius:999px;background:rgba(200,230,201,.24);color:var(--green-dark);font-weight:800;padding:5px 9px}.missing-value{color:var(--muted)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-options-details{border:1px solid rgba(16,64,80,.1);border-radius:12px;padding:10px;background:rgba(16,64,80,.025)}.change-options-details summary{cursor:pointer;font-weight:800;color:var(--green-dark)}.change-options-details[open]{display:grid;gap:12px}.structured-additional{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(16,64,80,.14);border-radius:14px;background:rgba(255,255,255,.72)}.structured-additional h3{margin:0}.structured-grid{display:grid;gap:12px}.structured-field{display:grid;gap:7px;padding:12px;border:1px solid rgba(16,64,80,.1);border-radius:12px;background:var(--white)}.structured-field.full-span{grid-column:1/-1}.suffix-input{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px}.suffix-input span{font-weight:800;color:var(--green-dark)}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
