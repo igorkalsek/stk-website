@@ -13,6 +13,8 @@ export type CalendarEventLinkInput = {
   noticeUrl?: string;
   registrationUrl?: string;
   language?: 'sl' | 'en';
+  uid?: string;
+  descriptionOverride?: string;
 };
 
 export type MultiIcsCalendarEventInput = CalendarEventLinkInput & {
@@ -58,8 +60,10 @@ const EVENT_DETAILS = {
 const getEventDetails = ({
   noticeUrl = '',
   registrationUrl = '',
-  language = 'sl'
-}: Pick<CalendarEventLinkInput, 'noticeUrl' | 'registrationUrl' | 'language'>) => {
+  language = 'sl',
+  descriptionOverride = ''
+}: Pick<CalendarEventLinkInput, 'noticeUrl' | 'registrationUrl' | 'language' | 'descriptionOverride'>) => {
+  if (descriptionOverride) return descriptionOverride;
   const labels = EVENT_DETAILS[language] ?? EVENT_DETAILS.sl;
 
   const normalizedNoticeUrl = normalizeDetailUrl(noticeUrl);
@@ -89,7 +93,8 @@ const buildIcsEventLines = ({
   registrationUrl = '',
   language = 'sl',
   uid,
-  dtstamp = new Date()
+  dtstamp = new Date(),
+  descriptionOverride = ''
 }: CalendarEventLinkInput & { uid: string; dtstamp?: Date | string }) => {
   if (!title || !hasValidAllDayDate(date) || !uid) return [];
 
@@ -104,7 +109,7 @@ const buildIcsEventLines = ({
     `DTEND;VALUE=DATE:${formatGoogleCalendarDate(nextDate)}`,
     `SUMMARY:${escapeIcsText(title)}`,
     location ? `LOCATION:${escapeIcsText(location)}` : '',
-    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl, language }))}`,
+    `DESCRIPTION:${escapeIcsText(getEventDetails({ noticeUrl, registrationUrl, language, descriptionOverride }))}`,
     'END:VEVENT'
   ].filter(Boolean);
 };
@@ -126,7 +131,8 @@ export const buildGoogleCalendarEventUrl = ({
   location = '',
   noticeUrl = '',
   registrationUrl = '',
-  language = 'sl'
+  language = 'sl',
+  descriptionOverride = ''
 }: CalendarEventLinkInput) => {
   if (!title || !hasValidAllDayDate(date)) return '';
 
@@ -137,7 +143,7 @@ export const buildGoogleCalendarEventUrl = ({
     action: 'TEMPLATE',
     text: title,
     dates: `${formatGoogleCalendarDate(date)}/${formatGoogleCalendarDate(nextDate)}`,
-    details: getEventDetails({ noticeUrl, registrationUrl, language })
+    details: getEventDetails({ noticeUrl, registrationUrl, language, descriptionOverride })
   });
 
   if (location) params.set('location', location);
@@ -184,7 +190,9 @@ export const buildIcsCalendarEvent = ({
   location = '',
   noticeUrl = '',
   registrationUrl = '',
-  language = 'sl'
+  language = 'sl',
+  uid = '',
+  descriptionOverride = ''
 }: CalendarEventLinkInput) => {
   const veventLines = buildIcsEventLines({
     title,
@@ -193,7 +201,8 @@ export const buildIcsCalendarEvent = ({
     noticeUrl,
     registrationUrl,
     language,
-    uid: `${date}-${slugifyFilenamePart(title)}@slovenski-tekaski-koledar`
+    descriptionOverride,
+    uid: uid || `${date}-${slugifyFilenamePart(title)}@slovenski-tekaski-koledar`
   });
   if (!veventLines.length) return '';
 
@@ -230,7 +239,8 @@ export const buildOutlookCalendarEventUrl = ({
   location = '',
   noticeUrl = '',
   registrationUrl = '',
-  language = 'sl'
+  language = 'sl',
+  descriptionOverride = ''
 }: CalendarEventLinkInput) => {
   if (!title || !hasValidAllDayDate(date)) return '';
 
@@ -243,10 +253,47 @@ export const buildOutlookCalendarEventUrl = ({
     startdt: date,
     enddt: nextDate,
     allday: 'true',
-    body: getEventDetails({ noticeUrl, registrationUrl, language })
+    body: getEventDetails({ noticeUrl, registrationUrl, language, descriptionOverride })
   });
 
   if (location) params.set('location', location);
 
   return `${OUTLOOK_CALENDAR_EVENT_URL}?${params.toString()}`;
+};
+
+export type RegistrationDeadlineCalendarInputOptions = {
+  eventId: string;
+  eventYear: string;
+  eventTitle: string;
+  deadlineKind: 'early' | 'registration';
+  deadlineDate: string;
+  detailUrl?: string;
+  registrationUrl?: string;
+  language?: 'sl' | 'en';
+};
+
+export const buildRegistrationDeadlineCalendarInput = ({
+  eventId,
+  eventYear,
+  eventTitle,
+  deadlineKind,
+  deadlineDate,
+  detailUrl = '',
+  registrationUrl = '',
+  language = 'sl'
+}: RegistrationDeadlineCalendarInputOptions): CalendarEventLinkInput => {
+  const labels = language === 'en'
+    ? { early: 'Early-registration deadline', registration: 'Registration deadline', verify: 'Verify the deadline in the official announcement.', detail: 'STK detail:', signup: 'Official registration:' }
+    : { early: 'Rok cenejše prijave', registration: 'Rok prijave', verify: 'Rok preverite v uradnem razpisu.', detail: 'STK stran:', signup: 'Uradna prijava:' };
+  const safeDetailUrl = normalizeDetailUrl(detailUrl);
+  const safeRegistrationUrl = normalizeDetailUrl(registrationUrl);
+  return {
+    title: `${labels[deadlineKind]}: ${eventTitle}`,
+    date: deadlineDate,
+    noticeUrl: safeDetailUrl,
+    registrationUrl: safeRegistrationUrl,
+    language,
+    uid: `${eventYear}-${eventId}-${deadlineKind}-deadline-${deadlineDate.replace(/-/g, '')}@slovenski-tekaski-koledar`,
+    descriptionOverride: [labels.verify, safeDetailUrl ? `${labels.detail} ${safeDetailUrl}` : '', safeRegistrationUrl ? `${labels.signup} ${safeRegistrationUrl}` : ''].filter(Boolean).join('\n')
+  };
 };

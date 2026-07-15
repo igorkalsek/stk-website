@@ -209,3 +209,42 @@ describe('my races page source contract', () => {
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
   });
 });
+
+import { getUpcomingSavedRaceDeadlines } from '../.cache/dist-test/utils-my-races.js';
+
+const withAdditional = (item, additionalData) => ({ ...item, event: item.event ? { ...item.event, additionalData } : null });
+const additional = (date, title, registrationDeadline = '', earlyRegistrationDeadline = '', reliability = 'visoka') => ({ masterRow: '173', masterRowNumber: 173, reliability, date, eventTitle: title, registrationMinEur: '', registrationMaxEur: '', registrationDeadline, earlyRegistrationDeadline, dayOfRegistration: '', elevationGain: '', routeUrl: '' });
+
+describe('my races upcoming registration deadlines', () => {
+  it('selects active resolved saved race deadlines and excludes completed, unresolved, past and beyond window', () => {
+    const base = resolveSavedRaces([
+      saved('r000173', '2026', '2026-08-01', 'A', 'following'),
+      saved('r000174', '2026', '2026-08-02', 'B', 'planning'),
+      saved('r000175', '2026', '2026-08-03', 'C', 'registered'),
+      saved('r000176', '2026', '2026-08-04', 'D', 'completed'),
+      saved('r999999', '2026', '2026-08-05', 'Missing', 'following')
+    ], { 2026: [
+      apiEvent({ row: '173', date: '2026-08-01', title: 'A' }),
+      apiEvent({ row: '174', date: '2026-08-02', title: 'B' }),
+      apiEvent({ row: '175', date: '2026-08-03', title: 'C' }),
+      apiEvent({ row: '176', date: '2026-08-04', title: 'D' })
+    ] }, '2026-07-01');
+    const items = [
+      withAdditional(base[0], additional('2026-08-01', 'A', '2026-07-05')),
+      withAdditional(base[1], additional('2026-08-02', 'B', '2026-06-30')),
+      withAdditional(base[2], additional('2026-08-03', 'C', '2026-08-15')),
+      withAdditional(base[3], additional('2026-08-04', 'D', '2026-07-05')),
+      base[4]
+    ];
+    assert.deepEqual(getUpcomingSavedRaceDeadlines({ items, todayIso: '2026-07-01', windowDays: 30 }).map((item) => item.event.title), ['A']);
+  });
+  it('deduplicates same-date deadlines, sorts deterministically, limits to six and keeps escaped labels renderable', () => {
+    const races = Array.from({ length: 8 }, (_, index) => saved(`r${String(200 + index).padStart(6, '0')}`, '2026', `2026-08-${String(index + 10).padStart(2, '0')}`, `<Race ${index}>`, 'following'));
+    const payload = races.map((race, index) => apiEvent({ row: String(200 + index), date: race.date, title: race.title }));
+    const resolved = resolveSavedRaces(races, { 2026: payload }, '2026-07-01').map((item, index) => withAdditional(item, additional(item.event.date, item.event.title, `2026-07-${String(10 + index).padStart(2, '0')}`, `2026-07-${String(10 + index).padStart(2, '0')}`)));
+    const deadlines = getUpcomingSavedRaceDeadlines({ items: resolved, todayIso: '2026-07-01', limit: 6 });
+    assert.equal(deadlines.length, 6);
+    assert.deepEqual(deadlines.map((item) => item.deadline.kind), Array(6).fill('registration'));
+    assert.ok(deadlines[0].event.title.includes('<Race'));
+  });
+});

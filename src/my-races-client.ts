@@ -1,19 +1,23 @@
 import { trackStkEvent, trackStkPageLoadEventOnce } from './lib/stkAnalytics.js';
-import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, type MultiIcsCalendarEventInput } from './utils-calendar.js';
-import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getSavedRaceDetailPath, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
+import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, buildRegistrationDeadlineCalendarInput, type MultiIcsCalendarEventInput } from './utils-calendar.js';
+import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getSavedRaceDetailPath, getUpcomingSavedRaceDeadlines, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
 import { getSavedRaceKey, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUSES, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, type MinimalStorage, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
-import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
+import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { buildPrimaryActions } from './utils-race-detail-view.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
+import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
+import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
+type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRows: AdditionalEventData[] };
+const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
 
-type Labels = Record<'loading' | 'empty' | 'search' | 'upcoming' | 'other' | 'unresolved' | 'remove' | 'details' | 'google' | 'apple' | 'outlook' | 'apiError' | 'storageError' | 'local' | 'downloadAll' | 'downloadAllNote' | 'calendarError' | 'emptyFilter', string>;
+type Labels = Record<'deadlinePanel' | 'earlyRegistration' | 'registrationDeadline' | 'addDeadline' | 'verifyDeadline' | 'deadlineUnavailable' | 'deadlinePrefix' | 'untilPrefix' | 'loading' | 'empty' | 'search' | 'upcoming' | 'other' | 'unresolved' | 'remove' | 'details' | 'google' | 'apple' | 'outlook' | 'apiError' | 'storageError' | 'local' | 'downloadAll' | 'downloadAllNote' | 'calendarError' | 'emptyFilter', string>;
 const LABELS: Record<'sl' | 'en', Labels> = {
-  sl: { loading: 'Nalagamo shranjene teke …', empty: 'Nimate še shranjenih tekov.', search: 'Odprite iskalnik tekov', upcoming: 'Prihodnji teki', other: 'Pretekli ali trenutno nerazrešeni teki', unresolved: 'Shranjena referenca', remove: 'Odstrani', details: 'Podrobnosti', google: 'Google', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.', storageError: 'Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov.', local: 'Shranjeni teki in njihovi osebni statusi so shranjeni samo v vašem brskalniku. Ne pošiljajo se na strežnik in se ne sinhronizirajo med napravami.', downloadAll: 'Prenesi vse prihodnje teke (.ics)', downloadAllNote: 'Datoteka vsebuje prihodnje shranjene teke, razen tekov z oznako Opravljen.', emptyFilter: 'V tem statusu ni shranjenih tekov.', calendarError: 'Koledarske datoteke trenutno ni bilo mogoče pripraviti.' },
-  en: { loading: 'Loading saved races …', empty: 'You have not saved any races yet.', search: 'Open race finder', upcoming: 'Upcoming races', other: 'Past or currently unresolved races', unresolved: 'Saved reference', remove: 'Remove', details: 'Details', google: 'Google', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'The API is currently unavailable. Basic saved references are shown below.', storageError: 'The browser currently does not allow access to saved races.', local: 'Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.', downloadAll: 'Download all upcoming races (.ics)', downloadAllNote: 'The file contains upcoming saved races except races marked Completed.', emptyFilter: 'There are no saved races with this status.', calendarError: 'The calendar file could not be prepared at this time.' }
+  sl: { deadlinePanel: 'Prihajajoči prijavni roki', earlyRegistration: 'Cenejša prijava', registrationDeadline: 'Rok prijave', addDeadline: 'Dodaj rok v koledar', verifyDeadline: 'Rok preverite v uradnem razpisu.', deadlineUnavailable: 'Podatki o prijavnih rokih trenutno niso na voljo.', deadlinePrefix: 'Rok:', untilPrefix: 'Do', loading: 'Nalagamo shranjene teke …', empty: 'Nimate še shranjenih tekov.', search: 'Odprite iskalnik tekov', upcoming: 'Prihodnji teki', other: 'Pretekli ali trenutno nerazrešeni teki', unresolved: 'Shranjena referenca', remove: 'Odstrani', details: 'Podrobnosti', google: 'Google koledar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.', storageError: 'Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov.', local: 'Shranjeni teki in njihovi osebni statusi so shranjeni samo v vašem brskalniku. Ne pošiljajo se na strežnik in se ne sinhronizirajo med napravami.', downloadAll: 'Prenesi vse prihodnje teke (.ics)', downloadAllNote: 'Datoteka vsebuje prihodnje shranjene teke, razen tekov z oznako Opravljen.', emptyFilter: 'V tem statusu ni shranjenih tekov.', calendarError: 'Koledarske datoteke trenutno ni bilo mogoče pripraviti.' },
+  en: { deadlinePanel: 'Upcoming registration deadlines', earlyRegistration: 'Early registration', registrationDeadline: 'Registration deadline', addDeadline: 'Add deadline to calendar', verifyDeadline: 'Verify the deadline in the official announcement.', deadlineUnavailable: 'Registration deadline information is currently unavailable.', deadlinePrefix: 'Deadline:', untilPrefix: 'Until', loading: 'Loading saved races …', empty: 'You have not saved any races yet.', search: 'Open race finder', upcoming: 'Upcoming races', other: 'Past or currently unresolved races', unresolved: 'Saved reference', remove: 'Remove', details: 'Details', google: 'Google Calendar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'The API is currently unavailable. Basic saved references are shown below.', storageError: 'The browser currently does not allow access to saved races.', local: 'Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.', downloadAll: 'Download all upcoming races (.ics)', downloadAllNote: 'The file contains upcoming saved races except races marked Completed.', emptyFilter: 'There are no saved races with this status.', calendarError: 'The calendar file could not be prepared at this time.' }
 };
 
 export const getStorage = (): MinimalStorage | null => {
@@ -60,6 +64,35 @@ const renderStatusSelect = (race: SavedRace, language: 'sl' | 'en') => {
 const renderStatusSummary = (counts: Record<SavedRaceStatus, number>, language: 'sl' | 'en') => `<div class="my-races-status-summary" data-my-races-status-summary>${SAVED_RACE_STATUSES.map((status) => `<span data-my-races-status-count="${status}"><strong>${escapeHtml(SAVED_RACE_STATUS_LABELS[language][status])}</strong> ${counts[status]}</span>`).join('')}</div>`;
 const renderStatusFilters = (counts: Record<SavedRaceStatus, number>, active: MyRacesStatusFilter, total: number, language: 'sl' | 'en') => `<div class="my-races-status-filters" role="group" aria-label="${escapeHtml(SAVED_RACE_STATUS_COPY[language].label)}">${[`<button class="my-races-status-filter" type="button" data-my-races-status-filter="all" aria-pressed="${active === 'all'}">${escapeHtml(SAVED_RACE_STATUS_COPY[language].all)} <span>${total}</span></button>`, ...SAVED_RACE_STATUSES.map((status) => `<button class="my-races-status-filter" type="button" data-my-races-status-filter="${status}" aria-pressed="${active === status}">${escapeHtml(SAVED_RACE_STATUS_LABELS[language][status])} <span>${counts[status]}</span></button>`)].join('')}</div>`;
 
+
+
+type DeadlineEvent = Parameters<typeof buildRegistrationDeadlineCalendarInput>[0];
+const renderDeadlineCalendarMenu = (input: DeadlineEvent, labels: Labels) => {
+  const cal = buildRegistrationDeadlineCalendarInput(input);
+  const google = buildGoogleCalendarEventUrl(cal);
+  const ics = buildIcsDataUrl(cal);
+  const outlook = buildOutlookCalendarEventUrl(cal);
+  if (!google && !ics && !outlook) return '';
+  return `<details class="deadline-calendar-menu"><summary>${escapeHtml(labels.addDeadline)}</summary><div class="deadline-calendar-actions">${google ? `<a href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
+};
+
+const deadlineLabel = (deadline: RegistrationDeadlineView, labels: Labels) => deadline.kind === 'early' ? labels.earlyRegistration : labels.registrationDeadline;
+const renderDeadlineItem = (deadline: RegistrationDeadlineView, event: { id: string; year: string; title: string; date: string; registrationUrl: string }, detailUrl: string, labels: Labels, language: 'sl' | 'en', compact = false) => {
+  const relative = formatRegistrationDeadlineRelative(deadline, language);
+  const css = getRegistrationDeadlineCssState(deadline);
+  const calendar = deadline.state === 'past' ? '' : renderDeadlineCalendarMenu({ eventId: event.id, eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl, registrationUrl: event.registrationUrl, language }, labels);
+  return `<div class="registration-deadline-item ${css}" data-deadline-item data-deadline-kind="${deadline.kind}"><p class="registration-deadline-relative">${escapeHtml(relative)}</p><p class="registration-deadline-absolute">${escapeHtml(compact ? deadlineLabel(deadline, labels) : (deadline.kind === 'early' ? labels.untilPrefix : labels.deadlinePrefix))} ${escapeHtml(formatDate(deadline.date, language))}</p>${calendar}</div>`;
+};
+
+const renderEventDeadlines = (event: { id: string; year: string; title: string; date: string; registrationUrl: string; additionalData?: AdditionalEventData | null }, labels: Labels, language: 'sl' | 'en', todayIso: string) => {
+  const deadlines = buildRegistrationDeadlineViews({ todayIso, eventDate: event.date, registrationDeadline: event.additionalData?.registrationDeadline, earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline });
+  if (!deadlines.length) return '';
+  const detailUrl = getSavedRaceDetailPath(event as any, language);
+  return `<div class="my-race-deadlines">${deadlines.map((deadline) => renderDeadlineItem(deadline, event, detailUrl, labels, language)).join('')}</div>`;
+};
+
+const renderUpcomingDeadlinesPanel = (items: ReturnType<typeof getUpcomingSavedRaceDeadlines>, labels: Labels, language: 'sl' | 'en') => items.length ? `<section class="upcoming-deadlines-panel" data-upcoming-deadlines-panel><h2>${escapeHtml(labels.deadlinePanel)}</h2><div class="upcoming-deadline-list">${items.map((item) => `<article class="upcoming-deadline-item" data-upcoming-deadline-item><h3><a href="${escapeHtml(getSavedRaceDetailPath(item.event, language))}">${escapeHtml(item.event.title)}</a></h3>${renderDeadlineItem(item.deadline, item.event, getSavedRaceDetailPath(item.event, language), labels, language, true)}</article>`).join('')}</div></section>` : '';
+
 const renderExportToolbar = (events: MultiIcsCalendarEventInput[], labels: Labels) => events.length ? `<div class="my-races-toolbar"><div><button class="button button-small" type="button" data-download-upcoming-races-ics><span aria-hidden="true">📅</span> ${escapeHtml(labels.downloadAll)}</button><p>${escapeHtml(labels.downloadAllNote)}</p></div><p class="notice warning" data-calendar-export-status aria-live="polite" hidden></p></div>` : '';
 
 const downloadUpcomingRacesIcs = (events: MultiIcsCalendarEventInput[], labels: Labels, filename: string, status: HTMLElement | null) => {
@@ -86,7 +119,7 @@ const downloadUpcomingRacesIcs = (events: MultiIcsCalendarEventInput[], labels: 
 
 const renderFallback = (race: SavedRace, labels: Labels, language: 'sl' | 'en') => `<article class="my-race-card is-muted" data-key="${escapeHtml(getSavedRaceKey(race))}"><div><h3>${escapeHtml(race.title || labels.unresolved)}</h3><p>${escapeHtml([race.year, race.eventId, race.date].filter(Boolean).join(' · '))}</p><div class="my-race-card-status">${renderStatusBadge(race.status, language)}${renderStatusSelect(race, language)}</div></div><button class="button button-small button-secondary-light" type="button" data-remove-saved-race data-event-id="${escapeHtml(race.eventId)}" data-event-year="${escapeHtml(race.year)}" data-event-title="${escapeHtml(race.title || labels.unresolved)}" data-event-date="${escapeHtml(race.date)}">${labels.remove}</button></article>`;
 
-const renderEvent = (item: ReturnType<typeof resolveSavedRaces>[number], labels: Labels, language: 'sl' | 'en') => {
+const renderEvent = (item: ReturnType<typeof resolveSavedRaces>[number] & { event: any }, labels: Labels, language: 'sl' | 'en', todayIso: string) => {
   if (!item.event) return renderFallback(item.savedRace, labels, language);
   const event = item.event;
   const location = [event.place, event.region].filter(Boolean).join(', ');
@@ -94,7 +127,7 @@ const renderEvent = (item: ReturnType<typeof resolveSavedRaces>[number], labels:
   const google = buildGoogleCalendarEventUrl(cal);
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
-  return `<article class="my-race-card" data-key="${escapeHtml(item.key)}" data-analytics-placement="my_races" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div><p class="my-race-date">${escapeHtml(formatDate(event.date, language))}</p><h3><a href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${escapeHtml(event.title)}</a></h3><p>${escapeHtml(location)}</p><div class="my-race-card-status">${renderStatusBadge(item.savedRace.status, language)}${renderStatusSelect({ ...item.savedRace, date: event.date, title: event.title }, language)}</div></div><div class="my-race-actions"><a class="button button-small" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${labels.details}</a>${renderPrimaryActionLinks(event, language)}${google ? `<a class="button button-small button-secondary-light" href="${escapeHtml(google)}" target="_blank" rel="noopener">${labels.google}</a>` : ''}${ics ? `<a class="button button-small button-secondary-light" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${labels.apple}</a>` : ''}${outlook ? `<a class="button button-small button-secondary-light" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${labels.outlook}</a>` : ''}<button class="button button-small button-secondary-light" type="button" data-remove-saved-race data-event-id="${escapeHtml(item.savedRace.eventId)}" data-event-year="${escapeHtml(item.savedRace.year)}" data-event-title="${escapeHtml(event.title)}" data-event-date="${escapeHtml(event.date)}">${labels.remove}</button></div></article>`;
+  return `<article class="my-race-card" data-key="${escapeHtml(item.key)}" data-analytics-placement="my_races" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div><p class="my-race-date">${escapeHtml(formatDate(event.date, language))}</p><h3><a href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${escapeHtml(event.title)}</a></h3><p>${escapeHtml(location)}</p><div class="my-race-card-status">${renderStatusBadge(item.savedRace.status, language)}${renderStatusSelect({ ...item.savedRace, date: event.date, title: event.title }, language)}</div>${renderEventDeadlines(event, labels, language, todayIso)}</div><div class="my-race-actions"><a class="button button-small" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${labels.details}</a>${renderPrimaryActionLinks(event, language)}${google ? `<a class="button button-small button-secondary-light" href="${escapeHtml(google)}" target="_blank" rel="noopener">${labels.google}</a>` : ''}${ics ? `<a class="button button-small button-secondary-light" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${labels.apple}</a>` : ''}${outlook ? `<a class="button button-small button-secondary-light" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${labels.outlook}</a>` : ''}<button class="button button-small button-secondary-light" type="button" data-remove-saved-race data-event-id="${escapeHtml(item.savedRace.eventId)}" data-event-year="${escapeHtml(item.savedRace.year)}" data-event-title="${escapeHtml(event.title)}" data-event-date="${escapeHtml(event.date)}">${labels.remove}</button></div></article>`;
 };
 
 
@@ -129,13 +162,27 @@ export const initMyRacesPage = async (root = document) => {
   trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
   if (!saved.length) { mount.innerHTML = `<p>${labels.empty}</p><a class="button" href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a><p class="muted-note">${labels.local}</p>`; return; }
   mount.textContent = labels.loading;
-  const payloads: Record<string, unknown> = {};
-  let apiOk = true;
-  await Promise.all(SUPPORTED_PUBLIC_YEARS.map(async (year: PublicYear) => {
-    try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } }); if (!response.ok) throw new Error(String(response.status)); payloads[year] = await response.json(); }
-    catch { apiOk = false; }
-  }));
-  const resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, getTodayIsoInLjubljana()));
+  const loadData = async (): Promise<MyRacesDataCache> => {
+    const payloads: Record<string, unknown> = {};
+    let apiOk = true;
+    const additionalPromise = fetchAdditionalEventData().catch(() => [] as AdditionalEventData[]);
+    await Promise.all(SUPPORTED_PUBLIC_YEARS.map(async (year: PublicYear) => {
+      try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } }); if (!response.ok) throw new Error(String(response.status)); payloads[year] = await response.json(); }
+      catch { apiOk = false; }
+    }));
+    return { payloads, apiOk, additionalRows: await additionalPromise };
+  };
+  const data = await (pageDataCache.get(mount) ?? pageDataCache.set(mount, loadData()).get(mount)!);
+  const { payloads, apiOk, additionalRows } = data;
+  const todayIso = getTodayIsoInLjubljana();
+  let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));
+  try {
+    if (additionalRows.length) {
+      const attached = attachAdditionalDataByMasterRow(resolved.filter((item) => item.event && isAdditionalDataEnabledForYear(item.event.year as PublicYear)).map((item) => item.event!), additionalRows);
+      const byKey = new Map(attached.map((event) => [`${event.year}:${event.id}`, event]));
+      resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
+    }
+  } catch { /* optional additional data */ }
   const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
   const counts = countSavedRaceStatuses(resolved);
   const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
@@ -143,7 +190,7 @@ export const initMyRacesPage = async (root = document) => {
   const exportableUpcoming = getExportableUpcomingRaceEvents(resolved, language);
   const other = filtered.filter((item) => item.status !== 'upcoming');
   const emptyFiltered = activeFilter !== 'all' && !filtered.length;
-  mount.innerHTML = `${apiOk ? '' : `<p class="notice warning">${labels.apiError}</p>`}<p class="muted-note">${labels.local}</p>${renderStatusSummary(counts, language)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}<div class="my-race-list">${upcoming.map((item) => renderEvent(item, labels, language)).join('')}</div></section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2><div class="my-race-list">${other.map((item) => renderEvent(item, labels, language)).join('')}</div></section>` : ''}`;
+  mount.innerHTML = `${apiOk ? '' : `<p class="notice warning">${labels.apiError}</p>`}<p class="muted-note">${labels.local}</p>${renderStatusSummary(counts, language)}${renderUpcomingDeadlinesPanel(getUpcomingSavedRaceDeadlines({ items: resolved as any, todayIso }), labels, language)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}<div class="my-race-list">${upcoming.map((item) => renderEvent(item as any, labels, language, todayIso)).join('')}</div></section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2><div class="my-race-list">${other.map((item) => renderEvent(item as any, labels, language, todayIso)).join('')}</div></section>` : ''}`;
   mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
   mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
   mount.querySelectorAll<HTMLSelectElement>('[data-my-race-status-select]').forEach((select) => select.addEventListener('change', () => { const status = select.value; const race = { eventId: select.dataset.eventId || '', year: select.dataset.eventYear || '', date: select.dataset.eventDate || '', title: select.dataset.eventTitle || '' }; if (isSavedRaceStatus(status)) setSavedRaceStatusInStorage(getStorage(), race, status); else removeSavedRaceFromMyRaces(getStorage(), race, { eventName: race.title, eventDate: race.date, language }); initMyRacesPage(root); }));
