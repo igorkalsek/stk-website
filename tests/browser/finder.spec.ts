@@ -103,9 +103,17 @@ test('removes individual chips and preserves direct filters distinct from quick 
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
   await page.locator('[data-remove-filter="quick"][data-remove-filter-value="budget"]').click();
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('');
-  await page.locator('[data-filter="registration-fee"]').selectOption('20');
+
+  const moreFilters = page.locator('[data-more-filters]');
+  await moreFilters.locator('summary').click();
+  await expect(moreFilters.locator('[data-filter="registration-fee"]')).toBeVisible();
+  await moreFilters.locator('[data-filter="registration-fee"]').selectOption('20');
   await expect(page).toHaveURL(/fee=20/);
   await expect(page.locator('[data-quick-pick="budget"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(chip(page, 'fee', '20')).toContainText('Up to €20');
+  await moreFilters.locator('summary').click();
+  await expect(moreFilters).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
   await expect(chip(page, 'fee', '20')).toContainText('Up to €20');
 });
 
@@ -175,8 +183,8 @@ test('keeps Races for me private while emitting only safe personalized analytics
   await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
   await expect(page).not.toHaveURL(/my-races/);
   await expect.poll(() => page.evaluate(() => localStorage.getItem('stkRacePreferencesV1') ?? '')).toContain('over-5-to-10');
+  await expect.poll(() => analytics.find((event: any) => event.event_type === 'personalized_results_used')).toBeTruthy();
   const personalized = analytics.find((event: any) => event.event_type === 'personalized_results_used') as any;
-  expect(personalized).toBeTruthy();
   expect(personalized.filters_json).not.toContain('private-query');
   expect(personalized.filters_json).not.toContain('over-5-to-10');
 });
@@ -223,8 +231,11 @@ test('keeps first-time race preferences compact until setup is requested', async
   await page.locator('[data-preference-surface="trail"]').check();
   await page.locator('[data-save-preferences]').click();
   await expect(page.locator('[data-preferences-form]')).toBeHidden();
-  await expect(page.locator('[data-preferences-compact]')).toContainText('Preferences saved');
+  await expect(page.locator('[data-preferences-compact]')).toContainText('Races for me is active');
+  await expect(page.locator('[data-preferences-summary]')).toContainText('5–10 km');
+  await expect(page.locator('[data-preferences-summary]')).toContainText('Trail');
   await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
+  await expect(page.getByRole('button', { name: 'Edit preferences' })).toBeVisible();
   await page.getByRole('button', { name: 'Edit preferences' }).click();
   await expect(page.locator('[data-preferences-form]')).toBeVisible();
   const apiAfter = await page.evaluate(() => performance.getEntriesByType('resource').filter((entry) => entry.name.includes('stk-master-api')).length);
