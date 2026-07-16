@@ -60,6 +60,40 @@ async function enterSlovenianManualCorrectionMode(page: Page) {
 }
 
 test.describe('native proposal form', () => {
+  test('SL organizer confirmation validates and posts exactly once on mobile', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await expect(page.getByRole('heading', { name: 'Objavljeni podatki o teku' })).toBeVisible();
+    await expect(page.locator('.proposal-type-fieldset')).toBeHidden(); await expect(page.locator('#proposal-date')).toBeHidden();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
+    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com');
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
+    await page.locator('#confirmation-statement').check(); await page.getByRole('button', { name: 'Potrdite podatke' }).click();
+    await expect.poll(() => intercepted.getSubmissions()).toBe(1); const payload = intercepted.getPayload();
+    expect(payload?.get(contract.fields.proposalType)).toBe(contract.values.proposalTypes[1]);
+    expect(payload?.get(contract.fields.description)).toContain('Vrsta predloga: Potrditev podatkov organizatorja');
+    expect(payload?.get(contract.fields.organizer)).toBe('Da'); expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Ne vem');
+    expect(page.url()).not.toContain('docs.google.com'); expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await assertNoConsoleErrors(page, errors);
+  });
+
+  test('EN organizer confirmation preserves correction and safe return links', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`/en/add-or-correct-race/?mode=confirm&${completeContextQuery.replace('lang=sl', 'lang=en').replace('/tek/2027/', '/en/races/2027/')}`); await waitForProposalRuntime(page);
+    await expect(page.getByRole('heading', { name: 'Published race information' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'The information is not correct – open the correction form' })).not.toHaveAttribute('href', /mode=confirm/);
+    await page.locator('#confirmation-organization').fill('Test Club'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
+    await page.getByRole('button', { name: 'Confirm information' }).click(); await expect.poll(() => intercepted.getSubmissions()).toBe(1);
+    expect(intercepted.getPayload()?.get(contract.fields.description)).toContain('Vrsta predloga: Potrditev podatkov organizatorja'); await assertNoConsoleErrors(page, errors);
+  });
+
+  test('confirmation without race context explains next steps and cannot post', async ({ page }) => {
+    const intercepted = await interceptForm(page); await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
+    await expect(page.getByRole('heading', { name: 'Podatki o teku manjkajo' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0);
+  });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const form = await interceptForm(page);

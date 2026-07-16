@@ -11,7 +11,7 @@ import { buildRaceCopyDescription } from '../../../../utils-race-copy';
 import { buildRaceShareUrls } from '../../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../../utils-build-data';
-import { buildRaceCorrectionContextUrl } from '../../../../proposal-form/race-correction-context';
+import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '../../../../proposal-form/race-correction-context';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../../utils-registration-deadlines';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
@@ -74,6 +74,7 @@ const copyDescription = event ? buildRaceCopyDescription({ event, language: 'en'
 const shareLinks = event ? buildRaceShareUrls({ event, language: 'en', formatDate }) : null;
 const shareUrl = shareLinks?.detailUrl ?? '';
 const correctionUrl = event ? buildRaceCorrectionContextUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/';
+const confirmationUrl = event ? buildRaceConfirmationContextUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/?mode=confirm';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
 const getDateStatus = (value: string) => {
@@ -337,6 +338,7 @@ const jsonLd = event ? {
                 <h2>Are you the organizer of this race?</h2>
                 <p>Help runners find accurate information. Send an update for the official notice, registration, course, entry fees, children’s races or other race details.</p>
                 <div class="event-detail-organizer-actions">
+                  <a class="button button-small button-primary" href={confirmationUrl}>Confirm that the information is correct</a>
                   <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Suggest an update or correction</a>
                 </div>
               </div>

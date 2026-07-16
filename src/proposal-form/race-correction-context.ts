@@ -43,6 +43,12 @@ export const buildRaceCorrectionContextParams = (event: CorrectionContextRace, l
 
 export const buildRaceCorrectionContextUrl = (event: CorrectionContextRace, language: ProposalLanguage, returnUrl?: string) => `${proposalPathForLanguage(language)}?${buildRaceCorrectionContextParams(event, language, returnUrl).toString()}`;
 
+export const buildRaceConfirmationContextUrl = (event: CorrectionContextRace, language: ProposalLanguage, returnUrl?: string) => {
+  const params = buildRaceCorrectionContextParams(event, language, returnUrl);
+  params.set('mode', 'confirm');
+  return `${proposalPathForLanguage(language)}?${params.toString()}`;
+};
+
 export const normalizeRaceSearchText = (value: string) => normalizeSloveneText(value).normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
 
 export const isPublicCalendarRace = (event: Partial<PublicRaceEvent> | null | undefined): event is PublicRaceEvent => Boolean(event?.date && event?.title && event?.year && event?.dateValue !== undefined);

@@ -1,5 +1,6 @@
 export type ProposalLanguage = 'sl' | 'en';
 export type ProposalTypeKey = 'new' | 'correction' | 'additional' | 'other';
+export type ProposalMode = 'new' | 'existing' | 'other' | 'confirm';
 
 export interface ProposalPrefill {
   eventTitle: string;

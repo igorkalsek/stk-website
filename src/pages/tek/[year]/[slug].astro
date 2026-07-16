@@ -11,7 +11,7 @@ import { buildRaceCopyDescription } from '../../../utils-race-copy';
 import { buildRaceShareUrls } from '../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../utils-build-data';
-import { buildRaceCorrectionContextUrl } from '../../../proposal-form/race-correction-context';
+import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '../../../proposal-form/race-correction-context';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../utils-registration-deadlines';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
@@ -74,6 +74,7 @@ const copyDescription = event ? buildRaceCopyDescription({ event, language: 'sl'
 const shareLinks = event ? buildRaceShareUrls({ event, language: 'sl', formatDate }) : null;
 const shareUrl = shareLinks?.detailUrl ?? '';
 const correctionUrl = event ? buildRaceCorrectionContextUrl(event, 'sl', canonicalPath) : '/dodaj-ali-popravi-tek/';
+const confirmationUrl = event ? buildRaceConfirmationContextUrl(event, 'sl', canonicalPath) : '/dodaj-ali-popravi-tek/?mode=confirm';
 const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027' ? '/en/find-races/?year=2027' : '/en/find-races/');
 
 const getDateStatus = (value: string) => {
@@ -337,7 +338,8 @@ const jsonLd = event ? {
                 <h2>Ste organizator tega teka?</h2>
                 <p>Pomagajte tekačem najti točne podatke. Sporočite popravek razpisa, prijave, trase, startnine, otroških tekov ali drugih informacij.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Predlagaj popravek ali dopolnitev</a>
+                  <a class="button button-small button-primary" href={confirmationUrl}>Potrdite pravilnost podatkov</a>
+                  <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Predlagajte popravek ali dopolnitev</a>
                 </div>
               </div>
 
