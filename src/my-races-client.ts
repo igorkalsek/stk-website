@@ -14,6 +14,20 @@ type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; add
 const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
+const SLOVENIAN_GENITIVE_MONTHS = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'] as const;
+
+export const formatDeadlineDateAfterUntil = (value: string, language: 'sl' | 'en', includeYear = false) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return '';
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isInteger(year) || month < 1 || month > 12 || day < 1 || day > 31) return '';
+  if (language === 'sl') return `${day}. ${SLOVENIAN_GENITIVE_MONTHS[month - 1]}${includeYear ? ` ${year}` : ''}`;
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ...(includeYear ? { year: 'numeric' as const } : {}) }).format(date);
+};
 
 type Labels = Record<'deadlinePanel' | 'earlyRegistration' | 'registrationDeadline' | 'addDeadline' | 'addRace' | 'racePrefix' | 'daysLeft' | 'tomorrow' | 'today' | 'verifyDeadline' | 'deadlineUnavailable' | 'deadlinePrefix' | 'untilPrefix' | 'loading' | 'empty' | 'search' | 'upcoming' | 'other' | 'unresolved' | 'remove' | 'details' | 'google' | 'apple' | 'outlook' | 'apiError' | 'storageError' | 'local' | 'downloadAll' | 'downloadAllNote' | 'calendarError' | 'emptyFilter', string>;
 const LABELS: Record<'sl' | 'en', Labels> = {
@@ -81,7 +95,7 @@ const renderDeadlineItem = (deadline: RegistrationDeadlineView, event: { id: str
   const relative = formatRegistrationDeadlineRelative(deadline, language);
   const css = getRegistrationDeadlineCssState(deadline);
   const calendar = deadline.state === 'past' ? '' : renderDeadlineCalendarMenu({ eventId: event.id, eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl, registrationUrl: event.registrationUrl, language }, labels);
-  return `<div class="registration-deadline-item ${css}" data-deadline-item data-deadline-kind="${deadline.kind}"><p class="registration-deadline-relative">${escapeHtml(relative)}</p><p class="registration-deadline-absolute">${escapeHtml(compact ? deadlineLabel(deadline, labels) : (deadline.kind === 'early' ? labels.untilPrefix : labels.deadlinePrefix))} ${escapeHtml(formatDate(deadline.date, language))}</p>${calendar}</div>`;
+  return `<div class="registration-deadline-item ${css}" data-deadline-item data-deadline-kind="${deadline.kind}"><p class="registration-deadline-relative">${escapeHtml(relative)}</p><p class="registration-deadline-absolute">${escapeHtml(compact ? deadlineLabel(deadline, labels) : (deadline.kind === 'early' ? labels.untilPrefix : labels.deadlinePrefix))} ${escapeHtml(compact ? formatDeadlineDateAfterUntil(deadline.date, language, true) : formatDate(deadline.date, language))}</p>${calendar}</div>`;
 };
 
 
@@ -93,7 +107,7 @@ export const renderRaceCardDeadlineSummary = (event: { date: string; additionalD
     .sort((a, b) => a.date.localeCompare(b.date) || (a.kind === 'registration' ? -1 : 1))[0];
   if (!deadline) return '';
   const css = getRegistrationDeadlineCssState(deadline);
-  return `<p class="my-race-deadline-summary ${css}" data-my-race-deadline-summary data-deadline-kind="${deadline.kind}">${escapeHtml(deadlineLabel(deadline, labels))} ${escapeHtml(formatDate(deadline.date, language).replace(/\s+\d{4}$/, ''))} · ${escapeHtml(conciseRelative(deadline, labels))}</p>`;
+  return `<p class="my-race-deadline-summary ${css}" data-my-race-deadline-summary data-deadline-kind="${deadline.kind}">${escapeHtml(deadlineLabel(deadline, labels))} ${escapeHtml(formatDeadlineDateAfterUntil(deadline.date, language))} · ${escapeHtml(conciseRelative(deadline, labels))}</p>`;
 };
 
 const renderRaceCalendarMenu = (event: { title: string; date: string; noticeUrl?: string; registrationUrl?: string }, location: string, labels: Labels, language: 'sl' | 'en') => {

@@ -221,7 +221,9 @@ test('shows verified deadlines on the saved race card and in the upcoming panel'
   await expect(panel.locator('[data-upcoming-deadline-group]')).toHaveCount(1);
   await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(2);
   await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava se konča čez 3 dni');
+  await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava do 18. julija 2026');
   await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo čez 8 dni');
+  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave do 23. julija 2026');
 
   for (const deadline of [
     { kind: 'early', googleDate: '20260718', outlookDate: '2026-07-18' },
@@ -314,7 +316,8 @@ test('migrates V1 saved races to V2 and preserves the race', async ({ page }) =>
   await expect(migratedCard.getByRole('link', { name: 'Ljubljana Test Run' })).toBeVisible();
   await expect(migratedCard.getByLabel('Moj status')).toHaveValue('following');
   await expect(migratedCard.locator('[data-race-status-badge]')).toHaveText('Spremljam');
-  await expect(count(page, 'following')).toHaveText(/Spremljam\s+1/);
+  await expect(count(page, 'following')).toHaveText('1');
+  await expect(filter(page, 'following')).toContainText('Spremljam 1');
 
   const migrated = await readSavedRacesV2(page);
   expect(migrated.version).toBe(2);
@@ -335,10 +338,14 @@ test('filters races, changes status and preserves it after reload', async ({ pag
 
   await openMyRaces(page);
 
-  await expect(count(page, 'following')).toHaveText(/Spremljam\s+1/);
-  await expect(count(page, 'planning')).toHaveText(/Planiram\s+1/);
-  await expect(count(page, 'registered')).toHaveText(/Prijavljen\s+1/);
-  await expect(count(page, 'completed')).toHaveText(/Opravljen\s+1/);
+  await expect(count(page, 'following')).toHaveText('1');
+  await expect(filter(page, 'following')).toContainText('Spremljam 1');
+  await expect(count(page, 'planning')).toHaveText('1');
+  await expect(filter(page, 'planning')).toContainText('Planiram 1');
+  await expect(count(page, 'registered')).toHaveText('1');
+  await expect(filter(page, 'registered')).toContainText('Prijavljen 1');
+  await expect(count(page, 'completed')).toHaveText('1');
+  await expect(filter(page, 'completed')).toContainText('Opravljen 1');
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
 
   await filter(page, 'registered').click();
@@ -351,12 +358,15 @@ test('filters races, changes status and preserves it after reload', async ({ pag
   await card(page, '2026:r000103').getByLabel('Moj status').selectOption('planning');
   await expect(card(page, '2026:r000103')).toHaveCount(0);
   await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toBeVisible();
-  await expect(count(page, 'registered')).toHaveText(/Prijavljen\s+0/);
-  await expect(count(page, 'planning')).toHaveText(/Planiram\s+2/);
+  await expect(count(page, 'registered')).toHaveText('0');
+  await expect(filter(page, 'registered')).toContainText('Prijavljen 0');
+  await expect(count(page, 'planning')).toHaveText('2');
+  await expect(filter(page, 'planning')).toContainText('Planiram 2');
   await expect(filter(page, 'registered')).toHaveAttribute('aria-pressed', 'true');
 
   await page.reload();
-  await expect(count(page, 'planning')).toHaveText(/Planiram\s+2/);
+  await expect(count(page, 'planning')).toHaveText('2');
+  await expect(filter(page, 'planning')).toContainText('Planiram 2');
   const state = await readSavedRacesV2(page);
   expect(state.races.filter((race: any) => race.eventId === 'r000103')).toHaveLength(1);
   expect(state.races.find((race: any) => race.eventId === 'r000103').status).toBe('planning');
@@ -410,10 +420,14 @@ test('supports English labels, filters and persistence', async ({ page }) => {
 
   await openMyRaces(page, '/en/my-races/');
 
-  await expect(count(page, 'following')).toHaveText(/^Following\s+1$/);
-  await expect(count(page, 'planning')).toHaveText(/^Planning\s+1$/);
-  await expect(count(page, 'registered')).toHaveText(/^Registered\s+1$/);
-  await expect(count(page, 'completed')).toHaveText(/^Completed\s+0$/);
+  await expect(count(page, 'following')).toHaveText('1');
+  await expect(filter(page, 'following')).toContainText('Following 1');
+  await expect(count(page, 'planning')).toHaveText('1');
+  await expect(filter(page, 'planning')).toContainText('Planning 1');
+  await expect(count(page, 'registered')).toHaveText('1');
+  await expect(filter(page, 'registered')).toContainText('Registered 1');
+  await expect(count(page, 'completed')).toHaveText('0');
+  await expect(filter(page, 'completed')).toContainText('Completed 0');
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.')).toBeVisible();
 
@@ -425,8 +439,10 @@ test('supports English labels, filters and persistence', async ({ page }) => {
   await card(page, '2026:r000103').getByLabel('My status').selectOption('completed');
 
   await expect(page.getByText('There are no saved races with this status.')).toBeVisible();
-  await expect(count(page, 'registered')).toHaveText(/Registered\s+0/);
-  await expect(count(page, 'completed')).toHaveText(/Completed\s+1/);
+  await expect(count(page, 'registered')).toHaveText('0');
+  await expect(filter(page, 'registered')).toContainText('Registered 0');
+  await expect(count(page, 'completed')).toHaveText('1');
+  await expect(filter(page, 'completed')).toContainText('Completed 1');
 
   await page.reload();
   const state = await readSavedRacesV2(page);
