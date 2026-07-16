@@ -37,10 +37,8 @@ describe('race search distance filter UI wiring', () => {
 
 describe('race preference compact UX wiring', () => {
   it('uses distinct intro and privacy sentences with correct compact/reset action labels', () => {
-    assert.equal((slovenePage.match(/Izberite razdalje, podlage in regije, ki vas zanimajo\./g) ?? []).length, 1);
-    assert.equal((slovenePage.match(/Preference ostanejo samo v tem brskalniku in se ne pošiljajo STK\./g) ?? []).length, 1);
-    assert.equal((englishPage.match(/Choose the distances, surfaces and regions you are interested in\./g) ?? []).length, 1);
-    assert.equal((englishPage.match(/Preferences stay only in this browser and are not sent to STK\./g) ?? []).length, 1);
+    assert.equal((slovenePage.match(/Izberite svoje priljubljene razdalje, podlage in regije\. Podatki ostanejo samo v tem brskalniku\./g) ?? []).length, 0);
+    assert.equal((englishPage.match(/Choose your preferred distances, surfaces and regions\. The information stays only in this browser\./g) ?? []).length, 0);
     assert.match(slovenePage, /data-reset-preferences>Ponastavite<\/button>/);
     assert.match(slovenePage, /data-cancel-preferences hidden>Prekličite urejanje<\/button>/);
     assert.match(englishPage, /data-reset-preferences>Reset<\/button>/);

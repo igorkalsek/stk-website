@@ -74,6 +74,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
   const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
   const preferenceFormHeading = document.querySelector<HTMLElement>('[data-preferences-form-heading]');
+  const preferenceEmptyTextElement = document.querySelector<HTMLElement>('[data-preferences-empty-text]');
   const preferenceStateTextElement = document.querySelector<HTMLElement>('[data-preferences-state-text]');
   const preferenceSummaryElement = document.querySelector<HTMLElement>('[data-preferences-summary]');
   const preferenceMessageElement = document.querySelector<HTMLElement>('[data-preferences-message]');
@@ -83,6 +84,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const editPreferencesButton = document.querySelector<HTMLButtonElement>('[data-edit-preferences]');
   const cancelPreferencesButton = document.querySelector<HTMLButtonElement>('[data-cancel-preferences]');
   const resetPreferencesButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences]');
+  const showAllPreferencesButton = document.querySelector<HTMLButtonElement>('[data-show-all-races]');
   const resetPreferencesFormButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences-form]');
   const preferenceDistanceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-distance]')];
   const preferenceSurfaceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-surface]')];
@@ -348,36 +350,34 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
 
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${action.kind === 'registration' ? '✍️' : '📄'}</span><span>${escapeHtml(action.label)}</span></a>`;
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`;
 
+  type SecondaryMenuAction = { url: string; html: string; priority: number };
+  const normalizeSecondaryDestination = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.startsWith('data:')) return trimmed;
+    return trimmed.replace(/\/+$/, '');
+  };
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
     date: string;
     location?: string;
     noticeUrl?: string;
     registrationUrl?: string;
-  }) => {
+  }): SecondaryMenuAction[] => {
     const event = buildRaceFinderCalendarEventInput(locale, { title, date, location, noticeUrl, registrationUrl });
     const googleUrl = buildGoogleCalendarEventUrl(event);
     const icsUrl = buildIcsDataUrl(event);
     const icsFilename = buildIcsFilename(event);
     const outlookUrl = buildOutlookCalendarEventUrl(event);
-    if (!googleUrl && !icsUrl && !outlookUrl) return '';
 
-    const options = [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google</a>`,
-      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>`,
+    return [
+      googleUrl && { url: googleUrl, priority: 5, html: `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google Calendar</a>` },
+      icsUrl && { url: icsUrl, priority: 5, html: `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>` },
       outlookUrl
-        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>`
-        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>`
-    ].filter(Boolean).join('');
-
-    return `
-      <details class="calendar-menu">
-        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>${locale.calendar.addToCalendarLabel}</span></summary>
-        <div class="calendar-menu-options">${options}</div>
-      </details>
-    `;
+        ? { url: outlookUrl, priority: 5, html: `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>` }
+        : icsUrl && { url: icsUrl, priority: 5, html: `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>` }
+    ].filter(Boolean) as SecondaryMenuAction[];
   };
 
   const setStatus = (message: string) => {
@@ -685,10 +685,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const updateAdvancedFiltersSummary = (filters = getFilters()) => {
     if (!advancedFiltersSummary) return;
     const activeCount = [
+      Boolean(filters.surface),
+      Boolean(filters.registrationFee),
+      Boolean(filters.deadlineFilter),
       filters.family,
       filters.dayOfRegistration,
       filters.route,
-      Boolean(filters.deadlineFilter),
       Boolean(filters.elevation)
     ].filter(Boolean).length;
 
@@ -759,17 +761,19 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     preferencePanel?.setAttribute('data-preferences-state', state);
     updatePreferenceSortOption();
     if (sortSelect && racePreferences.active && hasSaved) sortSelect.value = 'my-races';
-    const showForm = state === 'empty' || state === 'editing';
+    const showForm = state === 'editing';
     if (preferenceCompactElement) preferenceCompactElement.hidden = showForm;
     if (preferenceFormElement) preferenceFormElement.hidden = !showForm;
     setPreferenceFormFocusable(showForm);
-    if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'active' ? String(locale.messages.preferencesActive) : String(locale.messages.preferencesStored);
-    if (preferenceSummaryElement) { preferenceSummaryElement.textContent = summary.visible; preferenceSummaryElement.setAttribute('aria-label', summary.accessible || summary.visible); }
-    if (activatePreferencesButton) activatePreferencesButton.hidden = state !== 'inactive';
-    if (editPreferencesButton) { editPreferencesButton.hidden = !hasSaved; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
-    if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved; resetPreferencesButton.textContent = locale.resetLabel; }
-    if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing' || !hasSaved;
-    if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = !hasSaved;
+    if (preferenceEmptyTextElement) { preferenceEmptyTextElement.hidden = state !== 'empty' || showForm; preferenceEmptyTextElement.textContent = state === 'empty' && !showForm ? locale.preferenceEmptyText : ''; }
+    if (preferenceStateTextElement) { preferenceStateTextElement.hidden = state === 'empty' || showForm; preferenceStateTextElement.textContent = state === 'active' ? String(locale.messages.preferencesActive) : state === 'inactive' ? String(locale.messages.preferencesStored) : ''; }
+    if (preferenceSummaryElement) { preferenceSummaryElement.hidden = state === 'empty' || showForm; preferenceSummaryElement.textContent = state === 'empty' || showForm ? '' : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' || showForm ? '' : (summary.accessible || summary.visible)); }
+    if (activatePreferencesButton) { activatePreferencesButton.hidden = state !== 'inactive'; activatePreferencesButton.textContent = locale.showRacesForMeLabel; }
+    if (editPreferencesButton) { editPreferencesButton.hidden = state === 'editing'; editPreferencesButton.textContent = hasSaved ? locale.editPreferencesShortLabel : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
+    if (showAllPreferencesButton) showAllPreferencesButton.hidden = state !== 'active';
+    if (resetPreferencesButton) { resetPreferencesButton.hidden = state !== 'inactive'; resetPreferencesButton.textContent = locale.resetLabel; }
+    if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing';
+    if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = state !== 'editing' || !hasSaved;
     if (focusTarget === 'form') preferenceFormHeading?.focus();
     else if (focusTarget === 'edit') editPreferencesButton?.focus();
     else if (focusTarget === 'compact') preferenceCompactElement?.focus();
@@ -837,11 +841,9 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
-      event.place && `<span class="event-chip"><strong>${locale.cardLabels.place}:</strong> ${escapeHtml(event.place)}</span>`,
-      event.region && `<span class="event-chip"><strong>${locale.cardLabels.region}:</strong> ${escapeHtml(event.region)}</span>`,
-      formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
-      event.distances && `<span class="event-chip"><strong>${locale.cardLabels.distances}:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
-      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
+      formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
+      event.distances && `<span>${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span>${locale.startLabel} ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
 
 
@@ -856,26 +858,58 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     });
     const detailPath = locale.buildDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces });
-    const links = [
-      ...buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink),
-      `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
-      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>${locale.detailLabel}</span></a>`,
-      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}"><span class="action-icon" aria-hidden="true">👍</span><span>${locale.voteLabel}</span></a>`,
-      calendarOptions
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false });
+    const routeAction = event.additionalData?.routeUrl
+      ? { url: event.additionalData.routeUrl, priority: 3, html: `<a href="${escapeHtml(event.additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-stk-track="external-link" data-stk-action="trasa" data-stk-event-id="${escapeHtml(event.id)}" data-stk-event-name="${escapeHtml(event.title)}" data-stk-event-date="${escapeHtml(event.date)}" data-analytics-link-type="trasa">${locale.routeLabel}</a>` }
+      : null;
+    // buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink) remains the shared organizer-action renderer.
+    const organizerActions = buildPrimaryActions(event, locale.language);
+    const registrationActions = organizerActions.filter((action) => action.kind === 'registration');
+    const noticeActions = organizerActions.filter((action) => action.kind !== 'registration');
+    const primaryLinks = [
+      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}">${locale.detailLabel}</a>`,
+      ...registrationActions.map(renderPrimaryActionLink),
+      `<button class="button button-small button-secondary-light saved-race-button saved-race-button-compact" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="saved-race-star" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
     ].filter(Boolean).join('');
+    const primaryDestinationKeys = new Set(registrationActions.map((action) => normalizeSecondaryDestination(action.url)).filter(Boolean));
+    const secondaryActionCandidates: SecondaryMenuAction[] = [
+      ...noticeActions.map((action) => ({ url: action.url, priority: 2, html: `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>` })),
+      routeAction,
+      renderableVoteUrl && { url: renderableVoteUrl, priority: 4, html: `<a href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}">${locale.voteLabel}</a>` },
+      ...calendarOptions
+    ].filter(Boolean) as SecondaryMenuAction[];
+    const seenSecondaryDestinations = new Set(primaryDestinationKeys);
+    const moreOptions = secondaryActionCandidates
+      .sort((a, b) => a.priority - b.priority)
+      .filter((action) => {
+        const key = normalizeSecondaryDestination(action.url);
+        if (!key || seenSecondaryDestinations.has(key)) return false;
+        seenSecondaryDestinations.add(key);
+        return true;
+      })
+      .map((action) => action.html)
+      .join('');
+    const secondaryLinks = moreOptions
+      ? `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light">${locale.moreMenuLabel}</summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`
+      : '';
 
     return `
-      <article class="event-card search-event-card" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
-        <div class="search-event-date">
+      <article class="event-card search-event-card search-event-row" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
+        <div class="search-event-date search-event-row-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? `<span class="pill pill-family">${locale.familyFriendlyLabel}</span>` : ''}
         </div>
+        <div class="search-event-row-main">
         <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
-        ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${[event.place, event.region].filter(Boolean).length ? `<p class="search-event-location">${[event.place, event.region].filter(Boolean).map(escapeHtml).join(' · ')}</p>` : ''}
+        ${metaItems ? `<div class="search-event-facts">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
-        ${links ? `<div class="event-actions">${links}</div>` : ''}
+        </div>
+        <div class="search-event-row-actions">
+        ${primaryLinks ? `<div class="search-event-primary-actions">${primaryLinks}</div>` : ''}
+        ${secondaryLinks ? `<div class="search-event-secondary-actions">${secondaryLinks}</div>` : ''}
+        </div>
       </article>
     `;
   };
@@ -1068,7 +1102,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     preferencesEditing = false;
     if (sortSelect?.value === 'my-races') sortSelect.value = 'date';
     syncPreferenceControls();
-    refreshPreferencePanel('form');
+    refreshPreferencePanel('compact');
     setPreferenceMessage(String(locale.messages.preferencesReset));
     resetVisibleResults();
   };

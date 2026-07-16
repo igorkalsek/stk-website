@@ -18,14 +18,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="calendar-year-notice" data-year-notice hidden>Koledar 2027 se dopolnjuje.</p>
     </section>
 
-    <section class="section container" aria-labelledby="filters-title">
-      <div class="search-panel">
-        <div class="section-heading search-heading">
-          <div>
-            <h2 id="filters-title">Filtri</h2>
-            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo, podlago ali razdaljo.</p>
-          </div>
-          <p class="result-count" data-result-count>Dogodke nalagamo …</p>
+
+    <form class="finder-workspace container" data-search-form>
+      <aside class="finder-sidebar" aria-labelledby="filters-title">
+        <h2 id="filters-title">Filtri</h2>
+
+        <div class="finder-primary-filters">
+          <label class="field">
+            <span>Iskanje</span>
+            <input type="search" name="search" placeholder="Ime teka ali kraj" autocomplete="off" data-filter="search" />
+          </label>
+          <label class="field">
+            <span>Mesec</span>
+            <select name="month" data-filter="month" disabled><option value="">Vsi meseci</option></select>
+          </label>
+          <label class="field">
+            <span>Regija</span>
+            <select name="region" data-filter="region" disabled><option value="">Vse regije</option></select>
+          </label>
+          <label class="field">
+            <span>Razdalja</span>
+            <select name="distance" data-filter="distance">
+              <option value="all">Vse razdalje</option>
+              <option value="up-to-5">Do 5 km</option>
+              <option value="over-5-to-10">Nad 5 do 10 km</option>
+              <option value="over-10-to-half">Nad 10 do 21,1 km</option>
+              <option value="over-half-to-marathon">Nad 21,1 do 42,2 km</option>
+              <option value="ultra">Nad 42,2 km</option>
+            </select>
+          </label>
         </div>
 
         <div class="quick-picks" aria-label="Hitri izbori">
@@ -40,215 +61,65 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-sl">
-          <div class="race-preferences-static">
-            <h3 id="race-preferences-title-sl">Teki zame</h3>
-            <p data-preferences-intro>Izberite razdalje, podlage in regije, ki vas zanimajo.</p>
-            <p class="race-preferences-privacy">Preference ostanejo samo v tem brskalniku in se ne pošiljajo STK.</p>
+        <details class="finder-more-filters" data-more-filters>
+          <summary data-advanced-filters-summary>Več filtrov</summary>
+          <div class="finder-more-filters-content">
+            <label class="field"><span>Podlaga</span><select name="surface" data-filter="surface" disabled><option value="">Vse podlage</option></select></label>
+            <label class="field"><span>Startnina</span><select name="registrationFee" data-filter="registration-fee"><option value="">Vse startnine</option><option value="free-option">Ima brezplačno možnost</option><option value="10">Do 10 €</option><option value="20">Do 20 €</option><option value="30">Do 30 €</option><option value="50">Do 50 €</option></select><small>Startnina uporablja najnižjo znano startnino. Roki vključujejo predprijave in cenejše prijave; možnost “s traso” pomeni povezavo do trase, zemljevida ali GPX, ne nujno GPX datoteke.</small></label>
+            <label class="field"><span>Rok prijave</span><select name="deadlineFilter" data-filter="deadline"><option value="">Vsi roki</option><option value="within-7">Rok v 7 dneh</option><option value="within-14">Rok v 14 dneh</option><option value="within-30">Rok v 30 dneh</option><option value="early-ending">Cenejša prijava se izteka</option><option value="race-day">Tudi na dan tekme</option></select></label>
+            <label class="checkbox-field"><input type="checkbox" name="family" data-filter="family" /><span>Družinam prijazno</span></label>
+            <label class="checkbox-field"><input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" /><span>Prijave na dan dogodka</span></label>
+            <label class="checkbox-field"><input type="checkbox" name="route" data-filter="route" /><span>Ima traso / zemljevid</span></label>
+            <label class="field advanced-elevation-field"><span>Višinski metri</span><select name="elevation" data-filter="elevation"><option value="">Vsi višinci</option><option value="max-300">Do 300 m+</option><option value="max-800">Do 800 m+</option><option value="max-1500">Do 1500 m+</option><option value="over-1500">Nad 1500 m+</option></select></label>
           </div>
-          <div class="race-preferences-dynamic">
-            <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
-              <p class="race-preferences-state" data-preferences-state-text></p>
-              <p class="race-preferences-summary" data-preferences-summary></p>
-              <div class="race-preferences-actions race-preferences-compact-actions">
-                <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Prikažite teke zame</button>
-                <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-sl">Uredite preference</button>
-                <button class="button button-small button-secondary-light preference-reset-compact" type="button" data-reset-preferences>Ponastavite</button>
-              </div>
+        </details>
+
+        <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-sl">
+          <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
+            <h3 id="race-preferences-title-sl">Teki zame</h3>
+            <p class="race-preferences-empty" data-preferences-empty-text></p>
+            <p class="race-preferences-state" data-preferences-state-text></p>
+            <p class="race-preferences-summary" data-preferences-summary hidden></p>
+            <div class="race-preferences-actions race-preferences-compact-actions">
+              <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Prikažite teke zame</button>
+              <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-sl">Uredite</button>
+              <button class="button button-small button-secondary-light" type="button" data-show-all-races hidden>Prikažite vse teke</button>
+              <button class="button button-small button-secondary-light preference-reset-compact" type="button" data-reset-preferences>Ponastavite</button>
             </div>
-            <div class="race-preferences-form" id="race-preferences-form-sl" data-preferences-form hidden>
-              <h4 class="race-preferences-form-heading" tabindex="-1" data-preferences-form-heading>Izberite preference</h4>
-              <div class="race-preferences-grid">
-                <fieldset class="preference-fieldset">
-                  <legend>Želene razdalje</legend>
-                  <label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Do 5 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>5–10 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>10–21,1 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>21,1–42,2 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="ultra" /> <span>Nad 42,2 km</span></label>
-                </fieldset>
-                <fieldset class="preference-fieldset">
-                  <legend>Želene podlage</legend>
-                  <label><input type="checkbox" data-preference-surface="road" /> <span>Cesta</span></label>
-                  <label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label>
-                  <label><input type="checkbox" data-preference-surface="mountain" /> <span>Gorski tek</span></label>
-                  <label><input type="checkbox" data-preference-family /> <span>Prednost družinam prijaznim tekom</span></label>
-                </fieldset>
-                <fieldset class="preference-fieldset preference-regions">
-                  <legend>Želene regije</legend>
-                  <details>
-                    <summary>Izberite regije</summary>
-                    <div class="preference-region-list" data-preference-regions></div>
-                  </details>
-                </fieldset>
-              </div>
-              <div class="race-preferences-actions">
-                <button class="button button-small button-primary" type="button" data-save-preferences>Shrani in prikaži teke zame</button>
-                <button class="button button-small button-secondary-light" type="button" data-cancel-preferences hidden>Prekličite urejanje</button>
-                <button class="button button-small button-secondary-light" type="button" data-reset-preferences-form hidden>Ponastavite preference</button>
-              </div>
+          </div>
+          <div class="race-preferences-form" id="race-preferences-form-sl" data-preferences-form hidden>
+            <h3 class="race-preferences-form-heading" tabindex="-1" data-preferences-form-heading>Izberite preference</h3>
+            <div class="race-preferences-grid">
+              <fieldset class="preference-fieldset"><legend>Želene razdalje</legend><label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Do 5 km</span></label><label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>5–10 km</span></label><label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>10–21,1 km</span></label><label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>21,1–42,2 km</span></label><label><input type="checkbox" data-preference-distance="ultra" /> <span>Nad 42,2 km</span></label></fieldset>
+              <fieldset class="preference-fieldset"><legend>Želene podlage</legend><label><input type="checkbox" data-preference-surface="road" /> <span>Cesta</span></label><label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label><label><input type="checkbox" data-preference-surface="mountain" /> <span>Gorski tek</span></label><label><input type="checkbox" data-preference-family /> <span>Prednost družinam prijaznim tekom</span></label></fieldset>
+              <fieldset class="preference-fieldset preference-regions"><legend>Želene regije</legend><details><summary>Izberite regije</summary><div class="preference-region-list" data-preference-regions></div></details></fieldset>
             </div>
+            <div class="race-preferences-actions"><button class="button button-small button-primary" type="button" data-save-preferences>Shrani in prikaži teke zame</button><button class="button button-small button-secondary-light" type="button" data-cancel-preferences hidden>Prekličite urejanje</button><button class="button button-small button-secondary-light" type="button" data-reset-preferences-form hidden>Ponastavite preference</button></div>
           </div>
           <p class="race-preferences-message visually-hidden" data-preferences-message aria-live="polite"></p>
         </section>
 
-        <form class="filters-grid" data-search-form>
-          <label class="field field-wide">
-            <span>Iskanje</span>
-            <input
-              type="search"
-              name="search"
-              placeholder="Ime teka ali kraj"
-              autocomplete="off"
-              data-filter="search"
-            />
-          </label>
-
-          <label class="field">
-            <span>Mesec</span>
-            <select name="month" data-filter="month" disabled>
-              <option value="">Vsi meseci</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span>Regija</span>
-            <select name="region" data-filter="region" disabled>
-              <option value="">Vse regije</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span>Podlaga</span>
-            <select name="surface" data-filter="surface" disabled>
-              <option value="">Vse podlage</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span>Razdalja</span>
-            <select name="distance" data-filter="distance">
-              <option value="all">Vse razdalje</option>
-              <option value="up-to-5">Do 5 km</option>
-              <option value="over-5-to-10">Nad 5 do 10 km</option>
-              <option value="over-10-to-half">Nad 10 do 21,1 km</option>
-              <option value="over-half-to-marathon">Nad 21,1 do 42,2 km</option>
-              <option value="ultra">Nad 42,2 km</option>
-            </select>
-          </label>
-
-          <fieldset class="filter-card filter-card-price">
-            <legend>Startnina, roki in razvrščanje</legend>
-            <div class="filter-card-grid">
-              <label class="field">
-                <span>Startnina</span>
-                <select name="registrationFee" data-filter="registration-fee">
-                  <option value="">Vse startnine</option>
-                  <option value="free-option">Ima brezplačno možnost</option>
-                  <option value="10">Do 10 €</option>
-                  <option value="20">Do 20 €</option>
-                  <option value="30">Do 30 €</option>
-                  <option value="50">Do 50 €</option>
-                </select>
-                <small>Startnina uporablja najnižjo znano startnino. Roki vključujejo predprijave in cenejše prijave; možnost “s traso” pomeni povezavo do trase, zemljevida ali GPX, ne nujno GPX datoteke.</small>
-              </label>
-
-              <label class="field">
-                <span>Rok prijave</span>
-                <select name="deadlineFilter" data-filter="deadline">
-                  <option value="">Vsi roki</option>
-                  <option value="within-7">Rok v 7 dneh</option>
-                  <option value="within-14">Rok v 14 dneh</option>
-                  <option value="within-30">Rok v 30 dneh</option>
-                  <option value="early-ending">Cenejša prijava se izteka</option>
-                  <option value="race-day">Tudi na dan tekme</option>
-                </select>
-              </label>
-
-              <label class="field">
-                <span>Razvrsti po</span>
-                <select name="sort" data-filter="sort">
-                  <option value="date">Datumu</option>
-                  <option value="my-races" disabled>Teki zame</option>
-                  <option value="registration-deadline">Roki prijav najprej</option>
-                  <option value="registration-min">Najcenejši najprej</option>
-                  <option value="registration-max">Najdražji najprej</option>
-                </select>
-              </label>
-            </div>
-          </fieldset>
-
-          <details class="advanced-filters">
-            <summary data-advanced-filters-summary>Dodatni filtri</summary>
-            <div class="advanced-filters-content">
-              <label class="checkbox-field">
-                <input type="checkbox" name="family" data-filter="family" />
-                <span>Družinam prijazno</span>
-              </label>
-
-              <label class="checkbox-field">
-                <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
-                <span>Prijave na dan dogodka</span>
-              </label>
-
-              <label class="checkbox-field">
-                <input type="checkbox" name="route" data-filter="route" />
-                <span>Ima traso / zemljevid</span>
-              </label>
-
-              <label class="field advanced-elevation-field">
-                <span>Višinski metri</span>
-                <select name="elevation" data-filter="elevation">
-                  <option value="">Vsi višinci</option>
-                  <option value="max-300">Do 300 m+</option>
-                  <option value="max-800">Do 800 m+</option>
-                  <option value="max-1500">Do 1500 m+</option>
-                  <option value="over-1500">Nad 1500 m+</option>
-                </select>
-              </label>
-            </div>
-          </details>
-
-          <div class="filter-actions">
-            <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
-              Počistite filtre
-            </button>
-            <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>
-              Kopiraj povezavo
-            </button>
-            <span class="muted-note" data-copy-link-status aria-live="polite"></span>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <section class="section container" aria-labelledby="results-title">
-
-      <div class="active-filters" data-active-filters hidden>
-        <div class="active-filters-heading">
-          <strong data-active-filters-title>Aktivni filtri</strong>
-          <span data-active-filters-count></span>
+        <div class="filter-actions">
+          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>Počistite filtre</button>
+          <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>Kopiraj povezavo</button>
+          <span class="muted-note" data-copy-link-status aria-live="polite"></span>
         </div>
-        <div class="active-filter-list" data-active-filter-list></div>
-      </div>
-      <div class="section-heading">
-        <h2 id="results-title">Rezultati</h2>
-        <p data-search-status>Nalagamo potrjene javne dogodke …</p>
-        <p class="additional-data-note" data-additional-note hidden>Pri nekaterih tekih so dodane tudi startnine, roki prijav, trase ali višinski metri.</p>
-      </div>
-      <div class="search-results" data-search-results aria-live="polite">
-        <article class="event-card">
-          <h3>Podatke še nalagamo</h3>
-          <p>Seznam prihajajočih tekov bo prikazan tukaj.</p>
-          <div class="event-meta">
-            <span class="pill">Koledar</span>
+      </aside>
+
+      <section class="finder-results-column" aria-labelledby="results-title">
+        <div class="finder-results-toolbar">
+          <div class="finder-results-heading">
+            <div><h2 id="results-title">Rezultati</h2><p class="result-count" data-result-count>Dogodke nalagamo …</p></div>
+            <label class="field finder-sort-field"><span>Razvrsti po</span><select name="sort" data-filter="sort"><option value="date">Datumu</option><option value="my-races" disabled>Teki zame</option><option value="registration-deadline">Roki prijav najprej</option><option value="registration-min">Najcenejši najprej</option><option value="registration-max">Najdražji najprej</option></select></label>
           </div>
-        </article>
-      </div>
-      <div class="search-more" data-search-more hidden>
-        <button class="button button-primary" type="button" data-show-more>Prikažite več</button>
-      </div>
-    </section>
+          <p data-search-status>Nalagamo potrjene javne dogodke …</p>
+          <div class="active-filters" data-active-filters hidden><div class="active-filters-heading"><strong data-active-filters-title>Aktivni filtri</strong><span data-active-filters-count></span><button class="button button-small button-secondary-light" type="button" data-clear-filters>Počistite vse</button></div><div class="active-filter-list" data-active-filter-list></div></div>
+        </div>
+        <p class="additional-data-note" data-additional-note hidden>Pri nekaterih tekih so dodane tudi startnine, roki prijav, trase ali višinski metri.</p>
+        <div class="search-results" data-search-results aria-live="polite"><article class="event-card"><h3>Podatke še nalagamo</h3><p>Seznam prihajajočih tekov bo prikazan tukaj.</p><div class="event-meta"><span class="pill">Koledar</span></div></article></div>
+        <div class="search-more" data-search-more hidden><button class="button button-primary" type="button" data-show-more>Prikažite več</button></div>
+      </section>
+    </form>
   </main>
 </BaseLayout>
 
