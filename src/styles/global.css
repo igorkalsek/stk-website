@@ -3583,3 +3583,142 @@ main {
   border-radius: 999px;
   text-decoration: none;
 }
+
+/* Focused My races hierarchy cleanup */
+.my-race-actions {
+  align-content: start;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.my-race-actions-primary,
+.my-race-actions-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 100%;
+}
+
+.my-race-actions-secondary {
+  padding-top: 0.25rem;
+}
+
+.my-races-status-filters {
+  flex-wrap: nowrap;
+  margin: 1rem 0 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+}
+
+.my-races-status-filter {
+  flex: 0 0 auto;
+}
+
+.my-races-status-filter span {
+  display: inline-flex;
+  min-width: 1.5em;
+  justify-content: center;
+  margin-left: 0.2rem;
+  border-radius: 999px;
+  background: rgba(16, 64, 80, 0.09);
+  padding: 0 0.35rem;
+}
+
+.upcoming-deadlines-panel {
+  margin-top: 0.85rem;
+}
+
+.upcoming-deadline-group {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border-radius: 0.85rem;
+  background: rgba(15, 118, 110, 0.05);
+}
+
+.upcoming-deadline-group-header h3,
+.upcoming-deadline-group-header p {
+  margin: 0;
+}
+
+.upcoming-deadline-group-header p {
+  color: var(--color-muted, #52616b);
+}
+
+.upcoming-deadline-group-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.upcoming-deadline-item,
+.upcoming-deadline-item .registration-deadline-item {
+  padding: 0;
+  background: transparent;
+}
+
+.my-race-deadline-summary {
+  margin: 0.8rem 0 0;
+  color: var(--deep-teal);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.my-race-deadline-summary.deadline-soon,
+.my-race-deadline-summary.deadline-today {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.22rem 0.55rem;
+}
+
+.race-calendar-menu {
+  max-width: 100%;
+}
+
+.race-calendar-menu summary {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  border: 1px solid rgba(16, 64, 80, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--deep-teal);
+  cursor: pointer;
+  font-weight: 800;
+  list-style-position: inside;
+  padding: 0.38rem 0.7rem;
+}
+
+.race-calendar-menu summary:focus-visible,
+.deadline-calendar-menu summary:focus-visible {
+  outline: 3px solid rgba(240, 160, 48, 0.45);
+  outline-offset: 2px;
+}
+
+.race-calendar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+  max-width: min(100%, 28rem);
+}
+
+.race-calendar-actions a {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+@media (min-width: 720px) {
+  .my-race-actions {
+    align-items: flex-end;
+  }
+
+  .my-race-actions-primary,
+  .my-race-actions-secondary {
+    justify-content: flex-end;
+  }
+}
