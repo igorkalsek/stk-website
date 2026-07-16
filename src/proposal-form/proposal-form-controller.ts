@@ -2,7 +2,7 @@ import { googleProposalFormContract } from './proposal-form-contract.js';
 import type { ProposalLanguage, ProposalPrefill } from './proposal-form-types.js';
 
 
-export const frontendProposalTypes = ['new', 'existing', 'other'] as const;
+export const frontendProposalTypes = ['new', 'existing', 'other', 'confirm'] as const;
 export type FrontendProposalType = typeof frontendProposalTypes[number];
 
 export const basicChangeCategoryValues = ['basic-date-time', 'basic-title-place', 'basic-distance-surface', 'basic-official-source', 'basic-cup-series'] as const;
@@ -55,6 +55,43 @@ export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasComplet
 };
 
 export const parseProposalMode = (value: string | null | undefined): FrontendProposalType | '' => frontendProposalTypes.includes(value as FrontendProposalType) ? value as FrontendProposalType : '';
+
+export type OrganizerConfirmationDescriptionInput = Pick<ProposalPrefill, 'eventKey' | 'year' | 'eventTitle' | 'date' | 'place'> & {
+  organization: string; contactPerson?: string; email: string; note?: string; submissionDate?: Date;
+};
+
+export const formatLjubljanaSubmissionDate = (date = new Date()) => new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Ljubljana', year: 'numeric', month: '2-digit', day: '2-digit'
+}).format(date);
+
+export const buildOrganizerConfirmationDescription = (input: OrganizerConfirmationDescriptionInput) => [
+  'Vrsta predloga: Potrditev podatkov organizatorja',
+  `Event key: ${input.eventKey.trim()}`,
+  `Leto: ${input.year.trim()}`,
+  `Naziv teka: ${input.eventTitle.trim()}`,
+  `Datum: ${input.date.trim()}`,
+  `Kraj: ${input.place.trim()}`,
+  `Organizacija: ${input.organization.trim()}`,
+  `Kontaktna oseba: ${(input.contactPerson ?? '').trim()}`,
+  `Kontaktni e-naslov: ${input.email.trim()}`,
+  'Potrditvena izjava: Da',
+  `Opomba: ${(input.note ?? '').trim()}`,
+  `Datum oddaje: ${formatLjubljanaSubmissionDate(input.submissionDate)}`
+].join('\n');
+
+export const buildOrganizerConfirmationSubmission = (prefill: ProposalPrefill, details: { organization: string; contactPerson?: string; email: string; note?: string; submissionDate?: Date }) => ({
+  proposalType: googleProposalFormContract.values.proposalTypes[1],
+  date: prefill.date,
+  title: prefill.eventTitle,
+  place: prefill.place,
+  region: prefill.region,
+  officialSource: prefill.officialSourceUrl,
+  description: buildOrganizerConfirmationDescription({ ...prefill, ...details }),
+  organizer: 'Da',
+  officialAnnouncement: 'Ne vem',
+  email: details.email,
+  additionalData: [] as string[]
+});
 
 export const changeDescriptionPrefix = (lang: ProposalLanguage) => lang === 'en' ? 'Selected changes:' : 'Izbrane vrste sprememb:';
 

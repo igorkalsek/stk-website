@@ -64,6 +64,26 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       <input type="radio" name="proposal-type-ui" value="existing" hidden data-context-existing-radio data-proposal-type-ui data-field-label={copy.labels.proposalType} />
       <input type="hidden" name={googleProposalFormContract.fields.proposalType} value="" data-backend-proposal-type />
 
+      <section class="confirmation-mode" hidden aria-labelledby="confirmation-summary-title">
+        <div class="confirmation-valid-context">
+          <h3 id="confirmation-summary-title">{lang === 'en' ? 'Published race information' : 'Objavljeni podatki o teku'}</h3>
+          <dl class="confirmation-summary"></dl>
+          <div class="confirmation-fields">
+            <div><label for="confirmation-organization">{lang === 'en' ? 'Organization or club name' : 'Ime organizacije ali društva'} <span aria-hidden="true">*</span></label><input id="confirmation-organization" required autocomplete="organization" /></div>
+            <div><label for="confirmation-contact">{lang === 'en' ? 'Contact person name' : 'Ime kontaktne osebe'}</label><input id="confirmation-contact" autocomplete="name" /></div>
+            <div><label for="confirmation-email">{lang === 'en' ? 'Organizer email' : 'Organizatorski e-naslov'} <span aria-hidden="true">*</span></label><input id="confirmation-email" type="email" pattern={emailPattern} required autocomplete="email" /></div>
+            <label class="confirmation-statement"><input id="confirmation-statement" type="checkbox" required /> <span>{lang === 'en' ? 'I confirm that I am acting on behalf of the organizer and that the displayed information is correct.' : 'Potrjujem, da nastopam v imenu organizatorja in da so prikazani podatki pravilni.'}</span></label>
+            <div><label for="confirmation-note">{lang === 'en' ? 'Optional note' : 'Neobvezna opomba'}</label><textarea id="confirmation-note" rows="4"></textarea></div>
+          </div>
+          <p><a class="confirmation-correction-link" href="#">{lang === 'en' ? 'The information is not correct – open the correction form' : 'Podatki niso pravilni – odprite obrazec za popravek'}</a></p>
+        </div>
+        <div class="confirmation-invalid-context" hidden>
+          <h3>{lang === 'en' ? 'Race information is missing' : 'Podatki o teku manjkajo'}</h3>
+          <p>{lang === 'en' ? 'This confirmation link does not contain valid race information. Return to race search or use the regular form.' : 'Ta potrditvena povezava ne vsebuje veljavnih podatkov o teku. Vrnite se v iskalnik ali uporabite običajni obrazec.'}</p>
+          <p><a href={lang === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}>{lang === 'en' ? 'Open race search' : 'Odprite iskalnik tekov'}</a> · <a href={copy.cleanPath}>{lang === 'en' ? 'Open regular form' : 'Odprite običajni obrazec'}</a></p>
+        </div>
+      </section>
+
       <section class="race-picker" data-race-picker data-testid="race-picker" hidden aria-labelledby="race-picker-title">
         <h3 id="race-picker-title">{pickerCopy.heading}</h3>
         <label for="proposal-race-search">{pickerCopy.label}</label>
@@ -165,7 +185,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   // @ts-nocheck
   import { googleProposalFormContract as contract } from '../proposal-form/proposal-form-contract';
   import { proposalFormLocales } from '../proposal-form/proposal-form-locales';
-  import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl } from '../proposal-form/proposal-form-controller';
+  import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationSubmission, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl } from '../proposal-form/proposal-form-controller';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from '../utils-additional';
   import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
   import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
@@ -177,6 +197,9 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const params = new URLSearchParams(window.location.search);
   const prefill = readProposalPrefill(params, isEnglish ? 'en' : 'sl');
   const hasRaceContext = Boolean(prefill.eventKey || (prefill.eventTitle && prefill.date && prefill.place));
+  const proposalMode = parseProposalMode(params.get('mode'));
+  const isConfirmationMode = proposalMode === 'confirm';
+  const hasValidConfirmationContext = Boolean(prefill.eventKey && prefill.year && prefill.eventTitle && prefill.date && prefill.place);
   const contextSection = document.querySelector('[data-correction-context]');
 
   const showAllChangesButton = document.querySelector('[data-show-all-changes]');
@@ -203,6 +226,14 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const fallbackLink = document.querySelector('[data-correction-form-link]');
   const contextExistingRadio = document.querySelector('[data-context-existing-radio]');
   const proposalFieldset = document.querySelector('.proposal-type-fieldset');
+  const confirmationMode = document.querySelector('.confirmation-mode');
+  const confirmationValid = document.querySelector('.confirmation-valid-context');
+  const confirmationInvalid = document.querySelector('.confirmation-invalid-context');
+  const confirmationOrganization = document.querySelector('#confirmation-organization');
+  const confirmationContact = document.querySelector('#confirmation-contact');
+  const confirmationEmail = document.querySelector('#confirmation-email');
+  const confirmationStatement = document.querySelector('#confirmation-statement');
+  const confirmationNote = document.querySelector('#confirmation-note');
   const submitTarget = document.querySelector('[data-submit-target]');
   const backendSubmitForm = document.querySelector('[data-backend-submit-form]');
   const allowedAdditionalValues = contract.values.additionalData;
@@ -294,7 +325,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const addProtocol = () => { if (!source) return; const value = source.value.trim(); if (value && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) source.value = `https://${value}`; };
   const isStkUrl = () => { try { const url = new URL(source.value); const host = url.hostname.replace(/^www\./, ''); return host === 'tekaski-koledar.si'; } catch { return false; } };
   const validateSource = () => { addProtocol(); const value = source?.value.trim() || ''; const invalid = Boolean(value && !isSafeHttpUrl(value)); source?.setCustomValidity(invalid ? copy.sourceError : ''); if (invalid) source?.setAttribute('aria-invalid', 'true'); else source?.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = !invalid; if (sourceWarning) sourceWarning.hidden = !value || !isStkUrl(); updateErrorSummary(); return !invalid; };
-  const currentType = () => form?.querySelector('input[name="proposal-type-ui"]:checked')?.value || '';
+  const currentType = () => isConfirmationMode ? 'confirm' : form?.querySelector('input[name="proposal-type-ui"]:checked')?.value || '';
   const selectedChangeBoxes = () => Array.from(form?.querySelectorAll('input[name="proposal-change-category"]:checked') || []);
   const selectedChangeValues = () => selectedChangeBoxes().map((box) => box.value);
   const selectedChangeLabels = () => selectedChangeBoxes().map((box) => box.closest('label')?.querySelector('span')?.textContent?.trim()).filter(Boolean);
@@ -338,6 +369,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const fieldValue = (name) => form?.elements.namedItem(name)?.value || '';
   const descriptionForSubmission = () => currentType() === 'existing' ? buildStructuredDescription() : description?.value || '';
   const currentSubmissionInput = () => {
+    if (isConfirmationMode) return buildOrganizerConfirmationSubmission(prefill, { organization: confirmationOrganization?.value || '', contactPerson: confirmationContact?.value || '', email: confirmationEmail?.value || '', note: confirmationNote?.value || '' });
     setBackendType();
     return {
       proposalType: backendProposalType?.value || backendTypeForCurrentSelection(),
@@ -370,7 +402,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     HTMLFormElement.prototype.submit.call(backendSubmitForm);
     backendSubmitForm.replaceChildren();
   };
-  const updateFallbackLink = () => { if (fallbackLink) fallbackLink.href = currentGoogleFormsUrl(); };
+  const updateFallbackLink = () => { if (!fallbackLink) return; fallbackLink.closest('.proposal-fallback').hidden = isConfirmationMode; if (!isConfirmationMode) fallbackLink.href = currentGoogleFormsUrl(); };
   const syncDescriptionRequirement = () => { if (description && currentType() === 'existing') { const required = requiresExplanation(); description.required = required; const mark = document.querySelector('[data-field-row="description"] [data-required-mark]'); if (mark) mark.hidden = !required; } };
   const updateChangeSummary = () => { syncDescriptionRequirement(); const labels = selectedChangeLabels(); if (changeSummary) { changeSummary.hidden = labels.length === 0; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (description && !description.value && currentType() === 'existing') description.placeholder = buildChangePlaceholder(); setBackendType(); updateFallbackLink(); };
   const contextChangeError = () => isEnglish ? 'Enter at least one correction or additional detail.' : 'Vnesite vsaj en popravek ali dopolnitev.';
@@ -381,6 +413,13 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const isPickerGateActive = () => currentType() === 'existing' && !hasRaceContext && racePickerMode !== 'manual';
   const computeFieldRules = (type) => { const identity = getIdentityState(); const gated = type === 'existing' && !hasRaceContext && racePickerMode !== 'manual'; const rules = getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); return gated ? Object.fromEntries(Object.entries(rules).map(([key, rule]) => [key, { ...rule, visible: false, required: false, disabled: true }])) : rules; };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
+  const confirmationControls = () => Array.from(confirmationMode?.querySelectorAll('input,textarea,select,button') || []);
+  const ordinaryControls = () => Array.from(form?.querySelectorAll('.proposal-type-fieldset input, [data-context-existing-radio], [data-race-picker] input, [data-race-picker] button, [data-race-search-back], .form-grid input, .form-grid select, .form-grid textarea') || []);
+  const syncModeControlIsolation = () => {
+    const confirmationEnabled = isConfirmationMode && hasValidConfirmationContext;
+    confirmationControls().forEach((control) => { control.disabled = !confirmationEnabled; if (!confirmationEnabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); } });
+    if (isConfirmationMode) ordinaryControls().forEach((control) => { control.disabled = true; control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); });
+  };
   const applyTypeUx = () => {
     const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const rules = computeFieldRules(type);
     setRow('date', rules.date); setRow('title', rules.title); setRow('place', rules.place); setRow('region', rules.region);
@@ -405,7 +444,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (!isExisting) { clearChangeError(); if (changeSummary) changeSummary.hidden = true; }
     updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
   };
-  const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
+  const labelForField = (field) => {
+    const associatedLabel = field?.id ? form?.querySelector(`label[for="${CSS.escape(field.id)}"]`) : null;
+    return field?.dataset?.fieldLabel || associatedLabel?.textContent?.replace('*', '').trim() || field?.closest('label')?.textContent?.replace('*', '').trim() || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
+  };
   const isVisibleField = (field) => !field.disabled && !field.closest('[hidden]') && field.type !== 'hidden';
   const visibleInvalidFields = () => Array.from(form.querySelectorAll('input,select,textarea')).filter((field) => isVisibleField(field) && !field.checkValidity());
   const requiredFieldNames = [contract.fields.date, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.description, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email];
@@ -436,10 +478,28 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (title) title.textContent = prefill.eventTitle;
     if (meta) meta.textContent = [formatPickerDate(prefill.date) || prefill.year, prefill.place, prefill.region].filter(Boolean).join(' · ');
     if (back) { back.hidden = !prefill.safeReturnUrl; if (prefill.safeReturnUrl) back.href = prefill.safeReturnUrl; }
-    const mode = parseProposalMode(params.get('mode'));
-    if (!hasRaceContext && mode) { const modeRadio = form?.querySelector(`input[name="proposal-type-ui"][value="${mode}"]`); if (modeRadio) modeRadio.checked = true; }
+    const mode = proposalMode;
+    if (!hasRaceContext && mode && mode !== 'confirm') { const modeRadio = form?.querySelector(`input[name="proposal-type-ui"][value="${mode}"]`); if (modeRadio) modeRadio.checked = true; }
+    if (isConfirmationMode) {
+      confirmationMode.hidden = false; confirmationValid.hidden = !hasValidConfirmationContext; confirmationInvalid.hidden = hasValidConfirmationContext;
+      proposalFieldset.hidden = true; racePicker.hidden = true; raceBack.hidden = true; document.querySelector('.form-grid').hidden = true; document.querySelector('.proposal-hand-off').hidden = true;
+      contextSection.hidden = true; resetButton.hidden = true; button.hidden = !hasValidConfirmationContext;
+      if (button) button.textContent = isEnglish ? 'Confirm information' : 'Potrdite podatke';
+      if (formTitle) formTitle.textContent = isEnglish ? 'Confirm race information' : 'Potrdite podatke o teku';
+      if (formHelper) formHelper.textContent = isEnglish ? 'Review the published information before confirming it.' : 'Pred potrditvijo preglejte objavljene podatke.';
+      const summary = document.querySelector('.confirmation-summary'); summary.replaceChildren();
+      const fields = [
+        [isEnglish ? 'Race name' : 'Naziv teka', prefill.eventTitle], [isEnglish ? 'Date' : 'Datum', prefill.date],
+        [isEnglish ? 'Place and region' : 'Kraj in regija', [prefill.place, prefill.region].filter(Boolean).join(' · ')],
+        [isEnglish ? 'Start time' : 'Ura', prefill.startTime], [isEnglish ? 'Distances' : 'Razdalje', prefill.distances],
+        [isEnglish ? 'Surface' : 'Podlaga', prefill.surface], [isEnglish ? 'Official announcement' : 'Razpis', prefill.noticeUrl || prefill.officialSourceUrl, true],
+        [isEnglish ? 'Registration' : 'Prijava', prefill.registrationUrl, true], [isEnglish ? 'Cup or series' : 'Pokal ali serija', prefill.cup]
+      ];
+      for (const [label, value, link] of fields) if (value && (!link || isSafeHttpUrl(value))) { const dt = document.createElement('dt'); dt.textContent = label; const dd = document.createElement('dd'); if (link) { const a = document.createElement('a'); a.href = value; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = value; dd.append(a); } else dd.textContent = value; summary.append(dt, dd); }
+      const correctionParams = new URLSearchParams(params); correctionParams.delete('mode'); const correctionLink = document.querySelector('.confirmation-correction-link'); correctionLink.href = `${window.location.pathname}?${correctionParams}`;
+    }
     for (const value of parsePreselectedChangeCategories(params.get('changes'))) selectChangeCategory(value);
-    syncVisibleChangeOptions(); applyTypeUx(); validateSource(); updateFallbackLink();
+    syncVisibleChangeOptions(); applyTypeUx(); syncModeControlIsolation(); validateSource(); updateFallbackLink();
     form?.setAttribute('data-proposal-runtime-ready', 'true');
   };
 
@@ -464,13 +524,28 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field.dataset?.basicCorrectionField) { const err = document.querySelector(`[data-basic-error="${field.dataset.basicCorrectionField}"]`); if (err) err.hidden = true; } if (field.dataset?.structuredField === 'routeUrl') { const routeError = document.querySelector('[data-route-error]'); if (routeError) routeError.hidden = true; } if (field.dataset?.structuredField === 'elevationGain') { const elevationError = document.querySelector('[data-elevation-error]'); if (elevationError) elevationError.hidden = true; } updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
   form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else { updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
   const setStatus = (message, kind = '') => { if (!errors) return; errors.hidden = !message; errors.textContent = message; errors.classList.toggle('success', kind === 'success'); if (message) errors.focus(); };
-  const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
-  const markSubmitted = (attempt) => { if (submissionState !== 'submitting' || attempt !== armedSubmissionAttempt) return; submissionState = 'submitted-unverified'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = true; button.hidden = true; button.textContent = copy.submit; } if (resetButton) { resetButton.hidden = false; resetButton.textContent = copy.newProposal; } setStatus(copy.submitted, 'success'); };
+  const confirmationSubmitLabel = () => isEnglish ? 'Confirm information' : 'Potrdite podatke';
+  const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = isConfirmationMode ? confirmationSubmitLabel() : copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
+  const markSubmitted = (attempt) => { if (submissionState !== 'submitting' || attempt !== armedSubmissionAttempt) return; submissionState = 'submitted-unverified'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = true; button.hidden = true; button.textContent = copy.submit; } if (resetButton && !isConfirmationMode) { resetButton.hidden = false; resetButton.textContent = copy.newProposal; } setStatus(isConfirmationMode ? (isEnglish ? 'The confirmation was sent for manual review.' : 'Potrditev je bila poslana v ročni pregled.') : copy.submitted, 'success'); };
   submitTarget?.addEventListener('load', () => { if (submissionState !== 'submitting' || !armedSubmissionAttempt) return; markSubmitted(armedSubmissionAttempt); });
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
     if (submissionState === 'submitting' || submissionState === 'submitted-unverified') return;
     submissionState = 'validating';
+    if (isConfirmationMode) {
+      if (!hasValidConfirmationContext) { submissionState = 'failed'; setStatus(isEnglish ? 'Valid race information is required.' : 'Za potrditev so potrebni veljavni podatki o teku.'); return; }
+      const confirmationFields = [confirmationOrganization, confirmationEmail, confirmationStatement];
+      const invalid = confirmationFields.filter((field) => !field.checkValidity());
+      if (invalid.length) { submissionState = 'failed'; showErrors(invalid); invalid[0].focus(); return; }
+      setFieldValue(contract.fields.date, prefill.date); syncDateParts();
+      if (errors) { errors.hidden = true; errors.textContent = ''; errors.classList.remove('success'); }
+      currentSubmissionAttempt += 1; armedSubmissionAttempt = currentSubmissionAttempt;
+      if (button) { button.disabled = true; button.textContent = isEnglish ? 'Sending …' : 'Pošiljanje …'; }
+      submissionState = 'submitting'; window.clearTimeout(submitTimeoutId);
+      submitTimeoutId = window.setTimeout(() => restoreAfterSubmitFailure(), 12000);
+      submitCanonicalEntries(currentGoogleFormsEntries());
+      return;
+    }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
     if (currentType() === 'existing') {
       const hasCorrection = selectedChangeValues().length > 0 || hasStructured() || hasBasicCorrections();
@@ -514,5 +589,6 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   .proposal-type-grid,.checkbox-grid{display:grid;gap:10px}.proposal-choice,.checkbox-grid label{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(16,64,80,.12);border-radius:14px;background:var(--white)}
   .form-grid{display:grid;gap:16px}.form-grid [data-field-row]{display:grid;gap:7px}.form-grid label{font-weight:800;color:var(--ink)}.form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.form-grid textarea{resize:vertical}.full-span{grid-column:1/-1}.form-status{margin:14px 0;padding:12px;border-radius:12px;background:#fff3cd;color:#5f4400;font-weight:700}.form-status.success{background:rgba(200,230,201,.55);color:var(--green-dark)}[aria-invalid="true"]{border-color:#b42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.14)}.proposal-actions{align-items:center}
   .current-value{color:var(--muted);overflow-wrap:anywhere}.current-value a{font-weight:800;color:var(--green-dark);overflow-wrap:anywhere}.proposed-label{font-size:.9rem;color:var(--green-dark)}.context-mini-links{display:flex;flex-wrap:wrap;gap:12px}.change-options-details{border:1px solid rgba(16,64,80,.1);border-radius:12px;padding:10px;background:rgba(16,64,80,.025)}.change-options-details summary{cursor:pointer;font-weight:800;color:var(--green-dark)}.change-options-details[open]{display:grid;gap:12px}.structured-basic{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(16,64,80,.14);border-radius:14px;background:rgba(255,255,255,.72)}.structured-basic h3,.structured-basic p{margin:0}.structured-additional{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(16,64,80,.14);border-radius:14px;background:rgba(255,255,255,.72)}.structured-additional h3{margin:0}.structured-grid{display:grid;gap:12px}.structured-field{display:grid;gap:7px;padding:12px;border:1px solid rgba(16,64,80,.1);border-radius:12px;background:var(--white)}.structured-field.full-span{grid-column:1/-1}.suffix-input{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px}.suffix-input span{font-weight:800;color:var(--green-dark)}.change-summary{display:grid;gap:8px}.change-chips{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}.change-chip{display:inline-flex;border-radius:999px;padding:5px 9px;background:rgba(50,121,61,.12);color:var(--green-dark);font-weight:800}.about-proposal{padding:12px;border-radius:14px;background:rgba(16,64,80,.04)}.about-proposal h3,.about-proposal p{margin:0}.about-proposal{display:grid;gap:4px}
+  .confirmation-mode,.confirmation-valid-context,.confirmation-fields{display:grid;gap:16px}.confirmation-mode h3{margin:0}.confirmation-summary{display:grid;grid-template-columns:minmax(7rem,auto) minmax(0,1fr);gap:8px 14px;margin:0;padding:16px;border-radius:14px;background:rgba(16,64,80,.04)}.confirmation-summary dt{font-weight:800}.confirmation-summary dd{margin:0;overflow-wrap:anywhere}.confirmation-fields>div{display:grid;gap:7px}.confirmation-fields label{font-weight:800}.confirmation-fields input:not([type="checkbox"]),.confirmation-fields textarea{width:100%;border:1px solid rgba(16,64,80,.22);border-radius:12px;padding:12px;font:inherit}.confirmation-statement{display:flex;align-items:flex-start;gap:10px;padding:14px;border:1px solid rgba(16,64,80,.12);border-radius:14px}.confirmation-statement input{margin-top:.25rem;flex:0 0 auto}@media(max-width:480px){.confirmation-summary{grid-template-columns:1fr}.confirmation-summary dd{margin-bottom:6px}}
   @media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.proposal-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checkbox-grid,.structured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>

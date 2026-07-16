@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationDescription, buildOrganizerConfirmationSubmission, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
-import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
+import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
 describe('proposal form contract', () => {
   it('keeps verified Google Forms entry mapping', () => {
@@ -21,6 +21,7 @@ describe('proposal form contract', () => {
     assert.deepEqual(parsePreselectedChangeCategories('basic-date-time,Višinski metri,NEVELJAVNO,basic-date-time'), ['basic-date-time', 'Višinski metri']);
     assert.equal(parseProposalMode('new'), 'new');
     assert.equal(parseProposalMode('other'), 'other');
+    assert.equal(parseProposalMode('confirm'), 'confirm');
     assert.equal(parseProposalMode('bad'), '');
   });
   it('centralizes field visibility and keeps known context identity enabled while hidden', () => {
@@ -151,5 +152,29 @@ describe('proposal form contract', () => {
     const sources = ['src/components/RaceProposalForm.astro','src/proposal-form/proposal-form-controller.ts'].map((f) => readFileSync(new URL(`../${f}`, import.meta.url),'utf8')).join('\n');
     assert.doesNotMatch(sources, /googleapis|spreadsheets|\bD1\b|\bKV\b|master_row|Master API|Additional API/i);
     assert.match(sources, /stk-master-api\.igor-kalsek\.workers\.dev/);
+  });
+
+  it('builds confirmation URLs from the complete shared race context', () => {
+    const race = { row: '12', year: '2026', date: '2026-07-19', title: 'Testni tek', naziv_prireditve: 'Testni tek', place: 'Kranj', region: 'Gorenjska', startTime: '', distances: '', surface: '', noticeUrl: '', registrationUrl: '', cup: '' };
+    for (const [lang, path, returnUrl] of [['sl', '/dodaj-ali-popravi-tek/', '/tek/2026/test/'], ['en', '/en/add-or-correct-race/', '/en/races/2026/test/']]) {
+      const parsed = new URL(buildRaceConfirmationContextUrl(race, lang, returnUrl), 'https://tekaski-koledar.si');
+      assert.equal(parsed.pathname, path); assert.equal(parsed.searchParams.get('mode'), 'confirm');
+      assert.equal(parsed.searchParams.get('eventKey'), 'r000012'); assert.equal(parsed.searchParams.get('year'), '2026');
+      assert.equal(parsed.searchParams.get('date'), race.date); assert.equal(parsed.searchParams.get('event'), race.title);
+      assert.equal(parsed.searchParams.get('place'), race.place); assert.equal(parsed.searchParams.get('returnUrl'), returnUrl);
+    }
+  });
+
+  it('builds deterministic organizer confirmation description and existing-contract payload', () => {
+    const prefill = readProposalPrefill(new URLSearchParams('event=Testni%20tek&eventKey=r000012&year=2026&date=2026-07-19&place=Kranj&region=Gorenjska&officialSource=https%3A%2F%2Fexample.com%2Frazpis'), 'sl');
+    const details = { organization: 'ŠD Test', contactPerson: '', email: 'org@example.com', note: '', submissionDate: new Date('2026-07-15T22:30:00Z') };
+    assert.equal(buildOrganizerConfirmationDescription({ ...prefill, ...details }), 'Vrsta predloga: Potrditev podatkov organizatorja\nEvent key: r000012\nLeto: 2026\nNaziv teka: Testni tek\nDatum: 2026-07-19\nKraj: Kranj\nOrganizacija: ŠD Test\nKontaktna oseba: \nKontaktni e-naslov: org@example.com\nPotrditvena izjava: Da\nOpomba: \nDatum oddaje: 2026-07-16');
+    const submission = buildOrganizerConfirmationSubmission(prefill, details);
+    assert.equal(submission.proposalType, googleProposalFormContract.values.proposalTypes[1]);
+    assert.deepEqual([submission.date, submission.title, submission.place, submission.region, submission.organizer, submission.officialAnnouncement], ['2026-07-19', 'Testni tek', 'Kranj', 'Gorenjska', 'Da', 'Ne vem']);
+    assert.deepEqual(submission.additionalData, []);
+    const entries = buildGoogleFormsSubmissionEntries(submission);
+    assert.equal(entries.some(([name]) => name === googleProposalFormContract.fields.additionalData), false);
+    assert.deepEqual(new Set(entries.map(([name]) => name)), new Set(Object.values(googleProposalFormContract.fields).filter((name) => name !== googleProposalFormContract.fields.additionalData)));
   });
 });
