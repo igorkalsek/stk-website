@@ -4434,3 +4434,332 @@ main {
     width: 100%;
   }
 }
+
+/* Compact two-column race finder workspace */
+.finder-workspace {
+  display: grid;
+  gap: clamp(18px, 3vw, 28px);
+  margin-top: clamp(18px, 4vw, 30px);
+  margin-bottom: clamp(32px, 6vw, 56px);
+}
+
+.finder-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.finder-sidebar h2 {
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: clamp(1.15rem, 2.2vw, 1.35rem);
+}
+
+.finder-sidebar .field,
+.finder-sort-field {
+  gap: 5px;
+}
+
+.finder-sidebar .field input,
+.finder-sidebar .field select,
+.finder-sort-field select {
+  min-height: 40px;
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.finder-sidebar .finder-primary-filters {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.finder-sidebar .quick-picks {
+  gap: 7px;
+  margin: 0;
+}
+
+.finder-sidebar .quick-pick {
+  min-height: 30px;
+  padding: 5px 9px;
+  font-size: 0.86rem;
+}
+
+.finder-sidebar .finder-more-filters,
+.finder-sidebar .race-preferences-panel {
+  border: 0;
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+  padding: 12px 0 0;
+}
+
+.finder-sidebar .finder-more-filters summary {
+  list-style-position: outside;
+}
+
+.finder-sidebar .finder-more-filters-content {
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.finder-sidebar .checkbox-field {
+  min-height: 28px;
+  font-size: 0.92rem;
+}
+
+.finder-sidebar .race-preferences-compact {
+  gap: 6px;
+}
+
+.finder-sidebar .race-preferences-compact h3,
+.finder-sidebar .race-preferences-form-heading {
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: 1rem;
+}
+
+.finder-sidebar .race-preferences-state:empty {
+  display: none;
+}
+
+.finder-sidebar .race-preferences-summary {
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.finder-sidebar .race-preferences-actions,
+.finder-sidebar .filter-actions {
+  gap: 6px;
+}
+
+.finder-sidebar .race-preferences-actions .button,
+.finder-sidebar .filter-actions .button {
+  min-height: 32px;
+  padding: 6px 9px;
+}
+
+.finder-sidebar .filter-actions {
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+  padding-top: 12px;
+}
+
+.finder-results-column {
+  min-width: 0;
+}
+
+.finder-results-toolbar {
+  gap: 8px;
+  margin-bottom: 12px;
+  border-radius: 18px;
+  padding: clamp(12px, 2.4vw, 16px);
+}
+
+.finder-results-heading {
+  align-items: center;
+}
+
+.finder-results-heading h2 {
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+}
+
+.finder-results-heading .result-count {
+  margin-top: 0.25rem;
+}
+
+.finder-sort-field {
+  min-width: min(100%, 230px);
+}
+
+.finder-results-toolbar [data-search-status],
+.finder-results-toolbar .additional-data-note {
+  margin: 0;
+}
+
+.finder-results-toolbar .active-filters {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid rgba(16, 64, 80, 0.1);
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0 0;
+}
+
+.search-event-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.search-event-row .search-event-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+}
+
+.search-event-row-date {
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.search-event-row-date time {
+  padding: 6px 9px;
+}
+
+.search-event-row-main {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.search-event-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-event-primary-actions {
+  gap: 6px;
+}
+
+.search-event-primary-actions .button,
+.search-event-secondary-actions .button,
+.search-event-more-menu summary {
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
+.saved-race-button-compact {
+  width: auto;
+  gap: 0.25rem;
+}
+
+.saved-race-star {
+  color: #81510d;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.search-event-secondary-actions {
+  margin-top: 0;
+}
+
+.search-event-more-menu-options {
+  gap: 0;
+  min-width: 180px;
+}
+
+.search-event-more-menu-options a {
+  border-radius: 10px;
+  color: var(--deep-teal);
+  font-size: 0.92rem;
+  font-weight: 800;
+  padding: 8px 10px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.search-event-more-menu-options a:hover,
+.search-event-more-menu-options a:focus-visible {
+  background: rgba(200, 230, 201, 0.58);
+  outline: none;
+}
+
+.search-event-row .event-additional-chips,
+.search-event-row .additional-data-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.search-event-row .event-chip-additional,
+.search-event-row .additional-data-item {
+  display: inline;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  padding: 0;
+}
+
+.search-event-row .event-chip-additional:not(:last-child)::after,
+.search-event-row .additional-data-item:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.45rem;
+  color: var(--muted);
+}
+
+.search-event-row .event-chip-additional-price:first-child {
+  color: var(--deep-teal);
+  font-weight: 800;
+}
+
+@media (min-width: 960px) {
+  .finder-workspace {
+    grid-template-columns: minmax(290px, 320px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .finder-sidebar {
+    position: sticky;
+    top: 88px;
+  }
+
+  .finder-sidebar .finder-more-filters-content {
+    grid-template-columns: 1fr;
+  }
+
+  .search-event-row {
+    grid-template-columns: 82px minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .search-event-row-date {
+    align-self: start;
+    flex-direction: column;
+  }
+
+  .search-event-row-actions {
+    justify-content: flex-end;
+    min-width: 150px;
+  }
+
+  .search-event-primary-actions,
+  .search-event-secondary-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 959px) {
+  .finder-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .finder-sort-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .finder-sidebar .quick-picks-list,
+  .search-event-row-actions,
+  .search-event-primary-actions,
+  .search-event-secondary-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-event-primary-actions .button,
+  .search-event-secondary-actions .button,
+  .saved-race-button-compact {
+    width: auto;
+  }
+}

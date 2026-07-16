@@ -16,6 +16,8 @@ export type RaceFinderLocale = {
   advancedFiltersLabel: string;
   moreFiltersLabel: string;
   moreOptionsLabel: string;
+  moreMenuLabel: string;
+  routeLabel: string;
   setPreferencesLabel: string;
   startLabel: string;
   allMonthsLabel: string;

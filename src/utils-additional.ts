@@ -401,6 +401,7 @@ type AdditionalDataRenderOptions = {
   kidsRaces?: boolean;
   eventId?: string;
   eventName?: string;
+  includeRoute?: boolean;
 };
 
 export const renderAdditionalDataChips = (
@@ -473,7 +474,7 @@ export const renderAdditionalDataChips = (
       chips.push(chip(`+${elevationGain} m`, 'route'));
     }
 
-    if (additionalData.routeUrl) {
+    if (additionalData.routeUrl && options.includeRoute !== false) {
       const routeTrackingAttributes = [
         'data-stk-track="external-link"',
         'data-stk-action="trasa"',

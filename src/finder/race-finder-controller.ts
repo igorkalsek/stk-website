@@ -83,6 +83,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const editPreferencesButton = document.querySelector<HTMLButtonElement>('[data-edit-preferences]');
   const cancelPreferencesButton = document.querySelector<HTMLButtonElement>('[data-cancel-preferences]');
   const resetPreferencesButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences]');
+  const showAllPreferencesButton = document.querySelector<HTMLButtonElement>('[data-show-all-races]');
   const resetPreferencesFormButton = document.querySelector<HTMLButtonElement>('[data-reset-preferences-form]');
   const preferenceDistanceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-distance]')];
   const preferenceSurfaceInputs = [...document.querySelectorAll<HTMLInputElement>('[data-preference-surface]')];
@@ -348,7 +349,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
 
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${action.kind === 'registration' ? '✍️' : '📄'}</span><span>${escapeHtml(action.label)}</span></a>`;
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`;
 
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
@@ -362,22 +363,14 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const icsUrl = buildIcsDataUrl(event);
     const icsFilename = buildIcsFilename(event);
     const outlookUrl = buildOutlookCalendarEventUrl(event);
-    if (!googleUrl && !icsUrl && !outlookUrl) return '';
 
-    const options = [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google</a>`,
+    return [
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google Calendar</a>`,
       icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>`,
       outlookUrl
         ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>`
         : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>`
     ].filter(Boolean).join('');
-
-    return `
-      <details class="calendar-menu">
-        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>${locale.calendar.addToCalendarLabel}</span></summary>
-        <div class="calendar-menu-options">${options}</div>
-      </details>
-    `;
   };
 
   const setStatus = (message: string) => {
@@ -688,7 +681,6 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       Boolean(filters.surface),
       Boolean(filters.registrationFee),
       Boolean(filters.deadlineFilter),
-      filters.sort !== 'date',
       filters.family,
       filters.dayOfRegistration,
       filters.route,
@@ -767,10 +759,11 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (preferenceFormElement) preferenceFormElement.hidden = !showForm;
     setPreferenceFormFocusable(showForm);
     if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'empty' ? '' : state === 'active' ? String(locale.messages.preferencesActive) : String(locale.messages.preferencesStored);
-    if (preferenceSummaryElement) { const emptyText = locale.language === 'sl' ? 'Izberite razdalje, podlage in regije, ki vas zanimajo. Preference ostanejo samo v tem brskalniku.' : 'Choose the distances, surfaces and regions that interest you. Preferences stay only in this browser.'; preferenceSummaryElement.textContent = state === 'empty' ? emptyText : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' ? emptyText : (summary.accessible || summary.visible)); }
+    if (preferenceSummaryElement) { const emptyText = locale.language === 'sl' ? 'Izberite svoje priljubljene razdalje, podlage in regije. Podatki ostanejo samo v tem brskalniku.' : 'Choose your preferred distances, surfaces and regions. The information stays only in this browser.'; preferenceSummaryElement.textContent = state === 'empty' ? emptyText : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' ? emptyText : (summary.accessible || summary.visible)); }
     if (activatePreferencesButton) { activatePreferencesButton.hidden = state !== 'inactive'; activatePreferencesButton.textContent = locale.language === 'sl' ? 'Prikažite teke zame' : 'Show races for me'; }
-    if (editPreferencesButton) { editPreferencesButton.hidden = false; editPreferencesButton.textContent = hasSaved ? String(locale.messages.editPreferences) : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
-    if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved; resetPreferencesButton.textContent = locale.resetLabel; }
+    if (editPreferencesButton) { editPreferencesButton.hidden = false; editPreferencesButton.textContent = hasSaved ? (locale.language === 'sl' ? 'Uredite' : 'Edit') : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
+    if (showAllPreferencesButton) showAllPreferencesButton.hidden = state !== 'active';
+    if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved || state === 'active'; resetPreferencesButton.textContent = locale.resetLabel; }
     if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing' || !hasSaved;
     if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = !hasSaved;
     if (focusTarget === 'form') preferenceFormHeading?.focus();
@@ -857,35 +850,49 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     });
     const detailPath = locale.buildDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces });
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false });
+    const routeAction = event.additionalData?.routeUrl
+      ? `<a href="${escapeHtml(event.additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-stk-track="external-link" data-stk-action="trasa" data-stk-event-id="${escapeHtml(event.id)}" data-stk-event-name="${escapeHtml(event.title)}" data-stk-event-date="${escapeHtml(event.date)}" data-analytics-link-type="trasa">${locale.routeLabel}</a>`
+      : '';
     // buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink) remains the shared organizer-action renderer.
     const organizerActions = buildPrimaryActions(event, locale.language);
     const registrationActions = organizerActions.filter((action) => action.kind === 'registration');
     const noticeActions = organizerActions.filter((action) => action.kind !== 'registration');
     const primaryLinks = [
-      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>${locale.detailLabel}</span></a>`,
+      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}">${locale.detailLabel}</a>`,
       ...registrationActions.map(renderPrimaryActionLink),
-      `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
+      `<button class="button button-small button-secondary-light saved-race-button saved-race-button-compact" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="saved-race-star" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
     ].filter(Boolean).join('');
+    const noticeOptionLinks = noticeActions.map((action) =>
+      `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`
+    );
     const moreOptions = [
-      ...noticeActions.map(renderPrimaryActionLink),
-      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}"><span class="action-icon" aria-hidden="true">👍</span><span>${locale.voteLabel}</span></a>`
+      ...noticeOptionLinks,
+      renderableVoteUrl && `<a href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}">${locale.voteLabel}</a>`,
+      routeAction,
+      calendarOptions
     ].filter(Boolean).join('');
-    const secondaryLinks = [moreOptions && `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light"><span>${locale.moreOptionsLabel}</span></summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`, calendarOptions].filter(Boolean).join('');
+    const secondaryLinks = moreOptions
+      ? `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light">${locale.moreMenuLabel}</summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`
+      : '';
 
     return `
-      <article class="event-card search-event-card" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
-        <div class="search-event-date">
+      <article class="event-card search-event-card search-event-row" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
+        <div class="search-event-date search-event-row-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? `<span class="pill pill-family">${locale.familyFriendlyLabel}</span>` : ''}
         </div>
+        <div class="search-event-row-main">
         <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${[event.place, event.region].filter(Boolean).length ? `<p class="search-event-location">${[event.place, event.region].filter(Boolean).map(escapeHtml).join(' · ')}</p>` : ''}
         ${metaItems ? `<div class="search-event-facts">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
+        </div>
+        <div class="search-event-row-actions">
         ${primaryLinks ? `<div class="search-event-primary-actions">${primaryLinks}</div>` : ''}
         ${secondaryLinks ? `<div class="search-event-secondary-actions">${secondaryLinks}</div>` : ''}
+        </div>
       </article>
     `;
   };

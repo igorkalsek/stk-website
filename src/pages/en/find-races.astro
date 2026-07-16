@@ -31,45 +31,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="calendar-year-notice" data-year-notice hidden>The 2027 calendar is being updated.</p>
     </section>
 
-    <section class="section container" aria-labelledby="filters-title">
-      <div class="search-panel">
-        <div class="section-heading search-heading">
-          <div>
-            <h2 id="filters-title">Filters</h2>
-            <p>Search by race name, town or region, then choose a month, region, surface or distance.</p>
-          </div>
 
-        </div>
+    <form class="finder-workspace container" data-search-form>
+      <aside class="finder-sidebar" aria-labelledby="filters-title">
+        <h2 id="filters-title">Filters</h2>
 
-
-
-        <form class="filters-grid" data-search-form>
-          <div class="finder-primary-filters">
-          <label class="field field-wide">
+        <div class="finder-primary-filters">
+          <label class="field">
             <span>Search</span>
-            <input
-              type="search"
-              name="search"
-              placeholder="Search races, towns or regions"
-              autocomplete="off"
-              data-filter="search"
-            />
+            <input type="search" name="search" placeholder="Search races, towns or regions" autocomplete="off" data-filter="search" />
           </label>
-
           <label class="field">
             <span>Month</span>
-            <select name="month" data-filter="month" disabled>
-              <option value="">All months</option>
-            </select>
+            <select name="month" data-filter="month" disabled><option value="">All months</option></select>
           </label>
-
           <label class="field">
             <span>Region</span>
-            <select name="region" data-filter="region" disabled>
-              <option value="">All regions</option>
-            </select>
+            <select name="region" data-filter="region" disabled><option value="">All regions</option></select>
           </label>
-
           <label class="field">
             <span>Distance</span>
             <select name="distance" data-filter="distance">
@@ -81,10 +60,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
               <option value="ultra">Over 42.2 km</option>
             </select>
           </label>
+        </div>
 
-          </div>
-
-          <div class="quick-picks" aria-label="Quick picks">
+        <div class="quick-picks" aria-label="Quick picks">
           <p>Quick picks</p>
           <div class="quick-picks-list">
             <button class="quick-pick" type="button" data-quick-pick="deadlines-soon">Deadlines soon</button>
@@ -96,176 +74,64 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
         </div>
 
-          <details class="finder-more-filters" data-more-filters>
-            <summary data-advanced-filters-summary>More filters</summary>
-            <div class="finder-more-filters-content">
-              <label class="field">
-                <span>Surface</span>
-                <select name="surface" data-filter="surface" disabled>
-                  <option value="">All surfaces</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Entry fee</span>
-                <select name="registrationFee" data-filter="registration-fee">
-                  <option value="">All entry fees</option>
-                  <option value="free-option">Has a free option</option>
-                  <option value="10">Up to €10</option>
-                  <option value="20">Up to €20</option>
-                  <option value="30">Up to €30</option>
-                  <option value="50">Up to €50</option>
-                </select>
-                <small>Entry fee filters use the lowest known fee. Deadline filters include pre-registration and cheaper-entry deadlines. “With route” means a route, map or GPX link is available, not necessarily a GPX file.</small>
-              </label>
-
-              <label class="field">
-                <span>Registration deadline</span>
-                <select name="deadlineFilter" data-filter="deadline">
-                  <option value="">All deadlines</option>
-                  <option value="within-7">Deadline within 7 days</option>
-                  <option value="within-14">Deadline within 14 days</option>
-                  <option value="within-30">Deadline within 30 days</option>
-                  <option value="early-ending">Cheaper entry ending soon</option>
-                  <option value="race-day">Also on race day</option>
-                </select>
-              </label>
-
-              <label class="field">
-                <span>Sort by</span>
-                <select name="sort" data-filter="sort">
-                  <option value="date">Date</option>
-                  <option value="my-races" disabled>Races for me</option>
-                  <option value="registration-deadline">Registration deadlines first</option>
-                  <option value="registration-min">Cheapest first</option>
-                  <option value="registration-max">Most expensive first</option>
-                </select>
-              </label>
-
-              <label class="checkbox-field">
-                <input type="checkbox" name="family" data-filter="family" />
-                <span>Family-friendly</span>
-              </label>
-
-              <label class="checkbox-field">
-                <input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" />
-                <span>Race-day registration</span>
-              </label>
-
-              <label class="checkbox-field">
-                <input type="checkbox" name="route" data-filter="route" />
-                <span>Has route / map</span>
-              </label>
-
-              <label class="field advanced-elevation-field">
-                <span>Elevation gain</span>
-                <select name="elevation" data-filter="elevation">
-                  <option value="">All elevation gains</option>
-                  <option value="max-300">Up to 300 m+</option>
-                  <option value="max-800">Up to 800 m+</option>
-                  <option value="max-1500">Up to 1500 m+</option>
-                  <option value="over-1500">Over 1500 m+</option>
-                </select>
-              </label>
-            </div>
-          </details>
-
-          <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-en">
-          <div class="race-preferences-static">
-            <h3 id="race-preferences-title-en">Races for me</h3>
-            <p data-preferences-intro>Choose the distances, surfaces and regions you are interested in.</p>
-            <p class="race-preferences-privacy">Preferences stay only in this browser and are not sent to STK.</p>
+        <details class="finder-more-filters" data-more-filters>
+          <summary data-advanced-filters-summary>More filters</summary>
+          <div class="finder-more-filters-content">
+            <label class="field"><span>Surface</span><select name="surface" data-filter="surface" disabled><option value="">All surfaces</option></select></label>
+            <label class="field"><span>Entry fee</span><select name="registrationFee" data-filter="registration-fee"><option value="">All entry fees</option><option value="free-option">Has a free option</option><option value="10">Up to €10</option><option value="20">Up to €20</option><option value="30">Up to €30</option><option value="50">Up to €50</option></select><small>Entry fee uporablja najnižjo znano startnino. Roki vključujejo predprijave in cenejše prijave; možnost “s traso” pomeni povezavo do trase, zemljevida ali GPX, ne nujno GPX datoteke.</small></label>
+            <label class="field"><span>Registration deadline</span><select name="deadlineFilter" data-filter="deadline"><option value="">All deadlines</option><option value="within-7">Deadline within 7 days</option><option value="within-14">Deadline within 14 days</option><option value="within-30">Deadline within 30 days</option><option value="early-ending">Cheaper entry ending soon</option><option value="race-day">Also on race day</option></select></label>
+            <label class="checkbox-field"><input type="checkbox" name="family" data-filter="family" /><span>Family-friendly</span></label>
+            <label class="checkbox-field"><input type="checkbox" name="dayOfRegistration" data-filter="day-of-registration" /><span>Race-day registration</span></label>
+            <label class="checkbox-field"><input type="checkbox" name="route" data-filter="route" /><span>Has route / map</span></label>
+            <label class="field advanced-elevation-field"><span>Elevation gain</span><select name="elevation" data-filter="elevation"><option value="">All elevation gains</option><option value="max-300">Up to 300 m+</option><option value="max-800">Up to 800 m+</option><option value="max-1500">Up to 1500 m+</option><option value="over-1500">Over 1500 m+</option></select></label>
           </div>
-          <div class="race-preferences-dynamic">
-            <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
-              <p class="race-preferences-state" data-preferences-state-text></p>
-              <p class="race-preferences-summary" data-preferences-summary></p>
-              <div class="race-preferences-actions race-preferences-compact-actions">
-                <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Show races for me</button>
-                <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-en">Edit preferences</button>
-                <button class="button button-small button-secondary-light preference-reset-compact" type="button" data-reset-preferences>Reset</button>
-              </div>
+        </details>
+
+        <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-en">
+          <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
+            <h3 id="race-preferences-title-en">Races for me</h3>
+            <p class="race-preferences-state" data-preferences-state-text></p>
+            <p class="race-preferences-summary" data-preferences-summary></p>
+            <div class="race-preferences-actions race-preferences-compact-actions">
+              <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Show races for me</button>
+              <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-en">Edit</button>
+              <button class="button button-small button-secondary-light" type="button" data-show-all-races hidden>Show all races</button>
+              <button class="button button-small button-secondary-light preference-reset-compact" type="button" data-reset-preferences>Reset</button>
             </div>
-            <div class="race-preferences-form" id="race-preferences-form-en" data-preferences-form hidden>
-              <h4 class="race-preferences-form-heading" tabindex="-1" data-preferences-form-heading>Choose preferences</h4>
-              <div class="race-preferences-grid">
-                <fieldset class="preference-fieldset">
-                  <legend>Preferred distances</legend>
-                  <label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Up to 5 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>5–10 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>10–21.1 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>21.1–42.2 km</span></label>
-                  <label><input type="checkbox" data-preference-distance="ultra" /> <span>Over 42.2 km</span></label>
-                </fieldset>
-                <fieldset class="preference-fieldset">
-                  <legend>Preferred surfaces</legend>
-                  <label><input type="checkbox" data-preference-surface="road" /> <span>Road</span></label>
-                  <label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label>
-                  <label><input type="checkbox" data-preference-surface="mountain" /> <span>Mountain</span></label>
-                  <label><input type="checkbox" data-preference-family /> <span>Prefer family-friendly races</span></label>
-                </fieldset>
-                <fieldset class="preference-fieldset preference-regions">
-                  <legend>Preferred regions</legend>
-                  <details>
-                    <summary>Choose regions</summary>
-                    <div class="preference-region-list" data-preference-regions></div>
-                  </details>
-                </fieldset>
-              </div>
-              <div class="race-preferences-actions">
-                <button class="button button-small button-primary" type="button" data-save-preferences>Save and show races for me</button>
-                <button class="button button-small button-secondary-light" type="button" data-cancel-preferences hidden>Cancel editing</button>
-                <button class="button button-small button-secondary-light" type="button" data-reset-preferences-form hidden>Reset preferences</button>
-              </div>
+          </div>
+          <div class="race-preferences-form" id="race-preferences-form-en" data-preferences-form hidden>
+            <h3 class="race-preferences-form-heading" tabindex="-1" data-preferences-form-heading>Choose preferences</h3>
+            <div class="race-preferences-grid">
+              <fieldset class="preference-fieldset"><legend>Preferred distances</legend><label><input type="checkbox" data-preference-distance="up-to-5" /> <span>Up to 5 km</span></label><label><input type="checkbox" data-preference-distance="over-5-to-10" /> <span>5–10 km</span></label><label><input type="checkbox" data-preference-distance="over-10-to-half" /> <span>10–21.1 km</span></label><label><input type="checkbox" data-preference-distance="over-half-to-marathon" /> <span>21.1–42.2 km</span></label><label><input type="checkbox" data-preference-distance="ultra" /> <span>Over 42.2 km</span></label></fieldset>
+              <fieldset class="preference-fieldset"><legend>Preferred surfaces</legend><label><input type="checkbox" data-preference-surface="road" /> <span>Road</span></label><label><input type="checkbox" data-preference-surface="trail" /> <span>Trail</span></label><label><input type="checkbox" data-preference-surface="mountain" /> <span>Mountain</span></label><label><input type="checkbox" data-preference-family /> <span>Prefer family-friendly races</span></label></fieldset>
+              <fieldset class="preference-fieldset preference-regions"><legend>Preferred regions</legend><details><summary>Choose regions</summary><div class="preference-region-list" data-preference-regions></div></details></fieldset>
             </div>
+            <div class="race-preferences-actions"><button class="button button-small button-primary" type="button" data-save-preferences>Save and show races for me</button><button class="button button-small button-secondary-light" type="button" data-cancel-preferences hidden>Cancel editing</button><button class="button button-small button-secondary-light" type="button" data-reset-preferences-form hidden>Reset preference</button></div>
           </div>
           <p class="race-preferences-message visually-hidden" data-preferences-message aria-live="polite"></p>
         </section>
 
-          <div class="filter-actions">
-            <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>
-              Clear filters
-            </button>
-            <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>
-              Copy link
-            </button>
-            <span class="muted-note" data-copy-link-status aria-live="polite"></span>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <section class="section container" aria-labelledby="results-title">
-
-      <div class="finder-results-toolbar">
-        <div class="finder-results-heading">
-          <div>
-            <h2 id="results-title">Results</h2>
-            <p data-search-status>Loading confirmed public races …</p>
-          </div>
-          <p class="result-count" data-result-count>Loading races …</p>
+        <div class="filter-actions">
+          <button class="button button-small button-secondary-light clear-filters-button" type="button" data-clear-filters>Clear filters</button>
+          <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>Copy link</button>
+          <span class="muted-note" data-copy-link-status aria-live="polite"></span>
         </div>
-        <div class="active-filters" data-active-filters hidden>
-          <div class="active-filters-heading">
-            <strong data-active-filters-title>Active filters</strong>
-            <span data-active-filters-count></span>
+      </aside>
+
+      <section class="finder-results-column" aria-labelledby="results-title">
+        <div class="finder-results-toolbar">
+          <div class="finder-results-heading">
+            <div><h2 id="results-title">Results</h2><p class="result-count" data-result-count>Loading races …</p></div>
+            <label class="field finder-sort-field"><span>Sort by</span><select name="sort" data-filter="sort"><option value="date">Date</option><option value="my-races" disabled>Races for me</option><option value="registration-deadline">Registration deadlines first</option><option value="registration-min">Cheapest first</option><option value="registration-max">Most expensive first</option></select></label>
           </div>
-          <div class="active-filter-list" data-active-filter-list></div>
+          <p data-search-status>Loading confirmed public races …</p>
+          <div class="active-filters" data-active-filters hidden><div class="active-filters-heading"><strong data-active-filters-title>Active filters</strong><span data-active-filters-count></span><button class="button button-small button-secondary-light" type="button" data-clear-filters>Clear all</button></div><div class="active-filter-list" data-active-filter-list></div></div>
         </div>
-      </div>
-      <p class="additional-data-note" data-additional-note hidden>Some races also include entry fees, registration deadlines, routes or elevation gain.</p>
-      <div class="search-results" data-search-results aria-live="polite">
-        <article class="event-card">
-          <h3>Loading data</h3>
-          <p>The list of upcoming races will appear here.</p>
-          <div class="event-meta">
-            <span class="pill">Calendar</span>
-          </div>
-        </article>
-      </div>
-      <div class="search-more" data-search-more hidden>
-        <button class="button button-primary" type="button" data-show-more>Show more</button>
-      </div>
-    </section>
+        <p class="additional-data-note" data-additional-note hidden>Some races also include entry fees, registration deadlines, routes or elevation gain.</p>
+        <div class="search-results" data-search-results aria-live="polite"><article class="event-card"><h3>Loading data</h3><p>The list of upcoming races will appear here.</p><div class="event-meta"><span class="pill">Calendar</span></div></article></div>
+        <div class="search-more" data-search-more hidden><button class="button button-primary" type="button" data-show-more>Show more</button></div>
+      </section>
+    </form>
   </main>
 </BaseLayout>
 
