@@ -413,6 +413,13 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const isPickerGateActive = () => currentType() === 'existing' && !hasRaceContext && racePickerMode !== 'manual';
   const computeFieldRules = (type) => { const identity = getIdentityState(); const gated = type === 'existing' && !hasRaceContext && racePickerMode !== 'manual'; const rules = getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); return gated ? Object.fromEntries(Object.entries(rules).map(([key, rule]) => [key, { ...rule, visible: false, required: false, disabled: true }])) : rules; };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
+  const confirmationControls = () => Array.from(confirmationMode?.querySelectorAll('input,textarea,select,button') || []);
+  const ordinaryControls = () => Array.from(form?.querySelectorAll('.proposal-type-fieldset input, [data-context-existing-radio], [data-race-picker] input, [data-race-picker] button, [data-race-search-back], .form-grid input, .form-grid select, .form-grid textarea') || []);
+  const syncModeControlIsolation = () => {
+    const confirmationEnabled = isConfirmationMode && hasValidConfirmationContext;
+    confirmationControls().forEach((control) => { control.disabled = !confirmationEnabled; if (!confirmationEnabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); } });
+    if (isConfirmationMode) ordinaryControls().forEach((control) => { control.disabled = true; control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); });
+  };
   const applyTypeUx = () => {
     const type = currentType(); const isNew = type === 'new', isExisting = type === 'existing'; const rules = computeFieldRules(type);
     setRow('date', rules.date); setRow('title', rules.title); setRow('place', rules.place); setRow('region', rules.region);
@@ -437,7 +444,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (!isExisting) { clearChangeError(); if (changeSummary) changeSummary.hidden = true; }
     updateChangeSummary(); setBackendType(); if (errors) errors.hidden = true;
   };
-  const labelForField = (field) => field?.dataset?.fieldLabel || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
+  const labelForField = (field) => {
+    const associatedLabel = field?.id ? form?.querySelector(`label[for="${CSS.escape(field.id)}"]`) : null;
+    return field?.dataset?.fieldLabel || associatedLabel?.textContent?.replace('*', '').trim() || field?.closest('label')?.textContent?.replace('*', '').trim() || field?.closest('fieldset')?.querySelector('legend')?.textContent?.replace('*', '').trim() || '';
+  };
   const isVisibleField = (field) => !field.disabled && !field.closest('[hidden]') && field.type !== 'hidden';
   const visibleInvalidFields = () => Array.from(form.querySelectorAll('input,select,textarea')).filter((field) => isVisibleField(field) && !field.checkValidity());
   const requiredFieldNames = [contract.fields.date, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.description, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email];
@@ -489,7 +499,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       const correctionParams = new URLSearchParams(params); correctionParams.delete('mode'); const correctionLink = document.querySelector('.confirmation-correction-link'); correctionLink.href = `${window.location.pathname}?${correctionParams}`;
     }
     for (const value of parsePreselectedChangeCategories(params.get('changes'))) selectChangeCategory(value);
-    syncVisibleChangeOptions(); applyTypeUx(); validateSource(); updateFallbackLink();
+    syncVisibleChangeOptions(); applyTypeUx(); syncModeControlIsolation(); validateSource(); updateFallbackLink();
     form?.setAttribute('data-proposal-runtime-ready', 'true');
   };
 
@@ -514,7 +524,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field.dataset?.basicCorrectionField) { const err = document.querySelector(`[data-basic-error="${field.dataset.basicCorrectionField}"]`); if (err) err.hidden = true; } if (field.dataset?.structuredField === 'routeUrl') { const routeError = document.querySelector('[data-route-error]'); if (routeError) routeError.hidden = true; } if (field.dataset?.structuredField === 'elevationGain') { const elevationError = document.querySelector('[data-elevation-error]'); if (elevationError) elevationError.hidden = true; } updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
   form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else { updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
   const setStatus = (message, kind = '') => { if (!errors) return; errors.hidden = !message; errors.textContent = message; errors.classList.toggle('success', kind === 'success'); if (message) errors.focus(); };
-  const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
+  const confirmationSubmitLabel = () => isEnglish ? 'Confirm information' : 'Potrdite podatke';
+  const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = isConfirmationMode ? confirmationSubmitLabel() : copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
   const markSubmitted = (attempt) => { if (submissionState !== 'submitting' || attempt !== armedSubmissionAttempt) return; submissionState = 'submitted-unverified'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = true; button.hidden = true; button.textContent = copy.submit; } if (resetButton && !isConfirmationMode) { resetButton.hidden = false; resetButton.textContent = copy.newProposal; } setStatus(isConfirmationMode ? (isEnglish ? 'The confirmation was sent for manual review.' : 'Potrditev je bila poslana v ročni pregled.') : copy.submitted, 'success'); };
   submitTarget?.addEventListener('load', () => { if (submissionState !== 'submitting' || !armedSubmissionAttempt) return; markSubmitted(armedSubmissionAttempt); });
   form?.addEventListener('submit', (event) => {

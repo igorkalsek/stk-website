@@ -66,9 +66,12 @@ test.describe('native proposal form', () => {
     await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Objavljeni podatki o teku' })).toBeVisible();
     await expect(page.locator('.proposal-type-fieldset')).toBeHidden(); await expect(page.locator('#proposal-date')).toBeHidden();
+    await expect.poll(() => page.locator('.form-grid').locator('input,select,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
     await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
+    await expect(page.getByRole('alert')).toContainText('Ime organizacije ali društva'); await expect(page.locator('#confirmation-organization')).toBeFocused();
     await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com');
     await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
+    await expect(page.getByRole('alert')).toContainText('Potrjujem, da nastopam'); await expect(page.locator('#confirmation-statement')).toBeFocused();
     await page.locator('#confirmation-statement').check(); await page.getByRole('button', { name: 'Potrdite podatke' }).click();
     await expect.poll(() => intercepted.getSubmissions()).toBe(1); const payload = intercepted.getPayload();
     expect(payload?.get(contract.fields.proposalType)).toBe(contract.values.proposalTypes[1]);
@@ -92,6 +95,7 @@ test.describe('native proposal form', () => {
   test('confirmation without race context explains next steps and cannot post', async ({ page }) => {
     const intercepted = await interceptForm(page); await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Podatki o teku manjkajo' })).toBeVisible();
+    await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
     await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0);
   });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
@@ -172,6 +176,7 @@ test.describe('native proposal form', () => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
+    await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('dfdfg');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
@@ -709,6 +714,19 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: 'Naziv prireditve' })).toHaveValue('Tek po timeoutu');
     await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toHaveValue('Opis ostane.');
     await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveValue('timeout@example.com');
+  });
+
+  test('confirmation timeout restores the localized confirmation button label', async ({ page }) => {
+    await page.addInitScript(() => {
+      const nativeSetTimeout = window.setTimeout;
+      window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 12000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
+    });
+    const form = await interceptForm(page, { responseMode: 'hang' });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); await expect.poll(() => form.getSubmissions()).toBe(1);
+    await expect(page.getByRole('alert')).toContainText('Predloga trenutno ni bilo mogoče poslati.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toBeEnabled();
   });
 
   test('fallback analytics redacts prefilled values from target URL', async ({ page }) => {
