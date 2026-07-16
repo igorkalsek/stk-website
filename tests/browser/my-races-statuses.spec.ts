@@ -68,6 +68,34 @@ const additional2026 = [
   }
 ];
 
+
+const statusFilterAdditional2026 = [
+  {
+    master_row: '101',
+    datum: '2026-08-15',
+    naziv_prireditve: 'Ljubljana Test Run',
+    zanesljivost: 'visoka',
+    rok_cenejse_prijave: '2026-07-18',
+    rok_prijave: '2026-07-24'
+  },
+  {
+    master_row: '102',
+    datum: '2026-09-20',
+    naziv_prireditve: 'Maribor Test Trail',
+    zanesljivost: 'visoka',
+    rok_cenejse_prijave: '2026-07-19',
+    rok_prijave: '2026-07-25'
+  },
+  {
+    master_row: '103',
+    datum: '2026-10-10',
+    naziv_prireditve: 'Celje Test Run',
+    zanesljivost: 'visoka',
+    rok_cenejse_prijave: '2026-07-20',
+    rok_prijave: '2026-07-26'
+  }
+];
+
 const duplicateAdditional2026 = [
   {
     master_row: '101',
@@ -89,6 +117,7 @@ const byId: Record<string, SavedRaceFixture> = {
 const v2Race = (id: keyof typeof byId, status: SavedRaceStatus) => ({ version: 2, ...byId[id], status });
 const legacyRace = (id: keyof typeof byId) => ({ version: 1, ...byId[id] });
 const card = (page: Page, key: string) => page.locator(`[data-key="${key}"]`);
+const deadlineGroup = (page: Page, key: string) => page.locator(`[data-upcoming-deadline-group-key="${key}"]`);
 const count = (page: Page, status: SavedRaceStatus) => page.locator(`[data-my-races-status-count="${status}"]`);
 const filter = (page: Page, status: SavedRaceStatus | 'all') => page.locator(`[data-my-races-status-filter="${status}"]`);
 
@@ -288,6 +317,79 @@ test('updates upcoming deadline panel eligibility when saved status changes with
   await expectNoUnexpectedErrors(pageErrors);
 });
 
+
+test('filters deadline groups together with race cards', async ({ page }) => {
+  await freezeLjubljanaDate(page);
+  const { pageErrors, requestCounts } = await mockMyRacesApis(page, { additional: statusFilterAdditional2026 });
+  await seedV2SavedRaces(page, [
+    v2Race('r000101', 'following'),
+    v2Race('r000102', 'planning'),
+    v2Race('r000103', 'registered')
+  ]);
+
+  await openMyRaces(page);
+
+  await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
+  for (const key of ['2026:r000101', '2026:r000102', '2026:r000103']) {
+    await expect(card(page, key)).toBeVisible();
+    await expect(deadlineGroup(page, key)).toBeVisible();
+  }
+  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.master2026).toBe(1);
+  expect(requestCounts.master2027).toBe(1);
+
+  await filter(page, 'planning').click();
+  await expect(filter(page, 'planning')).toHaveAttribute('aria-pressed', 'true');
+  await expect(filter(page, 'following')).toHaveAttribute('aria-pressed', 'false');
+  await expect(filter(page, 'registered')).toHaveAttribute('aria-pressed', 'false');
+  await expect(filter(page, 'completed')).toHaveAttribute('aria-pressed', 'false');
+  await expect(card(page, '2026:r000102')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
+  await expect(card(page, '2026:r000101')).toHaveCount(0);
+  await expect(card(page, '2026:r000103')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000101')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000103')).toHaveCount(0);
+
+  await card(page, '2026:r000102').getByLabel('Moj status').selectOption('following');
+  await expect(card(page, '2026:r000102')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000102')).toHaveCount(0);
+  await expect(filter(page, 'planning')).toHaveAttribute('aria-pressed', 'true');
+  await expect(count(page, 'planning')).toHaveText('0');
+  await expect(filter(page, 'planning')).toContainText('Planiram 0');
+
+  await filter(page, 'following').click();
+  await expect(card(page, '2026:r000101')).toBeVisible();
+  await expect(card(page, '2026:r000102')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000101')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
+  await expect(card(page, '2026:r000103')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000103')).toHaveCount(0);
+
+  await filter(page, 'registered').click();
+  await expect(card(page, '2026:r000103')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000103')).toBeVisible();
+  await expect(card(page, '2026:r000101')).toHaveCount(0);
+  await expect(card(page, '2026:r000102')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000101')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000102')).toHaveCount(0);
+
+  await filter(page, 'completed').click();
+  await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toBeVisible();
+  await expect(page.locator('[data-key]')).toHaveCount(0);
+  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+
+  await filter(page, 'all').click();
+  for (const key of ['2026:r000101', '2026:r000102', '2026:r000103']) {
+    await expect(card(page, key)).toBeVisible();
+    await expect(deadlineGroup(page, key)).toBeVisible();
+  }
+
+  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.master2026).toBe(1);
+  expect(requestCounts.master2027).toBe(1);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
 test('keeps My races usable when optional additional API fails', async ({ page }) => {
   await freezeLjubljanaDate(page);
   const { pageErrors } = await mockMyRacesApis(page, { additionalStatus: 500 });
@@ -411,7 +513,7 @@ test('does not emit save or unsave analytics for a status-only change', async ({
 });
 
 test('supports English labels, filters and persistence', async ({ page }) => {
-  const { pageErrors } = await mockMyRacesApis(page);
+  const { pageErrors } = await mockMyRacesApis(page, { additional: statusFilterAdditional2026 });
   await seedV2SavedRaces(page, [
     v2Race('r000101', 'following'),
     v2Race('r000102', 'planning'),
@@ -430,15 +532,34 @@ test('supports English labels, filters and persistence', async ({ page }) => {
   await expect(filter(page, 'completed')).toContainText('Completed 0');
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000101')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000103')).toBeVisible();
 
   const optionText = await page.locator('[data-race-status-control]').evaluateAll((controls) => controls.flatMap((control) => Array.from((control as HTMLSelectElement).options).map((option) => option.textContent || '')).join(' '));
   expect(optionText).not.toMatch(/Spremljam|Planiram|Prijavljen|Opravljen|Ni v Mojih tekih/);
 
+  await filter(page, 'planning').click();
+  await expect(card(page, '2026:r000102')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000101')).toHaveCount(0);
+  await expect(deadlineGroup(page, '2026:r000103')).toHaveCount(0);
+
+  await filter(page, 'following').click();
+  await expect(card(page, '2026:r000101')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000101')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000102')).toHaveCount(0);
+
   await filter(page, 'registered').click();
   await expect(filter(page, 'registered')).toHaveAttribute('aria-pressed', 'true');
+  await expect(card(page, '2026:r000103')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000103')).toBeVisible();
+  await expect(deadlineGroup(page, '2026:r000101')).toHaveCount(0);
   await card(page, '2026:r000103').getByLabel('My status').selectOption('completed');
 
   await expect(page.getByText('There are no saved races with this status.')).toBeVisible();
+  await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toHaveCount(0);
+  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
   await expect(count(page, 'registered')).toHaveText('0');
   await expect(filter(page, 'registered')).toContainText('Registered 0');
   await expect(count(page, 'completed')).toHaveText('1');
