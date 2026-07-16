@@ -91,136 +91,130 @@ import SocialLinks from '../components/SocialLinks.astro';
       </div>
     </section>
 
-    <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
-      <article class="registration-deadlines-card">
-        <div class="registration-deadlines-heading">
+    <div class="home-current-sections">
+      <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+        <article class="registration-deadlines-card">
+          <div class="registration-deadlines-heading">
+            <div>
+              <h2 id="registration-deadlines-title">Prijave se iztekajo</h2>
+              <p>Roki prijav in cenejših prijavnin za prihajajoče teke.</p>
+            </div>
+          </div>
+          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+          <a class="registration-deadlines-cta" href="/iskalnik-tekov/">Poglej vse roke v iskalniku</a>
+        </article>
+      </section>
+
+      <section class="section container" aria-labelledby="nearest-title">
+        <div class="section-heading section-heading-with-action">
           <div>
-            <h2 id="registration-deadlines-title">Prijave se iztekajo</h2>
-            <p>Roki prijav in cenejših prijavnin za prihajajoče teke.</p>
+            <h2 id="nearest-title">Ta teden tečemo</h2>
+            <p>Najbližje potrjene tekaške prireditve iz Slovenskega Tekaškega Koledarja.</p>
+          </div>
+          <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
+        </div>
+        <div class="card-grid" data-nearest-events>
+          <article class="event-card">
+            <h3>Podatke še nalagamo</h3>
+            <p>Najbližji teki bodo prikazani tukaj.</p>
+            <div class="event-meta">
+              <span class="pill">Koledar</span>
+            </div>
+          </article>
+        </div>
+        <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
+      </section>
+
+      <section class="section container" aria-labelledby="voted-title">
+        <div class="section-heading section-heading-with-action">
+          <div>
+            <h2 id="voted-title">Največ zanimanja</h2>
+            <p>Izpostavljeno po zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid, prikazano z obstoječimi podatki o tekih.</p>
+          </div>
+          <div class="section-heading-actions">
+            <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
           </div>
         </div>
-        <ol class="registration-deadlines-list" data-registration-deadlines></ol>
-        <a class="registration-deadlines-cta" href="/iskalnik-tekov/">Poglej vse roke v iskalniku</a>
-      </article>
-    </section>
-
-    <section class="section container feature-strip-section" aria-labelledby="extra-data-title">
-      <article class="feature-strip">
-        <div class="feature-strip-copy">
-          <h2 id="extra-data-title">Več kot samo datumi tekov</h2>
-          <p>STK vključuje tudi startnine, roke prijav, višinske metre, trase / GPX in otroške teke.</p>
+        <div class="card-grid" data-top-events>
+          <article class="event-card">
+            <h3>Podatke še nalagamo</h3>
+            <p>Teki z največ zanimanja bodo prikazani tukaj.</p>
+            <div class="event-meta">
+              <span class="pill">Zanimanje obiskovalcev</span>
+            </div>
+          </article>
         </div>
-        <div class="feature-strip-actions">
-          <div class="feature-chip-list" aria-label="Dodatni podatki v iskalniku">
+        <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
+      </section>
+    </div>
+
+    <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
+      <div class="section-heading">
+        <h2 id="trust-updates-title">Zanesljivi podatki, ki se redno posodabljajo</h2>
+      </div>
+      <div class="home-trust-updates-grid">
+        <article class="home-trust-panel" aria-labelledby="trust-title">
+          <span class="eyebrow eyebrow-light">Zakaj STK</span>
+          <h3 id="trust-title">Potrjene informacije za lažje načrtovanje</h3>
+          <p>STK na enem mestu združuje potrjene tekaške dogodke, uradne povezave do razpisov in prijav ter praktične podatke za načrtovanje nastopa.</p>
+          <ul class="home-trust-benefits">
+            <li>Potrjeni javni dogodki</li>
+            <li>Povezave do uradnih razpisov in prijav</li>
+            <li>Redno pregledani in posodobljeni podatki</li>
+            <li>Neodvisen pregled tekaških prireditev po Sloveniji</li>
+          </ul>
+          <div class="feature-chip-list home-trust-chips" aria-label="Dodatni podatki v iskalniku">
             <span class="feature-chip">Startnine</span>
             <span class="feature-chip">Roki prijav</span>
             <span class="feature-chip">Višinski metri</span>
             <span class="feature-chip">Trase / GPX</span>
             <span class="feature-chip">Otroški teki</span>
           </div>
-          <a class="button button-small button-secondary-light" href="/iskalnik-tekov/">Odpri iskalnik tekov</a>
-        </div>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="nearest-title">
-      <div class="section-heading section-heading-with-action">
-        <div>
-          <h2 id="nearest-title">Ta teden tečemo</h2>
-          <p>Najbližje potrjene tekaške prireditve iz Slovenskega Tekaškega Koledarja.</p>
-        </div>
-        <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
-      </div>
-      <div class="card-grid" data-nearest-events>
-        <article class="event-card">
-          <h3>Podatke še nalagamo</h3>
-          <p>Najbližji teki bodo prikazani tukaj.</p>
-          <div class="event-meta">
-            <span class="pill">Koledar</span>
+          <div class="home-trust-actions">
+            <a class="button button-primary" href="/iskalnik-tekov/">Odprite iskalnik</a>
+            <a class="button button-secondary-light" href="/o-projektu-in-zasebnost/">O projektu in zasebnosti</a>
+          </div>
+        </article>
+        <article class="home-update-panel" aria-labelledby="updates-title">
+          <div class="home-update-heading">
+            <span class="eyebrow eyebrow-light">Zadnje posodobitve</span>
+            <h3 id="updates-title">Sveže spremembe v koledarju</h3>
+            <p>Najnovejše spremembe pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
+          </div>
+          <div class="card-grid" data-recent-updates>
+            <article class="update-card">
+              <h3>Podatke še nalagamo</h3>
+              <p>Zadnje spremembe se bodo prikazale tukaj.</p>
+            </article>
           </div>
         </article>
       </div>
-      <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
     </section>
 
-    <section class="section container" aria-labelledby="voted-title">
-      <div class="section-heading section-heading-with-action">
-        <div>
-          <h2 id="voted-title">Največ zanimanja</h2>
-          <p>Izpostavljeno po zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid, prikazano z obstoječimi podatki o tekih.</p>
-        </div>
-        <div class="section-heading-actions">
-          <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
-        </div>
-      </div>
-      <div class="card-grid" data-top-events>
-        <article class="event-card">
-          <h3>Podatke še nalagamo</h3>
-          <p>Teki z največ zanimanja bodo prikazani tukaj.</p>
-          <div class="event-meta">
-            <span class="pill">Zanimanje obiskovalcev</span>
-          </div>
-        </article>
-      </div>
-      <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
-    </section>
-
-
-    <section class="section container" aria-labelledby="organizer-cta-title">
-      <article class="info-card organizer-cta-card">
-        <div>
-          <span class="eyebrow eyebrow-light">Za organizatorje</span>
-          <h2 id="organizer-cta-title">Organizirate tek?</h2>
-          <p>Dodajte nov dogodek ali popravite podatke, da tekači lažje najdejo točne informacije.</p>
-        </div>
-        <a class="button button-secondary-light" href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="trust-title">
-      <article class="info-card trust-card">
-        <div>
-          <span class="eyebrow eyebrow-light">O koledarju</span>
-          <h2 id="trust-title">Zakaj Slovenski Tekaški Koledar?</h2>
-          <p>Na enem mestu zbiramo potrjene tekaške prireditve po Sloveniji, povezave do razpisov, prijav in osebnega koledarja. Pred prijavo vedno preverite uradni razpis organizatorja.</p>
-          <p class="tekobot-note">STK Tekobot vam pomaga poiskati teke z vprašanji v naravnem jeziku.</p>
-        </div>
-        <a class="button button-secondary-light" href="/stk-tekobot/">Vprašajte STK Tekobota</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="calendar-cta-title">
-      <article class="info-card calendar-cta-card">
-        <div>
-          <span class="eyebrow eyebrow-light">Osebni koledar</span>
-          <h2 id="calendar-cta-title">Dodajte teke v osebni koledar</h2>
-          <p>STK lahko spremljate tudi prek osebnega koledarja, kjer se dogodki prikažejo ob vaših drugih obveznostih.</p>
-        </div>
-        <a class="button button-secondary-light" href="/osebni-koledar/">Navodila za osebni koledar</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="updates-title">
+    <section class="section container home-utility-section" aria-labelledby="utility-title">
       <div class="section-heading">
-        <h2 id="updates-title">Zadnje posodobitve</h2>
-        <p>Najnovejše spremembe v koledarju pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
+        <h2 id="utility-title">Še več možnosti</h2>
       </div>
-      <div class="card-grid" data-recent-updates>
-        <article class="update-card">
-          <h3>Podatke še nalagamo</h3>
-          <p>Zadnje spremembe se bodo prikazale tukaj.</p>
+      <div class="home-utility-grid">
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">★</span>
+          <h3>Osebni koledar</h3>
+          <p>Dodajte tekaške dogodke med druge obveznosti v svojem koledarju.</p>
+          <a class="home-utility-link" href="/osebni-koledar/">Navodila za osebni koledar</a>
+        </article>
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">＋</span>
+          <h3>Za organizatorje</h3>
+          <p>Dodajte nov tek ali pošljite popravek že objavljenih podatkov.</p>
+          <a class="home-utility-link" href="/dodaj-ali-popravi-tek/">Dodajte ali popravite tek</a>
+        </article>
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">↗</span>
+          <h3 id="social-cta-title">Spremljajte STK</h3>
+          <p>Tedenske napovedi, novi teki in pomembne posodobitve koledarja.</p>
+          <SocialLinks lang="sl" labelledby="social-cta-title" />
         </article>
       </div>
-    </section>
-
-    <section class="section container social-cta-section" aria-labelledby="social-cta-title">
-      <article class="info-card social-cta-card">
-        <div>
-          <h2 id="social-cta-title">Spremljajte STK</h2>
-          <p>Za tedenske objave, nove teke, popravke, glasovanja in utrinke iz tekaškega koledarja spremljajte STK tudi na družbenih omrežjih.</p>
-        </div>
-        <SocialLinks lang="sl" labelledby="social-cta-title" />
-      </article>
     </section>
 
   </main>

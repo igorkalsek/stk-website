@@ -103,135 +103,130 @@ import SocialLinks from '../../components/SocialLinks.astro';
       </div>
     </section>
 
-    <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
-      <article class="registration-deadlines-card">
-        <div class="registration-deadlines-heading">
+    <div class="home-current-sections">
+      <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+        <article class="registration-deadlines-card">
+          <div class="registration-deadlines-heading">
+            <div>
+              <h2 id="registration-deadlines-title">Registration deadlines</h2>
+              <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
+            </div>
+          </div>
+          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+          <a class="registration-deadlines-cta" href="/en/find-races/">View all deadlines in race search</a>
+        </article>
+      </section>
+
+      <section class="section container" aria-labelledby="nearest-title">
+        <div class="section-heading section-heading-with-action">
           <div>
-            <h2 id="registration-deadlines-title">Registration deadlines</h2>
-            <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
+            <h2 id="nearest-title">This week’s races</h2>
+            <p>The nearest confirmed races from the Slovenian Race Calendar.</p>
+          </div>
+          <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
+        </div>
+        <div class="card-grid" data-nearest-events>
+          <article class="event-card">
+            <h3>Loading data</h3>
+            <p>Nearest races will appear here.</p>
+            <div class="event-meta">
+              <span class="pill">Calendar</span>
+            </div>
+          </article>
+        </div>
+        <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/en/find-races/">race search</a>.</p>
+      </section>
+
+      <section class="section container" aria-labelledby="voted-title">
+        <div class="section-heading section-heading-with-action">
+          <div>
+            <h2 id="voted-title">Races attracting the most interest</h2>
+            <p data-top-description>Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.</p>
+          </div>
+          <div class="section-heading-actions">
+            <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
           </div>
         </div>
-        <ol class="registration-deadlines-list" data-registration-deadlines></ol>
-        <a class="registration-deadlines-cta" href="/en/find-races/">View all deadlines in race search</a>
-      </article>
-    </section>
-
-    <section class="section container feature-strip-section" aria-labelledby="extra-data-title">
-      <article class="feature-strip">
-        <div class="feature-strip-copy">
-          <h2 id="extra-data-title">More than race dates</h2>
-          <p>STK also includes entry fees, registration deadlines, elevation gain, routes / GPX and kids’ races.</p>
+        <div class="card-grid" data-top-events>
+          <article class="event-card">
+            <h3>Loading data</h3>
+            <p>Races attracting the most interest will appear here.</p>
+            <div class="event-meta">
+              <span class="pill">Visitor interest</span>
+            </div>
+          </article>
         </div>
-        <div class="feature-strip-actions">
-          <div class="feature-chip-list" aria-label="Extra details in race search">
+        <p class="data-note" data-status="top">The selection is based on visitor interest in registration, official information, calendar and route links.</p>
+      </section>
+    </div>
+
+    <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
+      <div class="section-heading">
+        <h2 id="trust-updates-title">Reliable race information, regularly updated</h2>
+      </div>
+      <div class="home-trust-updates-grid">
+        <article class="home-trust-panel" aria-labelledby="trust-title">
+          <span class="eyebrow eyebrow-light">Why STK</span>
+          <h3 id="trust-title">Confirmed information for easier planning</h3>
+          <p>STK brings together confirmed races, official announcement and registration links, and practical details for planning your next event.</p>
+          <ul class="home-trust-benefits">
+            <li>Confirmed public races</li>
+            <li>Official announcement and registration links</li>
+            <li>Regularly reviewed and updated information</li>
+            <li>An independent overview of running events in Slovenia</li>
+          </ul>
+          <div class="feature-chip-list home-trust-chips" aria-label="Extra details in race search">
             <span class="feature-chip">Entry fees</span>
             <span class="feature-chip">Registration deadlines</span>
             <span class="feature-chip">Elevation gain</span>
             <span class="feature-chip">Routes / GPX</span>
             <span class="feature-chip">Kids’ races</span>
           </div>
-          <a class="button button-small button-secondary-light" href="/en/find-races/">Open race search</a>
-        </div>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="nearest-title">
-      <div class="section-heading section-heading-with-action">
-        <div>
-          <h2 id="nearest-title">This week’s races</h2>
-          <p>Upcoming confirmed races from the Slovenian Race Calendar.</p>
-        </div>
-        <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
-      </div>
-      <div class="card-grid" data-nearest-events>
-        <article class="event-card">
-          <h3>Loading data</h3>
-          <p>Upcoming races will be shown here.</p>
-          <div class="event-meta">
-            <span class="pill">Calendar</span>
+          <div class="home-trust-actions">
+            <a class="button button-primary" href="/en/find-races/">Open race search</a>
+            <a class="button button-secondary-light" href="/o-projektu-in-zasebnost/">About the project and privacy</a>
+          </div>
+        </article>
+        <article class="home-update-panel" aria-labelledby="updates-title">
+          <div class="home-update-heading">
+            <span class="eyebrow eyebrow-light">Latest updates</span>
+            <h3 id="updates-title">Fresh calendar changes</h3>
+            <p>The latest calendar changes help you quickly see what was added or corrected.</p>
+          </div>
+          <div class="card-grid" data-recent-updates>
+            <article class="update-card">
+              <h3>Loading data</h3>
+              <p>Latest changes will appear here.</p>
+            </article>
           </div>
         </article>
       </div>
-      <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/en/find-races/">race search</a>.</p>
     </section>
 
-    <section class="section container" aria-labelledby="voted-title">
-      <div class="section-heading section-heading-with-action">
-        <div>
-          <h2 id="voted-title">Races attracting the most interest</h2>
-          <p data-top-description>Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.</p>
-        </div>
-        <div class="section-heading-actions">
-          <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
-        </div>
-      </div>
-      <div class="card-grid" data-top-events>
-        <article class="event-card">
-          <h3>Loading data</h3>
-          <p>Races attracting the most interest will be shown here.</p>
-          <div class="event-meta">
-            <span class="pill">Visitor interest</span>
-          </div>
-        </article>
-      </div>
-      <p class="data-note" data-status="top">The selection is based on visitor interest in registration, official information, calendar and route links.</p>
-    </section>
-
-    <section class="section container" aria-labelledby="organizer-cta-title">
-      <article class="info-card organizer-cta-card">
-        <div>
-          <span class="eyebrow eyebrow-light">For organisers</span>
-          <h2 id="organizer-cta-title">Organising a race?</h2>
-          <p>Add a new event or correct race details so runners can find accurate information more easily. Submissions use the existing reviewed Google Forms flow.</p>
-        </div>
-        <a class="button button-secondary-light" href="/en/add-or-correct-race/">Add or correct a race</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="trust-title">
-      <article class="info-card trust-card">
-        <div>
-          <span class="eyebrow eyebrow-light">About the calendar</span>
-          <h2 id="trust-title">Why use the Slovenian Race Calendar?</h2>
-          <p>The calendar brings together confirmed running events across Slovenia, including links to official announcements, registration pages and personal calendar options. Before registering, always check the official race announcement or the organiser’s website.</p>
-          <p class="tekobot-note">STK Tekobot helps you find races using natural-language questions.</p>
-        </div>
-        <a class="button button-secondary-light" href="/en/stk-tekobot/">Ask STK Tekobot</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="calendar-cta-title">
-      <article class="info-card calendar-cta-card">
-        <div>
-          <span class="eyebrow eyebrow-light">Personal calendar</span>
-          <h2 id="calendar-cta-title">Add races to your personal calendar</h2>
-          <p>You can follow STK races in your personal calendar and see them next to your other plans.</p>
-        </div>
-        <a class="button button-secondary-light" href="/en/personal-calendar/">Personal calendar instructions</a>
-      </article>
-    </section>
-
-    <section class="section container" aria-labelledby="updates-title">
+    <section class="section container home-utility-section" aria-labelledby="utility-title">
       <div class="section-heading">
-        <h2 id="updates-title">Latest updates</h2>
-        <p>The latest calendar changes help you quickly see what was added or corrected.</p>
+        <h2 id="utility-title">More from STK</h2>
       </div>
-      <div class="card-grid" data-recent-updates>
-        <article class="update-card">
-          <h3>Loading data</h3>
-          <p>Latest changes will appear here.</p>
+      <div class="home-utility-grid">
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">★</span>
+          <h3>Personal calendar</h3>
+          <p>Add running events to the calendar you already use.</p>
+          <a class="home-utility-link" href="/en/personal-calendar/">Personal calendar instructions</a>
+        </article>
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">＋</span>
+          <h3>For organisers</h3>
+          <p>Add a new race or submit a correction to published information.</p>
+          <a class="home-utility-link" href="/en/add-or-correct-race/">Add or correct a race</a>
+        </article>
+        <article class="home-utility-card">
+          <span class="home-utility-mark" aria-hidden="true">↗</span>
+          <h3 id="social-cta-title">Follow STK</h3>
+          <p>Weekly race highlights, new events and important calendar updates.</p>
+          <SocialLinks lang="en" labelledby="social-cta-title" />
         </article>
       </div>
-    </section>
-
-    <section class="section container social-cta-section" aria-labelledby="social-cta-title">
-      <article class="info-card social-cta-card">
-        <div>
-          <h2 id="social-cta-title">Follow STK</h2>
-          <p>Follow STK for weekly race highlights, new events, updates, voting and running calendar posts.</p>
-        </div>
-        <SocialLinks lang="en" labelledby="social-cta-title" />
-      </article>
     </section>
 
   </main>
