@@ -8,38 +8,71 @@ import SocialLinks from '../components/SocialLinks.astro';
 >
   <main>
     <section class="hero container" aria-labelledby="hero-title">
-      <div class="hero-card">
-        <div class="hero-content">
-          <span class="eyebrow">Neodvisen tekaški vodič za Slovenijo</span>
-          <h1 id="hero-title">Poiščite svoj naslednji tek</h1>
-          <p class="hero-lead">Slovenski Tekaški Koledar na enem mestu zbira potrjene tekaške prireditve, koristne podatke in povezave do uradnih razpisov.</p>
-          <p class="hero-sublead">
-            Poiščite tek po datumu, regiji, podlagi ali razdalji.
-          </p>
-          <div class="hero-actions" aria-label="Glavne povezave">
-            <div class="cta-row cta-primary-row">
-              <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Poišči tek</a>
+      <div class="home-hero-card hero-card">
+        <div class="home-hero-main">
+          <div class="home-hero-copy hero-content">
+            <div class="home-hero-brand">
+              <img class="home-hero-logo" src="/stk-logo.jpeg" alt="" aria-hidden="true" />
+              <div>
+                <span class="home-hero-brand-name">Slovenski Tekaški Koledar</span>
+                <span class="home-hero-brand-note">Neodvisen tekaški vodič za Slovenijo</span>
+              </div>
             </div>
-            <p class="hero-helper-link">Ne veste, kateri tek izbrati? <a href="/stk-tekobot/">Vprašajte Tekobota.</a></p>
-            <p class="hero-helper-link hero-my-races-link">Shranite zanimive teke in jih pozneje najdete med <a href="/moji-teki/">Mojimi teki</a>.</p>
+            <h1 id="hero-title">Poiščite svoj naslednji tek v Sloveniji</h1>
+            <p class="hero-lead">Potrjene tekaške prireditve, prijave, razpisi in koristni podatki na enem mestu.</p>
+            <p class="hero-sublead">
+              Iščite po datumu, regiji, podlagi ali razdalji ter zanimive teke shranite med Moje teke.
+            </p>
+            <div class="home-hero-actions hero-actions" aria-label="Glavne povezave">
+              <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Poiščite tek</a>
+              <a class="button button-secondary hero-secondary-cta" href="/moji-teki/">Moji teki</a>
+              <a class="home-hero-text-link" href="/stk-tekobot/">Vprašajte Tekobota</a>
+            </div>
           </div>
+          <aside class="hero-preview" aria-label="Predogled koledarja">
+            <div class="hero-preview-heading">
+              <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
+              <p class="hero-preview-helper" data-hero-preview-helper>Po glasovih tekačev, dopolnjeno z najbližjimi teki.</p>
+            </div>
+            <ol class="hero-preview-list" data-hero-preview-list>
+              <li><span>nalagamo</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>
+            </ol>
+          </aside>
         </div>
-        <aside class="hero-preview" aria-label="Predogled koledarja">
-          <div class="hero-preview-heading">
-            <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
-            <p class="hero-preview-helper" data-hero-preview-helper>Po glasovih tekačev, dopolnjeno z najbližjimi teki.</p>
+      </div>
+
+      <div class="home-entry-grid" aria-label="Glavne možnosti">
+        <article class="home-entry-card">
+          <div class="home-entry-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" focusable="false"><circle cx="14" cy="14" r="7"/><path d="m20 20 6 6"/></svg>
           </div>
-          <ol class="hero-preview-list" data-hero-preview-list>
-            <li><span>nalagamo</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>
-          </ol>
-        </aside>
+          <h2>Najdite pravi tek</h2>
+          <p>Filtrirajte teke po datumu, regiji, podlagi in razdalji.</p>
+          <a class="home-entry-link" href="/iskalnik-tekov/">Odprite iskalnik</a>
+        </article>
+        <article class="home-entry-card">
+          <div class="home-entry-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" focusable="false"><rect x="7" y="8" width="18" height="18" rx="3"/><path d="M11 5v6M21 5v6M7 14h18M16 18l1.5 3 3.5.5-2.5 2.4.6 3.4-3.1-1.6-3.1 1.6.6-3.4-2.5-2.4 3.5-.5z"/></svg>
+          </div>
+          <h2>Načrtujte svoje teke</h2>
+          <p>Shranite teke, nastavite osebni status in spremljajte prijavne roke.</p>
+          <a class="home-entry-link" href="/moji-teki/">Odprite Moje teke</a>
+        </article>
+        <article class="home-entry-card">
+          <div class="home-entry-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" focusable="false"><rect x="6" y="9" width="20" height="15" rx="5"/><path d="M12 24l-4 4v-6M12 16h.01M20 16h.01M12 20h8M16 6v3"/></svg>
+          </div>
+          <h2>Vprašajte Tekobota</h2>
+          <p>Poiščite teke z vprašanjem v naravnem jeziku.</p>
+          <a class="home-entry-link" href="/stk-tekobot/">Odprite Tekobota</a>
+        </article>
       </div>
 
       <div class="stats-intro">
         <h2>Koledar 2026 v številkah</h2>
         <p>Podatki zajemajo celoten javni koledar od januarja do decembra 2026.</p>
       </div>
-      <div class="stats-strip" aria-label="Statistika koledarja">
+      <div class="home-stats-band stats-strip" aria-label="Statistika koledarja">
         <article class="stat-card stat-card-races">
           <span class="stat-mark" aria-hidden="true"></span>
           <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
