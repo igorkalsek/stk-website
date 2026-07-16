@@ -19,7 +19,8 @@ const races2027 = [
 const additional2026 = [
   additional('101', '2026-08-15', 'Ljubljana 10K Trail', '15', '25', '2026-08-05', '2026-07-25', 'da', '450', 'https://example.com/route-ljubljana'),
   additional('102', '2026-09-20', 'Maribor Road 5K', '8', '12', '2026-09-10', '', '', '90', ''),
-  additional('103', '2026-10-10', 'Soča Mountain Ultra', '35', '50', '2026-09-25', '', '', '2100', 'https://example.com/route-soca')
+  additional('103', '2026-10-10', 'Soča Mountain Ultra', '35', '50', '2026-09-25', '', '', '2100', 'https://example.com/route-soca'),
+  additional('104', '2026-11-08', 'Celje City Run', '12', '24', '2026-10-28', '', '', '120', 'https://example.com/notice')
 ];
 
 function race(row: string, datum: string, naziv_prireditve: string, kraj: string, regija: string, tip_podlage: string, razdalje_km: string, opombe_javne: string) {
@@ -66,6 +67,24 @@ const chip = (page: Page, kind: string, value?: string) => {
 
   return page.locator(selector);
 };
+
+
+const storedPreferences = JSON.stringify({
+  version: 1,
+  distanceBuckets: ['over-5-to-10'],
+  surfaceCategories: ['trail'],
+  regions: [],
+  familyFriendly: false,
+  active: false
+});
+
+async function seedStoredPreferences(page: Page, active = false) {
+  await page.addInitScript(({ value, active }) => {
+    const parsed = JSON.parse(value);
+    parsed.active = active;
+    localStorage.setItem('stkRacePreferencesV1', JSON.stringify(parsed));
+  }, { value: storedPreferences, active });
+}
 
 
 test('localizes single English result count as 1 race', async ({ page }) => {
@@ -245,6 +264,91 @@ test('shows primary filters and keeps optional filters in one disclosure', async
   await more.locator('summary').click();
   await expect(more).not.toHaveAttribute('open', '');
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+});
+
+test('deduplicates secondary race actions by destination URL', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?q=Celje', 'en');
+  const sameUrlCard = page.locator('.search-event-card').filter({ hasText: 'Celje City Run' });
+  await sameUrlCard.locator('.search-event-more-menu summary').click();
+  const sameMenu = sameUrlCard.locator('.search-event-more-menu-options');
+  const official = sameMenu.getByRole('link', { name: 'Official info' });
+  await expect(official).toHaveCount(1);
+  await expect(official).toHaveAttribute('href', 'https://example.com/notice');
+  await expect(official).toHaveAttribute('data-analytics-link-type', 'razpis');
+  await expect(sameMenu.getByRole('link', { name: 'Route' })).toHaveCount(0);
+
+  await page.goto('/en/find-races/?q=Ljubljana');
+  await expect(page.locator('[data-result-count]')).toContainText(/race/i);
+  const differentUrlCard = page.locator('.search-event-card').filter({ hasText: 'Ljubljana 10K Trail' });
+  await differentUrlCard.locator('.search-event-more-menu summary').click();
+  const differentMenu = differentUrlCard.locator('.search-event-more-menu-options');
+  await expect(differentMenu.getByRole('link', { name: 'Official info' })).toHaveCount(1);
+  await expect(differentMenu.getByRole('link', { name: 'Route' })).toHaveCount(1);
+  await expect(differentMenu.getByRole('link', { name: 'Route' })).toHaveAttribute('href', 'https://example.com/route-ljubljana');
+});
+
+test('shows only the no-saved-preferences state', async ({ page }) => {
+  await openFinder(page, '/en/find-races/', 'en');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await expect(page.locator('[data-result-count]')).toContainText(/race/i);
+  await expect(page.getByRole('button', { name: 'Set preferences' })).toBeVisible();
+  await expect(page.getByText('Choose your preferred distances, surfaces and regions. The information stays only in this browser.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show races for me' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Show all races' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Reset' })).toBeHidden();
+  await expect(page.locator('[data-preferences-summary]')).toBeHidden();
+  await expect(page.locator('[data-preferences-form]')).toBeHidden();
+  const tabbableFormControls = await page.locator('[data-preferences-form] input, [data-preferences-form] button').evaluateAll((controls) => controls.filter((control) => (control as HTMLElement).tabIndex >= 0).length);
+  expect(tabbableFormControls).toBe(0);
+});
+
+test('shows only the saved inactive race-preferences state', async ({ page }) => {
+  await seedStoredPreferences(page, false);
+  await openFinder(page, '/en/find-races/', 'en');
+  await expect(page.locator('[data-preferences-compact]')).toContainText('Preferences are saved');
+  await expect(page.locator('[data-preferences-summary]')).toContainText('5–10 km');
+  await expect(page.locator('[data-preferences-summary]')).toContainText('Trail');
+  await expect(page.getByRole('button', { name: 'Show races for me' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Reset' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Set preferences' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Show all races' })).toBeHidden();
+  await expect(page.locator('[data-preferences-form]')).toBeHidden();
+});
+
+test('shows only the active race-preferences state', async ({ page }) => {
+  await seedStoredPreferences(page, true);
+  await openFinder(page, '/en/find-races/', 'en');
+  await expect(page.locator('[data-preferences-compact]')).toContainText('Races for me is active');
+  await expect(page.locator('[data-preferences-summary]')).toContainText('5–10 km');
+  await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show all races' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Set preferences' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Show races for me' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Reset' })).toBeHidden();
+  await expect(page.locator('[data-preferences-form]')).toBeHidden();
+  await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
+});
+
+test('shows only the editing race-preferences state and restores compact state on cancel', async ({ page }) => {
+  await seedStoredPreferences(page, false);
+  await openFinder(page, '/en/find-races/', 'en');
+  const apiBefore = await page.evaluate(() => performance.getEntriesByType('resource').filter((entry) => entry.name.includes('stk-master-api')).length);
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await expect(page.locator('[data-preferences-form]')).toBeVisible();
+  await expect(page.locator('[data-preferences-form-heading]')).toBeFocused();
+  await expect(page.locator('[data-preferences-state-text]')).toBeHidden();
+  await expect(page.locator('[data-preferences-summary]')).toBeHidden();
+  await expect(page.locator('[data-preferences-compact]')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Save and show races for me' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Cancel editing' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Reset preference' })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel editing' }).click();
+  await expect(page.locator('[data-preferences-compact]')).toContainText('Preferences are saved');
+  await expect(page.getByRole('button', { name: 'Edit' })).toBeFocused();
+  const apiAfter = await page.evaluate(() => performance.getEntriesByType('resource').filter((entry) => entry.name.includes('stk-master-api')).length);
+  expect(apiAfter).toBe(apiBefore);
 });
 
 test('keeps first-time race preferences compact until setup is requested', async ({ page }) => {

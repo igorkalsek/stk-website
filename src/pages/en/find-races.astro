@@ -90,8 +90,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <section class="race-preferences-panel" data-race-preferences-panel data-preferences-ready="false" aria-labelledby="race-preferences-title-en">
           <div class="race-preferences-compact" data-preferences-compact tabindex="-1" hidden>
             <h3 id="race-preferences-title-en">Races for me</h3>
+            <p class="race-preferences-empty" data-preferences-empty-text></p>
             <p class="race-preferences-state" data-preferences-state-text></p>
-            <p class="race-preferences-summary" data-preferences-summary></p>
+            <p class="race-preferences-summary" data-preferences-summary hidden></p>
             <div class="race-preferences-actions race-preferences-compact-actions">
               <button class="button button-small button-primary" type="button" data-activate-preferences hidden>Show races for me</button>
               <button class="button button-small button-secondary-light" type="button" data-edit-preferences aria-expanded="false" aria-controls="race-preferences-form-en">Edit</button>

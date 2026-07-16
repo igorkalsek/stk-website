@@ -74,6 +74,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
   const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
   const preferenceFormHeading = document.querySelector<HTMLElement>('[data-preferences-form-heading]');
+  const preferenceEmptyTextElement = document.querySelector<HTMLElement>('[data-preferences-empty-text]');
   const preferenceStateTextElement = document.querySelector<HTMLElement>('[data-preferences-state-text]');
   const preferenceSummaryElement = document.querySelector<HTMLElement>('[data-preferences-summary]');
   const preferenceMessageElement = document.querySelector<HTMLElement>('[data-preferences-message]');
@@ -351,13 +352,19 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
     `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`;
 
+  type SecondaryMenuAction = { url: string; html: string; priority: number };
+  const normalizeSecondaryDestination = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.startsWith('data:')) return trimmed;
+    return trimmed.replace(/\/+$/, '');
+  };
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
     date: string;
     location?: string;
     noticeUrl?: string;
     registrationUrl?: string;
-  }) => {
+  }): SecondaryMenuAction[] => {
     const event = buildRaceFinderCalendarEventInput(locale, { title, date, location, noticeUrl, registrationUrl });
     const googleUrl = buildGoogleCalendarEventUrl(event);
     const icsUrl = buildIcsDataUrl(event);
@@ -365,12 +372,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const outlookUrl = buildOutlookCalendarEventUrl(event);
 
     return [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google Calendar</a>`,
-      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>`,
+      googleUrl && { url: googleUrl, priority: 5, html: `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google">Google Calendar</a>` },
+      icsUrl && { url: icsUrl, priority: 5, html: `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Apple / iCal</a>` },
       outlookUrl
-        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>`
-        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>`
-    ].filter(Boolean).join('');
+        ? { url: outlookUrl, priority: 5, html: `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook">Outlook</a>` }
+        : icsUrl && { url: icsUrl, priority: 5, html: `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}" data-analytics-calendar-type="ics">Outlook / .ics</a>` }
+    ].filter(Boolean) as SecondaryMenuAction[];
   };
 
   const setStatus = (message: string) => {
@@ -758,14 +765,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (preferenceCompactElement) preferenceCompactElement.hidden = showForm;
     if (preferenceFormElement) preferenceFormElement.hidden = !showForm;
     setPreferenceFormFocusable(showForm);
-    if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'empty' ? '' : state === 'active' ? String(locale.messages.preferencesActive) : String(locale.messages.preferencesStored);
-    if (preferenceSummaryElement) { const emptyText = locale.language === 'sl' ? 'Izberite svoje priljubljene razdalje, podlage in regije. Podatki ostanejo samo v tem brskalniku.' : 'Choose your preferred distances, surfaces and regions. The information stays only in this browser.'; preferenceSummaryElement.textContent = state === 'empty' ? emptyText : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' ? emptyText : (summary.accessible || summary.visible)); }
-    if (activatePreferencesButton) { activatePreferencesButton.hidden = state !== 'inactive'; activatePreferencesButton.textContent = locale.language === 'sl' ? 'Prikažite teke zame' : 'Show races for me'; }
-    if (editPreferencesButton) { editPreferencesButton.hidden = false; editPreferencesButton.textContent = hasSaved ? (locale.language === 'sl' ? 'Uredite' : 'Edit') : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
+    if (preferenceEmptyTextElement) { preferenceEmptyTextElement.hidden = state !== 'empty' || showForm; preferenceEmptyTextElement.textContent = state === 'empty' && !showForm ? locale.preferenceEmptyText : ''; }
+    if (preferenceStateTextElement) { preferenceStateTextElement.hidden = state === 'empty' || showForm; preferenceStateTextElement.textContent = state === 'active' ? String(locale.messages.preferencesActive) : state === 'inactive' ? String(locale.messages.preferencesStored) : ''; }
+    if (preferenceSummaryElement) { preferenceSummaryElement.hidden = state === 'empty' || showForm; preferenceSummaryElement.textContent = state === 'empty' || showForm ? '' : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' || showForm ? '' : (summary.accessible || summary.visible)); }
+    if (activatePreferencesButton) { activatePreferencesButton.hidden = state !== 'inactive'; activatePreferencesButton.textContent = locale.showRacesForMeLabel; }
+    if (editPreferencesButton) { editPreferencesButton.hidden = state === 'editing'; editPreferencesButton.textContent = hasSaved ? locale.editPreferencesShortLabel : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
     if (showAllPreferencesButton) showAllPreferencesButton.hidden = state !== 'active';
-    if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved || state === 'active'; resetPreferencesButton.textContent = locale.resetLabel; }
-    if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing' || !hasSaved;
-    if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = !hasSaved;
+    if (resetPreferencesButton) { resetPreferencesButton.hidden = state !== 'inactive'; resetPreferencesButton.textContent = locale.resetLabel; }
+    if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing';
+    if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = state !== 'editing' || !hasSaved;
     if (focusTarget === 'form') preferenceFormHeading?.focus();
     else if (focusTarget === 'edit') editPreferencesButton?.focus();
     else if (focusTarget === 'compact') preferenceCompactElement?.focus();
@@ -852,8 +860,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false });
     const routeAction = event.additionalData?.routeUrl
-      ? `<a href="${escapeHtml(event.additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-stk-track="external-link" data-stk-action="trasa" data-stk-event-id="${escapeHtml(event.id)}" data-stk-event-name="${escapeHtml(event.title)}" data-stk-event-date="${escapeHtml(event.date)}" data-analytics-link-type="trasa">${locale.routeLabel}</a>`
-      : '';
+      ? { url: event.additionalData.routeUrl, priority: 3, html: `<a href="${escapeHtml(event.additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-stk-track="external-link" data-stk-action="trasa" data-stk-event-id="${escapeHtml(event.id)}" data-stk-event-name="${escapeHtml(event.title)}" data-stk-event-date="${escapeHtml(event.date)}" data-analytics-link-type="trasa">${locale.routeLabel}</a>` }
+      : null;
     // buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink) remains the shared organizer-action renderer.
     const organizerActions = buildPrimaryActions(event, locale.language);
     const registrationActions = organizerActions.filter((action) => action.kind === 'registration');
@@ -863,15 +871,24 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       ...registrationActions.map(renderPrimaryActionLink),
       `<button class="button button-small button-secondary-light saved-race-button saved-race-button-compact" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="saved-race-star" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
     ].filter(Boolean).join('');
-    const noticeOptionLinks = noticeActions.map((action) =>
-      `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`
-    );
-    const moreOptions = [
-      ...noticeOptionLinks,
-      renderableVoteUrl && `<a href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}">${locale.voteLabel}</a>`,
+    const primaryDestinationKeys = new Set(registrationActions.map((action) => normalizeSecondaryDestination(action.url)).filter(Boolean));
+    const secondaryActionCandidates: SecondaryMenuAction[] = [
+      ...noticeActions.map((action) => ({ url: action.url, priority: 2, html: `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>` })),
       routeAction,
-      calendarOptions
-    ].filter(Boolean).join('');
+      renderableVoteUrl && { url: renderableVoteUrl, priority: 4, html: `<a href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}">${locale.voteLabel}</a>` },
+      ...calendarOptions
+    ].filter(Boolean) as SecondaryMenuAction[];
+    const seenSecondaryDestinations = new Set(primaryDestinationKeys);
+    const moreOptions = secondaryActionCandidates
+      .sort((a, b) => a.priority - b.priority)
+      .filter((action) => {
+        const key = normalizeSecondaryDestination(action.url);
+        if (!key || seenSecondaryDestinations.has(key)) return false;
+        seenSecondaryDestinations.add(key);
+        return true;
+      })
+      .map((action) => action.html)
+      .join('');
     const secondaryLinks = moreOptions
       ? `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light">${locale.moreMenuLabel}</summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`
       : '';
@@ -1085,7 +1102,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     preferencesEditing = false;
     if (sortSelect?.value === 'my-races') sortSelect.value = 'date';
     syncPreferenceControls();
-    refreshPreferencePanel('form');
+    refreshPreferencePanel('compact');
     setPreferenceMessage(String(locale.messages.preferencesReset));
     resetVisibleResults();
   };
