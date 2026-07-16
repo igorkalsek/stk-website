@@ -534,10 +534,9 @@ export const renderAdditionalDataBlock = (
     if (!englishItems.length) return '';
 
     return `
-      <details class="additional-data-block">
-        <summary>ℹ️ Additional info</summary>
+      <div class="additional-data-block" aria-label="Additional info">
         <ul class="additional-data-list additional-data-list-vertical">${englishItems.map((item) => `<li class="additional-data-item additional-data-item-vertical"><span class="additional-data-label">${escapeHtml(item.label)}:</span> <span class="additional-data-value">${typeof item.value === 'string' && item.value.includes('<a ') ? item.value : escapeHtml(item.value)}</span></li>`).join('')}</ul>
-      </details>
+      </div>
     `;
   }
 
@@ -556,9 +555,8 @@ export const renderAdditionalDataBlock = (
   if (!items.length) return '';
 
   return `
-    <details class="additional-data-block">
-      <summary>ℹ️ Dodatni podatki</summary>
+    <div class="additional-data-block" aria-label="Dodatni podatki">
       <ul class="additional-data-list">${items.map((item) => `<li class="additional-data-item">${item}</li>`).join('')}</ul>
-    </details>
+    </div>
   `;
 };

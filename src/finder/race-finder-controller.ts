@@ -685,10 +685,13 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const updateAdvancedFiltersSummary = (filters = getFilters()) => {
     if (!advancedFiltersSummary) return;
     const activeCount = [
+      Boolean(filters.surface),
+      Boolean(filters.registrationFee),
+      Boolean(filters.deadlineFilter),
+      filters.sort !== 'date',
       filters.family,
       filters.dayOfRegistration,
       filters.route,
-      Boolean(filters.deadlineFilter),
       Boolean(filters.elevation)
     ].filter(Boolean).length;
 
@@ -759,14 +762,14 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     preferencePanel?.setAttribute('data-preferences-state', state);
     updatePreferenceSortOption();
     if (sortSelect && racePreferences.active && hasSaved) sortSelect.value = 'my-races';
-    const showForm = state === 'empty' || state === 'editing';
+    const showForm = state === 'editing';
     if (preferenceCompactElement) preferenceCompactElement.hidden = showForm;
     if (preferenceFormElement) preferenceFormElement.hidden = !showForm;
     setPreferenceFormFocusable(showForm);
-    if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'active' ? String(locale.messages.preferencesActive) : String(locale.messages.preferencesStored);
-    if (preferenceSummaryElement) { preferenceSummaryElement.textContent = summary.visible; preferenceSummaryElement.setAttribute('aria-label', summary.accessible || summary.visible); }
-    if (activatePreferencesButton) activatePreferencesButton.hidden = state !== 'inactive';
-    if (editPreferencesButton) { editPreferencesButton.hidden = !hasSaved; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
+    if (preferenceStateTextElement) preferenceStateTextElement.textContent = state === 'empty' ? '' : state === 'active' ? String(locale.messages.preferencesActive) : String(locale.messages.preferencesStored);
+    if (preferenceSummaryElement) { const emptyText = locale.language === 'sl' ? 'Izberite razdalje, podlage in regije, ki vas zanimajo. Preference ostanejo samo v tem brskalniku.' : 'Choose the distances, surfaces and regions that interest you. Preferences stay only in this browser.'; preferenceSummaryElement.textContent = state === 'empty' ? emptyText : summary.visible; preferenceSummaryElement.setAttribute('aria-label', state === 'empty' ? emptyText : (summary.accessible || summary.visible)); }
+    if (activatePreferencesButton) { activatePreferencesButton.hidden = state !== 'inactive'; activatePreferencesButton.textContent = locale.language === 'sl' ? 'Prikažite teke zame' : 'Show races for me'; }
+    if (editPreferencesButton) { editPreferencesButton.hidden = false; editPreferencesButton.textContent = hasSaved ? String(locale.messages.editPreferences) : locale.setPreferencesLabel; editPreferencesButton.setAttribute('aria-expanded', String(state === 'editing')); }
     if (resetPreferencesButton) { resetPreferencesButton.hidden = !hasSaved; resetPreferencesButton.textContent = locale.resetLabel; }
     if (cancelPreferencesButton) cancelPreferencesButton.hidden = state !== 'editing' || !hasSaved;
     if (resetPreferencesFormButton) resetPreferencesFormButton.hidden = !hasSaved;
@@ -837,11 +840,9 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
-      event.place && `<span class="event-chip"><strong>${locale.cardLabels.place}:</strong> ${escapeHtml(event.place)}</span>`,
-      event.region && `<span class="event-chip"><strong>${locale.cardLabels.region}:</strong> ${escapeHtml(event.region)}</span>`,
-      formattedSurface && `<span class="event-chip event-chip-surface">${escapeHtml(formattedSurface)}</span>`,
-      event.distances && `<span class="event-chip"><strong>${locale.cardLabels.distances}:</strong> ${escapeHtml(formatDistances(event.distances))}</span>`,
-      event.startTime && `<span class="event-chip"><strong>Start:</strong> ${escapeHtml(formatStartTime(event.startTime))}</span>`
+      formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
+      event.distances && `<span>${escapeHtml(formatDistances(event.distances))}</span>`,
+      event.startTime && `<span>${locale.startLabel} ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
 
 
@@ -857,13 +858,20 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const detailPath = locale.buildDetailPath(event);
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces });
-    const links = [
-      ...buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink),
-      `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
+    // buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink) remains the shared organizer-action renderer.
+    const organizerActions = buildPrimaryActions(event, locale.language);
+    const registrationActions = organizerActions.filter((action) => action.kind === 'registration');
+    const noticeActions = organizerActions.filter((action) => action.kind !== 'registration');
+    const primaryLinks = [
       `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}"><span class="action-icon" aria-hidden="true">🔎</span><span>${locale.detailLabel}</span></a>`,
-      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}"><span class="action-icon" aria-hidden="true">👍</span><span>${locale.voteLabel}</span></a>`,
-      calendarOptions
+      ...registrationActions.map(renderPrimaryActionLink),
+      `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
     ].filter(Boolean).join('');
+    const moreOptions = [
+      ...noticeActions.map(renderPrimaryActionLink),
+      renderableVoteUrl && `<a class="button button-small button-secondary-light" href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}"><span class="action-icon" aria-hidden="true">👍</span><span>${locale.voteLabel}</span></a>`
+    ].filter(Boolean).join('');
+    const secondaryLinks = [moreOptions && `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light"><span>${locale.moreOptionsLabel}</span></summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`, calendarOptions].filter(Boolean).join('');
 
     return `
       <article class="event-card search-event-card" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
@@ -872,10 +880,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
           ${event.familyFriendly ? `<span class="pill pill-family">${locale.familyFriendlyLabel}</span>` : ''}
         </div>
         <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
-        ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
+        ${[event.place, event.region].filter(Boolean).length ? `<p class="search-event-location">${[event.place, event.region].filter(Boolean).map(escapeHtml).join(' · ')}</p>` : ''}
+        ${metaItems ? `<div class="search-event-facts">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
-        ${links ? `<div class="event-actions">${links}</div>` : ''}
+        ${primaryLinks ? `<div class="search-event-primary-actions">${primaryLinks}</div>` : ''}
+        ${secondaryLinks ? `<div class="search-event-secondary-actions">${secondaryLinks}</div>` : ''}
       </article>
     `;
   };

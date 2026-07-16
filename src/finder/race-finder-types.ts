@@ -14,6 +14,10 @@ export type RaceFinderLocale = {
   formatVisibleResultCount: (visibleCount: number, totalCount: number) => string;
   buildDetailPath: (event: Pick<PublicRaceEvent, 'year' | 'row' | 'date' | 'title' | 'naziv_prireditve' | 'place'>) => string;
   advancedFiltersLabel: string;
+  moreFiltersLabel: string;
+  moreOptionsLabel: string;
+  setPreferencesLabel: string;
+  startLabel: string;
   allMonthsLabel: string;
   allRegionsLabel: string;
   allSurfacesLabel: string;

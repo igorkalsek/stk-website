@@ -168,6 +168,7 @@ test('keeps Races for me private while emitting only safe personalized analytics
   const analytics = await mockFinderApis(page);
   await page.goto('/en/find-races/?q=private-query');
   await expect(page.locator('[data-result-count]')).toContainText(/race/i);
+  await page.getByRole('button', { name: 'Set preferences' }).click();
   await page.locator('[data-preference-distance="over-5-to-10"]').check();
   await page.locator('[data-preference-surface="trail"]').check();
   await page.locator('[data-save-preferences]').click();
@@ -178,4 +179,88 @@ test('keeps Races for me private while emitting only safe personalized analytics
   expect(personalized).toBeTruthy();
   expect(personalized.filters_json).not.toContain('private-query');
   expect(personalized.filters_json).not.toContain('over-5-to-10');
+});
+
+test('shows primary filters and keeps optional filters in one disclosure', async ({ page }) => {
+  await openFinder(page, '/iskalnik-tekov/', 'sl');
+  await expect(page.locator('.finder-primary-filters [data-filter="search"]')).toBeVisible();
+  await expect(page.locator('.finder-primary-filters [data-filter="month"]')).toBeVisible();
+  await expect(page.locator('.finder-primary-filters [data-filter="region"]')).toBeVisible();
+  await expect(page.locator('.finder-primary-filters [data-filter="distance"]')).toBeVisible();
+  const more = page.locator('[data-more-filters]');
+  await expect(more).not.toHaveAttribute('open', '');
+  await expect(more.locator('[data-filter="surface"]')).not.toBeVisible();
+  await more.locator('summary').click();
+  await expect(more.locator('[data-filter="surface"]')).toBeVisible();
+  await expect(more.locator('[data-filter="registration-fee"]')).toBeVisible();
+  await expect(more.locator('[data-filter="deadline"]')).toBeVisible();
+  await expect(more.locator('[data-filter="sort"]')).toBeVisible();
+  await expect(more.locator('[data-filter="family"]')).toBeVisible();
+  await expect(more.locator('[data-filter="route"]')).toBeVisible();
+  await expect(more.locator('[data-filter="elevation"]')).toBeVisible();
+  await more.locator('[data-filter="registration-fee"]').selectOption('20');
+  await expect(page).toHaveURL(/fee=20/);
+  await expect(more.locator('summary')).toContainText('Več filtrov (1)');
+  await expect(chip(page, 'fee', '20')).toContainText('Do 20 €');
+  await more.locator('summary').click();
+  await expect(more).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+});
+
+test('keeps first-time race preferences compact until setup is requested', async ({ page }) => {
+  const analytics = await mockFinderApis(page);
+  await page.goto('/en/find-races/');
+  await expect(page.locator('[data-result-count]')).toContainText(/race/i);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await expect(page.locator('[data-preferences-form]')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Set preferences' })).toBeVisible();
+  const apiBefore = await page.evaluate(() => performance.getEntriesByType('resource').filter((entry) => entry.name.includes('stk-master-api')).length);
+  await page.getByRole('button', { name: 'Set preferences' }).click();
+  await expect(page.locator('[data-preferences-form]')).toBeVisible();
+  await expect(page.locator('[data-preferences-form-heading]')).toBeFocused();
+  await page.locator('[data-preference-distance="over-5-to-10"]').check();
+  await page.locator('[data-preference-surface="trail"]').check();
+  await page.locator('[data-save-preferences]').click();
+  await expect(page.locator('[data-preferences-form]')).toBeHidden();
+  await expect(page.locator('[data-preferences-compact]')).toContainText('Preferences saved');
+  await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
+  await page.getByRole('button', { name: 'Edit preferences' }).click();
+  await expect(page.locator('[data-preferences-form]')).toBeVisible();
+  const apiAfter = await page.evaluate(() => performance.getEntriesByType('resource').filter((entry) => entry.name.includes('stk-master-api')).length);
+  expect(apiAfter).toBe(apiBefore);
+  expect(analytics.some((event: any) => JSON.stringify(event).includes('over-5-to-10'))).toBeFalsy();
+});
+
+test('renders compact race facts and separates primary and secondary actions', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?q=Ljubljana', 'en');
+  const card = page.locator('.search-event-card').first();
+  await expect(card.locator('.search-event-location')).toContainText('Ljubljana · Osrednjeslovenska');
+  await expect(card.locator('.search-event-facts')).toContainText('Trail');
+  await expect(card.locator('.search-event-facts')).toContainText('10 km');
+  await expect(card.locator('.search-event-facts')).toContainText('start 10:00');
+  await expect(card.locator('.search-event-primary-actions')).toContainText('Race details');
+  await expect(card.locator('.search-event-primary-actions')).toContainText('Registration');
+  await expect(card.locator('[data-saved-race-button]')).toBeVisible();
+  await expect(card.locator('.search-event-secondary-actions')).toContainText('More options');
+  await expect(card.locator('.calendar-menu')).not.toHaveAttribute('open', '');
+  await card.locator('.calendar-menu summary').click();
+  await expect(card.locator('.calendar-menu-options')).toContainText('Google');
+  await expect(card.locator('.calendar-menu-options')).toContainText('Apple / iCal');
+  await expect(card.locator('.calendar-menu-options')).toContainText('Outlook');
+  await expect(card).toHaveAttribute('data-analytics-placement', 'finder_results');
+  await expect(card.locator('a[href="https://example.com/register"]')).toHaveCount(1);
+  await expect(card.locator('a[href="https://example.com/notice"]')).toHaveCount(1);
+});
+
+test('keeps compact finder labels localized in English', async ({ page }) => {
+  await openFinder(page, '/en/find-races/', 'en');
+  await expect(page.locator('[data-more-filters] summary')).toContainText('More filters');
+  await expect(page.getByRole('button', { name: 'Set preferences' })).toBeVisible();
+  await expect(page.getByText('Več filtrov')).toHaveCount(0);
+  await expect(page.getByText('Nastavite preference')).toHaveCount(0);
+  await page.locator('[data-search-results] .search-event-more-menu summary').first().click();
+  await expect(page.locator('[data-search-results]')).toContainText('More options');
+  await expect(page.locator('[data-search-results]')).toContainText('Race details');
+  await expect(page.locator('[data-search-results]')).toContainText('Add to calendar');
 });
