@@ -4446,6 +4446,7 @@ main {
 .finder-sidebar {
   display: grid;
   align-content: start;
+  align-self: start;
   gap: 14px;
   min-width: 0;
 }
@@ -4706,11 +4707,6 @@ main {
   .finder-workspace {
     grid-template-columns: minmax(290px, 320px) minmax(0, 1fr);
     align-items: start;
-  }
-
-  .finder-sidebar {
-    position: sticky;
-    top: 88px;
   }
 
   .finder-sidebar .finder-more-filters-content {
