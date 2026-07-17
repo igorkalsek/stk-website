@@ -1,0 +1,26 @@
+name: Daily STK Pages rebuild
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+      timezone: "Europe/Ljubljana"
+  workflow_dispatch:
+
+jobs:
+  trigger-pages-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Cloudflare Pages deployment
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
+        run: |
+          test -n "$DEPLOY_HOOK_URL"
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --request POST \
+            --data "" \
+            "$DEPLOY_HOOK_URL"
