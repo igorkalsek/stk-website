@@ -91,8 +91,13 @@ import SocialLinks from '../components/SocialLinks.astro';
       </div>
     </section>
 
-    <div class="home-current-sections">
-      <section class="section container registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+    <section class="section container home-current-sections" aria-labelledby="current-title">
+      <div class="section-heading home-current-heading">
+        <span class="eyebrow">Na enem mestu</span>
+        <h2 id="current-title">Aktualno</h2>
+      </div>
+      <div class="home-current-layout">
+      <section class="registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
         <article class="registration-deadlines-card">
           <div class="registration-deadlines-heading">
             <div>
@@ -105,7 +110,7 @@ import SocialLinks from '../components/SocialLinks.astro';
         </article>
       </section>
 
-      <section class="section container home-primary-section" aria-labelledby="nearest-title">
+      <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
             <h2 id="nearest-title">Ta teden tečemo</h2>
@@ -124,6 +129,9 @@ import SocialLinks from '../components/SocialLinks.astro';
         </div>
         <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
       </section>
+
+      </div>
+    </section>
 
       <section class="section container home-secondary-section" aria-labelledby="voted-title">
         <div class="section-heading section-heading-with-action">
@@ -146,7 +154,6 @@ import SocialLinks from '../components/SocialLinks.astro';
         </div>
         <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
       </section>
-    </div>
 
     <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
       <div class="section-heading">
