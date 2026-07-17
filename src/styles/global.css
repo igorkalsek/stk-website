@@ -3728,6 +3728,7 @@ main {
 }
 
 .home-hero-card {
+  border-radius: 22px;
   background:
     radial-gradient(circle at 88% 16%, rgba(240, 160, 48, 0.24), transparent 18rem),
     radial-gradient(circle at 16% 88%, rgba(200, 230, 201, 0.18), transparent 22rem),
@@ -3852,7 +3853,8 @@ main {
     radial-gradient(circle at 92% 8%, rgba(200, 230, 201, 0.42), transparent 10rem);
   color: var(--ink);
   border-color: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 22px 50px rgba(4, 24, 30, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 14px 34px rgba(4, 24, 30, 0.16);
   backdrop-filter: blur(6px);
 }
 
@@ -3893,11 +3895,11 @@ main {
   align-content: start;
   min-height: 100%;
   border: 1px solid rgba(16, 64, 80, 0.1);
-  border-radius: var(--radius-md);
+  border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 247, 0.92));
   padding: clamp(18px, 3vw, 24px);
-  box-shadow: 0 12px 32px rgba(16, 64, 80, 0.07);
+  box-shadow: 0 7px 20px rgba(16, 64, 80, 0.055);
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
@@ -3905,7 +3907,7 @@ main {
 .home-entry-card:focus-within {
   transform: translateY(-2px);
   border-color: rgba(240, 160, 48, 0.38);
-  box-shadow: 0 18px 38px rgba(16, 64, 80, 0.11);
+  box-shadow: 0 10px 26px rgba(16, 64, 80, 0.08);
 }
 
 .home-entry-icon {
@@ -3960,9 +3962,9 @@ main {
   overflow: hidden;
   gap: 0;
   border: 1px solid rgba(16, 64, 80, 0.1);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 14px 34px rgba(16, 64, 80, 0.08);
+  border-radius: 16px;
+  background: rgba(200, 230, 201, 0.16);
+  box-shadow: none;
 }
 
 .home-stats-band .stat-card {
@@ -4062,6 +4064,32 @@ main {
   margin-bottom: 16px;
 }
 
+.home-primary-section {
+  position: relative;
+}
+
+.home-primary-section::before {
+  position: absolute;
+  inset: 18px -18px -10px;
+  z-index: -1;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.42);
+  content: "";
+}
+
+.home-secondary-section {
+  margin-top: clamp(12px, 3vw, 24px);
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+}
+
+.home-secondary-section .event-card {
+  border-color: transparent;
+  border-radius: 12px;
+  background: transparent;
+  padding: 14px 0;
+  box-shadow: none;
+}
+
 .home-trust-updates {
   padding-top: clamp(42px, 6vw, 58px);
 }
@@ -4074,12 +4102,12 @@ main {
   display: grid;
   gap: 18px;
   border: 1px solid rgba(16, 64, 80, 0.1);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   background:
     radial-gradient(circle at top left, rgba(200, 230, 201, 0.44), transparent 26rem),
     rgba(255, 255, 255, 0.76);
   padding: clamp(16px, 3vw, 24px);
-  box-shadow: 0 16px 42px rgba(16, 64, 80, 0.08);
+  box-shadow: none;
 }
 
 .home-trust-panel,
@@ -4088,7 +4116,7 @@ main {
   display: grid;
   align-content: start;
   border: 1px solid rgba(16, 64, 80, 0.09);
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.82);
   padding: clamp(16px, 2.6vw, 22px);
 }
@@ -4166,7 +4194,11 @@ main {
 }
 
 .home-update-panel .update-card {
-  padding: 16px;
+  border: 0;
+  border-top: 1px solid rgba(16, 64, 80, 0.1);
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 0 4px;
   box-shadow: none;
 }
 
@@ -4183,7 +4215,8 @@ main {
 .home-utility-card {
   gap: 12px;
   min-width: 0;
-  box-shadow: 0 10px 28px rgba(16, 64, 80, 0.05);
+  background: rgba(200, 230, 201, 0.1);
+  box-shadow: none;
 }
 
 .home-utility-card .social-links {
@@ -4195,10 +4228,19 @@ main {
   width: 34px;
   height: 34px;
   place-items: center;
-  border-radius: 13px;
+  border-radius: 10px;
   background: rgba(200, 230, 201, 0.56);
   color: var(--deep-teal);
-  font-weight: 900;
+}
+
+.home-utility-mark svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .home-utility-link {
