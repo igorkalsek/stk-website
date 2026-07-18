@@ -49,7 +49,7 @@ describe('race detail public share URLs', () => {
     assert.equal(description, [
       'Ljubljanski maraton',
       '18. oktober 2026, Ljubljana',
-      'Več informacij, razpis in prijava:',
+      'Več informacij na Slovenskem Tekaškem Koledarju:',
       'https://tekaski-koledar.si/tek/2026/r000042-ljubljanski-maraton/'
     ].join('\n'));
     assert.doesNotMatch(description, /pages\.dev|localhost|127\.0\.0\.1|\*|#/i);
@@ -61,7 +61,7 @@ describe('race detail public share URLs', () => {
     assert.equal(description, [
       'Ljubljanski maraton',
       '18. oktober 2026, Ljubljana',
-      'More information, official details and registration:',
+      'More information on the Slovenian Running Calendar:',
       'https://tekaski-koledar.si/en/races/2026/r000042-ljubljanski-maraton/'
     ].join('\n'));
   });

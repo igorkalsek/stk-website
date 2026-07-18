@@ -16,7 +16,7 @@ export const buildRaceCopyDescription = ({ event, language, formatDate }: RaceCo
   return [
     event.title,
     dateAndPlace,
-    language === 'en' ? 'More information, official details and registration:' : 'Več informacij, razpis in prijava:',
+    language === 'en' ? 'More information on the Slovenian Running Calendar:' : 'Več informacij na Slovenskem Tekaškem Koledarju:',
     detailUrl
   ].filter(Boolean).join('\n');
 };
