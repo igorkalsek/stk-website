@@ -1963,8 +1963,15 @@ main {
 }
 
 .action-icon {
-  font-size: 0.95em;
+  display: inline-flex;
+  flex: 0 0 auto;
   line-height: 1;
+}
+
+.action-icon-svg {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 
 .clear-filters-button {

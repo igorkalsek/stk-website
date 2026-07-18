@@ -5,6 +5,7 @@ import { getSavedRaceKey, isRaceSaved, isSavedRaceStatus, readSavedRaces, remove
 import { buildMasterApiPath, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { getStableEventId } from './utils-event-detail.js';
 import { buildPrimaryActions } from './utils-race-detail-view.js';
+import { renderActionIcon } from './utils-action-icons.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
@@ -125,7 +126,7 @@ const renderUpcomingDeadlinesPanel = (items: ReturnType<typeof getUpcomingSavedR
   return groups.length ? `<section class="upcoming-deadlines-panel" data-upcoming-deadlines-panel><h2>${escapeHtml(labels.deadlinePanel)}</h2><div class="upcoming-deadline-list">${groups.map((group) => `<article class="upcoming-deadline-group" data-upcoming-deadline-group data-upcoming-deadline-group-key="${escapeHtml(group.key)}"><div class="upcoming-deadline-group-header"><h3><a href="${escapeHtml(getSavedRaceDetailPath(group.event, language))}">${escapeHtml(group.event.title)}</a></h3><p>${escapeHtml(labels.racePrefix)} ${escapeHtml(formatDate(group.event.date, language))}</p></div><div class="upcoming-deadline-group-list" data-upcoming-deadline-group-list>${group.items.map((item) => `<div class="upcoming-deadline-item" data-upcoming-deadline-item>${renderDeadlineItem(item.deadline, item.event, getSavedRaceDetailPath(item.event, language), labels, language, true)}</div>`).join('')}</div></article>`).join('')}</div></section>` : '';
 };
 
-const renderExportToolbar = (events: MultiIcsCalendarEventInput[], labels: Labels) => events.length ? `<div class="my-races-toolbar"><div><button class="button button-small" type="button" data-download-upcoming-races-ics><span aria-hidden="true">📅</span> ${escapeHtml(labels.downloadAll)}</button><p>${escapeHtml(labels.downloadAllNote)}</p></div><p class="notice warning" data-calendar-export-status aria-live="polite" hidden></p></div>` : '';
+const renderExportToolbar = (events: MultiIcsCalendarEventInput[], labels: Labels) => events.length ? `<div class="my-races-toolbar"><div><button class="button button-small" type="button" data-download-upcoming-races-ics><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.downloadAll)}</button><p>${escapeHtml(labels.downloadAllNote)}</p></div><p class="notice warning" data-calendar-export-status aria-live="polite" hidden></p></div>` : '';
 
 const downloadUpcomingRacesIcs = (events: MultiIcsCalendarEventInput[], labels: Labels, filename: string, status: HTMLElement | null) => {
   if (!events.length) return;

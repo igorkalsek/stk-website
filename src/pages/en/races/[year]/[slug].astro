@@ -13,6 +13,7 @@ import { type RelatedRaceCard } from '../../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../../utils-build-data';
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '../../../../proposal-form/race-correction-context';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../../utils-registration-deadlines';
+import { renderActionIcon } from '../../../../utils-action-icons';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
@@ -204,7 +205,7 @@ const jsonLd = event ? {
             </div>
             <div class="event-detail-primary-actions event-detail-action-list" aria-label="Main links">
               {primaryActions.map((action) => (
-                <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" aria-hidden="true">{action.kind === 'registration' ? '✍️' : '📄'}</span><span>{action.label}</span></a>
+                <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
               ))}
               <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
 
