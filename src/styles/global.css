@@ -3778,13 +3778,15 @@ main {
   min-width: 0;
 }
 
-.my-race-main h3,
-.my-race-main p {
-  overflow-wrap: anywhere;
-}
-
 .my-race-main h3 {
   margin: 0;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: auto;
+}
+
+.my-race-main p {
+  overflow-wrap: break-word;
 }
 
 .my-race-location {
@@ -3853,7 +3855,33 @@ main {
   display: none;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 720px) and (max-width: 979px) {
+  .my-race-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .my-race-actions,
+  .my-race-actions-primary,
+  .my-race-actions-secondary {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .my-race-overview {
+    grid-template-columns: minmax(6.5rem, 8rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .my-race-card-status {
+    grid-column: 2;
+  }
+}
+
+@media (min-width: 980px) {
+  .my-race-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .my-race-overview {
     grid-template-columns: minmax(7.8rem, 9.5rem) minmax(0, 1fr) auto;
     align-items: start;
