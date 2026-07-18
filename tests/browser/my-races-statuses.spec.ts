@@ -230,6 +230,36 @@ function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
   expect(serialized).not.toMatch(/following|planning|registered|completed|status/);
 }
 
+test('uses one compact status control and a progressive calendar menu on a race card', async ({ page }) => {
+  const { pageErrors } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000101', 'registered')]);
+
+  await openMyRaces(page);
+
+  const raceCard = card(page, '2026:r000101');
+  const status = raceCard.getByLabel('Moj status');
+  await expect(status).toHaveValue('registered');
+  expect(await status.locator('option').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value))).toEqual(['', 'following', 'planning', 'registered', 'completed']);
+  await expect(raceCard.locator('[data-race-status-badge]')).toHaveCount(0);
+
+  const primaryActions = raceCard.locator('.my-race-actions-primary');
+  await expect(primaryActions.getByRole('link', { name: /Prijava/ })).toBeVisible();
+  await expect(primaryActions.getByRole('link', { name: /Podrobnosti/ })).toBeVisible();
+  await expect(primaryActions.getByRole('link', { name: /Razpis/ })).toBeVisible();
+  await expect(primaryActions.locator('.my-race-action-registration')).toHaveCount(1);
+
+  const calendar = raceCard.locator('[data-race-calendar-menu]');
+  await expect(calendar).not.toHaveAttribute('open', '');
+  await expect(calendar.locator('.race-calendar-actions a')).toHaveCount(3);
+  await calendar.locator('summary').click();
+  await expect(calendar).toHaveAttribute('open', '');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Google koledar');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Apple/iCal');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Outlook');
+  await expect(raceCard.locator('.my-race-remove')).toHaveText('Odstrani');
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
 test('shows verified deadlines on the saved race card and in the upcoming panel', async ({ page }) => {
   await freezeLjubljanaDate(page);
   const { pageErrors } = await mockMyRacesApis(page);
@@ -417,7 +447,8 @@ test('migrates V1 saved races to V2 and preserves the race', async ({ page }) =>
   await expect(migratedCard).toBeVisible();
   await expect(migratedCard.getByRole('link', { name: 'Ljubljana Test Run' })).toBeVisible();
   await expect(migratedCard.getByLabel('Moj status')).toHaveValue('following');
-  await expect(migratedCard.locator('[data-race-status-badge]')).toHaveText('Spremljam');
+  await expect(migratedCard.locator('[data-race-status-badge]')).toHaveCount(0);
+  await expect(migratedCard.getByLabel('Moj status')).toHaveAttribute('data-race-status', 'following');
   await expect(count(page, 'following')).toHaveText('1');
   await expect(filter(page, 'following')).toContainText('Spremljam 1');
 

@@ -3763,6 +3763,109 @@ main {
   }
 }
 
+/* Compact saved-race cards keep the event facts and actions easy to scan. */
+.my-race-card {
+  gap: 0.85rem;
+}
+
+.my-race-overview {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.my-race-main {
+  min-width: 0;
+}
+
+.my-race-main h3,
+.my-race-main p {
+  overflow-wrap: anywhere;
+}
+
+.my-race-main h3 {
+  margin: 0;
+}
+
+.my-race-location {
+  margin: 0.25rem 0 0;
+  color: var(--muted-text-color, #5f6f66);
+}
+
+.my-race-card-status {
+  align-self: start;
+  margin-top: 0;
+}
+
+.race-status-select[data-race-status="following"] {
+  border-color: rgba(16, 64, 80, 0.28);
+  background: rgba(224, 242, 254, 0.72);
+}
+
+.race-status-select[data-race-status="planning"] {
+  border-color: rgba(180, 83, 9, 0.3);
+  background: rgba(254, 243, 199, 0.72);
+}
+
+.race-status-select[data-race-status="registered"] {
+  border-color: rgba(21, 128, 61, 0.3);
+  background: rgba(220, 252, 231, 0.78);
+}
+
+.race-status-select[data-race-status="completed"] {
+  border-color: rgba(107, 114, 128, 0.3);
+  background: rgba(243, 244, 246, 0.9);
+}
+
+.my-races-status-filters {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  padding-bottom: 0;
+}
+
+.my-race-remove {
+  border: 0;
+  background: transparent;
+  color: var(--muted-text-color, #5f6f66);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.my-race-remove:hover,
+.my-race-remove:focus-visible {
+  color: var(--deep-teal);
+}
+
+.my-race-remove:focus-visible {
+  outline: 3px solid rgba(240, 160, 48, 0.45);
+  outline-offset: 2px;
+}
+
+.race-calendar-menu summary {
+  list-style: none;
+}
+
+.race-calendar-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .my-race-overview {
+    grid-template-columns: minmax(7.8rem, 9.5rem) minmax(0, 1fr) auto;
+    align-items: start;
+  }
+}
+
+@media (max-width: 719px) {
+  .my-race-actions-primary > * {
+    max-width: 100%;
+  }
+}
+
 .home-hero-card {
   border-radius: 22px;
   background:
