@@ -8,6 +8,7 @@
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
   import { buildPrimaryActions } from '../utils-race-detail-view';
+  import { renderActionIcon } from '../utils-action-icons';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
   import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
@@ -350,7 +351,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
 
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>`;
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
   type SecondaryMenuAction = { url: string; html: string; priority: number };
   const normalizeSecondaryDestination = (value: string) => {
@@ -873,7 +874,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     ].filter(Boolean).join('');
     const primaryDestinationKeys = new Set(registrationActions.map((action) => normalizeSecondaryDestination(action.url)).filter(Boolean));
     const secondaryActionCandidates: SecondaryMenuAction[] = [
-      ...noticeActions.map((action) => ({ url: action.url, priority: 2, html: `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}">${escapeHtml(action.label)}</a>` })),
+      ...noticeActions.map((action) => ({ url: action.url, priority: 2, html: `<a href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon">${renderActionIcon('notice')}</span><span>${escapeHtml(action.label)}</span></a>` })),
       routeAction,
       renderableVoteUrl && { url: renderableVoteUrl, priority: 4, html: `<a href="${escapeHtml(renderableVoteUrl)}" target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label="${escapeHtml(locale.voteAriaLabel(event.title))}">${locale.voteLabel}</a>` },
       ...calendarOptions

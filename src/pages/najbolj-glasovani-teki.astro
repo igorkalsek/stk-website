@@ -90,6 +90,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, renderAdditionalDataBlock, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildPrimaryActions } from '../utils-race-detail-view';
+  import { renderActionIcon } from '../utils-action-icons';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
   import { initSavedRaceButtons } from '../saved-races-client';
@@ -439,7 +440,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${action.kind === 'registration' ? '✍️' : '📄'}</span><span>${escapeHtml(action.label)}</span></a>`;
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
@@ -465,7 +466,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     return `
       <details class="calendar-menu">
-        <summary class="button button-small button-secondary-light"><span aria-hidden="true">📅</span><span>V koledar</span></summary>
+        <summary class="button button-small button-secondary-light"><span class="action-icon">${renderActionIcon('calendar')}</span><span>V koledar</span></summary>
         <div class="calendar-menu-options">${options}</div>
       </details>
     `;
