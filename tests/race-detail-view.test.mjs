@@ -60,7 +60,16 @@ describe('race detail view model', () => {
     const event = { ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '', registrationMaxEur: '   ', registrationDeadline: '', earlyRegistrationDeadline: '', dayOfRegistration: '' } };
     assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), []);
     const withDeadline = { ...event, additionalData: { ...event.additionalData, registrationDeadline: '2026-05-01' } };
-    assert.deepEqual(buildRegistrationRows(withDeadline, 'en', fmt).map((row) => row.label), ['Registration deadline']);
+    assert.deepEqual(buildRegistrationRows(withDeadline, 'en', fmt), []);
+  });
+
+
+
+  it('deduplicates ISO registration deadlines that are rendered by enriched deadline rows', () => {
+    const event = { ...baseEvent, additionalData: richAdditional };
+    assert.deepEqual(buildRegistrationRows(event, 'sl', fmt).map((row) => row.label), ['Startnina', 'Prijava na dan dogodka']);
+    const mixed = { ...baseEvent, additionalData: { ...richAdditional, registrationDeadline: '2026-05-01', earlyRegistrationDeadline: 'pokliči organizatorja', dayOfRegistration: '' } };
+    assert.deepEqual(buildRegistrationRows(mixed, 'sl', fmt).map((row) => row.label), ['Startnina', 'Cenejša prijava do']);
   });
 
   it('chooses route and elevation headings based on visible course rows', () => {
@@ -163,6 +172,24 @@ describe('race detail view model', () => {
     assert.doesNotMatch(slovenePage, /Zakaj je ta tek zanimiv\?/);
     assert.match(englishPage, /What stands out about this race/);
     assert.doesNotMatch(englishPage, /Why this race stands out/);
+  });
+
+  it('keeps side-panel DOM order aligned with the visual order', () => {
+    const pages = [
+      { source: readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8'), labels: ['Uporabna orodja', 'Koledar', 'Lokacija', 'Deli ta tek', 'Glasovanje', 'Ste organizator tega teka?'] },
+      { source: readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8'), labels: ['Useful tools', 'Calendar', 'Location', 'Share this race', 'Voting', 'Are you the organizer of this race?'] }
+    ];
+    for (const { source, labels } of pages) {
+      const asideStart = source.indexOf('class="info-card event-detail-action-panel"');
+      const aside = source.slice(asideStart);
+      const positions = labels.map((label) => aside.indexOf(label));
+      assert.ok(positions.every((position) => position >= 0), `Missing one of ${labels.join(', ')}`);
+      assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+    }
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    for (const selector of ['event-detail-tools-panel', 'event-detail-vote-panel', 'event-detail-organizer-panel', 'event-detail-calendar-panel', 'event-detail-location-panel', 'event-detail-share-panel']) {
+      assert.doesNotMatch(css, new RegExp(String.raw`\.${selector} \{ order:`));
+    }
   });
 
   it('keeps equivalent UX hierarchy, split CTA styling and analytics attributes on both detail routes', () => {

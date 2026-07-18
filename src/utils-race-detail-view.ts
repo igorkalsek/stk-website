@@ -217,12 +217,13 @@ export const buildRegistrationRows = (event: DetailEvent, language: DetailLangua
   const labels = language === 'en'
     ? { fee: 'Entry fee', deadline: 'Registration deadline', early: 'Cheaper registration until', raceDay: 'Race-day registration' }
     : { fee: 'Startnina', deadline: 'Rok prijave', early: 'Cenejša prijava do', raceDay: 'Prijava na dan dogodka' };
-  const fmtDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) ? formatDate(value) : value.trim();
+  const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+  const fmtDate = (value: string) => isIsoDate(value) ? formatDate(value) : value.trim();
   const day = formatYesNo(data.dayOfRegistration, language);
   return [
     { label: labels.fee, value: formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language) },
-    { label: labels.deadline, value: data.registrationDeadline ? fmtDate(data.registrationDeadline) : '' },
-    { label: labels.early, value: data.earlyRegistrationDeadline ? fmtDate(data.earlyRegistrationDeadline) : '' },
+    { label: labels.deadline, value: data.registrationDeadline && !isIsoDate(data.registrationDeadline) ? fmtDate(data.registrationDeadline) : '' },
+    { label: labels.early, value: data.earlyRegistrationDeadline && !isIsoDate(data.earlyRegistrationDeadline) ? fmtDate(data.earlyRegistrationDeadline) : '' },
     { label: labels.raceDay, value: day }
   ].filter((item) => hasText(item.value));
 };

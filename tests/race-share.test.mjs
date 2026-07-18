@@ -43,13 +43,33 @@ describe('race detail public share URLs', () => {
     assert.match(source, /href=\{shareLinks\.email\}/);
   });
 
-  it('keeps the prepared description with title, date, place and production link', () => {
+  it('builds multiline Slovene copy text with the canonical production URL', () => {
     const description = buildRaceCopyDescription({ event, language: 'sl', formatDate });
 
-    assert.match(description, /Ljubljanski maraton/);
-    assert.match(description, /18\. oktober 2026/);
-    assert.match(description, /Ljubljana/);
-    assert.match(description, /https:\/\/tekaski-koledar\.si\/tek\/2026\/r000042-ljubljanski-maraton\//);
+    assert.equal(description, [
+      'Ljubljanski maraton',
+      '18. oktober 2026, Ljubljana',
+      'Več informacij na Slovenskem Tekaškem Koledarju:',
+      'https://tekaski-koledar.si/tek/2026/r000042-ljubljanski-maraton/'
+    ].join('\n'));
+    assert.doesNotMatch(description, /pages\.dev|localhost|127\.0\.0\.1|\*|#/i);
+  });
+
+  it('builds multiline English copy text with the canonical production URL', () => {
+    const description = buildRaceCopyDescription({ event, language: 'en', formatDate });
+
+    assert.equal(description, [
+      'Ljubljanski maraton',
+      '18. oktober 2026, Ljubljana',
+      'More information on the Slovenian Running Calendar:',
+      'https://tekaski-koledar.si/en/races/2026/r000042-ljubljanski-maraton/'
+    ].join('\n'));
+  });
+
+  it('omits the comma when copy text has no location', () => {
+    const description = buildRaceCopyDescription({ event: { ...event, place: '' }, language: 'sl', formatDate });
+    assert.equal(description.split('\n')[1], '18. oktober 2026');
+    assert.doesNotMatch(description, /2026,\s*$/);
   });
 
   it('keeps Facebook analytics attributes on both detail pages', () => {
@@ -58,6 +78,7 @@ describe('race detail public share URLs', () => {
       assert.match(source, /data-analytics-event-type="share_clicked"/);
       assert.match(source, /data-analytics-action-type="share_facebook_click"/);
       assert.match(source, /data-analytics-target-url=\{shareUrl\}/);
+      assert.match(source, /data-analytics-link-type=\{action\.analyticsType\}/);
     }
   });
 
