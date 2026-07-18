@@ -333,6 +333,43 @@ const jsonLd = event ? {
             </div>
 
             <aside class="info-card event-detail-action-panel" aria-label="Glavne povezave">
+              <div class="event-detail-tools-panel">
+                <h2>Uporabna orodja</h2>
+                {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
+                  <div class="event-detail-calendar-panel">
+                    <h3><span class="action-icon" set:html={renderActionIcon('calendar')}></span> Koledar</h3>
+                    <div class="event-detail-calendar-actions">
+                      {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span><span>Google koledar</span></a>}
+                      {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span><span>iCal</span></a>}
+                      {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span><span>Outlook</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span><span>Outlook</span></a>}
+                    </div>
+                  </div>
+                )}
+
+                {locationUrl && (
+                  <div class="event-detail-location-panel">
+                    <h3><span class="action-icon" set:html={renderActionIcon('location')}></span> Lokacija</h3>
+                    <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Odpri lokacijo"><span class="action-icon" set:html={renderActionIcon('location')}></span><span>Odpri zemljevid</span></a>
+                  </div>
+                )}
+
+                {shareLinks && (
+                  <div class="event-detail-share-panel">
+                    <h3><span class="action-icon" set:html={renderActionIcon('share')}></span> Deli ta tek</h3>
+                    <p>Kopirajte pripravljen kratek opis z datumom, krajem in povezavo ter ga prilepite v objavo ali sporočilo.</p>
+                    <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Kopiraj besedilo za objavo</button>
+                    <div class="event-detail-share-options" aria-label="Možnosti deljenja">
+                      <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Kopiraj povezavo"><span class="action-icon" set:html={renderActionIcon('link')}></span></button>
+                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-facebook-share-button data-copy-share-text={copyDescription} data-facebook-copy-success="Besedilo je kopirano. Prilepite ga v objavo ali sporočilo." data-facebook-copy-failure="Facebook je odprt. Za besedilo uporabite gumb Kopiraj besedilo za objavo." data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" data-analytics-target-url={shareUrl} aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
+                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" data-analytics-target-url={shareUrl} aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
+                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" data-analytics-target-url={shareUrl} aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
+                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" data-analytics-target-url={shareUrl} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
+                    </div>
+                    <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
+                  </div>
+                )}
+              </div>
+
               {voteUrl && (
                 <div class="event-detail-vote-panel">
                   <h2><span class="action-icon" set:html={renderActionIcon('vote')}></span> Glasovanje</h2>
@@ -349,43 +386,6 @@ const jsonLd = event ? {
                   <a class="button button-small button-primary" href={confirmationUrl}>Potrdite pravilnost podatkov</a>
                   <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Predlagajte popravek ali dopolnitev</a>
                 </div>
-              </div>
-
-              <div class="event-detail-tools-panel">
-                <h2>Uporabna orodja</h2>
-                {shareLinks && (
-                <div class="event-detail-share-panel">
-                  <h3><span class="action-icon" set:html={renderActionIcon('share')}></span> Deli ta tek</h3>
-                  <p>Kopirajte pripravljen kratek opis z datumom, krajem in povezavo ter ga prilepite v objavo ali sporočilo.</p>
-                  <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Kopiraj besedilo za objavo</button>
-                  <div class="event-detail-share-options" aria-label="Možnosti deljenja">
-                    <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Kopiraj povezavo"><span class="action-icon" set:html={renderActionIcon('link')}></span></button>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-facebook-share-button data-copy-share-text={copyDescription} data-facebook-copy-success="Besedilo je kopirano. Prilepite ga v objavo ali sporočilo." data-facebook-copy-failure="Facebook je odprt. Za besedilo uporabite gumb Kopiraj besedilo za objavo." data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" data-analytics-target-url={shareUrl} aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" data-analytics-target-url={shareUrl} aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" data-analytics-target-url={shareUrl} aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
-                    <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" data-analytics-target-url={shareUrl} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
-                  </div>
-                  <p class="event-detail-share-feedback" data-share-feedback role="status" aria-live="polite"></p>
-                </div>
-              )}
-
-              {calendarOptions && (calendarOptions.googleUrl || calendarOptions.icsUrl || calendarOptions.outlookUrl) && (
-                <div class="event-detail-calendar-panel">
-                  <h3><span class="action-icon" set:html={renderActionIcon('calendar')}></span> Koledar</h3>
-                  <div class="event-detail-calendar-actions">
-                    {calendarOptions.googleUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.googleUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="google" aria-label="Dodaj v Google Koledar"><span aria-hidden="true">G</span><span>Google koledar</span></a>}
-                    {calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi iCal datoteko"><span aria-hidden="true"></span><span>iCal</span></a>}
-                    {calendarOptions.outlookUrl ? <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.outlookUrl} target="_blank" rel="noopener noreferrer" data-analytics-calendar-type="outlook" aria-label="Dodaj v Outlook"><span aria-hidden="true">O</span><span>Outlook</span></a> : calendarOptions.icsUrl && <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={calendarOptions.icsUrl} download={calendarOptions.icsFilename} data-analytics-calendar-type="ics" aria-label="Prenesi Outlook iCal datoteko"><span aria-hidden="true">O</span><span>Outlook</span></a>}
-                  </div>
-                </div>
-              )}
-
-              {locationUrl && (
-                <div class="event-detail-location-panel">
-                  <h3><span class="action-icon" set:html={renderActionIcon('location')}></span> Lokacija</h3>
-                  <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Odpri lokacijo"><span class="action-icon" set:html={renderActionIcon('location')}></span><span>Odpri zemljevid</span></a>
-                </div>
-              )}
               </div>
             </aside>
           </div>

@@ -5236,12 +5236,6 @@ main {
   top: 5.5rem;
 }
 
-.event-detail-tools-panel { order: 1; }
-.event-detail-vote-panel { order: 2; }
-.event-detail-organizer-panel { order: 3; }
-.event-detail-calendar-panel { order: 1; }
-.event-detail-location-panel { order: 2; }
-.event-detail-share-panel { order: 3; }
 
 .event-detail-vote-panel {
   border-top: 1px solid rgba(16, 64, 80, 0.12);

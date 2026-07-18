@@ -174,6 +174,24 @@ describe('race detail view model', () => {
     assert.doesNotMatch(englishPage, /Why this race stands out/);
   });
 
+  it('keeps side-panel DOM order aligned with the visual order', () => {
+    const pages = [
+      { source: readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8'), labels: ['Uporabna orodja', 'Koledar', 'Lokacija', 'Deli ta tek', 'Glasovanje', 'Ste organizator tega teka?'] },
+      { source: readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8'), labels: ['Useful tools', 'Calendar', 'Location', 'Share this race', 'Voting', 'Are you the organizer of this race?'] }
+    ];
+    for (const { source, labels } of pages) {
+      const asideStart = source.indexOf('class="info-card event-detail-action-panel"');
+      const aside = source.slice(asideStart);
+      const positions = labels.map((label) => aside.indexOf(label));
+      assert.ok(positions.every((position) => position >= 0), `Missing one of ${labels.join(', ')}`);
+      assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+    }
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    for (const selector of ['event-detail-tools-panel', 'event-detail-vote-panel', 'event-detail-organizer-panel', 'event-detail-calendar-panel', 'event-detail-location-panel', 'event-detail-share-panel']) {
+      assert.doesNotMatch(css, new RegExp(String.raw`\.${selector} \{ order:`));
+    }
+  });
+
   it('keeps equivalent UX hierarchy, split CTA styling and analytics attributes on both detail routes', () => {
     const slovenePage = readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8');
     const englishPage = readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8');
