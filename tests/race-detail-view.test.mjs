@@ -217,6 +217,41 @@ describe('race detail view model', () => {
     assert.match(englishPage, /Open map/);
   });
 
+  it('returns semantic highlight icon keys without emoji or visual Unicode symbols', () => {
+    const event = { ...baseEvent, distances: '5;10;85', cup: 'Pokal Slovenije – dolgi naziv za prelom', kidsRaces: true, publicNotes: 'otroški teki 100 m/500 m', additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
+    const cards = buildRaceHighlightCards(event, 'sl');
+    assert.equal(cards.length, 4);
+    assert.deepEqual(cards.map((card) => card.iconKey), ['ultra', 'elevation', 'family', 'cup']);
+    assert.equal(cards.some((card) => 'icon' in card), false);
+    assert.doesNotMatch(JSON.stringify(cards.map((card) => card.iconKey)), /[↗△★🏆🏃€✓]/u);
+  });
+
+  it('preserves key labels and values while using semantic highlight icon keys', () => {
+    const event = { ...baseEvent, distances: '0.5;5;80.5', cup: 'Pokal Slovenije za gorske teke z zelo dolgim nazivom', kidsRaces: true, publicNotes: 'otroški teki 100 m/500 m/1.6 km', additionalData: { ...richAdditional, elevationGain: '', registrationMinEur: '', dayOfRegistration: 'DA' } };
+    assert.deepEqual(buildRaceHighlightCards(event, 'sl'), [
+      { key: 'ultra', label: 'Ultra razdalja', value: '80,5 km', iconKey: 'ultra' },
+      { key: 'family', label: 'Otroški teki', value: '100 m, 500 m in 1,6 km', iconKey: 'family' },
+      { key: 'cup', label: 'Pokal', value: 'Pokal Slovenije za gorske teke z zelo dolgim nazivom', iconKey: 'cup' },
+      { key: 'distances', label: 'Razdalje', value: 'Od 500 m do 80,5 km', iconKey: 'distances' }
+    ]);
+    assert.deepEqual(buildRaceHighlightCards(event, 'en').at(-1), { key: 'distances', label: 'Distances', value: 'From 500 m to 80.5 km', iconKey: 'distances' });
+  });
+
+  it('preserves race-day registration highlight values in both languages', () => {
+    const event = { ...baseEvent, cup: 'Pokal', additionalData: { ...richAdditional, dayOfRegistration: 'DA', elevationGain: '', routeUrl: '' } };
+    assert.deepEqual(buildRaceHighlightCards(event, 'sl').find((card) => card.key === 'race-day-registration'), { key: 'race-day-registration', label: 'Prijava na dan', value: 'Da', iconKey: 'race-day-registration' });
+    assert.deepEqual(buildRaceHighlightCards(event, 'en').find((card) => card.key === 'race-day-registration'), { key: 'race-day-registration', label: 'Race-day registration', value: 'Yes', iconKey: 'race-day-registration' });
+  });
+
+  it('renders race highlight SVG icons through the shared renderer on both detail routes', () => {
+    const slovenePage = readFileSync('src/pages/tek/[year]/[slug].astro', 'utf8');
+    const englishPage = readFileSync('src/pages/en/races/[year]/[slug].astro', 'utf8');
+    for (const page of [slovenePage, englishPage]) {
+      assert.match(page, /renderActionIcon\(highlight\.iconKey\)/);
+      assert.doesNotMatch(page, /highlight\.icon[}\s<]/);
+    }
+  });
+
   it('builds no highlights for sparse events without qualifying facts', () => {
     assert.deepEqual(buildRaceHighlights({ ...baseEvent, distances: '5', surface: 'CESTA' }, 'sl'), []);
   });
@@ -310,7 +345,7 @@ describe('race detail view model', () => {
       'Family-friendly: Explicitly listed',
       'Distances: From 100 m to 10 km'
     ]);
-    assert.equal(buildRaceHighlightCards(event, 'sl').find((card) => card.key === 'distances').icon, '🏃');
+    assert.equal(buildRaceHighlightCards(event, 'sl').find((card) => card.key === 'distances').iconKey, 'distances');
   });
 
   it('preserves cup names and returns equivalent Slovenian and English categories', () => {

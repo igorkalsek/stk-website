@@ -1,3 +1,4 @@
+import type { RaceActionIcon } from './utils-action-icons';
 import type { PublicRaceEvent } from './utils-event-detail';
 import { parseRaceDistancesKm } from './utils-distance-filter.js';
 
@@ -49,7 +50,8 @@ export type DetailEvent = PublicRaceEvent & { additionalData?: DetailAdditionalD
 
 export type DetailAction = { kind: 'registration' | 'notice'; label: string; url: string; analyticsType: 'prijava' | 'razpis' };
 export type DetailRow = { label: string; value: string; url?: string; analyticsType?: string; ariaLabel?: string };
-export type DetailHighlightCard = { key: string; label: string; value: string; icon: string };
+export type DetailHighlightIconKey = Extract<RaceActionIcon, 'ultra' | 'elevation' | 'family' | 'cup' | 'distances' | 'free' | 'race-day-registration'>;
+export type DetailHighlightCard = { key: string; label: string; value: string; iconKey: DetailHighlightIconKey };
 
 const hasText = (value: string | undefined | null) => Boolean(value?.trim());
 const normalizePublicActionUrlForComparison = (value: string | undefined | null) => {
@@ -297,32 +299,32 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
   };
 
   if (hasStrongUltra && longestDistance !== null) {
-    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, icon: '↗' });
+    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, iconKey: 'ultra' });
   } else if (hasUltra && longestDistance !== null) {
-    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, icon: '↗' });
+    add({ key: 'ultra', label: labels.ultra, value: `${formatHighlightDistance(longestDistance, language)} km`, iconKey: 'ultra' });
   }
   if (hasShortSteep) {
-    add({ key: 'short-steep', label: labels.steep, value: language === 'en' ? 'Short and steep' : 'Kratko in strmo', icon: '△' });
+    add({ key: 'short-steep', label: labels.steep, value: language === 'en' ? 'Short and steep' : 'Kratko in strmo', iconKey: 'elevation' });
   }
   if (!hasShortSteep && elevation !== null && elevation >= 500) {
-    add({ key: 'elevation', label: labels.elevation, value: `${elevation} m+`, icon: '△' });
+    add({ key: 'elevation', label: labels.elevation, value: `${elevation} m+`, iconKey: 'elevation' });
   }
   if (hasChildren) {
-    add({ key: 'family', label: labels.children, value: extractChildrenDistancesLabel(event.publicNotes || '', language), icon: '★' });
+    add({ key: 'family', label: labels.children, value: extractChildrenDistancesLabel(event.publicNotes || '', language), iconKey: 'family' });
   } else if (hasFamily) {
-    add({ key: 'family', label: labels.family, value: language === 'en' ? 'Explicitly listed' : 'Izrecno navedeno', icon: '★' });
+    add({ key: 'family', label: labels.family, value: language === 'en' ? 'Explicitly listed' : 'Izrecno navedeno', iconKey: 'family' });
   }
   if (event.cup.trim()) {
-    add({ key: 'cup', label: labels.cup, value: event.cup.trim(), icon: '🏆' });
+    add({ key: 'cup', label: labels.cup, value: event.cup.trim(), iconKey: 'cup' });
   }
   if (distances.length >= 3 && shortestDistance !== null && longestDistance !== null) {
-    add({ key: 'distances', label: labels.distances, value: formatDistanceRangeValue(shortestDistance, longestDistance, language), icon: '🏃' });
+    add({ key: 'distances', label: labels.distances, value: formatDistanceRangeValue(shortestDistance, longestDistance, language), iconKey: 'distances' });
   }
   if (hasFreeFee) {
-    add({ key: 'free-fee', label: labels.free, value: language === 'en' ? 'Listed for part of the programme' : 'Za del programa', icon: '€' });
+    add({ key: 'free-fee', label: labels.free, value: language === 'en' ? 'Listed for part of the programme' : 'Za del programa', iconKey: 'free' });
   }
   if (hasRaceDayRegistration) {
-    add({ key: 'race-day-registration', label: labels.raceDay, value: labels.yes, icon: '✓' });
+    add({ key: 'race-day-registration', label: labels.raceDay, value: labels.yes, iconKey: 'race-day-registration' });
   }
   return highlights.length >= 2 ? highlights : [];
 };

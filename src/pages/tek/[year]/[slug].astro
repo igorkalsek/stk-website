@@ -255,7 +255,7 @@ const jsonLd = event ? {
                   <div class="event-detail-highlight-grid">
                     {raceHighlights.map((highlight) => (
                       <div class="event-detail-highlight-card">
-                        <span class="event-detail-highlight-icon" aria-hidden="true">{highlight.icon}</span>
+                        <span class="event-detail-highlight-icon" set:html={renderActionIcon(highlight.iconKey)}></span>
                         <span class="event-detail-highlight-text">
                           <strong>{highlight.label}</strong>
                           <span>{highlight.value}</span>
