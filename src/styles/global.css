@@ -5200,3 +5200,73 @@ main {
     width: auto;
   }
 }
+
+.event-detail-official-actions {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.event-detail-my-race-panel {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 18px;
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding: 0.9rem;
+}
+
+.event-detail-my-race-panel h2 {
+  color: var(--deep-teal);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.event-detail-my-race-actions {
+  align-items: start;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(10rem, max-content) minmax(14rem, 1fr);
+}
+
+.event-detail-my-race-panel .button {
+  width: auto;
+}
+
+.event-detail-action-panel {
+  top: 5.5rem;
+}
+
+.event-detail-tools-panel { order: 1; }
+.event-detail-vote-panel { order: 2; }
+.event-detail-organizer-panel { order: 3; }
+.event-detail-calendar-panel { order: 1; }
+.event-detail-location-panel { order: 2; }
+.event-detail-share-panel { order: 3; }
+
+.event-detail-vote-panel {
+  border-top: 1px solid rgba(16, 64, 80, 0.12);
+  padding-top: 1rem;
+}
+
+.event-detail-tools-panel h3,
+.event-detail-panel h2,
+.event-detail-vote-panel h2 {
+  align-items: center;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.event-detail-share-panel p {
+  color: var(--color-text-muted);
+  margin: -0.25rem 0 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .event-detail-my-race-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .event-detail-my-race-panel .button {
+    width: 100%;
+  }
+}

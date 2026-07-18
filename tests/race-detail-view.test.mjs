@@ -60,7 +60,16 @@ describe('race detail view model', () => {
     const event = { ...baseEvent, additionalData: { ...richAdditional, registrationMinEur: '', registrationMaxEur: '   ', registrationDeadline: '', earlyRegistrationDeadline: '', dayOfRegistration: '' } };
     assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), []);
     const withDeadline = { ...event, additionalData: { ...event.additionalData, registrationDeadline: '2026-05-01' } };
-    assert.deepEqual(buildRegistrationRows(withDeadline, 'en', fmt).map((row) => row.label), ['Registration deadline']);
+    assert.deepEqual(buildRegistrationRows(withDeadline, 'en', fmt), []);
+  });
+
+
+
+  it('deduplicates ISO registration deadlines that are rendered by enriched deadline rows', () => {
+    const event = { ...baseEvent, additionalData: richAdditional };
+    assert.deepEqual(buildRegistrationRows(event, 'sl', fmt).map((row) => row.label), ['Startnina', 'Prijava na dan dogodka']);
+    const mixed = { ...baseEvent, additionalData: { ...richAdditional, registrationDeadline: '2026-05-01', earlyRegistrationDeadline: 'pokliči organizatorja', dayOfRegistration: '' } };
+    assert.deepEqual(buildRegistrationRows(mixed, 'sl', fmt).map((row) => row.label), ['Startnina', 'Cenejša prijava do']);
   });
 
   it('chooses route and elevation headings based on visible course rows', () => {
