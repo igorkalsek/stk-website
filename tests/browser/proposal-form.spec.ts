@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { googleProposalFormContract } from '../../src/proposal-form/proposal-form-contract';
 
 const contract = googleProposalFormContract;
+const normalizeLineEndings = (value: FormDataEntryValue | null | undefined) => String(value ?? '').replace(/\r\n?/g, '\n');
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa`;
@@ -108,16 +109,28 @@ test.describe('native proposal form', () => {
 
     await expect(page.getByText('Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.')).toBeVisible();
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
-    await expect(page.getByText('Po preverjanju podatkov se predlog pošlje v obstoječi Google obrazec')).toBeVisible();
+    await expect(page.getByText('Predlog bo poslan v pregled. Ostali boste na tej strani.')).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
     await expect(page.getByRole('textbox', { name: /Povezava do razpisa/ })).toHaveCount(0);
 
     await page.getByRole('radio', { name: 'Nov tek' }).check();
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Npr. razdalje, čas starta, vrsta podlage, prijavnina in povezava za prijavo.');
-    await expect(page.getByText('Dodajte podatke, ki še niso zajeti v zgornjih poljih.')).toBeVisible();
+    await expect(page.getByText('Po želji dodajte podatke o izvedbi, prijavi, ceni in trasi.')).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Dodatni podatki o teku' })).toBeVisible();
     await expect(page.getByText('Navedite manjkajoči ali pravilen podatek.')).toHaveCount(0);
+    await expect(page.getByText('Kaj želite popraviti ali dopolniti?')).toHaveCount(0);
+    await expect(page.locator('[data-change-options-details]')).toBeHidden();
+    await expect(page.locator('input[name="proposal-change-category"]:visible')).toHaveCount(0);
+    await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
+    await expect(page.locator('[data-change-summary]')).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Podatki o izvedbi' })).toBeVisible();
+    for (const testId of ['basic-correction-start-time', 'basic-correction-distances', 'basic-correction-surface', 'basic-correction-registration-url', 'basic-correction-cup', 'additional-entry-fee-min', 'additional-entry-fee-max', 'additional-entry-fee-description', 'additional-registration-deadline', 'additional-cheaper-registration', 'additional-race-day-registration', 'additional-elevation', 'additional-route-url', 'additional-other']) {
+      await expect(page.getByTestId(testId)).toBeVisible();
+      await expect(page.getByTestId(testId)).toBeEnabled();
+    }
+    for (const testId of ['basic-correction-date', 'basic-correction-title', 'basic-correction-place', 'basic-correction-region', 'basic-correction-notice-url']) await expect(page.getByTestId(testId)).toBeHidden();
     await expect(page.getByRole('textbox', { name: 'Kraj', exact: true })).toHaveAttribute('required', '');
     await expect(page.locator('#proposal-date')).toHaveAttribute('required', '');
     await page.locator('#proposal-source').fill('organizator.si/razpis');
@@ -145,7 +158,21 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Štajerski ultra tek z zelo zelo dolgim nazivom');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 10 km in 21 km, start ob 10.00.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 10 km in 21 km, start ob 10.00.');
+    await page.getByTestId('basic-correction-start-time').fill('10:00');
+    await page.getByTestId('basic-correction-distances').fill('10 km; 21 km');
+    await page.getByTestId('basic-correction-surface').selectOption('asfalt');
+    await page.getByTestId('basic-correction-registration-url').fill('https://example.com/prijava');
+    await page.getByTestId('basic-correction-cup').fill('Pokal STK');
+    await page.getByTestId('additional-entry-fee-min').fill('15');
+    await page.getByTestId('additional-entry-fee-max').fill('25');
+    await page.getByTestId('additional-entry-fee-description').fill('Cena je odvisna od razdalje.');
+    await page.getByTestId('additional-registration-deadline').fill('2026-08-01');
+    await page.getByTestId('additional-cheaper-registration').fill('2026-07-27');
+    await page.getByTestId('additional-race-day-registration').selectOption('Da');
+    await page.getByTestId('additional-elevation').fill('450');
+    await page.getByTestId('additional-route-url').fill('https://example.com/trasa');
+    await page.getByTestId('additional-other').fill('Otroški teki');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -159,7 +186,12 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.place)).toBe('Maribor');
     expect(payload?.get(contract.fields.region)).toBe('Podravska');
     expect(payload?.get(contract.fields.officialSource)).toBe('https://example.com/razpis/2026?zelo=dolg-url');
-    expect(payload?.get(contract.fields.description)).toBe('Razdalje 10 km in 21 km, start ob 10.00.');
+    const expectedDescription = 'Razdalje 10 km in 21 km, start ob 10.00.\n\nČas začetka: 10:00\nRazdalje: 10 km; 21 km\nVrsta podlage: asfalt\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki';
+    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(expectedDescription);
+    expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
+    const fallbackParams = new URL(await page.locator('[data-correction-form-link]').getAttribute('href') || '').searchParams;
+    expect(fallbackParams.get(contract.fields.description)).toBe(expectedDescription);
+    expect(fallbackParams.getAll(contract.fields.additionalData)).toEqual(payload?.getAll(contract.fields.additionalData));
     expect(payload?.get(contract.fields.organizer)).toBe('Ne');
     expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Da');
     expect(payload?.get(contract.fields.email)).toBe('test@example.com');
@@ -182,7 +214,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 5 km.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 5 km.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne vem');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -204,7 +236,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 10 km in 21 km.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 10 km in 21 km.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -242,7 +274,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis za enkratno oddajo.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis za enkratno oddajo.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('once@example.com');
@@ -263,7 +295,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Neveljaven datum');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Kranj');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Gorenjska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('date@example.com');
@@ -282,7 +314,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek brez vira');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Celje');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Savinjska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis teka brez uradnega vira.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis teka brez uradnega vira.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -293,6 +325,8 @@ test.describe('native proposal form', () => {
 
     await page.goto('/en/add-or-correct-race/?mode=new');
     await waitForProposalRuntime(page);
+    await expect(page.getByRole('group', { name: 'Additional race details' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Race description and additional information', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
   });
@@ -630,6 +664,8 @@ test.describe('native proposal form', () => {
     await expect(descriptionInput).toHaveValue('');
     await expect(descriptionRequiredMark).toBeVisible();
     await expect(descriptionInput).toHaveAttribute('required', '');
+    await expect(page.getByText('Če ne spremenite nobenega zgornjega polja, tukaj opišite predlog. Sicer je pojasnilo neobvezno.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Dodajte nov tek' })).toHaveAttribute('href', '/dodaj-ali-popravi-tek/?mode=new');
 
     await expect(page.getByTestId('structured-basic-section')).toBeVisible();
     await expect(page.getByTestId('basic-correction-date')).toHaveValue('2027-05-01');
@@ -639,8 +675,12 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-date')).not.toHaveAttribute('data-changed', 'true');
 
     await expect(page.getByTestId('structured-additional-section')).not.toHaveAttribute('open', '');
+    await expect(page.getByTestId('structured-additional-section').locator('summary')).toHaveText('Prijava, cena in trasa');
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('20');
     await expect(page.getByTestId('additional-entry-fee-max')).toHaveValue('25');
+    const feeDescription = page.getByTestId('additional-entry-fee-description');
+    expect(await feeDescription.evaluate((field) => field.tagName)).toBe('TEXTAREA');
+    await expect(feeDescription).toHaveAttribute('rows', '3');
     await expect(page.getByTestId('additional-entry-fee-description')).toHaveValue('Različne razdalje');
     await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('2027-04-20');
     await expect(page.getByTestId('additional-route-url')).toHaveValue('https://example.com/trasa');
@@ -744,7 +784,7 @@ test.describe('native proposal form', () => {
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
     await expect(page.getByRole('radio', { name: 'Nov tek' })).toBeChecked();
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Npr. razdalje, čas starta, vrsta podlage, prijavnina in povezava za prijavo.');
     await expect(page.getByText('Navedite manjkajoči ali pravilen podatek.')).toHaveCount(0);
     await page.goto('/dodaj-ali-popravi-tek/?mode=other');
@@ -780,7 +820,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek po timeoutu');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis ostane.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis ostane.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('timeout@example.com');
@@ -789,7 +829,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Predloga trenutno ni bilo mogoče poslati.');
     await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeEnabled();
     await expect(page.getByRole('textbox', { name: 'Naziv prireditve' })).toHaveValue('Tek po timeoutu');
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toHaveValue('Opis ostane.');
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toHaveValue('Opis ostane.');
     await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveValue('timeout@example.com');
   });
 

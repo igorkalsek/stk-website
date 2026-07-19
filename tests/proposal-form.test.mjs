@@ -2,11 +2,21 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationDescription, buildOrganizerConfirmationSubmission, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain, isValidEntryFeeRange } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationDescription, buildOrganizerConfirmationSubmission, buildNewRaceDescription, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain, isValidEntryFeeRange } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
 describe('proposal form contract', () => {
+  it('uses plain-language hand-off and selected-race link copy', () => {
+    assert.equal(proposalFormLocales.sl.googleFormHandOff, 'Predlog bo poslan v pregled. Ostali boste na tej strani.');
+    assert.equal(proposalFormLocales.en.googleFormHandOff, 'The proposal will be submitted for review. You will remain on this page.');
+    assert.equal(proposalFormLocales.sl.addAnotherRace, 'Dodajte nov tek');
+    assert.equal(proposalFormLocales.en.addAnotherRace, 'Add a new race');
+    assert.equal(proposalFormLocales.sl.dynamicLabels.newDescription, 'Opis teka in dodatne informacije');
+    assert.equal(proposalFormLocales.en.dynamicLabels.newDescription, 'Race description and additional information');
+    assert.equal(proposalFormLocales.sl.helpers.newDescription, 'Dodajte samo informacije, ki jih ni mogoče vnesti v zgornja polja.');
+    assert.equal(proposalFormLocales.en.helpers.newDescription, 'Add only information that cannot be entered in the fields above.');
+  });
   it('keeps verified Google Forms entry mapping', () => {
     assert.equal(googleProposalFormContract.fields.proposalType, 'entry.1029369192');
     assert.equal(googleProposalFormContract.fields.officialSource, 'entry.1673153264');
@@ -86,6 +96,12 @@ describe('proposal form contract', () => {
     assert.equal(en, 'Additional details:\n\nRace-day registration: Yes\nRoute, map or GPX: https://example.com/route');
     const combined = combineCorrectionDescription({ lang: 'en', basicDescription: 'Date should be 2026-09-12.', structuredDetails: { registrationMinEur: '20' } });
     assert.equal(combined, 'Date should be 2026-09-12.\n\nAdditional details:\n\nMinimum entry fee: 20');
+  });
+  it('builds compact new-race descriptions and categories from structured values', () => {
+    const details = { startTime: '18:00', distances: '5;10;21.1', surface: 'cesta', registrationUrl: 'https://example.com/prijava', cup: 'Pokal STK', registrationMinEur: '15', registrationMaxEur: '25', registrationDescription: 'Cena je odvisna od razdalje.', registrationDeadline: '2026-08-01', cheaperRegistration: '2026-07-27', raceDayRegistration: 'Da', elevationGain: '450', routeUrl: 'https://example.com/trasa', otherDetails: 'Otroški teki' };
+    assert.equal(buildNewRaceDescription({ userText: 'Parkiranje je omejeno.', details, lang: 'sl' }), 'Parkiranje je omejeno.\n\nČas začetka: 18:00\nRazdalje: 5;10;21.1\nVrsta podlage: cesta\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki');
+    assert.equal(buildNewRaceDescription({ details: { distances: '10 km', elevationGain: '0' }, lang: 'en' }), 'Distances: 10 km\nElevation gain: 0');
+    assert.deepEqual(additionalDataValuesForStructuredDetails(details), ['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
   });
 
   it('includes categories for added, changed, removed and unchanged structured values', () => {
