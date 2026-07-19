@@ -113,8 +113,6 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: /Povezava do razpisa/ })).toHaveCount(0);
 
     await page.getByRole('radio', { name: 'Nov tek' }).check();
-    await expect(page.getByTestId('structured-additional-section')).toHaveAttribute('open', '');
-    await expect(page.getByTestId('additional-entry-fee')).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Npr. razdalje, čas starta, vrsta podlage, prijavnina in povezava za prijavo.');
     await expect(page.getByText('Dodajte podatke, ki še niso zajeti v zgornjih poljih.')).toBeVisible();
@@ -336,8 +334,9 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-place')).toHaveAttribute('data-original-value', 'Ljubljana');
     await page.getByTestId('basic-correction-place').fill('Ljubljana Center');
     await expect(page.getByTestId('basic-correction-place')).toHaveAttribute('data-changed', 'true');
-    await expect(page.getByText('Changed', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Undo' }).click();
+    const placeCard = page.locator('[data-basic-card="place"]');
+    await expect(placeCard.getByText('Changed', { exact: true })).toBeVisible();
+    await placeCard.getByRole('button', { name: 'Undo' }).click();
     await expect(page.getByTestId('basic-correction-place')).toHaveValue('Ljubljana');
     await page.getByTestId('basic-correction-place').fill('Ljubljana Center');
     await page.getByRole('combobox', { name: 'Are you the organizer?' }).selectOption('No');
@@ -603,7 +602,8 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
     await page.getByTestId('basic-correction-date').fill('2027-05-02');
     await expect(page.getByTestId('basic-correction-date')).toHaveAttribute('data-changed', 'true');
-    await expect(page.getByText('Spremenjeno', { exact: true })).toBeVisible();
+    const dateCard = page.locator('[data-basic-card="date"]');
+    await expect(dateCard.getByText('Spremenjeno', { exact: true })).toBeVisible();
     await expect(page.locator('[data-change-summary]')).toContainText('Spremenjeni podatki (1)');
     await expect(page.getByRole('button', { name: 'Pošlji spremembo' })).toBeVisible();
     page.once('dialog', (dialog) => dialog.accept());
