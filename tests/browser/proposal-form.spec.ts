@@ -644,7 +644,9 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('structured-additional-section').locator('summary')).toHaveText('Prijava, cena in trasa');
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('20');
     await expect(page.getByTestId('additional-entry-fee-max')).toHaveValue('25');
-    await expect(page.getByTestId('additional-entry-fee-description')).toEvaluate((field) => field.tagName === 'TEXTAREA' && field.getAttribute('rows') === '3');
+    const feeDescription = page.getByTestId('additional-entry-fee-description');
+    expect(await feeDescription.evaluate((field) => field.tagName)).toBe('TEXTAREA');
+    await expect(feeDescription).toHaveAttribute('rows', '3');
     await expect(page.getByTestId('additional-entry-fee-description')).toHaveValue('Različne razdalje');
     await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('2027-04-20');
     await expect(page.getByTestId('additional-route-url')).toHaveValue('https://example.com/trasa');
