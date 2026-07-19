@@ -331,6 +331,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     form?.querySelectorAll('[data-basic-correction-field], [data-structured-field]').forEach((field) => {
       if (field.dataset.structuredField === 'correctionIntent') return;
       if (!field.value) field.placeholder = isEnglish ? 'No data – add a value' : 'Ni podatka – dodajte vrednost';
+      if (field.dataset.diffInitialized === 'true') return;
+      field.dataset.diffInitialized = 'true';
       const card = field.closest('.structured-field'); const label = document.createElement('small'); label.className = 'field-change-label'; label.hidden = true; label.textContent = isEnglish ? 'Changed' : 'Spremenjeno';
       const undo = document.createElement('button'); undo.type = 'button'; undo.className = 'field-undo'; undo.hidden = true; undo.textContent = isEnglish ? 'Undo' : 'Razveljavi'; undo.addEventListener('click', () => { field.value = field.dataset.originalValue || ''; field.dispatchEvent(new Event('input', { bubbles: true })); });
       card?.append(label, undo);
@@ -447,6 +449,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (raceBack) raceBack.hidden = !(isExisting && !hasRaceContext && racePickerMode === 'manual');
     if (pickerActive) loadRacePickerEvents(); else closeRaceResults();
     if (additionalSection) additionalSection.hidden = !isExisting || pickerActive;
+    const additionalDetails = document.querySelector('[data-additional-details]');
+    if (additionalDetails) additionalDetails.open = !(isExisting && hasRaceContext && !pickerActive);
     if (additionalHelper) additionalHelper.textContent = hasRaceContext ? (isEnglish ? 'Enter at least one correction or additional detail.' : 'Vnesite vsaj en popravek ali dopolnitev.') : copy.helpers.additionalData;
     if (changeOptionsDetails) { changeOptionsDetails.open = !hasRaceContext; changeOptionsDetails.hidden = hasRaceContext; }
     const contextOther = document.querySelector('[data-context-other-option]'); if (contextOther) contextOther.hidden = !hasRaceContext;
