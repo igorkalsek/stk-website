@@ -23,6 +23,9 @@ export interface ProposalPrefill {
   registrationUrl: string;
   cup: string;
   registrationFee: string;
+  registrationMinEur: string;
+  registrationMaxEur: string;
+  registrationDescription: string;
   registrationDeadline: string;
   earlyRegistrationDeadline: string;
   dayOfRegistration: string;

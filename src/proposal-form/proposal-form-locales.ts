@@ -65,4 +65,8 @@ export const proposalFormLocales = {
   }
 } as const;
 
-export const proposalTypeOptions = (lang: ProposalLanguage) => ['new', 'existing', 'other'].map((value, index) => ({ value, label: proposalFormLocales[lang].typeLabels[lang][index] }));
+export const proposalTypeOptions = (lang: ProposalLanguage) => ['new', 'existing'].map((value, index) => ({ value, label: proposalFormLocales[lang].typeLabels[lang][index] }));
+
+// Values observed in the public STK event feed. Keep values Slovene even on English pages.
+export const canonicalSurfaceValues = ['cesta', 'asfalt', 'makadam', 'trail', 'cesta/trail', 'gorski tek'] as const;
+export const surfaceLabels = { sl: { cesta: 'Cesta', asfalt: 'Asfalt', makadam: 'Makadam', trail: 'Trail', 'cesta/trail': 'Cesta/trail', 'gorski tek': 'Gorski tek', other: 'Ne vem / drugo – navedem v opisu' }, en: { cesta: 'Road', asfalt: 'Asphalt', makadam: 'Gravel road', trail: 'Trail', 'cesta/trail': 'Road/trail', 'gorski tek': 'Mountain race', other: 'I do not know / other – I will explain below' } } as const;
