@@ -5,6 +5,7 @@ const contract = googleProposalFormContract;
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationFee=20%20EUR&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa`;
+const zagorjeContextQuery = 'event=21.%20Tek%20in%20pohod%20po%20Zagorski%20dolini&year=2026&date=2026-08-01&place=Zagorje%20ob%20Savi&region=Zasavska&startTime=18%3A00&distances=0%2C2%20km%20%C2%B7%200%2C3%20km%20%C2%B7%200%2C5%20km%20%C2%B7%201%20km%20%C2%B7%204%2C6%20km%20%C2%B7%207%2C5%20km%20%C2%B7%2010%2C3%20km&surface=Cesta&registrationFee=15%E2%80%9325&registrationDeadline=2026-08-01&earlyRegistrationDeadline=2026-07-27&dayOfRegistration=DA';
 
 type InterceptedForm = { getPayloads: () => URLSearchParams[]; getPayload: () => URLSearchParams | undefined; getSubmissions: () => number; getUrls: () => string[]; getDirectPosts: () => number };
 type InterceptOptions = { responseMode?: 'fulfill' | 'hang' };
@@ -560,6 +561,35 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Ne vem');
   });
 
+
+  test('selected race prefill does not create a false initial diff', async ({ page }) => {
+    await page.goto(`/dodaj-ali-popravi-tek/?${zagorjeContextQuery}`);
+    await waitForProposalRuntime(page);
+    await expect(page.getByTestId('basic-correction-date')).toHaveValue('2026-08-01');
+    await expect(page.getByTestId('basic-correction-title')).toHaveValue('21. Tek in pohod po Zagorski dolini');
+    await expect(page.getByTestId('basic-correction-place')).toHaveValue('Zagorje ob Savi');
+    await expect(page.getByTestId('basic-correction-region')).toHaveValue('Zasavska');
+    await expect(page.getByTestId('basic-correction-start-time')).toHaveValue('18:00');
+    await expect(page.getByTestId('basic-correction-distances')).toHaveValue('0,2 km · 0,3 km · 0,5 km · 1 km · 4,6 km · 7,5 km · 10,3 km');
+    await expect(page.getByTestId('basic-correction-surface')).toHaveValue('Cesta');
+    await expect(page.getByTestId('additional-entry-fee')).toHaveValue('15–25');
+    await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('2026-08-01');
+    await expect(page.getByTestId('additional-cheaper-registration')).toHaveValue('2026-07-27');
+    await expect(page.getByTestId('additional-race-day-registration')).toHaveValue('Da');
+    await expect(page.locator('[data-changed="true"]')).toHaveCount(0);
+    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeVisible();
+
+    const startTimeCard = page.locator('[data-basic-card="startTime"]');
+    await page.getByTestId('basic-correction-start-time').fill('19:00');
+    await expect(page.locator('[data-changed="true"]')).toHaveCount(1);
+    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(1);
+    await expect(page.getByRole('button', { name: 'Pošlji spremembo' })).toBeVisible();
+    await startTimeCard.getByRole('button', { name: 'Razveljavi' }).click();
+    await expect(page.getByTestId('basic-correction-start-time')).toHaveValue('18:00');
+    await expect(page.locator('[data-changed="true"]')).toHaveCount(0);
+    await expect(page.locator('[data-change-summary] .change-chip')).toHaveCount(0);
+  });
 
   test('context mode hides complete identity and uses compact structured correction fields', async ({ page }) => {
     const form = await interceptForm(page);

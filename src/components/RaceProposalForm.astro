@@ -323,6 +323,15 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const addProtocol = () => { if (!source) return; const value = source.value.trim(); if (value && !/^[a-z][a-z0-9+.-]*:\/\//i.test(value)) source.value = `https://${value}`; };
   const isStkUrl = () => { try { const url = new URL(source.value); const host = url.hostname.replace(/^www\./, ''); return host === 'tekaski-koledar.si'; } catch { return false; } };
   const additionalInputToPrefill = { entryFee: 'registrationFee', registrationDeadline: 'registrationDeadline', cheaperRegistration: 'earlyRegistrationDeadline', raceDayRegistration: 'dayOfRegistration', elevationGain: 'elevationGain', routeUrl: 'routeUrl' };
+  const normalizeSelectedRaceFieldValue = (field, value) => {
+    const cleanValue = String(value || '').trim();
+    if (field.dataset.structuredField !== 'raceDayRegistration') return cleanValue;
+    const normalized = cleanValue.toLocaleUpperCase('sl-SI');
+    if (normalized === 'DA' || normalized === 'YES') return 'Da';
+    if (normalized === 'NE' || normalized === 'NO') return 'Ne';
+    if (normalized === 'NE VEM') return 'Ne vem';
+    return cleanValue;
+  };
   const syncSelectedRaceDiffField = (field, updateSummary = true) => {
     const card = field.closest('.structured-field');
     const changed = normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue);
@@ -338,8 +347,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const initializeSelectedRaceDiffFields = () => {
     if (!hasRaceContext) return;
     const values = { ...basicCurrentValues(), ...additionalCurrentValues() };
-    basicCorrectionFields().forEach((field) => { const key = field.dataset.basicCorrectionField; const value = values[key] || ''; field.value = value; field.dataset.originalValue = value; });
-    structuredFields().forEach((field) => { const key = field.dataset.structuredField; if (key === 'correctionIntent' || key === 'otherDetails') return; const value = values[additionalInputToPrefill[key] || key] || ''; field.value = value; field.dataset.originalValue = value; });
+    basicCorrectionFields().forEach((field) => { const key = field.dataset.basicCorrectionField; const value = normalizeSelectedRaceFieldValue(field, values[key]); field.value = value; field.dataset.originalValue = value; });
+    structuredFields().forEach((field) => { const key = field.dataset.structuredField; if (key === 'correctionIntent' || key === 'otherDetails') return; const value = normalizeSelectedRaceFieldValue(field, values[additionalInputToPrefill[key] || key]); field.value = value; field.dataset.originalValue = value; });
     form?.querySelectorAll('[data-basic-correction-field], [data-structured-field]').forEach((field) => {
       if (field.dataset.structuredField === 'correctionIntent') return;
       if (!field.value) field.placeholder = isEnglish ? 'No data – add a value' : 'Ni podatka – dodajte vrednost';
