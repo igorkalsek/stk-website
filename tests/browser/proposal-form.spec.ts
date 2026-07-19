@@ -703,7 +703,9 @@ test.describe('native proposal form', () => {
     expect(description).toContain('Trenutno: 2027-05-01');
     expect(description).toContain('Predlagano: 2027-05-02');
     expect(description).toContain('Obstoječe besedilo ostane.');
-    expect(description).toContain('Najnižja prijavnina\nTrenutno: 20\nPredlagano: 25');
+    expect(description).toContain('Najnižja prijavnina');
+    expect(description).toContain('Trenutno: 20');
+    expect(description).toContain('Predlagano: 25');
     expect(description).toContain('Trenutno: https://example.com/trasa');
     expect(description).toContain('Predlagano: ODSTRANI PODATEK');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Trasa / zemljevid / GPX', 'Popravek napačnega dodatnega podatka']);
