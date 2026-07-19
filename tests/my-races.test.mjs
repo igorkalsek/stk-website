@@ -199,6 +199,7 @@ describe('my races page source contract', () => {
   const sl = readFileSync(new URL('../src/pages/moji-teki.astro', import.meta.url), 'utf8');
   const en = readFileSync(new URL('../src/pages/en/my-races/index.astro', import.meta.url), 'utf8');
   const client = readFileSync(new URL('../src/my-races-client.ts', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf8');
 
   it('adds Slovenian and English routes', () => {
     assert.match(sl, /Moji teki/);
@@ -222,6 +223,21 @@ describe('my races page source contract', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
     assert.match(client, /do not sync between devices/);
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
+  });
+
+  it('keeps the card outer layout single-column while overview owns responsive columns', () => {
+    assert.match(styles, /\.my-race-card\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\);/s);
+    assert.doesNotMatch(styles, /\.my-race-card\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+auto;/s);
+    assert.match(styles, /@media \(min-width: 980px\)\s*\{[\s\S]*?\.my-race-overview\s*\{[^}]*grid-template-columns:\s*minmax\(7\.8rem,\s*9\.5rem\)\s+minmax\(18rem,\s*1fr\)\s+minmax\(10rem,\s*12rem\);/);
+    assert.match(styles, /\.my-race-actions,\s*\.my-race-actions-primary\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;/s);
+  });
+
+  it('protects title wrapping and keeps both locales on the shared card renderer', () => {
+    assert.match(styles, /\.my-race-main h3,\s*\.my-race-main h3 a\s*\{[^}]*overflow-wrap:\s*normal;[^}]*word-break:\s*normal;[^}]*hyphens:\s*manual;/s);
+    assert.doesNotMatch(styles, /\.my-race-main h3 a\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+    assert.doesNotMatch(styles, /\.my-race-main h3 a\s*\{[^}]*word-break:\s*break-all;/s);
+    assert.match(sl, /initMyRacesPage/);
+    assert.match(en, /initMyRacesPage/);
   });
 });
 

@@ -3269,6 +3269,7 @@ main {
 
 .my-race-card {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   padding: 1rem;
   border: 1px solid var(--border-color, #d8e2dc);
@@ -3293,11 +3294,6 @@ main {
 }
 
 @media (min-width: 720px) {
-  .my-race-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-  }
-
   .my-race-actions {
     justify-content: flex-end;
   }
@@ -3778,11 +3774,13 @@ main {
   min-width: 0;
 }
 
-.my-race-main h3 {
+.my-race-main h3,
+.my-race-main h3 a {
   margin: 0;
+  min-width: 0;
   overflow-wrap: normal;
   word-break: normal;
-  hyphens: auto;
+  hyphens: manual;
 }
 
 .my-race-main p {
@@ -3797,6 +3795,12 @@ main {
 .my-race-card-status {
   align-self: start;
   margin-top: 0;
+}
+
+.my-race-actions,
+.my-race-actions-primary {
+  width: 100%;
+  min-width: 0;
 }
 
 .race-status-select[data-race-status="following"] {
@@ -3856,10 +3860,6 @@ main {
 }
 
 @media (min-width: 720px) and (max-width: 979px) {
-  .my-race-card {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .my-race-actions,
   .my-race-actions-primary,
   .my-race-actions-secondary {
@@ -3878,12 +3878,8 @@ main {
 }
 
 @media (min-width: 980px) {
-  .my-race-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
   .my-race-overview {
-    grid-template-columns: minmax(7.8rem, 9.5rem) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(7.8rem, 9.5rem) minmax(18rem, 1fr) minmax(10rem, 12rem);
     align-items: start;
   }
 }
