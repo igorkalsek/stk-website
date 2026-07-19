@@ -356,7 +356,12 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const renderCurrentValue = (el, value) => { const cleanValue = clean(value); el.textContent = ''; if (el.dataset.currentUrl && cleanValue && isSafeHttpUrl(cleanValue)) { const link = document.createElement('a'); link.href = cleanValue; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = currentLinkText(); link.title = cleanValue; link.setAttribute('aria-label', `${currentLinkText()}: ${cleanValue}`); el.append(link); } else { el.textContent = cleanValue || missingValueText(); } };
   const hasBasicCorrections = () => hasStructuredBasicCorrections(basicCorrections());
   const structuredFields = () => Array.from(form?.querySelectorAll('[data-structured-field]') || []);
-  const structuredDetails = () => Object.fromEntries(structuredFields().filter((field) => field.dataset.structuredField !== 'correctionIntent' && (!hasRaceContext || normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue))).map((field) => [field.dataset.structuredField, normalizeDiffValue(field.value)]));
+  const structuredDetails = () => Object.fromEntries(structuredFields().filter((field) => {
+    const key = field.dataset.structuredField;
+    if (!hasRaceContext) return true;
+    if (key === 'correctionIntent') return false;
+    return normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue);
+  }).map((field) => [field.dataset.structuredField, normalizeDiffValue(field.value)]));
   const hasStructured = () => hasStructuredAdditionalDetails(structuredDetails());
   const structuredAdditionalValues = () => additionalDataValuesForStructuredDetails(structuredDetails());
   const selectedBasicValues = () => [...selectedChangeValues().filter((value) => value === 'Drugo' || !allowedAdditionalValues.includes(value)), ...(hasBasicCorrections() ? ['structured-basic'] : [])];
