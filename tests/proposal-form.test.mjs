@@ -7,6 +7,12 @@ import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
 describe('proposal form contract', () => {
+  it('uses plain-language hand-off and selected-race link copy', () => {
+    assert.equal(proposalFormLocales.sl.googleFormHandOff, 'Predlog bo poslan v pregled. Ostali boste na tej strani.');
+    assert.equal(proposalFormLocales.en.googleFormHandOff, 'The proposal will be submitted for review. You will remain on this page.');
+    assert.equal(proposalFormLocales.sl.addAnotherRace, 'Dodajte nov tek');
+    assert.equal(proposalFormLocales.en.addAnotherRace, 'Add a new race');
+  });
   it('keeps verified Google Forms entry mapping', () => {
     assert.equal(googleProposalFormContract.fields.proposalType, 'entry.1029369192');
     assert.equal(googleProposalFormContract.fields.officialSource, 'entry.1673153264');

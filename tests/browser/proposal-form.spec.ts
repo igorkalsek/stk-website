@@ -108,7 +108,7 @@ test.describe('native proposal form', () => {
 
     await expect(page.getByText('Predlog za nov tek, popravek ali dopolnitev podatkov se pred objavo pregleda in preveri.')).toBeVisible();
     await expect(page.getByText('Predlog se ne objavi samodejno.')).toBeVisible();
-    await expect(page.getByText('Po preverjanju podatkov se predlog pošlje v obstoječi Google obrazec')).toBeVisible();
+    await expect(page.getByText('Predlog bo poslan v pregled. Ostali boste na tej strani.')).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Uradni vir (neobvezno)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
     await expect(page.getByRole('textbox', { name: /Povezava do razpisa/ })).toHaveCount(0);
@@ -630,6 +630,8 @@ test.describe('native proposal form', () => {
     await expect(descriptionInput).toHaveValue('');
     await expect(descriptionRequiredMark).toBeVisible();
     await expect(descriptionInput).toHaveAttribute('required', '');
+    await expect(page.getByText('Če ne spremenite nobenega zgornjega polja, tukaj opišite predlog. Sicer je pojasnilo neobvezno.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Dodajte nov tek' })).toHaveAttribute('href', '/dodaj-ali-popravi-tek/?mode=new');
 
     await expect(page.getByTestId('structured-basic-section')).toBeVisible();
     await expect(page.getByTestId('basic-correction-date')).toHaveValue('2027-05-01');
@@ -639,8 +641,10 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-date')).not.toHaveAttribute('data-changed', 'true');
 
     await expect(page.getByTestId('structured-additional-section')).not.toHaveAttribute('open', '');
+    await expect(page.getByTestId('structured-additional-section').locator('summary')).toHaveText('Prijava, cena in trasa');
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('20');
     await expect(page.getByTestId('additional-entry-fee-max')).toHaveValue('25');
+    await expect(page.getByTestId('additional-entry-fee-description')).toEvaluate((field) => field.tagName === 'TEXTAREA' && field.getAttribute('rows') === '3');
     await expect(page.getByTestId('additional-entry-fee-description')).toHaveValue('Različne razdalje');
     await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('2027-04-20');
     await expect(page.getByTestId('additional-route-url')).toHaveValue('https://example.com/trasa');
