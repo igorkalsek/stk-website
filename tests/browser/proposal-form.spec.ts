@@ -625,8 +625,11 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#proposal-title')).toHaveValue('Dolgi Šmarnogorski tek');
     await expect(page.locator('#proposal-place')).toHaveValue('Ljubljana');
     await expect(page.locator('#proposal-region')).toHaveValue('Osrednjeslovenska');
-    await expect(page.locator('#proposal-description')).toHaveValue('');
-    await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeHidden();
+    const descriptionInput = page.locator('#proposal-description');
+    const descriptionRequiredMark = page.locator('[data-field-row="description"] [data-required-mark]');
+    await expect(descriptionInput).toHaveValue('');
+    await expect(descriptionRequiredMark).toBeVisible();
+    await expect(descriptionInput).toHaveAttribute('required', '');
 
     await expect(page.getByTestId('structured-basic-section')).toBeVisible();
     await expect(page.getByTestId('basic-correction-date')).toHaveValue('2027-05-01');
@@ -644,6 +647,8 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveAttribute('data-original-value', '20');
     await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
     await page.getByTestId('basic-correction-date').fill('2027-05-02');
+    await expect(descriptionRequiredMark).toBeHidden();
+    await expect(descriptionInput).not.toHaveAttribute('required', '');
     await expect(page.getByTestId('basic-correction-date')).toHaveAttribute('data-changed', 'true');
     const dateCard = page.locator('[data-basic-card="date"]');
     await expect(dateCard.getByText('Spremenjeno', { exact: true })).toBeVisible();
@@ -656,6 +661,8 @@ test.describe('native proposal form', () => {
     await expect(dateCard).not.toHaveAttribute('data-changed');
     await expect(dateCard.getByText('Spremenjeno', { exact: true })).toBeHidden();
     await expect(dateCard.getByRole('button', { name: 'Razveljavi' })).toBeHidden();
+    await expect(descriptionRequiredMark).toBeVisible();
+    await expect(descriptionInput).toHaveAttribute('required', '');
     await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeVisible();
 
     await expect(page.locator('[data-change-options-details]')).toBeHidden();
@@ -666,9 +673,10 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Vnesite vsaj en popravek ali dopolnitev');
     await expect.poll(() => form.getSubmissions()).toBe(0);
 
-    await page.locator('#proposal-description').fill('Obstoječe besedilo ostane.');
+    await descriptionInput.fill('Obstoječe besedilo ostane.');
     await page.getByTestId('basic-correction-date').fill('2027-05-02');
-    await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeHidden();
+    await expect(descriptionRequiredMark).toBeHidden();
+    await expect(descriptionInput).not.toHaveAttribute('required', '');
     const additionalDetails = page.getByTestId('structured-additional-section');
     await additionalDetails.locator('summary').click();
     await expect(additionalDetails).toHaveAttribute('open', '');
