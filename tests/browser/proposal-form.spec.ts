@@ -662,12 +662,13 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.title)).toBe('Dolgi Šmarnogorski tek');
     expect(payload?.get(contract.fields.place)).toBe('Ljubljana');
     expect(payload?.get(contract.fields.region)).toBe('Osrednjeslovenska');
-    expect(payload?.get(contract.fields.description)).toContain('Trenutno: 2027-05-01');
-    expect(payload?.get(contract.fields.description)).toContain('Predlagano: 2027-05-02');
-    expect(payload?.get(contract.fields.description)).toContain('Obstoječe besedilo ostane.');
-    expect(payload?.get(contract.fields.description)).toContain('Trenutno: 20 EUR');
-    expect(payload?.get(contract.fields.description)).toContain('Predlagano: 25 €');
-    expect(payload?.get(contract.fields.description)).toContain('Predlagano: ODSTRANI PODATEK');
+    const description = String(payload?.get(contract.fields.description) ?? '');
+    expect(description).toContain('Trenutno: 2027-05-01');
+    expect(description).toContain('Predlagano: 2027-05-02');
+    expect(description).toContain('Obstoječe besedilo ostane.');
+    expect(description).toContain('Prijavnina / startnina: 25 €');
+    expect(description).toContain('Trenutno: https://example.com/trasa');
+    expect(description).toContain('Predlagano: ODSTRANI PODATEK');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Trasa / zemljevid / GPX', 'Popravek napačnega dodatnega podatka']);
   });
 
