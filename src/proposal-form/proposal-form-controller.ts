@@ -226,6 +226,8 @@ export type StructuredAdditionalDetails = {
 };
 export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
 
+export type NewRaceDetails = Pick<StructuredBasicCorrections, 'startTime' | 'distances' | 'surface' | 'registrationUrl' | 'cup'> & StructuredAdditionalDetails;
+
 const structuredAdditionalFields = [
   { key: 'registrationMinEur', value: 'Prijavnina / startnina', labels: { sl: 'Najnižja prijavnina', en: 'Minimum entry fee' }, suffix: '' },
   { key: 'registrationMaxEur', value: 'Prijavnina / startnina', labels: { sl: 'Najvišja prijavnina', en: 'Maximum entry fee' }, suffix: '' },
@@ -277,6 +279,18 @@ export const buildStructuredAdditionalDescription = ({ details = {}, currentValu
   }
   if (!lines.length) return '';
   return `${lang === 'en' ? 'Additional details:' : 'Dodatni podatki:'}\n\n${lines.join('\n')}`;
+};
+
+export const buildNewRaceDescription = ({ userText = '', details = {}, lang }: { userText?: string; details?: NewRaceDetails; lang: ProposalLanguage }) => {
+  const labels = lang === 'en'
+    ? { startTime: 'Start time', distances: 'Distances', surface: 'Surface', registrationUrl: 'Registration URL', cup: 'Cup or series', registrationMinEur: 'Minimum entry fee', registrationMaxEur: 'Maximum entry fee', registrationDescription: 'Entry fee description', registrationDeadline: 'Registration deadline', cheaperRegistration: 'Cheaper registration deadline', raceDayRegistration: 'Race-day registration', elevationGain: 'Elevation gain', routeUrl: 'Route, map or GPX', otherDetails: 'Other additional details' }
+    : { startTime: 'Čas začetka', distances: 'Razdalje', surface: 'Vrsta podlage', registrationUrl: 'Prijavna povezava', cup: 'Pokal ali serija', registrationMinEur: 'Najnižja prijavnina', registrationMaxEur: 'Najvišja prijavnina', registrationDescription: 'Opis prijavnine', registrationDeadline: 'Rok prijave', cheaperRegistration: 'Rok cenejše prijave', raceDayRegistration: 'Prijave na dan dogodka', elevationGain: 'Višinski metri', routeUrl: 'Trasa, zemljevid ali GPX', otherDetails: 'Drugi dodatni podatki' };
+  const keys = Object.keys(labels) as (keyof typeof labels)[];
+  const lines = [cleanSubmissionValue(userText), ...keys.map((key) => {
+    const value = cleanSubmissionValue(details[key]);
+    return value ? `${labels[key]}: ${value}` : '';
+  })].filter(Boolean);
+  return lines.join('\n');
 };
 
 export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, structuredAdditionalCurrentValues = {}, structuredAdditionalRemovalKeys = [], lang, structuredBasicCorrections = {}, structuredBasicCurrentValues = {}, structuredBasicRemovalKeys = [] }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; structuredAdditionalCurrentValues?: StructuredAdditionalCurrentValues; structuredAdditionalRemovalKeys?: readonly (keyof StructuredAdditionalDetails)[]; lang: ProposalLanguage; structuredBasicCorrections?: StructuredBasicCorrections; structuredBasicCurrentValues?: StructuredBasicCurrentValues; structuredBasicRemovalKeys?: readonly StructuredBasicCorrectionKey[] }) => {
