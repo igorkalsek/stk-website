@@ -88,6 +88,13 @@ describe('proposal form contract', () => {
     assert.equal(combined, 'Date should be 2026-09-12.\n\nAdditional details:\n\nMinimum entry fee: 20');
   });
 
+  it('maps each structured entry-fee field to one canonical category', () => {
+    for (const details of [{ registrationMinEur: '15' }, { registrationMaxEur: '25' }, { registrationDescription: 'Cena je odvisna od razdalje.' }, { registrationMinEur: '15', registrationMaxEur: '25', registrationDescription: 'Cena je odvisna od razdalje.' }]) {
+      assert.deepEqual(additionalDataValuesForStructuredDetails(details), ['Prijavnina / startnina']);
+    }
+    assert.deepEqual(additionalDataValuesForStructuredDetails({ registrationMinEur: '25', routeUrl: 'https://example.com/trasa' }), ['Prijavnina / startnina', 'Trasa / zemljevid / GPX']);
+  });
+
   it('keeps structured business values identical between direct entries and fallback URL', () => {
     const input = { proposalType: googleProposalFormContract.values.proposalTypes[2], date: '2026-09-12', title: 'Tek', place: 'Kranj', region: 'Gorenjska', officialSource: '', description: buildStructuredAdditionalDescription({ lang: 'sl', details: { registrationMinEur: '20', routeUrl: 'https://example.com/trasa' } }), organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com', additionalData: additionalDataValuesForStructuredDetails({ registrationMinEur: '20', routeUrl: 'https://example.com/trasa' }) };
     const direct = new URLSearchParams(buildGoogleFormsSubmissionEntries(input));
