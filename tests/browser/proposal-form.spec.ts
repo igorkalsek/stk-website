@@ -642,7 +642,9 @@ test.describe('native proposal form', () => {
     await page.getByTestId('additional-route-url').fill('');
     await expect(page.getByTestId('additional-route-url')).toHaveAttribute('data-changed', 'true');
     await expect(page.getByTestId('structured-additional-section')).toHaveAttribute('open', '');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    const submitChangesButton = page.getByRole('button', { name: 'Pošlji 3 spremembe' });
+    await expect(submitChangesButton).toBeVisible();
+    await submitChangesButton.click();
     await expect(page.getByRole('alert')).not.toContainText('Vnesite vsaj en popravek ali dopolnitev');
     await expect(page.getByRole('alert')).toContainText('Ali ste organizator?');
     await expect(page.getByRole('alert')).toContainText('Kontaktni e-naslov');
@@ -651,7 +653,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('context@example.com');
-    await page.getByRole('button', { name: 'Pošlji predlog' }).click();
+    await submitChangesButton.click();
 
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
