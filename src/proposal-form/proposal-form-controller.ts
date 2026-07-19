@@ -34,6 +34,11 @@ export const fieldCategoryMap = {
 } as const;
 
 export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasCompleteRaceIdentity, identity = {} }: { frontendType: FrontendProposalType; hasRaceContext: boolean; hasCompleteRaceIdentity: boolean; identity?: Partial<Record<'date' | 'title' | 'place' | 'region', boolean>> }) => {
+  if (frontendType === 'other') {
+    const hidden = { visible: false, required: false, disabled: true, keepEnabledWhenHidden: false } as const;
+    const shown = { visible: true, required: true, disabled: false, keepEnabledWhenHidden: false } as const;
+    return { date: hidden, title: hidden, place: hidden, region: hidden, source: { ...shown, required: false }, description: shown, organizer: shown, announcement: hidden, email: shown };
+  }
   const isExisting = frontendType === 'existing';
   const contextIdentity = isExisting && hasRaceContext;
   const identityRule = (key: 'date' | 'title' | 'place' | 'region') => {
@@ -141,7 +146,7 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
   const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }) : '';
   const get = (key: string) => params.get(key)?.trim() ?? '';
-  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: noticeUrlParam, registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
+  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: noticeUrlParam, registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationMinEur: get('registrationMinEur'), registrationMaxEur: get('registrationMaxEur'), registrationDescription: get('registrationDescription'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
 };
 
 export const buildPrefillDescription = ({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {
@@ -208,7 +213,9 @@ export const buildStructuredBasicCorrectionDescription = ({ corrections = {}, cu
 };
 
 export type StructuredAdditionalDetails = {
-  entryFee?: string;
+  registrationMinEur?: string;
+  registrationMaxEur?: string;
+  registrationDescription?: string;
   registrationDeadline?: string;
   cheaperRegistration?: string;
   raceDayRegistration?: string;
@@ -217,10 +224,12 @@ export type StructuredAdditionalDetails = {
   otherDetails?: string;
   correctionIntent?: string;
 };
-export type StructuredAdditionalCurrentValues = Partial<Record<'entryFee' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
+export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
 
 const structuredAdditionalFields = [
-  { key: 'entryFee', value: 'Prijavnina / startnina', labels: { sl: 'Prijavnina / startnina', en: 'Entry fee' }, suffix: '' },
+  { key: 'registrationMinEur', value: 'Prijavnina / startnina', labels: { sl: 'Najnižja prijavnina', en: 'Minimum entry fee' }, suffix: '' },
+  { key: 'registrationMaxEur', value: 'Prijavnina / startnina', labels: { sl: 'Najvišja prijavnina', en: 'Maximum entry fee' }, suffix: '' },
+  { key: 'registrationDescription', value: 'Prijavnina / startnina', labels: { sl: 'Opis prijavnine', en: 'Entry fee description' }, suffix: '' },
   { key: 'registrationDeadline', value: 'Rok prijave', labels: { sl: 'Rok prijave', en: 'Registration deadline' }, suffix: '' },
   { key: 'cheaperRegistration', value: 'Cenejša prijava / sprememba cene', labels: { sl: 'Rok cenejše prijave ali sprememba cene', en: 'Cheaper registration deadline or price change' }, suffix: '' },
   { key: 'raceDayRegistration', value: 'Prijave na dan dogodka', labels: { sl: 'Prijave na dan dogodka', en: 'Race-day registration' }, suffix: '' },
@@ -233,13 +242,20 @@ export const structuredCorrectionIntentValues = { missing: 'missing', correcting
 
 export const hasStructuredAdditionalDetails = (details: StructuredAdditionalDetails = {}) => structuredAdditionalFields.some((field) => cleanSubmissionValue(details[field.key]).length > 0);
 
-export const additionalDataValuesForStructuredDetails = (details: StructuredAdditionalDetails = {}) => {
+export const additionalDataValuesForStructuredDetails = (details: StructuredAdditionalDetails = {}, includedKeys: readonly (keyof StructuredAdditionalDetails)[] = []) => {
+  const included = new Set(includedKeys);
   const values: string[] = [];
   for (const field of structuredAdditionalFields) {
-    if (cleanSubmissionValue(details[field.key])) values.push(field.value);
+    if (cleanSubmissionValue(details[field.key]) || included.has(field.key)) values.push(field.value);
   }
   if (details.correctionIntent === structuredCorrectionIntentValues.correcting) values.push('Popravek napačnega dodatnega podatka');
-  return values.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number]));
+  return [...new Set(values.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number])))];
+};
+
+export const isValidEntryFeeRange = (minimum: string | undefined, maximum: string | undefined) => {
+  const min = cleanSubmissionValue(minimum); const max = cleanSubmissionValue(maximum);
+  if (!min || !max) return true;
+  return Number(min.replace(',', '.')) <= Number(max.replace(',', '.'));
 };
 
 export const isValidElevationGain = (value: string | undefined) => {

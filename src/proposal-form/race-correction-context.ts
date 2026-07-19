@@ -31,6 +31,9 @@ export const buildRaceCorrectionContextParams = (event: CorrectionContextRace, l
   addCorrectionParam(params, 'registrationUrl', event.registrationUrl);
   addCorrectionParam(params, 'cup', event.cup);
   addCorrectionParam(params, 'registrationFee', [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].filter(Boolean).join('–'));
+  addCorrectionParam(params, 'registrationMinEur', event.additionalData?.registrationMinEur);
+  addCorrectionParam(params, 'registrationMaxEur', event.additionalData?.registrationMaxEur);
+  addCorrectionParam(params, 'registrationDescription', event.additionalData?.registrationDescription);
   addCorrectionParam(params, 'registrationDeadline', event.additionalData?.registrationDeadline);
   addCorrectionParam(params, 'earlyRegistrationDeadline', event.additionalData?.earlyRegistrationDeadline);
   addCorrectionParam(params, 'dayOfRegistration', event.additionalData?.dayOfRegistration);

@@ -8,6 +8,7 @@ export type AdditionalEventData = {
   eventTitle: string;
   registrationMinEur: string;
   registrationMaxEur: string;
+  registrationDescription: string;
   registrationDeadline: string;
   earlyRegistrationDeadline: string;
   dayOfRegistration: string;
@@ -120,6 +121,7 @@ const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
     eventTitle: pick(item, 'naziv_prireditve'),
     registrationMinEur: pick(item, 'prijavnina_min_eur'),
     registrationMaxEur: pick(item, 'prijavnina_max_eur'),
+    registrationDescription: pick(item, 'prijavnina_opis'),
     registrationDeadline: pick(item, 'rok_prijave'),
     earlyRegistrationDeadline: pick(item, 'rok_cenejse_prijave'),
     dayOfRegistration: pick(item, 'prijave_na_dan_dogodka'),
