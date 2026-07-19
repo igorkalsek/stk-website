@@ -432,6 +432,8 @@ test.describe('native proposal form', () => {
 
     await page.getByRole('textbox', { name: 'Vnesite manjkajoče ali pravilne podatke' }).fill('Datum naj bo 13. 9. 2026.');
     await page.getByTestId('additional-entry-fee-min').fill('20');
+    await page.getByTestId('additional-entry-fee-max').fill('25');
+    await page.getByTestId('additional-entry-fee-description').fill('Cena je odvisna od razdalje.');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('igor@gmail');
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect(page.getByRole('alert')).toContainText('Datum');
@@ -459,7 +461,12 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.date)).toBe('2026-09-12');
     expect(payload?.get(contract.fields.title)).toBe('Tek z dodatnimi podatki');
     const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
-    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe('Izbrane vrste sprememb: Datum ali ura\n\nDatum naj bo 13. 9. 2026.\n\nDodatni podatki:\n\nPrijavnina / startnina: 20 € do 1. avgusta, nato 25 €');
+    const description = normalizeLineEndings(payload?.get(contract.fields.description));
+    expect(description).toContain('Izbrane vrste sprememb: Datum ali ura');
+    expect(description).toContain('Datum naj bo 13. 9. 2026.');
+    expect(description).toContain('Najnižja prijavnina: 20');
+    expect(description).toContain('Najvišja prijavnina: 25');
+    expect(description).toContain('Opis prijavnine: Cena je odvisna od razdalje.');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka']);
     expect(payload?.get(contract.fields.place)).toBe('Kranj');
     expect(payload?.get(contract.fields.region)).toBe('Gorenjska');
@@ -531,7 +538,7 @@ test.describe('native proposal form', () => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
-    await page.getByTestId('other-proposal-link').click();
+    await page.getByRole('link', { name: 'Drugo vprašanje ali sporočilo' }).click();
     await waitForProposalRuntime(page);
     for (const selector of ['#proposal-date', '#proposal-title', '#proposal-place', '#proposal-region', '[data-additional-section]', '[data-field-row="announcement"]']) await expect(page.locator(selector)).toBeHidden();
     await expect(page.getByRole('combobox', { name: 'Ali ste organizator?' })).toBeVisible();
@@ -696,7 +703,7 @@ test.describe('native proposal form', () => {
     expect(description).toContain('Trenutno: 2027-05-01');
     expect(description).toContain('Predlagano: 2027-05-02');
     expect(description).toContain('Obstoječe besedilo ostane.');
-    expect(description).toContain('Prijavnina / startnina: 25 €');
+    expect(description).toContain('Najnižja prijavnina\nTrenutno: 20\nPredlagano: 25');
     expect(description).toContain('Trenutno: https://example.com/trasa');
     expect(description).toContain('Predlagano: ODSTRANI PODATEK');
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Trasa / zemljevid / GPX', 'Popravek napačnega dodatnega podatka']);
@@ -738,6 +745,9 @@ test.describe('native proposal form', () => {
     await waitForProposalRuntime(page);
     await expect(page.locator('[data-context-other-radio]')).toBeChecked();
     await expect(page.locator('input[name="proposal-type-ui"]')).toHaveCount(4);
+    await expect(page.getByRole('combobox', { name: 'Ali ste organizator?' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toBeVisible();
+    for (const selector of ['#proposal-date', '#proposal-title', '#proposal-place', '#proposal-region', '[data-additional-section]', '[data-field-row="announcement"]']) await expect(page.locator(selector)).toBeHidden();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Napišite sporočilo ali pojasnite predlog.');
   });
 
