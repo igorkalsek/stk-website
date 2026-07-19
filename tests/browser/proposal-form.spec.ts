@@ -120,7 +120,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('group', { name: 'Dodatni podatki o teku' })).toBeVisible();
     await expect(page.getByText('Navedite manjkajoči ali pravilen podatek.')).toHaveCount(0);
     await expect(page.getByText('Kaj želite popraviti ali dopolniti?')).toHaveCount(0);
-    await expect(page.getByText('Druge možnosti popravka')).toHaveCount(0);
+    await expect(page.locator('[data-change-options-details]')).toBeHidden();
     await expect(page.locator('input[name="proposal-change-category"]:visible')).toHaveCount(0);
     await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
     await expect(page.locator('[data-change-summary]')).toBeHidden();
