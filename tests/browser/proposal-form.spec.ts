@@ -346,7 +346,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('button', { name: 'Clear entered changes' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear entered changes' }).click();
     await expect(page.getByTestId('basic-correction-place')).toHaveValue('Ljubljana Center');
-    await page.getByRole('button', { name: 'Send proposal' }).click();
+    await page.getByRole('button', { name: 'Submit change' }).click();
 
     await expect.poll(() => form.getPayload()?.get(contract.fields.proposalType)).toBe('Popravek obstoječega vnosa v koledarju');
     expect(form.getPayload()?.get(contract.fields.date)).toBe('2027-05-01');
@@ -610,6 +610,10 @@ test.describe('native proposal form', () => {
     await page.getByRole('button', { name: 'Počisti vnesene spremembe' }).click();
     await expect(page.getByTestId('basic-correction-date')).toHaveValue('2027-05-01');
     await expect(page.getByTestId('basic-correction-date')).not.toHaveAttribute('data-changed', 'true');
+    await expect(dateCard).not.toHaveAttribute('data-changed');
+    await expect(dateCard.getByText('Spremenjeno', { exact: true })).toBeHidden();
+    await expect(dateCard.getByRole('button', { name: 'Razveljavi' })).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeVisible();
 
     await expect(page.locator('[data-change-options-details]')).toBeHidden();
     await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-date-time"])')).toBeHidden();
