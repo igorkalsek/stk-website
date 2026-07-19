@@ -191,12 +191,15 @@ export const isValidStructuredBasicUrl = (value: string | undefined) => {
   return !clean || isSafeHttpUrl(clean);
 };
 
-export const buildStructuredBasicCorrectionDescription = ({ corrections = {}, currentValues = {}, lang }: { corrections?: StructuredBasicCorrections; currentValues?: StructuredBasicCurrentValues; lang: ProposalLanguage }) => {
+export const removeValueMarker = (lang: ProposalLanguage) => lang === 'en' ? 'REMOVE VALUE' : 'ODSTRANI PODATEK';
+
+export const buildStructuredBasicCorrectionDescription = ({ corrections = {}, currentValues = {}, removalKeys = [], lang }: { corrections?: StructuredBasicCorrections; currentValues?: StructuredBasicCurrentValues; removalKeys?: readonly StructuredBasicCorrectionKey[]; lang: ProposalLanguage }) => {
   const lines: string[] = [];
   for (const field of structuredBasicCorrectionFields) {
     const proposed = cleanSubmissionValue(corrections[field.key]);
-    if (!proposed) continue;
-    lines.push(field.labels[lang], `${lang === 'en' ? 'Current' : 'Trenutno'}: ${cleanSubmissionValue(currentValues[field.key]) || '-'}`, `${lang === 'en' ? 'Proposed' : 'Predlagano'}: ${proposed}`);
+    const current = cleanSubmissionValue(currentValues[field.key]);
+    if (!proposed && (!current || !removalKeys.includes(field.key))) continue;
+    lines.push(field.labels[lang], `${lang === 'en' ? 'Current' : 'Trenutno'}: ${current || '-'}`, `${lang === 'en' ? 'Proposed' : 'Predlagano'}: ${proposed || removeValueMarker(lang)}`);
   }
   if (!lines.length) return '';
   const blocks: string[] = [];
@@ -214,6 +217,7 @@ export type StructuredAdditionalDetails = {
   otherDetails?: string;
   correctionIntent?: string;
 };
+export type StructuredAdditionalCurrentValues = Partial<Record<'entryFee' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
 
 const structuredAdditionalFields = [
   { key: 'entryFee', value: 'Prijavnina / startnina', labels: { sl: 'Prijavnina / startnina', en: 'Entry fee' }, suffix: '' },
@@ -248,20 +252,21 @@ export const isValidStructuredRouteUrl = (value: string | undefined) => {
   return !clean || isSafeHttpUrl(clean);
 };
 
-export const buildStructuredAdditionalDescription = ({ details = {}, lang }: { details?: StructuredAdditionalDetails; lang: ProposalLanguage }) => {
+export const buildStructuredAdditionalDescription = ({ details = {}, currentValues = {}, removalKeys = [], lang }: { details?: StructuredAdditionalDetails; currentValues?: StructuredAdditionalCurrentValues; removalKeys?: readonly (keyof StructuredAdditionalDetails)[]; lang: ProposalLanguage }) => {
   const lines: string[] = [];
   for (const field of structuredAdditionalFields) {
     const value = cleanSubmissionValue(details[field.key]);
-    if (value) lines.push(`${field.labels[lang]}: ${value}${field.suffix}`);
+    const current = cleanSubmissionValue(currentValues[field.key as keyof StructuredAdditionalCurrentValues]);
+    if (value || (current && removalKeys.includes(field.key))) lines.push(current || !value ? [field.labels[lang], `${lang === 'en' ? 'Current' : 'Trenutno'}: ${current || '-'}`, `${lang === 'en' ? 'Proposed' : 'Predlagano'}: ${value ? `${value}${field.suffix}` : removeValueMarker(lang)}`].join('\n') : `${field.labels[lang]}: ${value}${field.suffix}`);
   }
   if (!lines.length) return '';
   return `${lang === 'en' ? 'Additional details:' : 'Dodatni podatki:'}\n\n${lines.join('\n')}`;
 };
 
-export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, lang, structuredBasicCorrections = {}, structuredBasicCurrentValues = {} }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; lang: ProposalLanguage; structuredBasicCorrections?: StructuredBasicCorrections; structuredBasicCurrentValues?: StructuredBasicCurrentValues }) => {
-  const basic = buildStructuredBasicCorrectionDescription({ corrections: structuredBasicCorrections, currentValues: structuredBasicCurrentValues, lang });
+export const combineCorrectionDescription = ({ basicDescription = '', structuredDetails = {}, structuredAdditionalCurrentValues = {}, structuredAdditionalRemovalKeys = [], lang, structuredBasicCorrections = {}, structuredBasicCurrentValues = {}, structuredBasicRemovalKeys = [] }: { basicDescription?: string; structuredDetails?: StructuredAdditionalDetails; structuredAdditionalCurrentValues?: StructuredAdditionalCurrentValues; structuredAdditionalRemovalKeys?: readonly (keyof StructuredAdditionalDetails)[]; lang: ProposalLanguage; structuredBasicCorrections?: StructuredBasicCorrections; structuredBasicCurrentValues?: StructuredBasicCurrentValues; structuredBasicRemovalKeys?: readonly StructuredBasicCorrectionKey[] }) => {
+  const basic = buildStructuredBasicCorrectionDescription({ corrections: structuredBasicCorrections, currentValues: structuredBasicCurrentValues, removalKeys: structuredBasicRemovalKeys, lang });
   const base = cleanSubmissionValue(basicDescription);
-  const structured = buildStructuredAdditionalDescription({ details: structuredDetails, lang });
+  const structured = buildStructuredAdditionalDescription({ details: structuredDetails, currentValues: structuredAdditionalCurrentValues, removalKeys: structuredAdditionalRemovalKeys, lang });
   return [basic, base, structured].filter(Boolean).join('\n\n');
 };
 
