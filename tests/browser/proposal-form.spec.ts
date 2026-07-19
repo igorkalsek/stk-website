@@ -634,6 +634,10 @@ test.describe('native proposal form', () => {
     await page.locator('#proposal-description').fill('Obstoječe besedilo ostane.');
     await page.getByTestId('basic-correction-date').fill('2027-05-02');
     await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeHidden();
+    const additionalDetails = page.getByTestId('structured-additional-section');
+    await additionalDetails.locator('summary').click();
+    await expect(additionalDetails).toHaveAttribute('open', '');
+    await expect(page.getByTestId('additional-entry-fee')).toBeVisible();
     await page.getByTestId('additional-entry-fee').fill('25 €');
     await page.getByTestId('additional-route-url').fill('');
     await expect(page.getByTestId('additional-route-url')).toHaveAttribute('data-changed', 'true');
