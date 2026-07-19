@@ -60,6 +60,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
         <p class="other-proposal-link"><a href={`${copy.cleanPath}?mode=other`} data-other-proposal-link>{lang === 'en' ? 'Other question or message' : 'Drugo vprašanje ali sporočilo'}</a><small>{lang === 'en' ? 'For a question or information that is not a new race or a correction to an existing race.' : 'Za vprašanje ali informacijo, ki ni nov tek oziroma popravek ali dopolnitev obstoječega teka.'}</small></p>
       </fieldset>
       <input type="radio" name="proposal-type-ui" value="existing" hidden data-context-existing-radio data-proposal-type-ui data-field-label={copy.labels.proposalType} />
+      <input type="radio" name="proposal-type-ui" value="other" hidden data-context-other-radio data-proposal-type-ui data-field-label={copy.labels.proposalType} />
       <input type="hidden" name={googleProposalFormContract.fields.proposalType} value="" data-backend-proposal-type />
 
       <section class="confirmation-mode" hidden aria-labelledby="confirmation-summary-title">
