@@ -239,6 +239,16 @@ describe('my races page source contract', () => {
     assert.match(sl, /initMyRacesPage/);
     assert.match(en, /initMyRacesPage/);
   });
+
+  it('uses one nearest-deadline summary and keeps all active deadlines on each race card', () => {
+    assert.match(client, /data-next-registration-deadline/);
+    assert.match(client, /data-my-race-deadlines/);
+    assert.match(client, /data-my-race-deadline/);
+    assert.match(client, /id="\$\{escapeHtml\(getRaceCardId\(item\.key\)\)\}"/);
+    assert.match(client, /href="#\$\{escapeHtml\(getRaceCardId\(item\.key\)\)\}"/);
+    assert.doesNotMatch(client, /renderUpcomingDeadlinesPanel/);
+    assert.doesNotMatch(client, /data-upcoming-deadlines-panel/);
+  });
 });
 
 import { getUpcomingSavedRaceDeadlines } from '../.cache/dist-test/utils-my-races.js';

@@ -3787,6 +3787,73 @@ main {
   overflow-wrap: break-word;
 }
 
+.next-registration-deadline {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--accent-color, #f0a030);
+  background: rgba(248, 253, 250, 0.86);
+}
+
+.next-registration-deadline p {
+  margin: 0;
+}
+
+.next-registration-deadline-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--deep-teal);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.next-registration-deadline-race a {
+  font-weight: 800;
+}
+
+.next-registration-deadline-copy,
+.next-registration-deadline-jump {
+  color: var(--muted-text-color, #5f6f66);
+  font-size: 0.92rem;
+}
+
+.next-registration-deadline-jump {
+  width: fit-content;
+}
+
+.my-race-deadlines {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
+.my-race-deadlines h4,
+.my-race-deadline p {
+  margin: 0;
+}
+
+.my-race-deadlines h4 {
+  color: var(--deep-teal);
+  font-size: 0.88rem;
+}
+
+.my-race-deadline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+}
+
+.my-race-deadline p {
+  font-size: 0.92rem;
+}
+
+.my-race-deadline .deadline-calendar-menu {
+  margin-top: 0;
+}
+
 .my-race-location {
   margin: 0.25rem 0 0;
   color: var(--muted-text-color, #5f6f66);
