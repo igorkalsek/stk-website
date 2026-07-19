@@ -199,10 +199,13 @@ describe('my races page source contract', () => {
   const sl = readFileSync(new URL('../src/pages/moji-teki.astro', import.meta.url), 'utf8');
   const en = readFileSync(new URL('../src/pages/en/my-races/index.astro', import.meta.url), 'utf8');
   const client = readFileSync(new URL('../src/my-races-client.ts', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('../src/styles/global.css', import.meta.url), 'utf8');
 
   it('adds Slovenian and English routes', () => {
     assert.match(sl, /Moji teki/);
     assert.match(en, /My races/);
+    assert.doesNotMatch(sl, /<p class="eyebrow">Moji teki/);
+    assert.doesNotMatch(en, /<p class="eyebrow">My races/);
   });
 
   it('uses the existing saved races storage key through utilities', () => assert.match(client, /readSavedRaces/));
@@ -220,8 +223,43 @@ describe('my races page source contract', () => {
   });
   it('includes fallback copy for API outages and local-only storage', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
-    assert.match(client, /do not sync between devices/);
+    assert.match(client, /no account or cross-device sync/);
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
+  });
+
+  it('keeps the card outer layout single-column while overview owns responsive columns', () => {
+    assert.match(styles, /\.my-race-card\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\);/s);
+    assert.doesNotMatch(styles, /\.my-race-card\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+auto;/s);
+    assert.match(styles, /@media \(min-width: 980px\)\s*\{[\s\S]*?\.my-race-overview\s*\{[^}]*grid-template-columns:\s*minmax\(7\.8rem,\s*9\.5rem\)\s+minmax\(18rem,\s*1fr\)\s+minmax\(10rem,\s*12rem\);/);
+    assert.match(styles, /\.my-race-actions,\s*\.my-race-actions-primary\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;/s);
+  });
+
+  it('protects title wrapping and keeps both locales on the shared card renderer', () => {
+    assert.match(styles, /\.my-race-main h3,\s*\.my-race-main h3 a\s*\{[^}]*overflow-wrap:\s*normal;[^}]*word-break:\s*normal;[^}]*hyphens:\s*manual;/s);
+    assert.doesNotMatch(styles, /\.my-race-main h3 a\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
+    assert.doesNotMatch(styles, /\.my-race-main h3 a\s*\{[^}]*word-break:\s*break-all;/s);
+    assert.match(sl, /initMyRacesPage/);
+    assert.match(en, /initMyRacesPage/);
+  });
+
+  it('uses one nearest-deadline summary and keeps all active deadlines on each race card', () => {
+    assert.match(client, /data-next-registration-deadline/);
+    assert.match(client, /data-my-race-deadlines/);
+    assert.match(client, /data-my-race-deadline/);
+    assert.match(client, /id="\$\{escapeHtml\(getRaceCardId\(item\.key\)\)\}"/);
+    assert.match(client, /href="#\$\{escapeHtml\(getRaceCardId\(item\.key\)\)\}"/);
+    assert.doesNotMatch(client, /renderUpcomingDeadlinesPanel/);
+    assert.doesNotMatch(client, /data-upcoming-deadlines-panel/);
+  });
+
+  it('keeps the compact local-only note and card order localized', () => {
+    assert.match(client, /Shranjeno samo v tem brskalniku · brez računa in sinhronizacije med napravami\./);
+    assert.match(client, /Stored only in this browser · no account or cross-device sync\./);
+    assert.match(client, /Moj tekaški načrt/);
+    assert.match(client, /My race plan/);
+    assert.match(client, /Prikaži v načrtu/);
+    assert.match(client, /Show in race plan/);
+    assert.match(client, /my-race-card-status[\s\S]*renderRaceCardDeadlines\(event, detailPath, labels, language, todayIso\)[\s\S]*my-race-actions/);
   });
 });
 

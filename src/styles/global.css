@@ -3269,6 +3269,7 @@ main {
 
 .my-race-card {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   padding: 1rem;
   border: 1px solid var(--border-color, #d8e2dc);
@@ -3293,11 +3294,6 @@ main {
 }
 
 @media (min-width: 720px) {
-  .my-race-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-  }
-
   .my-race-actions {
     justify-content: flex-end;
   }
@@ -3760,6 +3756,219 @@ main {
   .my-race-actions-primary,
   .my-race-actions-secondary {
     justify-content: flex-end;
+  }
+}
+
+/* Compact saved-race cards keep the event facts and actions easy to scan. */
+.my-race-card {
+  gap: 0.85rem;
+}
+
+.my-race-overview {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.my-race-main {
+  min-width: 0;
+}
+
+.my-race-main h3,
+.my-race-main h3 a {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+
+.my-race-main p {
+  overflow-wrap: break-word;
+}
+
+.next-registration-deadline {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--accent-color, #f0a030);
+  background: rgba(248, 253, 250, 0.86);
+}
+
+.next-registration-deadline p {
+  margin: 0;
+}
+
+.next-registration-deadline-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--deep-teal);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.next-registration-deadline-race a {
+  font-weight: 800;
+}
+
+.next-registration-deadline-copy,
+.next-registration-deadline-jump {
+  color: var(--muted-text-color, #5f6f66);
+  font-size: 0.92rem;
+}
+
+.next-registration-deadline-jump {
+  width: fit-content;
+}
+
+.my-race-deadlines {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+  padding: 0.65rem 0.75rem;
+  border-left: 2px solid rgba(16, 64, 80, 0.16);
+  background: rgba(15, 118, 110, 0.035);
+}
+
+.my-race-deadlines h4,
+.my-race-deadline p {
+  margin: 0;
+}
+
+.my-race-deadlines h4 {
+  color: var(--deep-teal);
+  font-size: 0.88rem;
+}
+
+.my-race-deadline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+}
+
+.my-race-deadline p {
+  font-size: 0.92rem;
+}
+
+.my-race-deadline .deadline-calendar-menu {
+  margin-top: 0;
+}
+
+.my-race-deadline .deadline-calendar-menu summary {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.my-races-local-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.my-race-location {
+  margin: 0.25rem 0 0;
+  color: var(--muted-text-color, #5f6f66);
+}
+
+.my-race-card-status {
+  align-self: start;
+  margin-top: 0;
+}
+
+.my-race-actions,
+.my-race-actions-primary {
+  width: 100%;
+  min-width: 0;
+}
+
+.race-status-select[data-race-status="following"] {
+  border-color: rgba(16, 64, 80, 0.28);
+  background: rgba(224, 242, 254, 0.72);
+}
+
+.race-status-select[data-race-status="planning"] {
+  border-color: rgba(180, 83, 9, 0.3);
+  background: rgba(254, 243, 199, 0.72);
+}
+
+.race-status-select[data-race-status="registered"] {
+  border-color: rgba(21, 128, 61, 0.3);
+  background: rgba(220, 252, 231, 0.78);
+}
+
+.race-status-select[data-race-status="completed"] {
+  border-color: rgba(107, 114, 128, 0.3);
+  background: rgba(243, 244, 246, 0.9);
+}
+
+.my-races-status-filters {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  padding-bottom: 0;
+}
+
+.my-race-remove {
+  border: 0;
+  background: transparent;
+  color: var(--muted-text-color, #5f6f66);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.my-race-remove:hover,
+.my-race-remove:focus-visible {
+  color: var(--deep-teal);
+}
+
+.my-race-remove:focus-visible {
+  outline: 3px solid rgba(240, 160, 48, 0.45);
+  outline-offset: 2px;
+}
+
+.race-calendar-menu summary {
+  list-style: none;
+}
+
+.race-calendar-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (min-width: 720px) and (max-width: 979px) {
+  .my-race-actions,
+  .my-race-actions-primary,
+  .my-race-actions-secondary {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .my-race-overview {
+    grid-template-columns: minmax(6.5rem, 8rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .my-race-card-status {
+    grid-column: 2;
+  }
+}
+
+@media (min-width: 980px) {
+  .my-race-overview {
+    grid-template-columns: minmax(7.8rem, 9.5rem) minmax(18rem, 1fr) minmax(10rem, 12rem);
+    align-items: start;
+  }
+}
+
+@media (max-width: 719px) {
+  .my-race-actions-primary > * {
+    max-width: 100%;
   }
 }
 

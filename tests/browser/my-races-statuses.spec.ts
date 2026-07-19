@@ -117,7 +117,7 @@ const byId: Record<string, SavedRaceFixture> = {
 const v2Race = (id: keyof typeof byId, status: SavedRaceStatus) => ({ version: 2, ...byId[id], status });
 const legacyRace = (id: keyof typeof byId) => ({ version: 1, ...byId[id] });
 const card = (page: Page, key: string) => page.locator(`[data-key="${key}"]`);
-const deadlineGroup = (page: Page, key: string) => page.locator(`[data-upcoming-deadline-group-key="${key}"]`);
+const deadlineGroup = (page: Page, key: string) => card(page, key).locator('[data-my-race-deadlines]');
 const count = (page: Page, status: SavedRaceStatus) => page.locator(`[data-my-races-status-count="${status}"]`);
 const filter = (page: Page, status: SavedRaceStatus | 'all') => page.locator(`[data-my-races-status-filter="${status}"]`);
 
@@ -230,7 +230,37 @@ function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
   expect(serialized).not.toMatch(/following|planning|registered|completed|status/);
 }
 
-test('shows verified deadlines on the saved race card and in the upcoming panel', async ({ page }) => {
+test('uses one compact status control and a progressive calendar menu on a race card', async ({ page }) => {
+  const { pageErrors } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000101', 'registered')]);
+
+  await openMyRaces(page);
+
+  const raceCard = card(page, '2026:r000101');
+  const status = raceCard.getByLabel('Moj status');
+  await expect(status).toHaveValue('registered');
+  expect(await status.locator('option').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value))).toEqual(['', 'following', 'planning', 'registered', 'completed']);
+  await expect(raceCard.locator('[data-race-status-badge]')).toHaveCount(0);
+
+  const primaryActions = raceCard.locator('.my-race-actions-primary');
+  await expect(primaryActions.getByRole('link', { name: /Prijava/ })).toBeVisible();
+  await expect(primaryActions.getByRole('link', { name: /Podrobnosti/ })).toBeVisible();
+  await expect(primaryActions.getByRole('link', { name: /Razpis/ })).toBeVisible();
+  await expect(primaryActions.locator('.my-race-action-registration')).toHaveCount(1);
+
+  const calendar = raceCard.locator('[data-race-calendar-menu]');
+  await expect(calendar).not.toHaveAttribute('open', '');
+  await expect(calendar.locator('.race-calendar-actions a')).toHaveCount(3);
+  await calendar.locator('summary').click();
+  await expect(calendar).toHaveAttribute('open', '');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Google koledar');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Apple/iCal');
+  await expect(calendar.locator('.race-calendar-actions')).toContainText('Outlook');
+  await expect(raceCard.locator('.my-race-remove')).toHaveText('Odstrani');
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('integrates verified deadlines into the saved race card and summarizes the nearest one', async ({ page }) => {
   await freezeLjubljanaDate(page);
   const { pageErrors } = await mockMyRacesApis(page);
   await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
@@ -240,25 +270,23 @@ test('shows verified deadlines on the saved race card and in the upcoming panel'
   const raceCard = card(page, '2026:r000101');
   await expect(raceCard).toBeVisible();
   await expect(page.locator('[data-my-races-status-summary]')).toHaveCount(0);
-  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toHaveCount(1);
-  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toContainText('Cenejša prijava do 18. julija · še 3 dni');
-  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(0);
+  await expect(raceCard.locator('[data-my-race-deadlines]')).toHaveCount(1);
+  await expect(raceCard.locator('[data-my-race-deadline]')).toHaveCount(2);
+  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="early"]')).toContainText('Cenejša prijava · 18. julija · še 3 dni');
   await expect(raceCard.locator('[data-race-calendar-menu]')).toHaveCount(1);
 
-  const panel = page.locator('[data-upcoming-deadlines-panel]');
-  await expect(panel).toContainText('Prihajajoči prijavni roki');
-  await expect(panel.locator('[data-upcoming-deadline-group]')).toHaveCount(1);
-  await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(2);
-  await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava se konča čez 3 dni');
-  await expect(panel.locator('[data-deadline-kind="early"]')).toContainText('Cenejša prijava do 18. julija 2026');
-  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo čez 8 dni');
-  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave do 23. julija 2026');
+  const summary = page.locator('[data-next-registration-deadline]');
+  await expect(summary).toContainText('Naslednji prijavni rok');
+  await expect(summary).toContainText('Ljubljana Test Run');
+  await expect(summary).toContainText('Cenejša prijava do 18. julija · čez 3 dni');
+  await expect(summary.locator('.deadline-calendar-menu')).toHaveCount(0);
+  await expect(summary.locator('a[href="#my-race-2026-r000101"]')).toHaveText('Prikaži v načrtu');
 
   for (const deadline of [
     { kind: 'early', googleDate: '20260718', outlookDate: '2026-07-18' },
     { kind: 'registration', googleDate: '20260723', outlookDate: '2026-07-23' }
   ]) {
-    const item = panel.locator(`[data-deadline-kind="${deadline.kind}"]`);
+    const item = raceCard.locator(`[data-my-race-deadline][data-deadline-kind="${deadline.kind}"]`);
     await expect(item.locator('summary')).toHaveText('Dodaj rok v koledar');
     const hrefs = await item.locator('.deadline-calendar-actions a').evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href));
     expect(hrefs).toHaveLength(3);
@@ -279,38 +307,34 @@ test('deduplicates identical early and final deadline dates', async ({ page }) =
   await openMyRaces(page);
 
   const raceCard = card(page, '2026:r000101');
-  await expect(raceCard.locator('[data-my-race-deadline-summary]')).toHaveCount(1);
-  await expect(raceCard.locator('[data-my-race-deadline-summary][data-deadline-kind="registration"]')).toContainText('Prijave do 16. julija · jutri');
-  await expect(raceCard.locator('[data-my-race-deadline-summary][data-deadline-kind="early"]')).toHaveCount(0);
-  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(0);
+  await expect(raceCard.locator('[data-my-race-deadline]')).toHaveCount(1);
+  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="registration"]')).toContainText('Prijava · 16. julija · jutri');
 
-  const panel = page.locator('[data-upcoming-deadlines-panel]');
-  await expect(panel.locator('[data-upcoming-deadline-item]')).toHaveCount(1);
-  await expect(panel.locator('[data-deadline-kind="registration"]')).toContainText('Prijave se zaprejo jutri');
-  await expect(panel.locator('.deadline-calendar-menu')).toHaveCount(1);
+  await expect(page.locator('[data-next-registration-deadline]')).toContainText('Prijave do 16. julija · jutri');
+  await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(1);
   await expectNoUnexpectedErrors(pageErrors);
 });
 
-test('updates upcoming deadline panel eligibility when saved status changes without API refetches', async ({ page }) => {
+test('updates the next deadline summary eligibility when saved status changes without API refetches', async ({ page }) => {
   await freezeLjubljanaDate(page);
   const { pageErrors, requestCounts } = await mockMyRacesApis(page);
   await seedV2SavedRaces(page, [v2Race('r000101', 'planning')]);
 
   await openMyRaces(page);
-  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-group]')).toHaveCount(1);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('completed');
-  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
-  await expect(card(page, '2026:r000101').locator('[data-my-race-deadline-summary]')).toHaveCount(1);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
+  await expect(card(page, '2026:r000101').locator('[data-my-race-deadlines]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('following');
-  await expect(page.locator('[data-upcoming-deadlines-panel] [data-upcoming-deadline-group]')).toHaveCount(1);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
   expect(requestCounts.additional).toBe(1);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
@@ -376,7 +400,7 @@ test('filters deadline groups together with race cards', async ({ page }) => {
   await filter(page, 'completed').click();
   await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toBeVisible();
   await expect(page.locator('[data-key]')).toHaveCount(0);
-  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
 
   await filter(page, 'all').click();
   for (const key of ['2026:r000101', '2026:r000102', '2026:r000103']) {
@@ -399,7 +423,7 @@ test('keeps My races usable when optional additional API fails', async ({ page }
 
   await expect(card(page, '2026:r000101')).toBeVisible();
   await expect(card(page, '2026:r000102')).toBeVisible();
-  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
   await expect(page.getByText('API trenutno ni dosegljiv')).toHaveCount(0);
   await filter(page, 'planning').click();
   await expect(card(page, '2026:r000102')).toBeVisible();
@@ -417,7 +441,8 @@ test('migrates V1 saved races to V2 and preserves the race', async ({ page }) =>
   await expect(migratedCard).toBeVisible();
   await expect(migratedCard.getByRole('link', { name: 'Ljubljana Test Run' })).toBeVisible();
   await expect(migratedCard.getByLabel('Moj status')).toHaveValue('following');
-  await expect(migratedCard.locator('[data-race-status-badge]')).toHaveText('Spremljam');
+  await expect(migratedCard.locator('[data-race-status-badge]')).toHaveCount(0);
+  await expect(migratedCard.getByLabel('Moj status')).toHaveAttribute('data-race-status', 'following');
   await expect(count(page, 'following')).toHaveText('1');
   await expect(filter(page, 'following')).toContainText('Spremljam 1');
 
@@ -531,7 +556,7 @@ test('supports English labels, filters and persistence', async ({ page }) => {
   await expect(count(page, 'completed')).toHaveText('0');
   await expect(filter(page, 'completed')).toContainText('Completed 0');
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText('Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.')).toBeVisible();
+  await expect(page.getByText('Stored only in this browser · no account or cross-device sync.')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000101')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000103')).toBeVisible();
@@ -559,7 +584,7 @@ test('supports English labels, filters and persistence', async ({ page }) => {
 
   await expect(page.getByText('There are no saved races with this status.')).toBeVisible();
   await expect(page.getByText('V tem statusu ni shranjenih tekov.')).toHaveCount(0);
-  await expect(page.locator('[data-upcoming-deadlines-panel]')).toHaveCount(0);
+  await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
   await expect(count(page, 'registered')).toHaveText('0');
   await expect(filter(page, 'registered')).toContainText('Registered 0');
   await expect(count(page, 'completed')).toHaveText('1');
