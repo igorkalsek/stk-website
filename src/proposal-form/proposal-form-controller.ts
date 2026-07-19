@@ -242,10 +242,11 @@ export const structuredCorrectionIntentValues = { missing: 'missing', correcting
 
 export const hasStructuredAdditionalDetails = (details: StructuredAdditionalDetails = {}) => structuredAdditionalFields.some((field) => cleanSubmissionValue(details[field.key]).length > 0);
 
-export const additionalDataValuesForStructuredDetails = (details: StructuredAdditionalDetails = {}) => {
+export const additionalDataValuesForStructuredDetails = (details: StructuredAdditionalDetails = {}, includedKeys: readonly (keyof StructuredAdditionalDetails)[] = []) => {
+  const included = new Set(includedKeys);
   const values: string[] = [];
   for (const field of structuredAdditionalFields) {
-    if (cleanSubmissionValue(details[field.key])) values.push(field.value);
+    if (cleanSubmissionValue(details[field.key]) || included.has(field.key)) values.push(field.value);
   }
   if (details.correctionIntent === structuredCorrectionIntentValues.correcting) values.push('Popravek napačnega dodatnega podatka');
   return [...new Set(values.filter((value) => allowedAdditionalDataValues.includes(value as typeof allowedAdditionalDataValues[number])))];

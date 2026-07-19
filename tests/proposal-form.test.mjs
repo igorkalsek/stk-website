@@ -88,6 +88,22 @@ describe('proposal form contract', () => {
     assert.equal(combined, 'Date should be 2026-09-12.\n\nAdditional details:\n\nMinimum entry fee: 20');
   });
 
+  it('includes categories for added, changed, removed and unchanged structured values', () => {
+    const cases = [
+      ['registrationMinEur', '15', 'Prijavnina / startnina'], ['registrationMaxEur', '25', 'Prijavnina / startnina'], ['registrationDescription', 'Cena', 'Prijavnina / startnina'],
+      ['registrationDeadline', '2026-08-10', 'Rok prijave'], ['cheaperRegistration', '2026-07-31', 'Cenejša prijava / sprememba cene'], ['raceDayRegistration', 'Da', 'Prijave na dan dogodka'],
+      ['elevationGain', '650', 'Višinski metri'], ['routeUrl', 'https://example.com/trasa', 'Trasa / zemljevid / GPX'], ['otherDetails', 'Otroški teki', 'Drugo']
+    ];
+    for (const [key, value, category] of cases) {
+      assert.deepEqual(additionalDataValuesForStructuredDetails({ [key]: value }), [category]);
+      assert.deepEqual(additionalDataValuesForStructuredDetails({ [key]: value }, [key]), [category]);
+      assert.deepEqual(additionalDataValuesForStructuredDetails({}, [key]), [category]);
+      assert.deepEqual(additionalDataValuesForStructuredDetails({}), []);
+    }
+    assert.deepEqual(additionalDataValuesForStructuredDetails({ registrationMinEur: '25' }, ['registrationMinEur', 'routeUrl']), ['Prijavnina / startnina', 'Trasa / zemljevid / GPX']);
+    assert.deepEqual(additionalDataValuesForStructuredDetails({ correctionIntent: 'correcting' }, ['routeUrl']), ['Trasa / zemljevid / GPX', 'Popravek napačnega dodatnega podatka']);
+  });
+
   it('maps each structured entry-fee field to one canonical category', () => {
     for (const details of [{ registrationMinEur: '15' }, { registrationMaxEur: '25' }, { registrationDescription: 'Cena je odvisna od razdalje.' }, { registrationMinEur: '15', registrationMaxEur: '25', registrationDescription: 'Cena je odvisna od razdalje.' }]) {
       assert.deepEqual(additionalDataValuesForStructuredDetails(details), ['Prijavnina / startnina']);
