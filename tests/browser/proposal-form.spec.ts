@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { googleProposalFormContract } from '../../src/proposal-form/proposal-form-contract';
 
 const contract = googleProposalFormContract;
+const normalizeLineEndings = (value: FormDataEntryValue | null | undefined) => String(value ?? '').replace(/\r\n?/g, '\n');
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa`;
@@ -186,7 +187,7 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.region)).toBe('Podravska');
     expect(payload?.get(contract.fields.officialSource)).toBe('https://example.com/razpis/2026?zelo=dolg-url');
     const expectedDescription = 'Razdalje 10 km in 21 km, start ob 10.00.\n\nČas začetka: 10:00\nRazdalje: 10 km; 21 km\nVrsta podlage: asfalt\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki';
-    expect(payload?.get(contract.fields.description)).toBe(expectedDescription);
+    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(expectedDescription);
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
     const fallbackParams = new URL(await page.locator('[data-correction-form-link]').getAttribute('href') || '').searchParams;
     expect(fallbackParams.get(contract.fields.description)).toBe(expectedDescription);
