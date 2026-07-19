@@ -12,6 +12,10 @@ describe('proposal form contract', () => {
     assert.equal(proposalFormLocales.en.googleFormHandOff, 'The proposal will be submitted for review. You will remain on this page.');
     assert.equal(proposalFormLocales.sl.addAnotherRace, 'Dodajte nov tek');
     assert.equal(proposalFormLocales.en.addAnotherRace, 'Add a new race');
+    assert.equal(proposalFormLocales.sl.dynamicLabels.newDescription, 'Opis teka in dodatne informacije');
+    assert.equal(proposalFormLocales.en.dynamicLabels.newDescription, 'Race description and additional information');
+    assert.equal(proposalFormLocales.sl.helpers.newDescription, 'Dodajte samo informacije, ki jih ni mogoče vnesti v zgornja polja.');
+    assert.equal(proposalFormLocales.en.helpers.newDescription, 'Add only information that cannot be entered in the fields above.');
   });
   it('keeps verified Google Forms entry mapping', () => {
     assert.equal(googleProposalFormContract.fields.proposalType, 'entry.1029369192');

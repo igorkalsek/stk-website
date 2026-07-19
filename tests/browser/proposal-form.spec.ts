@@ -114,10 +114,10 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('textbox', { name: /Povezava do razpisa/ })).toHaveCount(0);
 
     await page.getByRole('radio', { name: 'Nov tek' }).check();
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Npr. razdalje, čas starta, vrsta podlage, prijavnina in povezava za prijavo.');
     await expect(page.getByText('Po želji dodajte podatke o izvedbi, prijavi, ceni in trasi.')).toBeVisible();
-    await expect(page.getByText('Dodatni podatki o teku', { exact: true })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Dodatni podatki o teku' })).toBeVisible();
     await expect(page.getByText('Navedite manjkajoči ali pravilen podatek.')).toHaveCount(0);
     await expect(page.getByText('Kaj želite popraviti ali dopolniti?')).toHaveCount(0);
     await expect(page.getByText('Druge možnosti popravka')).toHaveCount(0);
@@ -157,7 +157,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Štajerski ultra tek z zelo zelo dolgim nazivom');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 10 km in 21 km, start ob 10.00.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 10 km in 21 km, start ob 10.00.');
     await page.getByTestId('basic-correction-start-time').fill('10:00');
     await page.getByTestId('basic-correction-distances').fill('10 km; 21 km');
     await page.getByTestId('basic-correction-surface').selectOption('asfalt');
@@ -213,7 +213,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 5 km.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 5 km.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne vem');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -235,7 +235,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Razdalje 10 km in 21 km.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Razdalje 10 km in 21 km.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -273,7 +273,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
     await page.locator('#proposal-source').fill('https://example.com/razpis');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis za enkratno oddajo.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis za enkratno oddajo.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('once@example.com');
@@ -294,7 +294,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Neveljaven datum');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Kranj');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Gorenjska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('date@example.com');
@@ -313,7 +313,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek brez vira');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Celje');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Savinjska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis teka brez uradnega vira.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis teka brez uradnega vira.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('test@example.com');
@@ -324,6 +324,8 @@ test.describe('native proposal form', () => {
 
     await page.goto('/en/add-or-correct-race/?mode=new');
     await waitForProposalRuntime(page);
+    await expect(page.getByRole('group', { name: 'Additional race details' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Race description and additional information', exact: true })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Official source (optional)', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
   });
@@ -781,7 +783,7 @@ test.describe('native proposal form', () => {
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
     await expect(page.getByRole('radio', { name: 'Nov tek' })).toBeChecked();
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toBeVisible();
     await expect(page.locator('#proposal-description')).toHaveAttribute('placeholder', 'Npr. razdalje, čas starta, vrsta podlage, prijavnina in povezava za prijavo.');
     await expect(page.getByText('Navedite manjkajoči ali pravilen podatek.')).toHaveCount(0);
     await page.goto('/dodaj-ali-popravi-tek/?mode=other');
@@ -817,7 +819,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Tek po timeoutu');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
     await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
-    await page.getByRole('textbox', { name: 'Dodatni podatki o teku' }).fill('Opis ostane.');
+    await page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true }).fill('Opis ostane.');
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('timeout@example.com');
@@ -826,7 +828,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Predloga trenutno ni bilo mogoče poslati.');
     await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeEnabled();
     await expect(page.getByRole('textbox', { name: 'Naziv prireditve' })).toHaveValue('Tek po timeoutu');
-    await expect(page.getByRole('textbox', { name: 'Dodatni podatki o teku' })).toHaveValue('Opis ostane.');
+    await expect(page.getByRole('textbox', { name: 'Opis teka in dodatne informacije', exact: true })).toHaveValue('Opis ostane.');
     await expect(page.getByRole('textbox', { name: 'Kontaktni e-naslov' })).toHaveValue('timeout@example.com');
   });
 
