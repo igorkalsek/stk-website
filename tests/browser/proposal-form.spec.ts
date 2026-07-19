@@ -574,7 +574,8 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-region')).toHaveValue('Zasavska');
     await expect(page.getByTestId('basic-correction-start-time')).toHaveValue('18:00');
     await expect(page.getByTestId('basic-correction-distances')).toHaveValue('0,2 km · 0,3 km · 0,5 km · 1 km · 4,6 km · 7,5 km · 10,3 km');
-    await expect(page.getByTestId('basic-correction-surface')).toHaveValue('Cesta');
+    await expect(page.getByTestId('basic-correction-surface')).toHaveValue('cesta');
+    await expect(page.getByTestId('basic-correction-surface').locator('option', { hasText: 'Cesta' })).toHaveCount(1);
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('15');
     await expect(page.getByTestId('additional-entry-fee-max')).toHaveValue('25');
     await expect(page.getByTestId('additional-entry-fee-description')).toHaveValue('Otroški teki');
@@ -609,7 +610,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByText('Dolgi Šmarnogorski tek').first()).toBeVisible();
     await expect(page.getByText('1. 5. 2027 · Ljubljana · Osrednjeslovenska')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Vnesite spremembe' })).toBeVisible();
-    await expect(page.getByText('Vnesite samo nove ali pravilne vrednosti. Prazna polja ostanejo nespremenjena.')).toBeVisible();
+    await expect(page.getByText('Spremenite samo podatke, ki jih želite popraviti. Če obstoječo vrednost izbrišete, predlagate odstranitev tega podatka.')).toBeVisible();
 
     for (const selector of ['#proposal-date', '#proposal-title', '#proposal-place', '#proposal-region']) {
       await expect(page.locator(selector)).toBeHidden();
@@ -653,21 +654,13 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeVisible();
 
     await expect(page.locator('[data-change-options-details]')).toBeHidden();
-    await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-date-time"])')).toBeHidden();
-    const otherCheckbox = page.locator('[data-context-other-option] input[name="proposal-change-category"][value="Drugo"]');
-    await expect(otherCheckbox).toBeVisible();
-    await expect(otherCheckbox).not.toBeChecked();
+    await expect(page.locator('[data-context-other-option]')).toBeHidden();
+    await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
 
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect(page.getByRole('alert')).toContainText('Vnesite vsaj en popravek ali dopolnitev');
-    await expect(page.getByRole('alert')).not.toContainText('Ali ste organizator?');
-    await expect(page.getByRole('alert')).not.toContainText('Kontaktni e-naslov');
     await expect.poll(() => form.getSubmissions()).toBe(0);
 
-    await otherCheckbox.check();
-    await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeVisible();
-    await page.locator('#proposal-description').fill('Drugo pojasnilo.');
-    await otherCheckbox.uncheck();
     await page.locator('#proposal-description').fill('Obstoječe besedilo ostane.');
     await page.getByTestId('basic-correction-date').fill('2027-05-02');
     await expect(page.locator('[data-field-row="description"] [data-required-mark]')).toBeHidden();
