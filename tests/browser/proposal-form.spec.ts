@@ -574,8 +574,11 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('basic-correction-region')).toHaveValue('Zasavska');
     await expect(page.getByTestId('basic-correction-start-time')).toHaveValue('18:00');
     await expect(page.getByTestId('basic-correction-distances')).toHaveValue('0,2 km · 0,3 km · 0,5 km · 1 km · 4,6 km · 7,5 km · 10,3 km');
-    await expect(page.getByTestId('basic-correction-surface')).toHaveValue('cesta');
-    await expect(page.getByTestId('basic-correction-surface').locator('option', { hasText: 'Cesta' })).toHaveCount(1);
+    const surface = page.getByTestId('basic-correction-surface');
+    await expect(surface).toHaveValue('cesta');
+    await expect(surface.locator('option[value="cesta"]')).toHaveCount(1);
+    await expect(surface.locator('option').filter({ hasText: /^Cesta$/ })).toHaveCount(1);
+    await expect(surface.locator('option[value="Cesta"]')).toHaveCount(0);
     await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('15');
     await expect(page.getByTestId('additional-entry-fee-max')).toHaveValue('25');
     await expect(page.getByTestId('additional-entry-fee-description')).toHaveValue('Otroški teki');
@@ -610,7 +613,9 @@ test.describe('native proposal form', () => {
     await expect(page.getByText('Dolgi Šmarnogorski tek').first()).toBeVisible();
     await expect(page.getByText('1. 5. 2027 · Ljubljana · Osrednjeslovenska')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Vnesite spremembe' })).toBeVisible();
-    await expect(page.getByText('Spremenite samo podatke, ki jih želite popraviti. Če obstoječo vrednost izbrišete, predlagate odstranitev tega podatka.')).toBeVisible();
+    const correctionInstruction = page.getByText('Spremenite samo podatke, ki jih želite popraviti. Če obstoječo vrednost izbrišete, predlagate odstranitev tega podatka.', { exact: true });
+    await expect(correctionInstruction).toBeVisible();
+    await expect(correctionInstruction).toHaveCount(1);
 
     for (const selector of ['#proposal-date', '#proposal-title', '#proposal-place', '#proposal-region']) {
       await expect(page.locator(selector)).toBeHidden();
@@ -723,10 +728,8 @@ test.describe('native proposal form', () => {
     await expect(page.locator('input[name="proposal-change-category"]:checked')).toHaveCount(0);
     await expect(page.getByTestId('basic-correction-notice-url')).toHaveValue('https://example.com/razpis');
     await expect(page.locator('[data-change-options-details]')).toBeHidden();
-    await expect(page.locator('label:has(input[name="proposal-change-category"][value="basic-official-source"])')).toBeHidden();
-    const otherCheckbox = page.locator('[data-context-other-option] input[name="proposal-change-category"][value="Drugo"]');
-    await expect(otherCheckbox).toBeVisible();
-    await expect(otherCheckbox).not.toBeChecked();
+    await expect(page.locator('[data-context-other-option]')).toBeHidden();
+    await expect(page.locator('input[name="proposal-change-category"]:visible')).toHaveCount(0);
   });
 
   test('general mode query parameter can preselect new or other without race context', async ({ page }) => {

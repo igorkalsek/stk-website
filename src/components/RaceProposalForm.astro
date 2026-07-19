@@ -126,7 +126,6 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
 
           <section class="structured-basic" data-structured-basic data-testid="structured-basic-section" aria-labelledby="structured-basic-title" hidden>
             <h3 id="structured-basic-title">{lang === 'en' ? 'Basic details' : 'Osnovni podatki'}</h3>
-            <p class="field-helper">{lang === 'en' ? 'Change only the details you want to correct. Clearing an existing value proposes removing that detail.' : 'Spremenite samo podatke, ki jih želite popraviti. Če obstoječo vrednost izbrišete, predlagate odstranitev tega podatka.'}</p>
             <div class="structured-grid">
               <div class="structured-field" data-basic-card="date"><label for="proposal-basic-date">{lang === 'en' ? 'Date' : 'Datum'}</label><input id="proposal-basic-date" data-testid="basic-correction-date" data-basic-correction-field="date" type="date" data-field-label={lang === 'en' ? 'Date' : 'Datum'} aria-describedby="proposal-basic-date-error" /><small id="proposal-basic-date-error" class="field-error" data-basic-error="date" hidden>{copy.dateError}</small></div>
               <div class="structured-field" data-basic-card="title"><label for="proposal-basic-title">{lang === 'en' ? 'Race title' : 'Naziv'}</label><input id="proposal-basic-title" data-testid="basic-correction-title" data-basic-correction-field="title" type="text" data-field-label={lang === 'en' ? 'Race title' : 'Naziv'} /></div>
