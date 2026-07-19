@@ -3827,6 +3827,9 @@ main {
   display: grid;
   gap: 0.45rem;
   margin-top: 0.8rem;
+  padding: 0.65rem 0.75rem;
+  border-left: 2px solid rgba(16, 64, 80, 0.16);
+  background: rgba(15, 118, 110, 0.035);
 }
 
 .my-race-deadlines h4,
@@ -3852,6 +3855,18 @@ main {
 
 .my-race-deadline .deadline-calendar-menu {
   margin-top: 0;
+}
+
+.my-race-deadline .deadline-calendar-menu summary {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.my-races-local-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
 }
 
 .my-race-location {

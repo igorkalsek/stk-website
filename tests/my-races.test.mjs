@@ -204,6 +204,8 @@ describe('my races page source contract', () => {
   it('adds Slovenian and English routes', () => {
     assert.match(sl, /Moji teki/);
     assert.match(en, /My races/);
+    assert.doesNotMatch(sl, /<p class="eyebrow">Moji teki/);
+    assert.doesNotMatch(en, /<p class="eyebrow">My races/);
   });
 
   it('uses the existing saved races storage key through utilities', () => assert.match(client, /readSavedRaces/));
@@ -221,7 +223,7 @@ describe('my races page source contract', () => {
   });
   it('includes fallback copy for API outages and local-only storage', () => {
     assert.match(client, /API trenutno ni dosegljiv/);
-    assert.match(client, /do not sync between devices/);
+    assert.match(client, /no account or cross-device sync/);
     assert.match(client, /Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov/);
   });
 
@@ -248,6 +250,16 @@ describe('my races page source contract', () => {
     assert.match(client, /href="#\$\{escapeHtml\(getRaceCardId\(item\.key\)\)\}"/);
     assert.doesNotMatch(client, /renderUpcomingDeadlinesPanel/);
     assert.doesNotMatch(client, /data-upcoming-deadlines-panel/);
+  });
+
+  it('keeps the compact local-only note and card order localized', () => {
+    assert.match(client, /Shranjeno samo v tem brskalniku · brez računa in sinhronizacije med napravami\./);
+    assert.match(client, /Stored only in this browser · no account or cross-device sync\./);
+    assert.match(client, /Moj tekaški načrt/);
+    assert.match(client, /My race plan/);
+    assert.match(client, /Prikaži v načrtu/);
+    assert.match(client, /Show in race plan/);
+    assert.match(client, /my-race-card-status[\s\S]*renderRaceCardDeadlines\(event, detailPath, labels, language, todayIso\)[\s\S]*my-race-actions/);
   });
 });
 

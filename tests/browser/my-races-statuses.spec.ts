@@ -272,7 +272,7 @@ test('integrates verified deadlines into the saved race card and summarizes the 
   await expect(page.locator('[data-my-races-status-summary]')).toHaveCount(0);
   await expect(raceCard.locator('[data-my-race-deadlines]')).toHaveCount(1);
   await expect(raceCard.locator('[data-my-race-deadline]')).toHaveCount(2);
-  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="early"]')).toContainText('Cenejša prijava do 18. julija · čez 3 dni');
+  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="early"]')).toContainText('Cenejša prijava · 18. julija · še 3 dni');
   await expect(raceCard.locator('[data-race-calendar-menu]')).toHaveCount(1);
 
   const summary = page.locator('[data-next-registration-deadline]');
@@ -280,7 +280,7 @@ test('integrates verified deadlines into the saved race card and summarizes the 
   await expect(summary).toContainText('Ljubljana Test Run');
   await expect(summary).toContainText('Cenejša prijava do 18. julija · čez 3 dni');
   await expect(summary.locator('.deadline-calendar-menu')).toHaveCount(0);
-  await expect(summary.locator('a[href="#my-race-2026-r000101"]')).toHaveText('Poglej tek');
+  await expect(summary.locator('a[href="#my-race-2026-r000101"]')).toHaveText('Prikaži v načrtu');
 
   for (const deadline of [
     { kind: 'early', googleDate: '20260718', outlookDate: '2026-07-18' },
@@ -308,7 +308,7 @@ test('deduplicates identical early and final deadline dates', async ({ page }) =
 
   const raceCard = card(page, '2026:r000101');
   await expect(raceCard.locator('[data-my-race-deadline]')).toHaveCount(1);
-  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="registration"]')).toContainText('Prijave do 16. julija · jutri');
+  await expect(raceCard.locator('[data-my-race-deadline][data-deadline-kind="registration"]')).toContainText('Prijava · 16. julija · jutri');
 
   await expect(page.locator('[data-next-registration-deadline]')).toContainText('Prijave do 16. julija · jutri');
   await expect(raceCard.locator('.deadline-calendar-menu')).toHaveCount(1);
@@ -556,7 +556,7 @@ test('supports English labels, filters and persistence', async ({ page }) => {
   await expect(count(page, 'completed')).toHaveText('0');
   await expect(filter(page, 'completed')).toContainText('Completed 0');
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText('Saved races and their personal statuses are stored only in your browser. They are not sent to the server and do not sync between devices.')).toBeVisible();
+  await expect(page.getByText('Stored only in this browser · no account or cross-device sync.')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000101')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000102')).toBeVisible();
   await expect(deadlineGroup(page, '2026:r000103')).toBeVisible();
