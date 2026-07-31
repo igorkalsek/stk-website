@@ -27,7 +27,7 @@ export const englishNavItems: NavItem[] = [
   { href: '/en/find-races/', label: 'Find races', variant: 'primary' },
   { href: '/en/my-races/', label: 'My races' },
   { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
-  { href: '/dodaj-ali-popravi-tek/', label: 'For organisers (SL)', variant: 'organizer' },
+  { href: '/en/add-or-correct-race/', label: 'For organisers', variant: 'organizer' },
   {
     href: '#more',
     label: 'More',
