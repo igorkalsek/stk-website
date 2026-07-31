@@ -12,7 +12,8 @@ const files = {
   votedEn: read('src/pages/en/most-voted-races.astro'),
   related: read('src/components/RelatedRaceCards.astro'),
   relatedUtils: read('src/utils-related-races.ts'),
-  header: read('src/components/Header.astro')
+  header: read('src/components/Header.astro'),
+  navigation: read('src/navigation.ts')
 };
 
 const allSurfaceSources = [files.homeSl, files.homeEn, files.familySl, files.familyEn, files.votedSl, files.votedEn, files.related];
@@ -69,5 +70,10 @@ describe('saved race button surfaces', () => {
   it('uses the updated Slovenian navigation label', () => {
     assert.match(files.header, /label: 'Osebni koledar'/);
     assert.doesNotMatch(files.header, /href: '\/osebni-koledar\/', label: 'Koledar'/);
+  });
+
+  it('uses the English organizer navigation label and path', () => {
+    assert.match(files.navigation, /href: '\/en\/add-or-correct-race\/', label: 'For organisers'/);
+    assert.doesNotMatch(files.navigation, /label: 'For organisers \(SL\)'/);
   });
 });
