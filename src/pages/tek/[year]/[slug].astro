@@ -14,7 +14,7 @@ import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailSt
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '../../../proposal-form/race-correction-context';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../utils-registration-deadlines';
 import { renderActionIcon } from '../../../utils-action-icons';
-import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildOrganizerView, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 type HeroFact = { label: string; value: string; datetime?: string; isDate?: boolean };
@@ -126,6 +126,7 @@ const routeItems = event ? buildCourseRows(event, 'sl') : [];
 const courseHeading = event ? buildCourseHeading(event, 'sl') : '';
 const familyInfo = event ? buildFamilyInfo(event, 'sl') : [];
 const publicNotes = event ? buildPublicNotes(event, 'sl', familyInfo) : '';
+const organizer = event ? buildOrganizerView(event) : null;
 const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
 const jsonLd = event ? {
   '@context': 'https://schema.org',
@@ -144,6 +145,9 @@ const jsonLd = event ? {
   } : {}),
   url: shareUrl,
   description,
+  ...(organizer?.name && organizer.url ? {
+    organizer: { '@type': 'Organization', name: organizer.name, url: organizer.url }
+  } : {}),
   ...(offerPrice !== null ? {
     offers: {
       '@type': 'Offer',
@@ -376,6 +380,14 @@ const jsonLd = event ? {
                   <div class="event-detail-action-list">
                     <a class="button button-secondary-light" href={voteUrl} target="_blank" rel="noopener noreferrer" data-analytics-action="vote" aria-label={`Glasujte za ${event.title}`}><span class="action-icon" set:html={renderActionIcon('vote')}></span><span>Glasuj</span></a>
                   </div>
+                </div>
+              )}
+
+              {organizer && (
+                <div class="event-detail-organizer-panel event-detail-listed-organizer-panel">
+                  <h2>Organizator</h2>
+                  {organizer.name && <p>{organizer.name}</p>}
+                  {organizer.url && <a class="button button-small button-secondary-light" href={organizer.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type="organizer_website">Spletna stran organizatorja</a>}
                 </div>
               )}
 

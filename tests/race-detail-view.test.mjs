@@ -8,6 +8,7 @@ import {
   buildKeyFacts,
   areEquivalentPublicActionUrls,
   buildPrimaryActions,
+  buildOrganizerView,
   buildRaceHighlights,
   buildRaceHighlightCards,
   buildPublicNotes,
@@ -17,6 +18,7 @@ import {
   formatHighlightDistanceWithUnit
 } from '../.cache/dist-test/utils-race-detail-view.js';
 import { buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
+import { mapAdditionalRow } from '../.cache/dist-test/utils-additional.js';
 
 const baseEvent = {
   id: 'r1', row: '1', year: '2026', date: '2026-05-10', dateValue: 0,
@@ -32,6 +34,35 @@ const richAdditional = {
 const fmt = (value) => `date:${value}`;
 
 describe('race detail view model', () => {
+  it('shows the organizer name and safe website link', () => {
+    const organizer = buildOrganizerView({ ...baseEvent, additionalData: { ...richAdditional, organizerName: 'Športno društvo', organizerUrl: 'https://example.com/club' } });
+    assert.deepEqual(organizer, { name: 'Športno društvo', url: 'https://example.com/club' });
+  });
+
+  it('hides an invalid organizer URL but retains an available name', () => {
+    assert.equal(mapAdditionalRow({ organizator_url: 'javascript:alert(1)' }).organizerUrl, '');
+    assert.deepEqual(buildOrganizerView({ ...baseEvent, additionalData: { ...richAdditional, organizerName: 'Športno društvo', organizerUrl: 'javascript:alert(1)' } }), { name: 'Športno društvo', url: '' });
+  });
+
+  it('does not repeat organizer links equivalent to notice or registration links', () => {
+    const additionalData = { ...richAdditional, organizerName: '', organizerUrl: 'https://example.com/race/?b=2&a=1#contact' };
+    assert.equal(buildOrganizerView({ ...baseEvent, noticeUrl: 'https://example.com/race?a=1&b=2', additionalData }), null);
+    assert.equal(buildOrganizerView({ ...baseEvent, registrationUrl: 'https://example.com/race?a=1&b=2', additionalData }), null);
+  });
+
+  it('omits the organizer section when organizer data is absent', () => {
+    assert.equal(buildOrganizerView({ ...baseEvent, additionalData: richAdditional }), null);
+    assert.equal(buildOrganizerView({ ...baseEvent, additionalData: null }), null);
+  });
+
+  it('adds an Organization organizer to JSON-LD only when name and URL exist', () => {
+    for (const path of ['src/pages/tek/[year]/[slug].astro', 'src/pages/en/races/[year]/[slug].astro']) {
+      const page = readFileSync(path, 'utf8');
+      assert.match(page, /organizer\?\.name && organizer\.url/);
+      assert.match(page, /organizer: \{ '@type': 'Organization', name: organizer\.name, url: organizer\.url \}/);
+    }
+  });
+
   it('omits registration and course sections when optional data is absent', () => {
     assert.deepEqual(buildRegistrationRows(baseEvent, 'sl', fmt), []);
     assert.deepEqual(buildCourseRows(baseEvent, 'sl'), []);

@@ -14,6 +14,8 @@ export type AdditionalEventData = {
   dayOfRegistration: string;
   elevationGain: string;
   routeUrl: string;
+  organizerName?: string;
+  organizerUrl?: string;
 };
 
 export type EventWithAdditionalRow = {
@@ -110,7 +112,7 @@ const safeUrl = (value: string) => {
   }
 };
 
-const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
+export const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
   const masterRow = pick(item, 'master_row');
 
   return {
@@ -126,7 +128,9 @@ const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
     earlyRegistrationDeadline: pick(item, 'rok_cenejse_prijave'),
     dayOfRegistration: pick(item, 'prijave_na_dan_dogodka'),
     elevationGain: pick(item, 'visinski_m_plus'),
-    routeUrl: safeUrl(pick(item, 'trasa_url'))
+    routeUrl: safeUrl(pick(item, 'trasa_url')),
+    organizerName: pick(item, 'organizator_naziv'),
+    organizerUrl: safeUrl(pick(item, 'organizator_url'))
   };
 };
 

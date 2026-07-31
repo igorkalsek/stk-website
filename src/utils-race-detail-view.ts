@@ -45,6 +45,8 @@ export type DetailAdditionalData = {
   dayOfRegistration: string;
   elevationGain: string;
   routeUrl: string;
+  organizerName?: string;
+  organizerUrl?: string;
 };
 export type DetailEvent = PublicRaceEvent & { additionalData?: DetailAdditionalData | null };
 
@@ -72,6 +74,19 @@ export const areEquivalentPublicActionUrls = (first: string | undefined | null, 
   const firstComparable = normalizePublicActionUrlForComparison(first);
   const secondComparable = normalizePublicActionUrlForComparison(second);
   return Boolean(firstComparable && secondComparable && firstComparable === secondComparable);
+};
+
+export type OrganizerView = { name: string; url: string };
+
+export const buildOrganizerView = (event: DetailEvent): OrganizerView | null => {
+  const name = event.additionalData?.organizerName?.trim() ?? '';
+  const candidateUrl = normalizeDetailUrl(event.additionalData?.organizerUrl);
+  const url = candidateUrl
+    && !areEquivalentPublicActionUrls(candidateUrl, event.noticeUrl)
+    && !areEquivalentPublicActionUrls(candidateUrl, event.registrationUrl)
+    ? candidateUrl
+    : '';
+  return name || url ? { name, url } : null;
 };
 
 const normalizeSameResourceUrlForComparison = (value: string | undefined | null) => {
