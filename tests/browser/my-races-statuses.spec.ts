@@ -217,6 +217,7 @@ async function readLegacySavedRaces(page: Page) {
 }
 
 async function openMyRaces(page: Page, path = '/moji-teki/') {
+  await freezeLjubljanaDate(page);
   await page.goto(path);
   await expect(page.locator('[data-my-races-app]')).not.toContainText(/Loading saved races|Nalagamo shranjene teke/);
 }
