@@ -298,7 +298,7 @@ test('tracks localized finder registration links with the compatible writer cont
     await expect.poll(() => analytics.find((event: any) => event.action_type === 'prijava')).toBeTruthy();
     const payload = analytics.find((event: any) => event.action_type === 'prijava') as any;
     expect(payload).toMatchObject({
-      event_type: 'external_link_clicked', language, event_id: '101', event_year: '2026',
+      event_type: 'external_link_clicked', language, event_id: '101', event_year: '2026', event_key: '2026:101',
       target_url: 'https://example.com/register', target_domain: 'example.com', placement: 'finder_results'
     });
   }

@@ -80,10 +80,10 @@ describe('registration click writer compatibility contract', () => {
     } });
 
     initializeStkAnalyticsClickTracking();
-    const click = (action, year = '2026', id = 'r000123', text = '') => {
+    const click = (action, year = '2026', id = 'r000123', text = '', placement = 'finder_results') => {
       const card = new FakeElement({ tag: 'article', dataset: {
         analyticsEventId: id, analyticsEventName: 'Testni tek', analyticsEventDate: `${year}-09-12`,
-        analyticsEventYear: year, analyticsPlacement: 'finder_results'
+        analyticsEventYear: year, analyticsPlacement: placement
       } });
       const link = new FakeElement({ dataset: action ? { analyticsLinkType: action } : {}, parent: card, href: `https://example.com/${action || 'external'}`, text });
       clickHandler({ target: link });
@@ -92,8 +92,8 @@ describe('registration click writer compatibility contract', () => {
     // Slovenian finder, English finder, Slovenian detail and English detail use the same delegated contract.
     click('prijava');
     globalThis.window.location.pathname = '/en/find-races/'; click('registration_click');
-    globalThis.window.location.pathname = '/tek/2026/test/'; click('prijava');
-    globalThis.window.location.pathname = '/en/races/2026/test/'; click('prijava');
+    globalThis.window.location.pathname = '/tek/2026/test/'; click('prijava', '2026', 'r000123', '', 'race_detail');
+    globalThis.window.location.pathname = '/en/races/2026/test/'; click('prijava', '2026', 'r000123', '', 'race_detail');
     click('razpis');
     click('trasa');
     click('map_click');
@@ -105,12 +105,19 @@ describe('registration click writer compatibility contract', () => {
     const payloads = await Promise.all(pending);
     assert.equal(payloads.length, 10, 'an unmarked non-registration link does not create a classified event');
     assert.deepEqual(payloads.map(({ action_type }) => action_type), [
-      'prijava', 'prijava', 'prijava', 'prijava', 'razpis', 'trasa', 'trasa', 'uradna_stran', 'other', 'prijava'
+      'prijava', 'prijava', 'prijava', 'prijava', 'official_notice_click', 'route_click', 'map_click', 'organizer_website', 'other', 'prijava'
     ]);
     assert.equal(payloads.filter(({ action_type }) => action_type === 'prijava').length, 5);
+    assert.deepEqual(payloads.slice(0, 4).map(({ language, event_key, placement }) => ({ language, event_key, placement })), [
+      { language: 'sl', event_key: '2026:r000123', placement: 'finder_results' },
+      { language: 'en', event_key: '2026:r000123', placement: 'finder_results' },
+      { language: 'sl', event_key: '2026:r000123', placement: 'race_detail' },
+      { language: 'en', event_key: '2026:r000123', placement: 'race_detail' }
+    ]);
     assert.deepEqual(payloads[0], {
       event_type: 'external_link_clicked', page_path: '/iskalnik-tekov/', language: 'sl', event_id: 'r000123',
       event_name: 'Testni tek', event_date: '2026-09-12', event_year: '2026', target_url: 'https://example.com/prijava',
+      event_key: '2026:r000123',
       action_type: 'prijava', search_query: '', filters_json: '', results_count: '', target_domain: 'example.com',
       calendar_type: '', referrer: '', user_agent_group: 'desktop', notes: '', placement: 'finder_results'
     });
