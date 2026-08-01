@@ -287,6 +287,23 @@ test('deduplicates secondary race actions by destination URL', async ({ page }) 
   await expect(differentMenu.getByRole('link', { name: 'Route' })).toHaveAttribute('href', 'https://example.com/route-ljubljana');
 });
 
+test('tracks localized finder registration links with the writer contract', async ({ page }) => {
+  for (const [path, language] of [['/iskalnik-tekov/?q=Ljubljana', 'sl'], ['/en/find-races/?q=Ljubljana', 'en']] as const) {
+    const analytics = await mockFinderApis(page);
+    await page.goto(path);
+    await expect(page.locator('[data-result-count]')).toContainText(language === 'en' ? /race/i : /dogodek|tek/i);
+    const registration = page.locator('.search-event-card a[href="https://example.com/register"]').first();
+    await registration.evaluate((link) => link.addEventListener('click', (event) => event.preventDefault(), { once: true }));
+    await registration.click();
+    await expect.poll(() => analytics.find((event: any) => event.action_type === 'prijava')).toBeTruthy();
+    const payload = analytics.find((event: any) => event.action_type === 'prijava') as any;
+    expect(payload).toMatchObject({
+      event_type: 'external_link_clicked', language, event_id: '101', event_year: '2026',
+      target_url: 'https://example.com/register', target_domain: 'example.com', placement: 'finder_results'
+    });
+  }
+});
+
 test('shows only the no-saved-preferences state', async ({ page }) => {
   await openFinder(page, '/en/find-races/', 'en');
   await page.evaluate(() => localStorage.clear());

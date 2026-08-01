@@ -330,11 +330,18 @@ const inferCalendarType = (link: HTMLAnchorElement) => {
 };
 
 const ACTION_TYPE_MAP: Record<string, string> = {
-  razpis: 'official_notice_click',
-  prijava: 'registration_click',
-  uradna_stran: 'official_site_click',
-  trasa: 'route_click',
-  gpx: 'gpx_click',
+  razpis: 'razpis',
+  official_notice_click: 'razpis',
+  prijava: 'prijava',
+  registration_click: 'prijava',
+  uradna_stran: 'uradna_stran',
+  official_site_click: 'uradna_stran',
+  organizer_website: 'uradna_stran',
+  trasa: 'trasa',
+  route_click: 'trasa',
+  map_click: 'trasa',
+  gpx: 'gpx',
+  gpx_click: 'gpx',
   group_run_form: 'google_form_click',
   correction_form: 'google_form_click'
 };
@@ -351,11 +358,11 @@ const inferLinkType = (link: HTMLAnchorElement) => {
   if (explicit) return explicit;
   const label = link.textContent?.toLocaleLowerCase('sl-SI') ?? '';
   const href = link.href.toLocaleLowerCase('sl-SI');
-  if (label.includes('prijava') || label.includes('registration')) return 'registration_click';
-  if (label.includes('razpis') || label.includes('official info')) return 'official_notice_click';
-  if (label.includes('uradna') || label.includes('official') || label.includes('organiser') || label.includes('organizer')) return 'official_site_click';
-  if (label.includes('gpx') || href.includes('gpx')) return 'gpx_click';
-  if (label.includes('trasa') || label.includes('route') || href.includes('strava') || href.includes('map')) return 'route_click';
+  if (label.includes('prijava') || label.includes('registration')) return 'prijava';
+  if (label.includes('razpis') || label.includes('official info')) return 'razpis';
+  if (label.includes('uradna') || label.includes('official') || label.includes('organiser') || label.includes('organizer')) return 'uradna_stran';
+  if (label.includes('gpx') || href.includes('gpx')) return 'gpx';
+  if (label.includes('trasa') || label.includes('route') || href.includes('strava') || href.includes('map')) return 'trasa';
   return '';
 };
 
@@ -447,7 +454,8 @@ export const initializeStkAnalyticsClickTracking = () => {
         ...context,
         action_type: explicitLinkType,
         target_url: targetUrl,
-        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : '',
+        placement
       });
       return;
     }
@@ -472,7 +480,8 @@ export const initializeStkAnalyticsClickTracking = () => {
         ...context,
         action_type: linkType,
         target_url: targetUrl,
-        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : ''
+        target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : targetUrl ? getStkTargetDomain(targetUrl) : '',
+        placement
       });
     }
   }, { capture: true });
