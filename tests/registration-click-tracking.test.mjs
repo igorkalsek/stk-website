@@ -27,7 +27,7 @@ after(() => {
   else delete globalThis.navigator;
 });
 
-describe('registration click writer contract', () => {
+describe('registration click writer compatibility contract', () => {
   it('marks registration actions in both localized finders and detail pages', () => {
     assert.match(finder, /data-analytics-link-type="\$\{escapeHtml\(action\.analyticsType\)\}"/);
     for (const detail of [slDetail, enDetail]) {
@@ -37,7 +37,7 @@ describe('registration click writer contract', () => {
     }
   });
 
-  it('emits legacy writer action values once while preserving full event identity and destination', async () => {
+  it('normalizes old and new aliases once while preserving full event identity and destination', async () => {
     const pending = [];
     let clickHandler;
 

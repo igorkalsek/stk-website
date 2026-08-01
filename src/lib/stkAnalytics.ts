@@ -330,6 +330,9 @@ const inferCalendarType = (link: HTMLAnchorElement) => {
 };
 
 const ACTION_TYPE_MAP: Record<string, string> = {
+  // The current backend accepts both descriptive aliases and these original
+  // public values. Emit the original values for compatibility with deployments
+  // whose exact Apps Script revision cannot be observed from the browser.
   razpis: 'razpis',
   official_notice_click: 'razpis',
   prijava: 'prijava',

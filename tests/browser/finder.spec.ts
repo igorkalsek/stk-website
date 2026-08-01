@@ -287,7 +287,7 @@ test('deduplicates secondary race actions by destination URL', async ({ page }) 
   await expect(differentMenu.getByRole('link', { name: 'Route' })).toHaveAttribute('href', 'https://example.com/route-ljubljana');
 });
 
-test('tracks localized finder registration links with the writer contract', async ({ page }) => {
+test('tracks localized finder registration links with the compatible writer contract', async ({ page }) => {
   for (const [path, language] of [['/iskalnik-tekov/?q=Ljubljana', 'sl'], ['/en/find-races/?q=Ljubljana', 'en']] as const) {
     const analytics = await mockFinderApis(page);
     await page.goto(path);
