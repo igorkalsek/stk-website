@@ -108,11 +108,13 @@ describe('registration click writer compatibility contract', () => {
       'prijava', 'prijava', 'prijava', 'prijava', 'official_notice_click', 'route_click', 'map_click', 'organizer_website', 'other', 'prijava'
     ]);
     assert.equal(payloads.filter(({ action_type }) => action_type === 'prijava').length, 5);
-    assert.deepEqual(payloads.slice(0, 4).map(({ language, event_key, placement }) => ({ language, event_key, placement })), [
-      { language: 'sl', event_key: '2026:r000123', placement: 'finder_results' },
-      { language: 'en', event_key: '2026:r000123', placement: 'finder_results' },
-      { language: 'sl', event_key: '2026:r000123', placement: 'race_detail' },
-      { language: 'en', event_key: '2026:r000123', placement: 'race_detail' }
+    assert.deepEqual(payloads.slice(0, 4).map(({ action_type, page_path, language, event_id, event_year, event_key, target_url, target_domain, placement }) => (
+      { action_type, page_path, language, event_id, event_year, event_key, target_url, target_domain, placement }
+    )), [
+      { action_type: 'prijava', page_path: '/iskalnik-tekov/', language: 'sl', event_id: 'r000123', event_year: '2026', event_key: '2026:r000123', target_url: 'https://example.com/prijava', target_domain: 'example.com', placement: 'finder_results' },
+      { action_type: 'prijava', page_path: '/en/find-races/', language: 'en', event_id: 'r000123', event_year: '2026', event_key: '2026:r000123', target_url: 'https://example.com/registration_click', target_domain: 'example.com', placement: 'finder_results' },
+      { action_type: 'prijava', page_path: '/tek/2026/test/', language: 'sl', event_id: 'r000123', event_year: '2026', event_key: '2026:r000123', target_url: 'https://example.com/prijava', target_domain: 'example.com', placement: 'race_detail' },
+      { action_type: 'prijava', page_path: '/en/races/2026/test/', language: 'en', event_id: 'r000123', event_year: '2026', event_key: '2026:r000123', target_url: 'https://example.com/prijava', target_domain: 'example.com', placement: 'race_detail' }
     ]);
     assert.deepEqual(payloads[0], {
       event_type: 'external_link_clicked', page_path: '/iskalnik-tekov/', language: 'sl', event_id: 'r000123',
