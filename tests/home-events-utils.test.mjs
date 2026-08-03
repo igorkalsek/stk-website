@@ -6,7 +6,8 @@ import {
   buildHomepageMasterEventIndex,
   matchRecentUpdateToMasterEvent,
   getCanonicalHomepageEvent,
-  getHomepageEventYear
+  getHomepageEventYear,
+  selectUpcomingHomepageEvents
 } from '../.cache/dist-test/utils-home-events.js';
 
 const helpers = {
@@ -16,6 +17,19 @@ const helpers = {
 };
 
 describe('homepage event detail helpers', () => {
+  it('selects at most four nearest races using the client date, place and title order', () => {
+    const event = (row, date, place, title) => ({ row, date, place, title, dateValue: Date.parse(`${date}T00:00:00`) });
+    const selected = selectUpcomingHomepageEvents([
+      event('5', '2026-09-02', 'Bled', 'Fifth'),
+      event('4', '2026-09-01', 'Celje', 'Fourth'),
+      event('3', '2026-09-01', 'Bled', 'Zulu'),
+      event('2', '2026-09-01', 'Bled', 'Alpha'),
+      event('1', '2026-08-31', 'Ptuj', 'First')
+    ]);
+
+    assert.deepEqual(selected.map(({ row }) => row), ['1', '2', '3', '4']);
+  });
+
   it('detects supported event years from dates and explicit fields only', () => {
     assert.equal(getHomepageEventYear({ datum: '2026-05-16' }), '2026');
     assert.equal(getHomepageEventYear({ year: '2027', datum: '2026-05-16' }), '2027');

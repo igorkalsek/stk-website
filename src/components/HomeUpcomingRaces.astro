@@ -1,0 +1,62 @@
+---
+import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
+import { renderActionIcon } from '../utils-action-icons';
+import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, type PublicRaceEvent } from '../utils-event-detail';
+import { buildPrimaryActions } from '../utils-race-detail-view';
+import { formatEnglishDateBadge } from '../utils-english';
+import { formatSloveneDateBadge } from '../utils-slovenian';
+
+type Props = {
+  events: PublicRaceEvent[];
+  lang: 'sl' | 'en';
+};
+
+const { events, lang } = Astro.props;
+const escapeHtml = (value: string | number) => String(value).replace(/[&<>'"]/g, (character) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+}[character] ?? character));
+const dateFormatter = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+const detailPath = lang === 'en' ? buildEnglishEventDetailPath : buildEventDetailPath;
+const formatDateBadge = lang === 'en' ? formatEnglishDateBadge : formatSloveneDateBadge;
+
+const renderSavedRaceButton = (event: PublicRaceEvent) => {
+  const eventId = getStableEventId(event);
+  const label = lang === 'en' ? 'Save race' : 'Shrani tek';
+  return `<button class="button button-small button-secondary-light saved-race-button" type="button" data-saved-race-button data-event-id="${escapeHtml(eventId)}" data-event-year="${escapeHtml(event.year)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.displayTitle)}" data-language="${lang}" aria-pressed="false" aria-label="${label}"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>${label}</span></button>`;
+};
+
+const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
+  `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
+
+const renderCalendarOptions = (event: PublicRaceEvent) => {
+  const calendarEvent = { title: event.displayTitle, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl };
+  const googleUrl = buildGoogleCalendarEventUrl(calendarEvent);
+  const icsUrl = buildIcsDataUrl(calendarEvent);
+  const icsFilename = buildIcsFilename(calendarEvent);
+  const outlookUrl = buildOutlookCalendarEventUrl(calendarEvent);
+  if (!googleUrl && !icsUrl && !outlookUrl) return '';
+  const options = [
+    googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
+    icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+    outlookUrl
+      ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
+      : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+  ].filter(Boolean).join('');
+  const label = lang === 'en' ? 'Add to calendar' : 'V koledar';
+  return `<details class="calendar-menu"><summary class="button button-small button-secondary-light"><span class="action-icon">${renderActionIcon('calendar')}</span><span>${label}</span></summary><div class="calendar-menu-options">${options}</div></details>`;
+};
+
+const cardsHtml = events.map((event) => {
+  const formattedDate = dateFormatter.format(new Date(event.date));
+  const summary = [event.place, event.region].filter(Boolean).join(' · ');
+  const links = [
+    ...buildPrimaryActions({ registrationUrl: event.registrationUrl, noticeUrl: event.noticeUrl }, lang).map(renderPrimaryActionLink),
+    renderCalendarOptions(event),
+    renderSavedRaceButton(event)
+  ].filter(Boolean).join('');
+
+  return `<article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(getStableEventId(event))}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div class="event-card-heading"><time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formattedDate)}">${escapeHtml(formatDateBadge(event.date))}</time><h3><a href="${escapeHtml(detailPath(event))}">${escapeHtml(event.displayTitle)}</a></h3></div>${summary ? `<p>${escapeHtml(summary)}</p>` : ''}${links ? `<div class="event-actions">${links}</div>` : ''}</article>`;
+}).join('');
+---
+
+<Fragment set:html={cardsHtml} />

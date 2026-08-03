@@ -1,6 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import HomeUpcomingRaces from '../components/HomeUpcomingRaces.astro';
+import { getPublicYearData } from '../utils-build-data';
+import { DEFAULT_PUBLIC_YEAR } from '../utils-public-year';
+import { selectUpcomingHomepageEvents } from '../utils-home-events';
+
+const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearData(DEFAULT_PUBLIC_YEAR)).events);
 ---
 
 <BaseLayout
@@ -104,13 +110,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
         </div>
         <div class="card-grid" data-nearest-events>
-          <article class="event-card">
-            <h3>Podatke še nalagamo</h3>
-            <p>Najbližji teki bodo prikazani tukaj.</p>
-            <div class="event-meta">
-              <span class="pill">Koledar</span>
-            </div>
-          </article>
+          <HomeUpcomingRaces events={initialUpcomingEvents} lang="sl" />
         </div>
         <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
       </section>
@@ -1362,16 +1362,13 @@ import SocialLinks from '../components/SocialLinks.astro';
         `;
       }).join('');
 
-      container.innerHTML = eventCards;
+      const normalizeRenderedCards = (html: string) => html.trim().replace(/>\s+</g, '><');
+      if (normalizeRenderedCards(container.innerHTML) !== normalizeRenderedCards(eventCards)) {
+        container.innerHTML = eventCards;
+      }
       initSavedRaceButtons(container);
       setStatus('nearest', '');
     } catch (error) {
-      container.innerHTML = `
-        <article class="event-card">
-          <h3>Seznam trenutno ni dosegljiv</h3>
-          <p>Ko bodo podatki znova na voljo, se bodo najbližji teki prikazali tukaj.</p>
-        </article>
-      `;
       setStatus('nearest', 'Seznam najbližjih tekov trenutno ni dosegljiv, zato prikazujemo nadomestni prikaz.');
     }
   }

@@ -1,4 +1,13 @@
 import { buildEnglishEventDetailPath, buildEventDetailPath } from './utils-event-detail.js';
+import type { PublicRaceEvent } from './utils-event-detail.js';
+
+export const selectUpcomingHomepageEvents = (events: PublicRaceEvent[], limit = 4) => [...events]
+  .sort((a, b) =>
+    a.dateValue - b.dateValue ||
+    a.place.localeCompare(b.place, 'sl-SI') ||
+    a.title.localeCompare(b.title, 'sl-SI')
+  )
+  .slice(0, limit);
 
 export type HomepageApiRecord = Record<string, unknown>;
 
