@@ -1,6 +1,6 @@
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildEventDetailSlug, mapPublicRaceEvent, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
-import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
+import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { buildRelatedRaceCards, buildRelatedRaces, type RelatedRaceCard } from './utils-related-races.js';
 import { enrichEventsWithVoteUrls } from './utils-vote.js';
@@ -43,6 +43,8 @@ type BuildStats = {
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const TOP_API_URL = `${API_BASE}/top?scope=upcoming&limit=1000`;
 const DEFAULT_TIMEOUT_MS = 15_000;
+const MASTER_FETCH_ATTEMPTS = 3;
+const MASTER_RETRY_DELAY_MS = 100;
 const timingEnabled = () => process.env.STK_BUILD_TIMING === '1';
 const now = () => performance.now();
 
@@ -78,7 +80,16 @@ export const fetchMasterYearPayload = (year: PublicYear, fetchImpl: FetchLike = 
     stats.masterRequests += 1;
     const started = now();
     try {
-      return await timedFetchJson(`${API_BASE}${buildMasterApiPath(year)}`, { label: `master ${year}`, fetchImpl });
+      let lastError: unknown;
+      for (let attempt = 1; attempt <= MASTER_FETCH_ATTEMPTS; attempt += 1) {
+        try {
+          return await timedFetchJson(`${API_BASE}${buildMasterApiPath(year)}`, { label: `master ${year} (attempt ${attempt}/${MASTER_FETCH_ATTEMPTS})`, fetchImpl });
+        } catch (error) {
+          lastError = error;
+          if (attempt < MASTER_FETCH_ATTEMPTS) await new Promise((resolve) => setTimeout(resolve, MASTER_RETRY_DELAY_MS * attempt));
+        }
+      }
+      throw lastError;
     } finally {
       stats.masterDurations[year] = now() - started;
     }
@@ -126,12 +137,25 @@ export const getPublicYearData = (year: PublicYear) => {
   return request;
 };
 
+export const assertRequiredDetailPaths = (data: YearData, language: Language) => {
+  if (!data.events.length) {
+    throw new Error(`[build-data] master ${DEFAULT_PUBLIC_YEAR} returned no valid public events; refusing to build without detail pages`);
+  }
+  const requiredPaths = language === 'en' ? data.enPaths : data.slPaths;
+  if (!requiredPaths.length) {
+    throw new Error(`[build-data] no ${language.toUpperCase()} detail paths generated for required year ${DEFAULT_PUBLIC_YEAR}`);
+  }
+};
+
 export const getDetailStaticPaths = async (language: Language) => {
   const data = await Promise.all(SUPPORTED_PUBLIC_YEARS.map((year) => getPublicYearData(year).catch((error) => {
+    if (year === DEFAULT_PUBLIC_YEAR) throw error;
     console.warn(`[build-data] detail paths skipped ${year}: ${error instanceof Error ? error.message : String(error)}`);
     return null;
   })));
-  if (data.every((item) => !item)) maybePrintBuildTiming();
+  const requiredYearData = data.find((item) => item?.year === DEFAULT_PUBLIC_YEAR);
+  if (!requiredYearData) throw new Error(`[build-data] required year ${DEFAULT_PUBLIC_YEAR} produced no build data`);
+  assertRequiredDetailPaths(requiredYearData, language);
   return data.flatMap((item) => item ? (language === 'en' ? item.enPaths : item.slPaths) : []);
 };
 
