@@ -1,7 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
+import HomeUpcomingRaces from '../../components/HomeUpcomingRaces.astro';
+import { getPublicYearData } from '../../utils-build-data';
+import { DEFAULT_PUBLIC_YEAR } from '../../utils-public-year';
+import { selectUpcomingHomepageEvents } from '../../utils-home-events';
 
+const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearData(DEFAULT_PUBLIC_YEAR)).events);
 ---
 
 <BaseLayout
@@ -111,13 +116,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
           <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
         </div>
         <div class="card-grid" data-nearest-events>
-          <article class="event-card">
-            <h3>Loading data</h3>
-            <p>Nearest races will appear here.</p>
-            <div class="event-meta">
-              <span class="pill">Calendar</span>
-            </div>
-          </article>
+          <HomeUpcomingRaces events={initialUpcomingEvents} lang="en" />
         </div>
         <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/en/find-races/">race search</a>.</p>
       </section>
@@ -1371,17 +1370,14 @@ import SocialLinks from '../../components/SocialLinks.astro';
         `;
       }).join('');
 
-      container.innerHTML = eventCards;
-      initSavedRaceButtons(container);
+      const normalizeRenderedCards = (html: string) => html.trim().replace(/>\s+</g, '><');
+      if (normalizeRenderedCards(container.innerHTML) !== normalizeRenderedCards(eventCards)) {
+        container.innerHTML = eventCards;
+        initSavedRaceButtons(container);
+      }
       setStatus('nearest', '');
     } catch (error) {
       logDebugError('This week races failed', error);
-      container.innerHTML = `
-        <article class="event-card">
-          <h3>The list is currently unavailable</h3>
-          <p>Upcoming races will appear here when the data is available again.</p>
-        </article>
-      `;
       setStatus('nearest', 'The upcoming race list is currently unavailable, so a fallback view is shown.');
     }
   }
@@ -1586,6 +1582,8 @@ import SocialLinks from '../../components/SocialLinks.astro';
   }
 
   if (enableApiDebug) createDebugPanel();
+  const initialNearestEvents = document.querySelector('[data-nearest-events]');
+  if (initialNearestEvents) initSavedRaceButtons(initialNearestEvents);
   loadStats();
   loadNearestEvents();
   loadRegistrationDeadlines();
