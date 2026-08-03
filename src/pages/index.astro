@@ -4,6 +4,10 @@ import SocialLinks from '../components/SocialLinks.astro';
 ---
 
 <BaseLayout
+  alternateLinks={[
+    { lang: 'sl', href: '/' },
+    { lang: 'en', href: '/en/' }
+  ]}
   description="Neodvisen in redno posodobljen tekaški koledar za Slovenijo s potrjenimi prireditvami, razpisi, prijavami, družinam prijaznimi teki, skupinskimi teki in dodatnimi informacijami."
 >
   <main>
@@ -32,7 +36,7 @@ import SocialLinks from '../components/SocialLinks.astro';
           <aside class="hero-preview" aria-label="Predogled koledarja">
             <div class="hero-preview-heading">
               <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
-              <p class="hero-preview-helper" data-hero-preview-helper>Po glasovih tekačev, dopolnjeno z najbližjimi teki.</p>
+              <p class="hero-preview-helper" data-hero-preview-helper>Izbor prihodnjih tekov.</p>
             </div>
             <ol class="hero-preview-list" data-hero-preview-list>
               <li><span>nalagamo</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>
@@ -47,7 +51,7 @@ import SocialLinks from '../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><circle cx="14" cy="14" r="7"/><path d="m20 20 6 6"/></svg>
           </div>
           <h2>Najdite pravi tek</h2>
-          <p>Filtrirajte teke po datumu, regiji, podlagi in razdalji.</p>
+          <p>Filtrirajte po datumu, regiji, podlagi ali razdalji.</p>
           <a class="home-entry-link" href="/iskalnik-tekov/">Odprite iskalnik</a>
         </article>
         <article class="home-entry-card">
@@ -55,7 +59,7 @@ import SocialLinks from '../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><rect x="7" y="8" width="18" height="18" rx="3"/><path d="M11 5v6M21 5v6M7 14h18M16 18l1.5 3 3.5.5-2.5 2.4.6 3.4-3.1-1.6-3.1 1.6.6-3.4-2.5-2.4 3.5-.5z"/></svg>
           </div>
           <h2>Načrtujte svoje teke</h2>
-          <p>Shranite teke, nastavite osebni status in spremljajte prijavne roke.</p>
+          <p>Shranite teke in spremljajte prijavne roke.</p>
           <a class="home-entry-link" href="/moji-teki/">Odprite Moje teke</a>
         </article>
         <article class="home-entry-card">
@@ -63,32 +67,11 @@ import SocialLinks from '../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><rect x="6" y="9" width="20" height="15" rx="5"/><path d="M12 24l-4 4v-6M12 16h.01M20 16h.01M12 20h8M16 6v3"/></svg>
           </div>
           <h2>Vprašajte Tekobota</h2>
-          <p>Poiščite teke z vprašanjem v naravnem jeziku.</p>
+          <p>Poiščite tek z vprašanjem.</p>
           <a class="home-entry-link" href="/stk-tekobot/">Odprite Tekobota</a>
         </article>
       </div>
 
-      <div class="stats-intro">
-        <h2>Koledar 2026 v številkah</h2>
-        <p>Podatki zajemajo celoten javni koledar od januarja do decembra 2026.</p>
-      </div>
-      <div class="home-stats-band stats-strip" aria-label="Statistika koledarja">
-        <article class="stat-card stat-card-races">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
-          <span class="stat-label">potrjenih prireditev</span>
-        </article>
-        <article class="stat-card stat-card-family">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="family_friendly_total">…</span>
-          <span class="stat-label">družinam prijaznih prireditev</span>
-        </article>
-        <article class="stat-card stat-card-group">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="group_runs_total">…</span>
-          <span class="stat-label">skupinskih tekov</span>
-        </article>
-      </div>
     </section>
 
     <section class="section container home-current-sections" aria-labelledby="current-title">
@@ -113,7 +96,7 @@ import SocialLinks from '../components/SocialLinks.astro';
       <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
-            <h2 id="nearest-title">Ta teden tečemo</h2>
+            <h2 id="nearest-title">Naslednji teki</h2>
             <p>Najbližje potrjene tekaške prireditve iz Slovenskega Tekaškega Koledarja.</p>
           </div>
           <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
@@ -133,11 +116,35 @@ import SocialLinks from '../components/SocialLinks.astro';
       </div>
     </section>
 
+    <section class="container home-calendar-stats" aria-labelledby="calendar-stats-title">
+      <div class="stats-intro">
+        <h2 id="calendar-stats-title">Koledar 2026 v številkah</h2>
+        <p>Podatki zajemajo celoten javni koledar od januarja do decembra 2026.</p>
+      </div>
+      <div class="home-stats-band stats-strip" aria-label="Statistika koledarja">
+        <article class="stat-card stat-card-races">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
+          <span class="stat-label">potrjenih prireditev</span>
+        </article>
+        <article class="stat-card stat-card-family">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="family_friendly_total">…</span>
+          <span class="stat-label">družinam prijaznih prireditev</span>
+        </article>
+        <article class="stat-card stat-card-group">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="group_runs_total">…</span>
+          <span class="stat-label">skupinskih tekov</span>
+        </article>
+      </div>
+    </section>
+
       <section class="section container home-secondary-section" aria-labelledby="voted-title">
         <div class="section-heading section-heading-with-action">
           <div>
             <h2 id="voted-title">Največ zanimanja</h2>
-            <p>Izpostavljeno po zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid, prikazano z obstoječimi podatki o tekih.</p>
+            <p data-top-description>Izbor prihodnjih tekov.</p>
           </div>
           <div class="section-heading-actions">
             <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
@@ -146,13 +153,13 @@ import SocialLinks from '../components/SocialLinks.astro';
         <div class="card-grid" data-top-events>
           <article class="event-card">
             <h3>Podatke še nalagamo</h3>
-            <p>Teki z največ zanimanja bodo prikazani tukaj.</p>
+            <p>Izbrani prihodnji teki bodo prikazani tukaj.</p>
             <div class="event-meta">
-              <span class="pill">Zanimanje obiskovalcev</span>
+              <span class="pill">Prihajajoči teki</span>
             </div>
           </article>
         </div>
-        <p class="data-note" data-status="top">Prikaz je razvrščen po zanimanju obiskovalcev. Če podatka ni, uporabimo obstoječi prikaz glasovanih prihajajočih tekov.</p>
+        <p class="data-note" data-status="top">Izbor prihodnjih tekov.</p>
       </section>
 
     <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
@@ -1070,9 +1077,7 @@ import SocialLinks from '../components/SocialLinks.astro';
       titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
     }
     if (helperElement) {
-      helperElement.textContent = upcomingInterestEvents.length
-        ? 'Najbližji prihajajoči teki z največ zanimanja.'
-        : 'Najbližji prihajajoči teki.';
+      helperElement.textContent = 'Izbor prihodnjih tekov.';
     }
 
     if (!previewEvents.length) {
@@ -1408,6 +1413,7 @@ import SocialLinks from '../components/SocialLinks.astro';
 
   async function loadTopEvents() {
     const container = document.querySelector('[data-top-events]');
+    const description = document.querySelector('[data-top-description]');
     if (!container) return;
 
     const renderEvents = (events: ApiRecord[], options: { interestPreview: boolean }) => {
@@ -1450,7 +1456,8 @@ import SocialLinks from '../components/SocialLinks.astro';
         setDebugTopDetails(interestEvents, interestEvents);
         renderEvents(interestEvents, { interestPreview: true });
         initSavedRaceButtons(container);
-        setStatus('top', 'Izbor temelji na zanimanju obiskovalcev za prijave, razpise, koledar in zemljevid.');
+        if (description) description.textContent = 'Izbor prihodnjih tekov.';
+        setStatus('top', 'Izbor prihodnjih tekov.');
         return;
       }
     } catch (error) {
@@ -1471,7 +1478,8 @@ import SocialLinks from '../components/SocialLinks.astro';
       setDebugTopDetails(topEvents, rawTopEvents);
       renderEvents(topEvents, { interestPreview: false });
       initSavedRaceButtons(container);
-      setStatus('top', 'Pregled zanimanja trenutno ni dosegljiv, zato prikazujemo obstoječe izpostavljene prihajajoče teke.');
+      if (description) description.textContent = 'Izbor prihodnjih tekov.';
+      setStatus('top', 'Izbor prihodnjih tekov.');
     } catch (error) {
       setDebug('top', 'no');
       setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
