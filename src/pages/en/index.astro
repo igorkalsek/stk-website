@@ -1373,8 +1373,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       const normalizeRenderedCards = (html: string) => html.trim().replace(/>\s+</g, '><');
       if (normalizeRenderedCards(container.innerHTML) !== normalizeRenderedCards(eventCards)) {
         container.innerHTML = eventCards;
+        initSavedRaceButtons(container);
       }
-      initSavedRaceButtons(container);
       setStatus('nearest', '');
     } catch (error) {
       logDebugError('This week races failed', error);
@@ -1582,6 +1582,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   }
 
   if (enableApiDebug) createDebugPanel();
+  const initialNearestEvents = document.querySelector('[data-nearest-events]');
+  if (initialNearestEvents) initSavedRaceButtons(initialNearestEvents);
   loadStats();
   loadNearestEvents();
   loadRegistrationDeadlines();

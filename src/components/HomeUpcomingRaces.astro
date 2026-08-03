@@ -29,7 +29,7 @@ const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[
   `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
 const renderCalendarOptions = (event: PublicRaceEvent) => {
-  const calendarEvent = { title: event.displayTitle, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl };
+  const calendarEvent = { title: event.displayTitle, date: event.date, location: event.place, noticeUrl: event.noticeUrl, registrationUrl: event.registrationUrl, language: lang };
   const googleUrl = buildGoogleCalendarEventUrl(calendarEvent);
   const icsUrl = buildIcsDataUrl(calendarEvent);
   const icsFilename = buildIcsFilename(calendarEvent);
