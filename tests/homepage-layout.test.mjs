@@ -63,6 +63,6 @@ test('homepages use neutral preview copy before and after loading', () => {
 
 test('Slovene home declares the same language alternates as English home', () => {
   for (const source of Object.values(pages)) {
-    assert.match(source, /alternateLinks=\{\[\s*\{ lang: 'sl', href: '\/' \},\s*\{ lang: 'en', href: '\/en\/' \}\s*\]\}/s);
+    assert.match(source, /alternateLinks=\{\[\s*\{ lang: 'sl', href: '\/' \},\s*\{ lang: 'en', href: '\/en\/' \},\s*\{ lang: 'x-default', href: '\/' \}\s*\]\}/s);
   }
 });
