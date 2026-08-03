@@ -9,6 +9,15 @@ export const selectUpcomingHomepageEvents = (events: PublicRaceEvent[], limit = 
   )
   .slice(0, limit);
 
+export const buildHomepageCalendarEventInput = (event: PublicRaceEvent, language: 'sl' | 'en') => ({
+  title: event.displayTitle,
+  date: event.date,
+  location: event.place,
+  noticeUrl: event.noticeUrl,
+  registrationUrl: event.registrationUrl,
+  language
+});
+
 export type HomepageApiRecord = Record<string, unknown>;
 
 export const homepageAsRecord = (value: unknown): HomepageApiRecord | null =>

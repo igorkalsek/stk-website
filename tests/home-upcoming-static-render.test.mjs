@@ -29,7 +29,7 @@ test('static cards preserve localized detail paths and the client analytics cont
 });
 
 test('static calendar links explicitly use the card language for SL and EN descriptions', () => {
-  assert.match(component, /registrationUrl: event\.registrationUrl, language: lang/);
+  assert.match(component, /buildHomepageCalendarEventInput\(event, lang\)/);
   assert.match(component, /buildGoogleCalendarEventUrl\(calendarEvent\)/);
   assert.match(component, /buildIcsDataUrl\(calendarEvent\)/);
   assert.match(component, /buildOutlookCalendarEventUrl\(calendarEvent\)/);

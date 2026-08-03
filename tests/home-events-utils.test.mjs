@@ -7,8 +7,10 @@ import {
   matchRecentUpdateToMasterEvent,
   getCanonicalHomepageEvent,
   getHomepageEventYear,
-  selectUpcomingHomepageEvents
+  selectUpcomingHomepageEvents,
+  buildHomepageCalendarEventInput
 } from '../.cache/dist-test/utils-home-events.js';
+import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildOutlookCalendarEventUrl } from '../.cache/dist-test/utils-calendar.js';
 
 const helpers = {
   rowKey: (event) => String(event.row ?? '').trim(),
@@ -17,6 +19,34 @@ const helpers = {
 };
 
 describe('homepage event detail helpers', () => {
+  it('builds localized SL and EN static calendar descriptions', () => {
+    const event = {
+      displayTitle: 'Testni tek',
+      date: '2026-09-01',
+      place: 'Bled',
+      noticeUrl: 'https://example.com/info',
+      registrationUrl: 'https://example.com/register'
+    };
+    const slInput = buildHomepageCalendarEventInput(event, 'sl');
+    const enInput = buildHomepageCalendarEventInput(event, 'en');
+
+    const slGoogleDetails = new URL(buildGoogleCalendarEventUrl(slInput)).searchParams.get('details');
+    const enGoogleDetails = new URL(buildGoogleCalendarEventUrl(enInput)).searchParams.get('details');
+    assert.match(slGoogleDetails, /Dodano iz Slovenskega Tekaškega Koledarja/);
+    assert.match(enGoogleDetails, /Added from Slovenski Tekaški Koledar/);
+    assert.doesNotMatch(enGoogleDetails, /Dodano iz/);
+
+    const slIcs = decodeURIComponent(buildIcsDataUrl(slInput));
+    const enIcs = decodeURIComponent(buildIcsDataUrl(enInput));
+    assert.match(slIcs, /DESCRIPTION:Dodano iz Slovenskega Tekaškega Koledarja/);
+    assert.match(enIcs, /DESCRIPTION:Added from Slovenski Tekaški Koledar/);
+
+    const slOutlookBody = new URL(buildOutlookCalendarEventUrl(slInput)).searchParams.get('body');
+    const enOutlookBody = new URL(buildOutlookCalendarEventUrl(enInput)).searchParams.get('body');
+    assert.match(slOutlookBody, /Razpis:/);
+    assert.match(enOutlookBody, /Official info:/);
+  });
+
   it('selects at most four nearest races using the client date, place and title order', () => {
     const event = (row, date, place, title) => ({ row, date, place, title, dateValue: Date.parse(`${date}T00:00:00`) });
     const selected = selectUpcomingHomepageEvents([
