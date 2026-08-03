@@ -7,7 +7,7 @@ const source = readFileSync(new URL('../src/pages/en/index.astro', import.meta.u
 describe('English home interest section', () => {
   it('uses interest-preview copy and keeps only View all races in the section header', () => {
     assert.match(source, /<h2 id="voted-title">Races attracting the most interest<\/h2>/);
-    assert.match(source, /<p data-top-description>Upcoming races attracting the most visitor interest in registration, official information, calendar and route links\.<\/p>/);
+    assert.match(source, /<p data-top-description>A selection of upcoming races\.<\/p>/);
     assert.match(source, /href="\/en\/find-races\/">View all races<\/a>/);
     assert.doesNotMatch(source, /Most voted upcoming races/);
     assert.doesNotMatch(source, /View full ranking/);
@@ -23,8 +23,8 @@ describe('English home interest section', () => {
   it('hides vote counts for interest cards and shows them for vote fallback cards', () => {
     assert.match(source, /const metaItems = options\.interestPreview\s*\? ''\s*:/s);
     assert.match(source, /formatVoteCount\(votes\)/);
-    assert.match(source, /Upcoming races with the most runner votes\./);
-    assert.match(source, /This view is based on runner votes\. If vote counts are tied, nearer upcoming races are shown first\./);
+    assert.doesNotMatch(source, /This view is based on runner votes/);
+    assert.match(source, /setStatus\('top', 'A selection of upcoming races\.'\)/);
   });
 
   it('keeps interest analytics and links cards to English race detail pages', () => {
@@ -46,7 +46,7 @@ describe('English home hero preview', () => {
   it('uses interest events plus nearest fallback events and hides interest vote counts', () => {
     assert.match(source, /const interestPreviewEvents = await getInterestPreviewRaces\(events, 20\)\.catch\(\(\) => \[\]\);/);
     assert.match(source, /renderHeroPreview\(interestPreviewEvents, events\);/);
-    assert.match(source, /upcomingInterestEvents\.length\s*\? 'Nearby upcoming races attracting the most interest\.'\s*: 'Nearby upcoming races\.'/s);
+    assert.match(source, /helperElement\.textContent = 'A selection of upcoming races\.';/);
     assert.doesNotMatch(source, /Most votes among upcoming races\./);
   });
 

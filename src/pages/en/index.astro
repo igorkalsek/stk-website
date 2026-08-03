@@ -44,7 +44,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
           <aside class="hero-preview" aria-label="Calendar preview">
             <div class="hero-preview-heading">
               <span class="hero-preview-kicker" data-hero-preview-title>Highlighted in the next days</span>
-              <p class="hero-preview-helper" data-hero-preview-helper>Nearby upcoming races attracting the most interest.</p>
+              <p class="hero-preview-helper" data-hero-preview-helper>A selection of upcoming races.</p>
             </div>
             <ol class="hero-preview-list" data-hero-preview-list>
               <li><span>loading</span><strong>Upcoming races will appear here.</strong></li>
@@ -59,7 +59,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><circle cx="14" cy="14" r="7"/><path d="m20 20 6 6"/></svg>
           </div>
           <h2>Find the right race</h2>
-          <p>Filter races by date, region, terrain and distance.</p>
+          <p>Filter by date, region, terrain or distance.</p>
           <a class="home-entry-link" href="/en/find-races/">Open race search</a>
         </article>
         <article class="home-entry-card">
@@ -67,7 +67,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><rect x="7" y="8" width="18" height="18" rx="3"/><path d="M11 5v6M21 5v6M7 14h18M16 18l1.5 3 3.5.5-2.5 2.4.6 3.4-3.1-1.6-3.1 1.6.6-3.4-2.5-2.4 3.5-.5z"/></svg>
           </div>
           <h2>Plan your races</h2>
-          <p>Save races, set a personal status and follow registration deadlines.</p>
+          <p>Save races and follow registration deadlines.</p>
           <a class="home-entry-link" href="/en/my-races/">Open My races</a>
         </article>
         <article class="home-entry-card">
@@ -75,32 +75,11 @@ import SocialLinks from '../../components/SocialLinks.astro';
             <svg viewBox="0 0 32 32" focusable="false"><rect x="6" y="9" width="20" height="15" rx="5"/><path d="M12 24l-4 4v-6M12 16h.01M20 16h.01M12 20h8M16 6v3"/></svg>
           </div>
           <h2>Ask STK Tekobot</h2>
-          <p>Find races by asking a question in natural language.</p>
+          <p>Find a race with a question.</p>
           <a class="home-entry-link" href="/en/stk-tekobot/">Open Tekobot</a>
         </article>
       </div>
 
-      <div class="stats-intro">
-        <h2>2026 calendar at a glance</h2>
-        <p>The figures cover the full public calendar from January to December 2026.</p>
-      </div>
-      <div class="home-stats-band stats-strip" aria-label="Calendar statistics">
-        <article class="stat-card stat-card-races">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
-          <span class="stat-label">confirmed races</span>
-        </article>
-        <article class="stat-card stat-card-family">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="family_friendly_total">…</span>
-          <span class="stat-label">family-friendly</span>
-        </article>
-        <article class="stat-card stat-card-group">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="group_runs_total">…</span>
-          <span class="stat-label">group runs</span>
-        </article>
-      </div>
     </section>
 
     <section class="section container home-current-sections" aria-labelledby="current-title">
@@ -125,7 +104,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
-            <h2 id="nearest-title">This week’s races</h2>
+            <h2 id="nearest-title">Upcoming races</h2>
             <p>The nearest confirmed races from the Slovenian Race Calendar.</p>
           </div>
           <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
@@ -145,11 +124,35 @@ import SocialLinks from '../../components/SocialLinks.astro';
       </div>
     </section>
 
+    <section class="container home-calendar-stats" aria-labelledby="calendar-stats-title">
+      <div class="stats-intro">
+        <h2 id="calendar-stats-title">2026 calendar at a glance</h2>
+        <p>The figures cover the full public calendar from January to December 2026.</p>
+      </div>
+      <div class="home-stats-band stats-strip" aria-label="Calendar statistics">
+        <article class="stat-card stat-card-races">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
+          <span class="stat-label">confirmed races</span>
+        </article>
+        <article class="stat-card stat-card-family">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="family_friendly_total">…</span>
+          <span class="stat-label">family-friendly</span>
+        </article>
+        <article class="stat-card stat-card-group">
+          <span class="stat-mark" aria-hidden="true"></span>
+          <span class="stat-value" data-stat="group_runs_total">…</span>
+          <span class="stat-label">group runs</span>
+        </article>
+      </div>
+    </section>
+
       <section class="section container home-secondary-section" aria-labelledby="voted-title">
         <div class="section-heading section-heading-with-action">
           <div>
             <h2 id="voted-title">Races attracting the most interest</h2>
-            <p data-top-description>Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.</p>
+            <p data-top-description>A selection of upcoming races.</p>
           </div>
           <div class="section-heading-actions">
             <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
@@ -158,13 +161,13 @@ import SocialLinks from '../../components/SocialLinks.astro';
         <div class="card-grid" data-top-events>
           <article class="event-card">
             <h3>Loading data</h3>
-            <p>Races attracting the most interest will appear here.</p>
+            <p>Selected upcoming races will appear here.</p>
             <div class="event-meta">
-              <span class="pill">Visitor interest</span>
+              <span class="pill">Upcoming races</span>
             </div>
           </article>
         </div>
-        <p class="data-note" data-status="top">The selection is based on visitor interest in registration, official information, calendar and route links.</p>
+        <p class="data-note" data-status="top">A selection of upcoming races.</p>
       </section>
 
     <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
@@ -1075,9 +1078,7 @@ import SocialLinks from '../../components/SocialLinks.astro';
       titleElement.textContent = 'Highlighted in the next days';
     }
     if (helperElement) {
-      helperElement.textContent = upcomingInterestEvents.length
-        ? 'Nearby upcoming races attracting the most interest.'
-        : 'Nearby upcoming races.';
+      helperElement.textContent = 'A selection of upcoming races.';
     }
 
     if (!previewEvents.length) {
@@ -1467,8 +1468,8 @@ import SocialLinks from '../../components/SocialLinks.astro';
         setDebugTopDetails(interestEvents, interestEvents);
         renderEvents(interestEvents, { interestPreview: true });
         initSavedRaceButtons(container);
-        if (description) description.textContent = 'Upcoming races attracting the most visitor interest in registration, official information, calendar and route links.';
-        setStatus('top', 'The selection is based on visitor interest in registration, official information, calendar and route links.');
+        if (description) description.textContent = 'A selection of upcoming races.';
+        setStatus('top', 'A selection of upcoming races.');
         return;
       }
     } catch (error) {
@@ -1490,8 +1491,8 @@ import SocialLinks from '../../components/SocialLinks.astro';
       setDebugTopDetails(topEvents, rawTopEvents);
       renderEvents(topEvents, { interestPreview: false });
       initSavedRaceButtons(container);
-      if (description) description.textContent = 'Upcoming races with the most runner votes.';
-      setStatus('top', 'This view is based on runner votes. If vote counts are tied, nearer upcoming races are shown first.');
+      if (description) description.textContent = 'A selection of upcoming races.';
+      setStatus('top', 'A selection of upcoming races.');
     } catch (error) {
       logDebugError('Interest section voted fallback failed', error);
       setDebug('top', 'no');

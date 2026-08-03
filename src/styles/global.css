@@ -5571,3 +5571,81 @@ main {
     width: 100%;
   }
 }
+
+/* Keep the mobile home introduction short and its secondary routes clearly subordinate. */
+.home-calendar-stats {
+  margin-top: clamp(24px, 5vw, 48px);
+}
+
+@media (max-width: 679px) {
+  .home-entry-grid {
+    gap: 1px;
+  }
+
+  .home-entry-card {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    min-height: 52px;
+    gap: 1px 9px;
+    align-items: center;
+    padding: 8px 10px;
+  }
+
+  .home-entry-icon {
+    grid-row: 1 / span 2;
+    width: 30px;
+    height: 30px;
+  }
+
+  .home-entry-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .home-entry-card h2 {
+    font-size: 0.92rem;
+  }
+
+  .home-entry-card p {
+    grid-column: 2;
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
+  .home-entry-link {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 6px 4px;
+    font-size: 0.78rem;
+    text-align: right;
+  }
+
+  .home-current-sections {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .home-hero-copy .hero-sublead {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .home-hero-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+  }
+
+  .home-hero-actions .hero-primary-cta {
+    grid-column: 1 / -1;
+  }
+
+  .home-hero-actions .button,
+  .home-hero-text-link {
+    min-height: 44px;
+    padding: 9px 10px;
+  }
+}
