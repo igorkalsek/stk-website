@@ -130,6 +130,15 @@ describe('race detail view model', () => {
     assert.equal(formatFamilyPublicNote('Family-friendly: children’s races.', 'en'), 'Family-friendly: children’s races.');
   });
 
+  it('keeps unrelated registration details when English family notes need a fallback', () => {
+    const event = { ...baseEvent, familyFriendly: true, publicNotes: 'Otroški tek je na voljo. Prijave so odprte do petka.' };
+    const family = buildFamilyInfo(event, 'en');
+
+    assert.deepEqual(family, ['Family activities are available. Check the official race information for details.']);
+    assert.equal(buildPublicNotes(event, 'en', family), 'Prijave so odprte do petka.');
+    assert.doesNotMatch(buildPublicNotes(event, 'en', family), /Otroški tek/);
+  });
+
   it('labels route links that point to the same notice URL without changing analytics', () => {
     const same = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf/' } };
     const different = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf?type=notice', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf?type=route' } };
