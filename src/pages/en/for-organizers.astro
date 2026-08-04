@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import OrganizerPage from '../../components/OrganizerPage.astro';
+---
+<BaseLayout
+  title="For organisers"
+  description="Present your race in Slovenski Tekaški Koledar and confirm, complete or correct its information."
+  lang="en"
+  canonicalPath="/en/for-organizers/"
+  alternateLinks={[{ lang: 'sl', href: '/za-organizatorje/' }, { lang: 'en', href: '/en/for-organizers/' }, { lang: 'x-default', href: '/za-organizatorje/' }]}
+  brandHref="/en/"
+  brandLabel="Slovenski Tekaški Koledar - home"
+  navLabel="Main navigation"
+  menuLabel="Menu"
+  languageSwitchHref="/za-organizatorje/"
+>
+  <OrganizerPage lang="en" />
+</BaseLayout>

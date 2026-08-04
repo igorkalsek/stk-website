@@ -73,7 +73,7 @@ describe('saved race button surfaces', () => {
   });
 
   it('uses the English organizer navigation label and path', () => {
-    assert.match(files.navigation, /href: '\/en\/add-or-correct-race\/', label: 'For organisers'/);
+    assert.match(files.navigation, /href: '\/en\/for-organizers\/', label: 'For organisers'/);
     assert.doesNotMatch(files.navigation, /label: 'For organisers \(SL\)'/);
   });
 });

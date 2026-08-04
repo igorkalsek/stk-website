@@ -136,6 +136,7 @@ const formatYesNo = (value: string, language: DetailLanguage) => {
 };
 
 const normalizeNote = (value: string) => value.replace(/\s+/g, ' ').trim().toLocaleLowerCase('sl-SI');
+const hasFamilyNoteContext = (value: string) => /družinam prijazno|družin(?:ski|ska|sko|am|e|o)|otro(?:ški|ška|ško|ških|kom|ci|cih|ke)|najmlajš|kids?|children(?:’s|'s)?/iu.test(value);
 const uniqueDistances = (value: string) => [...new Set(parseRaceDistancesKm(value))].sort((a, b) => a - b);
 const parseElevationGain = (value: string | undefined | null) => {
   const trimmed = value?.trim() ?? '';
@@ -168,9 +169,15 @@ export const formatFamilyPublicNote = (value: string, language: DetailLanguage =
   const trimmed = value.replace(/\s+/g, ' ').trim();
   if (!trimmed) return '';
   const isRecognizedFamilyNote = /družinam prijazno|otroški teki|vsak tretji otrok iz družine/iu.test(trimmed);
-  if (!isRecognizedFamilyNote) return trimmed;
 
-  if (language === 'en') return formatEnglishPublicNotes(trimmed);
+  if (language === 'en') {
+    const translated = formatEnglishPublicNotes(trimmed);
+    const hasSlovenianFamilyCopy = hasFamilyNoteContext(translated) && /\b(?:družin\w*|otrok\w*|otro\w*|najmlajš\w*|brezplač\w*)\b/iu.test(translated);
+    return hasSlovenianFamilyCopy
+      ? 'Family activities are available. Check the official race information for details.'
+      : translated;
+  }
+  if (!isRecognizedFamilyNote) return trimmed;
 
   let formatted = trimmed
     .replace(/^družinam prijazno:/iu, 'Družinam prijazno:')
@@ -190,7 +197,7 @@ export const formatFamilyPublicNote = (value: string, language: DetailLanguage =
 const familyNoteSentences = (notes: string) => notes
   .split(/(?<=[.!?])\s+/)
   .map((sentence) => sentence.trim())
-  .filter((sentence) => sentence && /družinam prijazno|otro(?:ški|ška|ških|kom|ci|cih|ke)|kids?|children(?:’s|'s)?/iu.test(sentence));
+  .filter((sentence) => sentence && hasFamilyNoteContext(sentence));
 
 const extractChildrenDistancesLabel = (notes: string, language: DetailLanguage) => {
   const match = notes.match(/otroški teki\s+((?:\d+(?:[,.]\d+)?\s*(?:m|km)\/?)+)/iu);
