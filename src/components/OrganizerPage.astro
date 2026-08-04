@@ -1,0 +1,79 @@
+---
+interface Props { lang: 'sl' | 'en'; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const finderHref = en ? '/en/find-races/' : '/iskalnik-tekov/';
+const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
+const benefits = en ? [
+  'Greater visibility among Slovenian runners',
+  'Direct links to the official race information and registration',
+  'A clear overview of distances, fees, deadlines, course and special features',
+  'A shareable link to the race profile'
+] : [
+  'Večja vidnost med slovenskimi tekači',
+  'Neposredna povezava na uradni razpis in prijavo',
+  'Pregleden prikaz razdalj, startnine, rokov, trase in posebnosti',
+  'Povezava do profila, primerna za deljenje'
+];
+const fields = en ? [
+  'Date, place and start time', 'Distances and surface', 'Entry fee and registration deadlines',
+  'Course and elevation gain', 'Children’s or family programme', 'Cup or series',
+  'Organiser and official website'
+] : [
+  'Datum, kraj in ura', 'Razdalje in podlaga', 'Startnina in prijavni roki',
+  'Trasa in višinski metri', 'Otroški oziroma družinski program', 'Pokal ali serija',
+  'Organizator in uradna spletna stran'
+];
+---
+<main class="organizer-page">
+  <section class="page-hero container" aria-labelledby="organizer-title">
+    <span class="eyebrow">{en ? 'FOR ORGANISERS' : 'ZA ORGANIZATORJE'}</span>
+    <h1 id="organizer-title">{en ? 'Help runners find your race' : 'Naj tekači lažje najdejo vaš tek'}</h1>
+    <p>{en
+      ? 'Slovenski Tekaški Koledar presents the key information about your race in one place and directs runners straight to the official race information and registration.'
+      : 'Slovenski Tekaški Koledar na enem mestu predstavi najpomembnejše podatke o vašem teku ter tekače usmeri neposredno na uradni razpis in prijavo.'}</p>
+    <div class="cta-row" aria-label={en ? 'Organiser actions' : 'Možnosti za organizatorje'}>
+      <a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="hero">{en ? 'Find your race' : 'Poiščite svoj tek'}</a>
+      <a class="button organizer-button-secondary" href={formHref} data-organizer-action="add_race" data-organizer-placement="hero">{en ? 'Add a new race' : 'Dodajte nov tek'}</a>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="benefits-title">
+    <div class="section-heading"><h2 id="benefits-title">{en ? 'Your race, clearly presented' : 'Vaš tek, pregledno predstavljen'}</h2></div>
+    <ul class="organizer-benefits">{benefits.map((benefit) => <li>{benefit}</li>)}</ul>
+  </section>
+
+  <section class="section container organizer-grid" aria-label={en ? 'Publishing process and profile information' : 'Postopek objave in podatki profila'}>
+    <div class="info-card">
+      <h2>{en ? 'How to update your race' : 'Kako posodobite svoj tek'}</h2>
+      <ol>
+        <li>{en ? 'Find the existing race.' : 'Poiščite obstoječi tek.'}</li>
+        <li>{en ? 'Confirm or add missing information.' : 'Potrdite ali dopolnite podatke.'}</li>
+        <li>{en ? 'STK reviews the proposal and then publishes the changes.' : 'STK predlog pregleda in nato objavi spremembe.'}</li>
+      </ol>
+      <p class="organizer-review-note"><strong>{en ? 'Proposals are not published automatically.' : 'Predlogi niso objavljeni samodejno.'}</strong></p>
+      <a class="button organizer-dark-button" href={formHref} data-organizer-action="confirm_race" data-organizer-placement="process">{en ? 'Confirm or correct the information' : 'Potrdite ali popravite podatke'}</a>
+    </div>
+    <div class="info-card">
+      <h2>{en ? 'Information supported by a profile' : 'Podatki, ki jih profil podpira'}</h2>
+      <ul class="organizer-field-list">{fields.map((field) => <li>{field}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="claim-title">
+    <div class="organizer-claim-card">
+      <div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="claim-title">{en ? 'Claiming a race profile' : 'Prevzem profila teka'}</h2></div>
+      <p>{en
+        ? 'In the future, STK wants to make it easier for verified organisers to confirm and update their races. Possible benefits include a verified-profile badge, easier updates, promotional tools and aggregated insight into interest.'
+        : 'STK želi preverjenim organizatorjem v prihodnje olajšati potrjevanje in posodabljanje njihovega teka. Možne koristi vključujejo oznako potrjenega profila, lažje posodabljanje, promocijska orodja in agregiran vpogled v zanimanje.'}</p>
+    </div>
+  </section>
+
+  <section class="section container organizer-final-cta" aria-labelledby="next-title">
+    <h2 id="next-title">{en ? 'Start with your race' : 'Začnite pri svojem teku'}</h2>
+    <div class="cta-row">
+      <a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="final">{en ? 'Find your race' : 'Poiščite svoj tek'}</a>
+      <a class="button organizer-dark-button" href={formHref} data-organizer-action="add_race" data-organizer-placement="final">{en ? 'Add a new race' : 'Dodajte nov tek'}</a>
+    </div>
+  </section>
+</main>

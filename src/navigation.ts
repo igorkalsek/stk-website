@@ -9,7 +9,7 @@ export const slovenianNavItems: NavItem[] = [
   { href: '/iskalnik-tekov/', label: 'Najdi tek', variant: 'primary' },
   { href: '/moji-teki/', label: 'Moji teki' },
   { href: '/stk-tekobot/', label: 'Tekobot' },
-  { href: '/dodaj-ali-popravi-tek/', label: 'Za organizatorje', variant: 'organizer' },
+  { href: '/za-organizatorje/', label: 'Za organizatorje', variant: 'organizer' },
   {
     href: '#vec',
     label: 'Več',
@@ -27,7 +27,7 @@ export const englishNavItems: NavItem[] = [
   { href: '/en/find-races/', label: 'Find races', variant: 'primary' },
   { href: '/en/my-races/', label: 'My races' },
   { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
-  { href: '/en/add-or-correct-race/', label: 'For organisers', variant: 'organizer' },
+  { href: '/en/for-organizers/', label: 'For organisers', variant: 'organizer' },
   {
     href: '#more',
     label: 'More',

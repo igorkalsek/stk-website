@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import OrganizerPage from '../components/OrganizerPage.astro';
+---
+<BaseLayout
+  title="Za organizatorje"
+  description="Predstavite svoj tek v Slovenskem Tekaškem Koledarju ter potrdite, dopolnite ali popravite podatke."
+  canonicalPath="/za-organizatorje/"
+  alternateLinks={[{ lang: 'sl', href: '/za-organizatorje/' }, { lang: 'en', href: '/en/for-organizers/' }, { lang: 'x-default', href: '/za-organizatorje/' }]}
+  languageSwitchHref="/en/for-organizers/"
+>
+  <OrganizerPage lang="sl" />
+</BaseLayout>

@@ -168,9 +168,15 @@ export const formatFamilyPublicNote = (value: string, language: DetailLanguage =
   const trimmed = value.replace(/\s+/g, ' ').trim();
   if (!trimmed) return '';
   const isRecognizedFamilyNote = /družinam prijazno|otroški teki|vsak tretji otrok iz družine/iu.test(trimmed);
-  if (!isRecognizedFamilyNote) return trimmed;
 
-  if (language === 'en') return formatEnglishPublicNotes(trimmed);
+  if (language === 'en') {
+    const translated = formatEnglishPublicNotes(trimmed);
+    const hasSlovenianFamilyCopy = /\b(?:družin\w*|otrok\w*|tek\w*|brezplač\w*|prijav\w*)\b/iu.test(translated);
+    return hasSlovenianFamilyCopy
+      ? 'Family activities are available. Check the official race information for details.'
+      : translated;
+  }
+  if (!isRecognizedFamilyNote) return trimmed;
 
   let formatted = trimmed
     .replace(/^družinam prijazno:/iu, 'Družinam prijazno:')
