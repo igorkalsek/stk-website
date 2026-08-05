@@ -31,4 +31,7 @@ export interface ProposalPrefill {
   dayOfRegistration: string;
   elevationGain: string;
   routeUrl: string;
+  otherDetails: string;
+  organizator_naziv: string;
+  organizator_url: string;
 }

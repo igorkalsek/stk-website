@@ -39,6 +39,9 @@ export const buildRaceCorrectionContextParams = (event: CorrectionContextRace, l
   addCorrectionParam(params, 'dayOfRegistration', event.additionalData?.dayOfRegistration);
   addCorrectionParam(params, 'elevationGain', event.additionalData?.elevationGain);
   addCorrectionParam(params, 'routeUrl', event.additionalData?.routeUrl);
+  addCorrectionParam(params, 'otherDetails', event.publicNotes);
+  addCorrectionParam(params, 'organizator_naziv', event.additionalData?.organizerName);
+  addCorrectionParam(params, 'organizator_url', event.additionalData?.organizerUrl);
   addCorrectionParam(params, 'lang', language);
   addCorrectionParam(params, 'returnUrl', returnUrl.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : raceDetailPathForLanguage(event, language));
   return params;

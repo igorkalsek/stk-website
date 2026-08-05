@@ -30,7 +30,7 @@ export const parsePreselectedChangeCategories = (value: string | null | undefine
 };
 
 export const fieldCategoryMap = {
-  date: 'basic-date-time', startTime: 'basic-date-time', title: 'basic-title-place', place: 'basic-title-place', region: 'basic-title-place', distances: 'basic-distance-surface', surface: 'basic-distance-surface', noticeUrl: 'basic-official-source', registrationUrl: 'basic-official-source', cup: 'basic-cup-series', registrationFee: 'Prijavnina / startnina', registrationDeadline: 'Rok prijave', earlyRegistrationDeadline: 'Cenejša prijava / sprememba cene', dayOfRegistration: 'Prijave na dan dogodka', routeUrl: 'Trasa / zemljevid / GPX', elevationGain: 'Višinski metri'
+  date: 'basic-date-time', organizator_naziv: 'basic-official-source', organizator_url: 'basic-official-source', startTime: 'basic-date-time', title: 'basic-title-place', place: 'basic-title-place', region: 'basic-title-place', distances: 'basic-distance-surface', surface: 'basic-distance-surface', noticeUrl: 'basic-official-source', registrationUrl: 'basic-official-source', cup: 'basic-cup-series', registrationFee: 'Prijavnina / startnina', registrationDeadline: 'Rok prijave', earlyRegistrationDeadline: 'Cenejša prijava / sprememba cene', dayOfRegistration: 'Prijave na dan dogodka', routeUrl: 'Trasa / zemljevid / GPX', elevationGain: 'Višinski metri'
 } as const;
 
 export const getProposalFieldRules = ({ frontendType, hasRaceContext, hasCompleteRaceIdentity, identity = {} }: { frontendType: FrontendProposalType; hasRaceContext: boolean; hasCompleteRaceIdentity: boolean; identity?: Partial<Record<'date' | 'title' | 'place' | 'region', boolean>> }) => {
@@ -146,7 +146,7 @@ export const readProposalPrefill = (params: URLSearchParams, pageLanguage: Propo
   const safeReturnUrl = isSafeInternalReturnUrl(returnUrl) ? returnUrl : '';
   const description = eventTitle ? buildPrefillDescription({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }) : '';
   const get = (key: string) => params.get(key)?.trim() ?? '';
-  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: noticeUrlParam, registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationMinEur: get('registrationMinEur'), registrationMaxEur: get('registrationMaxEur'), registrationDescription: get('registrationDescription'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl') };
+  return { eventTitle, year, date, place, source, officialSourceUrl, returnUrl, lang, safeReturnUrl, description, context, eventKey: get('eventKey'), region: get('region'), startTime: get('startTime'), distances: get('distances'), surface: get('surface'), noticeUrl: noticeUrlParam, registrationUrl: get('registrationUrl'), cup: get('cup'), registrationFee: get('registrationFee'), registrationMinEur: get('registrationMinEur'), registrationMaxEur: get('registrationMaxEur'), registrationDescription: get('registrationDescription'), registrationDeadline: get('registrationDeadline'), earlyRegistrationDeadline: get('earlyRegistrationDeadline'), dayOfRegistration: get('dayOfRegistration'), elevationGain: get('elevationGain'), routeUrl: get('routeUrl'), otherDetails: get('otherDetails'), organizator_naziv: get('organizator_naziv'), organizator_url: get('organizator_url') };
 };
 
 export const buildPrefillDescription = ({ eventTitle, year, date, place, officialSourceUrl, safeReturnUrl, lang }: { eventTitle: string; year: string; date: string; place: string; officialSourceUrl: string; safeReturnUrl: string; lang: ProposalLanguage }) => {
@@ -163,7 +163,7 @@ export const buildPrefillDescription = ({ eventTitle, year, date, place, officia
 
 
 
-export type StructuredBasicCorrectionKey = 'date' | 'title' | 'place' | 'region' | 'startTime' | 'distances' | 'surface' | 'noticeUrl' | 'registrationUrl' | 'cup';
+export type StructuredBasicCorrectionKey = 'date' | 'title' | 'place' | 'region' | 'startTime' | 'distances' | 'surface' | 'noticeUrl' | 'registrationUrl' | 'cup' | 'organizator_naziv' | 'organizator_url';
 export type StructuredBasicCorrections = Partial<Record<StructuredBasicCorrectionKey, string>>;
 export type StructuredBasicCurrentValues = Partial<Record<StructuredBasicCorrectionKey, string>>;
 
@@ -177,7 +177,9 @@ export const structuredBasicCorrectionFields = [
   { key: 'surface', labels: { sl: 'Vrsta podlage', en: 'Surface' } },
   { key: 'noticeUrl', labels: { sl: 'Uradni razpis', en: 'Official announcement URL' } },
   { key: 'registrationUrl', labels: { sl: 'Prijavna povezava', en: 'Registration URL' } },
-  { key: 'cup', labels: { sl: 'Pokal ali serija', en: 'Cup or series' } }
+  { key: 'cup', labels: { sl: 'Pokal ali serija', en: 'Cup or series' } },
+  { key: 'organizator_naziv', labels: { sl: 'Uradni naziv organizatorja', en: 'Official organizer name' } },
+  { key: 'organizator_url', labels: { sl: 'Uradna spletna stran organizatorja', en: 'Organizer website' } }
 ] as const;
 
 export const hasStructuredBasicCorrections = (details: StructuredBasicCorrections = {}) => structuredBasicCorrectionFields.some((field) => cleanSubmissionValue(details[field.key]).length > 0);
@@ -224,9 +226,9 @@ export type StructuredAdditionalDetails = {
   otherDetails?: string;
   correctionIntent?: string;
 };
-export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
+export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl' | 'otherDetails', string>>;
 
-export type NewRaceDetails = Pick<StructuredBasicCorrections, 'startTime' | 'distances' | 'surface' | 'registrationUrl' | 'cup'> & StructuredAdditionalDetails;
+export type NewRaceDetails = Pick<StructuredBasicCorrections, 'startTime' | 'distances' | 'surface' | 'registrationUrl' | 'cup' | 'organizator_naziv' | 'organizator_url'> & StructuredAdditionalDetails;
 
 const structuredAdditionalFields = [
   { key: 'registrationMinEur', value: 'Prijavnina / startnina', labels: { sl: 'Najnižja prijavnina', en: 'Minimum entry fee' }, suffix: '' },
@@ -283,8 +285,8 @@ export const buildStructuredAdditionalDescription = ({ details = {}, currentValu
 
 export const buildNewRaceDescription = ({ userText = '', details = {}, lang }: { userText?: string; details?: NewRaceDetails; lang: ProposalLanguage }) => {
   const labels = lang === 'en'
-    ? { startTime: 'Start time', distances: 'Distances', surface: 'Surface', registrationUrl: 'Registration URL', cup: 'Cup or series', registrationMinEur: 'Minimum entry fee', registrationMaxEur: 'Maximum entry fee', registrationDescription: 'Entry fee description', registrationDeadline: 'Registration deadline', cheaperRegistration: 'Cheaper registration deadline', raceDayRegistration: 'Race-day registration', elevationGain: 'Elevation gain', routeUrl: 'Route, map or GPX', otherDetails: 'Other additional details' }
-    : { startTime: 'Čas začetka', distances: 'Razdalje', surface: 'Vrsta podlage', registrationUrl: 'Prijavna povezava', cup: 'Pokal ali serija', registrationMinEur: 'Najnižja prijavnina', registrationMaxEur: 'Najvišja prijavnina', registrationDescription: 'Opis prijavnine', registrationDeadline: 'Rok prijave', cheaperRegistration: 'Rok cenejše prijave', raceDayRegistration: 'Prijave na dan dogodka', elevationGain: 'Višinski metri', routeUrl: 'Trasa, zemljevid ali GPX', otherDetails: 'Drugi dodatni podatki' };
+    ? { startTime: 'Start time', distances: 'Distances', surface: 'Surface', registrationUrl: 'Registration URL', cup: 'Cup or series', organizator_naziv: 'Official organizer name', organizator_url: 'Organizer website', registrationMinEur: 'Minimum entry fee', registrationMaxEur: 'Maximum entry fee', registrationDescription: 'Entry fee description', registrationDeadline: 'Registration deadline', cheaperRegistration: 'Cheaper registration deadline', raceDayRegistration: 'Race-day registration', elevationGain: 'Elevation gain', routeUrl: 'Route, map or GPX', otherDetails: 'Other additional details' }
+    : { startTime: 'Čas začetka', distances: 'Razdalje', surface: 'Vrsta podlage', registrationUrl: 'Prijavna povezava', cup: 'Pokal ali serija', organizator_naziv: 'Uradni naziv organizatorja', organizator_url: 'Uradna spletna stran organizatorja', registrationMinEur: 'Najnižja prijavnina', registrationMaxEur: 'Najvišja prijavnina', registrationDescription: 'Opis prijavnine', registrationDeadline: 'Rok prijave', cheaperRegistration: 'Rok cenejše prijave', raceDayRegistration: 'Prijave na dan dogodka', elevationGain: 'Višinski metri', routeUrl: 'Trasa, zemljevid ali GPX', otherDetails: 'Drugi dodatni podatki' };
   const keys = Object.keys(labels) as (keyof typeof labels)[];
   const lines = keys.map((key) => {
     const value = cleanSubmissionValue(details[key]);

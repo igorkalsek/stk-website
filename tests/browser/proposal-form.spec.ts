@@ -5,7 +5,7 @@ const contract = googleProposalFormContract;
 const normalizeLineEndings = (value: FormDataEntryValue | null | undefined) => String(value ?? '').replace(/\r\n?/g, '\n');
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
-const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa`;
+const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa&otherDetails=Dru%C5%BEinam%20prijazno&organizator_naziv=%C5%A0D%20Objavljeno&organizator_url=https%3A%2F%2Fexample.com%2Forg`;
 const zagorjeContextQuery = 'event=21.%20Tek%20in%20pohod%20po%20Zagorski%20dolini&year=2026&date=2026-08-01&place=Zagorje%20ob%20Savi&region=Zasavska&startTime=18%3A00&distances=0%2C2%20km%20%C2%B7%200%2C3%20km%20%C2%B7%200%2C5%20km%20%C2%B7%201%20km%20%C2%B7%204%2C6%20km%20%C2%B7%207%2C5%20km%20%C2%B7%2010%2C3%20km&surface=Cesta&registrationMinEur=15&registrationMaxEur=25&registrationDescription=Otro%C5%A1ki%20teki&registrationDeadline=2026-08-01&earlyRegistrationDeadline=2026-07-27&dayOfRegistration=DA';
 
 type InterceptedForm = { getPayloads: () => URLSearchParams[]; getPayload: () => URLSearchParams | undefined; getSubmissions: () => number; getUrls: () => string[]; getDirectPosts: () => number };
@@ -73,7 +73,15 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Ime organizacije ali društva'); await expect(page.locator('#confirmation-organization')).toBeFocused();
     await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com');
     await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
-    await expect(page.getByRole('alert')).toContainText('Potrjujem, da nastopam'); await expect(page.locator('#confirmation-statement')).toBeFocused();
+    await expect(page.getByRole('alert')).toContainText('Potrjujem, da nastopam');
+    const publishedSummary = page.getByRole('region', { name: 'Objavljeni podatki o teku' }).locator('.confirmation-summary');
+    await expect(publishedSummary.getByText('Uradni naziv organizatorja')).toBeVisible();
+    await expect(publishedSummary.getByText('ŠD Objavljeno')).toBeVisible();
+    await expect(publishedSummary.getByText('Uradna spletna stran organizatorja')).toBeVisible();
+    await expect(publishedSummary).toContainText('Dolgi Šmarnogorski tek');
+    await expect(publishedSummary).toContainText('2027-05-01');
+    await expect(publishedSummary).toContainText('ŠD Objavljeno');
+    await expect(page.locator('#confirmation-statement')).toBeFocused();
     await page.locator('#confirmation-statement').check(); await page.getByRole('button', { name: 'Potrdite podatke' }).click();
     await expect.poll(() => intercepted.getSubmissions()).toBe(1); const payload = intercepted.getPayload();
     expect(payload?.get(contract.fields.proposalType)).toBe(contract.values.proposalTypes[1]);
@@ -88,6 +96,9 @@ test.describe('native proposal form', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`/en/add-or-correct-race/?mode=confirm&${completeContextQuery.replace('lang=sl', 'lang=en').replace('/tek/2027/', '/en/races/2027/')}`); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Published race information' })).toBeVisible();
+    const publishedSummary = page.getByRole('region', { name: 'Published race information' }).locator('.confirmation-summary');
+    await expect(publishedSummary.getByText('Official organizer name')).toBeVisible();
+    await expect(publishedSummary.getByText('ŠD Objavljeno')).toBeVisible();
     await expect(page.getByRole('link', { name: 'The information is not correct – open the correction form' })).not.toHaveAttribute('href', /mode=confirm/);
     await page.locator('#confirmation-organization').fill('Test Club'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
     await page.getByRole('button', { name: 'Confirm information' }).click(); await expect.poll(() => intercepted.getSubmissions()).toBe(1);
@@ -126,7 +137,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByTestId('additional-correction-intent')).toBeHidden();
     await expect(page.locator('[data-change-summary]')).toBeHidden();
     await expect(page.getByRole('heading', { name: 'Podatki o izvedbi' })).toBeVisible();
-    for (const testId of ['basic-correction-start-time', 'basic-correction-distances', 'basic-correction-surface', 'basic-correction-registration-url', 'basic-correction-cup', 'additional-entry-fee-min', 'additional-entry-fee-max', 'additional-entry-fee-description', 'additional-registration-deadline', 'additional-cheaper-registration', 'additional-race-day-registration', 'additional-elevation', 'additional-route-url', 'additional-other']) {
+    for (const testId of ['basic-correction-start-time', 'basic-correction-distances', 'basic-correction-surface', 'basic-correction-registration-url', 'basic-correction-cup', 'additional-entry-fee-min', 'additional-entry-fee-max', 'additional-entry-fee-description', 'additional-registration-deadline', 'additional-cheaper-registration', 'additional-race-day-registration', 'additional-elevation', 'additional-route-url', 'additional-other', 'basic-correction-organizer-name', 'basic-correction-organizer-url']) {
       await expect(page.getByTestId(testId)).toBeVisible();
       await expect(page.getByTestId(testId)).toBeEnabled();
     }
@@ -164,6 +175,8 @@ test.describe('native proposal form', () => {
     await page.getByTestId('basic-correction-surface').selectOption('asfalt');
     await page.getByTestId('basic-correction-registration-url').fill('https://example.com/prijava');
     await page.getByTestId('basic-correction-cup').fill('Pokal STK');
+    await page.getByTestId('basic-correction-organizer-name').fill('ŠD Objavljeno');
+    await page.getByTestId('basic-correction-organizer-url').fill('https://example.com/organizator');
     await page.getByTestId('additional-entry-fee-min').fill('15');
     await page.getByTestId('additional-entry-fee-max').fill('25');
     await page.getByTestId('additional-entry-fee-description').fill('Cena je odvisna od razdalje.');
@@ -186,7 +199,7 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.place)).toBe('Maribor');
     expect(payload?.get(contract.fields.region)).toBe('Podravska');
     expect(payload?.get(contract.fields.officialSource)).toBe('https://example.com/razpis/2026?zelo=dolg-url');
-    const expectedDescription = 'Razdalje 10 km in 21 km, start ob 10.00.\n\nČas začetka: 10:00\nRazdalje: 10 km; 21 km\nVrsta podlage: asfalt\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki';
+    const expectedDescription = 'Razdalje 10 km in 21 km, start ob 10.00.\n\nČas začetka: 10:00\nRazdalje: 10 km; 21 km\nVrsta podlage: asfalt\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nUradni naziv organizatorja: ŠD Objavljeno\nUradna spletna stran organizatorja: https://example.com/organizator\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki';
     expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(expectedDescription);
     expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
     const fallbackParams = new URL(await page.locator('[data-correction-form-link]').getAttribute('href') || '').searchParams;
