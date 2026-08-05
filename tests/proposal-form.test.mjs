@@ -66,7 +66,7 @@ describe('proposal form contract', () => {
   it('builds structured basic correction descriptions deterministically', () => {
     assert.equal(hasStructuredBasicCorrections({}), false);
     assert.equal(hasStructuredBasicCorrections({ date: '2026-08-02' }), true);
-    assert.deepEqual(structuredBasicCorrectionFields.map((field) => field.key), ['date','title','place','region','startTime','distances','surface','noticeUrl','registrationUrl','cup']);
+    assert.deepEqual(structuredBasicCorrectionFields.map((field) => field.key), ['date','title','place','region','startTime','distances','surface','noticeUrl','registrationUrl','cup','organizator_naziv','organizator_url']);
     const currentValues = { date: '2026-08-01', title: 'Stari tek', place: 'Kranj', startTime: '18:00', registrationUrl: 'https://example.com/stara' };
     const corrections = { registrationUrl: 'https://example.com/nova', date: '2026-08-02', startTime: '19:00', title: '' };
     assert.equal(buildStructuredBasicCorrectionDescription({ lang: 'sl', currentValues, corrections }), 'Osnovni popravki:\n\nDatum\nTrenutno: 2026-08-01\nPredlagano: 2026-08-02\n\nČas začetka\nTrenutno: 18:00\nPredlagano: 19:00\n\nPrijavna povezava\nTrenutno: https://example.com/stara\nPredlagano: https://example.com/nova');
@@ -78,8 +78,8 @@ describe('proposal form contract', () => {
   });
 
   it('combines basic corrections, explanation, and additional data in Google Forms description while preserving identity entries', () => {
-    const description = combineCorrectionDescription({ lang: 'sl', basicDescription: 'Dodatno pojasnilo.', structuredBasicCorrections: { date: '2026-08-02' }, structuredBasicCurrentValues: { date: '2026-08-01' }, structuredDetails: { registrationMinEur: '20' } });
-    assert.equal(description, 'Osnovni popravki:\n\nDatum\nTrenutno: 2026-08-01\nPredlagano: 2026-08-02\n\nDodatno pojasnilo.\n\nDodatni podatki:\n\nNajnižja prijavnina: 20');
+    const description = combineCorrectionDescription({ lang: 'sl', basicDescription: 'Dodatno pojasnilo.', structuredBasicCorrections: { date: '2026-08-02', organizator_naziv: 'Novo društvo' }, structuredBasicCurrentValues: { date: '2026-08-01', organizator_naziv: 'Staro društvo' }, structuredDetails: { registrationMinEur: '20' } });
+    assert.equal(description, 'Osnovni popravki:\n\nDatum\nTrenutno: 2026-08-01\nPredlagano: 2026-08-02\n\nUradni naziv organizatorja\nTrenutno: Staro društvo\nPredlagano: Novo društvo\n\nDodatno pojasnilo.\n\nDodatni podatki:\n\nNajnižja prijavnina: 20');
     const entries = new URLSearchParams(buildGoogleFormsSubmissionEntries({ proposalType: googleProposalFormContract.values.proposalTypes[1], date: '2026-08-01', title: 'Stari tek', place: 'Kranj', region: 'Gorenjska', description, organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com' }));
     assert.equal(entries.get(googleProposalFormContract.fields.date), '2026-08-01');
     assert.equal(entries.get(googleProposalFormContract.fields.title), 'Stari tek');
@@ -98,8 +98,8 @@ describe('proposal form contract', () => {
     assert.equal(combined, 'Date should be 2026-09-12.\n\nAdditional details:\n\nMinimum entry fee: 20');
   });
   it('builds compact new-race descriptions and categories from structured values', () => {
-    const details = { startTime: '18:00', distances: '5;10;21.1', surface: 'cesta', registrationUrl: 'https://example.com/prijava', cup: 'Pokal STK', registrationMinEur: '15', registrationMaxEur: '25', registrationDescription: 'Cena je odvisna od razdalje.', registrationDeadline: '2026-08-01', cheaperRegistration: '2026-07-27', raceDayRegistration: 'Da', elevationGain: '450', routeUrl: 'https://example.com/trasa', otherDetails: 'Otroški teki' };
-    assert.equal(buildNewRaceDescription({ userText: 'Parkiranje je omejeno.', details, lang: 'sl' }), 'Parkiranje je omejeno.\n\nČas začetka: 18:00\nRazdalje: 5;10;21.1\nVrsta podlage: cesta\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki');
+    const details = { startTime: '18:00', distances: '5;10;21.1', surface: 'cesta', registrationUrl: 'https://example.com/prijava', cup: 'Pokal STK', organizator_naziv: 'ŠD Objavljeno', organizator_url: 'https://example.com/organizator', registrationMinEur: '15', registrationMaxEur: '25', registrationDescription: 'Cena je odvisna od razdalje.', registrationDeadline: '2026-08-01', cheaperRegistration: '2026-07-27', raceDayRegistration: 'Da', elevationGain: '450', routeUrl: 'https://example.com/trasa', otherDetails: 'Otroški teki' };
+    assert.equal(buildNewRaceDescription({ userText: 'Parkiranje je omejeno.', details, lang: 'sl' }), 'Parkiranje je omejeno.\n\nČas začetka: 18:00\nRazdalje: 5;10;21.1\nVrsta podlage: cesta\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nUradni naziv organizatorja: ŠD Objavljeno\nUradna spletna stran organizatorja: https://example.com/organizator\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki');
     assert.equal(buildNewRaceDescription({ details: { distances: '10 km', elevationGain: '0' }, lang: 'en' }), 'Distances: 10 km\nElevation gain: 0');
     assert.deepEqual(additionalDataValuesForStructuredDetails(details), ['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
   });
@@ -183,7 +183,7 @@ describe('proposal form contract', () => {
     assert.equal(searchPublicRaces(races, 'ljubljana')[0].row, '13');
     assert.equal(searchPublicRaces(races, 'Smarna gora')[0].row, '13');
     assert.equal(searchPublicRaces([{ ...base, date: '', title: '' }, ...races], 'tek', 1).length, 1);
-    const url = buildRaceCorrectionContextUrl({ ...base, additionalData: { masterRow: '12', registrationMinEur: '20', registrationMaxEur: '25', registrationDeadline: '2026-07-10', earlyRegistrationDeadline: '2026-06-30', dayOfRegistration: 'Da', elevationGain: '650', routeUrl: 'https://example.com/gpx' } }, 'sl', 'https://evil.test/');
+    const url = buildRaceCorrectionContextUrl({ ...base, additionalData: { masterRow: '12', registrationMinEur: '20', registrationMaxEur: '25', registrationDeadline: '2026-07-10', earlyRegistrationDeadline: '2026-06-30', dayOfRegistration: 'Da', elevationGain: '650', routeUrl: 'https://example.com/gpx', organizerName: 'ŠD Bevkov vrh', organizerUrl: 'https://example.com/organizator' }, publicNotes: 'Družinam prijazno: otroški teki.' }, 'sl', 'https://evil.test/');
     const parsed = new URL(url, 'https://tekaski-koledar.si');
     assert.equal(parsed.pathname, '/dodaj-ali-popravi-tek/');
     assert.equal(parsed.searchParams.get('event'), base.title);
@@ -192,6 +192,9 @@ describe('proposal form contract', () => {
     assert.equal(parsed.searchParams.get('returnUrl'), '/tek/2026/r000012-20-gorski-tek-na-bevkov-vrh-trail-2026/');
     assert.equal(parsed.searchParams.get('registrationFee'), '20–25');
     assert.equal(parsed.searchParams.get('routeUrl'), 'https://example.com/gpx');
+    assert.equal(parsed.searchParams.get('organizator_naziv'), 'ŠD Bevkov vrh');
+    assert.equal(parsed.searchParams.get('organizator_url'), 'https://example.com/organizator');
+    assert.equal(parsed.searchParams.get('otherDetails'), 'Družinam prijazno: otroški teki.');
   });
   it('does not add direct master or API writes', () => {
     const sources = ['src/components/RaceProposalForm.astro','src/proposal-form/proposal-form-controller.ts'].map((f) => readFileSync(new URL(`../${f}`, import.meta.url),'utf8')).join('\n');
@@ -211,7 +214,7 @@ describe('proposal form contract', () => {
   });
 
   it('builds deterministic organizer confirmation description and existing-contract payload', () => {
-    const prefill = readProposalPrefill(new URLSearchParams('event=Testni%20tek&eventKey=r000012&year=2026&date=2026-07-19&place=Kranj&region=Gorenjska&officialSource=https%3A%2F%2Fexample.com%2Frazpis'), 'sl');
+    const prefill = readProposalPrefill(new URLSearchParams('event=Testni%20tek&eventKey=r000012&year=2026&date=2026-07-19&place=Kranj&region=Gorenjska&officialSource=https%3A%2F%2Fexample.com%2Frazpis&organizator_naziv=%C5%A0D%20Objavljeno&organizator_url=https%3A%2F%2Fexample.com%2Forg'), 'sl');
     const details = { organization: 'ŠD Test', contactPerson: '', email: 'org@example.com', note: '', submissionDate: new Date('2026-07-15T22:30:00Z') };
     assert.equal(buildOrganizerConfirmationDescription({ ...prefill, ...details }), 'Vrsta predloga: Potrditev podatkov organizatorja\nEvent key: r000012\nLeto: 2026\nNaziv teka: Testni tek\nDatum: 2026-07-19\nKraj: Kranj\nOrganizacija: ŠD Test\nKontaktna oseba: \nKontaktni e-naslov: org@example.com\nPotrditvena izjava: Da\nOpomba: \nDatum oddaje: 2026-07-16');
     const submission = buildOrganizerConfirmationSubmission(prefill, details);
