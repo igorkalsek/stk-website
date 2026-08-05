@@ -226,7 +226,7 @@ export type StructuredAdditionalDetails = {
   otherDetails?: string;
   correctionIntent?: string;
 };
-export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl', string>>;
+export type StructuredAdditionalCurrentValues = Partial<Record<'registrationMinEur' | 'registrationMaxEur' | 'registrationDescription' | 'registrationDeadline' | 'cheaperRegistration' | 'raceDayRegistration' | 'elevationGain' | 'routeUrl' | 'otherDetails', string>>;
 
 export type NewRaceDetails = Pick<StructuredBasicCorrections, 'startTime' | 'distances' | 'surface' | 'registrationUrl' | 'cup' | 'organizator_naziv' | 'organizator_url'> & StructuredAdditionalDetails;
 

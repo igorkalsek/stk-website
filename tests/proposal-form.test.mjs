@@ -127,6 +127,14 @@ describe('proposal form contract', () => {
     assert.deepEqual(additionalDataValuesForStructuredDetails({ registrationMinEur: '25', routeUrl: 'https://example.com/trasa' }), ['Prijavnina / startnina', 'Trasa / zemljevid / GPX']);
   });
 
+  it('preserves public notes as current additional values for prefill, changes and removals', () => {
+    const prefill = readProposalPrefill(new URLSearchParams('event=Tek&year=2026&date=2026-09-12&place=Kranj&otherDetails=Dru%C5%BEinam%20prijazno%3A%20otro%C5%A1ki%20teki.'), 'sl');
+    assert.equal(prefill.otherDetails, 'Družinam prijazno: otroški teki.');
+    assert.equal(buildStructuredAdditionalDescription({ lang: 'sl', details: { otherDetails: 'Družinam prijazno: otroški teki na 500 m.' }, currentValues: { otherDetails: prefill.otherDetails } }), 'Dodatni podatki:\n\nDrugi dodatni podatki\nTrenutno: Družinam prijazno: otroški teki.\nPredlagano: Družinam prijazno: otroški teki na 500 m.');
+    assert.equal(buildStructuredAdditionalDescription({ lang: 'sl', details: {}, currentValues: { otherDetails: prefill.otherDetails }, removalKeys: ['otherDetails'] }), 'Dodatni podatki:\n\nDrugi dodatni podatki\nTrenutno: Družinam prijazno: otroški teki.\nPredlagano: ODSTRANI PODATEK');
+    assert.equal(buildStructuredAdditionalDescription({ lang: 'sl', details: {}, currentValues: { otherDetails: prefill.otherDetails } }), '');
+  });
+
   it('keeps structured business values identical between direct entries and fallback URL', () => {
     const input = { proposalType: googleProposalFormContract.values.proposalTypes[2], date: '2026-09-12', title: 'Tek', place: 'Kranj', region: 'Gorenjska', officialSource: '', description: buildStructuredAdditionalDescription({ lang: 'sl', details: { registrationMinEur: '20', routeUrl: 'https://example.com/trasa' } }), organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com', additionalData: additionalDataValuesForStructuredDetails({ registrationMinEur: '20', routeUrl: 'https://example.com/trasa' }) };
     const direct = new URLSearchParams(buildGoogleFormsSubmissionEntries(input));
