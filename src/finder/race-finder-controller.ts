@@ -5,7 +5,6 @@
   import { getStableEventId, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDistances } from '../utils-slovenian';
-  import { getSurfaceBadgeClass } from '../utils-surface-badge';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
   import { buildPrimaryActions } from '../utils-race-detail-view';
@@ -842,11 +841,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const renderEvent = (event: RaceEvent) => {
     const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
-    const surfaceBadgeClass = getSurfaceBadgeClass(event.surface);
-    const surfaceBadge = formattedSurface && surfaceBadgeClass
-      ? `<span class="${surfaceBadgeClass}">${escapeHtml(formattedSurface)}</span>`
-      : '';
     const metaItems = [
+      formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
       event.distances && `<span>${escapeHtml(formatDistances(event.distances))}</span>`,
       event.startTime && `<span>${locale.startLabel} ${escapeHtml(formatStartTime(event.startTime))}</span>`
     ].filter(Boolean).join('');
@@ -907,7 +903,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         <div class="search-event-row-main">
         <h3 class="search-event-title"><a class="search-event-title-link" href="${escapeHtml(detailPath)}">${escapeHtml(event.title)}</a></h3>
         ${[event.place, event.region].filter(Boolean).length ? `<p class="search-event-location">${[event.place, event.region].filter(Boolean).map(escapeHtml).join(' · ')}</p>` : ''}
-        ${surfaceBadge || metaItems ? `<div class="search-event-facts">${surfaceBadge}${metaItems ? `<span class="search-event-fact-text">${metaItems}</span>` : ''}</div>` : ''}
+        ${metaItems ? `<div class="search-event-facts">${metaItems}</div>` : ''}
         ${additionalDataChips}
         ${preferenceReasons}
         </div>

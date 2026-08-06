@@ -1,25 +1,20 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { getSurfaceBadgeClass, getSurfaceBadgeTone } from '../.cache/dist-test/utils-surface-badge.js';
 import { formatEnglishSurface } from '../.cache/dist-test/utils-english.js';
 import { formatSloveneSurface } from '../.cache/dist-test/utils-slovenian.js';
 import { canonicalSurfaceLabels, canonicalSurfaceValues } from '../.cache/dist-test/utils-surface-labels.js';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('surface values map to stable visual tones', () => {
-  for (const [value, expected] of [
-    ['cesta', 'road'], ['ROAD', 'road'], ['asfalt', 'road'], ['trail', 'trail'],
-    ['gorski', 'mountain'], ['Mountain', 'mountain'], ['vzpon', 'mountain'],
-    ['mešano', 'mixed'], ['mesano', 'mixed'], ['mixed', 'mixed'], ['cesta/trail', 'mixed'],
-    ['oviratlon', 'other'], ['nekaj novega', 'other'], ['', null], ['   ', null]
-  ]) assert.equal(getSurfaceBadgeTone(value), expected, value);
-  assert.equal(getSurfaceBadgeClass('trail'), 'surface-badge surface-badge--trail');
-  assert.equal(getSurfaceBadgeClass(''), '');
-});
+const assertAnalyticsContract = (source) => {
+  assert.match(source, /data-analytics-placement=/);
+  for (const attribute of ['event-id', 'event-name', 'event-date', 'event-year']) {
+    assert.match(source, new RegExp(`data-analytics-${attribute}=`));
+  }
+};
 
-test('surface labels remain localized and retain unknown source text', () => {
+test('canonical and fallback surface labels remain localized', () => {
   const expectedSl = ['Cesta', 'Asfalt', 'Makadam', 'Trail', 'Cesta/trail', 'Gorski tek'];
   const expectedEn = ['Road', 'Asphalt', 'Gravel road', 'Trail', 'Road/trail', 'Mountain race'];
   assert.deepEqual(canonicalSurfaceValues.map((value) => canonicalSurfaceLabels.sl[value]), expectedSl);
@@ -31,29 +26,31 @@ test('surface labels remain localized and retain unknown source text', () => {
   assert.equal(formatEnglishSurface('nova podlaga'), 'Nova podlaga');
 });
 
-test('static and refreshed homepage cards share surface badge structure', () => {
+test('static and refreshed homepage cards omit surface metadata and keep matching hierarchy', () => {
   const component = read('src/components/HomeUpcomingRaces.astro');
-  assert.match(component, /renderSurfaceBadgeHtml\(event\.surface, surfaceLabel, escapeHtml\)/);
-  assert.match(component, /renderSurfaceSummaryHtml\(summary, surfaceBadge, escapeHtml\)/);
+  assert.doesNotMatch(component, /event\.surface|surface-badge|event-card-summary/);
+  assert.match(component, /\$\{summary \? `<p>\$\{escapeHtml\(summary\)\}<\/p>` : ''\}/);
+  assertAnalyticsContract(component);
+
   for (const path of ['src/pages/index.astro', 'src/pages/en/index.astro']) {
     const source = read(path);
     const refresh = source.slice(source.indexOf('async function loadNearestEvents()'), source.indexOf('async function loadStats()'));
-    assert.match(refresh, /getEventField\(event, 'tip_podlage', \['surface'\]\)/);
-    assert.match(refresh, /getSurfaceBadgeClass\(surface\)/);
-    assert.match(refresh, /event-card-summary/);
-    assert.match(refresh, /data-analytics-placement="home_this_week"/);
-    for (const attribute of ['event-id', 'event-name', 'event-date', 'event-year']) {
-      assert.match(refresh, new RegExp(`data-analytics-${attribute}=`));
-    }
+    assert.doesNotMatch(refresh, /tip_podlage|surface-badge|event-card-summary/);
+    assert.match(refresh, /\$\{summary \? `<p>\$\{escapeHtml\(summary\)\}<\/p>` : ''\}/);
+    assertAnalyticsContract(refresh);
   }
 });
 
-test('finder renders the badge separately before delimited facts and preserves analytics', () => {
+test('finder renders surface as an ordinary optional delimited metadata item', () => {
   const source = read('src/finder/race-finder-controller.ts');
-  assert.match(source, /getSurfaceBadgeClass\(event\.surface\)/);
-  assert.match(source, /\$\{surfaceBadge\}\$\{metaItems/);
-  assert.match(source, /data-analytics-placement="finder_results"/);
-  for (const attribute of ['event-id', 'event-name', 'event-date', 'event-year']) {
-    assert.match(source, new RegExp(`data-analytics-${attribute}=`));
-  }
+  assert.match(source, /formattedSurface && `<span>\$\{escapeHtml\(formattedSurface\)\}<\/span>`/);
+  assert.match(source, /\[\s*formattedSurface[\s\S]*?event\.distances[\s\S]*?event\.startTime[\s\S]*?\]\.filter\(Boolean\)\.join\(''\)/);
+  assert.match(source, /\$\{metaItems \? `<div class="search-event-facts">\$\{metaItems\}<\/div>` : ''\}/);
+  assert.doesNotMatch(source, /surface-badge|surfaceBadge|search-event-fact-text/);
+  const styles = read('src/styles/global.css');
+  const factsStyles = styles.slice(styles.indexOf('.search-event-facts {'), styles.indexOf('.search-event-primary-actions'));
+  assert.match(factsStyles, /color: var\(--muted\)/);
+  assert.match(factsStyles, /span:not\(:last-child\)::after[\s\S]*?content: "·"/);
+  assert.doesNotMatch(factsStyles, /border|border-radius|background/);
+  assertAnalyticsContract(source);
 });

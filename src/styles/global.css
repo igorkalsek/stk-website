@@ -1039,35 +1039,6 @@ main {
   color: var(--muted);
 }
 
-.event-card-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.surface-badge {
-  display: inline-flex;
-  min-height: 25px;
-  align-items: center;
-  width: fit-content;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 3px 9px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.surface-badge--road { background: rgba(16, 64, 80, 0.09); border-color: rgba(16, 64, 80, 0.14); color: #103f4f; }
-.surface-badge--trail { background: rgba(200, 230, 201, 0.62); border-color: rgba(65, 120, 70, 0.18); color: #245d2b; }
-.surface-badge--mountain { background: rgba(240, 160, 48, 0.13); border-color: rgba(180, 105, 12, 0.16); color: #714307; }
-.surface-badge--mixed,
-.surface-badge--other { background: rgba(100, 130, 136, 0.11); border-color: rgba(62, 96, 104, 0.14); color: #34535a; }
-
 
 .event-card-date {
   display: inline-grid;
@@ -5039,18 +5010,12 @@ main {
 .search-event-facts {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 8px;
-  color: var(--deep-teal);
-  font-weight: 800;
+  gap: 4px 0;
+  color: var(--muted);
+  font-weight: 600;
 }
 
-.search-event-fact-text {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.search-event-fact-text > span:not(:last-child)::after {
+.search-event-facts span:not(:last-child)::after {
   content: "·";
   color: var(--muted);
   margin: 0 0.45rem;

@@ -3,10 +3,9 @@ import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOu
 import { renderActionIcon } from '../utils-action-icons';
 import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, type PublicRaceEvent } from '../utils-event-detail';
 import { buildPrimaryActions } from '../utils-race-detail-view';
-import { formatEnglishDateBadge, formatEnglishSurface } from '../utils-english';
+import { formatEnglishDateBadge } from '../utils-english';
 import { buildHomepageCalendarEventInput } from '../utils-home-events';
-import { formatSloveneDateBadge, formatSloveneSurface } from '../utils-slovenian';
-import { renderSurfaceBadgeHtml, renderSurfaceSummaryHtml } from '../utils-surface-badge';
+import { formatSloveneDateBadge } from '../utils-slovenian';
 
 type Props = {
   events: PublicRaceEvent[];
@@ -48,28 +47,17 @@ const renderCalendarOptions = (event: PublicRaceEvent) => {
   return `<details class="calendar-menu"><summary class="button button-small button-secondary-light"><span class="action-icon">${renderActionIcon('calendar')}</span><span>${label}</span></summary><div class="calendar-menu-options">${options}</div></details>`;
 };
 
-const cards = events.map((event) => {
+const cardsHtml = events.map((event) => {
   const formattedDate = dateFormatter.format(new Date(event.date));
   const summary = [event.place, event.region].filter(Boolean).join(' · ');
-  const surfaceLabel = lang === 'en' ? formatEnglishSurface(event.surface) : formatSloveneSurface(event.surface);
-  const surfaceBadge = renderSurfaceBadgeHtml(event.surface, surfaceLabel, escapeHtml);
-  const summaryHtml = renderSurfaceSummaryHtml(summary, surfaceBadge, escapeHtml);
   const links = [
     ...buildPrimaryActions({ registrationUrl: event.registrationUrl, noticeUrl: event.noticeUrl }, lang).map(renderPrimaryActionLink),
     renderCalendarOptions(event),
     renderSavedRaceButton(event)
   ].filter(Boolean).join('');
-  return { event, formattedDate, links, summaryHtml };
-});
+
+  return `<article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(getStableEventId(event))}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div class="event-card-heading"><time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formattedDate)}">${escapeHtml(formatDateBadge(event.date))}</time><h3><a href="${escapeHtml(detailPath(event))}">${escapeHtml(event.displayTitle)}</a></h3></div>${summary ? `<p>${escapeHtml(summary)}</p>` : ''}${links ? `<div class="event-actions">${links}</div>` : ''}</article>`;
+}).join('');
 ---
 
-{cards.map(({ event, formattedDate, links, summaryHtml }) => (
-  <article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id={getStableEventId(event)} data-analytics-event-name={event.displayTitle} data-analytics-event-date={event.date} data-analytics-event-year={event.year}>
-    <div class="event-card-heading">
-      <time class="event-card-date" datetime={event.date} aria-label={formattedDate}>{formatDateBadge(event.date)}</time>
-      <h3><a href={detailPath(event)}>{event.displayTitle}</a></h3>
-    </div>
-    <Fragment set:html={summaryHtml} />
-    {links && <div class="event-actions" set:html={links} />}
-  </article>
-))}
+<Fragment set:html={cardsHtml} />
