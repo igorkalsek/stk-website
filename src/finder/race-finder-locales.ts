@@ -1,16 +1,10 @@
 import { buildEnglishEventDetailPath, buildEventDetailPath } from '../utils-event-detail.js';
 import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../utils-english.js';
-import { formatSloveneDateBadge } from '../utils-slovenian.js';
+import { formatSloveneDateBadge, formatSloveneSurface } from '../utils-slovenian.js';
 import type { CalendarEventLinkInput } from '../utils-calendar.js';
 import type { RaceFinderLocale } from './race-finder-types.js';
 
 const slMonthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
-const formatSloveneSurface = (value: string) => {
-  const trimmed = value.trim();
-  if (!trimmed) return '';
-  return trimmed.toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
-};
-
 export const buildPreferenceRegionInputId = (language: RaceFinderLocale['language'], index: number) => `pref-region-${language}-${index}`;
 
 export const buildRaceFinderCalendarEventInput = (locale: Pick<RaceFinderLocale, 'language'>, event: Omit<CalendarEventLinkInput, 'language'>): CalendarEventLinkInput => ({

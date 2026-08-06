@@ -250,6 +250,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { getStableEventId } from '../../utils-event-detail';
   import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
+  import { formatEnglishSurface } from '../../utils-english';
+  import { getSurfaceBadgeClass } from '../../utils-surface-badge';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -1347,11 +1349,14 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const date = formatDate(dateValue);
         const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
         const region = getEventField(event, 'regija', ['region']);
+        const surface = getEventField(event, 'tip_podlage', ['surface']);
         const analyticsEventId = getEventStableId(event, title, dateValue, location);
         const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
+        const surfaceBadgeClass = getSurfaceBadgeClass(surface);
+        const surfaceBadge = surfaceBadgeClass ? `<span class="${surfaceBadgeClass}">${escapeHtml(formatEnglishSurface(surface))}</span>` : '';
         const links = [
           ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'en').map(renderPrimaryActionLink),
           calendarOptions,
@@ -1364,7 +1369,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
               <time class="event-card-date" datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time>
               <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
-            ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
+            ${summary || surfaceBadge ? `<div class="event-card-summary">${summary ? `<span>${escapeHtml(summary)}</span>` : ''}${surfaceBadge}</div>` : ''}
             ${links ? `<div class="event-actions">${links}</div>` : ''}
           </article>
         `;

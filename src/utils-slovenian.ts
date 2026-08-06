@@ -42,3 +42,9 @@ export const formatSloveneDistances = (value: string) => value
   .map(formatSloveneDistancePart)
   .filter(Boolean)
   .join(' · ');
+
+export const formatSloveneSurface = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return trimmed.toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
+};
