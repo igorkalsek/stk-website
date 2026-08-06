@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import { getSurfaceBadgeClass, getSurfaceBadgeTone } from '../.cache/dist-test/utils-surface-badge.js';
 import { formatEnglishSurface } from '../.cache/dist-test/utils-english.js';
 import { formatSloveneSurface } from '../.cache/dist-test/utils-slovenian.js';
+import { canonicalSurfaceLabels, canonicalSurfaceValues } from '../.cache/dist-test/utils-surface-labels.js';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -19,10 +20,13 @@ test('surface values map to stable visual tones', () => {
 });
 
 test('surface labels remain localized and retain unknown source text', () => {
-  assert.equal(formatSloveneSurface('CESTA'), 'Cesta');
+  const expectedSl = ['Cesta', 'Asfalt', 'Makadam', 'Trail', 'Cesta/trail', 'Gorski tek'];
+  const expectedEn = ['Road', 'Asphalt', 'Gravel road', 'Trail', 'Road/trail', 'Mountain race'];
+  assert.deepEqual(canonicalSurfaceValues.map((value) => canonicalSurfaceLabels.sl[value]), expectedSl);
+  assert.deepEqual(canonicalSurfaceValues.map(formatSloveneSurface), expectedSl);
+  assert.deepEqual(canonicalSurfaceValues.map((value) => canonicalSurfaceLabels.en[value]), expectedEn);
+  assert.deepEqual(canonicalSurfaceValues.map(formatEnglishSurface), expectedEn);
   assert.equal(formatSloveneSurface('oviratlon'), 'Oviratlon');
-  assert.equal(formatEnglishSurface('cesta'), 'Road');
-  assert.equal(formatEnglishSurface('gorski'), 'Mountain');
   assert.equal(formatEnglishSurface('oviratlon'), 'Obstacle run');
   assert.equal(formatEnglishSurface('nova podlaga'), 'Nova podlaga');
 });

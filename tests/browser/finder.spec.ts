@@ -137,6 +137,7 @@ test('removes individual chips and preserves direct filters distinct from quick 
 });
 
 test('exercises production additional-data fields for direct filters', async ({ page }) => {
+  await page.clock.setFixedTime('2026-08-01T12:00:00+02:00');
   await openFinder(page, '/en/find-races/?fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800');
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
   await expect(page.locator('[data-filter="deadline"]')).toHaveValue('within-14');

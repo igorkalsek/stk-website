@@ -1,5 +1,8 @@
 import { googleProposalFormContract } from './proposal-form-contract.js';
 import type { ProposalLanguage } from './proposal-form-types.js';
+import { canonicalSurfaceLabels, canonicalSurfaceValues } from '../utils-surface-labels.js';
+
+export { canonicalSurfaceValues } from '../utils-surface-labels.js';
 
 const typeLabels = {
   sl: ['Nov tek', 'Popravek ali dopolnitev obstoječega teka', 'Drugo'],
@@ -68,5 +71,7 @@ export const proposalFormLocales = {
 export const proposalTypeOptions = (lang: ProposalLanguage) => ['new', 'existing'].map((value, index) => ({ value, label: proposalFormLocales[lang].typeLabels[lang][index] }));
 
 // Values observed in the public STK event feed. Keep values Slovene even on English pages.
-export const canonicalSurfaceValues = ['cesta', 'asfalt', 'makadam', 'trail', 'cesta/trail', 'gorski tek'] as const;
-export const surfaceLabels = { sl: { cesta: 'Cesta', asfalt: 'Asfalt', makadam: 'Makadam', trail: 'Trail', 'cesta/trail': 'Cesta/trail', 'gorski tek': 'Gorski tek', other: 'Ne vem / drugo – navedem v opisu' }, en: { cesta: 'Road', asfalt: 'Asphalt', makadam: 'Gravel road', trail: 'Trail', 'cesta/trail': 'Road/trail', 'gorski tek': 'Mountain race', other: 'I do not know / other – I will explain below' } } as const;
+export const surfaceLabels = {
+  sl: { ...canonicalSurfaceLabels.sl, other: 'Ne vem / drugo – navedem v opisu' },
+  en: { ...canonicalSurfaceLabels.en, other: 'I do not know / other – I will explain below' }
+} as const;

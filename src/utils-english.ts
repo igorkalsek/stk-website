@@ -1,3 +1,5 @@
+import { canonicalSurfaceLabels } from './utils-surface-labels.js';
+
 const MONTH_NAMES = [
   'January',
   'February',
@@ -57,12 +59,10 @@ export const formatEnglishSurface = (value: string) => {
   if (!trimmed) return '';
 
   const labels: Record<string, string> = {
-    cesta: 'Road',
-    'cesta/trail': 'Road/trail',
+    ...canonicalSurfaceLabels.en,
     gorski: 'Mountain',
     oviratlon: 'Obstacle run',
-    stopnice: 'Stairs',
-    trail: 'Trail'
+    stopnice: 'Stairs'
   };
 
   return labels[trimmed.toLocaleLowerCase('sl-SI')] ?? trimmed.replace(/^./, (letter) => letter.toLocaleUpperCase('en-GB'));
