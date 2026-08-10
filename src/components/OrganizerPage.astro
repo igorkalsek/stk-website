@@ -7,9 +7,6 @@ const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
 const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
 const fields = en ? ['Date', 'Place', 'Distances', 'Registration', 'Course', 'Entry fee', 'Registration deadlines', 'Family programme', 'Organiser'] : ['datum', 'kraj', 'razdalje', 'prijavo', 'traso', 'prijavnino', 'prijavne roke', 'družinski program', 'organizatorja'];
 const stats = en ? ['1,248 profile views', '384 registration clicks', '127 race-info clicks', '82 organiser website clicks'] : ['1.248 ogledov profila', '384 klikov na prijavo', '127 klikov na razpis', '82 klikov na spletno stran organizatorja'];
-const weekendExamples = en ? [
-  ['11–12 September', 'Less busy'], ['18–19 September', 'Busier'], ['25–26 September', 'Moderately busy']
-] : [['11.–12. september', 'Manj zaseden'], ['18.–19. september', 'Bolj zaseden'], ['25.–26. september', 'Srednje zaseden']];
 ---
 <main class="organizer-page">
   <section class="page-hero container" aria-labelledby="organizer-title">
@@ -26,15 +23,11 @@ const weekendExamples = en ? [
   <section class="section container" aria-labelledby="season-title">
     <div class="organizer-season-card">
       <div class="organizer-season-copy">
-        <span class="organizer-prototype-label">{en ? 'DISPLAY EXAMPLE · PROTOTYPE' : 'PRIMER PRIKAZA · PROTOTIP'}</span>
         <h2 id="season-title">{en ? '2027 season planning' : 'Načrtovanje sezone 2027'}</h2>
-        <h3>{en ? 'Choose a suitable date for your race' : 'Izberite primeren termin za svoj tek'}</h3>
-        <p>{en ? 'STK tracks confirmed dates and traditional running events in Slovenia. This overview helps organisers assess which weekends are already busier.' : 'STK spremlja potrjene termine in tradicionalne tekaške prireditve po Sloveniji. Pregled pomaga organizatorjem oceniti, kateri vikendi so že bolj zasedeni.'}</p>
+        <h3>{en ? 'Compare dates for your race' : 'Primerjajte termine za svoj tek'}</h3>
+        <p>{en ? 'The overview already includes confirmed and expected running events for 2027, grouped by weekend.' : 'Pregled že vključuje potrjene in pričakovane tekaške dogodke za leto 2027, razvrščene po vikendih.'}</p>
         <a class="button button-primary" href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="season_preview">{en ? 'View the 2027 date overview' : 'Poglejte pregled terminov 2027'}</a>
       </div>
-      <ul class="organizer-weekend-preview">
-        {weekendExamples.map(([date, level], index) => <li><span>{date}</span><strong class={`occupancy occupancy-${index + 1}`}>{level}</strong></li>)}
-      </ul>
     </div>
   </section>
 

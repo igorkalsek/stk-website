@@ -1,12 +1,13 @@
 import { googleProposalFormContract } from './proposal-form-contract.js';
 import type { ProposalLanguage } from './proposal-form-types.js';
+import { formatEnglishRegion } from '../utils-english.js';
 
 const typeLabels = {
   sl: ['Nov tek', 'Popravek ali dopolnitev obstoječega teka', 'Drugo'],
   en: ['New race', 'Correct or add details to an existing race', 'Other']
 } as const;
 
-const regionLabelsEn: Record<string, string> = { Pomurska: 'Mura region', Podravska: 'Drava region', Koroška: 'Carinthia', Savinjska: 'Savinja region', Zasavska: 'Central Sava', Posavska: 'Lower Sava', Jugovzhodna: 'Southeast Slovenia', 'Primorsko-notranjska': 'Primorska-Inner Carniola', Osrednjeslovenska: 'Central Slovenia', Gorenjska: 'Upper Carniola', Goriška: 'Gorizia region', 'Obalno-kraška': 'Coastal-Karst', 'Ne vem / nisem prepričan (navedem v opisu)': 'I do not know / I am not sure (I will explain in the description)' };
+const regionLabelsEn = Object.fromEntries(googleProposalFormContract.values.regions.map((value) => [value, formatEnglishRegion(value)]));
 const additionalDataLabelsEn: Record<string, string> = { 'Prijavnina / startnina': 'Entry fee / start fee', 'Rok prijave': 'Registration deadline', 'Cenejša prijava / sprememba cene': 'Early-bird registration / price change', 'Prijave na dan dogodka': 'Race-day registration', 'Trasa / zemljevid / GPX': 'Route / map / GPX', 'Višinski metri': 'Elevation gain', 'Popravek napačnega dodatnega podatka': 'Correction of already published additional data', Drugo: 'Other – describe below' };
 
 const changeCategoryLabels = {

@@ -1223,9 +1223,6 @@ main {
 .organizer-season-copy p { color: var(--muted); line-height: 1.65; }
 .organizer-season-copy .button { width: fit-content; }
 .organizer-prototype-label { width: fit-content; color: #704406; font-size: .75rem; font-weight: 900; letter-spacing: .07em; }
-.organizer-weekend-preview { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.organizer-weekend-preview li { display: grid; gap: 6px; border-radius: var(--radius-md); background: var(--white); padding: 16px; box-shadow: inset 0 0 0 1px rgba(16, 64, 80, .1); }
-.organizer-weekend-preview li > span { color: var(--deep-teal); font-weight: 850; }
 .organizer-steps { display: grid; gap: 18px; }
 .organizer-steps .info-card { display: grid; align-content: start; gap: 12px; }
 .organizer-steps h3, .organizer-steps p { margin: 0; }
@@ -1239,32 +1236,45 @@ main {
 .organizer-claim-card p { margin: 0; max-width: 850px; color: #d7e8e2; line-height: 1.7; }
 .organizer-status { display: inline-flex; border-radius: 999px; background: var(--orange); color: #1e2b1e; font-size: .78rem; font-weight: 900; letter-spacing: .08em; padding: 7px 10px; }
 .organizer-final-cta { display: grid; gap: 18px; padding-bottom: 12px; }
-.prototype-notice { border-left: 5px solid var(--orange); border-radius: 0 var(--radius-md) var(--radius-md) 0; background: rgba(240, 160, 48, .09); padding: 18px; }
-.prototype-notice strong { color: var(--deep-teal); }
-.prototype-notice p { margin: 6px 0 0; color: var(--muted); }
-.dates-filter-prototype { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; color: var(--muted); }
-.dates-filter-prototype span { border: 1px solid rgba(16, 64, 80, .13); border-radius: 999px; background: white; padding: 8px 12px; }
-.dates-filter-prototype span:first-child { border: 0; background: transparent; font-weight: 800; }
+.planning-intro { display: grid; gap: 20px; }
+.planning-note { border-left: 4px solid #70958a; border-radius: 0 var(--radius-md) var(--radius-md) 0; background: rgba(200, 230, 201, .3); padding: 18px; color: var(--deep-teal); line-height: 1.6; }
+.planning-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.planning-summary li { display: grid; gap: 3px; border: 1px solid rgba(16, 64, 80, .12); border-radius: var(--radius-md); background: white; padding: 16px; }
+.planning-summary strong { color: var(--deep-teal); font-size: 1.6rem; }
+.planning-summary span { color: var(--muted); }
+.planning-fallback, .planning-empty { border-radius: var(--radius-md); background: rgba(16, 64, 80, .06); padding: 22px; color: var(--deep-teal); }
+.planning-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.planning-filters label { display: grid; gap: 6px; color: var(--deep-teal); font-weight: 800; }
+.planning-filters select { min-width: 0; border: 1px solid rgba(16, 64, 80, .2); border-radius: 10px; background: white; padding: 10px; color: var(--deep-teal); font: inherit; }
+.planning-count-help { margin: 0 0 28px; color: var(--muted); font-size: .9rem; }
 .dates-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-md); background: white; overflow: hidden; }
 .dates-table th, .dates-table td { border-bottom: 1px solid rgba(16, 64, 80, .1); padding: 15px; text-align: left; }
 .dates-table thead { background: var(--deep-teal); color: white; }
-.occupancy { display: inline-flex; width: fit-content; border-left: 4px solid #708376; padding: 4px 8px; color: var(--deep-teal); font-size: .9rem; }
-.occupancy-medium, .occupancy-3 { border-color: #c58a25; }
-.occupancy-high, .occupancy-2 { border-color: #a84d42; }
-.occupancy-low, .occupancy-1 { border-color: #4d8560; }
+.dates-table details { min-width: 120px; }
+.dates-table summary, .weekend-card summary { color: var(--deep-teal); cursor: pointer; font-weight: 800; }
 .dates-mobile-list { display: none; }
 .weekend-card { display: grid; align-content: start; gap: 10px; border: 1px solid rgba(16, 64, 80, .12); border-radius: var(--radius-md); background: white; padding: 18px; }
 .weekend-card h3, .weekend-card p { margin: 0; }
-.weekend-card summary { margin-top: 8px; color: var(--deep-teal); cursor: pointer; font-weight: 800; }
-.demo-events { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
-.demo-events li { display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(16, 64, 80, .1); padding-top: 10px; }
-.demo-events li div { display: grid; gap: 3px; }
-.demo-events li div span { color: var(--muted); font-size: .85rem; }
+.planning-events { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.planning-event { display: flex; justify-content: space-between; gap: 14px; border-top: 1px solid rgba(16, 64, 80, .1); padding-top: 12px; overflow-wrap: anywhere; }
+.planning-event-main { display: grid; min-width: 0; gap: 3px; }
+.planning-event-main span, .planning-event-main time { color: var(--muted); font-size: .85rem; }
 .event-status { align-self: start; border-radius: 999px; padding: 5px 8px; font-size: .72rem; font-weight: 900; }
-.event-status-confirmed { background: rgba(77, 133, 96, .15); color: #285d3a; }
-.event-status-expected { border: 1px dashed #8a6a32; color: #72551f; }
-@media (min-width: 800px) { .organizer-season-card { grid-template-columns: 1.3fr .8fr; } .organizer-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 719px) { .dates-table-wrap { display: none; } .dates-mobile-list { display: grid; grid-template-columns: 1fr; gap: 14px; } }
+.event-status-potrjeno { background: rgba(77, 133, 96, .15); color: #285d3a; }
+.event-status-pričakovano { border: 1px dashed #8a6a32; color: #72551f; }
+.event-status-termin_znan { border-left: 3px solid #55788a; background: rgba(85, 120, 138, .1); color: #345766; }
+.planning-unknown { margin-top: 42px; }
+.planning-unknown > p { color: var(--muted); }
+@media (min-width: 800px) { .organizer-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 719px) {
+  .planning-summary { grid-template-columns: 1fr; gap: 8px; }
+  .planning-summary li { grid-template-columns: auto 1fr; align-items: baseline; gap: 10px; padding: 11px 14px; }
+  .planning-filters { grid-template-columns: 1fr; gap: 9px; }
+  .planning-filters label { grid-template-columns: minmax(90px, .55fr) 1fr; align-items: center; }
+  .dates-table-wrap { display: none; }
+  .dates-mobile-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .planning-event { flex-direction: column; gap: 8px; }
+}
 
 .hero-secondary-link:hover,
 .hero-secondary-link:focus-visible {
