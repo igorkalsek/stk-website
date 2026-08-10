@@ -38,7 +38,7 @@ test('CTAs use stable semantic action and placement values without misusing anal
   assert.doesNotMatch(component, /external_link_clicked|correction_clicked/);
 });
 
-test('publishes paired prototype date routes with canonical, hreflang, x-default and language switch', () => {
+test('publishes paired production date routes with canonical, hreflang, x-default and language switch', () => {
   assert.match(slDatesPage, /canonicalPath="\/za-organizatorje\/termini-2027\/"/);
   assert.match(enDatesPage, /canonicalPath="\/en\/for-organizers\/2027-race-dates\/"/);
   for (const page of [slDatesPage, enDatesPage]) {
@@ -52,17 +52,15 @@ test('publishes paired prototype date routes with canonical, hreflang, x-default
   assert.match(header, /2027-race-dates/);
 });
 
-test('date overview labels static demo data and distinguishes event certainty', () => {
-  assert.match(datesComponent, /Static demo\/prototype data only/);
-  assert.match(datesComponent, /Prototip · demonstracijski podatki/);
-  assert.match(datesComponent, /Ne gre za produkcijske podatke/);
+test('date overview uses production data and distinguishes event certainty', () => {
+  assert.match(datesComponent, /fetchPlanning2027/);
+  assert.doesNotMatch(datesComponent, /demonstracijski podatki|DEMO 0/);
   assert.match(datesComponent, /Potrjeno/);
   assert.match(datesComponent, /Pričakovano/);
   assert.match(datesComponent, /event-status-\$\{event\.status\}/);
-  assert.match(styles, /\.event-status-confirmed/);
-  assert.match(styles, /\.event-status-expected/);
-  for (const label of ['DEMO 01', 'DEMO 02', 'DEMO 03', 'DEMO 04', 'DEMO 05']) assert.match(datesComponent, new RegExp(label));
-  assert.doesNotMatch(datesComponent, /Mestni tek|Gozdni krog|Tek med vinogradi|Planinski izziv|Kraški jesenski tek/);
+  assert.match(styles, /\.event-status-potrjeno/);
+  assert.match(styles, /\.event-status-pričakovano/);
+  assert.match(styles, /\.event-status-termin_znan/);
 });
 
 test('weekends use a desktop table and narrow-screen cards without a wide mobile table', () => {
@@ -73,10 +71,10 @@ test('weekends use a desktop table and narrow-screen cards without a wide mobile
   assert.match(styles, /@media \(max-width: 719px\).*\.dates-table-wrap \{ display: none; \}.*\.dates-mobile-list \{ display: grid;/s);
 });
 
-test('organizer journey retains the existing proposal form and clearly labels examples', () => {
+test('organizer journey retains the existing proposal form and limits prototype copy to future statistics', () => {
   assert.match(component, /\/dodaj-ali-popravi-tek\//);
   assert.match(component, /\/en\/add-or-correct-race\//);
-  assert.match(component, /PRIMER PRIKAZA · PROTOTIP/);
+  assert.doesNotMatch(component, /PRIMER PRIKAZA · PROTOTIP/);
   assert.match(component, /PRIMER PRIKAZA STATISTIKE/);
 });
 
