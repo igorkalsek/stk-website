@@ -237,6 +237,12 @@ export function formatPlanningUpdated(value: string, lang: 'sl' | 'en'): string 
   return `${date.getUTCDate()}. ${slMonths[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
+export function formatPlanningEventCount(count: number, lang: 'sl' | 'en'): string {
+  if (lang === 'en') return `${count} ${count === 1 ? 'event' : 'events'}`;
+  const noun = count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count === 3 || count === 4 ? 'dogodki' : 'dogodkov';
+  return `${count} ${noun}`;
+}
+
 export const formatPlanningRegion = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishRegion(value) : value;
 export const formatPlanningSurface = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishSurface(value) : value;
 
