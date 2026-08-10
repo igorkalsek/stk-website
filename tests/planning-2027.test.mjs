@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
+import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -47,7 +47,7 @@ test('weekday-only expected ranges stay out of weekend counts and use their own 
   assert.equal(overview.weekends.length, 0);
   assert.deepEqual(overview.weekday, [event]);
   assert.equal(overview.unknown.length, 0);
-  assert.equal(formatEventPlanningDate(event, 'sl'), '17.–19. maj 2027');
+  assert.equal(formatEventPlanningDate(event, 'sl'), '17.–19. maja 2027');
   assert.equal(formatEventPlanningDate(event, 'en'), '17–19 May 2027');
 });
 
@@ -68,8 +68,17 @@ test('month filtering uses actual event dates across weekend and month boundarie
 });
 
 test('date formatters localize dates and ranges without exposing ISO values', () => {
-  assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'sl'), '20.–22. avgust 2027');
+  assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'sl'), '20.–22. avgusta 2027');
   assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'en'), '20–22 August 2027');
+});
+
+test('English planning taxonomy localizes display labels without changing raw values', () => {
+  const region = 'Osrednjeslovenska';
+  const surface = 'cesta/trail';
+  assert.equal(formatPlanningRegion(region, 'en'), 'Central Slovenia');
+  assert.equal(formatPlanningSurface(surface, 'en'), 'Road/trail');
+  assert.equal(formatPlanningRegion(region, 'sl'), region);
+  assert.equal(formatPlanningSurface(surface, 'sl'), surface);
 });
 
 test('planning fetch returns a safe null fallback for an unavailable or invalid API', async () => {

@@ -1,5 +1,5 @@
 ---
-import { buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, type PlanningEvent } from '../utils-planning-2027';
+import { buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, type PlanningEvent } from '../utils-planning-2027';
 
 interface Props { lang: 'sl' | 'en'; }
 const { lang } = Astro.props;
@@ -10,7 +10,7 @@ const regions = [...new Set((payload?.data ?? []).map((event) => event.regija).f
 const surfaces = [...new Set((payload?.data ?? []).map((event) => event.tip_podlage).filter(Boolean))].sort((a, b) => a.localeCompare(b, lang));
 const months = en ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
 const statusLabel = (event: PlanningEvent) => event.status === 'potrjeno' ? (en ? 'Confirmed' : 'Potrjeno') : event.status === 'termin_znan' ? (en ? 'Date window known' : 'Termin znan') : (en ? 'Expected' : 'Pričakovano');
-const eventDetails = (event: PlanningEvent) => [event.kraj || (en ? 'Location not provided' : 'Kraj ni naveden'), event.regija, event.tip_podlage].filter(Boolean).join(' · ');
+const eventDetails = (event: PlanningEvent) => [event.kraj || (en ? 'Location not provided' : 'Kraj ni naveden'), formatPlanningRegion(event.regija, lang), formatPlanningSurface(event.tip_podlage, lang)].filter(Boolean).join(' · ');
 const summary = payload ? {
   confirmed: payload.data.filter((event) => event.status === 'potrjeno').length,
   expected: payload.data.filter((event) => event.status === 'pričakovano').length,
@@ -38,8 +38,8 @@ const summary = payload ? {
     <div data-planning-content hidden={!payload}>
       <form class="planning-filters" aria-label={en ? 'Filter the race date overview' : 'Filtriranje pregleda terminov'}>
         <label><span>{en ? 'Month' : 'Mesec'}</span><select name="month" data-planning-filter><option value="">{en ? 'All months' : 'Vsi meseci'}</option>{months.map((month, index) => <option value={String(index + 1).padStart(2, '0')}>{month}</option>)}</select></label>
-        <label><span>{en ? 'Region' : 'Regija'}</span><select name="region" data-planning-filter><option value="">{en ? 'All regions' : 'Vse regije'}</option>{regions.map((region) => <option value={region}>{region}</option>)}</select></label>
-        <label><span>{en ? 'Surface' : 'Tip podlage'}</span><select name="surface" data-planning-filter><option value="">{en ? 'All surfaces' : 'Vsi tipi podlage'}</option>{surfaces.map((surface) => <option value={surface}>{surface}</option>)}</select></label>
+        <label><span>{en ? 'Region' : 'Regija'}</span><select name="region" data-planning-filter><option value="">{en ? 'All regions' : 'Vse regije'}</option>{regions.map((region) => <option value={region}>{formatPlanningRegion(region, lang)}</option>)}</select></label>
+        <label><span>{en ? 'Surface' : 'Tip podlage'}</span><select name="surface" data-planning-filter><option value="">{en ? 'All surfaces' : 'Vsi tipi podlage'}</option>{surfaces.map((surface) => <option value={surface}>{formatPlanningSurface(surface, lang)}</option>)}</select></label>
       </form>
       <p class="planning-count-help">{en ? 'The expected count also includes events whose official date window is known.' : 'Število pričakovanih vključuje tudi dogodke z znanim uradnim obdobjem.'}</p>
       <div class="section-heading"><h2 id="weekends-title">{en ? 'Weekends in 2027' : 'Vikendi v letu 2027'}</h2></div>

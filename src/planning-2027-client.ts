@@ -1,4 +1,4 @@
-import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, type PlanningEvent, type PlanningPayload } from './utils-planning-2027';
+import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, type PlanningEvent, type PlanningPayload } from './utils-planning-2027';
 
 type Lang = 'sl' | 'en';
 const escapeHtml = (value: string | number) => String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]!);
@@ -14,7 +14,7 @@ const copy = (lang: Lang) => lang === 'en' ? {
 function eventHtml(event: PlanningEvent, lang: Lang): string {
   const labels = copy(lang);
   const status = event.status === 'potrjeno' ? labels.confirmed : event.status === 'termin_znan' ? labels.known : labels.expected;
-  const details = [event.kraj || labels.location, event.regija, event.tip_podlage].filter(Boolean).map(escapeHtml).join(' · ');
+  const details = [event.kraj || labels.location, formatPlanningRegion(event.regija, lang), formatPlanningSurface(event.tip_podlage, lang)].filter(Boolean).map(escapeHtml).join(' · ');
   return `<li class="planning-event"><div class="planning-event-main"><strong>${escapeHtml(event.naziv_prireditve)}</strong><span>${details}</span><time>${escapeHtml(formatEventPlanningDate(event, lang))}</time></div><span class="event-status event-status-${escapeHtml(event.status)}">${status}</span></li>`;
 }
 
@@ -54,7 +54,7 @@ export function initializePlanning2027(root: HTMLElement, initialPayload: Planni
       const field = name === 'region' ? 'regija' : 'tip_podlage';
       const selected = select.value;
       while (select.options.length > 1) select.remove(1);
-      [...new Set(events.map((event) => event[field]).filter(Boolean))].sort((a, b) => a.localeCompare(b, lang)).forEach((value) => select.add(new Option(value, value)));
+      [...new Set(events.map((event) => event[field]).filter(Boolean))].sort((a, b) => a.localeCompare(b, lang)).forEach((value) => select.add(new Option(name === 'region' ? formatPlanningRegion(value, lang) : formatPlanningSurface(value, lang), value)));
       if ([...select.options].some((option) => option.value === selected)) select.value = selected;
     }
   };

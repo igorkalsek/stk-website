@@ -1,3 +1,5 @@
+import { formatEnglishRegion, formatEnglishSurface } from './utils-english.js';
+
 export const PLANNING_2027_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/planning-2027';
 
 export type PlanningStatus = 'potrjeno' | 'pričakovano' | 'termin_znan';
@@ -149,7 +151,7 @@ export function formatPlanningDate(iso: string, lang: 'sl' | 'en'): string {
   return `${date.getUTCDate()}. ${date.getUTCMonth() + 1}. ${date.getUTCFullYear()}`;
 }
 
-const slMonths = ['januar', 'februar', 'marec', 'april', 'maj', 'junij', 'julij', 'avgust', 'september', 'oktober', 'november', 'december'];
+const slMonths = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'];
 export function formatPlanningRange(start: string, end: string, lang: 'sl' | 'en', includeYear = true): string {
   const from = toDate(start); const to = toDate(end);
   const sameMonth = from.getUTCMonth() === to.getUTCMonth();
@@ -168,6 +170,9 @@ export function formatEventPlanningDate(event: PlanningEvent, lang: 'sl' | 'en')
   if (!period) return lang === 'en' ? 'Date not yet known' : 'Termin še ni znan';
   return period[0] === period[1] ? formatPlanningDate(period[0], lang) : formatPlanningRange(period[0], period[1], lang);
 }
+
+export const formatPlanningRegion = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishRegion(value) : value;
+export const formatPlanningSurface = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishSurface(value) : value;
 
 export async function fetchPlanning2027(fetchImpl: typeof fetch = fetch): Promise<PlanningPayload | null> {
   const controller = new AbortController();

@@ -67,3 +67,18 @@ export const formatEnglishSurface = (value: string) => {
 
   return labels[trimmed.toLocaleLowerCase('sl-SI')] ?? trimmed.replace(/^./, (letter) => letter.toLocaleUpperCase('en-GB'));
 };
+
+export const formatEnglishRegion = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  const labels: Record<string, string> = {
+    Pomurska: 'Mura region', Podravska: 'Drava region', Koroška: 'Carinthia', Savinjska: 'Savinja region',
+    Zasavska: 'Central Sava', Posavska: 'Lower Sava', Jugovzhodna: 'Southeast Slovenia',
+    'Primorsko-notranjska': 'Primorska-Inner Carniola', Osrednjeslovenska: 'Central Slovenia',
+    Gorenjska: 'Upper Carniola', Goriška: 'Gorizia region', 'Obalno-kraška': 'Coastal-Karst',
+    'Ne vem / nisem prepričan (navedem v opisu)': 'I do not know / I am not sure (I will explain in the description)'
+  };
+
+  return labels[trimmed] ?? trimmed;
+};
