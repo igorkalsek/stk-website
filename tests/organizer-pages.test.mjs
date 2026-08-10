@@ -12,6 +12,7 @@ const datesComponent = readFileSync('src/components/RaceDates2027Page.astro', 'u
 const slDatesPage = readFileSync('src/pages/za-organizatorje/termini-2027.astro', 'utf8');
 const enDatesPage = readFileSync('src/pages/en/for-organizers/2027-race-dates.astro', 'utf8');
 const styles = readFileSync('src/styles/global.css', 'utf8');
+const workflow = readFileSync('src/components/OrganizerWorkflow.astro', 'utf8');
 
 test('publishes equivalent organiser routes with SEO and language alternates', () => {
   assert.match(slPage, /canonicalPath="\/za-organizatorje\/"/);
@@ -33,8 +34,10 @@ test('navigation and footer lead to organiser pages while legacy forms remain li
 });
 
 test('CTAs use stable semantic action and placement values without misusing analytics events', () => {
-  for (const action of ['check_2027_dates', 'find_race', 'add_race', 'confirm_race', 'view_organizer_stats_info']) assert.match(component, new RegExp(`data-organizer-action="${action}"`));
-  for (const placement of ['hero', 'season_preview', 'steps', 'final']) assert.match(component, new RegExp(`data-organizer-placement="${placement}"`));
+  for (const action of ['check_2027_dates', 'find_race', 'add_race']) assert.match(component, new RegExp(`data-organizer-action="${action}"`));
+  for (const action of ['check_2027_dates', 'confirm_race', 'view_organizer_stats_info']) assert.match(workflow, new RegExp(action));
+  for (const placement of ['hero', 'main']) assert.match(component, new RegExp(`data-organizer-placement="${placement}"`));
+  assert.match(workflow, /data-organizer-placement="workflow"/);
   assert.doesNotMatch(component, /external_link_clicked|correction_clicked/);
 });
 
@@ -57,29 +60,34 @@ test('date overview uses production data and distinguishes event certainty', () 
   assert.doesNotMatch(datesComponent, /demonstracijski podatki|DEMO 0/);
   assert.match(datesComponent, /Potrjeno/);
   assert.match(datesComponent, /Pričakovano/);
-  assert.match(datesComponent, /event-status-\$\{event\.status\}/);
-  assert.match(styles, /\.event-status-potrjeno/);
-  assert.match(styles, /\.event-status-pričakovano/);
-  assert.match(styles, /\.event-status-termin_znan/);
+  assert.match(datesComponent, /Pričakovano · ocena STK/);
+  assert.match(datesComponent, /planning-status-guide/);
 });
 
-test('weekends use a desktop table and narrow-screen cards without a wide mobile table', () => {
-  assert.match(datesComponent, /class="dates-table"/);
-  assert.match(datesComponent, /class="dates-mobile-list"/);
-  assert.match(datesComponent, /<article class="weekend-card">/);
-  assert.match(styles, /\.dates-mobile-list \{ display: none; \}/);
-  assert.match(styles, /@media \(max-width: 719px\).*\.dates-table-wrap \{ display: none; \}.*\.dates-mobile-list \{ display: grid;/s);
+test('planner uses one responsive month and week information architecture', () => {
+  assert.match(datesComponent, /class="year-overview"/);
+  assert.match(datesComponent, /class="planning-week"/);
+  assert.doesNotMatch(datesComponent, /dates-table|dates-mobile-list/);
+  assert.match(styles, /\.planning-week/);
 });
 
-test('organizer journey retains the existing proposal form and limits prototype copy to future statistics', () => {
+test('organizer journey retains proposal and finder routes without fictional statistics', () => {
   assert.match(component, /\/dodaj-ali-popravi-tek\//);
   assert.match(component, /\/en\/add-or-correct-race\//);
   assert.doesNotMatch(component, /PRIMER PRIKAZA · PROTOTIP/);
-  assert.match(component, /PRIMER PRIKAZA STATISTIKE/);
+  assert.match(component, /Ko bo funkcija na voljo/);
+  assert.doesNotMatch(component, /1\.248|384|127|82/);
 });
 
-test('claim section is explicitly in development and has no non-functional claim control', () => {
-  assert.match(component, /Prevzem profila teka/);
+test('future organiser tools are explicitly in development and have no non-functional control', () => {
+  assert.match(component, /Promocija in statistika/);
   assert.match(component, /V PRIPRAVI/);
   assert.doesNotMatch(component, /<button|claim_race/);
+});
+
+test('shared workflow provides equivalent SL and EN links and the planner marks step one current', () => {
+  for (const route of ['/za-organizatorje/termini-2027/', '/en/for-organizers/2027-race-dates/', '/dodaj-ali-popravi-tek/', '/en/add-or-correct-race/']) assert.match(workflow, new RegExp(route.replaceAll('/', '\\/')));
+  assert.match(workflow, /Preverite termin/);
+  assert.match(workflow, /Check the date/);
+  assert.match(datesComponent, /<OrganizerWorkflow \{lang\} active=\{1\}/);
 });

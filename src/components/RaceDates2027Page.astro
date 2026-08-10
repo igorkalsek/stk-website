@@ -1,63 +1,48 @@
 ---
-import { buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, type PlanningEvent } from '../utils-planning-2027';
-
+import OrganizerWorkflow from './OrganizerWorkflow.astro';
+import { allPlanningWeekends, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, formatPlanningUpdated, type PlanningEvent } from '../utils-planning-2027';
 interface Props { lang: 'sl' | 'en'; }
-const { lang } = Astro.props;
-const en = lang === 'en';
-const payload = await fetchPlanning2027();
-const overview = buildPlanningOverview(payload?.data ?? []);
-const regions = [...new Set((payload?.data ?? []).map((event) => event.regija).filter(Boolean))].sort((a, b) => a.localeCompare(b, lang));
-const surfaces = [...new Set((payload?.data ?? []).map((event) => event.tip_podlage).filter(Boolean))].sort((a, b) => a.localeCompare(b, lang));
-const months = en ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij', 'Avgust', 'September', 'Oktober', 'November', 'December'];
-const statusLabel = (event: PlanningEvent) => event.status === 'potrjeno' ? (en ? 'Confirmed' : 'Potrjeno') : event.status === 'termin_znan' ? (en ? 'Date window known' : 'Termin znan') : (en ? 'Expected' : 'Pričakovano');
-const eventDetails = (event: PlanningEvent) => [event.kraj || (en ? 'Location not provided' : 'Kraj ni naveden'), formatPlanningRegion(event.regija, lang), formatPlanningSurface(event.tip_podlage, lang)].filter(Boolean).join(' · ');
-const summary = payload ? {
-  confirmed: payload.data.filter((event) => event.status === 'potrjeno').length,
-  expected: payload.data.filter((event) => event.status === 'pričakovano').length,
-  known: payload.data.filter((event) => event.status === 'termin_znan').length
-} : null;
+const { lang } = Astro.props; const en = lang === 'en';
+const payload = await fetchPlanning2027(); const events = payload?.data ?? [];
+const overview = buildPlanningOverview(events); const weeks = buildPlanningWeeks(events); const allWeekends = allPlanningWeekends();
+const regions = [...new Set(events.map(e => e.regija).filter(Boolean))].sort((a,b) => a.localeCompare(b, lang));
+const surfaces = [...new Set(events.map(e => e.tip_podlage).filter(Boolean))].sort((a,b) => a.localeCompare(b, lang));
+const months = en ? ['January','February','March','April','May','June','July','August','September','October','November','December'] : ['Januar','Februar','Marec','April','Maj','Junij','Julij','Avgust','September','Oktober','November','December'];
+const statusLabel = (e: PlanningEvent) => e.status === 'potrjeno' ? (en?'Confirmed':'Potrjeno') : e.status === 'termin_znan' ? (en?'Date window known':'Termin znan') : (en?'Expected · STK estimate':'Pričakovano · ocena STK');
+const details = (e: PlanningEvent) => [e.kraj || (en?'Location not provided':'Kraj ni naveden'), formatPlanningRegion(e.regija,lang), formatPlanningSurface(e.tip_podlage,lang)].filter(Boolean).join(' · ');
+const count = (n:number, one:string, two:string, many:string) => `${n} ${n===1?one:n===2?two:many}`;
+const weekendCount = new Map(overview.weekends.map(w => [w.start,w.total]));
+const finderHref=en?'/en/find-races/':'/iskalnik-tekov/'; const formHref=en?'/en/add-or-correct-race/':'/dodaj-ali-popravi-tek/';
 ---
 <main class="race-dates-page" data-planning-root data-lang={lang}>
-  <section class="page-hero container">
-    <span class="eyebrow">{en ? 'FOR ORGANISERS' : 'ZA ORGANIZATORJE'}</span>
-    <h1>{en ? '2027 race date overview' : 'Pregled tekaških terminov 2027'}</h1>
-    <p>{en ? 'See which running events are already planned for each weekend and compare dates while preparing your 2027 season.' : 'Preverite, kateri tekaški dogodki so že načrtovani za posamezen vikend, in primerjajte termine pri pripravi sezone 2027.'}</p>
-  </section>
-
+  <section class="page-hero container"><span class="eyebrow">{en?'FOR ORGANISERS':'ZA ORGANIZATORJE'}</span><h1>{en?'Plan 2027 race dates':'Načrtovanje tekaških terminov 2027'}</h1><p>{en?'Compare the dates STK currently knows, then add or update your race.':'Primerjajte termine, ki jih STK trenutno pozna, nato dodajte ali posodobite svoj tek.'}</p></section>
+  <section class="container planning-workflow"><OrganizerWorkflow {lang} active={1} /></section>
   <section class="section container planning-intro">
-    <div class="planning-note" role="note">{en ? 'Confirmed events already have an official published date for 2027. Expected dates are based on previous editions and current information and have not been confirmed by organisers.' : 'Potrjeni dogodki imajo že objavljen uradni termin za 2027. Pričakovani termini temeljijo na preteklih izvedbah in aktualnih informacijah ter še niso potrjeni s strani organizatorjev.'}</div>
-    <ul class="planning-summary" data-planning-summary hidden={!summary} aria-label={en ? 'Season summary' : 'Povzetek sezone'}>
-      <li><strong data-summary-confirmed>{summary?.confirmed ?? 0}</strong><span data-summary-confirmed-label>{formatPlanningSummaryLabel('confirmed', summary?.confirmed ?? 0, lang)}</span></li>
-      <li><strong data-summary-expected>{summary?.expected ?? 0}</strong><span data-summary-expected-label>{formatPlanningSummaryLabel('expected', summary?.expected ?? 0, lang)}</span></li>
-      <li><strong data-summary-known>{summary?.known ?? 0}</strong><span data-summary-known-label>{formatPlanningSummaryLabel('known', summary?.known ?? 0, lang)}</span></li>
-    </ul>
+    <div class="planning-status-guide" aria-label={en?'Date status explanation':'Pojasnilo statusov terminov'}>
+      <div><strong>{en?'Confirmed':'Potrjeno'}</strong><span>{en?'Official 2027 event date.':'Uradni termin dogodka za 2027.'}</span></div>
+      <div><strong>{en?'Date window known':'Termin znan'}</strong><span>{en?'An official period is known, but the exact date has not yet been set or published.':'Uradno je znano obdobje, natančen termin pa še ni določen oziroma objavljen.'}</span></div>
+      <div><strong>{en?'Expected · STK estimate':'Pričakovano · ocena STK'}</strong><span>{en?'An STK estimate based on past editions and current information. It is not an organiser-confirmed date.':'Ocena STK na podlagi preteklih izvedb in aktualnih informacij. Ni potrjen termin organizatorja.'}</span></div>
+    </div>
+    <p class="planning-updated" data-planning-updated hidden={!formatPlanningUpdated(payload?.generated_at ?? '',lang)}>{en?'Last updated:':'Nazadnje osveženo:'} <time>{formatPlanningUpdated(payload?.generated_at ?? '',lang)}</time></p>
   </section>
-
-  <section class="section container planning-browser" aria-labelledby="weekends-title">
-    <div class="planning-fallback" data-planning-fallback hidden={Boolean(payload)} role="status">{en ? 'The race date overview is temporarily unavailable. Please try again later.' : 'Pregled terminov trenutno ni na voljo. Poskusite znova nekoliko pozneje.'}</div>
+  <section class="section container planning-browser" aria-labelledby="overview-title">
+    <div class="planning-fallback" data-planning-fallback hidden={Boolean(payload)} role="status">{en?'The race date planner is temporarily unavailable. Please try again later.':'Načrtovalnik terminov trenutno ni na voljo. Poskusite znova nekoliko pozneje.'}</div>
     <div data-planning-content hidden={!payload}>
-      <form class="planning-filters" aria-label={en ? 'Filter the race date overview' : 'Filtriranje pregleda terminov'}>
-        <label><span>{en ? 'Month' : 'Mesec'}</span><select name="month" data-planning-filter><option value="">{en ? 'All months' : 'Vsi meseci'}</option>{months.map((month, index) => <option value={String(index + 1).padStart(2, '0')}>{month}</option>)}</select></label>
-        <label><span>{en ? 'Region' : 'Regija'}</span><select name="region" data-planning-filter><option value="">{en ? 'All regions' : 'Vse regije'}</option>{regions.map((region) => <option value={region}>{formatPlanningRegion(region, lang)}</option>)}</select></label>
-        <label><span>{en ? 'Surface' : 'Tip podlage'}</span><select name="surface" data-planning-filter><option value="">{en ? 'All surfaces' : 'Vsi tipi podlage'}</option>{surfaces.map((surface) => <option value={surface}>{formatPlanningSurface(surface, lang)}</option>)}</select></label>
+      <form class="planning-filters" aria-label={en?'Filter the planner':'Filtriranje načrtovalnika'}>
+        <label><span>{en?'Month':'Mesec'}</span><select name="month" data-planning-filter><option value="">{en?'All months':'Vsi meseci'}</option>{months.map((m,i)=><option value={String(i+1).padStart(2,'0')}>{m}</option>)}</select></label>
+        <label><span>{en?'Region':'Regija'}</span><select name="region" data-planning-filter><option value="">{en?'All regions':'Vse regije'}</option>{regions.map(v=><option value={v}>{formatPlanningRegion(v,lang)}</option>)}</select></label>
+        <label><span>{en?'Surface':'Tip podlage'}</span><select name="surface" data-planning-filter><option value="">{en?'All surfaces':'Vsi tipi podlage'}</option>{surfaces.map(v=><option value={v}>{formatPlanningSurface(v,lang)}</option>)}</select></label>
+        <button type="button" class="planning-clear" data-planning-clear hidden>{en?'Clear filters':'Počisti filtre'}</button>
       </form>
-      <p class="planning-count-help">{en ? 'The expected count also includes events whose official date window is known.' : 'Število pričakovanih vključuje tudi dogodke z znanim uradnim obdobjem.'}</p>
-      <div class="section-heading"><h2 id="weekends-title">{en ? 'Weekends in 2027' : 'Vikendi v letu 2027'}</h2></div>
-      <div class="dates-table-wrap"><table class="dates-table"><caption class="sr-only">{en ? 'Running events by weekend in 2027' : 'Tekaški dogodki po vikendih v letu 2027'}</caption><thead><tr><th>{en ? 'Weekend' : 'Vikend'}</th><th>{en ? 'Confirmed' : 'Potrjeni'}</th><th>{en ? 'Expected' : 'Pričakovani'}</th><th>{en ? 'Total' : 'Skupaj'}</th><th><span class="sr-only">{en ? 'Events' : 'Dogodki'}</span></th></tr></thead><tbody data-weekends-table>{overview.weekends.map((weekend) => <tr><th scope="row">{formatPlanningRange(weekend.start, weekend.end, lang, false)}</th><td>{weekend.confirmed}</td><td>{weekend.expected}</td><td>{weekend.total}</td><td><details><summary>{en ? 'Show events' : 'Prikaži dogodke'}</summary><ul class="planning-events">{weekend.events.map((event) => <li class="planning-event"><div class="planning-event-main"><strong>{event.naziv_prireditve}</strong><span>{eventDetails(event)}</span><time>{formatEventPlanningDate(event, lang)}</time></div><span class={`event-status event-status-${event.status}`}>{statusLabel(event)}</span></li>)}</ul></details></td></tr>)}</tbody></table></div>
-      <div class="dates-mobile-list" data-weekends-cards>{overview.weekends.map((weekend) => <article class="weekend-card"><h3>{formatPlanningRange(weekend.start, weekend.end, lang, false)}</h3><p>{weekend.confirmed} {en ? 'confirmed' : 'potrjeni'} · {weekend.expected} {en ? 'expected' : 'pričakovani'}</p><strong>{en ? 'Total' : 'Skupaj'}: {weekend.total}</strong><details><summary>{en ? 'Show events' : 'Prikaži dogodke'}</summary><ul class="planning-events">{weekend.events.map((event) => <li class="planning-event"><div class="planning-event-main"><strong>{event.naziv_prireditve}</strong><span>{eventDetails(event)}</span><time>{formatEventPlanningDate(event, lang)}</time></div><span class={`event-status event-status-${event.status}`}>{statusLabel(event)}</span></li>)}</ul></details></article>)}</div>
-      <p class="planning-empty" data-empty-results hidden>{en ? 'No events match the selected filters.' : 'Izbranim filtrom ne ustreza noben dogodek.'}</p>
-      <section class="planning-unknown" data-weekday-events hidden={overview.weekday.length === 0} aria-labelledby="weekday-title"><h2 id="weekday-title">{en ? 'Weekday dates' : 'Termini med tednom'}</h2><p>{en ? 'These events have a date or date window that does not overlap a Saturday or Sunday and are not included in weekend counts.' : 'Ti dogodki imajo datum ali obdobje, ki ne vključuje sobote ali nedelje, zato niso vključeni v štetje vikendov.'}</p><ul class="planning-events">{overview.weekday.map((event) => <li class="planning-event"><div class="planning-event-main"><strong>{event.naziv_prireditve}</strong><span>{eventDetails(event)}</span><time>{formatEventPlanningDate(event, lang)}</time></div><span class={`event-status event-status-${event.status}`}>{statusLabel(event)}</span></li>)}</ul></section>
-      <section class="planning-unknown" data-unknown-events hidden={overview.unknown.length === 0} aria-labelledby="unknown-title"><h2 id="unknown-title">{en ? 'Date not yet known' : 'Termin še ni znan'}</h2><p>{en ? 'These expected events do not yet have a date or date window and are not included in any weekend count.' : 'Ti pričakovani dogodki še nimajo datuma ali obdobja in niso vključeni v štetje nobenega vikenda.'}</p><ul class="planning-events">{overview.unknown.map((event) => <li class="planning-event"><div class="planning-event-main"><strong>{event.naziv_prireditve}</strong><span>{eventDetails(event)}</span><time>{formatEventPlanningDate(event, lang)}</time></div><span class={`event-status event-status-${event.status}`}>{statusLabel(event)}</span></li>)}</ul></section>
+      <div class="section-heading"><h2 id="overview-title">{en?'2027 year overview':'Pregled leta 2027'}</h2></div>
+      <div class="year-overview" data-year-overview>{months.map((month,index)=><section class="year-month" data-month={String(index+1).padStart(2,'0')}><a href={`#month-${String(index+1).padStart(2,'0')}`}><strong>{month}</strong></a><div>{allWeekends.filter(w=>w.month===String(index+1).padStart(2,'0')).map(w=>{const n=weekendCount.get(w.start)??0;return <a href={`#week-${w.start}`} class={`weekend-count count-${Math.min(n,3)}`} aria-label={`${formatPlanningRange(w.start,w.end,lang,false)}: ${n} ${en?'events':'dogodkov'}`}><span>{new Date(`${w.start}T00:00:00Z`).getUTCDate()}.</span><strong>{n>=3?'3+':n}</strong></a>})}</div></section>)}</div>
+      <p class="planning-zero-note" role="note">{en?'0 events means STK currently has no known event for that weekend. It does not mean the date is available.':'0 dogodkov pomeni, da STK za ta vikend trenutno nima znanega dogodka. To ne pomeni, da je termin prost.'}</p>
+      <div class="planning-months" data-planning-weeks>{months.map((month,index)=>{const key=String(index+1).padStart(2,'0'); const monthWeeks=weeks.filter(w=>w.weekendStart.slice(5,7)===key||w.weekdayEvents.some(e=>(e.datum||e.predvideno_od).slice(5,7)===key)); return monthWeeks.length>0&&<section class="planning-month" id={`month-${key}`}><h2>{month}</h2><div>{monthWeeks.map(w=><article class="planning-week" id={`week-${w.weekendStart}`}><h3>{formatPlanningRange(w.start,w.end,lang)}</h3><p class="week-counts"><strong>{en?'Weekend':'Vikend'}: {w.weekendEvents.length}</strong><span>{en?'Weekday':'Med tednom'}: {w.weekdayEvents.length}</span></p><p class="week-statuses">{w.confirmed} {en?'confirmed':'potrjeno'} · {w.expected} {en?'expected':'pričakovano'} · {w.known} {en?'date window known':'termin znan'}</p><details><summary>{en?'Show events':'Prikaži dogodke'}</summary><ul class="planning-events">{w.events.map(e=><li class="planning-event"><div class="planning-event-main"><strong>{e.naziv_prireditve}</strong><span>{details(e)}</span><time>{formatEventPlanningDate(e,lang)}</time><em>{statusLabel(e)}</em></div></li>)}</ul></details></article>)}</div></section>})}</div>
+      <p class="planning-empty" data-empty-results hidden>{en?'No dated events match the selected filters.':'Izbranim filtrom ne ustreza noben datiran dogodek.'}</p>
+      <details class="planning-undated" data-unknown-events hidden={overview.unknown.length===0}><summary>{en?`Date not yet known · ${overview.unknown.length} events`:`Datum še ni znan · ${count(overview.unknown.length,'dogodek','dogodka','dogodkov')}`}</summary><ul class="planning-events">{overview.unknown.map(e=><li class="planning-event"><div class="planning-event-main"><strong>{e.naziv_prireditve}</strong><span>{details(e)}</span><time>{formatEventPlanningDate(e,lang)}</time><em>{statusLabel(e)}</em></div></li>)}</ul></details>
     </div>
   </section>
-  <section class="section container organizer-final-cta"><a class="button organizer-dark-button" href={en ? '/en/for-organizers/' : '/za-organizatorje/'}>{en ? 'Back to organiser information' : 'Nazaj na stran za organizatorje'}</a></section>
+  <section class="section container organizer-final-cta" aria-labelledby="next-action"><h2 id="next-action">{en?'Have you set your race date?':'Ste določili termin svojega teka?'}</h2><div class="cta-row"><a class="button button-primary" href={formHref} data-organizer-action="confirm_race" data-organizer-placement="planner_final">{en?'Add or update a race':'Dodajte ali posodobite tek'}</a><a class="button organizer-dark-button" href={finderHref} data-organizer-action="find_race" data-organizer-placement="planner_final">{en?'Find your race':'Poiščite svoj tek'}</a></div></section>
 </main>
-<script is:inline type="application/json" id={`planning-2027-data-${lang}`} set:html={JSON.stringify(payload).replace(/</g, '\\u003c')} />
-<script>
-  import { initializePlanning2027 } from '../planning-2027-client';
-  document.querySelectorAll<HTMLElement>('[data-planning-root]').forEach((root) => {
-    const lang = root.dataset.lang === 'en' ? 'en' : 'sl';
-    const data = document.getElementById(`planning-2027-data-${lang}`)?.textContent ?? 'null';
-    initializePlanning2027(root, JSON.parse(data), lang);
-  });
-</script>
+<script is:inline type="application/json" id={`planning-2027-data-${lang}`} set:html={JSON.stringify(payload).replace(/</g,'\\u003c')} />
+<script>import { initializePlanning2027 } from '../planning-2027-client'; document.querySelectorAll<HTMLElement>('[data-planning-root]').forEach(root=>{const lang=root.dataset.lang==='en'?'en':'sl';initializePlanning2027(root,JSON.parse(document.getElementById(`planning-2027-data-${lang}`)?.textContent??'null'),lang);});</script>

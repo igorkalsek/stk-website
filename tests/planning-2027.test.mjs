@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
+import { allPlanningWeekends, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -22,7 +22,7 @@ test('confirmed dates and expected ranges produce calculated weekend counts and 
   const overview = buildPlanningOverview(events);
   assert.deepEqual({ confirmed: overview.weekends[0].confirmed, expected: overview.weekends[0].expected, total: overview.weekends[0].total }, { confirmed: 1, expected: 2, total: 3 });
   assert.equal(overview.weekends[0].events[2].status, 'termin_znan');
-  assert.equal(formatEventPlanningDate(events[0], 'sl'), '15. 5. 2027');
+  assert.equal(formatEventPlanningDate(events[0], 'sl'), '15. maja 2027');
   assert.equal(formatEventPlanningDate(events[1], 'en'), '15–16 May 2027');
 });
 
@@ -37,7 +37,7 @@ test('undated events stay out of weekends and in the separate unknown group', ()
   const event = row(); const overview = buildPlanningOverview([event]);
   assert.equal(overview.weekends.length, 0);
   assert.deepEqual(overview.unknown, [event]);
-  assert.equal(formatEventPlanningDate(event, 'sl'), 'Termin še ni znan');
+  assert.equal(formatEventPlanningDate(event, 'sl'), 'Datum še ni znan');
   assert.equal(formatEventPlanningDate(event, 'en'), 'Date not yet known');
 });
 
@@ -49,6 +49,22 @@ test('weekday-only expected ranges stay out of weekend counts and use their own 
   assert.equal(overview.unknown.length, 0);
   assert.equal(formatEventPlanningDate(event, 'sl'), '17.–19. maja 2027');
   assert.equal(formatEventPlanningDate(event, 'en'), '17–19 May 2027');
+  const week = buildPlanningWeeks([event])[0];
+  assert.equal(week.start, '2027-05-17');
+  assert.deepEqual(week.weekdayEvents, [event]);
+  assert.equal(week.weekendEvents.length, 0);
+});
+
+test('represents every 2027 Saturday and Sunday weekend including zero-event weekends', () => {
+  const weekends = allPlanningWeekends();
+  assert.equal(weekends.length, 52);
+  assert.deepEqual([weekends[0].start, weekends.at(-1).start], ['2027-01-02', '2027-12-25']);
+  assert.ok(weekends.every(({ start, end }) => new Date(`${start}T00:00:00Z`).getUTCDay() === 6 && new Date(`${end}T00:00:00Z`).getUTCDay() === 0));
+});
+
+test('week planner keeps ranges on each overlapping weekend week', () => {
+  const event = row({ predvideno_od: '2027-05-14', predvideno_do: '2027-05-23' });
+  assert.deepEqual(buildPlanningWeeks([event]).map(({ weekendStart }) => weekendStart), ['2027-05-15', '2027-05-22']);
 });
 
 test('month, region, and complete surface values filter locally', () => {
@@ -70,6 +86,12 @@ test('month filtering uses actual event dates across weekend and month boundarie
 test('date formatters localize dates and ranges without exposing ISO values', () => {
   assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'sl'), '20.–22. avgusta 2027');
   assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'en'), '20–22 August 2027');
+});
+
+test('generated_at is displayed as a localized calendar date', () => {
+  assert.equal(formatPlanningUpdated('2026-08-10T12:34:00Z', 'sl'), '10. avgusta 2026');
+  assert.equal(formatPlanningUpdated('2026-08-10T12:34:00Z', 'en'), '10 August 2026');
+  assert.equal(formatPlanningUpdated('', 'en'), '');
 });
 
 test('English planning taxonomy localizes display labels without changing raw values', () => {
@@ -101,13 +123,14 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   const organizer = readFileSync('src/components/OrganizerPage.astro', 'utf8');
   const styles = readFileSync('src/styles/global.css', 'utf8');
   assert.doesNotMatch(component, /DEMO 0|demonstracijski podatki|static examples|Srednje zaseden|Moderately busy/);
-  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Termini med tednom', 'Weekday dates', 'Termin še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
+  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Med tednom', 'Weekday', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
   assert.match(component, /data-planning-filter/);
   assert.match(component, /data-planning-fallback/);
-  assert.match(component, /<details>/);
-  assert.match(styles, /@media \(max-width: 719px\)/);
+  assert.match(component, /<details/);
+  assert.match(component, /0 dogodkov pomeni/);
+  assert.match(styles, /@media \(max-width: 520px\)/);
   assert.match(organizer, /data-organizer-action="check_2027_dates"/);
-  assert.match(organizer, /data-organizer-placement="season_preview"/);
+  assert.doesNotMatch(organizer, /1\.248|384|127|82/);
 });
 
 test('production planning routes are included in sitemap with canonical and hreflang metadata', () => {
