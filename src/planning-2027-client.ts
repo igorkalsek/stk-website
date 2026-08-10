@@ -28,14 +28,18 @@ export function renderPlanningOverview(root: HTMLElement, events: PlanningEvent[
   const tableBody = root.querySelector<HTMLElement>('[data-weekends-table]');
   const cards = root.querySelector<HTMLElement>('[data-weekends-cards]');
   const unknown = root.querySelector<HTMLElement>('[data-unknown-events]');
+  const weekday = root.querySelector<HTMLElement>('[data-weekday-events]');
   const empty = root.querySelector<HTMLElement>('[data-empty-results]');
-  if (!tableBody || !cards || !unknown || !empty) return;
+  if (!tableBody || !cards || !unknown || !weekday || !empty) return;
   tableBody.innerHTML = overview.weekends.map((weekend) => `<tr><th scope="row">${escapeHtml(formatPlanningRange(weekend.start, weekend.end, lang, false))}</th><td>${weekend.confirmed}</td><td>${weekend.expected}</td><td>${weekend.total}</td><td>${detailsHtml(weekend.events, lang)}</td></tr>`).join('');
   cards.innerHTML = overview.weekends.map((weekend) => `<article class="weekend-card"><h3>${escapeHtml(formatPlanningRange(weekend.start, weekend.end, lang, false))}</h3><p>${weekend.confirmed} ${labels.confirmed.toLocaleLowerCase(lang)} · ${weekend.expected} ${labels.expected.toLocaleLowerCase(lang)}</p><strong>${labels.total}: ${weekend.total}</strong>${detailsHtml(weekend.events, lang)}</article>`).join('');
   unknown.hidden = overview.unknown.length === 0;
   const unknownList = unknown.querySelector<HTMLElement>('ul');
   if (unknownList) unknownList.innerHTML = overview.unknown.map((event) => eventHtml(event, lang)).join('');
-  empty.hidden = overview.weekends.length > 0 || overview.unknown.length > 0;
+  weekday.hidden = overview.weekday.length === 0;
+  const weekdayList = weekday.querySelector<HTMLElement>('ul');
+  if (weekdayList) weekdayList.innerHTML = overview.weekday.map((event) => eventHtml(event, lang)).join('');
+  empty.hidden = overview.weekends.length > 0 || overview.weekday.length > 0 || overview.unknown.length > 0;
 }
 
 export function initializePlanning2027(root: HTMLElement, initialPayload: PlanningPayload | null, lang: Lang): void {

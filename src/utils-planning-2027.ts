@@ -37,6 +37,7 @@ export interface PlanningWeekend {
 export interface PlanningOverview {
   events: PlanningEvent[];
   weekends: PlanningWeekend[];
+  weekday: PlanningEvent[];
   unknown: PlanningEvent[];
 }
 
@@ -82,13 +83,6 @@ const toDate = (iso: string) => new Date(`${iso}T00:00:00Z`);
 const toIso = (date: Date) => date.toISOString().slice(0, 10);
 const addDays = (date: Date, days: number) => new Date(date.valueOf() + days * 86400000);
 
-function weekendForDate(iso: string): [string, string] {
-  const date = toDate(iso);
-  const day = date.getUTCDay();
-  const saturday = addDays(date, day === 0 ? -1 : 6 - day);
-  return [toIso(saturday), toIso(addDays(saturday, 1))];
-}
-
 function eventPeriod(event: PlanningEvent): [string, string] | null {
   if (event.status === 'potrjeno') return event.datum ? [event.datum, event.datum] : null;
   const start = event.predvideno_od || event.predvideno_do;
@@ -98,10 +92,11 @@ function eventPeriod(event: PlanningEvent): [string, string] | null {
 }
 
 function weekendKeysForPeriod(start: string, end: string): Array<[string, string]> {
-  if (start === end) return [weekendForDate(start)];
   const result: Array<[string, string]> = [];
-  let saturday = toDate(weekendForDate(start)[0]);
-  if (toIso(addDays(saturday, 1)) < start) saturday = addDays(saturday, 7);
+  const startDate = toDate(start);
+  const startDay = startDate.getUTCDay();
+  let saturday = startDay === 6 ? startDate : addDays(startDate, startDay === 0 ? -1 : 6 - startDay);
+  if (toIso(saturday) < start && toIso(addDays(saturday, 1)) < start) saturday = addDays(saturday, 7);
   while (toIso(saturday) <= end) {
     const sunday = addDays(saturday, 1);
     if (toIso(sunday) >= start) result.push([toIso(saturday), toIso(sunday)]);
@@ -112,12 +107,15 @@ function weekendKeysForPeriod(start: string, end: string): Array<[string, string
 
 export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview {
   const weekendMap = new Map<string, PlanningEvent[]>();
+  const weekday: PlanningEvent[] = [];
   const unknown: PlanningEvent[] = [];
   events.forEach((event) => {
     const period = eventPeriod(event);
     if (!period) { unknown.push(event); return; }
+    const weekendKeys = weekendKeysForPeriod(...period);
+    if (weekendKeys.length === 0) { weekday.push(event); return; }
     const seen = new Set<string>();
-    weekendKeysForPeriod(...period).forEach(([start]) => {
+    weekendKeys.forEach(([start]) => {
       if (seen.has(start)) return;
       seen.add(start);
       weekendMap.set(start, [...(weekendMap.get(start) ?? []), event]);
@@ -129,7 +127,7 @@ export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview
     expected: weekendEvents.filter((event) => event.status !== 'potrjeno').length,
     total: weekendEvents.length
   }));
-  return { events, weekends, unknown };
+  return { events, weekends, weekday, unknown };
 }
 
 export interface PlanningFilters { month: string; region: string; surface: string; }
@@ -137,7 +135,10 @@ export interface PlanningFilters { month: string; region: string; surface: strin
 export function filterPlanningEvents(events: PlanningEvent[], filters: PlanningFilters): PlanningEvent[] {
   return events.filter((event) => {
     const period = eventPeriod(event);
-    const monthMatches = filters.month === '' || (period !== null && weekendKeysForPeriod(...period).some(([start]) => start.slice(5, 7) === filters.month));
+    const monthStart = filters.month ? `2027-${filters.month}-01` : '';
+    const followingMonth = filters.month ? new Date(Date.UTC(2027, Number(filters.month), 1)) : null;
+    const monthEnd = followingMonth ? toIso(addDays(followingMonth, -1)) : '';
+    const monthMatches = filters.month === '' || (period !== null && period[0] <= monthEnd && period[1] >= monthStart);
     return monthMatches && (!filters.region || event.regija === filters.region) && (!filters.surface || event.tip_podlage === filters.surface);
   });
 }

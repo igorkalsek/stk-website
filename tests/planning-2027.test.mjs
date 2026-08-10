@@ -41,10 +41,30 @@ test('undated events stay out of weekends and in the separate unknown group', ()
   assert.equal(formatEventPlanningDate(event, 'en'), 'Date not yet known');
 });
 
+test('weekday-only expected ranges stay out of weekend counts and use their own group', () => {
+  const event = row({ predvideno_od: '2027-05-17', predvideno_do: '2027-05-19' });
+  const overview = buildPlanningOverview([event]);
+  assert.equal(overview.weekends.length, 0);
+  assert.deepEqual(overview.weekday, [event]);
+  assert.equal(overview.unknown.length, 0);
+  assert.equal(formatEventPlanningDate(event, 'sl'), '17.–19. maj 2027');
+  assert.equal(formatEventPlanningDate(event, 'en'), '17–19 May 2027');
+});
+
 test('month, region, and complete surface values filter locally', () => {
   const may = row({ naziv_prireditve: 'Maj', predvideno_od: '2027-05-15', predvideno_do: '2027-05-15' });
   const june = row({ naziv_prireditve: 'Junij', regija: 'Savinjska', tip_podlage: 'trail', predvideno_od: '2027-06-12', predvideno_do: '2027-06-12' });
   assert.deepEqual(filterPlanningEvents([may, june], { month: '05', region: 'Gorenjska', surface: 'cesta/trail' }), [may]);
+});
+
+test('month filtering uses actual event dates across weekend and month boundaries', () => {
+  const sunday = row({ predvideno_od: '2027-08-01', predvideno_do: '2027-08-01' });
+  const spanning = row({ naziv_prireditve: 'Čez mesec', predvideno_od: '2027-07-30', predvideno_do: '2027-08-02' });
+  const filters = (month) => ({ month, region: '', surface: '' });
+  assert.deepEqual(filterPlanningEvents([sunday], filters('08')), [sunday]);
+  assert.deepEqual(filterPlanningEvents([spanning], filters('07')), [spanning]);
+  assert.deepEqual(filterPlanningEvents([spanning], filters('08')), [spanning]);
+  assert.deepEqual(filterPlanningEvents([sunday, spanning], filters('09')), []);
 });
 
 test('date formatters localize dates and ranges without exposing ISO values', () => {
@@ -62,7 +82,7 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   const organizer = readFileSync('src/components/OrganizerPage.astro', 'utf8');
   const styles = readFileSync('src/styles/global.css', 'utf8');
   assert.doesNotMatch(component, /DEMO 0|demonstracijski podatki|static examples|Srednje zaseden|Moderately busy/);
-  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Termin še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
+  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Termini med tednom', 'Weekday dates', 'Termin še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
   assert.match(component, /data-planning-filter/);
   assert.match(component, /data-planning-fallback/);
   assert.match(component, /<details>/);
