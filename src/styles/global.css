@@ -1209,27 +1209,62 @@ main {
   text-underline-offset: 4px;
 }
 
-.organizer-page .section { padding-top: 36px; }
+.organizer-page .section, .race-dates-page .section { padding-top: 36px; }
 .organizer-page .page-hero { padding-bottom: 12px; }
 .organizer-page .page-hero h1 { max-width: 820px; }
-.organizer-button-secondary { background: var(--white); color: var(--deep-teal); box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.18); }
 .organizer-dark-button { background: var(--deep-teal); color: var(--white); }
 .organizer-dark-button:hover { color: var(--white); }
-.organizer-benefits { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.organizer-benefits li { border: 1px solid rgba(16, 64, 80, 0.1); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.88); color: var(--deep-teal); font-weight: 750; line-height: 1.45; padding: 18px 18px 18px 48px; position: relative; }
-.organizer-benefits li::before { position: absolute; left: 18px; content: '✓'; color: #28704d; font-weight: 900; }
-.organizer-grid { display: grid; gap: 18px; }
-.organizer-grid .info-card { display: grid; align-content: start; gap: 16px; }
-.organizer-grid h2, .organizer-claim-card h2, .organizer-final-cta h2 { margin: 0; color: var(--deep-teal); letter-spacing: -0.035em; }
-.organizer-grid ol, .organizer-field-list { margin: 0; padding-left: 1.35rem; color: var(--muted); line-height: 1.75; }
-.organizer-grid .organizer-review-note { margin: 0; color: var(--deep-teal); }
-.organizer-grid .button { width: fit-content; }
+.organizer-text-link { align-self: center; color: var(--deep-teal); font-weight: 800; padding: 12px 4px; text-underline-offset: 4px; }
+.organizer-season-card { display: grid; gap: 24px; border: 1px solid rgba(16, 64, 80, .12); border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(200, 230, 201, .34), rgba(255, 255, 255, .94)); padding: clamp(24px, 5vw, 44px); }
+.organizer-season-copy { display: grid; align-content: start; gap: 14px; }
+.organizer-season-copy h2, .organizer-season-copy h3, .organizer-season-copy p { margin: 0; }
+.organizer-season-copy h2 { color: var(--deep-teal); font-size: clamp(1.8rem, 4vw, 2.6rem); }
+.organizer-season-copy h3 { color: var(--deep-teal); }
+.organizer-season-copy p { color: var(--muted); line-height: 1.65; }
+.organizer-season-copy .button { width: fit-content; }
+.organizer-prototype-label { width: fit-content; color: #704406; font-size: .75rem; font-weight: 900; letter-spacing: .07em; }
+.organizer-weekend-preview { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.organizer-weekend-preview li { display: grid; gap: 6px; border-radius: var(--radius-md); background: var(--white); padding: 16px; box-shadow: inset 0 0 0 1px rgba(16, 64, 80, .1); }
+.organizer-weekend-preview li > span { color: var(--deep-teal); font-weight: 850; }
+.organizer-steps { display: grid; gap: 18px; }
+.organizer-steps .info-card { display: grid; align-content: start; gap: 12px; }
+.organizer-steps h3, .organizer-steps p { margin: 0; }
+.organizer-steps ul { margin: 0; padding-left: 1.25rem; color: var(--muted); line-height: 1.65; }
+.organizer-steps a { color: var(--deep-teal); font-weight: 850; text-underline-offset: 4px; }
+.organizer-step-number { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--deep-teal); color: white; font-weight: 900; }
+.organizer-stats { display: grid; gap: 8px; padding: 0 !important; list-style: none; }
+.organizer-stats li { border-left: 3px solid var(--orange); padding-left: 10px; color: var(--deep-teal); font-weight: 750; }
 .organizer-claim-card { display: grid; gap: 14px; border-radius: var(--radius-lg); background: var(--deep-teal); color: var(--white); padding: clamp(24px, 5vw, 40px); }
 .organizer-claim-card h2 { margin-top: 10px; color: var(--white); }
 .organizer-claim-card p { margin: 0; max-width: 850px; color: #d7e8e2; line-height: 1.7; }
 .organizer-status { display: inline-flex; border-radius: 999px; background: var(--orange); color: #1e2b1e; font-size: .78rem; font-weight: 900; letter-spacing: .08em; padding: 7px 10px; }
 .organizer-final-cta { display: grid; gap: 18px; padding-bottom: 12px; }
-@media (min-width: 720px) { .organizer-benefits, .organizer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.prototype-notice { border-left: 5px solid var(--orange); border-radius: 0 var(--radius-md) var(--radius-md) 0; background: rgba(240, 160, 48, .09); padding: 18px; }
+.prototype-notice strong { color: var(--deep-teal); }
+.prototype-notice p { margin: 6px 0 0; color: var(--muted); }
+.dates-filter-prototype { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; color: var(--muted); }
+.dates-filter-prototype span { border: 1px solid rgba(16, 64, 80, .13); border-radius: 999px; background: white; padding: 8px 12px; }
+.dates-filter-prototype span:first-child { border: 0; background: transparent; font-weight: 800; }
+.dates-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-md); background: white; overflow: hidden; }
+.dates-table th, .dates-table td { border-bottom: 1px solid rgba(16, 64, 80, .1); padding: 15px; text-align: left; }
+.dates-table thead { background: var(--deep-teal); color: white; }
+.occupancy { display: inline-flex; width: fit-content; border-left: 4px solid #708376; padding: 4px 8px; color: var(--deep-teal); font-size: .9rem; }
+.occupancy-medium, .occupancy-3 { border-color: #c58a25; }
+.occupancy-high, .occupancy-2 { border-color: #a84d42; }
+.occupancy-low, .occupancy-1 { border-color: #4d8560; }
+.dates-mobile-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.weekend-card { display: grid; align-content: start; gap: 10px; border: 1px solid rgba(16, 64, 80, .12); border-radius: var(--radius-md); background: white; padding: 18px; }
+.weekend-card h3, .weekend-card p { margin: 0; }
+.weekend-card summary { margin-top: 8px; color: var(--deep-teal); cursor: pointer; font-weight: 800; }
+.demo-events { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.demo-events li { display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(16, 64, 80, .1); padding-top: 10px; }
+.demo-events li div { display: grid; gap: 3px; }
+.demo-events li div span { color: var(--muted); font-size: .85rem; }
+.event-status { align-self: start; border-radius: 999px; padding: 5px 8px; font-size: .72rem; font-weight: 900; }
+.event-status-confirmed { background: rgba(77, 133, 96, .15); color: #285d3a; }
+.event-status-expected { border: 1px dashed #8a6a32; color: #72551f; }
+@media (min-width: 800px) { .organizer-season-card { grid-template-columns: 1.3fr .8fr; } .organizer-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 719px) { .dates-table-wrap { display: none; } .dates-mobile-list { grid-template-columns: 1fr; margin-top: 0; } }
 
 .hero-secondary-link:hover,
 .hero-secondary-link:focus-visible {

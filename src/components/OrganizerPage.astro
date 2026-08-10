@@ -4,76 +4,50 @@ const { lang } = Astro.props;
 const en = lang === 'en';
 const finderHref = en ? '/en/find-races/' : '/iskalnik-tekov/';
 const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
-const benefits = en ? [
-  'Greater visibility among Slovenian runners',
-  'Direct links to the official race information and registration',
-  'A clear overview of distances, fees, deadlines, course and special features',
-  'A shareable link to the race profile'
-] : [
-  'Večja vidnost med slovenskimi tekači',
-  'Neposredna povezava na uradni razpis in prijavo',
-  'Pregleden prikaz razdalj, startnine, rokov, trase in posebnosti',
-  'Povezava do profila, primerna za deljenje'
-];
-const fields = en ? [
-  'Date, place and start time', 'Distances and surface', 'Entry fee and registration deadlines',
-  'Course and elevation gain', 'Children’s or family programme', 'Cup or series',
-  'Organiser and official website'
-] : [
-  'Datum, kraj in ura', 'Razdalje in podlaga', 'Startnina in prijavni roki',
-  'Trasa in višinski metri', 'Otroški oziroma družinski program', 'Pokal ali serija',
-  'Organizator in uradna spletna stran'
-];
+const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
+const fields = en ? ['Date', 'Place', 'Distances', 'Registration', 'Course', 'Entry fee', 'Registration deadlines', 'Family programme', 'Organiser'] : ['datum', 'kraj', 'razdalje', 'prijavo', 'traso', 'prijavnino', 'prijavne roke', 'družinski program', 'organizatorja'];
+const stats = en ? ['1,248 profile views', '384 registration clicks', '127 race-info clicks', '82 organiser website clicks'] : ['1.248 ogledov profila', '384 klikov na prijavo', '127 klikov na razpis', '82 klikov na spletno stran organizatorja'];
+const weekendExamples = en ? [
+  ['11–12 September', 'Less busy'], ['18–19 September', 'Busier'], ['25–26 September', 'Moderately busy']
+] : [['11.–12. september', 'Manj zaseden'], ['18.–19. september', 'Bolj zaseden'], ['25.–26. september', 'Srednje zaseden']];
 ---
 <main class="organizer-page">
   <section class="page-hero container" aria-labelledby="organizer-title">
     <span class="eyebrow">{en ? 'FOR ORGANISERS' : 'ZA ORGANIZATORJE'}</span>
-    <h1 id="organizer-title">{en ? 'Help runners find your race' : 'Naj tekači lažje najdejo vaš tek'}</h1>
-    <p>{en
-      ? 'Slovenski Tekaški Koledar presents the key information about your race in one place and directs runners straight to the official race information and registration.'
-      : 'Slovenski Tekaški Koledar na enem mestu predstavi najpomembnejše podatke o vašem teku ter tekače usmeri neposredno na uradni razpis in prijavo.'}</p>
+    <h1 id="organizer-title">{en ? 'Plan and present your race' : 'Načrtujte in predstavite svoj tek'}</h1>
+    <p>{en ? 'STK helps organisers review race dates, present their event to runners and monitor basic interest in it.' : 'STK organizatorjem pomaga preveriti tekaške termine, predstaviti dogodek tekačem in spremljati osnovno zanimanje za dogodek.'}</p>
     <div class="cta-row" aria-label={en ? 'Organiser actions' : 'Možnosti za organizatorje'}>
-      <a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="hero">{en ? 'Find your race' : 'Poiščite svoj tek'}</a>
-      <a class="button organizer-button-secondary" href={formHref} data-organizer-action="add_race" data-organizer-placement="hero">{en ? 'Add a new race' : 'Dodajte nov tek'}</a>
+      <a class="button button-primary" href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="hero">{en ? 'Check 2027 dates' : 'Preverite termine 2027'}</a>
+      <a class="button organizer-dark-button" href={finderHref} data-organizer-action="find_race" data-organizer-placement="hero">{en ? 'Find your race' : 'Poiščite svoj tek'}</a>
+      <a class="organizer-text-link" href={formHref} data-organizer-action="add_race" data-organizer-placement="hero">{en ? 'Add a new race' : 'Dodajte nov tek'}</a>
     </div>
   </section>
 
-  <section class="section container" aria-labelledby="benefits-title">
-    <div class="section-heading"><h2 id="benefits-title">{en ? 'Your race, clearly presented' : 'Vaš tek, pregledno predstavljen'}</h2></div>
-    <ul class="organizer-benefits">{benefits.map((benefit) => <li>{benefit}</li>)}</ul>
-  </section>
-
-  <section class="section container organizer-grid" aria-label={en ? 'Publishing process and profile information' : 'Postopek objave in podatki profila'}>
-    <div class="info-card">
-      <h2>{en ? 'How to update your race' : 'Kako posodobite svoj tek'}</h2>
-      <ol>
-        <li>{en ? 'Find the existing race.' : 'Poiščite obstoječi tek.'}</li>
-        <li>{en ? 'Confirm or add missing information.' : 'Potrdite ali dopolnite podatke.'}</li>
-        <li>{en ? 'STK reviews the proposal and then publishes the changes.' : 'STK predlog pregleda in nato objavi spremembe.'}</li>
-      </ol>
-      <p class="organizer-review-note"><strong>{en ? 'Proposals are not published automatically.' : 'Predlogi niso objavljeni samodejno.'}</strong></p>
-      <a class="button organizer-dark-button" href={formHref} data-organizer-action="confirm_race" data-organizer-placement="process">{en ? 'Confirm or correct the information' : 'Potrdite ali popravite podatke'}</a>
-    </div>
-    <div class="info-card">
-      <h2>{en ? 'Information supported by a profile' : 'Podatki, ki jih profil podpira'}</h2>
-      <ul class="organizer-field-list">{fields.map((field) => <li>{field}</li>)}</ul>
+  <section class="section container" aria-labelledby="season-title">
+    <div class="organizer-season-card">
+      <div class="organizer-season-copy">
+        <span class="organizer-prototype-label">{en ? 'DISPLAY EXAMPLE · PROTOTYPE' : 'PRIMER PRIKAZA · PROTOTIP'}</span>
+        <h2 id="season-title">{en ? '2027 season planning' : 'Načrtovanje sezone 2027'}</h2>
+        <h3>{en ? 'Choose a suitable date for your race' : 'Izberite primeren termin za svoj tek'}</h3>
+        <p>{en ? 'STK tracks confirmed dates and traditional running events in Slovenia. This overview helps organisers assess which weekends are already busier.' : 'STK spremlja potrjene termine in tradicionalne tekaške prireditve po Sloveniji. Pregled pomaga organizatorjem oceniti, kateri vikendi so že bolj zasedeni.'}</p>
+        <a class="button button-primary" href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="season_preview">{en ? 'View the 2027 date overview' : 'Poglejte pregled terminov 2027'}</a>
+      </div>
+      <ul class="organizer-weekend-preview">
+        {weekendExamples.map(([date, level], index) => <li><span>{date}</span><strong class={`occupancy occupancy-${index + 1}`}>{level}</strong></li>)}
+      </ul>
     </div>
   </section>
 
-  <section class="section container" aria-labelledby="claim-title">
-    <div class="organizer-claim-card">
-      <div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="claim-title">{en ? 'Claiming a race profile' : 'Prevzem profila teka'}</h2></div>
-      <p>{en
-        ? 'In the future, STK wants to make it easier for verified organisers to confirm and update their races. Possible benefits include a verified-profile badge, easier updates, promotional tools and aggregated insight into interest.'
-        : 'STK želi preverjenim organizatorjem v prihodnje olajšati potrjevanje in posodabljanje njihovega teka. Možne koristi vključujejo oznako potrjenega profila, lažje posodabljanje, promocijska orodja in agregiran vpogled v zanimanje.'}</p>
+  <section class="section container" aria-labelledby="steps-title">
+    <div class="section-heading"><span class="eyebrow">{en ? 'THREE STEPS' : 'TRIJE KORAKI'}</span><h2 id="steps-title">{en ? 'Support from planning to promotion' : 'Podpora od načrtovanja do predstavitve'}</h2></div>
+    <div class="organizer-steps">
+      <article class="info-card"><span class="organizer-step-number">1</span><h3>{en ? 'Plan the date' : 'Načrtujte termin'}</h3><p>{en ? 'Review confirmed and expected running events around your preferred date.' : 'Preverite potrjene in pričakovane tekaške dogodke okoli želenega termina.'}</p><a href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="steps">{en ? '2027 date overview' : 'Pregled terminov 2027'}</a></article>
+      <article class="info-card"><span class="organizer-step-number">2</span><h3>{en ? 'Present your race' : 'Predstavite svoj tek'}</h3><p>{en ? 'Publish or complete the essential event information:' : 'Objavite oziroma dopolnite:'}</p><ul>{fields.map((field) => <li>{field}</li>)}</ul><p class="organizer-review-note"><strong>{en ? 'STK reviews proposals before publication.' : 'STK predloge pred objavo pregleda.'}</strong></p><a href={formHref} data-organizer-action="confirm_race" data-organizer-placement="steps">{en ? 'Add or correct race information' : 'Dodajte ali popravite podatke'}</a></article>
+      <article class="info-card organizer-stats-card"><span class="organizer-step-number">3</span><h3>{en ? 'Monitor interest' : 'Spremljajte zanimanje'}</h3><p>{en ? 'STK can show organisers aggregated interest in their event.' : 'STK lahko organizatorjem prikaže agregirano zanimanje za njihov dogodek.'}</p><span class="organizer-prototype-label">{en ? 'STATISTICS DISPLAY EXAMPLE' : 'PRIMER PRIKAZA STATISTIKE'}</span><ul class="organizer-stats">{stats.map((stat) => <li>{stat}</li>)}</ul><a href="#claim-title" data-organizer-action="view_organizer_stats_info" data-organizer-placement="steps">{en ? 'About future organiser tools' : 'O prihodnjih orodjih za organizatorje'}</a></article>
     </div>
   </section>
 
-  <section class="section container organizer-final-cta" aria-labelledby="next-title">
-    <h2 id="next-title">{en ? 'Start with your race' : 'Začnite pri svojem teku'}</h2>
-    <div class="cta-row">
-      <a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="final">{en ? 'Find your race' : 'Poiščite svoj tek'}</a>
-      <a class="button organizer-dark-button" href={formHref} data-organizer-action="add_race" data-organizer-placement="final">{en ? 'Add a new race' : 'Dodajte nov tek'}</a>
-    </div>
-  </section>
+  <section class="section container" aria-labelledby="claim-title"><div class="organizer-claim-card"><div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="claim-title">{en ? 'Claiming a race profile' : 'Prevzem profila teka'}</h2></div><p>{en ? 'A future verified profile could provide easier updates, promotional tools and aggregated statistics. These features are not yet available.' : 'Prihodnji preverjen profil bi lahko omogočil lažje posodabljanje, promocijska orodja in agregirano statistiko. Te možnosti še niso na voljo.'}</p></div></section>
+
+  <section class="section container organizer-final-cta" aria-labelledby="next-title"><h2 id="next-title">{en ? 'Start with your race' : 'Začnite pri svojem teku'}</h2><div class="cta-row"><a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="final">{en ? 'Find your race' : 'Poiščite svoj tek'}</a><a class="button organizer-dark-button" href={formHref} data-organizer-action="add_race" data-organizer-placement="final">{en ? 'Add a new race' : 'Dodajte nov tek'}</a></div></section>
 </main>

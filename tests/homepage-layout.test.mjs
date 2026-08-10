@@ -33,8 +33,8 @@ test('homepages remove duplicate standalone lower sections', () => {
 });
 
 test('homepages include final utility cards and expected links', () => {
-  assert.match(pages.sl, /Še več možnosti[\s\S]*Osebni koledar[\s\S]*href="\/osebni-koledar\/"[\s\S]*Za organizatorje[\s\S]*href="\/dodaj-ali-popravi-tek\/"[\s\S]*Spremljajte STK[\s\S]*<SocialLinks lang="sl"/);
-  assert.match(pages.en, /More from STK[\s\S]*Personal calendar[\s\S]*href="\/en\/personal-calendar\/"[\s\S]*For organisers[\s\S]*href="\/en\/add-or-correct-race\/"[\s\S]*Follow STK[\s\S]*<SocialLinks lang="en"/);
+  assert.match(pages.sl, /Še več možnosti[\s\S]*Osebni koledar[\s\S]*href="\/osebni-koledar\/"[\s\S]*Za organizatorje[\s\S]*Načrtujete tek za 2027\?[\s\S]*href="\/za-organizatorje\/"[\s\S]*Spremljajte STK[\s\S]*<SocialLinks lang="sl"/);
+  assert.match(pages.en, /More from STK[\s\S]*Personal calendar[\s\S]*href="\/en\/personal-calendar\/"[\s\S]*For organisers[\s\S]*Planning a race for 2027\?[\s\S]*href="\/en\/for-organizers\/"[\s\S]*Follow STK[\s\S]*<SocialLinks lang="en"/);
 });
 
 
