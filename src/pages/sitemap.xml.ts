@@ -7,6 +7,7 @@ const sitemapPaths = [
   '/osebni-koledar/',
   '/stk-tekobot/',
   '/dodaj-ali-popravi-tek/',
+  '/za-organizatorje/',
   '/o-projektu-in-zasebnost/',
   '/en/',
   '/en/find-races/',
@@ -15,6 +16,7 @@ const sitemapPaths = [
   '/en/group-runs/',
   '/en/personal-calendar/',
   '/en/stk-tekobot/',
+  '/en/for-organizers/',
 ];
 
 export function GET() {
