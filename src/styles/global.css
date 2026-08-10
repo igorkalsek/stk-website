@@ -1252,7 +1252,7 @@ main {
 .occupancy-medium, .occupancy-3 { border-color: #c58a25; }
 .occupancy-high, .occupancy-2 { border-color: #a84d42; }
 .occupancy-low, .occupancy-1 { border-color: #4d8560; }
-.dates-mobile-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.dates-mobile-list { display: none; }
 .weekend-card { display: grid; align-content: start; gap: 10px; border: 1px solid rgba(16, 64, 80, .12); border-radius: var(--radius-md); background: white; padding: 18px; }
 .weekend-card h3, .weekend-card p { margin: 0; }
 .weekend-card summary { margin-top: 8px; color: var(--deep-teal); cursor: pointer; font-weight: 800; }
@@ -1264,7 +1264,7 @@ main {
 .event-status-confirmed { background: rgba(77, 133, 96, .15); color: #285d3a; }
 .event-status-expected { border: 1px dashed #8a6a32; color: #72551f; }
 @media (min-width: 800px) { .organizer-season-card { grid-template-columns: 1.3fr .8fr; } .organizer-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 719px) { .dates-table-wrap { display: none; } .dates-mobile-list { grid-template-columns: 1fr; margin-top: 0; } }
+@media (max-width: 719px) { .dates-table-wrap { display: none; } .dates-mobile-list { display: grid; grid-template-columns: 1fr; gap: 14px; } }
 
 .hero-secondary-link:hover,
 .hero-secondary-link:focus-visible {

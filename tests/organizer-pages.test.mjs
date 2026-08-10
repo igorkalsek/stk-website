@@ -61,13 +61,16 @@ test('date overview labels static demo data and distinguishes event certainty', 
   assert.match(datesComponent, /event-status-\$\{event\.status\}/);
   assert.match(styles, /\.event-status-confirmed/);
   assert.match(styles, /\.event-status-expected/);
+  for (const label of ['DEMO 01', 'DEMO 02', 'DEMO 03', 'DEMO 04', 'DEMO 05']) assert.match(datesComponent, new RegExp(label));
+  assert.doesNotMatch(datesComponent, /Mestni tek|Gozdni krog|Tek med vinogradi|Planinski izziv|Kraški jesenski tek/);
 });
 
 test('weekends use a desktop table and narrow-screen cards without a wide mobile table', () => {
   assert.match(datesComponent, /class="dates-table"/);
   assert.match(datesComponent, /class="dates-mobile-list"/);
   assert.match(datesComponent, /<article class="weekend-card">/);
-  assert.match(styles, /@media \(max-width: 719px\).*\.dates-table-wrap \{ display: none; \}/s);
+  assert.match(styles, /\.dates-mobile-list \{ display: none; \}/);
+  assert.match(styles, /@media \(max-width: 719px\).*\.dates-table-wrap \{ display: none; \}.*\.dates-mobile-list \{ display: grid;/s);
 });
 
 test('organizer journey retains the existing proposal form and clearly labels examples', () => {
