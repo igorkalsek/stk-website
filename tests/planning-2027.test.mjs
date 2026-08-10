@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
+import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -79,6 +79,16 @@ test('English planning taxonomy localizes display labels without changing raw va
   assert.equal(formatPlanningSurface(surface, 'en'), 'Road/trail');
   assert.equal(formatPlanningRegion(region, 'sl'), region);
   assert.equal(formatPlanningSurface(surface, 'sl'), surface);
+});
+
+test('season summary labels follow English and Slovene count grammar', () => {
+  assert.equal(formatPlanningSummaryLabel('confirmed', 1, 'en'), 'confirmed date');
+  assert.equal(formatPlanningSummaryLabel('confirmed', 2, 'en'), 'confirmed dates');
+  assert.equal(formatPlanningSummaryLabel('expected', 1, 'en'), 'expected event');
+  assert.equal(formatPlanningSummaryLabel('known', 2, 'en'), 'events with a known date window');
+  assert.deepEqual([1, 2, 3, 5].map((count) => formatPlanningSummaryLabel('confirmed', count, 'sl')), ['potrjen termin', 'potrjena termina', 'potrjeni termini', 'potrjenih terminov']);
+  assert.deepEqual([1, 2, 4, 6].map((count) => formatPlanningSummaryLabel('expected', count, 'sl')), ['pričakovan dogodek', 'pričakovana dogodka', 'pričakovani dogodki', 'pričakovanih dogodkov']);
+  assert.deepEqual([1, 2, 3, 5].map((count) => formatPlanningSummaryLabel('known', count, 'sl')), ['dogodek z znanim obdobjem', 'dogodka z znanim obdobjem', 'dogodki z znanim obdobjem', 'dogodkov z znanim obdobjem']);
 });
 
 test('planning fetch returns a safe null fallback for an unavailable or invalid API', async () => {

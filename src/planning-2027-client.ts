@@ -1,4 +1,4 @@
-import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, type PlanningEvent, type PlanningPayload } from './utils-planning-2027';
+import { buildPlanningOverview, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, type PlanningEvent, type PlanningPayload, type PlanningSummaryKind } from './utils-planning-2027';
 
 type Lang = 'sl' | 'en';
 const escapeHtml = (value: string | number) => String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]!);
@@ -69,6 +69,8 @@ export function initializePlanning2027(root: HTMLElement, initialPayload: Planni
     for (const [name, value] of Object.entries(counts)) {
       const target = summary.querySelector<HTMLElement>(`[data-summary-${name}]`);
       if (target) target.textContent = String(value);
+      const label = summary.querySelector<HTMLElement>(`[data-summary-${name}-label]`);
+      if (label) label.textContent = formatPlanningSummaryLabel(name as PlanningSummaryKind, value, lang);
     }
     summary.hidden = false;
   };

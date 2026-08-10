@@ -174,6 +174,23 @@ export function formatEventPlanningDate(event: PlanningEvent, lang: 'sl' | 'en')
 export const formatPlanningRegion = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishRegion(value) : value;
 export const formatPlanningSurface = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishSurface(value) : value;
 
+export type PlanningSummaryKind = 'confirmed' | 'expected' | 'known';
+
+export function formatPlanningSummaryLabel(kind: PlanningSummaryKind, count: number, lang: 'sl' | 'en'): string {
+  if (lang === 'en') {
+    if (kind === 'confirmed') return count === 1 ? 'confirmed date' : 'confirmed dates';
+    if (kind === 'expected') return count === 1 ? 'expected event' : 'expected events';
+    return count === 1 ? 'event with a known date window' : 'events with a known date window';
+  }
+  const form = count === 1 ? 0 : count === 2 ? 1 : count === 3 || count === 4 ? 2 : 3;
+  const labels: Record<PlanningSummaryKind, string[]> = {
+    confirmed: ['potrjen termin', 'potrjena termina', 'potrjeni termini', 'potrjenih terminov'],
+    expected: ['pričakovan dogodek', 'pričakovana dogodka', 'pričakovani dogodki', 'pričakovanih dogodkov'],
+    known: ['dogodek z znanim obdobjem', 'dogodka z znanim obdobjem', 'dogodki z znanim obdobjem', 'dogodkov z znanim obdobjem']
+  };
+  return labels[kind][form];
+}
+
 export async function fetchPlanning2027(fetchImpl: typeof fetch = fetch): Promise<PlanningPayload | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 4000);

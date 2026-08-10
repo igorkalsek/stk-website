@@ -1,5 +1,5 @@
 ---
-import { buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, type PlanningEvent } from '../utils-planning-2027';
+import { buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, type PlanningEvent } from '../utils-planning-2027';
 
 interface Props { lang: 'sl' | 'en'; }
 const { lang } = Astro.props;
@@ -27,9 +27,9 @@ const summary = payload ? {
   <section class="section container planning-intro">
     <div class="planning-note" role="note">{en ? 'Confirmed events already have an official published date for 2027. Expected dates are based on previous editions and current information and have not been confirmed by organisers.' : 'Potrjeni dogodki imajo že objavljen uradni termin za 2027. Pričakovani termini temeljijo na preteklih izvedbah in aktualnih informacijah ter še niso potrjeni s strani organizatorjev.'}</div>
     <ul class="planning-summary" data-planning-summary hidden={!summary} aria-label={en ? 'Season summary' : 'Povzetek sezone'}>
-      <li><strong data-summary-confirmed>{summary?.confirmed ?? 0}</strong><span>{en ? 'confirmed dates' : 'potrjenih terminov'}</span></li>
-      <li><strong data-summary-expected>{summary?.expected ?? 0}</strong><span>{en ? 'expected events' : 'pričakovanih dogodkov'}</span></li>
-      <li><strong data-summary-known>{summary?.known ?? 0}</strong><span>{en ? 'events with a known date window' : 'dogodkov z znanim obdobjem'}</span></li>
+      <li><strong data-summary-confirmed>{summary?.confirmed ?? 0}</strong><span data-summary-confirmed-label>{formatPlanningSummaryLabel('confirmed', summary?.confirmed ?? 0, lang)}</span></li>
+      <li><strong data-summary-expected>{summary?.expected ?? 0}</strong><span data-summary-expected-label>{formatPlanningSummaryLabel('expected', summary?.expected ?? 0, lang)}</span></li>
+      <li><strong data-summary-known>{summary?.known ?? 0}</strong><span data-summary-known-label>{formatPlanningSummaryLabel('known', summary?.known ?? 0, lang)}</span></li>
     </ul>
   </section>
 
