@@ -68,7 +68,11 @@ test('delegated organizer clicks emit once, remain navigable, avoid external ana
   globalThis.HTMLElement = FakeElement;
   globalThis.HTMLAnchorElement = FakeElement;
   globalThis.window = {
-    location: { pathname: '/za-organizatorje/', search: '', href: 'https://tekaski-koledar.si/za-organizatorje/' },
+    location: {
+      pathname: '/dodaj-ali-popravi-tek/',
+      search: '?event_name=Skrivni%20tek&notes=Obcutljive%20opombe&organizer_email=oseba%40example.com',
+      href: 'https://tekaski-koledar.si/dodaj-ali-popravi-tek/?event_name=Skrivni%20tek&notes=Obcutljive%20opombe&organizer_email=oseba%40example.com'
+    },
     localStorage: { getItem: () => optedOut ? 'true' : null },
     setTimeout: (callback) => { callback(); return 0; }
   };
@@ -121,9 +125,13 @@ test('delegated organizer clicks emit once, remain navigable, avoid external ana
     assert.deepEqual(new Set(sent.map(({ action_type }) => action_type)), new Set(cases.map(([action]) => action)));
 
     const allowedKeys = ['action_type', 'event_type', 'language', 'page_path', 'placement', 'user_agent_group'];
+    const serializedPayloads = JSON.stringify(sent);
+    for (const sensitiveValue of ['Skrivni', 'Obcutljive', 'oseba', 'event_name', 'notes', 'organizer_email']) {
+      assert.doesNotMatch(serializedPayloads, new RegExp(sensitiveValue));
+    }
     for (const [index, payload] of sent.entries()) {
       assert.deepEqual(Object.keys(payload).sort(), allowedKeys);
-      assert.equal(payload.page_path, index === sent.length - 1 ? '/en/for-organizers/' : '/za-organizatorje/');
+      assert.equal(payload.page_path, index === sent.length - 1 ? '/en/for-organizers/' : '/dodaj-ali-popravi-tek/');
       assert.equal(payload.language, index === sent.length - 1 ? 'en' : 'sl');
     }
   } finally {

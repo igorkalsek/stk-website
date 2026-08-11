@@ -211,6 +211,19 @@ const getPagePath = () => {
   return `${window.location.pathname}${window.location.search}`.slice(0, MAX_FIELD_LENGTH);
 };
 
+const getOrganizerPagePath = (value: unknown) => {
+  const fallbackPath = typeof window === 'undefined' ? '' : window.location.pathname;
+  const pagePath = trimText(value || fallbackPath);
+  if (!pagePath) return '';
+
+  try {
+    const baseHref = typeof window === 'undefined' ? 'https://tekaski-koledar.si/' : window.location.href;
+    return new URL(pagePath, baseHref).pathname.slice(0, MAX_FIELD_LENGTH);
+  } catch {
+    return pagePath.split(/[?#]/, 1)[0].slice(0, MAX_FIELD_LENGTH);
+  }
+};
+
 const getReferrer = () => {
   if (typeof document === 'undefined' || !document.referrer) return '';
   try {
@@ -279,7 +292,7 @@ const buildBody = (payload: StkAnalyticsPayload) => {
   if (body.event_type === 'organizer_action_clicked') {
     return {
       event_type: body.event_type,
-      page_path: body.page_path,
+      page_path: getOrganizerPagePath(payload.page_path),
       language: body.language,
       user_agent_group: body.user_agent_group,
       action_type: body.action_type,
