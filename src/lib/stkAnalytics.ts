@@ -15,7 +15,8 @@ type StkAnalyticsEventType =
   | 'related_race_clicked'
   | 'my_races_viewed'
   | 'my_races_bulk_ics_exported'
-  | 'personalized_results_used';
+  | 'personalized_results_used'
+  | 'organizer_action_clicked';
 
 export type StkAnalyticsPlacement =
   | 'home_featured'
@@ -29,6 +30,8 @@ export type StkAnalyticsPlacement =
   | 'my_races'
   | 'personalized_results'
   | 'personal_calendar'
+  | 'organizer_home'
+  | 'organizer_workflow'
   | 'unknown';
 
 type UserAgentGroup = 'mobile' | 'tablet' | 'desktop' | 'unknown';
@@ -109,7 +112,8 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'related_race_clicked',
   'my_races_viewed',
   'my_races_bulk_ics_exported',
-  'personalized_results_used'
+  'personalized_results_used',
+  'organizer_action_clicked'
 ]);
 
 const ALLOWED_PLACEMENTS = new Set<StkAnalyticsPlacement>([
@@ -124,6 +128,8 @@ const ALLOWED_PLACEMENTS = new Set<StkAnalyticsPlacement>([
   'my_races',
   'personalized_results',
   'personal_calendar',
+  'organizer_home',
+  'organizer_workflow',
   'unknown'
 ]);
 
@@ -247,27 +253,42 @@ const EVENT_SCOPED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'related_race_clicked'
 ]);
 
-const buildBody = (payload: StkAnalyticsPayload) => ({
-  event_type: ALLOWED_EVENT_TYPES.has(payload.event_type) ? payload.event_type : 'external_link_clicked',
-  page_path: trimText(payload.page_path || getPagePath()),
-  language: trimText(payload.language || inferLanguage(), 12),
-  event_id: trimText(payload.event_id, 120),
-  event_name: trimText(payload.event_name),
-  event_date: trimText(payload.event_date, 40),
-  event_year: trimText(payload.event_year, 12),
-  event_key: trimText(payload.event_key || (payload.event_year && payload.event_id ? `${payload.event_year}:${payload.event_id}` : ''), 140),
-  target_url: trimText(payload.target_url),
-  action_type: trimText(payload.action_type, 80),
-  search_query: trimText(payload.search_query, MAX_QUERY_LENGTH),
-  filters_json: trimText(payload.filters_json, MAX_JSON_FIELD_LENGTH),
-  results_count: Number.isFinite(payload.results_count) ? payload.results_count : '',
-  target_domain: trimText(payload.target_domain, 180),
-  calendar_type: trimText(payload.calendar_type, 80),
-  referrer: trimText(payload.referrer || getReferrer()),
-  user_agent_group: payload.user_agent_group || getUserAgentGroup(),
-  notes: trimText(payload.notes),
-  placement: normalizePlacement(payload.placement)
-});
+const buildBody = (payload: StkAnalyticsPayload) => {
+  const body = {
+    event_type: ALLOWED_EVENT_TYPES.has(payload.event_type) ? payload.event_type : 'external_link_clicked',
+    page_path: trimText(payload.page_path || getPagePath()),
+    language: trimText(payload.language || inferLanguage(), 12),
+    event_id: trimText(payload.event_id, 120),
+    event_name: trimText(payload.event_name),
+    event_date: trimText(payload.event_date, 40),
+    event_year: trimText(payload.event_year, 12),
+    event_key: trimText(payload.event_key || (payload.event_year && payload.event_id ? `${payload.event_year}:${payload.event_id}` : ''), 140),
+    target_url: trimText(payload.target_url),
+    action_type: trimText(payload.action_type, 80),
+    search_query: trimText(payload.search_query, MAX_QUERY_LENGTH),
+    filters_json: trimText(payload.filters_json, MAX_JSON_FIELD_LENGTH),
+    results_count: Number.isFinite(payload.results_count) ? payload.results_count : '',
+    target_domain: trimText(payload.target_domain, 180),
+    calendar_type: trimText(payload.calendar_type, 80),
+    referrer: trimText(payload.referrer || getReferrer()),
+    user_agent_group: payload.user_agent_group || getUserAgentGroup(),
+    notes: trimText(payload.notes),
+    placement: normalizePlacement(payload.placement)
+  };
+
+  if (body.event_type === 'organizer_action_clicked') {
+    return {
+      event_type: body.event_type,
+      page_path: body.page_path,
+      language: body.language,
+      user_agent_group: body.user_agent_group,
+      action_type: body.action_type,
+      placement: body.placement
+    } as typeof body;
+  }
+
+  return body;
+};
 
 const sendBody = (body: ReturnType<typeof buildBody>) => {
   const serializedBody = JSON.stringify(body);
@@ -344,6 +365,20 @@ const ACTION_TYPE_MAP: Record<string, string> = {
 
 const normalizeActionType = (value: string) => ACTION_TYPE_MAP[value] || value;
 
+const ORGANIZER_ACTION_TYPES = new Set([
+  'check_2027_dates',
+  'confirm_race',
+  'find_race',
+  'add_race',
+  'view_organizer_stats_info'
+]);
+
+export const normalizeOrganizerPlacement = (value: unknown): StkAnalyticsPlacement => {
+  if (value === 'workflow') return 'organizer_workflow';
+  if (value === 'hero' || value === 'main') return 'organizer_home';
+  return 'unknown';
+};
+
 const getExplicitLinkType = (link: HTMLAnchorElement) => {
   const explicit = link.dataset.stkAction || link.dataset.analyticsActionType || link.dataset.analyticsLinkType;
   return explicit ? normalizeActionType(explicit) : '';
@@ -412,6 +447,15 @@ export const initializeStkAnalyticsClickTracking = () => {
     const explicitEventType = clickedElement.dataset.analyticsEventType as StkAnalyticsEventType | undefined;
     const explicitActionType = clickedElement.dataset.analyticsActionType;
     const explicitContext = getEventContext(clickedElement);
+    const organizerAction = clickedElement.dataset.organizerAction;
+    if (clickedElement instanceof HTMLAnchorElement && organizerAction && ORGANIZER_ACTION_TYPES.has(organizerAction)) {
+      trackStkEvent({
+        event_type: 'organizer_action_clicked',
+        action_type: organizerAction,
+        placement: normalizeOrganizerPlacement(clickedElement.dataset.organizerPlacement)
+      });
+      return;
+    }
     if (explicitEventType && ALLOWED_EVENT_TYPES.has(explicitEventType)) {
       const rawTargetUrl = clickedElement instanceof HTMLAnchorElement ? clickedElement.href : clickedElement.dataset.analyticsTargetUrl;
       const targetUrl = getAnalyticsTargetUrl(clickedElement, rawTargetUrl);
