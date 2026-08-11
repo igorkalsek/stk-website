@@ -20,7 +20,7 @@ const steps = en ? [
     {steps.map((step, index) => <li class:list={{ current: active === index + 1 }}>
       {active === index + 1 ? (
         <span class="organizer-step" aria-current="step">
-          <span class="organizer-step-number">{index + 1}</span><span><strong>{step[0]}</strong><span class="organizer-current-label">{en ? 'Current step' : 'Trenutni korak'}</span>{!compact && <small>{step[1]}</small>}</span>
+          <span class="organizer-step-number">{index + 1}</span><span><strong>{step[0]}</strong>{!compact && <small>{step[1]}</small>}</span>
         </span>
       ) : (
         <a class="organizer-step" href={step[2]} data-organizer-action={step[3]} data-organizer-placement="workflow">

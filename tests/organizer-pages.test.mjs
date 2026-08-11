@@ -107,8 +107,7 @@ test('shared compact workflow marks each destination current without tab semanti
   assert.match(workflow, /<span class="organizer-step" aria-current="step">/);
   assert.doesNotMatch(workflow, /<a[^>]+aria-current/);
   assert.match(workflow, /<a class="organizer-step" href=\{step\[2\]\}/);
-  assert.match(workflow, /Current step/);
-  assert.match(workflow, /Trenutni korak/);
+  assert.doesNotMatch(workflow, /Current step|Trenutni korak|organizer-current-label/);
   assert.doesNotMatch(workflow, /tablist|role="tab"|<script/);
 });
 
@@ -152,4 +151,9 @@ test('workflow additions do not introduce duplicate literal ids', () => {
 
 test('compact planner legend retains all three status meanings', () => {
   for (const copy of ['official date', 'officially known period', 'not organiser-confirmed', 'uradni termin', 'uradno znano obdobje', 'ni potrditev organizatorja']) assert.match(datesComponent, new RegExp(copy));
+});
+
+test('planner overview heading avoids repeating the year from the page title', () => {
+  assert.match(datesComponent, /en\?'Race date overview':'Pregled terminov'/);
+  assert.doesNotMatch(datesComponent, /2027 year overview|Pregled leta 2027/);
 });
