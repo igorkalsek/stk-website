@@ -157,14 +157,20 @@ export function buildPlanningWeeks(events: PlanningEvent[]): PlanningWeek[] {
   events.forEach((event) => {
     const period = eventPeriod(event);
     if (!period) return;
-    const weekendKeys = weekendKeysForPeriod(...period);
-    if (weekendKeys.length) weekendKeys.forEach(([saturday]) => add(toIso(addDays(toDate(saturday), -5)), 'weekend', event));
-    else add(calendarWeekStart(period[0]), 'weekday', event);
+    let weekStart = calendarWeekStart(period[0]);
+    while (weekStart <= period[1]) {
+      const saturday = toIso(addDays(toDate(weekStart), 5));
+      const sunday = toIso(addDays(toDate(weekStart), 6));
+      const overlapsWeekend = period[0] <= sunday && period[1] >= saturday;
+      add(weekStart, overlapsWeekend ? 'weekend' : 'weekday', event);
+      weekStart = toIso(addDays(toDate(weekStart), 7));
+    }
   });
   return [...weeks.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([start, grouped]) => {
     const eventsForWeek = [...new Set([...grouped.weekend, ...grouped.weekday])];
+    const calendarWeekEnd = toIso(addDays(toDate(start), 6));
     return {
-      key: start, start, end: toIso(addDays(toDate(start), 6)), weekendStart: toIso(addDays(toDate(start), 5)), weekendEnd: toIso(addDays(toDate(start), 6)),
+      key: start, start, end: calendarWeekEnd > '2027-12-31' ? '2027-12-31' : calendarWeekEnd, weekendStart: toIso(addDays(toDate(start), 5)), weekendEnd: calendarWeekEnd,
       weekendEvents: grouped.weekend, weekdayEvents: grouped.weekday, events: eventsForWeek,
       confirmed: eventsForWeek.filter((event) => event.status === 'potrjeno').length,
       expected: eventsForWeek.filter((event) => event.status === 'pričakovano').length,
@@ -178,7 +184,7 @@ export function buildPlanningMonthSections(events: PlanningEvent[], selectedMont
   if (selectedMonth) return weeks.length ? [{ month: selectedMonth, weeks }] : [];
   return Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, '0')).map((month) => ({
     month,
-    weeks: weeks.filter((week) => week.weekendStart.slice(5, 7) === month)
+    weeks: weeks.filter((week) => week.weekendStart.startsWith('2028-') ? month === '12' : week.weekendStart.slice(5, 7) === month)
   })).filter((section) => section.weeks.length > 0);
 }
 

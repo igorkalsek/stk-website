@@ -64,7 +64,29 @@ test('represents every 2027 Saturday and Sunday weekend including zero-event wee
 
 test('week planner keeps ranges on each overlapping weekend week', () => {
   const event = row({ predvideno_od: '2027-05-14', predvideno_do: '2027-05-23' });
-  assert.deepEqual(buildPlanningWeeks([event]).map(({ weekendStart }) => weekendStart), ['2027-05-15', '2027-05-22']);
+  const weeks = buildPlanningWeeks([event]);
+  assert.deepEqual(weeks.map(({ weekendStart }) => weekendStart), ['2027-05-15', '2027-05-22']);
+  assert.ok(weeks.every((week) => week.weekendEvents.filter((item) => item === event).length === 1));
+});
+
+test('a range appears in every calendar week it overlaps with per-week occupancy classification', () => {
+  const event = row({ predvideno_od: '2027-08-01', predvideno_do: '2027-08-06' });
+  const weeks = buildPlanningWeeks([event]);
+  assert.deepEqual(weeks.map(({ start }) => start), ['2027-07-26', '2027-08-02']);
+  assert.deepEqual(weeks[0].weekendEvents, [event]);
+  assert.equal(weeks[0].weekdayEvents.length, 0);
+  assert.deepEqual(weeks[1].weekdayEvents, [event]);
+  assert.equal(weeks[1].weekendEvents.length, 0);
+  assert.ok(weeks.every(({ events }) => events.filter((item) => item === event).length === 1));
+});
+
+test('the final partial 2027 week remains in the December planner section', () => {
+  const event = row({ status: 'potrjeno', datum: '2027-12-30' });
+  const sections = buildPlanningMonthSections([event]);
+  assert.deepEqual(sections.map(({ month }) => month), ['12']);
+  assert.equal(sections[0].weeks[0].start, '2027-12-27');
+  assert.equal(sections[0].weeks[0].end, '2027-12-31');
+  assert.deepEqual(sections[0].weeks[0].weekdayEvents, [event]);
 });
 
 test('a boundary week has one canonical month based on its Saturday', () => {
@@ -163,16 +185,18 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   const organizer = readFileSync('src/components/OrganizerPage.astro', 'utf8');
   const styles = readFileSync('src/styles/global.css', 'utf8');
   assert.doesNotMatch(component, /DEMO 0|demonstracijski podatki|static examples|Srednje zaseden|Moderately busy/);
-  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'med tednom', 'weekday', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
+  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Med tednom', 'Weekday', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
   assert.match(component, /data-planning-filter/);
   assert.match(component, /data-planning-fallback/);
   assert.match(component, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
   assert.match(component, /formatPlanningEventCount\(w\.events\.length,lang,'show'\)/);
+  assert.match(component, /\{en\?'Weekend':'Vikend'\}: \{formatPlanningEventCount\(w\.weekendEvents\.length,lang\)\}/);
   assert.match(component, /<details/);
   assert.match(component, /0 dogodkov pomeni/);
   assert.match(component, /n>0\?<a/);
   assert.doesNotMatch(component, /weekdayEvents\.some/);
   const client = readFileSync('src/planning-2027-client.ts', 'utf8');
+  assert.match(client, /\$\{l\.weekend\}: \$\{formatPlanningEventCount\(w\.weekendEvents\.length,lang\)\}/);
   assert.match(client, /Števila prikazujejo dogodke, ki ustrezajo izbranim filtrom/);
   assert.match(client, /if\(selectedMonth&&selectedMonth!==month\)return''/);
   assert.match(client, /n>0\?`<a/);
@@ -184,7 +208,7 @@ test('pages remove demo data, provide localized labels and preserve responsive d
 test('month headings link only when a matching detailed planner month exists', () => {
   const component = readFileSync('src/components/RaceDates2027Page.astro', 'utf8');
   const client = readFileSync('src/planning-2027-client.ts', 'utf8');
-  assert.match(component, /const hasWeeks=weeks\.some\(w=>w\.weekendStart\.slice\(5,7\)===key\)/);
+  assert.match(component, /const hasWeeks=weeks\.some\(w=>w\.weekendStart\.startsWith\('2028-'\)\?key==='12':w\.weekendStart\.slice\(5,7\)===key\)/);
   assert.match(component, /hasWeeks\?<a href=\{`#month-\$\{key\}`\}/);
   assert.match(client, /heading=sections\.some\(section=>section\.month===month\)\?`<a href="#month-\$\{month\}"/);
   assert.match(client, /:`<strong>\$\{name\}<\/strong>`/);
