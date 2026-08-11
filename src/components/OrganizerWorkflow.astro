@@ -1,0 +1,26 @@
+---
+interface Props { lang: 'sl' | 'en'; active?: 1 | 2 | 3; compact?: boolean; }
+const { lang, active, compact = false } = Astro.props;
+const en = lang === 'en';
+const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
+const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
+const organizerHref = en ? '/en/for-organizers/#promotion' : '/za-organizatorje/#promotion';
+const steps = en ? [
+  ['Check the date', 'Compare what STK currently knows about 2027 dates.', datesHref, 'check_2027_dates'],
+  ['Publish or update a race', 'Add a race or correct its public information.', formHref, 'confirm_race'],
+  ['Promotion and statistics', 'See which organiser tools are in development.', organizerHref, 'view_organizer_stats_info']
+] : [
+  ['Preverite termin', 'Primerjajte trenutno znane termine za leto 2027.', datesHref, 'check_2027_dates'],
+  ['Objavite ali posodobite tek', 'Dodajte tek ali popravite njegove javne podatke.', formHref, 'confirm_race'],
+  ['Promocija in statistika', 'Preverite, katera orodja za organizatorje so v pripravi.', organizerHref, 'view_organizer_stats_info']
+];
+---
+<nav class:list={['organizer-workflow', { 'organizer-workflow-compact': compact }]} aria-label={en ? 'Organiser workflow' : 'Pot organizatorja'}>
+  <ol>
+    {steps.map((step, index) => <li class:list={{ current: active === index + 1 }}>
+      <a href={step[2]} aria-current={active === index + 1 ? 'step' : undefined} data-organizer-action={step[3]} data-organizer-placement="workflow">
+        <span class="organizer-step-number">{index + 1}</span><span><strong>{step[0]}</strong>{!compact && <small>{step[1]}</small>}</span>
+      </a>
+    </li>)}
+  </ol>
+</nav>

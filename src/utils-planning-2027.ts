@@ -43,6 +43,25 @@ export interface PlanningOverview {
   unknown: PlanningEvent[];
 }
 
+export interface PlanningWeek {
+  key: string;
+  start: string;
+  end: string;
+  weekendStart: string;
+  weekendEnd: string;
+  weekendEvents: PlanningEvent[];
+  weekdayEvents: PlanningEvent[];
+  events: PlanningEvent[];
+  confirmed: number;
+  expected: number;
+  known: number;
+}
+
+export interface PlanningMonthSection {
+  key: string;
+  weeks: PlanningWeek[];
+}
+
 const statuses = new Set<PlanningStatus>(['potrjeno', 'pričakovano', 'termin_znan']);
 const isoPattern = /^2027-\d{2}-\d{2}$/;
 
@@ -107,6 +126,66 @@ function weekendKeysForPeriod(start: string, end: string): Array<[string, string
   return result;
 }
 
+export function allPlanningWeekends(): Array<{ key: string; start: string; end: string; month: string }> {
+  const result: Array<{ key: string; start: string; end: string; month: string }> = [];
+  let saturday = toDate('2027-01-02');
+  while (saturday.getUTCFullYear() === 2027) {
+    const start = toIso(saturday);
+    result.push({ key: start, start, end: toIso(addDays(saturday, 1)), month: start.slice(5, 7) });
+    saturday = addDays(saturday, 7);
+  }
+  return result;
+}
+
+function calendarWeekStart(iso: string): string {
+  const date = toDate(iso);
+  const day = date.getUTCDay();
+  return toIso(addDays(date, day === 0 ? -6 : 1 - day));
+}
+
+export function buildPlanningWeeks(events: PlanningEvent[]): PlanningWeek[] {
+  const weeks = new Map<string, { weekend: PlanningEvent[]; weekday: PlanningEvent[] }>();
+  const add = (key: string, kind: 'weekend' | 'weekday', event: PlanningEvent) => {
+    const value = weeks.get(key) ?? { weekend: [], weekday: [] };
+    if (!value[kind].includes(event)) value[kind].push(event);
+    weeks.set(key, value);
+  };
+  events.forEach((event) => {
+    const period = eventPeriod(event);
+    if (!period) return;
+    const weekendKeys = weekendKeysForPeriod(...period);
+    if (weekendKeys.length) weekendKeys.forEach(([saturday]) => add(toIso(addDays(toDate(saturday), -5)), 'weekend', event));
+    else add(calendarWeekStart(period[0]), 'weekday', event);
+  });
+  return [...weeks.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([start, grouped]) => {
+    const eventsForWeek = [...new Set([...grouped.weekend, ...grouped.weekday])];
+    return {
+      key: start, start, end: toIso(addDays(toDate(start), 6)), weekendStart: toIso(addDays(toDate(start), 5)), weekendEnd: toIso(addDays(toDate(start), 6)),
+      weekendEvents: grouped.weekend, weekdayEvents: grouped.weekday, events: eventsForWeek,
+      confirmed: eventsForWeek.filter((event) => event.status === 'potrjeno').length,
+      expected: eventsForWeek.filter((event) => event.status === 'pričakovano').length,
+      known: eventsForWeek.filter((event) => event.status === 'termin_znan').length
+    };
+  });
+}
+
+export function buildPlanningMonthSections(events: PlanningEvent[], selectedMonth = ''): PlanningMonthSection[] {
+  const weeks = buildPlanningWeeks(events);
+  if (selectedMonth) {
+    const monthStart = `2027-${selectedMonth}-01`;
+    const followingMonth = new Date(Date.UTC(2027, Number(selectedMonth), 1));
+    const monthEnd = toIso(addDays(followingMonth, -1));
+    const matchingWeeks = weeks.filter((week) => week.start <= monthEnd && week.end >= monthStart);
+    return matchingWeeks.length ? [{ key: selectedMonth, weeks: matchingWeeks }] : [];
+  }
+  const sections = new Map<string, PlanningWeek[]>();
+  weeks.forEach((week) => {
+    const key = week.weekendStart.slice(5, 7);
+    sections.set(key, [...(sections.get(key) ?? []), week]);
+  });
+  return [...sections.entries()].map(([key, sectionWeeks]) => ({ key, weeks: sectionWeeks }));
+}
+
 export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview {
   const weekendMap = new Map<string, PlanningEvent[]>();
   const weekday: PlanningEvent[] = [];
@@ -148,7 +227,7 @@ export function filterPlanningEvents(events: PlanningEvent[], filters: PlanningF
 export function formatPlanningDate(iso: string, lang: 'sl' | 'en'): string {
   const date = toDate(iso);
   if (lang === 'en') return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
-  return `${date.getUTCDate()}. ${date.getUTCMonth() + 1}. ${date.getUTCFullYear()}`;
+  return `${date.getUTCDate()}. ${slMonths[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
 const slMonths = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'];
@@ -167,8 +246,23 @@ export function formatPlanningRange(start: string, end: string, lang: 'sl' | 'en
 export function formatEventPlanningDate(event: PlanningEvent, lang: 'sl' | 'en'): string {
   if (event.status === 'potrjeno' && event.datum) return formatPlanningDate(event.datum, lang);
   const period = eventPeriod(event);
-  if (!period) return lang === 'en' ? 'Date not yet known' : 'Termin še ni znan';
+  if (!period) return lang === 'en' ? 'Date not yet known' : 'Datum še ni znan';
   return period[0] === period[1] ? formatPlanningDate(period[0], lang) : formatPlanningRange(period[0], period[1], lang);
+}
+
+export function formatPlanningUpdated(value: string, lang: 'sl' | 'en'): string {
+  const iso = value.slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+  const date = toDate(iso);
+  if (Number.isNaN(date.valueOf()) || toIso(date) !== iso) return '';
+  if (lang === 'en') return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+  return `${date.getUTCDate()}. ${slMonths[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+}
+
+export function formatPlanningEventCount(count: number, lang: 'sl' | 'en', context: 'count' | 'show' = 'count'): string {
+  if (lang === 'en') return `${count} ${count === 1 ? 'event' : 'events'}`;
+  const noun = count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count === 3 || count === 4 ? (context === 'show' ? 'dogodke' : 'dogodki') : 'dogodkov';
+  return `${count} ${noun}`;
 }
 
 export const formatPlanningRegion = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishRegion(value) : value;
