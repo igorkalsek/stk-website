@@ -13,6 +13,9 @@ const slDatesPage = readFileSync('src/pages/za-organizatorje/termini-2027.astro'
 const enDatesPage = readFileSync('src/pages/en/for-organizers/2027-race-dates.astro', 'utf8');
 const styles = readFileSync('src/styles/global.css', 'utf8');
 const workflow = readFileSync('src/components/OrganizerWorkflow.astro', 'utf8');
+const proposalForm = readFileSync('src/components/RaceProposalForm.astro', 'utf8');
+const slFormPage = readFileSync('src/pages/dodaj-ali-popravi-tek.astro', 'utf8');
+const enFormPage = readFileSync('src/pages/en/add-or-correct-race.astro', 'utf8');
 
 test('publishes equivalent organiser routes with SEO and language alternates', () => {
   assert.match(slPage, /canonicalPath="\/za-organizatorje\/"/);
@@ -93,6 +96,40 @@ test('shared workflow provides equivalent SL and EN links and the planner marks 
   assert.match(component, /<OrganizerWorkflow \{lang\} \/>/);
   assert.match(workflow, /compact\?: boolean/);
   assert.match(workflow, /!compact && <small>/);
+});
+
+test('shared compact workflow marks each destination current without tab semantics', () => {
+  assert.match(datesComponent, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
+  assert.match(proposalForm, /<OrganizerWorkflow \{lang\} active=\{2\} compact/);
+  assert.match(component, /<OrganizerWorkflow \{lang\} active=\{3\} compact/);
+  assert.match(component, /<OrganizerWorkflow \{lang\} \/>/);
+  assert.match(workflow, /<nav[^>]+aria-label=/);
+  assert.match(workflow, /aria-current=\{active === index \+ 1 \? 'step'/);
+  assert.match(workflow, /Current step/);
+  assert.match(workflow, /Trenutni korak/);
+  assert.doesNotMatch(workflow, /tablist|role="tab"|<script/);
+});
+
+test('proposal routes render the bilingual step-two workflow and retain language pairing', () => {
+  for (const page of [slFormPage, enFormPage]) assert.match(page, /<RaceProposalForm lang=/);
+  assert.match(slFormPage, /languageSwitchHref="\/en\/add-or-correct-race\/"/);
+  assert.match(enFormPage, /languageSwitchHref="\/dodaj-ali-popravi-tek\/"/);
+  for (const route of ['/za-organizatorje/termini-2027/', '/en/for-organizers/2027-race-dates/', '/dodaj-ali-popravi-tek/', '/en/add-or-correct-race/', '/za-organizatorje/#promotion', '/en/for-organizers/#promotion']) {
+    assert.match(workflow, new RegExp(route.replaceAll('/', '\\/')));
+  }
+});
+
+test('promotion anchor starts with step-three navigation and workflow analytics stay stable', () => {
+  assert.match(component, /id="promotion"[^>]*><OrganizerWorkflow \{lang\} active=\{3\} compact \/><div class="organizer-claim-card">/);
+  assert.match(workflow, /data-organizer-placement="workflow"/);
+  for (const action of ['check_2027_dates', 'confirm_race', 'view_organizer_stats_info']) assert.match(workflow, new RegExp(action));
+});
+
+test('workflow additions do not introduce duplicate literal ids', () => {
+  for (const source of [workflow, component, datesComponent]) {
+    const ids = [...source.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
+    assert.equal(new Set(ids).size, ids.length);
+  }
 });
 
 test('compact planner legend retains all three status meanings', () => {

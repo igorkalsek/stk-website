@@ -15,7 +15,7 @@ const finderHref=en?'/en/find-races/':'/iskalnik-tekov/'; const formHref=en?'/en
 ---
 <main class="race-dates-page" data-planning-root data-lang={lang}>
   <section class="page-hero container"><span class="eyebrow">{en?'FOR ORGANISERS':'ZA ORGANIZATORJE'}</span><h1>{en?'Plan 2027 race dates':'Načrtovanje tekaških terminov 2027'}</h1><p>{en?'Compare the dates STK currently knows, then add or update your race.':'Primerjajte termine, ki jih STK trenutno pozna, nato dodajte ali posodobite svoj tek.'}</p></section>
-  <section class="container planning-workflow"><OrganizerWorkflow {lang} active={1} compact /></section>
+  <section class="container organizer-workflow-section planning-workflow"><OrganizerWorkflow {lang} active={1} compact /></section>
   <section class="section container planning-intro">
     <ul class="planning-status-guide" aria-label={en?'Date status explanation':'Pojasnilo statusov terminov'}>
       <li><strong>{en?'Confirmed':'Potrjeno'}</strong><span> — {en?'official date':'uradni termin'}</span></li>
