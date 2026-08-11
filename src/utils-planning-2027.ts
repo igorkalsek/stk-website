@@ -198,6 +198,12 @@ export function buildPlanningMonthSections(events: PlanningEvent[], selectedMont
 
 export const hasPlanningMonthSection = (sections: PlanningMonthSection[], month: string): boolean => sections.some((section) => section.key === month);
 export const hasPlanningWeekTarget = (sections: PlanningMonthSection[], weekendStart: string): boolean => sections.some((section) => section.weeks.some((week) => week.weekendStart === weekendStart));
+export function planningWeekTargetMatchesEvents(sections: PlanningMonthSection[], weekendStart: string, occupancyEvents: PlanningEvent[]): boolean {
+  const target = sections.flatMap((section) => section.weeks).find((week) => week.weekendStart === weekendStart);
+  return Boolean(target && target.weekendEvents.length === occupancyEvents.length && target.weekendEvents.every((event) => occupancyEvents.includes(event)));
+}
+
+export const formatPlanningWeekendOccupancy = (count: number): string => count >= 3 ? '3+' : String(count);
 
 export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview {
   const weekendMap = new Map<string, PlanningEvent[]>();
