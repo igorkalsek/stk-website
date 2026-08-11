@@ -137,6 +137,13 @@ export function allPlanningWeekends(): Array<{ key: string; start: string; end: 
   return result;
 }
 
+export function planningWeekendsForMonth(month: string): Array<{ key: string; start: string; end: string; month: string }> {
+  const monthStart = `2027-${month}-01`;
+  const followingMonth = new Date(Date.UTC(2027, Number(month), 1));
+  const monthEnd = toIso(addDays(followingMonth, -1));
+  return allPlanningWeekends().filter((weekend) => weekend.start <= monthEnd && weekend.end >= monthStart);
+}
+
 function calendarWeekStart(iso: string): string {
   const date = toDate(iso);
   const day = date.getUTCDay();
@@ -222,6 +229,10 @@ export function filterPlanningEvents(events: PlanningEvent[], filters: PlanningF
     const monthMatches = filters.month === '' || (period !== null && period[0] <= monthEnd && period[1] >= monthStart);
     return monthMatches && (!filters.region || event.regija === filters.region) && (!filters.surface || event.tip_podlage === filters.surface);
   });
+}
+
+export function filterPlanningWeekendOccupancyEvents(events: PlanningEvent[], filters: PlanningFilters): PlanningEvent[] {
+  return filterPlanningEvents(events, { ...filters, month: '' });
 }
 
 export function formatPlanningDate(iso: string, lang: 'sl' | 'en'): string {

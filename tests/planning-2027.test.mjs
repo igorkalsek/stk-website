@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
+import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, filterPlanningWeekendOccupancyEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -109,6 +109,21 @@ test('selected month sections retain only calendar weeks overlapping that month'
   ]);
   assert.equal(new Set(sections[0].weeks.map(({ key }) => key)).size, sections[0].weeks.length);
   assert.ok(sections[0].weeks.every(({ start, end }) => start <= '2027-08-31' && end >= '2027-08-01'));
+});
+
+test('boundary weekend occupancy stays complete across month views and respects taxonomy filters', () => {
+  const saturday = row({ naziv_prireditve: 'Sobotni tek', status: 'potrjeno', datum: '2027-07-31', regija: 'Gorenjska', tip_podlage: 'trail' });
+  const sunday = row({ naziv_prireditve: 'Nedeljski tek', status: 'potrjeno', datum: '2027-08-01', regija: 'Savinjska', tip_podlage: 'cesta' });
+  const events = [saturday, sunday];
+  const occupancyCount = (filters) => buildPlanningOverview(filterPlanningWeekendOccupancyEvents(events, filters)).weekends[0]?.total ?? 0;
+  assert.ok(planningWeekendsForMonth('07').some(({ start }) => start === '2027-07-31'));
+  assert.ok(planningWeekendsForMonth('08').some(({ start }) => start === '2027-07-31'));
+  assert.equal(occupancyCount({ month: '07', region: '', surface: '' }), 2);
+  assert.equal(occupancyCount({ month: '08', region: '', surface: '' }), 2);
+  assert.equal(occupancyCount({ month: '08', region: 'Gorenjska', surface: '' }), 1);
+  assert.equal(occupancyCount({ month: '07', region: '', surface: 'cesta' }), 1);
+  const weekendEvents = buildPlanningOverview(filterPlanningWeekendOccupancyEvents(events, { month: '08', region: '', surface: '' })).weekends[0].events;
+  assert.equal(new Set(weekendEvents).size, 2);
 });
 
 test('date formatters localize dates and ranges without exposing ISO values', () => {
