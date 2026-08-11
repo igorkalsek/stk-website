@@ -142,6 +142,14 @@ test('promotion anchor clears the sticky header without affecting normal section
   assert.match(styles, /\.promotion-section\s*\{[^}]*scroll-margin-top:\s*84px;/s);
 });
 
+test('compact workflow stacks without horizontal scrolling through tablet widths', () => {
+  const tabletRules = styles.match(/@media \(max-width: 799px\) \{([^\n]+)\}/)?.[1] ?? '';
+  assert.match(tabletRules, /\.organizer-workflow-compact ol \{ display: grid; grid-template-columns: 1fr; \}/);
+  assert.match(tabletRules, /\.organizer-workflow-compact li \+ li \{ border-top:/);
+  assert.match(tabletRules, /border-left: 0;/);
+  assert.doesNotMatch(tabletRules, /overflow-x|flex: 0 0 auto/);
+});
+
 test('workflow additions do not introduce duplicate literal ids', () => {
   for (const source of [workflow, component, datesComponent]) {
     const ids = [...source.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
