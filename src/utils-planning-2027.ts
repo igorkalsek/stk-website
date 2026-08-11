@@ -237,9 +237,9 @@ export function formatPlanningUpdated(value: string, lang: 'sl' | 'en'): string 
   return `${date.getUTCDate()}. ${slMonths[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
-export function formatPlanningEventCount(count: number, lang: 'sl' | 'en'): string {
+export function formatPlanningEventCount(count: number, lang: 'sl' | 'en', context: 'count' | 'show' = 'count'): string {
   if (lang === 'en') return `${count} ${count === 1 ? 'event' : 'events'}`;
-  const noun = count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count === 3 || count === 4 ? 'dogodki' : 'dogodkov';
+  const noun = count === 1 ? 'dogodek' : count === 2 ? 'dogodka' : count === 3 || count === 4 ? (context === 'show' ? 'dogodke' : 'dogodki') : 'dogodkov';
   return `${count} ${noun}`;
 }
 

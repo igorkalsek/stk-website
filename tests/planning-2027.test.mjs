@@ -107,6 +107,7 @@ test('generated_at is displayed as a localized calendar date', () => {
 test('visible event counts use correct Slovene grammar', () => {
   assert.deepEqual([1, 2, 3, 4, 5, 12].map((count) => formatPlanningEventCount(count, 'sl')), ['1 dogodek', '2 dogodka', '3 dogodki', '4 dogodki', '5 dogodkov', '12 dogodkov']);
   assert.deepEqual([1, 2].map((count) => formatPlanningEventCount(count, 'en')), ['1 event', '2 events']);
+  assert.deepEqual([1, 2, 3, 4, 5].map((count) => formatPlanningEventCount(count, 'sl', 'show')), ['1 dogodek', '2 dogodka', '3 dogodke', '4 dogodke', '5 dogodkov']);
 });
 
 test('English planning taxonomy localizes display labels without changing raw values', () => {
@@ -138,9 +139,11 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   const organizer = readFileSync('src/components/OrganizerPage.astro', 'utf8');
   const styles = readFileSync('src/styles/global.css', 'utf8');
   assert.doesNotMatch(component, /DEMO 0|demonstracijski podatki|static examples|Srednje zaseden|Moderately busy/);
-  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Med tednom', 'Weekday', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
+  for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'med tednom', 'weekday', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
   assert.match(component, /data-planning-filter/);
   assert.match(component, /data-planning-fallback/);
+  assert.match(component, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
+  assert.match(component, /formatPlanningEventCount\(w\.events\.length,lang,'show'\)/);
   assert.match(component, /<details/);
   assert.match(component, /0 dogodkov pomeni/);
   assert.match(component, /n>0\?<a/);

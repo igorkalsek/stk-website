@@ -89,5 +89,12 @@ test('shared workflow provides equivalent SL and EN links and the planner marks 
   for (const route of ['/za-organizatorje/termini-2027/', '/en/for-organizers/2027-race-dates/', '/dodaj-ali-popravi-tek/', '/en/add-or-correct-race/']) assert.match(workflow, new RegExp(route.replaceAll('/', '\\/')));
   assert.match(workflow, /Preverite termin/);
   assert.match(workflow, /Check the date/);
-  assert.match(datesComponent, /<OrganizerWorkflow \{lang\} active=\{1\}/);
+  assert.match(datesComponent, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
+  assert.match(component, /<OrganizerWorkflow \{lang\} \/>/);
+  assert.match(workflow, /compact\?: boolean/);
+  assert.match(workflow, /!compact && <small>/);
+});
+
+test('compact planner legend retains all three status meanings', () => {
+  for (const copy of ['official date', 'officially known period', 'not organiser-confirmed', 'uradni termin', 'uradno znano obdobje', 'ni potrditev organizatorja']) assert.match(datesComponent, new RegExp(copy));
 });

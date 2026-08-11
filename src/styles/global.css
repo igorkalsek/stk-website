@@ -1221,7 +1221,14 @@ main {
 .organizer-workflow a > span:last-child { display: grid; align-content: start; gap: 4px; }
 .organizer-workflow small { color: var(--muted); line-height: 1.4; }
 .organizer-step-number { display: grid; flex: 0 0 34px; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--deep-teal); color: white; font-weight: 900; }
-.planning-workflow { padding-top: 12px; }
+.organizer-workflow-compact ol { display: flex; gap: 0; border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; overflow: hidden; }
+.organizer-workflow-compact li { flex: 1; border: 0; border-radius: 0; background: transparent; }
+.organizer-workflow-compact li + li { border-left: 1px solid rgba(16,64,80,.12); }
+.organizer-workflow-compact li.current { background: rgba(200,230,201,.3); box-shadow: inset 0 3px var(--deep-teal); }
+.organizer-workflow-compact a { align-items: center; padding: 10px 14px; }
+.organizer-workflow-compact .organizer-step-number { flex-basis: 26px; width: 26px; height: 26px; font-size: .8rem; }
+.organizer-workflow-compact strong { font-size: .8rem; letter-spacing: .025em; text-transform: uppercase; }
+.planning-workflow { padding-top: 6px; }
 .organizer-actions { display: grid; gap: 20px; border-radius: var(--radius-lg); background: rgba(200,230,201,.24); padding: clamp(22px,4vw,36px) !important; }
 .organizer-actions h2, .organizer-actions p { margin-top: 0; }
 .organizer-claim-card { display: grid; gap: 14px; border-radius: var(--radius-lg); background: var(--deep-teal); color: var(--white); padding: clamp(24px,5vw,40px); }
@@ -1230,14 +1237,16 @@ main {
 .organizer-status { display: inline-flex; border-radius: 999px; background: var(--orange); color: #1e2b1e; font-size: .78rem; font-weight: 900; letter-spacing: .08em; padding: 7px 10px; }
 .organizer-capabilities { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px 24px; margin: 0; padding-left: 1.2rem; color: white; }
 .organizer-final-cta { display: grid; gap: 18px; padding-bottom: 12px; }
+.race-dates-page .planning-intro { gap: 8px; padding-top: 18px; }
+.race-dates-page .planning-browser { padding-top: 20px; }
 .planning-intro { display: grid; gap: 14px; }
-.planning-status-guide { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
-.planning-status-guide div { display: grid; gap: 5px; border-left: 3px solid #70958a; padding: 10px 14px; }
+.planning-status-guide { display: flex; flex-wrap: wrap; gap: 5px 22px; margin: 0; border-left: 3px solid #70958a; border-radius: 0 8px 8px 0; background: rgba(200,230,201,.18); padding: 10px 14px; list-style: none; }
+.planning-status-guide li { color: var(--muted); font-size: .86rem; line-height: 1.4; }
 .planning-status-guide strong { color: var(--deep-teal); }
-.planning-status-guide span, .planning-updated { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.planning-status-guide span, .planning-updated { color: var(--muted); font-size: .86rem; line-height: 1.4; }
 .planning-updated { margin: 0; }
 .planning-fallback, .planning-empty { border-radius: var(--radius-md); background: rgba(16,64,80,.06); padding: 22px; color: var(--deep-teal); }
-.planning-filters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)) auto; align-items: end; gap: 12px; margin-bottom: 30px; }
+.planning-filters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)) auto; align-items: end; gap: 12px; margin-bottom: 20px; }
 .planning-filters label { display: grid; gap: 6px; color: var(--deep-teal); font-weight: 800; }
 .planning-filters select { min-width: 0; border: 1px solid rgba(16,64,80,.2); border-radius: 10px; background: white; padding: 10px; color: var(--deep-teal); font: inherit; }
 .planning-clear { border: 0; background: transparent; color: var(--deep-teal); padding: 11px 4px; font-weight: 800; text-decoration: underline; cursor: pointer; }
@@ -1262,8 +1271,8 @@ main {
 .planning-event-main span, .planning-event-main time { color: var(--muted); font-size: .85rem; }
 .planning-event-main em { margin-top: 3px; color: #46685f; font-size: .72rem; font-style: normal; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .planning-undated { margin-top: 38px; border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; padding: 18px; }
-@media (max-width: 799px) { .organizer-workflow ol { grid-template-columns: 1fr; }.planning-status-guide { grid-template-columns: 1fr; }.planning-filters { grid-template-columns: 1fr 1fr; }.year-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }.planning-week { grid-template-columns: 1fr 1fr; }.planning-week h3 { grid-column: 1/-1; } }
-@media (max-width: 520px) { .organizer-capabilities, .planning-events { grid-template-columns: 1fr; }.planning-filters, .year-overview { grid-template-columns: 1fr; }.planning-filters label { grid-template-columns: 90px 1fr; align-items: center; }.planning-week { grid-template-columns: 1fr; }.planning-week h3, .planning-week details:not([open]) { grid-column: auto; }.year-month > div { gap: 7px; }.weekend-count { padding: 7px 3px; } }
+@media (max-width: 799px) { .organizer-workflow ol { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: flex; overflow-x: auto; }.organizer-workflow-compact li { flex: 0 0 auto; }.organizer-workflow-compact a { padding: 9px 12px; }.planning-filters { grid-template-columns: 1fr 1fr; }.year-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }.planning-week { grid-template-columns: 1fr 1fr; }.planning-week h3 { grid-column: 1/-1; } }
+@media (max-width: 520px) { .organizer-capabilities, .planning-events { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: grid; grid-template-columns: 1fr; }.organizer-workflow-compact li + li { border-top: 1px solid rgba(16,64,80,.12); border-left: 0; }.organizer-workflow-compact a { padding: 7px 10px; }.organizer-workflow-compact .organizer-step-number { flex-basis: 23px; width: 23px; height: 23px; }.planning-status-guide { display: grid; gap: 3px; }.planning-filters, .year-overview { grid-template-columns: 1fr; }.planning-filters label { grid-template-columns: 90px 1fr; align-items: center; }.planning-week { grid-template-columns: 1fr; }.planning-week h3, .planning-week details:not([open]) { grid-column: auto; }.year-month > div { gap: 7px; }.weekend-count { padding: 7px 3px; } }
 
 .hero-secondary-link:hover,
 .hero-secondary-link:focus-visible {

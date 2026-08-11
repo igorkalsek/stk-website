@@ -1,6 +1,6 @@
 ---
-interface Props { lang: 'sl' | 'en'; active?: 1 | 2 | 3; }
-const { lang, active } = Astro.props;
+interface Props { lang: 'sl' | 'en'; active?: 1 | 2 | 3; compact?: boolean; }
+const { lang, active, compact = false } = Astro.props;
 const en = lang === 'en';
 const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
 const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
@@ -15,11 +15,11 @@ const steps = en ? [
   ['Promocija in statistika', 'Preverite, katera orodja za organizatorje so v pripravi.', organizerHref, 'view_organizer_stats_info']
 ];
 ---
-<nav class="organizer-workflow" aria-label={en ? 'Organiser workflow' : 'Pot organizatorja'}>
+<nav class:list={['organizer-workflow', { 'organizer-workflow-compact': compact }]} aria-label={en ? 'Organiser workflow' : 'Pot organizatorja'}>
   <ol>
     {steps.map((step, index) => <li class:list={{ current: active === index + 1 }}>
       <a href={step[2]} aria-current={active === index + 1 ? 'step' : undefined} data-organizer-action={step[3]} data-organizer-placement="workflow">
-        <span class="organizer-step-number">{index + 1}</span><span><strong>{step[0]}</strong><small>{step[1]}</small></span>
+        <span class="organizer-step-number">{index + 1}</span><span><strong>{step[0]}</strong>{!compact && <small>{step[1]}</small>}</span>
       </a>
     </li>)}
   </ol>
