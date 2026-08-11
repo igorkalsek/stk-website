@@ -57,6 +57,11 @@ export interface PlanningWeek {
   known: number;
 }
 
+export interface PlanningMonthSection {
+  month: string;
+  weeks: PlanningWeek[];
+}
+
 const statuses = new Set<PlanningStatus>(['potrjeno', 'pričakovano', 'termin_znan']);
 const isoPattern = /^2027-\d{2}-\d{2}$/;
 
@@ -132,6 +137,10 @@ export function allPlanningWeekends(): Array<{ key: string; start: string; end: 
   return result;
 }
 
+export function planningWeekendsForMonth(month: string): Array<{ key: string; start: string; end: string; month: string }> {
+  return allPlanningWeekends().filter((weekend) => weekend.start.slice(5, 7) === month || weekend.end.slice(5, 7) === month);
+}
+
 function calendarWeekStart(iso: string): string {
   const date = toDate(iso);
   const day = date.getUTCDay();
@@ -162,6 +171,15 @@ export function buildPlanningWeeks(events: PlanningEvent[]): PlanningWeek[] {
       known: eventsForWeek.filter((event) => event.status === 'termin_znan').length
     };
   });
+}
+
+export function buildPlanningMonthSections(events: PlanningEvent[], selectedMonth = ''): PlanningMonthSection[] {
+  const weeks = buildPlanningWeeks(events);
+  if (selectedMonth) return weeks.length ? [{ month: selectedMonth, weeks }] : [];
+  return Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, '0')).map((month) => ({
+    month,
+    weeks: weeks.filter((week) => week.weekendStart.slice(5, 7) === month)
+  })).filter((section) => section.weeks.length > 0);
 }
 
 export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview {

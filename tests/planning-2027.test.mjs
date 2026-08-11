@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { allPlanningWeekends, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload } from '../.cache/dist-test/utils-planning-2027.js';
+import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -93,6 +93,30 @@ test('month filtering uses actual event dates across weekend and month boundarie
   assert.deepEqual(filterPlanningEvents([sunday, spanning], filters('09')), []);
 });
 
+test('August planning model includes a Sunday event on the July boundary weekend exactly once', () => {
+  const sunday = row({ status: 'potrjeno', datum: '2027-08-01' });
+  const filtered = filterPlanningEvents([sunday], { month: '08', region: '', surface: '' });
+  const sections = buildPlanningMonthSections(filtered, '08');
+  assert.deepEqual(filtered, [sunday]);
+  assert.equal(sections.length, 1);
+  assert.equal(sections[0].month, '08');
+  assert.equal(sections[0].weeks.length, 1);
+  assert.equal(sections[0].weeks[0].weekendStart, '2027-07-31');
+  assert.deepEqual(sections[0].weeks[0].events, [sunday]);
+  assert.equal(new Set(sections[0].weeks.map(({ key }) => key)).size, sections[0].weeks.length);
+  assert.ok(planningWeekendsForMonth('08').some(({ start }) => start === '2027-07-31'));
+});
+
+test('cross-month ranges produce a visible planning model in every matching month', () => {
+  const spanning = row({ predvideno_od: '2027-07-30', predvideno_do: '2027-08-02' });
+  for (const month of ['07', '08']) {
+    const filtered = filterPlanningEvents([spanning], { month, region: '', surface: '' });
+    const sections = buildPlanningMonthSections(filtered, month);
+    assert.equal(sections.length, 1);
+    assert.ok(sections[0].weeks.some(({ events }) => events.includes(spanning)));
+  }
+});
+
 test('date formatters localize dates and ranges without exposing ISO values', () => {
   assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'sl'), '20.–22. avgusta 2027');
   assert.equal(formatPlanningRange('2027-08-20', '2027-08-22', 'en'), '20–22 August 2027');
@@ -162,7 +186,7 @@ test('month headings link only when a matching detailed planner month exists', (
   const client = readFileSync('src/planning-2027-client.ts', 'utf8');
   assert.match(component, /const hasWeeks=weeks\.some\(w=>w\.weekendStart\.slice\(5,7\)===key\)/);
   assert.match(component, /hasWeeks\?<a href=\{`#month-\$\{key\}`\}/);
-  assert.match(client, /heading=weeks\.some\(w=>w\.weekendStart\.slice\(5,7\)===month\)\?`<a href="#month-\$\{month\}"/);
+  assert.match(client, /heading=sections\.some\(section=>section\.month===month\)\?`<a href="#month-\$\{month\}"/);
   assert.match(client, /:`<strong>\$\{name\}<\/strong>`/);
 });
 
