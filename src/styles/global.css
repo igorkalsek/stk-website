@@ -1217,18 +1217,20 @@ main {
 .organizer-workflow ol { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 .organizer-workflow li { border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; }
 .organizer-workflow li.current { border-color: var(--deep-teal); background: rgba(200,230,201,.3); box-shadow: inset 0 3px var(--deep-teal); }
-.organizer-workflow a { display: flex; gap: 12px; height: 100%; padding: 16px; color: var(--deep-teal); text-decoration: none; }
-.organizer-workflow a > span:last-child { display: grid; align-content: start; gap: 4px; }
+.organizer-workflow .organizer-step { display: flex; gap: 12px; height: 100%; padding: 16px; color: var(--deep-teal); text-decoration: none; }
+.organizer-workflow .organizer-step > span:last-child { display: grid; align-content: start; gap: 4px; }
 .organizer-workflow small { color: var(--muted); line-height: 1.4; }
 .organizer-step-number { display: grid; flex: 0 0 34px; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--deep-teal); color: white; font-weight: 900; }
 .organizer-workflow-compact ol { display: flex; gap: 0; border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; overflow: hidden; }
 .organizer-workflow-compact li { flex: 1; border: 0; border-radius: 0; background: transparent; }
 .organizer-workflow-compact li + li { border-left: 1px solid rgba(16,64,80,.12); }
 .organizer-workflow-compact li.current { background: rgba(200,230,201,.3); box-shadow: inset 0 3px var(--deep-teal); }
-.organizer-workflow-compact a { align-items: center; padding: 10px 14px; }
+.organizer-workflow li.current .organizer-step-number { outline: 2px solid var(--deep-teal); outline-offset: 2px; }
+.organizer-workflow-compact .organizer-step { align-items: center; padding: 10px 14px; }
 .organizer-workflow-compact .organizer-step-number { flex-basis: 26px; width: 26px; height: 26px; font-size: .8rem; }
 .organizer-workflow-compact strong { font-size: .8rem; letter-spacing: .025em; text-transform: uppercase; }
-.planning-workflow { padding-top: 6px; }
+.organizer-workflow-section { padding-top: 6px; }
+.promotion-section { display: grid; gap: 20px; scroll-margin-top: 84px; }
 .organizer-actions { display: grid; gap: 20px; border-radius: var(--radius-lg); background: rgba(200,230,201,.24); padding: clamp(22px,4vw,36px) !important; }
 .organizer-actions h2, .organizer-actions p { margin-top: 0; }
 .organizer-claim-card { display: grid; gap: 14px; border-radius: var(--radius-lg); background: var(--deep-teal); color: var(--white); padding: clamp(24px,5vw,40px); }
@@ -1271,8 +1273,8 @@ main {
 .planning-event-main span, .planning-event-main time { color: var(--muted); font-size: .85rem; }
 .planning-event-main em { margin-top: 3px; color: #46685f; font-size: .72rem; font-style: normal; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .planning-undated { margin-top: 38px; border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; padding: 18px; }
-@media (max-width: 799px) { .organizer-workflow ol { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: flex; overflow-x: auto; }.organizer-workflow-compact li { flex: 0 0 auto; }.organizer-workflow-compact a { padding: 9px 12px; }.planning-filters { grid-template-columns: 1fr 1fr; }.year-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }.planning-week { grid-template-columns: 1fr 1fr; }.planning-week h3 { grid-column: 1/-1; } }
-@media (max-width: 520px) { .organizer-capabilities, .planning-events { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: grid; grid-template-columns: 1fr; }.organizer-workflow-compact li + li { border-top: 1px solid rgba(16,64,80,.12); border-left: 0; }.organizer-workflow-compact a { padding: 7px 10px; }.organizer-workflow-compact .organizer-step-number { flex-basis: 23px; width: 23px; height: 23px; }.planning-status-guide { display: grid; gap: 3px; }.planning-filters, .year-overview { grid-template-columns: 1fr; }.planning-filters label { grid-template-columns: 90px 1fr; align-items: center; }.planning-week { grid-template-columns: 1fr; }.planning-week h3, .planning-week details:not([open]) { grid-column: auto; }.year-month > div { gap: 7px; }.weekend-count { padding: 7px 3px; } }
+@media (max-width: 799px) { .organizer-workflow ol { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: grid; grid-template-columns: 1fr; }.organizer-workflow-compact li + li { border-top: 1px solid rgba(16,64,80,.12); border-left: 0; }.organizer-workflow-compact .organizer-step { padding: 9px 12px; }.planning-filters { grid-template-columns: 1fr 1fr; }.year-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }.planning-week { grid-template-columns: 1fr 1fr; }.planning-week h3 { grid-column: 1/-1; } }
+@media (max-width: 520px) { .organizer-capabilities, .planning-events { grid-template-columns: 1fr; }.organizer-workflow-compact .organizer-step { padding: 7px 10px; }.organizer-workflow-compact .organizer-step-number { flex-basis: 23px; width: 23px; height: 23px; }.planning-status-guide { display: grid; gap: 3px; }.planning-filters, .year-overview { grid-template-columns: 1fr; }.planning-filters label { grid-template-columns: 90px 1fr; align-items: center; }.planning-week { grid-template-columns: 1fr; }.planning-week h3, .planning-week details:not([open]) { grid-column: auto; }.year-month > div { gap: 7px; }.weekend-count { padding: 7px 3px; } }
 
 .hero-secondary-link:hover,
 .hero-secondary-link:focus-visible {

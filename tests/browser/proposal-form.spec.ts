@@ -62,6 +62,21 @@ async function enterSlovenianManualCorrectionMode(page: Page) {
 }
 
 test.describe('native proposal form', () => {
+  test('current workflow step preserves proposal query context and entered data', async ({ page }) => {
+    await mockRacePickerApi(page);
+    await page.goto(`/dodaj-ali-popravi-tek/?${correctionQuery}`);
+    await waitForProposalRuntime(page);
+    const originalUrl = page.url();
+    const currentStep = page.locator('.organizer-workflow [aria-current="step"]');
+    await expect(currentStep).toHaveText(/Objavite ali posodobite tek/);
+    await expect(currentStep).not.toHaveAttribute('href');
+    await expect(currentStep).toHaveAttribute('aria-current', 'step');
+    await page.locator('#proposal-description').fill('Podatek, ki se ne sme izgubiti.');
+    await currentStep.click();
+    await expect(page).toHaveURL(originalUrl);
+    await expect(page.locator('#proposal-description')).toHaveValue('Podatek, ki se ne sme izgubiti.');
+  });
+
   test('SL organizer confirmation validates and posts exactly once on mobile', async ({ page }) => {
     const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page);
     await page.setViewportSize({ width: 390, height: 844 });

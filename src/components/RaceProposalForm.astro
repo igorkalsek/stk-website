@@ -4,6 +4,7 @@ import { buildGoogleFormsFallbackUrl, readProposalPrefill, basicChangeCategoryVa
 import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS } from '../utils-public-year';
 import { proposalFormLocales, proposalTypeOptions, canonicalSurfaceValues, surfaceLabels } from '../proposal-form/proposal-form-locales';
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
+import OrganizerWorkflow from './OrganizerWorkflow.astro';
 
 const { lang = 'sl' } = Astro.props as { lang?: ProposalLanguage };
 const emailPattern = String.raw`[^@\s]+@[^@\s]+\.[^@\s]+`;
@@ -25,6 +26,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   <h1 id="page-title">{copy.title}</h1>
   <p>{copy.intro}</p>
   <p class="proposal-note">{copy.notAuto}</p>
+</section>
+
+<section class="container organizer-workflow-section proposal-workflow">
+  <OrganizerWorkflow {lang} active={2} compact />
 </section>
 
 <section class="section container correction-context" aria-labelledby="selected-race-title" data-correction-context hidden>
