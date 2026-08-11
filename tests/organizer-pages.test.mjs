@@ -104,10 +104,21 @@ test('shared compact workflow marks each destination current without tab semanti
   assert.match(component, /<OrganizerWorkflow \{lang\} active=\{3\} compact/);
   assert.match(component, /<OrganizerWorkflow \{lang\} \/>/);
   assert.match(workflow, /<nav[^>]+aria-label=/);
-  assert.match(workflow, /aria-current=\{active === index \+ 1 \? 'step'/);
+  assert.match(workflow, /<span class="organizer-step" aria-current="step">/);
+  assert.doesNotMatch(workflow, /<a[^>]+aria-current/);
+  assert.match(workflow, /<a class="organizer-step" href=\{step\[2\]\}/);
   assert.match(workflow, /Current step/);
   assert.match(workflow, /Trenutni korak/);
   assert.doesNotMatch(workflow, /tablist|role="tab"|<script/);
+});
+
+test('only navigable workflow steps retain action analytics', () => {
+  const activeBranch = workflow.match(/active === index \+ 1 \? \(([\s\S]*?)\) : \(/)?.[1] ?? '';
+  const linkBranch = workflow.match(/\) : \(([\s\S]*?)\)\s*\}/)?.[1] ?? '';
+  assert.doesNotMatch(activeBranch, /<a|href=|data-organizer-action|data-organizer-placement/);
+  assert.match(linkBranch, /<a class="organizer-step" href=\{step\[2\]\}/);
+  assert.match(linkBranch, /data-organizer-action=\{step\[3\]\}/);
+  assert.match(linkBranch, /data-organizer-placement="workflow"/);
 });
 
 test('proposal routes render the bilingual step-two workflow and retain language pairing', () => {
@@ -123,6 +134,13 @@ test('promotion anchor starts with step-three navigation and workflow analytics 
   assert.match(component, /id="promotion"[^>]*><OrganizerWorkflow \{lang\} active=\{3\} compact \/><div class="organizer-claim-card">/);
   assert.match(workflow, /data-organizer-placement="workflow"/);
   for (const action of ['check_2027_dates', 'confirm_race', 'view_organizer_stats_info']) assert.match(workflow, new RegExp(action));
+});
+
+test('promotion anchor clears the sticky header without affecting normal section spacing', () => {
+  assert.match(styles, /\.site-header\s*\{[^}]*position:\s*sticky;[^}]*top:\s*0;/s);
+  assert.match(styles, /\.header-inner\s*\{[^}]*padding:\s*14px 0;/s);
+  assert.match(styles, /\.brand-logo\s*\{[^}]*height:\s*38px;/s);
+  assert.match(styles, /\.promotion-section\s*\{[^}]*scroll-margin-top:\s*84px;/s);
 });
 
 test('workflow additions do not introduce duplicate literal ids', () => {
