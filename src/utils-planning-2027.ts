@@ -267,6 +267,19 @@ export function formatPlanningEventCount(count: number, lang: 'sl' | 'en', conte
   return `${count} ${noun}`;
 }
 
+export function formatPlanningWeekStatusCount(status: PlanningStatus, count: number, lang: 'sl' | 'en'): string {
+  if (lang === 'en') {
+    const label = status === 'potrjeno' ? 'confirmed' : status === 'pričakovano' ? 'expected' : 'date window known';
+    return `${count} ${label}`;
+  }
+  if (status === 'termin_znan') return `${count} z znanim terminom`;
+  const forms = status === 'potrjeno'
+    ? ['potrjen', 'potrjena', 'potrjeni', 'potrjenih']
+    : ['pričakovan', 'pričakovana', 'pričakovani', 'pričakovanih'];
+  const form = count === 1 ? forms[0] : count === 2 ? forms[1] : count === 3 || count === 4 ? forms[2] : forms[3];
+  return `${count} ${form}`;
+}
+
 export const formatPlanningRegion = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishRegion(value) : value;
 export const formatPlanningSurface = (value: string, lang: 'sl' | 'en'): string => lang === 'en' ? formatEnglishSurface(value) : value;
 

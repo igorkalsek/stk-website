@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
+import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, formatPlanningWeekStatusCount, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -156,6 +156,17 @@ test('visible event counts use correct Slovene grammar', () => {
   assert.deepEqual([1, 2, 3, 4, 5].map((count) => formatPlanningEventCount(count, 'sl', 'show')), ['1 dogodek', '2 dogodka', '3 dogodke', '4 dogodke', '5 dogodkov']);
 });
 
+test('weekly status summaries use count-aware Slovene forms and stable English labels', () => {
+  assert.deepEqual([1, 2, 3, 4, 5].map((count) => formatPlanningWeekStatusCount('potrjeno', count, 'sl')), ['1 potrjen', '2 potrjena', '3 potrjeni', '4 potrjeni', '5 potrjenih']);
+  assert.deepEqual([1, 2, 3, 4, 5].map((count) => formatPlanningWeekStatusCount('pričakovano', count, 'sl')), ['1 pričakovan', '2 pričakovana', '3 pričakovani', '4 pričakovani', '5 pričakovanih']);
+  assert.deepEqual([1, 2, 3, 4, 5].map((count) => formatPlanningWeekStatusCount('termin_znan', count, 'sl')), ['1 z znanim terminom', '2 z znanim terminom', '3 z znanim terminom', '4 z znanim terminom', '5 z znanim terminom']);
+  assert.deepEqual([
+    formatPlanningWeekStatusCount('potrjeno', 2, 'en'),
+    formatPlanningWeekStatusCount('pričakovano', 3, 'en'),
+    formatPlanningWeekStatusCount('termin_znan', 1, 'en')
+  ], ['2 confirmed', '3 expected', '1 date window known']);
+});
+
 test('English planning taxonomy localizes display labels without changing raw values', () => {
   const region = 'Osrednjeslovenska';
   const surface = 'cesta/trail';
@@ -190,12 +201,14 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   assert.match(component, /data-planning-fallback/);
   assert.match(component, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
   assert.match(component, /formatPlanningEventCount\(w\.events\.length,lang,'show'\)/);
+  assert.match(component, /formatPlanningWeekStatusCount\('potrjeno',w\.confirmed,lang\)/);
   assert.match(component, /\{en\?'Weekend':'Vikend'\}: \{formatPlanningEventCount\(w\.weekendEvents\.length,lang\)\}/);
   assert.match(component, /<details/);
   assert.match(component, /0 dogodkov pomeni/);
   assert.match(component, /n>0\?<a/);
   assert.doesNotMatch(component, /weekdayEvents\.some/);
   const client = readFileSync('src/planning-2027-client.ts', 'utf8');
+  assert.match(client, /formatPlanningWeekStatusCount\('pričakovano',w\.expected,lang\)/);
   assert.match(client, /\$\{l\.weekend\}: \$\{formatPlanningEventCount\(w\.weekendEvents\.length,lang\)\}/);
   assert.match(client, /Števila prikazujejo dogodke, ki ustrezajo izbranim filtrom/);
   assert.match(client, /if\(selectedMonth&&selectedMonth!==month\)return''/);
