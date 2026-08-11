@@ -157,6 +157,15 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   assert.doesNotMatch(organizer, /1\.248|384|127|82/);
 });
 
+test('month headings link only when a matching detailed planner month exists', () => {
+  const component = readFileSync('src/components/RaceDates2027Page.astro', 'utf8');
+  const client = readFileSync('src/planning-2027-client.ts', 'utf8');
+  assert.match(component, /const hasWeeks=weeks\.some\(w=>w\.weekendStart\.slice\(5,7\)===key\)/);
+  assert.match(component, /hasWeeks\?<a href=\{`#month-\$\{key\}`\}/);
+  assert.match(client, /heading=weeks\.some\(w=>w\.weekendStart\.slice\(5,7\)===month\)\?`<a href="#month-\$\{month\}"/);
+  assert.match(client, /:`<strong>\$\{name\}<\/strong>`/);
+});
+
 test('production planning routes are included in sitemap with canonical and hreflang metadata', () => {
   const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
   const sl = readFileSync('src/pages/za-organizatorje/termini-2027.astro', 'utf8');
