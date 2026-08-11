@@ -166,8 +166,11 @@ export function buildPlanningWeeks(events: PlanningEvent[]): PlanningWeek[] {
   });
   return [...weeks.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([start, grouped]) => {
     const eventsForWeek = [...new Set([...grouped.weekend, ...grouped.weekday])];
+    const calendarEnd = toIso(addDays(toDate(start), 6));
+    const weekendStart = toIso(addDays(toDate(start), 5));
     return {
-      key: start, start, end: toIso(addDays(toDate(start), 6)), weekendStart: toIso(addDays(toDate(start), 5)), weekendEnd: toIso(addDays(toDate(start), 6)),
+      key: start, start, end: calendarEnd > '2027-12-31' ? '2027-12-31' : calendarEnd,
+      weekendStart, weekendEnd: calendarEnd,
       weekendEvents: grouped.weekend, weekdayEvents: grouped.weekday, events: eventsForWeek,
       confirmed: eventsForWeek.filter((event) => event.status === 'potrjeno').length,
       expected: eventsForWeek.filter((event) => event.status === 'pričakovano').length,
@@ -187,11 +190,14 @@ export function buildPlanningMonthSections(events: PlanningEvent[], selectedMont
   }
   const sections = new Map<string, PlanningWeek[]>();
   weeks.forEach((week) => {
-    const key = week.weekendStart.slice(5, 7);
+    const key = week.weekendStart.startsWith('2027-') ? week.weekendStart.slice(5, 7) : '12';
     sections.set(key, [...(sections.get(key) ?? []), week]);
   });
   return [...sections.entries()].map(([key, sectionWeeks]) => ({ key, weeks: sectionWeeks }));
 }
+
+export const hasPlanningMonthSection = (sections: PlanningMonthSection[], month: string): boolean => sections.some((section) => section.key === month);
+export const hasPlanningWeekTarget = (sections: PlanningMonthSection[], weekendStart: string): boolean => sections.some((section) => section.weeks.some((week) => week.weekendStart === weekendStart));
 
 export function buildPlanningOverview(events: PlanningEvent[]): PlanningOverview {
   const weekendMap = new Map<string, PlanningEvent[]>();

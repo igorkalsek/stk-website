@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, filterPlanningWeekendOccupancyEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
+import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, filterPlanningWeekendOccupancyEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, hasPlanningMonthSection, hasPlanningWeekTarget, parsePlanningPayload, planningWeekendsForMonth } from '../.cache/dist-test/utils-planning-2027.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -77,6 +77,15 @@ test('a boundary week has one canonical month based on its Saturday', () => {
   assert.deepEqual(weeks[0].weekendEvents, [weekend]);
 });
 
+test('the final partial 2027 week stays in December and clamps its visible range', () => {
+  const event = row({ predvideno_od: '2027-12-30', predvideno_do: '2027-12-30' });
+  const sections = buildPlanningMonthSections([event]);
+  assert.equal(sections.length, 1);
+  assert.equal(sections[0].key, '12');
+  assert.deepEqual({ start: sections[0].weeks[0].start, end: sections[0].weeks[0].end }, { start: '2027-12-27', end: '2027-12-31' });
+  assert.equal(formatPlanningRange(sections[0].weeks[0].start, sections[0].weeks[0].end, 'en'), '27–31 December 2027');
+});
+
 test('month, region, and complete surface values filter locally', () => {
   const may = row({ naziv_prireditve: 'Maj', predvideno_od: '2027-05-15', predvideno_do: '2027-05-15' });
   const june = row({ naziv_prireditve: 'Junij', regija: 'Savinjska', tip_podlage: 'trail', predvideno_od: '2027-06-12', predvideno_do: '2027-06-12' });
@@ -124,6 +133,17 @@ test('boundary weekend occupancy stays complete across month views and respects 
   assert.equal(occupancyCount({ month: '07', region: '', surface: 'cesta' }), 1);
   const weekendEvents = buildPlanningOverview(filterPlanningWeekendOccupancyEvents(events, { month: '08', region: '', surface: '' })).weekends[0].events;
   assert.equal(new Set(weekendEvents).size, 2);
+});
+
+test('overview navigation exists only for rendered detail weeks and month sections', () => {
+  const julyOnly = row({ status: 'potrjeno', datum: '2027-07-31', regija: 'Gorenjska' });
+  const augustDetails = filterPlanningEvents([julyOnly], { month: '08', region: '', surface: '' });
+  const augustSections = buildPlanningMonthSections(augustDetails, '08');
+  assert.equal(buildPlanningOverview(filterPlanningWeekendOccupancyEvents([julyOnly], { month: '08', region: '', surface: '' })).weekends[0].total, 1);
+  assert.equal(hasPlanningWeekTarget(augustSections, '2027-07-31'), false);
+  assert.equal(hasPlanningMonthSection(augustSections, '08'), false);
+  const taxonomyDetails = filterPlanningEvents([julyOnly], { month: '', region: 'Savinjska', surface: '' });
+  assert.equal(hasPlanningMonthSection(buildPlanningMonthSections(taxonomyDetails), '07'), false);
 });
 
 test('date formatters localize dates and ranges without exposing ISO values', () => {
@@ -179,12 +199,14 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   assert.match(component, /formatPlanningEventCount\(w\.events\.length,lang,'show'\)/);
   assert.match(component, /<details/);
   assert.match(component, /0 dogodkov pomeni/);
-  assert.match(component, /n>0\?<a/);
+  assert.match(component, /n>0&&hasPlanningWeekTarget/);
   assert.doesNotMatch(component, /weekdayEvents\.some/);
   const client = readFileSync('src/planning-2027-client.ts', 'utf8');
   assert.match(client, /Števila prikazujejo dogodke, ki ustrezajo izbranim filtrom/);
   assert.match(client, /if\(selectedMonth&&selectedMonth!==month\)return''/);
-  assert.match(client, /n>0\?`<a/);
+  assert.match(client, /n>0&&hasPlanningWeekTarget/);
+  assert.match(client, /show:'Show'/);
+  assert.match(client, /show:'Prikaži'/);
   assert.match(styles, /@media \(max-width: 520px\)/);
   assert.match(organizer, /data-organizer-action="check_2027_dates"/);
   assert.doesNotMatch(organizer, /1\.248|384|127|82/);
