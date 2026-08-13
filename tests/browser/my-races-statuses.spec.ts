@@ -59,6 +59,8 @@ const races2026 = [
 
 const additional2026 = [
   {
+    leto: '2026',
+    master_sheet: '2026',
     master_row: '101',
     datum: '2026-08-15',
     naziv_prireditve: 'Ljubljana Test Run',
@@ -71,6 +73,7 @@ const additional2026 = [
 
 const statusFilterAdditional2026 = [
   {
+    leto: '2026', master_sheet: '2026',
     master_row: '101',
     datum: '2026-08-15',
     naziv_prireditve: 'Ljubljana Test Run',
@@ -79,6 +82,7 @@ const statusFilterAdditional2026 = [
     rok_prijave: '2026-07-24'
   },
   {
+    leto: '2026', master_sheet: '2026',
     master_row: '102',
     datum: '2026-09-20',
     naziv_prireditve: 'Maribor Test Trail',
@@ -87,6 +91,7 @@ const statusFilterAdditional2026 = [
     rok_prijave: '2026-07-25'
   },
   {
+    leto: '2026', master_sheet: '2026',
     master_row: '103',
     datum: '2026-10-10',
     naziv_prireditve: 'Celje Test Run',
@@ -98,6 +103,8 @@ const statusFilterAdditional2026 = [
 
 const duplicateAdditional2026 = [
   {
+    leto: '2026',
+    master_sheet: '2026',
     master_row: '101',
     datum: '2026-08-15',
     naziv_prireditve: 'Ljubljana Test Run',
@@ -111,7 +118,8 @@ const byId: Record<string, SavedRaceFixture> = {
   r000101: { eventId: 'r000101', year: '2026', date: '2026-08-15', title: 'Ljubljana Test Run' },
   r000102: { eventId: 'r000102', year: '2026', date: '2026-09-20', title: 'Maribor Test Trail' },
   r000103: { eventId: 'r000103', year: '2026', date: '2026-10-10', title: 'Celje Test Run' },
-  r000104: { eventId: 'r000104', year: '2026', date: '2026-01-10', title: 'Past Test Run' }
+  r000104: { eventId: 'r000104', year: '2026', date: '2026-01-10', title: 'Past Test Run' },
+  r000101_2027: { eventId: 'r000101', year: '2027', date: '2027-08-15', title: 'Ljubljana Future Run' }
 };
 
 const v2Race = (id: keyof typeof byId, status: SavedRaceStatus) => ({ version: 2, ...byId[id], status });
@@ -141,7 +149,7 @@ async function freezeLjubljanaDate(page: Page) {
   });
 }
 
-async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additionalStatus?: number } = {}) {
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2027?: unknown[]; additionalStatus?: number } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -158,12 +166,13 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
     if (url.pathname === '/additional') {
       requestCounts.additional += 1;
       if (options.additionalStatus && options.additionalStatus >= 400) return route.fulfill({ status: options.additionalStatus, contentType: 'application/json', body: JSON.stringify({ error: 'additional failed' }) });
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: options.additional ?? additional2026 }) });
+      const rows = url.searchParams.get('year') === '2027' ? options.additional2027 ?? [] : options.additional ?? additional2026;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: rows }) });
     }
 
     if (url.searchParams.get('year') === '2027') {
       requestCounts.master2027 += 1;
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(options.races2027 ?? []) });
     }
 
     requestCounts.master2026 += 1;
@@ -225,6 +234,23 @@ async function openMyRaces(page: Page, path = '/moji-teki/') {
 async function expectNoUnexpectedErrors(pageErrors: string[]) {
   await expect.poll(() => pageErrors).toEqual([]);
 }
+
+test('attaches a 2027 deadline only to the matching 2027 saved race', async ({ page }) => {
+  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+  const additional2027 = [{ ...additional2026[0], leto: '2027', master_sheet: '2027', datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run', rok_cenejse_prijave: '', rok_prijave: '2027-08-01' }];
+  const conflicting2026 = [{ ...additional2026[0], rok_prijave: '2026-07-23' }];
+  const { pageErrors, requestCounts } = await mockMyRacesApis(page, { additional: conflicting2026, additional2027, races2027: [race2027] });
+  await seedV2SavedRaces(page, [v2Race('r000101_2027', 'following')]);
+
+  await openMyRaces(page);
+
+  const raceCard = card(page, '2027:r000101');
+  await expect(raceCard).toBeVisible();
+  await expect(raceCard.locator('[data-my-race-deadline]')).toContainText('1. avgusta 2027');
+  await expect(raceCard).not.toContainText('23. julija 2026');
+  expect(requestCounts.additional).toBe(2);
+  await expectNoUnexpectedErrors(pageErrors);
+});
 
 function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
   const serialized = JSON.stringify(analytics);
@@ -323,20 +349,20 @@ test('updates the next deadline summary eligibility when saved status changes wi
 
   await openMyRaces(page);
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.additional).toBe(2);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('completed');
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
   await expect(card(page, '2026:r000101').locator('[data-my-race-deadlines]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.additional).toBe(2);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('following');
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.additional).toBe(2);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
   await expectNoUnexpectedErrors(pageErrors);
@@ -359,7 +385,7 @@ test('filters deadline groups together with race cards', async ({ page }) => {
     await expect(card(page, key)).toBeVisible();
     await expect(deadlineGroup(page, key)).toBeVisible();
   }
-  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.additional).toBe(2);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
 
@@ -409,7 +435,7 @@ test('filters deadline groups together with race cards', async ({ page }) => {
     await expect(deadlineGroup(page, key)).toBeVisible();
   }
 
-  expect(requestCounts.additional).toBe(1);
+  expect(requestCounts.additional).toBe(2);
   expect(requestCounts.master2026).toBe(1);
   expect(requestCounts.master2027).toBe(1);
   await expectNoUnexpectedErrors(pageErrors);

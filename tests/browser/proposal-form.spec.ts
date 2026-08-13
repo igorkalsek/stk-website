@@ -36,8 +36,16 @@ async function interceptForm(page: Page, options: InterceptOptions = {}): Promis
 
 
 async function mockRacePickerApi(page: Page, fail = false) {
-  const row = { row: '12', datum: '2026-07-19', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', kraj: 'Gorenje Jazne', regija: 'Goriška', status_dogodka: 'Potrjeno', vidno_v_javnem_koledarju: 'DA', tip_podlage: 'trail', razdalje_km: '10.5', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/razpis', povezava_prijava: 'https://example.com/prijava', pokal: 'Pokal STK' };
-  await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => fail ? route.abort() : route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([row]) }));
+  const row2026 = { row: '12', datum: '2026-07-19', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', kraj: 'Gorenje Jazne', regija: 'Goriška', status_dogodka: 'Potrjeno', vidno_v_javnem_koledarju: 'DA', tip_podlage: 'trail', razdalje_km: '10.5', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/razpis', povezava_prijava: 'https://example.com/prijava', pokal: 'Pokal STK' };
+  const row2027 = { ...row2026, datum: '2027-07-19', naziv_prireditve: 'Prihodnji tek 2027' };
+  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01` });
+  await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => {
+    if (fail) return route.abort();
+    const url = new URL(route.request().url());
+    const year = url.searchParams.get('year') === '2027' ? '2027' : '2026';
+    const body = url.pathname === '/additional' ? { data: [additional(year)] } : [year === '2027' ? row2027 : row2026];
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
 }
 
 async function assertNoConsoleErrors(page: Page, errors: string[]) {
@@ -451,6 +459,21 @@ test.describe('native proposal form', () => {
     await page.getByRole('radio', { name: 'Correct or add details to an existing race' }).check();
     await expect(page.getByTestId('race-picker')).toBeVisible();
     await expect(page.getByLabel('Search by race name or place')).toBeVisible();
+  });
+
+  test('race picker prefills additional data from the selected 2027 dataset', async ({ page }) => {
+    await mockRacePickerApi(page);
+    await page.goto('/dodaj-ali-popravi-tek/');
+    await waitForProposalRuntime(page);
+    await page.getByRole('radio', { name: 'Popravek ali dopolnitev obstoječega teka' }).check();
+    await page.getByTestId('race-picker-search').fill('Prihodnji tek 2027');
+    await page.getByRole('option', { name: /Prihodnji tek 2027/ }).click();
+
+    await expect(page).toHaveURL(/year=2027/);
+    await expect(page).toHaveURL(/registrationMinEur=27/);
+    await expect(page).not.toHaveURL(/registrationMinEur=16/);
+    await expect(page.getByTestId('additional-entry-fee-min')).toHaveValue('27');
+    await expect(page.getByTestId('additional-registration-deadline')).toHaveValue('2027-07-01');
   });
 
   test('race picker loading failure still allows manual correction entry', async ({ page }) => {
