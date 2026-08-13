@@ -57,6 +57,26 @@ async function mockFinderApis(page: Page) {
   return analytics;
 }
 
+async function freezeFinderDate(page: Page) {
+  const clock = (page as Page & { clock?: { setFixedTime: (date: Date) => Promise<void> } }).clock;
+  if (clock?.setFixedTime) {
+    await clock.setFixedTime(new Date('2026-07-25T10:00:00+02:00'));
+    return;
+  }
+  await page.addInitScript(() => {
+    const fixed = new Date('2026-07-25T08:00:00.000Z').getTime();
+    const RealDate = Date;
+    class MockDate extends RealDate {
+      constructor(...args: any[]) {
+        if (args.length === 0) super(fixed);
+        else super(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+      }
+      static now() { return fixed; }
+    }
+    Object.defineProperty(window, 'Date', { configurable: true, value: MockDate });
+  });
+}
+
 type FinderLanguage = 'sl' | 'en';
 
 async function openFinder(page: Page, path = '/en/find-races/', language: FinderLanguage = path.startsWith('/en/') ? 'en' : 'sl') {
@@ -143,6 +163,7 @@ test('removes individual chips and preserves direct filters distinct from quick 
 });
 
 test('exercises production additional-data fields for direct filters', async ({ page }) => {
+  await freezeFinderDate(page);
   await openFinder(page, '/en/find-races/?fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800');
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
   await expect(page.locator('[data-filter="deadline"]')).toHaveValue('within-14');

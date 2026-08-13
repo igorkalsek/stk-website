@@ -246,8 +246,10 @@ test('attaches a 2027 deadline only to the matching 2027 saved race', async ({ p
 
   const raceCard = card(page, '2027:r000101');
   await expect(raceCard).toBeVisible();
-  await expect(raceCard.locator('[data-my-race-deadline]')).toContainText('1. avgusta 2027');
-  await expect(raceCard).not.toContainText('23. julija 2026');
+  const registrationDeadline = raceCard.locator('[data-my-race-deadline][data-deadline-kind="registration"]');
+  await expect(registrationDeadline).toHaveCount(1);
+  await expect(registrationDeadline).toContainText('1. avgusta');
+  await expect(raceCard).not.toContainText('23. julija');
   expect(requestCounts.additional).toBe(2);
   await expectNoUnexpectedErrors(pageErrors);
 });
