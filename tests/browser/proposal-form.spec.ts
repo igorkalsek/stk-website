@@ -439,9 +439,12 @@ test.describe('native proposal form', () => {
     await page.getByTestId('race-picker-search').fill('Bevkov');
     await expect(page.getByRole('option', { name: /20\. Gorski tek na Bevkov vrh/ })).toBeVisible();
     await page.getByTestId('race-picker-search').fill('Gorenje Jazne');
+    await expect(page.getByRole('option')).toHaveCount(2);
+    await page.getByTestId('race-picker-search').fill('Bevkov');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/event=20\.\+Gorski\+tek\+na\+Bevkov\+vrh/);
+    await expect(page).toHaveURL(/year=2026/);
     await expect(page.getByTestId('race-picker')).toBeHidden();
     await expect(page.locator('[data-correction-context]')).toBeVisible();
     await expect(page.getByTestId('structured-additional-section')).toBeVisible();

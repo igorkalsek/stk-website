@@ -516,13 +516,13 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (regionSelect) regionSelect.value = [...regionSelect.options].some((option) => option.value === finderState.region) ? finderState.region : '';
     if (surfaceSelect) surfaceSelect.value = [...surfaceSelect.options].some((option) => option.value === finderState.surface) ? finderState.surface : '';
     if (distanceSelect) distanceSelect.value = finderState.distance;
-    if (registrationFeeSelect) registrationFeeSelect.value = activeYear === '2027' ? '' : finderState.fee;
-    if (deadlineSelect) deadlineSelect.value = activeYear === '2027' ? '' : finderState.deadline;
+    if (registrationFeeSelect) registrationFeeSelect.value = finderState.fee;
+    if (deadlineSelect) deadlineSelect.value = finderState.deadline;
     applyPublicSortState(finderState);
     if (familyInput) familyInput.checked = finderState.family;
-    if (dayOfRegistrationInput) dayOfRegistrationInput.checked = activeYear !== '2027' && finderState.raceDay;
-    if (routeInput) routeInput.checked = activeYear !== '2027' && finderState.route;
-    if (elevationSelect) elevationSelect.value = activeYear === '2027' ? '' : finderState.elevation;
+    if (dayOfRegistrationInput) dayOfRegistrationInput.checked = finderState.raceDay;
+    if (routeInput) routeInput.checked = finderState.route;
+    if (elevationSelect) elevationSelect.value = finderState.elevation;
   };
 
   const rebuildControlsFromFinderState = (finderState: FinderUrlState) => {
