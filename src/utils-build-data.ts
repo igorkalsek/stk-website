@@ -51,7 +51,7 @@ const now = () => performance.now();
 const stats: BuildStats = { masterRequests: 0, masterDurations: {}, topRequests: 0, topDurationMs: 0, additionalRequests: 0, additionalDurationMs: 0, processedEvents: {}, detailPaths: { sl: {}, en: {} }, relatedPrepMs: {}, keyPrepMs: 0 };
 const masterPayloadCache = new Map<PublicYear, Promise<unknown>>();
 const yearDataCache = new Map<PublicYear, Promise<YearData>>();
-let additionalDataPromise: Promise<AdditionalEventData[]> | null = null;
+const additionalDataCache = new Map<PublicYear, Promise<AdditionalEventData[]>>();
 let topRowsPromise: Promise<Record<string, unknown>[]> | null = null;
 let timingPrinted = false;
 
@@ -159,15 +159,17 @@ export const getDetailStaticPaths = async (language: Language) => {
   return data.flatMap((item) => item ? (language === 'en' ? item.enPaths : item.slPaths) : []);
 };
 
-export const getAdditionalEventDataCached = () => {
-  if (additionalDataPromise) return additionalDataPromise;
+export const getAdditionalEventDataCached = (year: PublicYear) => {
+  const cached = additionalDataCache.get(year);
+  if (cached) return cached;
   stats.additionalRequests += 1;
   const started = now();
-  additionalDataPromise = fetchAdditionalEventData().finally(() => {
+  const request = fetchAdditionalEventData(year).finally(() => {
     stats.additionalDurationMs = now() - started;
   });
-  additionalDataPromise.catch(() => { additionalDataPromise = null; });
-  return additionalDataPromise;
+  additionalDataCache.set(year, request);
+  request.catch(() => { additionalDataCache.delete(year); });
+  return request;
 };
 
 export const getTopVoteRowsCached = () => {
@@ -183,8 +185,8 @@ export const getTopVoteRowsCached = () => {
   return topRowsPromise;
 };
 
-export const attachAdditionalDataCached = async <T extends Parameters<typeof attachAdditionalDataByMasterRow>[0][number]>(events: T[]) =>
-  attachAdditionalDataByMasterRow(events, await getAdditionalEventDataCached());
+export const attachAdditionalDataCached = async <T extends Parameters<typeof attachAdditionalDataByMasterRow>[0][number]>(events: T[], year: PublicYear) =>
+  attachAdditionalDataByMasterRow(events, await getAdditionalEventDataCached(year), year);
 
 export const enrichEventsWithVoteUrlsCached = async <T extends Parameters<typeof enrichEventsWithVoteUrls>[0][number]>(events: T[]) =>
   enrichEventsWithVoteUrls(events, await getTopVoteRowsCached());
@@ -207,7 +209,7 @@ export const maybePrintBuildTiming = () => {
 export const __resetBuildDataCachesForTests = () => {
   masterPayloadCache.clear();
   yearDataCache.clear();
-  additionalDataPromise = null;
+  additionalDataCache.clear();
   topRowsPromise = null;
   timingPrinted = false;
   stats.masterRequests = 0;

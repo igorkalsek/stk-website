@@ -110,7 +110,7 @@ test('top vote rows are fetched once for concurrent callers and retry after reje
   }
 });
 
-test('additional event data is fetched once for concurrent callers and retry after rejection', async () => {
+test('additional event data is cached separately by year and retries a rejected year', async () => {
   __resetBuildDataCachesForTests();
   const originalFetch = globalThis.fetch;
   let calls = 0;
@@ -120,13 +120,15 @@ test('additional event data is fetched once for concurrent callers and retry aft
   };
 
   try {
-    const [first, second] = await Promise.all([
-      getAdditionalEventDataCached(),
-      getAdditionalEventDataCached(),
+    const [first2026, first2027, second2027] = await Promise.all([
+      getAdditionalEventDataCached('2026'),
+      getAdditionalEventDataCached('2027'),
+      getAdditionalEventDataCached('2027'),
     ]);
 
-    assert.equal(calls, 1);
-    assert.deepEqual(first, second);
+    assert.equal(calls, 2);
+    assert.deepEqual(first2026, []);
+    assert.deepEqual(first2027, second2027);
 
     __resetBuildDataCachesForTests();
     let failed = false;
@@ -140,8 +142,8 @@ test('additional event data is fetched once for concurrent callers and retry aft
       return jsonResponse({ additional: [] });
     };
 
-    await assert.rejects(getAdditionalEventDataCached(), /temporary additional error/);
-    assert.deepEqual(await getAdditionalEventDataCached(), []);
+    await assert.rejects(getAdditionalEventDataCached('2027'), /temporary additional error/);
+    assert.deepEqual(await getAdditionalEventDataCached('2027'), []);
     assert.equal(calls, 2);
   } finally {
     globalThis.fetch = originalFetch;

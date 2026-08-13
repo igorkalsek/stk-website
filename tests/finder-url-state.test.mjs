@@ -23,10 +23,13 @@ describe('finder URL state utility', () => {
   });
   it('deduplicates and stably orders quick picks', () => assert.equal(qs({ quick: ['kids', 'trail', 'kids', 'budget'] }), 'quick=budget%2Ctrail%2Ckids'));
   it('does not serialize sort=my-races', () => assert.equal(qs({ sort: 'my-races' }), ''));
-  it('removes additional-data filters when switching to 2027', () => assert.equal(qs(stateForYear({ fee: '20', deadline: 'within-14', raceDay: true, route: true, elevation: 'max-800', quick: ['budget', 'route', 'kids'] }, '2027')), 'year=2027&quick=kids'));
+  it('preserves additional-data filters and quick picks for 2027', () => {
+    const input = parseFinderUrlState(new URLSearchParams('year=2027&fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800&quick=deadlines-soon,budget,route'));
+    assert.equal(qs(stateForYear(input, '2027')), 'year=2027&fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800&quick=deadlines-soon%2Cbudget%2Croute');
+  });
   it('preserves parameters during language switching', () => assert.equal(buildFinderUrlForLanguage({ month: '08', surface: 'trail', family: true }, 'en'), '/en/find-races/?month=08&surface=trail&family=1'));
   it('clear keeps only active 2027', () => assert.equal(buildFinderUrl('/iskalnik-tekov/', clearFinderUrlState('2027')), '/iskalnik-tekov/?year=2027'));
-  it('year URL builder keeps compatible filters for 2027', () => assert.equal(buildFinderUrlForYear('/iskalnik-tekov/', { q: 'tek', fee: '20', quick: ['budget', 'trail'] }, '2027'), '/iskalnik-tekov/?year=2027&q=tek&quick=trail'));
+  it('year URL builder keeps additional filters for 2027', () => assert.equal(buildFinderUrlForYear('/iskalnik-tekov/', { q: 'tek', fee: '20', quick: ['budget', 'trail'] }, '2027'), '/iskalnik-tekov/?year=2027&q=tek&fee=20&quick=budget%2Ctrail'));
 
   it('resets public sort back to date and switches between public non-default sorts', () => {
     assert.equal(parseFinderUrlState(new URLSearchParams('sort=registration-min')).sort, 'registration-min');

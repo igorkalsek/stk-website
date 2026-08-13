@@ -292,11 +292,15 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       const yearly = await Promise.all(raceApiPaths.map(async ({ year, path }) => {
         const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
         if (!response.ok) throw new Error(`API status ${response.status}`);
-        return toApiRecords(await response.json()).map((item) => mapPublicRaceEvent(item, year, 0)).filter(Boolean);
+        const eventsForYear = toApiRecords(await response.json()).map((item) => mapPublicRaceEvent(item, year, 0)).filter(Boolean);
+        try {
+          return attachAdditionalDataByMasterRow(eventsForYear, await fetchAdditionalEventData(year), year);
+        } catch (error) {
+          console.warn(`Proposal race picker additional data skipped for ${year}`, error);
+          return eventsForYear;
+        }
       }));
-      let events = yearly.flat();
-      try { events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData()); } catch (error) { console.warn('Proposal race picker additional data skipped', error); }
-      racePickerEvents = events.sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
+      racePickerEvents = yearly.flat().sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
       racePickerLoaded = true;
       setRaceStatus(pickerMessages.ready);
       updateRaceSearch();

@@ -95,16 +95,7 @@ export const sanitizeFinderUrlState = (state: Partial<FinderUrlState>): FinderUr
 };
 
 export const stateForYear = (state: Partial<FinderUrlState>, year: PublicFinderYear): FinderUrlState => {
-  const next = sanitizeFinderUrlState({ ...state, year });
-  if (year === '2027') {
-    next.fee = '';
-    next.deadline = '';
-    next.raceDay = false;
-    next.route = false;
-    next.elevation = '';
-    next.quick = next.quick.filter((value) => !['deadlines-soon', 'budget', 'route'].includes(value));
-  }
-  return next;
+  return sanitizeFinderUrlState({ ...state, year });
 };
 
 export const clearFinderUrlState = (year: PublicFinderYear = DEFAULT_FINDER_YEAR): FinderUrlState => ({ ...defaultFinderUrlState(), year });

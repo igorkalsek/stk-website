@@ -23,19 +23,25 @@ const additional2026 = [
   additional('104', '2026-11-08', 'Celje City Run', '12', '24', '2026-10-28', '', '', '120', 'https://example.com/notice')
 ];
 
+const additional2027 = [
+  additional('201', '2027-05-01', 'Koper Spring Run', '15', '20', '2027-04-20', '', 'da', '250', 'https://example.com/route-koper'),
+  additional('202', '2027-06-12', 'Pohorje Trail', '30', '45', '2027-05-30', '', '', '1400', 'https://example.com/route-pohorje')
+];
+
 function race(row: string, datum: string, naziv_prireditve: string, kraj: string, regija: string, tip_podlage: string, razdalje_km: string, opombe_javne: string) {
   return { row, datum, naziv_prireditve, kraj, regija, tip_podlage, razdalje_km, opombe_javne, status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/notice', povezava_prijava: 'https://example.com/register' };
 }
 
 function additional(master_row: string, datum: string, naziv_prireditve: string, prijavnina_min_eur: string, prijavnina_max_eur: string, rok_prijave: string, rok_cenejse_prijave: string, prijave_na_dan_dogodka: string, visinski_m_plus: string, trasa_url: string) {
-  return { master_row, datum, naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur, prijavnina_max_eur, rok_prijave, rok_cenejse_prijave, prijave_na_dan_dogodka, visinski_m_plus, trasa_url };
+  const leto = datum.slice(0, 4);
+  return { leto, master_sheet: leto, master_row, datum, naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur, prijavnina_max_eur, rok_prijave, rok_cenejse_prijave, prijave_na_dan_dogodka, visinski_m_plus, trasa_url };
 }
 
 async function mockFinderApis(page: Page) {
   const analytics: unknown[] = [];
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
-    if (url.pathname === '/additional') return route.fulfill({ json: { data: additional2026 } });
+    if (url.pathname === '/additional') return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? additional2027 : additional2026 } });
     if (url.pathname === '/top') return route.fulfill({ json: { data: [] } });
     return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? races2027 : races2026 } });
   });
@@ -49,6 +55,26 @@ async function mockFinderApis(page: Page) {
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (value: string) => { (window as any).__copiedText = value; } } });
   });
   return analytics;
+}
+
+async function freezeFinderDate(page: Page) {
+  const clock = (page as Page & { clock?: { setFixedTime: (date: Date) => Promise<void> } }).clock;
+  if (clock?.setFixedTime) {
+    await clock.setFixedTime(new Date('2026-07-25T10:00:00+02:00'));
+    return;
+  }
+  await page.addInitScript(() => {
+    const fixed = new Date('2026-07-25T08:00:00.000Z').getTime();
+    const RealDate = Date;
+    class MockDate extends RealDate {
+      constructor(...args: any[]) {
+        if (args.length === 0) super(fixed);
+        else super(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+      }
+      static now() { return fixed; }
+    }
+    Object.defineProperty(window, 'Date', { configurable: true, value: MockDate });
+  });
 }
 
 type FinderLanguage = 'sl' | 'en';
@@ -137,6 +163,7 @@ test('removes individual chips and preserves direct filters distinct from quick 
 });
 
 test('exercises production additional-data fields for direct filters', async ({ page }) => {
+  await freezeFinderDate(page);
   await openFinder(page, '/en/find-races/?fee=20&deadline=within-14&raceDay=1&route=1&elevation=max-800');
   await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
   await expect(page.locator('[data-filter="deadline"]')).toHaveValue('within-14');
@@ -158,6 +185,24 @@ test('hydrates 2027 filters from a sparse future-year master payload', async ({ 
   await expect(page.locator('[data-filter="surface"]')).toHaveValue('trail');
   await expect(page.locator('[data-search-results]')).toContainText('Pohorje Trail');
   await expect(page.locator('[data-search-results]')).not.toContainText('Koper Spring Run');
+});
+
+test('preserves and applies additional-data filters for the 2027 Slovenian finder', async ({ page }) => {
+  await openFinder(page, '/iskalnik-tekov/?year=2027&fee=20', 'sl');
+  await expect(page).toHaveURL(/year=2027/);
+  await expect(page).toHaveURL(/fee=20/);
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+  await expect(page.locator('[data-search-results]')).toContainText('Koper Spring Run');
+  await expect(page.locator('[data-search-results]')).not.toContainText('Pohorje Trail');
+});
+
+test('preserves 2027 additional quick picks through the shared English finder state', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?year=2027&quick=deadlines-soon,budget,route', 'en');
+  await expect(page).toHaveURL(/year=2027/);
+  await expect(page).toHaveURL(/quick=deadlines-soon%2Cbudget%2Croute/);
+  for (const quick of ['deadlines-soon', 'budget', 'route']) {
+    await expect(page.locator(`[data-quick-pick="${quick}"]`)).toHaveAttribute('aria-pressed', 'true');
+  }
 });
 
 

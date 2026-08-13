@@ -31,7 +31,7 @@ let event: DetailEvent | null = baseEvent && isValidYear && slugMatchesEvent(slu
 
 if (event && eventYear && isAdditionalDataEnabledForYear(eventYear)) {
   try {
-    const [withAdditional] = await attachAdditionalDataCached([event]);
+    const [withAdditional] = await attachAdditionalDataCached([event], eventYear);
     event = withAdditional;
   } catch (error) {
     console.warn('Detail strani additional data skipped', error);

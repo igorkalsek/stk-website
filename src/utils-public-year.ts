@@ -16,7 +16,7 @@ export const buildMasterApiPath = (year: PublicYear): string =>
   year === DEFAULT_PUBLIC_YEAR ? '/' : `/?year=${year}`;
 
 export const isAdditionalDataEnabledForYear = (year: PublicYear): boolean =>
-  year === DEFAULT_PUBLIC_YEAR;
+  SUPPORTED_PUBLIC_YEARS.includes(year);
 
 export const isRecentUpdatesEnabledForYear = (year: PublicYear): boolean =>
   year === DEFAULT_PUBLIC_YEAR;

@@ -693,7 +693,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       let events = getFamilyEvents(toArray(payload));
 
       try {
-        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData('2026'), '2026');
       } catch (error) {
         console.warn('Družinam prijazni teki additional data skipped', error);
       }

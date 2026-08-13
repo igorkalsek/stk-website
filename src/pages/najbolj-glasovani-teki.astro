@@ -685,13 +685,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           console.warn('Najbolj glasovani teki master enrichment skipped', error);
           return [];
         }),
-        fetchAdditionalEventData().catch((error) => {
+        fetchAdditionalEventData('2026').catch((error) => {
           console.warn('Najbolj glasovani teki additional data skipped', error);
           return [];
         })
       ]);
 
-      state.events = attachAdditionalDataByMasterRow(mapTopEvents(toArray(topPayload), toArray(masterPayload)), additionalRows);
+      state.events = attachAdditionalDataByMasterRow(mapTopEvents(toArray(topPayload), toArray(masterPayload)), additionalRows, '2026');
       state.apiAvailable = true;
       populateFilters();
       renderResults();
