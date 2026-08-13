@@ -34,7 +34,7 @@ describe('my races resolver', () => {
     const [item] = resolveSavedRaces([saved('r000101', '2026', '2026-08-15', 'Ljubljana Test Run')], { 2026: [apiEvent({ row: '101', date: '2026-08-15', title: 'Ljubljana Test Run' })] }, '2026-07-01');
     assert.equal(item.key, '2026:r000101');
     assert.equal(getStableEventId(item.event), 'r000101');
-    const [attached] = attachAdditionalDataByMasterRow([item.event], [additional('2026-08-15', 'Ljubljana Test Run', '2026-07-23', '2026-07-18', 'visoka', '101')]);
+    const [attached] = attachAdditionalDataByMasterRow([item.event], [additional('2026-08-15', 'Ljubljana Test Run', '2026-07-23', '2026-07-18', 'visoka', '101')], '2026');
     const byKey = new Map([[`${attached.year}:${getStableEventId(attached)}`, attached]]);
     const enriched = byKey.has(item.key) ? { ...item, event: byKey.get(item.key) } : item;
     assert.equal(enriched.event.additionalData.registrationDeadline, '2026-07-23');
@@ -266,7 +266,7 @@ describe('my races page source contract', () => {
 import { getUpcomingSavedRaceDeadlines } from '../.cache/dist-test/utils-my-races.js';
 
 const withAdditional = (item, additionalData) => ({ ...item, event: item.event ? { ...item.event, additionalData } : null });
-const additional = (date, title, registrationDeadline = '', earlyRegistrationDeadline = '', reliability = 'visoka', masterRow = '173') => ({ masterRow, masterRowNumber: Number(masterRow), reliability, date, eventTitle: title, registrationMinEur: '', registrationMaxEur: '', registrationDeadline, earlyRegistrationDeadline, dayOfRegistration: '', elevationGain: '', routeUrl: '' });
+const additional = (date, title, registrationDeadline = '', earlyRegistrationDeadline = '', reliability = 'visoka', masterRow = '173') => ({ year: '2026', masterSheet: '2026', masterRow, masterRowNumber: Number(masterRow), reliability, date, eventTitle: title, registrationMinEur: '', registrationMaxEur: '', registrationDeadline, earlyRegistrationDeadline, dayOfRegistration: '', elevationGain: '', routeUrl: '' });
 
 describe('my races upcoming registration deadlines', () => {
   it('selects active resolved saved race deadlines and excludes completed, unresolved, past and beyond window', () => {

@@ -1019,7 +1019,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
       try {
         if (additionalDataEnabled) {
-          events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData());
+          events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData(activeYear), activeYear);
         }
       } catch (error) {
         console.warn(`${locale.emptyDefaultPill} additional data skipped`, error);

@@ -11,7 +11,7 @@ import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type Additio
 import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRows: AdditionalEventData[] };
+type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
 const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
@@ -198,20 +198,26 @@ export const initMyRacesPage = async (root = document) => {
   const loadData = async (): Promise<MyRacesDataCache> => {
     const payloads: Record<string, unknown> = {};
     let apiOk = true;
-    const additionalPromise = fetchAdditionalEventData().catch(() => [] as AdditionalEventData[]);
+    const additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> = {};
     await Promise.all(SUPPORTED_PUBLIC_YEARS.map(async (year: PublicYear) => {
+      const additionalPromise = fetchAdditionalEventData(year).catch(() => [] as AdditionalEventData[]);
       try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } }); if (!response.ok) throw new Error(String(response.status)); payloads[year] = await response.json(); }
       catch { apiOk = false; }
+      additionalRowsByYear[year] = await additionalPromise;
     }));
-    return { payloads, apiOk, additionalRows: await additionalPromise };
+    return { payloads, apiOk, additionalRowsByYear };
   };
   const data = await (pageDataCache.get(mount) ?? pageDataCache.set(mount, loadData()).get(mount)!);
-  const { payloads, apiOk, additionalRows } = data;
+  const { payloads, apiOk, additionalRowsByYear } = data;
   const todayIso = getTodayIsoInLjubljana();
   let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));
   try {
-    if (additionalRows.length) {
-      const attached = attachAdditionalDataByMasterRow(resolved.filter((item) => item.event && isAdditionalDataEnabledForYear(item.event.year as PublicYear)).map((item) => item.event!), additionalRows);
+    const attached = SUPPORTED_PUBLIC_YEARS.flatMap((year) => {
+      const additionalRows = additionalRowsByYear[year] ?? [];
+      if (!additionalRows.length || !isAdditionalDataEnabledForYear(year)) return [];
+      return attachAdditionalDataByMasterRow(resolved.filter((item) => item.event?.year === year).map((item) => item.event!), additionalRows, year);
+    });
+    if (attached.length) {
       const byKey = new Map(attached.map((event) => [`${event.year}:${getStableEventId(event)}`, event]));
       resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
     }

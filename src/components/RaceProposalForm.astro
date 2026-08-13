@@ -295,7 +295,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
         return toApiRecords(await response.json()).map((item) => mapPublicRaceEvent(item, year, 0)).filter(Boolean);
       }));
       let events = yearly.flat();
-      try { events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData()); } catch (error) { console.warn('Proposal race picker additional data skipped', error); }
+      try { events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData('2026'), '2026'); } catch (error) { console.warn('Proposal race picker additional data skipped', error); }
       racePickerEvents = events.sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
       racePickerLoaded = true;
       setRaceStatus(pickerMessages.ready);

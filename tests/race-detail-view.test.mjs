@@ -27,7 +27,7 @@ const baseEvent = {
   noticeUrl: '', registrationUrl: '', voteUrl: '', publicNotes: '', cup: '', familyFriendly: false, kidsRaces: false
 };
 const richAdditional = {
-  masterRow: '1', masterRowNumber: 1, reliability: 'visoka', date: '2026-05-10', eventTitle: 'Testni tek',
+  year: '2026', masterSheet: '2026', masterRow: '1', masterRowNumber: 1, reliability: 'visoka', date: '2026-05-10', eventTitle: 'Testni tek',
   registrationMinEur: '10', registrationMaxEur: '20', registrationDeadline: '2026-05-01', earlyRegistrationDeadline: '2026-04-01',
   dayOfRegistration: 'DA', elevationGain: '250', routeUrl: 'https://example.com/route'
 };
@@ -191,6 +191,13 @@ describe('race detail view model', () => {
     assert.deepEqual(buildKeyFacts(event2027, 'en'), []);
     assert.deepEqual(buildRegistrationRows(event2027, 'en', fmt), []);
     assert.deepEqual(buildRaceHighlights(event2027, 'en'), []);
+  });
+
+  it('passes the explicit event year to additional enrichment on both detail routes', () => {
+    for (const path of ['src/pages/tek/[year]/[slug].astro', 'src/pages/en/races/[year]/[slug].astro']) {
+      const page = readFileSync(path, 'utf8');
+      assert.match(page, /attachAdditionalDataCached\(\[event\], eventYear\)/);
+    }
   });
 
   it('uses equivalent Slovenian and English structure and preserves tracked action types', () => {

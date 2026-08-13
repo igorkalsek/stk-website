@@ -1,6 +1,10 @@
+import { DEFAULT_PUBLIC_YEAR, type PublicYear } from './utils-public-year.js';
+
 export type ApiRecord = Record<string, unknown>;
 
 export type AdditionalEventData = {
+  year: string;
+  masterSheet: string;
   masterRow: string;
   masterRowNumber: number;
   reliability: string;
@@ -19,6 +23,7 @@ export type AdditionalEventData = {
 };
 
 export type EventWithAdditionalRow = {
+  year?: string;
   row?: string;
   id?: string;
   date?: string;
@@ -73,7 +78,7 @@ const normalizeRow = (value: string) => {
 
 const hasValidRowNumber = (value: number) => Number.isFinite(value);
 
-const isDevelopment = () => import.meta.env.DEV;
+const isDevelopment = () => Boolean(import.meta.env?.DEV);
 
 const warnAdditionalDataSkipped = (reason: string, context: Record<string, unknown>) => {
   if (!isDevelopment()) return;
@@ -116,6 +121,8 @@ export const mapAdditionalRow = (item: ApiRecord): AdditionalEventData => {
   const masterRow = pick(item, 'master_row');
 
   return {
+    year: pick(item, 'leto'),
+    masterSheet: pick(item, 'master_sheet'),
     masterRow,
     masterRowNumber: normalizeRow(masterRow),
     reliability: pick(item, 'zanesljivost'),
@@ -181,14 +188,17 @@ const isValidAdditionalMatch = (event: EventWithAdditionalRow, additionalRow: Ad
   return true;
 };
 
-export const fetchAdditionalEventData = async () => {
+export const fetchAdditionalEventData = async (year: PublicYear) => {
   const started = performance.now();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ADDITIONAL_API_TIMEOUT_MS);
   try {
-    const response = await fetch(ADDITIONAL_API_URL, { headers: { Accept: 'application/json' }, signal: controller.signal });
+    const url = year === DEFAULT_PUBLIC_YEAR ? ADDITIONAL_API_URL : `${ADDITIONAL_API_URL}?year=${year}`;
+    const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
     if (!response.ok) throw new Error(`Additional API status ${response.status}`);
-    return toAdditionalArray(await response.json()).map(mapAdditionalRow);
+    return toAdditionalArray(await response.json())
+      .map(mapAdditionalRow)
+      .filter((row) => row.year === year && row.masterSheet === year);
   } catch (error) {
     console.warn(`[additional-data] API fetch failed after ${Math.round(performance.now() - started)}ms: ${error instanceof Error ? error.message : String(error)}`);
     throw error;
@@ -199,11 +209,13 @@ export const fetchAdditionalEventData = async () => {
 
 export const attachAdditionalDataByMasterRow = <TEvent extends EventWithAdditionalRow>(
   events: TEvent[],
-  additionalRows: AdditionalEventData[]
+  additionalRows: AdditionalEventData[],
+  year: PublicYear
 ): TEvent[] => {
   const byMasterRow = new Map<number, AdditionalEventData>();
 
   for (const additionalRow of additionalRows) {
+    if (additionalRow.year !== year || additionalRow.masterSheet !== year) continue;
     if (!hasValidRowNumber(additionalRow.masterRowNumber)) {
       warnAdditionalDataSkipped('master_row is missing', { additionalRow });
       continue;
@@ -217,6 +229,10 @@ export const attachAdditionalDataByMasterRow = <TEvent extends EventWithAddition
   }
 
   return events.map((event) => {
+    if (event.year !== year) {
+      warnAdditionalDataSkipped('event year mismatch', { eventYear: event.year, requestedYear: year });
+      return { ...event, additionalData: null };
+    }
     const eventRow = normalizeRow(event.row ?? '');
 
     if (!hasValidRowNumber(eventRow)) {
