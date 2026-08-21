@@ -251,7 +251,10 @@ test('pages remove demo data, provide localized labels and preserve responsive d
 });
 
 test('production planning routes are included in sitemap with canonical and hreflang metadata', () => {
-  const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+  const sitemap = [
+    readFileSync('src/pages/sitemap.xml.ts', 'utf8'),
+    readFileSync('src/utils-sitemap.ts', 'utf8'),
+  ].join('\n');
   const sl = readFileSync('src/pages/za-organizatorje/termini-2027.astro', 'utf8');
   const en = readFileSync('src/pages/en/for-organizers/2027-race-dates.astro', 'utf8');
   assert.match(sitemap, /\/za-organizatorje\/termini-2027\//);

@@ -77,6 +77,10 @@ async function freezeFinderDate(page: Page) {
   });
 }
 
+test.beforeEach(async ({ page }) => {
+  await freezeFinderDate(page);
+});
+
 type FinderLanguage = 'sl' | 'en';
 
 async function openFinder(page: Page, path = '/en/find-races/', language: FinderLanguage = path.startsWith('/en/') ? 'en' : 'sl') {

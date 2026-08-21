@@ -1,36 +1,11 @@
-const sitemapPaths = [
-  '/',
-  '/iskalnik-tekov/',
-  '/najbolj-glasovani-teki/',
-  '/druzinam-prijazni-teki/',
-  '/skupinski-teki/',
-  '/osebni-koledar/',
-  '/stk-tekobot/',
-  '/dodaj-ali-popravi-tek/',
-  '/za-organizatorje/',
-  '/za-organizatorje/termini-2027/',
-  '/o-projektu-in-zasebnost/',
-  '/en/',
-  '/en/find-races/',
-  '/en/most-voted-races/',
-  '/en/family-friendly-races/',
-  '/en/group-runs/',
-  '/en/personal-calendar/',
-  '/en/stk-tekobot/',
-  '/en/for-organizers/',
-  '/en/for-organizers/2027-race-dates/',
-];
+import { getDetailStaticPaths } from '../utils-build-data';
+import { buildSitemapPaths, renderSitemapXml } from '../utils-sitemap';
 
-export function GET() {
-  const urls = sitemapPaths
-    .map((path) => `  <url><loc>${new URL(path, import.meta.env.SITE).href}</loc></url>`)
-    .join('\n');
+export async function GET() {
+  const detailPaths = await getDetailStaticPaths('sl');
+  const sitemapPaths = buildSitemapPaths(detailPaths);
 
-  return new Response(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
-</urlset>
-`, {
+  return new Response(renderSitemapXml(sitemapPaths, import.meta.env.SITE), {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
     },

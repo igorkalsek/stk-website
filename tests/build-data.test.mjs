@@ -168,6 +168,20 @@ test('Slovenian and English detail paths reuse the same year data cache', async 
         razdalje_km: '10',
         status_dogodka: 'potrjeno',
         vidno_v_javnem_koledarju: 'DA',
+      }, {
+        row: `hidden-${year}`,
+        datum: `${year}-12-02`,
+        naziv_prireditve: `Skriti tek ${year}`,
+        kraj: 'Ljubljana',
+        status_dogodka: 'potrjeno',
+        vidno_v_javnem_koledarju: 'NE',
+      }, {
+        row: `unconfirmed-${year}`,
+        datum: `${year}-12-03`,
+        naziv_prireditve: `Neuradni tek ${year}`,
+        kraj: 'Ljubljana',
+        status_dogodka: 'osnutek',
+        vidno_v_javnem_koledarju: 'DA',
       }],
     });
   };
