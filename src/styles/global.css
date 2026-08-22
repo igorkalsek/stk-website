@@ -5746,4 +5746,9 @@ progress { width: 100%; accent-color: var(--color-primary, #275b3b); }
 .achievement-card h4 { display: inline; margin: 0; }
 .achievement-status { float: right; color: #275b3b; font-size: .8rem; font-weight: 800; }
 .season-empty { padding: 1rem; border-left: 4px solid #55745e; background: #f7f8f3; }
-@media (max-width: 720px) { .my-stk-dashboard, .season-passport, .achievement-grid { grid-template-columns: 1fr; } .season-stamp { min-height: 125px; } }
+.my-stk-season-summary { display: grid; gap: .35rem; margin: .75rem 0; }
+.season-regions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; margin: 1rem 0 2rem; }
+.season-region { display: grid; gap: .25rem; padding: .75rem; border: 1px solid #d9ddd7; border-radius: 12px; background: #fff; }
+.season-region.is-visited { border-color: #55745e; background: #f2f7f1; }
+.season-region span { font-size: .82rem; color: #536057; }
+@media (max-width: 720px) { .my-stk-dashboard, .season-passport, .achievement-grid { grid-template-columns: 1fr; } .season-regions { grid-template-columns: repeat(2, minmax(0, 1fr)); } .season-stamp { min-height: 125px; } }
