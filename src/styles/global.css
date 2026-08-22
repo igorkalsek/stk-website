@@ -5716,3 +5716,34 @@ main {
     padding: 9px 10px;
   }
 }
+
+/* Moj STK: a compact personal layer that retains the calendar's editorial tone. */
+.my-stk { padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--color-border, #d9ddd7); border-radius: 18px; background: #f7f8f3; }
+.my-stk-heading h2 { margin: 0 0 .45rem; }
+.my-stk-heading h3 { margin: .25rem 0; }
+.my-stk-heading p { max-width: 62ch; }
+.my-stk-dashboard { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+.my-stk-dashboard article { min-width: 0; padding: 1rem; border-radius: 14px; background: #fff; border: 1px solid var(--color-border, #d9ddd7); }
+.my-stk-dashboard h3 { margin: .45rem 0; font-size: 1.1rem; }
+.my-stk-numbers, .season-summary { display: flex; gap: 1rem; flex-wrap: wrap; margin: .75rem 0; }
+.my-stk-numbers strong, .season-summary strong { font-size: 1.5rem; }
+.my-stk-numbers span, .season-summary span { display: block; font-size: .78rem; font-weight: 500; }
+.my-stk-global-stats { margin: 1.25rem 0 0; padding-top: .85rem; border-top: 1px solid #d9ddd7; color: var(--color-muted, #59635b); font-size: .88rem; }
+progress { width: 100%; accent-color: var(--color-primary, #275b3b); }
+.my-races-tabs { display: flex; gap: .35rem; margin: 1.25rem 0; padding: .3rem; border-radius: 12px; background: #eef0eb; }
+.my-races-tabs button { flex: 1; border: 0; border-radius: 9px; padding: .7rem 1rem; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+.my-races-tabs button[aria-selected="true"] { background: #fff; box-shadow: 0 1px 4px #0001; }
+.season-summary { padding: 1rem; border-radius: 14px; background: #f3f5ef; }
+.season-passport { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 2rem; }
+.season-stamp { display: flex; min-width: 0; min-height: 150px; flex-direction: column; justify-content: center; gap: .35rem; padding: 1rem; color: inherit; text-align: center; text-decoration: none; border: 2px solid #55745e; border-radius: 48% 52% 46% 54% / 53% 44% 56% 47%; background: #fbfaf3; transform: rotate(-1deg); }
+.season-stamp:nth-child(even) { transform: rotate(1deg); }
+.season-stamp strong { overflow-wrap: anywhere; }
+.season-stamp span { font-size: .82rem; color: #536057; }
+.season-stamp.is-unresolved { opacity: .7; border-style: dashed; }
+.achievement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.achievement-card { padding: 1rem; border: 1px solid #d9ddd7; border-radius: 14px; background: #fff; }
+.achievement-card.is-achieved { border-color: #55745e; background: #f2f7f1; }
+.achievement-card h4 { display: inline; margin: 0; }
+.achievement-status { float: right; color: #275b3b; font-size: .8rem; font-weight: 800; }
+.season-empty { padding: 1rem; border-left: 4px solid #55745e; background: #f7f8f3; }
+@media (max-width: 720px) { .my-stk-dashboard, .season-passport, .achievement-grid { grid-template-columns: 1fr; } .season-stamp { min-height: 125px; } }

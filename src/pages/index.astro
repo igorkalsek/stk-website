@@ -118,28 +118,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       </div>
     </section>
 
-    <section class="container home-calendar-stats" aria-labelledby="calendar-stats-title">
-      <div class="stats-intro">
-        <h2 id="calendar-stats-title">Koledar 2026 v številkah</h2>
-        <p>Podatki zajemajo celoten javni koledar od januarja do decembra 2026.</p>
-      </div>
-      <div class="home-stats-band stats-strip" aria-label="Statistika koledarja">
-        <article class="stat-card stat-card-races">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="confirmed_public_events_total">…</span>
-          <span class="stat-label">potrjenih prireditev</span>
-        </article>
-        <article class="stat-card stat-card-family">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="family_friendly_total">…</span>
-          <span class="stat-label">družinam prijaznih prireditev</span>
-        </article>
-        <article class="stat-card stat-card-group">
-          <span class="stat-mark" aria-hidden="true"></span>
-          <span class="stat-value" data-stat="group_runs_total">…</span>
-          <span class="stat-label">skupinskih tekov</span>
-        </article>
-      </div>
+    <section class="container home-calendar-stats my-stk" data-my-stk data-language="sl" aria-labelledby="my-stk-title">
+      <div class="my-stk-heading"><h2 id="my-stk-title">Moj STK</h2><p>Nalagamo vašo tekaško sezono …</p></div>
+      <p class="my-stk-global-stats" data-my-stk-global-stats>STK 2026 · <span data-stat="confirmed_public_events_total">…</span> potrjenih prireditev · <span data-stat="family_friendly_total">…</span> družinam prijaznih · <span data-stat="group_runs_total">…</span> skupinskih tekov</p>
     </section>
 
       <section class="section container home-secondary-section" aria-labelledby="voted-title">
@@ -1577,4 +1558,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   loadRegistrationDeadlines();
   loadTopEvents();
   loadRecentUpdates();
+</script>
+
+<script>
+  import { initMyStk } from '../my-stk-client';
+  initMyStk();
 </script>

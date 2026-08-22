@@ -14,6 +14,9 @@ type StkAnalyticsEventType =
   | 'event_card_clicked'
   | 'related_race_clicked'
   | 'my_races_viewed'
+  | 'my_stk_viewed'
+  | 'season_viewed'
+  | 'achievement_viewed'
   | 'my_races_bulk_ics_exported'
   | 'personalized_results_used'
   | 'organizer_action_clicked';
@@ -111,6 +114,9 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'event_card_clicked',
   'related_race_clicked',
   'my_races_viewed',
+  'my_stk_viewed',
+  'season_viewed',
+  'achievement_viewed',
   'my_races_bulk_ics_exported',
   'personalized_results_used',
   'organizer_action_clicked'

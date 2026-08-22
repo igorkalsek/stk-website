@@ -9,6 +9,7 @@ import { renderActionIcon } from './utils-action-icons.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
+import { getSeasonAchievements, getSeasonSummary, type AchievementKey, type BasicSurface } from './utils-my-season.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
@@ -16,6 +17,14 @@ const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
 const SLOVENIAN_GENITIVE_MONTHS = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'] as const;
+
+const ACHIEVEMENT_NAMES: Record<'sl' | 'en', Record<AchievementKey, string>> = {
+  sl: { debut: 'Debi', five: 'Petica', ten: 'Desetka', nomad: 'Nomad', 'all-terrain': 'Terenec', veteran: 'Veteran' },
+  en: { debut: 'Debut', five: 'Five', ten: 'Ten', nomad: 'Nomad', 'all-terrain': 'All-terrain', veteran: 'Veteran' }
+};
+const SURFACE_NAMES: Record<'sl' | 'en', Record<BasicSurface, string>> = {
+  sl: { road: 'Cesta', trail: 'Trail', mountain: 'Gorski' }, en: { road: 'Road', trail: 'Trail', mountain: 'Mountain' }
+};
 
 export const formatDeadlineDateAfterUntil = (value: string, language: 'sl' | 'en', includeYear = false) => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -182,6 +191,40 @@ export const removeSavedRaceFromMyRaces = (storage: MinimalStorage | null, race:
   return true;
 };
 
+const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, language: 'sl' | 'en') => {
+  const summary = getSeasonSummary(items);
+  const achievements = getSeasonAchievements(items);
+  const year = summary.completed.map((item) => item.event?.year || item.savedRace.year).sort().at(-1) || String(new Date().getFullYear());
+  const copy = language === 'en'
+    ? { title: `My ${year} season`, races: 'completed races', regions: 'regions', surfaces: 'basic surface types', empty: 'Once you complete a race, mark it as Completed in My races. Your running passport will begin here.', passport: 'My running passport', achievements: 'My achievements', achieved: 'Achieved', old: 'Saved race (details are no longer available)' }
+    : { title: `Moja sezona ${year}`, races: 'opravljenih tekov', regions: 'različnih regij', surfaces: 'različnih osnovnih podlag', empty: 'Ko tek opravite, ga v Mojih tekih označite kot Opravljen. Tukaj se bo začel vaš tekaški potni list.', passport: 'Moj tekaški potni list', achievements: 'Moji dosežki', achieved: 'Doseženo', old: 'Shranjeni tek (podrobnosti niso več na voljo)' };
+  const terrain = summary.surfaces;
+  const progress = (achievement: typeof achievements[number]) => achievement.key === 'all-terrain'
+    ? (['road', 'trail', 'mountain'] as BasicSurface[]).map((surface) => `${SURFACE_NAMES[language][surface]} ${terrain.has(surface) ? '✓' : '○'}`).join(' · ')
+    : `${achievement.current} / ${achievement.target}${achievement.key === 'nomad' ? (language === 'en' ? ' regions' : ' regij') : ''}`;
+  const stamps = summary.completed.map((item) => {
+    const event = item.event;
+    if (!event) return `<article class="season-stamp is-unresolved"><strong>${escapeHtml(item.savedRace.title || copy.old)}</strong><span>${escapeHtml(item.savedRace.date || item.savedRace.year)}</span></article>`;
+    const body = `<strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))}</span><span>${escapeHtml(event.place || event.region)}${event.place && event.region ? ` · ${escapeHtml(event.region)}` : ''}</span><span>${escapeHtml(event.surface)}</span>`;
+    return `<a class="season-stamp" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${body}</a>`;
+  }).join('');
+  return `<section class="my-season" aria-labelledby="my-season-title"><h2 id="my-season-title">${copy.title}</h2><div class="season-summary"><strong>${summary.completedCount} <span>${copy.races}</span></strong><strong>${summary.regionCount} <span>${copy.regions}</span></strong><strong>${summary.surfaceCount} <span>${copy.surfaces}</span></strong></div>${summary.completedCount ? `<h3>${copy.passport}</h3><div class="season-passport">${stamps}</div>` : `<p class="season-empty">${copy.empty}</p>`}<h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => `<article class="achievement-card${achievement.achieved ? ' is-achieved' : ''}" data-achievement="${achievement.key}"><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4>${achievement.achieved ? `<span class="achievement-status">${copy.achieved}</span>` : ''}</div>${achievement.key === 'debut' && !achievement.achieved ? '' : `<p>${progress(achievement)}</p><progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress>`}</article>`).join('')}</div></section>`;
+};
+
+const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, language: 'sl' | 'en') => {
+  const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
+  if (seasonMount) seasonMount.innerHTML = renderSeason(items, language);
+};
+
+export const initMyRacesTabs = (root = document) => {
+  root.querySelectorAll<HTMLButtonElement>('[data-my-races-tab]').forEach((button) => button.addEventListener('click', () => {
+    const selected = button.dataset.myRacesTab || 'plan';
+    root.querySelectorAll<HTMLElement>('[data-my-races-panel]').forEach((panel) => { panel.hidden = panel.dataset.myRacesPanel !== selected; });
+    root.querySelectorAll<HTMLButtonElement>('[data-my-races-tab]').forEach((tab) => { tab.setAttribute('aria-selected', String(tab === button)); });
+    if (selected === 'season') trackStkPageLoadEventOnce(`season_viewed:${location.pathname}`, { event_type: 'season_viewed', language: root.querySelector<HTMLElement>('[data-my-races-app]')?.dataset.language, placement: 'my_races' });
+  }));
+};
+
 export const initMyRacesPage = async (root = document) => {
   const mount = root.querySelector<HTMLElement>('[data-my-races-app]');
   if (!mount) return;
@@ -193,7 +236,7 @@ export const initMyRacesPage = async (root = document) => {
     mount.innerHTML = `<p class="notice warning">${labels.storageError}</p>${renderLocalNotice(labels)}`; return; }
   const saved = readSavedRaces(storage).state.races;
   trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
-  if (!saved.length) { mount.innerHTML = `<p>${labels.empty}</p><a class="button" href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>${renderLocalNotice(labels)}`; return; }
+  if (!saved.length) { mount.innerHTML = `<p>${labels.empty}</p><a class="button" href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>${renderLocalNotice(labels)}`; updateSeasonMount(root, [], language); return; }
   mount.textContent = labels.loading;
   const loadData = async (): Promise<MyRacesDataCache> => {
     const payloads: Record<string, unknown> = {};
@@ -222,6 +265,7 @@ export const initMyRacesPage = async (root = document) => {
       resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
     }
   } catch { /* optional additional data */ }
+  updateSeasonMount(root, resolved, language);
   const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
   const counts = countSavedRaceStatuses(resolved);
   const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
