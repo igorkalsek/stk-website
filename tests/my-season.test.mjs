@@ -55,10 +55,12 @@ describe('My STK season', () => {
   it('localizes API region and surface labels only for the English season view', () => {
     assert.equal(formatSeasonRegionLabel('Gorenjska', 'en'), 'Upper Carniola');
     assert.equal(formatSeasonRegionLabel('Osrednjeslovenska', 'en'), 'Central Slovenia');
-    assert.equal(formatSeasonSurfaceLabel('cesta', 'en'), 'Road');
+    const canonicalSurfaces = ['cesta', 'asfalt', 'makadam', 'trail', 'cesta/trail', 'gorski tek'];
+    assert.deepEqual(canonicalSurfaces.map((surface) => formatSeasonSurfaceLabel(surface, 'en')), ['Road', 'Asphalt', 'Gravel road', 'Trail', 'Road/trail', 'Mountain race']);
     assert.equal(formatSeasonRegionLabel('Gorenjska', 'sl'), 'Gorenjska');
     assert.equal(formatSeasonSurfaceLabel('cesta', 'sl'), 'cesta');
     assert.doesNotMatch(formatSeasonRegionLabel('Gorenjska', 'en'), /Gorenjska/);
+    assert.doesNotMatch(['asfalt', 'makadam', 'gorski tek'].map((surface) => formatSeasonSurfaceLabel(surface, 'en')).join(' · '), /asfalt|makadam|gorski tek/i);
   });
   it('keeps unresolved references safe', () => assert.doesNotThrow(() => getSeasonAchievements([item('old', { resolved: false })])));
   it('keeps live stats outside async dashboard replacement', () => {
