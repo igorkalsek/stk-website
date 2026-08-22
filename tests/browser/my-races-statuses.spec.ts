@@ -658,6 +658,9 @@ test('opens plan by default and supports the shared season deep link and accessi
   await expect(page.getByRole('tab', { name: 'My season' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('[data-my-races-panel="season"]')).toBeVisible();
   await expect(page.getByText('Moja sezona', { exact: true })).toHaveCount(0);
+  await expect(page.locator('[data-my-races-panel="season"]')).toContainText('Upper Carniola');
+  await expect(page.locator('[data-my-races-panel="season"]')).toContainText('Road');
+  await expect(page.locator('[data-my-races-panel="season"]')).not.toContainText('Gorenjska');
 
   await page.setViewportSize({ width: 390, height: 844 });
   const overflows = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);

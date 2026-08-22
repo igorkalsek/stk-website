@@ -9,7 +9,7 @@ import { renderActionIcon } from './utils-action-icons.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
-import { formatSloveneCount, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, type AchievementKey, type BasicSurface } from './utils-my-season.js';
+import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, type AchievementKey, type BasicSurface } from './utils-my-season.js';
 import { dispatchSavedRacesChanged } from './saved-races-events.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
@@ -207,14 +207,16 @@ const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availableRegi
   const stamps = summary.completed.map((item) => {
     const event = item.event;
     if (!event) return `<article class="season-stamp is-unresolved"><strong>${escapeHtml(item.savedRace.title || copy.old)}</strong><span>${escapeHtml(item.savedRace.date || item.savedRace.year)}</span></article>`;
-    const body = `<span class="season-stamp-mark">STK · ${escapeHtml(event.year)}</span><strong>${escapeHtml(event.title)}</strong><span class="season-stamp-date">${escapeHtml(formatDate(event.date, language))}</span><span class="season-stamp-meta">${escapeHtml(event.place || event.region)}${event.place && event.region ? ` · ${escapeHtml(event.region)}` : ''}<br>${escapeHtml(event.surface)}</span>`;
+    const region = formatSeasonRegionLabel(event.region, language);
+    const location = event.place ? `${event.place}${region ? ` · ${region}` : ''}` : region;
+    const body = `<span class="season-stamp-mark">STK · ${escapeHtml(event.year)}</span><strong>${escapeHtml(event.title)}</strong><span class="season-stamp-date">${escapeHtml(formatDate(event.date, language))}</span><span class="season-stamp-meta">${escapeHtml(location)}<br>${escapeHtml(formatSeasonSurfaceLabel(event.surface, language))}</span>`;
     return `<a class="season-stamp" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${body}</a>`;
   }).join('');
   const summaryRace = language === 'en' ? `${summary.completedCount} completed races` : formatSloveneCount(summary.completedCount, 'completed-race');
   const summaryEvent = language === 'en' ? `${summary.distinctEventCount} different events` : formatSloveneCount(summary.distinctEventCount, 'distinct-event');
   const summaryRaceLabel = summaryRace.replace(/^\d+\s+/, '');
   const summaryEventLabel = summaryEvent.replace(/^\d+\s+/, '');
-  const regionCards = regions.map((region) => `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(region.label)}</strong>${region.visited ? `<span>${language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race')}</span>` : ''}</article>`).join('');
+  const regionCards = regions.map((region) => `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(formatSeasonRegionLabel(region.label, language))}</strong>${region.visited ? `<span>${language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race')}</span>` : ''}</article>`).join('');
   const summaryStrip = `<div class="season-summary"><span class="season-metric"><strong>${summary.completedCount}</strong><span>${escapeHtml(summaryRaceLabel)}</span></span><span class="season-metric"><strong>${summary.regionCount} / ${regions.length}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(summaryEventLabel)}</span></span></div>`;
   return `<section class="my-season" aria-labelledby="my-season-title"><h2 id="my-season-title">${copy.title}</h2>${summaryStrip}${summary.completedCount ? '' : `<p class="season-empty">${copy.empty}</p>`}<section class="my-season-section"><h3>${copy.exploring}</h3><div class="season-regions">${regionCards}</div></section>${summary.completedCount ? `<section class="my-season-section"><h3>${copy.passport}</h3><div class="season-passport">${stamps}</div></section>` : ''}<section class="my-season-section achievements-section"><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => `<article class="achievement-card${achievement.achieved ? ' is-achieved' : ''}" data-achievement="${achievement.key}"><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4>${achievement.achieved ? `<span class="achievement-status">${copy.achieved}</span>` : ''}</div>${achievement.key === 'debut' && !achievement.achieved ? '' : `<p>${progress(achievement)}</p><progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress>`}</article>`).join('')}</div></section></section>`;
 };

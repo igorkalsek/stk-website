@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
-import { formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
+import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
 import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
@@ -51,6 +51,14 @@ describe('My STK season', () => {
   });
   it('formats Slovene race, region and achievement counts', () => {
     for (const [kind, expected] of [['completed-race', ['1 opravljen tek','2 opravljena teka','3 opravljeni teki','5 opravljenih tekov']], ['region', ['1 regija','2 regiji','3 regije','5 regij']], ['achievement', ['1 dosežek','2 dosežka','3 dosežki','5 dosežkov']]]) assert.deepEqual([1,2,3,5].map((n) => formatSloveneCount(n, kind)), expected);
+  });
+  it('localizes API region and surface labels only for the English season view', () => {
+    assert.equal(formatSeasonRegionLabel('Gorenjska', 'en'), 'Upper Carniola');
+    assert.equal(formatSeasonRegionLabel('Osrednjeslovenska', 'en'), 'Central Slovenia');
+    assert.equal(formatSeasonSurfaceLabel('cesta', 'en'), 'Road');
+    assert.equal(formatSeasonRegionLabel('Gorenjska', 'sl'), 'Gorenjska');
+    assert.equal(formatSeasonSurfaceLabel('cesta', 'sl'), 'cesta');
+    assert.doesNotMatch(formatSeasonRegionLabel('Gorenjska', 'en'), /Gorenjska/);
   });
   it('keeps unresolved references safe', () => assert.doesNotThrow(() => getSeasonAchievements([item('old', { resolved: false })])));
   it('keeps live stats outside async dashboard replacement', () => {

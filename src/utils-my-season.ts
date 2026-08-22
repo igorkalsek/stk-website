@@ -1,5 +1,6 @@
 import type { SavedRaceResolution } from './utils-my-races.js';
 import { DEFAULT_PUBLIC_YEAR, type PublicYear } from './utils-public-year.js';
+import { formatEnglishRegion, formatEnglishSurface } from './utils-english.js';
 
 export type AchievementKey = 'debut' | 'five' | 'ten' | 'nomad' | 'all-terrain' | 'veteran';
 export type BasicSurface = 'road' | 'trail' | 'mountain';
@@ -17,6 +18,8 @@ const SURFACES: Record<string, BasicSurface> = {
 /** Combined and unknown values intentionally return null: one event can prove only one category. */
 export const normalizeBasicSurface = (value: string): BasicSurface | null => SURFACES[normalize(value)] ?? null;
 export const normalizeRegionKey = (value: string) => normalize(value);
+export const formatSeasonRegionLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishRegion(value) : value;
+export const formatSeasonSurfaceLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishSurface(value) : value;
 
 export const getCompletedRaces = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR) => {
   const seen = new Set<string>();
