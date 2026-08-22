@@ -66,6 +66,14 @@ describe('My STK season', () => {
     assert.match(en, /aria-labelledby="my-stk-title"/);
     assert.match(client, /\? 'My STK' : 'Moj STK'/);
   });
+  it('refreshes My STK re-entrantly without duplicate listeners or stale async renders', () => {
+    const client = readFileSync('src/my-stk-client.ts', 'utf8');
+    assert.match(client, /new WeakMap<HTMLElement, MyStkRuntime>/);
+    assert.match(client, /if \(!runtime\.listening[\s\S]*addEventListener\(SAVED_RACES_CHANGED_EVENT/);
+    assert.match(client, /const renderVersion = \+\+runtime\.renderVersion/);
+    assert.match(client, /runtime\.renderVersion !== renderVersion/);
+    assert.match(client, /if \(!runtime\.viewed\)[\s\S]*my_stk_viewed/);
+  });
   it('uses one localized season deep-link contract while ordinary visits keep the plan view', () => {
     assert.equal(getInitialMyRacesView(''), 'plan');
     assert.equal(getInitialMyRacesView('?view=plan'), 'plan');

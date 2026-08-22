@@ -5,6 +5,7 @@ import { readSavedRaces } from './utils-saved-races.js';
 import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, isSupportedPublicYear, type PublicYear } from './utils-public-year.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { mapPublicRaceEvent, toApiRecords } from './utils-event-detail.js';
+import { SAVED_RACES_CHANGED_EVENT } from './saved-races-events.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
@@ -12,15 +13,28 @@ const statusLabel = (status: string, language: 'sl' | 'en') => language === 'en'
   ? ({ following: 'Following', planning: 'Planning', registered: 'Registered' }[status] ?? status)
   : ({ following: 'Spremljam', planning: 'Planiram', registered: 'Prijavljen' }[status] ?? status);
 
+type MyStkRuntime = { renderVersion: number; listening: boolean; viewed: boolean };
+const runtimes = new WeakMap<HTMLElement, MyStkRuntime>();
+
 export const initMyStk = async (root = document) => {
   const mount = root.querySelector<HTMLElement>('[data-my-stk]');
   const content = mount?.querySelector<HTMLElement>('[data-my-stk-content]');
   if (!mount || !content) return;
+  const runtime = runtimes.get(mount) ?? { renderVersion: 0, listening: false, viewed: false };
+  runtimes.set(mount, runtime);
+  const renderVersion = ++runtime.renderVersion;
+  if (!runtime.listening && typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener(SAVED_RACES_CHANGED_EVENT, () => { void initMyStk(root); });
+    runtime.listening = true;
+  }
   const language = mount.dataset.language === 'en' ? 'en' : 'sl';
   let storage: Storage | null = null;
   try { storage = window.localStorage; } catch { /* onboarding is the graceful fallback */ }
   const saved = readSavedRaces(storage).state.races;
-  trackStkPageLoadEventOnce(`my_stk_viewed:${language}`, { event_type: 'my_stk_viewed', language, placement: 'home_my_stk', results_count: saved.length });
+  if (!runtime.viewed) {
+    trackStkPageLoadEventOnce(`my_stk_viewed:${language}`, { event_type: 'my_stk_viewed', language, placement: 'home_my_stk', results_count: saved.length });
+    runtime.viewed = true;
+  }
   const finder = language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/';
   if (!saved.length) {
     content.innerHTML = `<div class="my-stk-heading"><h2 id="my-stk-title">${language === 'en' ? 'My STK' : 'Moj STK'}</h2><h3>${language === 'en' ? 'Build your running season' : 'Ustvarite svojo tekaško sezono'}</h3><p>${language === 'en' ? 'Save interesting races, follow registration deadlines and discover Slovenia through running.' : 'Shranjujte zanimive teke, spremljajte prijavne roke in skozi tek odkrivajte Slovenijo.'}</p><a class="button" href="${finder}">${language === 'en' ? 'Find your first race' : 'Poiščite prvi tek'}</a></div>`;
@@ -29,6 +43,7 @@ export const initMyStk = async (root = document) => {
   const years = [...new Set([DEFAULT_PUBLIC_YEAR, ...saved.map((race) => race.year).filter(isSupportedPublicYear)])] as PublicYear[];
   const payloads: Record<string, unknown> = {};
   await Promise.all(years.map(async (year) => { try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`); if (response.ok) payloads[year] = await response.json(); } catch { /* unresolved references remain safe */ } }));
+  if (runtime.renderVersion !== renderVersion) return;
   const items = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, getTodayIsoInLjubljana()));
   const activeEvents = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)).filter(Boolean);
   const availableRegions = activeEvents.map((event) => event!.region).filter(Boolean);

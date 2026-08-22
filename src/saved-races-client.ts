@@ -1,5 +1,6 @@
 import { trackStkEvent } from './lib/stkAnalytics.js';
 import { getSavedRaceStatus, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races.js';
+import { dispatchSavedRacesChanged } from './saved-races-events.js';
 
 type Language = 'sl' | 'en';
 const LABELS = {
@@ -75,6 +76,7 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
         language: getLanguage(button),
         placement: getPlacement(button)
       });
+      if (result.persistent && isRaceSaved(readSavedRaces(getStorage()).state, clickedRace) === result.saved) dispatchSavedRacesChanged();
     });
   });
   root.querySelectorAll<HTMLSelectElement>('[data-race-status-control]').forEach((control) => {
@@ -94,11 +96,13 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
         if (!result.persistent) return;
         syncRaceControls(changedRace, true, nextStatus);
         if (!beforeStatus) trackStkEvent({ event_type: 'race_saved', event_id: changedRace.eventId, event_name: changedRace.title, event_date: changedRace.date, event_year: changedRace.year, language: getLanguage(control), placement: getPlacement(control) });
+        if (beforeStatus !== nextStatus && getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace) === nextStatus) dispatchSavedRacesChanged();
       } else {
         const result = removeSavedRaceFromStorage(getStorage(), changedRace);
         if (!result.persistent) return;
         syncRaceControls(changedRace, false, null);
         if (beforeStatus) trackStkEvent({ event_type: 'race_unsaved', event_id: changedRace.eventId, event_name: changedRace.title, event_date: changedRace.date, event_year: changedRace.year, language: getLanguage(control), placement: getPlacement(control) });
+        if (beforeStatus && !getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace)) dispatchSavedRacesChanged();
       }
     });
   });

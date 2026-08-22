@@ -1,7 +1,7 @@
 import { trackStkEvent, trackStkPageLoadEventOnce } from './lib/stkAnalytics.js';
 import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, buildRegistrationDeadlineCalendarInput, type MultiIcsCalendarEventInput } from './utils-calendar.js';
 import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getInitialMyRacesView, getSavedRaceDetailPath, getUpcomingSavedRaceDeadlines, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
-import { getSavedRaceKey, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUSES, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, type MinimalStorage, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
+import { getSavedRaceKey, getSavedRaceStatus, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUSES, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, type MinimalStorage, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
 import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { getStableEventId, mapPublicRaceEvent, toApiRecords } from './utils-event-detail.js';
 import { buildPrimaryActions } from './utils-race-detail-view.js';
@@ -10,6 +10,7 @@ import { getTodayIsoInLjubljana } from './utils-date.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 import { formatSloveneCount, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, type AchievementKey, type BasicSurface } from './utils-my-season.js';
+import { dispatchSavedRacesChanged } from './saved-races-events.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
@@ -188,6 +189,7 @@ export const removeSavedRaceFromMyRaces = (storage: MinimalStorage | null, race:
     language: context.language,
     placement: 'my_races'
   });
+  dispatchSavedRacesChanged();
   return true;
 };
 
@@ -308,7 +310,7 @@ export const initMyRacesPage = async (root = document) => {
   mount.innerHTML = `${apiOk ? '' : `<p class="notice warning">${labels.apiError}</p>`}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextDeadlineSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), labels, language)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}<div class="my-race-list">${upcoming.map((item) => renderEvent(item as any, labels, language, todayIso)).join('')}</div></section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2><div class="my-race-list">${other.map((item) => renderEvent(item as any, labels, language, todayIso)).join('')}</div></section>` : ''}`;
   mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
   mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
-  mount.querySelectorAll<HTMLSelectElement>('[data-my-race-status-select]').forEach((select) => select.addEventListener('change', () => { const status = select.value; const race = { eventId: select.dataset.eventId || '', year: select.dataset.eventYear || '', date: select.dataset.eventDate || '', title: select.dataset.eventTitle || '' }; if (isSavedRaceStatus(status)) setSavedRaceStatusInStorage(getStorage(), race, status); else removeSavedRaceFromMyRaces(getStorage(), race, { eventName: race.title, eventDate: race.date, language }); initMyRacesPage(root); }));
+  mount.querySelectorAll<HTMLSelectElement>('[data-my-race-status-select]').forEach((select) => select.addEventListener('change', () => { const status = select.value; const race = { eventId: select.dataset.eventId || '', year: select.dataset.eventYear || '', date: select.dataset.eventDate || '', title: select.dataset.eventTitle || '' }; if (isSavedRaceStatus(status)) { const before = getSavedRaceStatus(readSavedRaces(getStorage()).state, race); const result = setSavedRaceStatusInStorage(getStorage(), race, status); if (result.persistent && before !== status && getSavedRaceStatus(readSavedRaces(getStorage()).state, race) === status) dispatchSavedRacesChanged(); } else removeSavedRaceFromMyRaces(getStorage(), race, { eventName: race.title, eventDate: race.date, language }); initMyRacesPage(root); }));
   mount.querySelectorAll<HTMLButtonElement>('[data-remove-saved-race]').forEach((button) => button.addEventListener('click', () => {
     removeSavedRaceFromMyRaces(getStorage(), { eventId: button.dataset.eventId || '', year: button.dataset.eventYear || '' }, { eventName: button.dataset.eventTitle || '', eventDate: button.dataset.eventDate || '', language });
     initMyRacesPage(root);

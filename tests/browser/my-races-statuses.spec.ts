@@ -663,3 +663,18 @@ test('opens plan by default and supports the shared season deep link and accessi
   const overflows = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflows).toBe(false);
 });
+
+test('refreshes the homepage My STK component after save and unsave without reloading', async ({ page }) => {
+  await mockMyRacesApis(page);
+  await page.addInitScript(([v1, v2]) => { localStorage.removeItem(v1); localStorage.removeItem(v2); }, [V1_KEY, V2_KEY]);
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Ustvarite svojo tekaško sezono' })).toBeVisible();
+  const saveButton = page.locator('[data-saved-race-button]').first();
+  await expect(saveButton).toBeVisible();
+
+  await saveButton.click();
+  await expect(page.locator('[data-my-stk] .my-stk-dashboard')).toBeVisible();
+
+  await saveButton.click();
+  await expect(page.getByRole('heading', { name: 'Ustvarite svojo tekaško sezono' })).toBeVisible();
+});
