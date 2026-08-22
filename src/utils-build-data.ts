@@ -10,7 +10,10 @@ type FetchLike = typeof fetch;
 
 type YearData = {
   year: PublicYear;
+  /** All confirmed public events, including archive events. Used only for detail paths. */
   events: PublicRaceEvent[];
+  /** Today and future only. Safe for homepage and other discovery surfaces. */
+  upcomingEvents: PublicRaceEvent[];
   slPaths: DetailPath[];
   enPaths: DetailPath[];
   relatedPrepMs: number;
@@ -111,7 +114,8 @@ const buildYearData = async (year: PublicYear): Promise<YearData> => {
 
   const relatedStarted = now();
   const relatedBySlug = new Map<string, ReturnType<typeof buildRelatedRaces>>();
-  const upcomingEvents = records.map((item) => mapPublicRaceEvent(item, year, today)).filter((event): event is PublicRaceEvent => Boolean(event));
+  const upcomingEvents = records.map((item) => mapPublicRaceEvent(item, year, today)).filter((event): event is PublicRaceEvent => Boolean(event))
+    .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
   for (const event of events) relatedBySlug.set(buildEventDetailSlug(event), buildRelatedRaces({ currentEvent: event, candidates: upcomingEvents, todayIso, limit: 3 }));
   const relatedPrepMs = now() - relatedStarted;
 
@@ -127,7 +131,7 @@ const buildYearData = async (year: PublicYear): Promise<YearData> => {
   stats.detailPaths.en[year] = enPaths.length;
   stats.relatedPrepMs[year] = relatedPrepMs;
   stats.keyPrepMs += now() - started;
-  return { year, events, slPaths, enPaths, relatedPrepMs };
+  return { year, events, upcomingEvents, slPaths, enPaths, relatedPrepMs };
 };
 
 export const getPublicYearData = (year: PublicYear) => {

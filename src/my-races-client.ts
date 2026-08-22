@@ -7,7 +7,7 @@ import { getStableEventId, mapPublicRaceEvent, toApiRecords } from './utils-even
 import { buildPrimaryActions } from './utils-race-detail-view.js';
 import { renderActionIcon } from './utils-action-icons.js';
 import { getTodayIsoInLjubljana, isCompletionAllowed } from './utils-date.js';
-import { getCompletedRaceSnapshotKey, readCompletedRaceSnapshots, upsertCompletedRaceSnapshot } from './utils-completed-snapshots.js';
+import { backfillCompletedRaceSnapshots, getCompletedRaceSnapshotKey, upsertCompletedRaceSnapshot } from './utils-completed-snapshots.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, type AchievementKey, type BasicSurface } from './utils-my-season.js';
@@ -280,7 +280,8 @@ export const initMyRacesPage = async (root = document) => {
   const { payloads, apiOk, additionalRowsByYear } = data;
   const todayIso = getTodayIsoInLjubljana();
   let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));
-  const snapshotByKey = new Map(readCompletedRaceSnapshots(storage).snapshots.map((item) => [getCompletedRaceSnapshotKey(item), item]));
+  const snapshotState = backfillCompletedRaceSnapshots(storage, resolved, todayIso);
+  const snapshotByKey = new Map(snapshotState.snapshots.map((item) => [getCompletedRaceSnapshotKey(item), item]));
   resolved = resolved.map((item) => ({ ...item, snapshot: snapshotByKey.get(item.key) ?? null }));
   try {
     const attached = SUPPORTED_PUBLIC_YEARS.flatMap((year) => {

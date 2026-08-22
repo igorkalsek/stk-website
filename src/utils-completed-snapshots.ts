@@ -1,5 +1,7 @@
 import { getStableEventId, type PublicRaceEvent } from './utils-event-detail.js';
 import type { MinimalStorage } from './utils-saved-races.js';
+import type { SavedRaceResolution } from './utils-my-races.js';
+import { isCompletionAllowed } from './utils-date.js';
 export const COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY = 'stkCompletedRaceSnapshotsV1';
 export type CompletedRaceSnapshot = { version: 1; eventId: string; year: string; date: string; title: string; place: string; region: string; surface: string };
 export type CompletedRaceSnapshotsState = { version: 1; snapshots: CompletedRaceSnapshot[] };
@@ -22,4 +24,20 @@ export const upsertCompletedRaceSnapshot = (storage: MinimalStorage | null | und
   const state = readCompletedRaceSnapshots(storage); const snapshot: CompletedRaceSnapshot = { version: 1, eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title, place: event.place, region: event.region, surface: event.surface };
   const snapshots = [snapshot, ...state.snapshots.filter((item) => getCompletedRaceSnapshotKey(item) !== getCompletedRaceSnapshotKey(snapshot))];
   try { storage?.setItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY, JSON.stringify({ version: 1, snapshots })); return Boolean(storage); } catch { return false; }
+};
+
+/** Backfills only missing snapshots for valid, resolved historical completions. Never dispatches or overwrites. */
+export const backfillCompletedRaceSnapshots = (storage: MinimalStorage | null | undefined, items: SavedRaceResolution[], todayIso: string) => {
+  const state = readCompletedRaceSnapshots(storage);
+  const existing = new Set(state.snapshots.map(getCompletedRaceSnapshotKey));
+  const additions: CompletedRaceSnapshot[] = [];
+  for (const item of items) {
+    if (item.savedRace.status !== 'completed' || !item.event || !isCompletionAllowed(item.event.date, todayIso) || existing.has(item.key)) continue;
+    const snapshot: CompletedRaceSnapshot = { version: 1, eventId: item.savedRace.eventId, year: item.event.year, date: item.event.date, title: item.event.title, place: item.event.place, region: item.event.region, surface: item.event.surface };
+    existing.add(item.key);
+    additions.push(snapshot);
+  }
+  if (!additions.length) return state;
+  const next = { version: 1 as const, snapshots: [...additions, ...state.snapshots] };
+  try { storage?.setItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY, JSON.stringify(next)); return storage ? next : state; } catch { return state; }
 };

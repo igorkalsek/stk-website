@@ -129,14 +129,14 @@ const deadlineGroup = (page: Page, key: string) => card(page, key).locator('[dat
 const count = (page: Page, status: SavedRaceStatus) => page.locator(`[data-my-races-status-count="${status}"]`);
 const filter = (page: Page, status: SavedRaceStatus | 'all') => page.locator(`[data-my-races-status-filter="${status}"]`);
 
-async function freezeLjubljanaDate(page: Page) {
+async function freezeLjubljanaDate(page: Page, todayIso = '2026-07-15') {
   const clock = (page as Page & { clock?: { setFixedTime: (date: Date) => Promise<void> } }).clock;
   if (clock?.setFixedTime) {
-    await clock.setFixedTime(new Date('2026-07-15T10:00:00+02:00'));
+    await clock.setFixedTime(new Date(`${todayIso}T10:00:00+02:00`));
     return;
   }
-  await page.addInitScript(() => {
-    const fixed = new Date('2026-07-15T08:00:00.000Z').getTime();
+  await page.addInitScript((iso) => {
+    const fixed = new Date(`${iso}T08:00:00.000Z`).getTime();
     const RealDate = Date;
     class MockDate extends RealDate {
       constructor(...args: any[]) {
@@ -146,10 +146,10 @@ async function freezeLjubljanaDate(page: Page) {
       static now() { return fixed; }
     }
     Object.defineProperty(window, 'Date', { configurable: true, value: MockDate });
-  });
+  }, todayIso);
 }
 
-async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2027?: unknown[]; additionalStatus?: number } = {}) {
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -176,7 +176,7 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
     }
 
     requestCounts.master2026 += 1;
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(races2026) });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(options.races2026 ?? races2026) });
   });
 
   await page.route(`${ANALYTICS_HOST}/**`, async (route) => {
@@ -225,8 +225,8 @@ async function readLegacySavedRaces(page: Page) {
   return page.evaluate((key) => localStorage.getItem(key), V1_KEY);
 }
 
-async function openMyRaces(page: Page, path = '/moji-teki/') {
-  await freezeLjubljanaDate(page);
+async function openMyRaces(page: Page, path = '/moji-teki/', todayIso = '2026-07-15') {
+  await freezeLjubljanaDate(page, todayIso);
   await page.goto(path);
   await expect(page.locator('[data-my-races-app]')).not.toContainText(/Loading saved races|Nalagamo shranjene teke/);
 }
@@ -344,10 +344,39 @@ test('deduplicates identical early and final deadline dates', async ({ page }) =
   await expectNoUnexpectedErrors(pageErrors);
 });
 
+
+test('future completion is disabled and defensively does not change storage or season', async ({ page }) => {
+  const { pageErrors } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000101', 'planning')]);
+  await openMyRaces(page, '/moji-teki/?view=season');
+  const select = card(page, '2026:r000101').getByLabel('Moj status');
+  await expect(select.locator('option[value="completed"]')).toBeDisabled();
+  await select.evaluate((element: HTMLSelectElement) => { element.value = 'completed'; element.dispatchEvent(new Event('change', { bubbles: true })); });
+  await expect(select).toHaveValue('planning');
+  expect((await readSavedRacesV2(page)).races[0].status).toBe('planning');
+  await expect(page.locator('[data-my-season-app] .season-metric').first()).toContainText('0');
+  await expect(page.locator('.season-stamp')).toHaveCount(0);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('completion is enabled on the event date', async ({ page }) => {
+  const todayRace = { ...races2026[0], datum: '2026-07-15' };
+  await mockMyRacesApis(page, { races2026: [todayRace] });
+  await seedV2SavedRaces(page, [{ ...v2Race('r000101', 'planning'), date: '2026-07-15' }]);
+  await openMyRaces(page, '/moji-teki/', '2026-07-15');
+  const select = card(page, '2026:r000101').getByLabel('Moj status');
+  await expect(select.locator('option[value="completed"]')).toBeEnabled();
+  await select.selectOption('completed');
+  await expect(select).toHaveValue('completed');
+  expect((await readSavedRacesV2(page)).races[0].status).toBe('completed');
+});
+
 test('updates the next deadline summary eligibility when saved status changes without API refetches', async ({ page }) => {
   await freezeLjubljanaDate(page);
-  const { pageErrors, requestCounts } = await mockMyRacesApis(page);
-  await seedV2SavedRaces(page, [v2Race('r000101', 'planning')]);
+  const todayRace = { ...races2026[0], datum: '2026-07-15' };
+  const todayAdditional = [{ ...additional2026[0], datum: '2026-07-15', rok_cenejse_prijave: '', rok_prijave: '2026-07-15' }];
+  const { pageErrors, requestCounts } = await mockMyRacesApis(page, { races2026: [todayRace, ...races2026.slice(1)], additional: todayAdditional });
+  await seedV2SavedRaces(page, [{ ...v2Race('r000101', 'planning'), date: '2026-07-15' }]);
 
   await openMyRaces(page);
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
@@ -373,14 +402,16 @@ test('updates the next deadline summary eligibility when saved status changes wi
 
 test('filters deadline groups together with race cards', async ({ page }) => {
   await freezeLjubljanaDate(page);
-  const { pageErrors, requestCounts } = await mockMyRacesApis(page, { additional: statusFilterAdditional2026 });
+  const todayRaces = races2026.map((race) => race.row === '104' ? race : { ...race, datum: '2026-07-15' });
+  const todayDeadlines = statusFilterAdditional2026.map((row) => ({ ...row, datum: '2026-07-15', rok_cenejse_prijave: '', rok_prijave: '2026-07-15' }));
+  const { pageErrors, requestCounts } = await mockMyRacesApis(page, { races2026: todayRaces, additional: todayDeadlines });
   await seedV2SavedRaces(page, [
-    v2Race('r000101', 'following'),
-    v2Race('r000102', 'planning'),
-    v2Race('r000103', 'registered')
+    { ...v2Race('r000101', 'following'), date: '2026-07-15' },
+    { ...v2Race('r000102', 'planning'), date: '2026-07-15' },
+    { ...v2Race('r000103', 'registered'), date: '2026-07-15' }
   ]);
 
-  await openMyRaces(page);
+  await openMyRaces(page, '/en/my-races/', '2026-07-15');
 
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
   for (const key of ['2026:r000101', '2026:r000102', '2026:r000103']) {

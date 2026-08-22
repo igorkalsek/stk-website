@@ -6,6 +6,7 @@ import {
   fetchMasterYearPayload,
   getAdditionalEventDataCached,
   getDetailStaticPaths,
+  getPublicYearData,
   getTopVoteRowsCached,
   timedFetchJson,
 } from '../.cache/dist-test/utils-build-data.js';
@@ -198,6 +199,25 @@ test('Slovenian and English detail paths reuse the same year data cache', async 
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+
+test('keeps past public events in detail paths but out of homepage-safe upcoming data', async () => {
+  __resetBuildDataCachesForTests();
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const year = String(url).includes('year=2027') ? '2027' : '2026';
+    return jsonResponse({ rows: year === '2026' ? [
+      { row: '1', datum: '2026-01-10', naziv_prireditve: 'Past public race', kraj: 'Kranj', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA' },
+      { row: '2', datum: '2026-12-10', naziv_prireditve: 'Future public race', kraj: 'Celje', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA' }
+    ] : [] });
+  };
+  try {
+    const data = await getPublicYearData('2026');
+    assert.deepEqual(data.events.map((event) => event.title), ['Past public race', 'Future public race']);
+    assert.deepEqual(data.upcomingEvents.map((event) => event.title), ['Future public race']);
+    assert.deepEqual(data.slPaths.map((path) => path.props.event.title), ['Past public race', 'Future public race']);
+  } finally { globalThis.fetch = originalFetch; }
 });
 
 test('detail paths fail the build when required year 2026 has no valid public events', async () => {
