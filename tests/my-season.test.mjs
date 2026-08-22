@@ -57,6 +57,15 @@ describe('My STK season', () => {
     const client = readFileSync('src/my-stk-client.ts', 'utf8'); const home = readFileSync('src/pages/index.astro', 'utf8');
     assert.doesNotMatch(client, /outerHTML/); assert.match(client, /content\.innerHTML/); assert.match(home, /data-my-stk-content[\s\S]*data-my-stk-global-stats/);
   });
+  it('keeps the My STK region labelled after onboarding and dashboard renders in both locales', () => {
+    const client = readFileSync('src/my-stk-client.ts', 'utf8');
+    const sl = readFileSync('src/pages/index.astro', 'utf8');
+    const en = readFileSync('src/pages/en/index.astro', 'utf8');
+    assert.equal((client.match(/<h2 id="my-stk-title">/g) ?? []).length, 2);
+    assert.match(sl, /aria-labelledby="my-stk-title"/);
+    assert.match(en, /aria-labelledby="my-stk-title"/);
+    assert.match(client, /\? 'My STK' : 'Moj STK'/);
+  });
   it('uses one localized season deep-link contract while ordinary visits keep the plan view', () => {
     assert.equal(getInitialMyRacesView(''), 'plan');
     assert.equal(getInitialMyRacesView('?view=plan'), 'plan');
