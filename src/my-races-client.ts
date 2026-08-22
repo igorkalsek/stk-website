@@ -205,13 +205,16 @@ const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availableRegi
   const stamps = summary.completed.map((item) => {
     const event = item.event;
     if (!event) return `<article class="season-stamp is-unresolved"><strong>${escapeHtml(item.savedRace.title || copy.old)}</strong><span>${escapeHtml(item.savedRace.date || item.savedRace.year)}</span></article>`;
-    const body = `<strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))}</span><span>${escapeHtml(event.place || event.region)}${event.place && event.region ? ` · ${escapeHtml(event.region)}` : ''}</span><span>${escapeHtml(event.surface)}</span>`;
+    const body = `<span class="season-stamp-mark">STK · ${escapeHtml(event.year)}</span><strong>${escapeHtml(event.title)}</strong><span class="season-stamp-date">${escapeHtml(formatDate(event.date, language))}</span><span class="season-stamp-meta">${escapeHtml(event.place || event.region)}${event.place && event.region ? ` · ${escapeHtml(event.region)}` : ''}<br>${escapeHtml(event.surface)}</span>`;
     return `<a class="season-stamp" href="${escapeHtml(getSavedRaceDetailPath(event, language))}">${body}</a>`;
   }).join('');
   const summaryRace = language === 'en' ? `${summary.completedCount} completed races` : formatSloveneCount(summary.completedCount, 'completed-race');
   const summaryEvent = language === 'en' ? `${summary.distinctEventCount} different events` : formatSloveneCount(summary.distinctEventCount, 'distinct-event');
+  const summaryRaceLabel = summaryRace.replace(/^\d+\s+/, '');
+  const summaryEventLabel = summaryEvent.replace(/^\d+\s+/, '');
   const regionCards = regions.map((region) => `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(region.label)}</strong>${region.visited ? `<span>${language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race')}</span>` : ''}</article>`).join('');
-  return `<section class="my-season" aria-labelledby="my-season-title"><h2 id="my-season-title">${copy.title}</h2><div class="season-summary"><strong>${escapeHtml(summaryRace)}</strong><strong>${summary.regionCount} / ${regions.length} <span>${language === 'en' ? 'regions' : 'regij'}</span></strong><strong>${escapeHtml(summaryEvent)}</strong></div>${summary.completedCount ? `<h3>${copy.passport}</h3><div class="season-passport">${stamps}</div>` : `<p class="season-empty">${copy.empty}</p>`}<h3>${copy.exploring}</h3><div class="season-regions">${regionCards}</div><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => `<article class="achievement-card${achievement.achieved ? ' is-achieved' : ''}" data-achievement="${achievement.key}"><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4>${achievement.achieved ? `<span class="achievement-status">${copy.achieved}</span>` : ''}</div>${achievement.key === 'debut' && !achievement.achieved ? '' : `<p>${progress(achievement)}</p><progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress>`}</article>`).join('')}</div></section>`;
+  const summaryStrip = `<div class="season-summary"><span class="season-metric"><strong>${summary.completedCount}</strong><span>${escapeHtml(summaryRaceLabel)}</span></span><span class="season-metric"><strong>${summary.regionCount} / ${regions.length}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(summaryEventLabel)}</span></span></div>`;
+  return `<section class="my-season" aria-labelledby="my-season-title"><h2 id="my-season-title">${copy.title}</h2>${summaryStrip}${summary.completedCount ? '' : `<p class="season-empty">${copy.empty}</p>`}<section class="my-season-section"><h3>${copy.exploring}</h3><div class="season-regions">${regionCards}</div></section>${summary.completedCount ? `<section class="my-season-section"><h3>${copy.passport}</h3><div class="season-passport">${stamps}</div></section>` : ''}<section class="my-season-section achievements-section"><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => `<article class="achievement-card${achievement.achieved ? ' is-achieved' : ''}" data-achievement="${achievement.key}"><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4>${achievement.achieved ? `<span class="achievement-status">${copy.achieved}</span>` : ''}</div>${achievement.key === 'debut' && !achievement.achieved ? '' : `<p>${progress(achievement)}</p><progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress>`}</article>`).join('')}</div></section></section>`;
 };
 
 const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, availableRegions: string[], language: 'sl' | 'en') => {
@@ -220,16 +223,25 @@ const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSav
 };
 
 export const initMyRacesTabs = (root = document) => {
-  root.querySelectorAll<HTMLButtonElement>('[data-my-races-tab]').forEach((button) => button.addEventListener('click', () => {
+  const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-my-races-tab]')];
+  const selectTab = (button: HTMLButtonElement) => {
     const selected = button.dataset.myRacesTab || 'plan';
     root.querySelectorAll<HTMLElement>('[data-my-races-panel]').forEach((panel) => { panel.hidden = panel.dataset.myRacesPanel !== selected; });
-    root.querySelectorAll<HTMLButtonElement>('[data-my-races-tab]').forEach((tab) => { tab.setAttribute('aria-selected', String(tab === button)); });
+    tabs.forEach((tab) => { const active = tab === button; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
     if (selected === 'season') {
       const language = root.querySelector<HTMLElement>('[data-my-races-app]')?.dataset.language;
       trackStkPageLoadEventOnce(`season_viewed:${location.pathname}`, { event_type: 'season_viewed', language, placement: 'my_races' });
       trackStkPageLoadEventOnce(`achievement_viewed:${location.pathname}`, { event_type: 'achievement_viewed', language, placement: 'my_races' });
     }
-  }));
+  };
+  tabs.forEach((button, index) => {
+    button.addEventListener('click', () => selectTab(button));
+    button.addEventListener('keydown', (event) => {
+      const nextIndex = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index - 1 + tabs.length) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
+      if (nextIndex < 0) return;
+      event.preventDefault(); tabs[nextIndex].focus(); selectTab(tabs[nextIndex]);
+    });
+  });
 };
 
 export const initMyRacesPage = async (root = document) => {
