@@ -5764,9 +5764,9 @@ main {
 .season-stamp:hover { border-color: var(--deep-teal); background: rgba(200, 230, 201, .16); color: var(--deep-teal); }
 .season-stamp:focus-visible { outline: 3px solid rgba(240, 160, 48, .6); outline-offset: 3px; }
 .season-stamp strong { display: block; overflow-wrap: anywhere; font-size: .95rem; line-height: 1.18; }
-.season-stamp-mark { color: var(--deep-teal); font-size: .65rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+.season-stamp-mark { color: var(--deep-teal); font-size: .72rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
 .season-stamp-date { color: var(--ink); font-size: .75rem; font-weight: 750; }
-.season-stamp-meta { color: var(--muted); font-size: .67rem; line-height: 1.25; text-transform: uppercase; }
+.season-stamp-meta { color: var(--muted); font-size: .74rem; line-height: 1.25; text-transform: uppercase; }
 .season-stamp.is-unresolved { border-style: dashed; opacity: .78; }
 
 .achievement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
@@ -5787,7 +5787,7 @@ main {
   .my-stk-season-summary, .season-summary { gap: .35rem; padding-inline: .7rem; }
   .season-metric + .season-metric { padding-left: .35rem; }
   .season-metric strong { font-size: 1.18rem; }
-  .season-metric span { font-size: .68rem; }
+  .season-metric span { font-size: .75rem; }
   .season-regions, .season-passport { grid-template-columns: 1fr; }
   .season-region { min-height: 60px; }
 }
