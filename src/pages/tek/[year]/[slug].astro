@@ -216,11 +216,11 @@ const jsonLd = event ? {
               <div class="event-detail-my-race-panel">
                 <h2>Moj tek</h2>
                 <div class="event-detail-my-race-actions">
-                  <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
+                  <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
 
                   <div class="race-status-control" data-analytics-placement="race_detail">
                 <label for="race-detail-status-select">Moj status</label>
-                <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-language="sl" aria-describedby="race-detail-status-helper">
+                <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="sl" aria-describedby="race-detail-status-helper">
                   <option value="">Ni v Mojih tekih</option>
                   <option value="following">Spremljam</option>
                   <option value="planning">Planiram</option>

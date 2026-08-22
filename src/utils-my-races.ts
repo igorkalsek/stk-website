@@ -1,11 +1,13 @@
 import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, mapPublicRaceEvent, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
 import { getSavedRaceKey, SAVED_RACE_STATUSES, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
+import type { CompletedRaceSnapshot } from './utils-completed-snapshots.js';
 
 export type SavedRaceResolution = {
   savedRace: SavedRace;
   event: PublicRaceEvent | null;
   key: string;
   status: 'upcoming' | 'past-or-unresolved';
+  snapshot?: CompletedRaceSnapshot | null;
 };
 
 export const resolveSavedRaces = (savedRaces: SavedRace[], payloadsByYear: Record<string, unknown>, todayIso: string): SavedRaceResolution[] => {

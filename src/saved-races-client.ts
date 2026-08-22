@@ -1,6 +1,8 @@
 import { trackStkEvent } from './lib/stkAnalytics.js';
 import { getSavedRaceStatus, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races.js';
 import { dispatchSavedRacesChanged } from './saved-races-events.js';
+import { isCompletionAllowed } from './utils-date.js';
+import { upsertCompletedRaceSnapshot } from './utils-completed-snapshots.js';
 
 type Language = 'sl' | 'en';
 const LABELS = {
@@ -48,6 +50,8 @@ const prepareStatusControl = (control: HTMLSelectElement) => {
     const copy = SAVED_RACE_STATUS_COPY[language];
     control.append(new Option(copy.empty, ''), new Option(SAVED_RACE_STATUS_LABELS[language].following, 'following'), new Option(SAVED_RACE_STATUS_LABELS[language].planning, 'planning'), new Option(SAVED_RACE_STATUS_LABELS[language].registered, 'registered'), new Option(SAVED_RACE_STATUS_LABELS[language].completed, 'completed'));
   }
+  const completed = Array.from(control.options).find((option) => option.value === 'completed');
+  if (completed) completed.disabled = !isCompletionAllowed(control.dataset.eventDate || '');
 };
 
 export const initSavedRaceButtons = (root: ParentNode = document) => {
@@ -92,9 +96,11 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
       const beforeStatus = getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace);
       const nextStatus = control.value;
       if (nextStatus && isSavedRaceStatus(nextStatus)) {
+        if (nextStatus === 'completed' && !isCompletionAllowed(changedRace.date)) { setControlState(control, beforeStatus); return; }
         const result = setSavedRaceStatusInStorage(getStorage(), changedRace, nextStatus);
         if (!result.persistent) return;
         syncRaceControls(changedRace, true, nextStatus);
+        if (nextStatus === 'completed') upsertCompletedRaceSnapshot(getStorage(), { id: changedRace.eventId, row: changedRace.eventId.match(/^r0*(\d+)$/)?.[1] || '', year: changedRace.year, date: changedRace.date, title: changedRace.title, naziv_prireditve: changedRace.title, place: control.dataset.eventPlace || '', region: control.dataset.eventRegion || '', surface: control.dataset.eventSurface || '' });
         if (!beforeStatus) trackStkEvent({ event_type: 'race_saved', event_id: changedRace.eventId, event_name: changedRace.title, event_date: changedRace.date, event_year: changedRace.year, language: getLanguage(control), placement: getPlacement(control) });
         if (beforeStatus !== nextStatus && getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace) === nextStatus) dispatchSavedRacesChanged();
       } else {

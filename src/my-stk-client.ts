@@ -6,6 +6,7 @@ import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, isSupportedPublicYear, type Pu
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { mapPublicRaceEvent, toApiRecords } from './utils-event-detail.js';
 import { SAVED_RACES_CHANGED_EVENT } from './saved-races-events.js';
+import { getCompletedRaceSnapshotKey, readCompletedRaceSnapshots } from './utils-completed-snapshots.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
@@ -44,7 +45,8 @@ export const initMyStk = async (root = document) => {
   const payloads: Record<string, unknown> = {};
   await Promise.all(years.map(async (year) => { try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`); if (response.ok) payloads[year] = await response.json(); } catch { /* unresolved references remain safe */ } }));
   if (runtime.renderVersion !== renderVersion) return;
-  const items = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, getTodayIsoInLjubljana()));
+  const snapshotByKey = new Map(readCompletedRaceSnapshots(storage).snapshots.map((item) => [getCompletedRaceSnapshotKey(item), item]));
+  const items = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, getTodayIsoInLjubljana())).map((item) => ({ ...item, snapshot: snapshotByKey.get(item.key) ?? null }));
   const activeEvents = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)).filter(Boolean);
   const availableRegions = activeEvents.map((event) => event!.region).filter(Boolean);
   const regions = getSeasonRegionProgress(items, availableRegions, DEFAULT_PUBLIC_YEAR);

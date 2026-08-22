@@ -14,8 +14,9 @@ describe('My STK season', () => {
     const planning2027 = [item('done'), item('plan', { year: '2027', status: 'planning' })];
     assert.equal(getSeasonSummary(planning2027, '2026').completedCount, 1);
     const both = [item('26'), item('27', { year: '2027' })];
-    assert.equal(getSeasonSummary(both, '2026').completedCount, 1); assert.equal(getSeasonSummary(both, '2027').completedCount, 1);
+    assert.equal(getSeasonSummary(both, '2026').completedCount, 1); assert.equal(getSeasonSummary(both, '2027').completedCount, 0);
   });
+  it('counts yesterday and today but rejects tomorrow defensively', () => { const dates = ['2026-08-21', '2026-08-22', '2026-08-23']; const rows = dates.map((date, i) => ({ ...item(String(i)), savedRace: { ...item(String(i)).savedRace, date }, event: { ...item(String(i)).event, date } })); assert.deepEqual(getCompletedRaces(rows, '2026', '2026-08-22').map((row) => row.savedRace.date), dates.slice(0, 2)); });
   it('selects only a non-completed upcoming next race', () => {
     assert.equal(getNextSavedRace([item('today', { timing: 'upcoming' })]), null);
     assert.equal(getNextSavedRace([item('future-complete', { timing: 'upcoming' })]), null);
