@@ -627,3 +627,39 @@ test('supports English labels, filters and persistence', async ({ page }) => {
   expect(new Set(ids).size).toBe(ids.length);
   await expectNoUnexpectedErrors(pageErrors);
 });
+
+test('opens plan by default and supports the shared season deep link and accessible tab navigation', async ({ page }) => {
+  await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [{ version: 2, eventId: '104', year: '2026', date: '2026-01-10', title: 'Past Test Run', status: 'completed' }]);
+
+  await openMyRaces(page, '/moji-teki/');
+  await expect(page.getByRole('tab', { name: 'Načrt' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('[data-my-races-panel="plan"]')).toBeVisible();
+  await expect(page.locator('[data-my-races-panel="season"]')).toBeHidden();
+
+  await openMyRaces(page, '/moji-teki/?view=season');
+  const slSeason = page.getByRole('tab', { name: 'Moja sezona' });
+  await expect(slSeason).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('[data-my-races-panel="season"]')).toBeVisible();
+  await page.reload();
+  await expect(slSeason).toHaveAttribute('aria-selected', 'true');
+  await slSeason.press('ArrowLeft');
+  await expect(page.getByRole('tab', { name: 'Načrt' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('tab', { name: 'Načrt' }).press('End');
+  await expect(slSeason).toHaveAttribute('aria-selected', 'true');
+  await slSeason.press('Home');
+  await expect(page.getByRole('tab', { name: 'Načrt' })).toHaveAttribute('aria-selected', 'true');
+  await slSeason.click();
+  await expect(page.locator('[data-my-races-panel="season"]')).toBeVisible();
+
+  await openMyRaces(page, '/en/my-races/');
+  await expect(page.getByRole('tab', { name: 'Plan', exact: true })).toHaveAttribute('aria-selected', 'true');
+  await openMyRaces(page, '/en/my-races/?view=season');
+  await expect(page.getByRole('tab', { name: 'My season' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('[data-my-races-panel="season"]')).toBeVisible();
+  await expect(page.getByText('Moja sezona', { exact: true })).toHaveCount(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const overflows = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  expect(overflows).toBe(false);
+});

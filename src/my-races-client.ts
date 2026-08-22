@@ -1,6 +1,6 @@
 import { trackStkEvent, trackStkPageLoadEventOnce } from './lib/stkAnalytics.js';
 import { buildGoogleCalendarEventUrl, buildIcsCalendar, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, buildRegistrationDeadlineCalendarInput, type MultiIcsCalendarEventInput } from './utils-calendar.js';
-import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getSavedRaceDetailPath, getUpcomingSavedRaceDeadlines, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
+import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, getInitialMyRacesView, getSavedRaceDetailPath, getUpcomingSavedRaceDeadlines, resolveSavedRaces, sortResolvedSavedRaces, type MyRacesStatusFilter } from './utils-my-races.js';
 import { getSavedRaceKey, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUSES, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, type MinimalStorage, type SavedRace, type SavedRaceStatus } from './utils-saved-races.js';
 import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, isAdditionalDataEnabledForYear, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { getStableEventId, mapPublicRaceEvent, toApiRecords } from './utils-event-detail.js';
@@ -219,7 +219,7 @@ const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availableRegi
 
 const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, availableRegions: string[], language: 'sl' | 'en') => {
   const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
-  if (seasonMount) seasonMount.innerHTML = renderSeason(items, availableRegions, language);
+  if (seasonMount && 'mySeasonApp' in seasonMount.dataset) seasonMount.innerHTML = renderSeason(items, availableRegions, language);
 };
 
 export const initMyRacesTabs = (root = document) => {
@@ -242,6 +242,9 @@ export const initMyRacesTabs = (root = document) => {
       event.preventDefault(); tabs[nextIndex].focus(); selectTab(tabs[nextIndex]);
     });
   });
+  const initialView = getInitialMyRacesView(typeof window === 'undefined' ? '' : window.location.search);
+  const initialTab = tabs.find((tab) => tab.dataset.myRacesTab === initialView) ?? tabs[0];
+  if (initialTab) selectTab(initialTab);
 };
 
 export const initMyRacesPage = async (root = document) => {

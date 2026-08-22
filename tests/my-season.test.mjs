@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
+import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
 const many = (n, options = {}) => Array.from({ length: n }, (_, index) => item(String(index), typeof options === 'function' ? options(index) : options));
@@ -55,5 +56,14 @@ describe('My STK season', () => {
   it('keeps live stats outside async dashboard replacement', () => {
     const client = readFileSync('src/my-stk-client.ts', 'utf8'); const home = readFileSync('src/pages/index.astro', 'utf8');
     assert.doesNotMatch(client, /outerHTML/); assert.match(client, /content\.innerHTML/); assert.match(home, /data-my-stk-content[\s\S]*data-my-stk-global-stats/);
+  });
+  it('uses one localized season deep-link contract while ordinary visits keep the plan view', () => {
+    assert.equal(getInitialMyRacesView(''), 'plan');
+    assert.equal(getInitialMyRacesView('?view=plan'), 'plan');
+    assert.equal(getInitialMyRacesView('?view=season'), 'season');
+    assert.equal(getInitialMyRacesView('?view=season&source=home'), 'season');
+    const client = readFileSync('src/my-stk-client.ts', 'utf8');
+    assert.match(client, /\/moji-teki\/\?view=season/);
+    assert.match(client, /\/en\/my-races\/\?view=season/);
   });
 });
