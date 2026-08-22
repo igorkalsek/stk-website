@@ -1,5 +1,5 @@
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
-import { buildEventDetailSlug, mapPublicRaceEvent, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
+import { buildEventDetailSlug, mapPublicRaceEvent, mapPublicRaceEventForDetail, toApiRecords, type PublicRaceEvent } from './utils-event-detail.js';
 import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, SUPPORTED_PUBLIC_YEARS, type PublicYear } from './utils-public-year.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { buildRelatedRaceCards, buildRelatedRaces, type RelatedRaceCard } from './utils-related-races.js';
@@ -10,7 +10,10 @@ type FetchLike = typeof fetch;
 
 type YearData = {
   year: PublicYear;
+  /** All confirmed public events, including archive events. Used only for detail paths. */
   events: PublicRaceEvent[];
+  /** Today and future only. Safe for homepage and other discovery surfaces. */
+  upcomingEvents: PublicRaceEvent[];
   slPaths: DetailPath[];
   enPaths: DetailPath[];
   relatedPrepMs: number;
@@ -103,14 +106,17 @@ const buildYearData = async (year: PublicYear): Promise<YearData> => {
   const started = now();
   const todayIso = getTodayIsoInLjubljana();
   const today = new Date(`${todayIso}T00:00:00`).getTime();
-  const events = toApiRecords(await fetchMasterYearPayload(year))
-    .map((item) => mapPublicRaceEvent(item, year, today))
+  const records = toApiRecords(await fetchMasterYearPayload(year));
+  const events = records
+    .map((item) => mapPublicRaceEventForDetail(item, year))
     .filter((event): event is PublicRaceEvent => Boolean(event))
     .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
 
   const relatedStarted = now();
   const relatedBySlug = new Map<string, ReturnType<typeof buildRelatedRaces>>();
-  for (const event of events) relatedBySlug.set(buildEventDetailSlug(event), buildRelatedRaces({ currentEvent: event, candidates: events, todayIso, limit: 3 }));
+  const upcomingEvents = records.map((item) => mapPublicRaceEvent(item, year, today)).filter((event): event is PublicRaceEvent => Boolean(event))
+    .sort((a, b) => a.dateValue - b.dateValue || a.title.localeCompare(b.title, 'sl-SI'));
+  for (const event of events) relatedBySlug.set(buildEventDetailSlug(event), buildRelatedRaces({ currentEvent: event, candidates: upcomingEvents, todayIso, limit: 3 }));
   const relatedPrepMs = now() - relatedStarted;
 
   const toPath = (event: PublicRaceEvent, language: Language): DetailPath => ({
@@ -125,7 +131,7 @@ const buildYearData = async (year: PublicYear): Promise<YearData> => {
   stats.detailPaths.en[year] = enPaths.length;
   stats.relatedPrepMs[year] = relatedPrepMs;
   stats.keyPrepMs += now() - started;
-  return { year, events, slPaths, enPaths, relatedPrepMs };
+  return { year, events, upcomingEvents, slPaths, enPaths, relatedPrepMs };
 };
 
 export const getPublicYearData = (year: PublicYear) => {

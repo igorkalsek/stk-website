@@ -1,6 +1,7 @@
 import type { SavedRaceResolution } from './utils-my-races.js';
 import { DEFAULT_PUBLIC_YEAR, type PublicYear } from './utils-public-year.js';
 import { formatEnglishRegion, formatEnglishSurface } from './utils-english.js';
+import { isCompletionAllowed } from './utils-date.js';
 
 export type AchievementKey = 'debut' | 'five' | 'ten' | 'nomad' | 'all-terrain' | 'veteran';
 export type BasicSurface = 'road' | 'trail' | 'mountain';
@@ -21,10 +22,11 @@ export const normalizeRegionKey = (value: string) => normalize(value);
 export const formatSeasonRegionLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishRegion(value) : value;
 export const formatSeasonSurfaceLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishSurface(value) : value;
 
-export const getCompletedRaces = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR) => {
+export const getCompletedRaces = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR, todayIso?: string) => {
   const seen = new Set<string>();
   return items.filter((item) => {
-    if (item.savedRace.year !== year || item.savedRace.status !== 'completed' || seen.has(item.key)) return false;
+    const date = item.event?.date || item.snapshot?.date || item.savedRace.date;
+    if (item.savedRace.year !== year || item.savedRace.status !== 'completed' || !isCompletionAllowed(date, todayIso) || seen.has(item.key)) return false;
     seen.add(item.key);
     return true;
   });
@@ -36,15 +38,15 @@ export const getNextSavedRace = (items: SavedRaceResolution[]) => items.find((it
 
 export const getSeasonSummary = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR) => {
   const completed = getCompletedRaces(items, year);
-  const regions = new Set(completed.map((item) => normalizeRegionKey(item.event?.region ?? '')).filter(Boolean));
-  const surfaces = new Set(completed.map((item) => normalizeBasicSurface(item.event?.surface ?? '')).filter((value): value is BasicSurface => Boolean(value)));
+  const regions = new Set(completed.map((item) => normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '')).filter(Boolean));
+  const surfaces = new Set(completed.map((item) => normalizeBasicSurface(item.event?.surface ?? item.snapshot?.surface ?? '')).filter((value): value is BasicSurface => Boolean(value)));
   return { completed, completedCount: completed.length, distinctEventCount: completed.length, regionCount: regions.size, surfaceCount: surfaces.size, regions, surfaces };
 };
 
 export const getSeasonRegionProgress = (items: SavedRaceResolution[], availableRegionLabels: string[], year: PublicYear = DEFAULT_PUBLIC_YEAR): SeasonRegionProgress[] => {
   const counts = new Map<string, number>();
   getCompletedRaces(items, year).forEach((item) => {
-    const key = normalizeRegionKey(item.event?.region ?? '');
+    const key = normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '');
     if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
   });
   const labels = new Map<string, string>();
