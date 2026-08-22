@@ -45,6 +45,12 @@ export const countSavedRaceStatuses = (items: { savedRace: SavedRace }[] | Saved
 };
 export const filterSavedRaceResolutionsByStatus = <T extends { savedRace: SavedRace }>(items: T[], filter: MyRacesStatusFilter): T[] => filter === 'all' ? items : items.filter((item) => item.savedRace.status === filter);
 
+export type MyRacesView = 'plan' | 'season';
+export const getInitialMyRacesView = (search: string): MyRacesView => {
+  try { return new URLSearchParams(search).get('view') === 'season' ? 'season' : 'plan'; }
+  catch { return 'plan'; }
+};
+
 import { buildRegistrationDeadlineViews, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 import type { AdditionalEventData } from './utils-additional.js';
 

@@ -14,6 +14,10 @@ type StkAnalyticsEventType =
   | 'event_card_clicked'
   | 'related_race_clicked'
   | 'my_races_viewed'
+  | 'my_stk_viewed'
+  | 'season_viewed'
+  | 'achievement_viewed'
+  | 'region_discovery_clicked'
   | 'my_races_bulk_ics_exported'
   | 'personalized_results_used'
   | 'organizer_action_clicked';
@@ -28,6 +32,7 @@ export type StkAnalyticsPlacement =
   | 'race_detail'
   | 'related_races'
   | 'my_races'
+  | 'home_my_stk'
   | 'personalized_results'
   | 'personal_calendar'
   | 'organizer_home'
@@ -111,6 +116,10 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'event_card_clicked',
   'related_race_clicked',
   'my_races_viewed',
+  'my_stk_viewed',
+  'season_viewed',
+  'achievement_viewed',
+  'region_discovery_clicked',
   'my_races_bulk_ics_exported',
   'personalized_results_used',
   'organizer_action_clicked'
@@ -126,6 +135,7 @@ const ALLOWED_PLACEMENTS = new Set<StkAnalyticsPlacement>([
   'race_detail',
   'related_races',
   'my_races',
+  'home_my_stk',
   'personalized_results',
   'personal_calendar',
   'organizer_home',

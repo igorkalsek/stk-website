@@ -8,12 +8,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
     <div class="container narrow-container">
       <h1>My races</h1>
       <p class="lead">These are the races you saved while browsing the calendar.</p>
-      <div data-my-races-app data-language="en" class="my-races-app" aria-live="polite"></div>
+      <div class="my-races-tabs" role="tablist" aria-label="My races views">
+        <button id="my-races-plan-tab" type="button" role="tab" aria-controls="my-races-plan-panel" aria-selected="true" data-my-races-tab="plan">Plan</button>
+        <button id="my-races-season-tab" type="button" role="tab" aria-controls="my-races-season-panel" aria-selected="false" tabindex="-1" data-my-races-tab="season">My season</button>
+      </div>
+      <div id="my-races-plan-panel" role="tabpanel" aria-labelledby="my-races-plan-tab" data-my-races-panel="plan"><div data-my-races-app data-language="en" class="my-races-app" aria-live="polite"></div></div>
+      <div id="my-races-season-panel" role="tabpanel" aria-labelledby="my-races-season-tab" data-my-races-panel="season" hidden><div data-my-season-app class="my-season-app" aria-live="polite"></div></div>
     </div>
   </main>
 </BaseLayout>
 
 <script>
-  import { initMyRacesPage } from '../../../my-races-client';
+  import { initMyRacesPage, initMyRacesTabs } from '../../../my-races-client';
+  initMyRacesTabs();
   initMyRacesPage();
 </script>

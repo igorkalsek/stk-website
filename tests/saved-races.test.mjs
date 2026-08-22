@@ -174,7 +174,8 @@ const createFakeDocument = ({ buttons = [], controls = [] } = {}) => ({
 
 const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createMemoryStorage() } = {}) => {
   const payloads = [];
-  globalThis.window = { localStorage: storage, location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' }, setTimeout: (callback) => { callback(); return 0; } };
+  const browserEvents = [];
+  globalThis.window = { localStorage: storage, location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' }, setTimeout: (callback) => { callback(); return 0; }, dispatchEvent: (event) => { browserEvents.push(event.type); return true; } };
   globalThis.document = createFakeDocument({ buttons, controls });
   globalThis.CSS = { escape: (value) => String(value) };
   globalThis.Option = class { constructor(text, value) { this.text = text; this.textContent = text; this.value = value; } };
@@ -182,7 +183,7 @@ const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createM
   globalThis.fetch = async (_url, init = {}) => { if (init.body) payloads.push(JSON.parse(String(init.body))); return { ok: true }; };
   const { initSavedRaceButtons } = await import(`../.cache/dist-test/saved-races-client.js?cache=${Date.now()}${Math.random()}`);
   initSavedRaceButtons(globalThis.document);
-  return { storage, payloads, initSavedRaceButtons };
+  return { storage, payloads, browserEvents, initSavedRaceButtons };
 };
 
 const analyticsEvents = (payloads, type) => payloads.filter((payload) => payload.event_type === type);
@@ -297,6 +298,19 @@ describe('saved races UI interactions', () => {
     assert.equal(readStoredState(storage).races.length, 0);
     assert.equal(analyticsEvents(payloads, 'race_unsaved').length, 1);
     assertNoStatusInAnalytics(payloads);
+  });
+
+  it('dispatches one saved-races change event for each persisted state change only', async () => {
+    const button = new FakeButton();
+    const select = new FakeSelect();
+    const { browserEvents } = await setupSavedRaceUi({ buttons: [button], controls: [select] });
+
+    button.click();
+    select.change('completed');
+    select.change('completed');
+    select.change('');
+
+    assert.deepEqual(browserEvents, ['stk:saved-races-changed', 'stk:saved-races-changed', 'stk:saved-races-changed']);
   });
 
   it('keeps all controls for the same event synchronized without changing other events', async () => {

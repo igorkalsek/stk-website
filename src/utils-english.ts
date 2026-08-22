@@ -58,8 +58,11 @@ export const formatEnglishSurface = (value: string) => {
 
   const labels: Record<string, string> = {
     cesta: 'Road',
+    asfalt: 'Asphalt',
+    makadam: 'Gravel road',
     'cesta/trail': 'Road/trail',
     gorski: 'Mountain',
+    'gorski tek': 'Mountain race',
     oviratlon: 'Obstacle run',
     stopnice: 'Stairs',
     trail: 'Trail'
