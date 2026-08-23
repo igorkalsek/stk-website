@@ -31,10 +31,12 @@ const SURFACE_NAMES: Record<'sl' | 'en', Record<BasicSurface, string>> = {
 
 const decorativeSvg = (body: string, className = '') => `<svg class="${className}" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 const renderSurfaceStampIcon = (surface: BasicSurface | null) => surface === 'trail'
-  ? decorativeSvg('<path d="M3 18c3-7 5 2 8-7s5 4 10-5"/><path d="m17 4 4 2-2 4"/>', 'season-stamp-icon')
+  ? decorativeSvg('<path data-surface-icon="trail" d="M3 18c3-7 5 2 8-7s5 4 10-5"/><path d="m17 4 4 2-2 4"/>', 'season-stamp-icon')
   : surface === 'mountain'
-    ? decorativeSvg('<path d="m2 19 7-12 3 5 3-4 7 11Z"/><path d="m7.5 9.5 1.5 2 1.5-2"/>', 'season-stamp-icon')
-    : decorativeSvg('<path d="M9 21 11 3M15 21 13 3M12 6v3m0 3v3m0 3v3"/>', 'season-stamp-icon');
+    ? decorativeSvg('<path data-surface-icon="mountain" d="m2 19 7-12 3 5 3-4 7 11Z"/><path d="m7.5 9.5 1.5 2 1.5-2"/>', 'season-stamp-icon')
+    : surface === 'road'
+      ? decorativeSvg('<path data-surface-icon="road" d="M9 21 11 3M15 21 13 3M12 6v3m0 3v3m0 3v3"/>', 'season-stamp-icon')
+      : decorativeSvg('<path data-surface-icon="other" d="M4 20c0-5 8-4 8-9V4m0 7c0 5 8 4 8 9M8 7l4-3 4 3"/>', 'season-stamp-icon');
 const renderAchievementIcon = (key: AchievementKey) => {
   if (key === 'debut') return decorativeSvg('<path d="M5 21V4m0 1h12l-3 4 3 4H5"/><path d="m8 18 1.2 1.2L12 16"/>', 'achievement-symbol');
   if (key === 'five' || key === 'ten') return decorativeSvg(`<circle cx="12" cy="10" r="7"/><path d="m8 16-2 6 6-3 6 3-2-6"/><text x="12" y="13" text-anchor="middle" stroke="none" fill="currentColor" font-size="8" font-weight="900">${key === 'five' ? '5' : '10'}</text>`, 'achievement-symbol');
@@ -234,7 +236,8 @@ export const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availa
     const region = formatSeasonRegionLabel(event.region, language);
     const location = event.place ? `${event.place}${region ? ` · ${region}` : ''}` : region;
     const surface = normalizeBasicSurface(event.surface);
-    const body = `<span class="season-stamp-seal">${renderSurfaceStampIcon(surface)}<span>${escapeHtml(event.year)}</span></span><span class="season-stamp-mark">STK · ${escapeHtml(SURFACE_NAMES[language][surface ?? 'road'])}</span><strong>${escapeHtml(event.title)}</strong><span class="season-stamp-date">${escapeHtml(formatDate(event.date, language))}</span><span class="season-stamp-meta">${escapeHtml(location)} · ${escapeHtml(formatSeasonSurfaceLabel(event.surface, language))}</span>`;
+    const surfaceLabel = formatSeasonSurfaceLabel(event.surface, language);
+    const body = `<span class="season-stamp-seal">${renderSurfaceStampIcon(surface)}<span>${escapeHtml(event.year)}</span></span><span class="season-stamp-mark">STK · ${escapeHtml(surfaceLabel)}</span><strong>${escapeHtml(event.title)}</strong><span class="season-stamp-date">${escapeHtml(formatDate(event.date, language))}</span><span class="season-stamp-meta">${escapeHtml(location)} · ${escapeHtml(surfaceLabel)}</span>`;
     return item.event ? `<a class="season-stamp is-${surface ?? 'other'}" href="${escapeHtml(getSavedRaceDetailPath(item.event, language))}">${body}</a>` : `<article class="season-stamp is-unresolved is-${surface ?? 'other'}">${body}<span class="season-stamp-unavailable">${copy.old}</span></article>`;
   }).join('');
   const summaryRace = language === 'en' ? `${summary.completedCount} completed races` : formatSloveneCount(summary.completedCount, 'completed-race');

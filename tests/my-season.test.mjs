@@ -129,6 +129,24 @@ describe('My STK season', () => {
     assert.equal((html.match(/season-stamp-icon/g) ?? []).length, 4);
     for (const svg of html.match(/<svg class="(?:season-stamp-icon|achievement-symbol)"[\s\S]*?<\/svg>/g) ?? []) assert.doesNotMatch(svg, /tabindex|focusable/);
   });
+  it('uses neutral stamps and truthful localized labels for mixed and non-standard surfaces', () => {
+    const races = [item('road'), item('trail', { surface: 'trail' }), item('mountain', { surface: 'gorski tek' }), item('mixed', { surface: 'cesta/trail' }), item('gravel', { surface: 'makadam' })];
+    const getStamp = (html, id) => (html.match(/<a class="season-stamp [^"]+"[^>]*>[\s\S]*?<\/a>/g) ?? []).find((stamp) => stamp.includes(`<strong>${id}</strong>`)) ?? '';
+    const sl = renderSeason(races, canonicalRegions, 'sl');
+    const en = renderSeason(races, canonicalRegions, 'en');
+    assert.match(getStamp(sl, 'road'), /data-surface-icon="road"[\s\S]*STK · cesta/);
+    assert.match(getStamp(sl, 'trail'), /data-surface-icon="trail"[\s\S]*STK · trail/);
+    assert.match(getStamp(sl, 'mountain'), /data-surface-icon="mountain"[\s\S]*STK · gorski tek/);
+    for (const [id, slLabel, enLabel] of [['mixed', 'cesta\/trail', 'Road\/trail'], ['gravel', 'makadam', 'Gravel road']]) {
+      const slStamp = getStamp(sl, id); const enStamp = getStamp(en, id);
+      assert.match(slStamp, /class="season-stamp is-other"/); assert.match(enStamp, /class="season-stamp is-other"/);
+      assert.match(slStamp, /data-surface-icon="other"/); assert.match(enStamp, /data-surface-icon="other"/);
+      assert.match(slStamp, new RegExp(`STK · ${slLabel}`)); assert.match(enStamp, new RegExp(`STK · ${enLabel}`));
+      assert.doesNotMatch(slStamp, /data-surface-icon="road"|STK · Cesta/); assert.doesNotMatch(enStamp, /data-surface-icon="road"|STK · Road(?:<|\s)/);
+      const icon = slStamp.match(/<svg class="season-stamp-icon"[\s\S]*?<\/svg>/)?.[0] ?? '';
+      assert.match(icon, /aria-hidden="true"/); assert.doesNotMatch(icon, /tabindex|focusable/);
+    }
+  });
   it('renders equivalent localized achievement states without changing thresholds', () => {
     const races = many(3, i => ({ region: canonicalRegions[i], surface: i === 0 ? 'cesta' : 'trail' }));
     const sl = renderSeason(races, canonicalRegions, 'sl');
