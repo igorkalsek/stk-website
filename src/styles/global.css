@@ -5857,10 +5857,9 @@ main {
 .season-map-copy p { margin: .7rem 0 0; color: var(--muted); font-weight: 700; }
 .slovenia-map { width: 100%; max-width: 620px; margin: 0 auto; }
 .slovenia-map svg { display: block; width: 100%; height: auto; overflow: visible; }
-.slovenia-map-region { outline: none; }
+.slovenia-map-outline { fill: none; stroke: var(--deep-teal); stroke-width: 5; stroke-linejoin: round; opacity: .72; }
 .slovenia-map-region > path { fill: #edf1ed; stroke: #62726b; stroke-width: 1.5; transition: fill .15s ease, stroke .15s ease; }
 .slovenia-map-region.is-visited > path { fill: #b9dcbd; stroke: var(--deep-teal); stroke-width: 2.2; }
-.slovenia-map-region:focus-visible > path { stroke: #9a610d; stroke-width: 4; filter: drop-shadow(0 0 2px #fff); }
 .slovenia-map-check circle { fill: var(--deep-teal); stroke: #fff; stroke-width: 1.5; }
 .slovenia-map-check path { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .slovenia-map--compact { margin: .15rem 0 .55rem; }
@@ -5877,5 +5876,6 @@ main {
   .season-map-count { font-size: 1.55rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .slovenia-map-region > path { transition: none; }
+  .slovenia-map-outline { fill: none; stroke: var(--deep-teal); stroke-width: 5; stroke-linejoin: round; opacity: .72; }
+.slovenia-map-region > path { transition: none; }
 }

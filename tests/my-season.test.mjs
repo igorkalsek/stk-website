@@ -158,6 +158,10 @@ describe('Slovenia regional progress map', () => {
     assert.equal(mapped.filter((region) => region.visited).length, 2);
     assert.equal(mapped.find((region) => region.sl === 'Gorenjska').completedEventCount, 1);
     assert.equal(mapped.find((region) => region.sl === 'Pomurska').visited, false);
+    const southeast = getSloveniaMapRegions([{ key: 'jugovzhodna', label: 'Jugovzhodna', visited: true, completedEventCount: 1 }], 'en').find((region) => region.nuts === 'SI037');
+    assert.equal(southeast.visited, true);
+    assert.equal(southeast.completedEventCount, 1);
+    assert.equal(southeast.label, 'Southeast Slovenia');
   });
 
   it('renders localized accessible empty and visited states with the same geometry', async () => {
@@ -171,6 +175,9 @@ describe('Slovenia regional progress map', () => {
     assert.match(visited, /Upper Carniola: visited, 2 completed races/);
     assert.match(visited, /Mura region: not visited, no completed races/);
     assert.doesNotMatch(visited, /Gorenjska:/);
+    assert.doesNotMatch(visited, /tabindex=/);
+    assert.doesNotMatch(visited, /role="listitem"/);
+    assert.match(visited, /class="slovenia-map-outline"/);
   });
 
   it('supports the complete state and shares one renderer between season and home', async () => {

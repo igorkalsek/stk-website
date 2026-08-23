@@ -225,7 +225,12 @@ const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availableRegi
   const summaryEvent = language === 'en' ? `${summary.distinctEventCount} different events` : formatSloveneCount(summary.distinctEventCount, 'distinct-event');
   const summaryRaceLabel = summaryRace.replace(/^\d+\s+/, '');
   const summaryEventLabel = summaryEvent.replace(/^\d+\s+/, '');
-  const regionCards = regions.map((region) => `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(formatSeasonRegionLabel(region.label, language))}</strong>${region.visited ? `<span>${language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race')}</span>` : ''}</article>`).join('');
+  const regionCards = regions.map((region) => {
+    const state = region.visited
+      ? (language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race'))
+      : (language === 'en' ? 'Not visited yet' : 'Še ni obiskana');
+    return `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(formatSeasonRegionLabel(region.label, language))}</strong><span>${escapeHtml(state)}</span></article>`;
+  }).join('');
   const nextAchievementCopy = nextAchievement ? `${language === 'en' ? 'Next achievement' : 'Naslednji dosežek'}: ${ACHIEVEMENT_NAMES[language][nextAchievement.key]} · ${nextAchievement.current}/${nextAchievement.target}` : (language === 'en' ? 'All achievements completed' : 'Vsi dosežki so osvojeni');
   const nomad = achievements.find((achievement) => achievement.key === 'nomad')!;
   const nomadCopy = nomad.achieved
