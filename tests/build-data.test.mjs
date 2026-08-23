@@ -213,7 +213,7 @@ test('keeps past public events in detail paths but out of homepage-safe upcoming
     ] : [] });
   };
   try {
-    const data = await getPublicYearData('2026');
+    const data = await getPublicYearData('2026', '2026-08-22');
     assert.deepEqual(data.events.map((event) => event.title), ['Past public race', 'Future public race']);
     assert.deepEqual(data.upcomingEvents.map((event) => event.title), ['Future public race']);
     assert.deepEqual(data.slPaths.map((path) => path.props.event.title), ['Past public race', 'Future public race']);

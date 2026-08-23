@@ -411,7 +411,7 @@ test('filters deadline groups together with race cards', async ({ page }) => {
     { ...v2Race('r000103', 'registered'), date: '2026-07-15' }
   ]);
 
-  await openMyRaces(page, '/en/my-races/', '2026-07-15');
+  await openMyRaces(page, '/moji-teki/', '2026-07-15');
 
   await expect(filter(page, 'all')).toHaveAttribute('aria-pressed', 'true');
   for (const key of ['2026:r000101', '2026:r000102', '2026:r000103']) {
@@ -434,7 +434,10 @@ test('filters deadline groups together with race cards', async ({ page }) => {
   await expect(deadlineGroup(page, '2026:r000101')).toHaveCount(0);
   await expect(deadlineGroup(page, '2026:r000103')).toHaveCount(0);
 
+  await filter(page, 'all').click();
+  await expect(card(page, '2026:r000102')).toBeVisible();
   await card(page, '2026:r000102').getByLabel('Moj status').selectOption('following');
+  await filter(page, 'planning').click();
   await expect(card(page, '2026:r000102')).toHaveCount(0);
   await expect(deadlineGroup(page, '2026:r000102')).toHaveCount(0);
   await expect(filter(page, 'planning')).toHaveAttribute('aria-pressed', 'true');
@@ -598,14 +601,16 @@ test('does not emit save or unsave analytics for a status-only change', async ({
 });
 
 test('supports English labels, filters and persistence', async ({ page }) => {
-  const { pageErrors } = await mockMyRacesApis(page, { additional: statusFilterAdditional2026 });
+  const todayRaces = races2026.map((race) => race.row === '104' ? race : { ...race, datum: '2026-07-15' });
+  const todayDeadlines = statusFilterAdditional2026.map((row) => ({ ...row, datum: '2026-07-15', rok_cenejse_prijave: '', rok_prijave: '2026-07-15' }));
+  const { pageErrors } = await mockMyRacesApis(page, { races2026: todayRaces, additional: todayDeadlines });
   await seedV2SavedRaces(page, [
-    v2Race('r000101', 'following'),
-    v2Race('r000102', 'planning'),
-    v2Race('r000103', 'registered')
+    { ...v2Race('r000101', 'following'), date: '2026-07-15' },
+    { ...v2Race('r000102', 'planning'), date: '2026-07-15' },
+    { ...v2Race('r000103', 'registered'), date: '2026-07-15' }
   ]);
 
-  await openMyRaces(page, '/en/my-races/');
+  await openMyRaces(page, '/en/my-races/', '2026-07-15');
 
   await expect(count(page, 'following')).toHaveText('1');
   await expect(filter(page, 'following')).toContainText('Following 1');

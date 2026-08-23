@@ -102,9 +102,8 @@ export const fetchMasterYearPayload = (year: PublicYear, fetchImpl: FetchLike = 
   return request;
 };
 
-const buildYearData = async (year: PublicYear): Promise<YearData> => {
+const buildYearData = async (year: PublicYear, todayIso = getTodayIsoInLjubljana()): Promise<YearData> => {
   const started = now();
-  const todayIso = getTodayIsoInLjubljana();
   const today = new Date(`${todayIso}T00:00:00`).getTime();
   const records = toApiRecords(await fetchMasterYearPayload(year));
   const events = records
@@ -134,7 +133,9 @@ const buildYearData = async (year: PublicYear): Promise<YearData> => {
   return { year, events, upcomingEvents, slPaths, enPaths, relatedPrepMs };
 };
 
-export const getPublicYearData = (year: PublicYear) => {
+export const getPublicYearData = (year: PublicYear, todayIso?: string) => {
+  // Explicit dates are only used by deterministic tests and deliberately bypass the production cache.
+  if (todayIso) return buildYearData(year, todayIso);
   const cached = yearDataCache.get(year);
   if (cached) return cached;
   const request = buildYearData(year);
