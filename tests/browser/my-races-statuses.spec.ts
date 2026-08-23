@@ -150,7 +150,7 @@ async function freezeLjubljanaDate(page: Page, todayIso = '2026-07-15') {
   }, todayIso);
 }
 
-async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; delayMs?: number } = {}) {
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; masterGate?: Promise<void> } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -163,7 +163,7 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
   const requestCounts = { master2026: 0, master2027: 0, additional: 0 };
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
-    if (options.delayMs) await new Promise((resolve) => setTimeout(resolve, options.delayMs));
+    if (options.masterGate) await options.masterGate;
 
     if (url.pathname === '/additional') {
       requestCounts.additional += 1;
@@ -778,20 +778,38 @@ test('opens plan by default and supports the shared season deep link and accessi
 });
 
 test('shows and safely clears the localized season loading state on success and API failure', async ({ page }) => {
-  await mockMyRacesApis(page, { delayMs: 500 });
+  let releaseMaster!: () => void;
+  const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+  await mockMyRacesApis(page, { masterGate });
   await page.goto('/moji-teki/?view=season');
   const panel = page.locator('[data-my-races-panel="season"]');
+  const status = page.getByRole('status');
   await expect(panel).toHaveAttribute('aria-busy', 'true');
-  await expect(page.locator('[data-my-season-app]')).toHaveAttribute('aria-label', 'Pripravljamo tvojo sezono …');
+  await expect(status).toHaveText('Pripravljamo tvojo sezono …');
+  await expect(status).not.toHaveAttribute('aria-hidden');
   await expect(page.locator('.season-loading-skeleton')).toBeVisible();
+  await expect(page.locator('.season-loading-skeleton')).toHaveAttribute('aria-hidden', 'true');
+  releaseMaster();
   await expect(page.locator('[data-my-season-app]')).not.toHaveAttribute('data-season-loading');
+  await expect(status).toHaveCount(0);
   await expect(panel).not.toHaveAttribute('aria-busy');
   await expect(page.locator('[data-my-season-app]')).not.toHaveAttribute('aria-label');
 
   await page.unrouteAll({ behavior: 'wait' });
+  let releaseEnglishMaster!: () => void;
+  const englishMasterGate = new Promise<void>((resolve) => { releaseEnglishMaster = resolve; });
+  await mockMyRacesApis(page, { masterGate: englishMasterGate });
+  await page.goto('/en/my-races/?view=season');
+  const englishStatus = page.getByRole('status');
+  await expect(englishStatus).toHaveText('Preparing your season …');
+  await expect(englishStatus).not.toHaveAttribute('aria-hidden');
+  releaseEnglishMaster();
+  await expect(englishStatus).toHaveCount(0);
+
+  await page.unrouteAll({ behavior: 'wait' });
   await mockMyRacesApis(page, { masterStatus: 503 });
   await page.goto('/en/my-races/?view=season');
-  await expect(page.getByText('Preparing your season …')).toHaveCount(0);
+  await expect(page.getByRole('status', { name: 'Preparing your season …' })).toHaveCount(0);
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   await expect(page.locator('.my-season')).toBeVisible();
 });

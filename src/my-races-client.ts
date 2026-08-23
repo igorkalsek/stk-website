@@ -17,7 +17,12 @@ import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-sloveni
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
 const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
-const pageRenderVersions = new WeakMap<HTMLElement, number>();
+const pageRenderVersions = new WeakMap<object, number>();
+export const beginMyRacesRender = (mount: object) => {
+  const renderVersion = (pageRenderVersions.get(mount) ?? 0) + 1;
+  pageRenderVersions.set(mount, renderVersion);
+  return () => pageRenderVersions.get(mount) === renderVersion;
+};
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
 const SLOVENIAN_GENITIVE_MONTHS = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'] as const;
@@ -289,6 +294,7 @@ const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSav
     seasonMount.classList.remove('season-loading');
     delete seasonMount.dataset.seasonLoading;
     seasonMount.removeAttribute('aria-label');
+    seasonMount.setAttribute('aria-live', 'polite');
     seasonMount.closest<HTMLElement>('[data-my-races-panel="season"]')?.removeAttribute('aria-busy');
   }
 };
@@ -325,8 +331,7 @@ export const initMyRacesTabs = (root = document) => {
 export const initMyRacesPage = async (root = document) => {
   const mount = root.querySelector<HTMLElement>('[data-my-races-app]');
   if (!mount) return;
-  const renderVersion = (pageRenderVersions.get(mount) ?? 0) + 1;
-  pageRenderVersions.set(mount, renderVersion);
+  const isCurrentRender = beginMyRacesRender(mount);
   const language = mount.dataset.language === 'en' ? 'en' : 'sl';
   const labels = LABELS[language];
   const storage = getStorage();
@@ -349,7 +354,7 @@ export const initMyRacesPage = async (root = document) => {
     return { payloads, apiOk, additionalRowsByYear };
   };
   const data = await (pageDataCache.get(mount) ?? pageDataCache.set(mount, loadData()).get(mount)!);
-  if (pageRenderVersions.get(mount) !== renderVersion) return;
+  if (!isCurrentRender()) return;
   const { payloads, apiOk, additionalRowsByYear } = data;
   const todayIso = getTodayIsoInLjubljana();
   let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));

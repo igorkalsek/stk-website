@@ -13,7 +13,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
         <button id="my-races-season-tab" type="button" role="tab" aria-controls="my-races-season-panel" aria-selected="false" tabindex="-1" data-my-races-tab="season">My season</button>
       </div>
       <div id="my-races-plan-panel" role="tabpanel" aria-labelledby="my-races-plan-tab" data-my-races-panel="plan"><div data-my-races-app data-language="en" class="my-races-app" aria-live="polite"></div></div>
-      <div id="my-races-season-panel" role="tabpanel" aria-labelledby="my-races-season-tab" data-my-races-panel="season" hidden><div data-my-season-app data-season-loading class="my-season-app season-loading" aria-live="polite" aria-label="Preparing your season …"><div class="season-loading-status" aria-hidden="true">Preparing your season …</div><div class="season-loading-skeleton" aria-hidden="true"><span class="season-loading-summary"></span><span class="season-loading-map"></span><span class="season-loading-card"></span><span class="season-loading-card"></span></div></div></div>
+      <div id="my-races-season-panel" role="tabpanel" aria-labelledby="my-races-season-tab" data-my-races-panel="season" hidden><div data-my-season-app data-season-loading class="my-season-app season-loading" aria-live="off"><div class="season-loading-status" role="status" aria-live="polite" aria-atomic="true">Preparing your season …</div><div class="season-loading-skeleton" aria-hidden="true"><span class="season-loading-summary"></span><span class="season-loading-map"></span><span class="season-loading-card"></span><span class="season-loading-card"></span></div></div></div>
     </div>
   </main>
 </BaseLayout>
