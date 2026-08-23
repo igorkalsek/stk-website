@@ -36,16 +36,16 @@ export const getNextSavedRace = (items: SavedRaceResolution[]) => items.find((it
   item.status === 'upcoming' && item.savedRace.status !== 'completed' && Boolean(item.event)
 ) ?? null;
 
-export const getSeasonSummary = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR) => {
-  const completed = getCompletedRaces(items, year);
+export const getSeasonSummary = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR, todayIso?: string) => {
+  const completed = getCompletedRaces(items, year, todayIso);
   const regions = new Set(completed.map((item) => normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '')).filter(Boolean));
   const surfaces = new Set(completed.map((item) => normalizeBasicSurface(item.event?.surface ?? item.snapshot?.surface ?? '')).filter((value): value is BasicSurface => Boolean(value)));
   return { completed, completedCount: completed.length, distinctEventCount: completed.length, regionCount: regions.size, surfaceCount: surfaces.size, regions, surfaces };
 };
 
-export const getSeasonRegionProgress = (items: SavedRaceResolution[], availableRegionLabels: string[], year: PublicYear = DEFAULT_PUBLIC_YEAR): SeasonRegionProgress[] => {
+export const getSeasonRegionProgress = (items: SavedRaceResolution[], availableRegionLabels: string[], year: PublicYear = DEFAULT_PUBLIC_YEAR, todayIso?: string): SeasonRegionProgress[] => {
   const counts = new Map<string, number>();
-  const completed = getCompletedRaces(items, year);
+  const completed = getCompletedRaces(items, year, todayIso);
   completed.forEach((item) => {
     const key = normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '');
     if (key) counts.set(key, (counts.get(key) ?? 0) + 1);

@@ -174,7 +174,7 @@ const createFakeDocument = ({ buttons = [], controls = [] } = {}) => ({
   }
 });
 
-const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createMemoryStorage() } = {}) => {
+const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createMemoryStorage(), todayIso } = {}) => {
   const payloads = [];
   const browserEvents = [];
   globalThis.window = { localStorage: storage, location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' }, setTimeout: (callback) => { callback(); return 0; }, dispatchEvent: (event) => { browserEvents.push(event.type); return true; } };
@@ -183,8 +183,13 @@ const setupSavedRaceUi = async ({ buttons = [], controls = [], storage = createM
   globalThis.Option = class { constructor(text, value) { this.text = text; this.textContent = text; this.value = value; } };
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { userAgent: 'node-test', maxTouchPoints: 0, sendBeacon: (_url, blob) => { payloads.push(JSON.parse(blob.text ? '' : '{}')); return false; } } });
   globalThis.fetch = async (_url, init = {}) => { if (init.body) payloads.push(JSON.parse(String(init.body))); return { ok: true }; };
-  const { initSavedRaceButtons } = await import(`../.cache/dist-test/saved-races-client.js?cache=${Date.now()}${Math.random()}`);
-  initSavedRaceButtons(globalThis.document);
+  const RealDate = globalThis.Date;
+  if (todayIso) {
+    const fixed = new RealDate(`${todayIso}T12:00:00.000Z`).getTime();
+    globalThis.Date = class extends RealDate { constructor(...args) { if (args.length) super(...args); else super(fixed); } static now() { return fixed; } };
+  }
+  const { initSavedRaceButtons } = await import(`../.cache/dist-test/saved-races-client.js?cache=${RealDate.now()}${Math.random()}`);
+  try { initSavedRaceButtons(globalThis.document); } finally { globalThis.Date = RealDate; }
   return { storage, payloads, browserEvents, initSavedRaceButtons };
 };
 
@@ -209,7 +214,7 @@ describe('saved races UI interactions', () => {
     storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(), status: 'completed' }])));
     const historical = { version: 1, eventId: 'r000173', year: '2026', date: '2026-05-10', title: 'Original title', place: 'Original place', region: 'Original region', surface: 'trail' };
     storage.setItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY, JSON.stringify({ version: 1, snapshots: [historical] }));
-    await setupSavedRaceUi({ controls: [select], storage });
+    await setupSavedRaceUi({ controls: [select], storage, todayIso: '2026-08-23' });
     assert.deepEqual(JSON.parse(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY)).snapshots, [historical]);
   });
 
@@ -229,7 +234,7 @@ describe('saved races UI interactions', () => {
     const select = new FakeSelect({ year: '2027', date: '2027-05-10', detailMetadata: true });
     const storage = createMemoryStorage();
     storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race('r000173', '2027'), status: 'completed' }])));
-    await setupSavedRaceUi({ controls: [select], storage });
+    await setupSavedRaceUi({ controls: [select], storage, todayIso: '2026-08-23' });
     assert.equal(select.value, 'completed');
     assert.equal(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY), null);
   });
