@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
+import { COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY } from '../.cache/dist-test/utils-completed-snapshots.js';
 import {
   SAVED_RACES_STORAGE_KEY,
   LEGACY_SAVED_RACES_STORAGE_KEY,
@@ -146,8 +147,9 @@ class FakeButton {
 }
 
 class FakeSelect {
-  constructor({ language = 'sl', eventId = 'r000173', year = '2026' } = {}) {
-    this.dataset = { raceStatusControl: '', eventId, eventYear: year, eventDate: `${year}-05-10`, eventTitle: 'Testni tek', language };
+  constructor({ language = 'sl', eventId = 'r000173', year = '2026', date = `${year}-05-10`, detailMetadata = false } = {}) {
+    this.dataset = { raceStatusControl: '', eventId, eventYear: year, eventDate: date, eventTitle: 'Testni tek', language };
+    if (detailMetadata) Object.assign(this.dataset, { eventPlace: 'Kranj', eventRegion: 'Gorenjska', eventSurface: 'cesta' });
     this.value = '';
     this.options = [];
     this.listeners = new Map();
@@ -190,6 +192,26 @@ const analyticsEvents = (payloads, type) => payloads.filter((payload) => payload
 const assertNoStatusInAnalytics = (payloads) => assert.doesNotMatch(JSON.stringify(payloads), /following|planning|registered|completed|status/);
 
 describe('saved races UI interactions', () => {
+  it('backfills a past legacy completion from detail metadata without interaction', async () => {
+    const select = new FakeSelect({ detailMetadata: true });
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(), status: 'completed' }])));
+    const { browserEvents } = await setupSavedRaceUi({ controls: [select], storage });
+    assert.equal(select.value, 'completed');
+    const snapshots = JSON.parse(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY)).snapshots;
+    assert.deepEqual(snapshots, [{ version: 1, eventId: 'r000173', year: '2026', date: '2026-05-10', title: 'Testni tek', place: 'Kranj', region: 'Gorenjska', surface: 'cesta' }]);
+    assert.deepEqual(browserEvents, []);
+  });
+
+  it('does not backfill a future legacy completion from detail metadata', async () => {
+    const select = new FakeSelect({ year: '2027', date: '2027-05-10', detailMetadata: true });
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race('r000173', '2027'), status: 'completed' }])));
+    await setupSavedRaceUi({ controls: [select], storage });
+    assert.equal(select.value, 'completed');
+    assert.equal(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY), null);
+  });
+
   it('updates regular and icon-only icons, labels, and aria labels in Slovenian', async () => {
     const regular = new FakeButton({ language: 'sl' });
     const iconOnly = new FakeButton({ language: 'sl', iconOnly: true });
