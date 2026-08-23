@@ -5848,3 +5848,34 @@ main {
 @keyframes stk-skeleton { to { opacity: .5; } }
 
 .my-season-heading,.post-race-cta,.past-race-result{display:flex;align-items:center;justify-content:space-between;gap:1rem}.post-race-cta,.past-race-picker{margin:1rem 0;padding:1rem;border:1px solid var(--color-border,#d8ded8);border-radius:.75rem}.past-race-picker input{width:100%;margin-top:.4rem}.past-race-result{padding:.8rem 0;border-bottom:1px solid var(--color-border,#d8ded8)}.past-race-result span{display:block;color:var(--color-muted,#58635c);font-size:.9rem}@media(max-width:520px){.my-season-heading,.post-race-cta,.past-race-result{align-items:stretch;flex-direction:column}}
+
+/* Accessible statistical-regions progress map. Geometry attribution is documented in utils-slovenia-map.ts. */
+.season-map-panel { display: grid; grid-template-columns: minmax(180px, .7fr) minmax(0, 1.55fr); align-items: center; gap: clamp(1rem, 4vw, 2.25rem); margin-top: 1rem; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid rgba(16, 64, 80, .24); border-radius: 18px; background: linear-gradient(145deg, #f7faf6, rgba(200, 230, 201, .2)); overflow: hidden; }
+.season-map-copy .eyebrow { color: var(--deep-teal); font-size: .75rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.season-map-copy h3 { margin: .35rem 0 .7rem; color: var(--deep-teal); font-size: clamp(1.35rem, 3vw, 1.8rem); }
+.season-map-count { display: block; color: var(--deep-teal); font-size: clamp(1.65rem, 4vw, 2.35rem); line-height: 1; }
+.season-map-copy p { margin: .7rem 0 0; color: var(--muted); font-weight: 700; }
+.slovenia-map { width: 100%; max-width: 620px; margin: 0 auto; }
+.slovenia-map svg { display: block; width: 100%; height: auto; overflow: visible; }
+.slovenia-map-region { outline: none; }
+.slovenia-map-region > path { fill: #edf1ed; stroke: #62726b; stroke-width: 1.5; transition: fill .15s ease, stroke .15s ease; }
+.slovenia-map-region.is-visited > path { fill: #b9dcbd; stroke: var(--deep-teal); stroke-width: 2.2; }
+.slovenia-map-region:focus-visible > path { stroke: #9a610d; stroke-width: 4; filter: drop-shadow(0 0 2px #fff); }
+.slovenia-map-check circle { fill: var(--deep-teal); stroke: #fff; stroke-width: 1.5; }
+.slovenia-map-check path { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.slovenia-map--compact { margin: .15rem 0 .55rem; }
+.my-stk-discovery-card .slovenia-map { width: min(100%, 290px); }
+.season-region-list { padding-top: .8rem; border-top: 1px solid var(--line); }
+.season-region-list > h3 { font-size: 1rem; }
+.season-region-list .season-regions { opacity: .88; }
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+@media (max-width: 620px) {
+  .season-map-panel { grid-template-columns: 1fr; gap: .65rem; }
+  .season-map-copy { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: .2rem .75rem; }
+  .season-map-copy .eyebrow, .season-map-copy h3, .season-map-copy p { grid-column: 1 / -1; }
+  .season-map-copy h3 { margin-bottom: .25rem; }
+  .season-map-count { font-size: 1.55rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slovenia-map-region > path { transition: none; }
+}

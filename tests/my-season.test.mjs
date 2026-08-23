@@ -148,3 +148,38 @@ describe('My STK season', () => {
     assert.match(client, /\/en\/my-races\/\?view=season/);
   });
 });
+
+describe('Slovenia regional progress map', () => {
+  it('maps all 12 regions and preserves visited progress without recalculating it', async () => {
+    const { getSloveniaMapRegions, SLOVENIA_STATISTICAL_REGIONS } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const progress = getSeasonRegionProgress([item('a'), item('b', { region: 'Goriška' })], SLOVENIA_STATISTICAL_REGIONS.map((region) => region.sl));
+    const mapped = getSloveniaMapRegions(progress, 'sl');
+    assert.equal(mapped.length, 12);
+    assert.equal(mapped.filter((region) => region.visited).length, 2);
+    assert.equal(mapped.find((region) => region.sl === 'Gorenjska').completedEventCount, 1);
+    assert.equal(mapped.find((region) => region.sl === 'Pomurska').visited, false);
+  });
+
+  it('renders localized accessible empty and visited states with the same geometry', async () => {
+    const { renderSloveniaRegionsMap } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const empty = renderSloveniaRegionsMap([], 'sl');
+    assert.equal((empty.match(/class="slovenia-map-region/g) ?? []).length, 12);
+    assert.match(empty, /Obiskanih je 0 od 12 statističnih regij/);
+    assert.match(empty, /Gorenjska: še ni obiskana, brez opravljenih tekov/);
+    const visited = renderSloveniaRegionsMap([{ key: 'gorenjska', label: 'Gorenjska', visited: true, completedEventCount: 2 }], 'en', 'compact');
+    assert.equal((visited.match(/data-visited="true"/g) ?? []).length, 1);
+    assert.match(visited, /Upper Carniola: visited, 2 completed races/);
+    assert.match(visited, /Mura region: not visited, no completed races/);
+    assert.doesNotMatch(visited, /Gorenjska:/);
+  });
+
+  it('supports the complete state and shares one renderer between season and home', async () => {
+    const { renderSloveniaRegionsMap, SLOVENIA_STATISTICAL_REGIONS } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const complete = SLOVENIA_STATISTICAL_REGIONS.map((region) => ({ key: region.key, label: region.sl, visited: true, completedEventCount: 1 }));
+    assert.equal((renderSloveniaRegionsMap(complete, 'en').match(/data-visited="true"/g) ?? []).length, 12);
+    const seasonClient = readFileSync(new URL('../src/my-races-client.ts', import.meta.url), 'utf8');
+    const homeClient = readFileSync(new URL('../src/my-stk-client.ts', import.meta.url), 'utf8');
+    assert.match(seasonClient, /renderSloveniaRegionsMap\(regionProgress, language, 'full'\)/);
+    assert.match(homeClient, /renderSloveniaRegionsMap\(regions, language, 'compact'\)/);
+  });
+});
