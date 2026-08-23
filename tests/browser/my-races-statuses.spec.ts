@@ -4,6 +4,7 @@ const API_HOST = 'https://stk-master-api.igor-kalsek.workers.dev';
 const ANALYTICS_HOST = 'https://script.google.com';
 const V1_KEY = 'stkSavedRacesV1';
 const V2_KEY = 'stkSavedRacesV2';
+const SNAPSHOT_KEY = 'stkCompletedRaceSnapshotsV1';
 
 type SavedRaceStatus = 'following' | 'planning' | 'registered' | 'completed';
 type SavedRaceFixture = { eventId: string; year: string; date: string; title: string; status?: SavedRaceStatus };
@@ -716,4 +717,15 @@ test('refreshes the homepage My STK component after save and unsave without relo
 
   await saveButton.click();
   await expect(page.getByRole('heading', { name: 'Ustvarite svojo tekaško sezono' })).toBeVisible();
+});
+
+test('backfills a resolved legacy completion when the user opens only the homepage', async ({ page }) => {
+  await freezeLjubljanaDate(page, '2026-07-15');
+  await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, [v2Race('r000104', 'completed')]);
+  await page.goto('/');
+  await expect(page.locator('[data-my-stk] .my-stk-dashboard')).toBeVisible();
+  const snapshots = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || '{"snapshots":[]}').snapshots, SNAPSHOT_KEY);
+  expect(snapshots).toHaveLength(1);
+  expect(snapshots[0]).toMatchObject({ eventId: 'r000104', title: 'Past Test Run', place: 'Kranj', region: 'Gorenjska', surface: 'cesta' });
 });

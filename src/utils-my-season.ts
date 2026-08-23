@@ -45,12 +45,14 @@ export const getSeasonSummary = (items: SavedRaceResolution[], year: PublicYear 
 
 export const getSeasonRegionProgress = (items: SavedRaceResolution[], availableRegionLabels: string[], year: PublicYear = DEFAULT_PUBLIC_YEAR): SeasonRegionProgress[] => {
   const counts = new Map<string, number>();
-  getCompletedRaces(items, year).forEach((item) => {
+  const completed = getCompletedRaces(items, year);
+  completed.forEach((item) => {
     const key = normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '');
     if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
   });
   const labels = new Map<string, string>();
   availableRegionLabels.forEach((label) => { const key = normalizeRegionKey(label); if (key && !labels.has(key)) labels.set(key, label.trim()); });
+  completed.forEach((item) => { const label = item.event?.region ?? item.snapshot?.region ?? ''; const key = normalizeRegionKey(label); if (key && !labels.has(key)) labels.set(key, label.trim()); });
   return [...labels].map(([key, label]) => ({ key, label, visited: counts.has(key), completedEventCount: counts.get(key) ?? 0 }))
     .sort((a, b) => a.label.localeCompare(b.label, 'sl-SI'));
 };

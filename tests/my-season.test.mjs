@@ -29,6 +29,15 @@ describe('My STK season', () => {
     assert.deepEqual(progress.map(({ key, visited, completedEventCount }) => [key, visited, completedEventCount]), [['gorenjska', true, 2], ['goriška', true, 1], ['savinjska', false, 0]]);
     assert.equal(getSeasonRegionProgress([], ['A', 'B']).filter((r) => r.visited).length, 0);
   });
+  it('includes snapshot-only regions once and keeps the denominator consistent', () => {
+    const unresolved = { ...item('archived', { resolved: false }), snapshot: { version: 1, eventId: 'archived', year: '2026', date: '2026-08-01', title: 'Archived', place: 'Kraj', region: ' Gorenjska ', surface: 'cesta' } };
+    const liveWithSameSnapshot = { ...item('live', { region: 'gorenjska' }), snapshot: { version: 1, eventId: 'live', year: '2026', date: '2026-08-01', title: 'Live', place: 'Kraj', region: 'GORENJSKA', surface: 'cesta' } };
+    const items = [unresolved, liveWithSameSnapshot];
+    const progress = getSeasonRegionProgress(items, ['Gorenjska']);
+    assert.deepEqual(progress.map(({ key, label, visited, completedEventCount }) => [key, label, visited, completedEventCount]), [['gorenjska', 'Gorenjska', true, 2]]);
+    assert.ok(getSeasonSummary(items).regionCount <= progress.length);
+    assert.equal(formatSeasonRegionLabel(progress[0].label, 'en'), 'Upper Carniola');
+  });
   it('keeps Nomad as a six-region milestone while region progress continues to Y/Y', () => {
     const six = many(6, i => ({ region: `R${i}` })); const eight = many(8, i => ({ region: `R${i}` }));
     assert.equal(achievement(six, 'nomad').achieved, true);
