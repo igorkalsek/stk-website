@@ -205,11 +205,12 @@ const agendaMonth = (item: ReturnType<typeof resolveSavedRaces>[number], languag
 
 export const renderRaceAgenda = (items: ReturnType<typeof resolveSavedRaces>, labels: Labels, language: 'sl' | 'en', todayIso: string, highlightNext = false) => {
   let previousMonth = '';
-  return `<ol class="my-race-agenda">${items.map((item, index) => {
+  const nextRaceKey = highlightNext ? getNextSavedRace(items)?.key : undefined;
+  return `<ol class="my-race-agenda">${items.map((item) => {
     const month = agendaMonth(item, language);
     const monthHeading = month !== previousMonth ? `<h3 class="my-race-month">${escapeHtml(month)}</h3>` : '';
     previousMonth = month;
-    return `<li class="my-race-agenda-item">${monthHeading}<span class="my-race-axis-marker" aria-hidden="true"></span>${renderEvent(item as any, labels, language, todayIso, highlightNext && index === 0)}</li>`;
+    return `<li class="my-race-agenda-item">${monthHeading}<span class="my-race-axis-marker" aria-hidden="true"></span>${renderEvent(item as any, labels, language, todayIso, item.key === nextRaceKey)}</li>`;
   }).join('')}</ol>`;
 };
 

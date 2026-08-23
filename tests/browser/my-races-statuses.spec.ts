@@ -258,8 +258,52 @@ test('renders a chronological, month-grouped agenda with one accessible next-rac
   await expect(upcomingAgenda.locator('.my-race-month')).toHaveText(['avgust 2026', 'september 2026', 'oktober 2026']);
   await expect(page.locator('.my-races-secondary .my-race-card.is-completed')).toHaveCount(1);
   await expect(page.locator('.my-races-secondary [data-key="2025:r999999"]')).toContainText('Legacy missing race');
-  await expect(page.locator('.my-race-axis-marker')).toHaveAttribute('aria-hidden', 'true');
-  expect(await page.locator('.my-race-axis-marker').evaluateAll((nodes) => nodes.every((node) => !node.matches('a, button, input, select, textarea, [tabindex]')))).toBe(true);
+  expect(await page.locator('.my-race-axis-marker').evaluateAll((nodes) => nodes.every((node) =>
+    node.getAttribute('aria-hidden') === 'true'
+    && !node.hasAttribute('tabindex')
+    && !node.matches('a, button, input, select, textarea')
+  ))).toBe(true);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('skips a completed race today and keeps the next-race summary aligned with the highlighted card', async ({ page }) => {
+  const todayRace = { ...races2026[3], datum: '2026-07-15', naziv_prireditve: 'Completed Today Run' };
+  const { pageErrors } = await mockMyRacesApis(page, { additional: [], races2026: [races2026[1], todayRace] });
+  await seedV2SavedRaces(page, [
+    { version: 2, eventId: 'r000104', year: '2026', date: '2026-07-15', title: todayRace.naziv_prireditve, status: 'completed' },
+    v2Race('r000102', 'planning')
+  ]);
+
+  await openMyRaces(page);
+
+  const completedToday = card(page, '2026:r000104');
+  const nextRace = card(page, '2026:r000102');
+  await expect(completedToday).toHaveClass(/is-completed/);
+  await expect(completedToday).not.toHaveClass(/is-next/);
+  await expect(completedToday).not.toHaveAttribute('data-next-race');
+  await expect(nextRace).toHaveClass(/is-next/);
+  await expect(nextRace).toHaveAttribute('data-next-race', 'true');
+  await expect(page.locator('[data-next-race="true"]')).toHaveCount(1);
+  const summary = page.locator('[data-next-race-step]');
+  await expect(summary).toContainText('Maribor Test Trail');
+  await expect(summary.locator('a[href="#my-race-2026-r000102"]')).toHaveCount(2);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('does not mark a next race when every upcoming race is completed', async ({ page }) => {
+  const todayRace = { ...races2026[3], datum: '2026-07-15', naziv_prireditve: 'Completed Today Run' };
+  const { pageErrors } = await mockMyRacesApis(page, { additional: [], races2026: [races2026[1], todayRace] });
+  await seedV2SavedRaces(page, [
+    { version: 2, eventId: 'r000104', year: '2026', date: '2026-07-15', title: todayRace.naziv_prireditve, status: 'completed' },
+    v2Race('r000102', 'completed')
+  ]);
+
+  await openMyRaces(page);
+
+  await expect(page.locator('.my-race-card.is-completed')).toHaveCount(2);
+  await expect(page.locator('.my-race-card.is-next')).toHaveCount(0);
+  await expect(page.locator('[data-next-race="true"]')).toHaveCount(0);
+  await expect(page.locator('[data-next-race-step]')).toHaveCount(0);
   await expectNoUnexpectedErrors(pageErrors);
 });
 
