@@ -236,6 +236,77 @@ async function expectNoUnexpectedErrors(pageErrors: string[]) {
   await expect.poll(() => pageErrors).toEqual([]);
 }
 
+test('renders a chronological, month-grouped agenda with one accessible next-race emphasis', async ({ page }) => {
+  const sameMonthRace = { ...races2026[0], row: '105', datum: '2026-08-29', naziv_prireditve: 'Very Long Second August Race Name', kraj: 'A very long place name that must wrap safely' };
+  const { pageErrors } = await mockMyRacesApis(page, { races2026: [races2026[2], sameMonthRace, races2026[0], races2026[1], races2026[3]] });
+  await seedV2SavedRaces(page, [
+    v2Race('r000103', 'planning'),
+    { version: 2, eventId: 'r000105', year: '2026', date: '2026-08-29', title: sameMonthRace.naziv_prireditve, status: 'registered' },
+    v2Race('r000101', 'following'),
+    v2Race('r000102', 'registered'),
+    v2Race('r000104', 'completed'),
+    { version: 2, eventId: 'r999999', year: '2025', date: '2025-03-01', title: 'Legacy missing race', status: 'following' }
+  ]);
+
+  await openMyRaces(page);
+
+  const upcomingAgenda = page.locator('.my-race-agenda').first();
+  await expect(upcomingAgenda.locator('.my-race-card')).toHaveCount(4);
+  expect(await upcomingAgenda.locator('.my-race-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-key')))).toEqual(['2026:r000101', '2026:r000105', '2026:r000102', '2026:r000103']);
+  await expect(upcomingAgenda.locator('[data-next-race="true"]')).toHaveCount(1);
+  await expect(upcomingAgenda.locator('[data-next-race="true"]')).toContainText('Naslednji tek');
+  await expect(upcomingAgenda.locator('.my-race-month')).toHaveText(['avgust 2026', 'september 2026', 'oktober 2026']);
+  await expect(page.locator('.my-races-secondary .my-race-card.is-completed')).toHaveCount(1);
+  await expect(page.locator('.my-races-secondary [data-key="2025:r999999"]')).toContainText('Legacy missing race');
+  expect(await page.locator('.my-race-axis-marker').evaluateAll((nodes) => nodes.every((node) =>
+    node.getAttribute('aria-hidden') === 'true'
+    && !node.hasAttribute('tabindex')
+    && !node.matches('a, button, input, select, textarea')
+  ))).toBe(true);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('skips a completed race today and keeps the next-race summary aligned with the highlighted card', async ({ page }) => {
+  const todayRace = { ...races2026[3], datum: '2026-07-15', naziv_prireditve: 'Completed Today Run' };
+  const { pageErrors } = await mockMyRacesApis(page, { additional: [], races2026: [races2026[1], todayRace] });
+  await seedV2SavedRaces(page, [
+    { version: 2, eventId: 'r000104', year: '2026', date: '2026-07-15', title: todayRace.naziv_prireditve, status: 'completed' },
+    v2Race('r000102', 'planning')
+  ]);
+
+  await openMyRaces(page);
+
+  const completedToday = card(page, '2026:r000104');
+  const nextRace = card(page, '2026:r000102');
+  await expect(completedToday).toHaveClass(/is-completed/);
+  await expect(completedToday).not.toHaveClass(/is-next/);
+  await expect(completedToday).not.toHaveAttribute('data-next-race');
+  await expect(nextRace).toHaveClass(/is-next/);
+  await expect(nextRace).toHaveAttribute('data-next-race', 'true');
+  await expect(page.locator('[data-next-race="true"]')).toHaveCount(1);
+  const summary = page.locator('[data-next-race-step]');
+  await expect(summary).toContainText('Maribor Test Trail');
+  await expect(summary.locator('a[href="#my-race-2026-r000102"]')).toHaveCount(2);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
+test('does not mark a next race when every upcoming race is completed', async ({ page }) => {
+  const todayRace = { ...races2026[3], datum: '2026-07-15', naziv_prireditve: 'Completed Today Run' };
+  const { pageErrors } = await mockMyRacesApis(page, { additional: [], races2026: [races2026[1], todayRace] });
+  await seedV2SavedRaces(page, [
+    { version: 2, eventId: 'r000104', year: '2026', date: '2026-07-15', title: todayRace.naziv_prireditve, status: 'completed' },
+    v2Race('r000102', 'completed')
+  ]);
+
+  await openMyRaces(page);
+
+  await expect(page.locator('.my-race-card.is-completed')).toHaveCount(2);
+  await expect(page.locator('.my-race-card.is-next')).toHaveCount(0);
+  await expect(page.locator('[data-next-race="true"]')).toHaveCount(0);
+  await expect(page.locator('[data-next-race-step]')).toHaveCount(0);
+  await expectNoUnexpectedErrors(pageErrors);
+});
+
 test('attaches a 2027 deadline only to the matching 2027 saved race', async ({ page }) => {
   const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
   const additional2027 = [{ ...additional2026[0], leto: '2027', master_sheet: '2027', datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run', rok_cenejse_prijave: '', rok_prijave: '2027-08-01' }];
