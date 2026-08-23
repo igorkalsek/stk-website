@@ -1,4 +1,4 @@
-import { formatSeasonRegionLabel, normalizeRegionKey, type SeasonRegionProgress } from './utils-my-season.js';
+import { formatSeasonRegionLabel, formatSloveneCount, normalizeRegionKey, type SeasonRegionProgress } from './utils-my-season.js';
 
 /**
  * Geometry: Eurostat GISCO NUTS 2024, NUTS level 3 and national boundary,
@@ -49,6 +49,26 @@ export const getSloveniaMapRegions = (progress: SeasonRegionProgress[], language
   });
 };
 
+const formatCompletedRaceCount = (count: number, language: SloveniaMapLanguage) => language === 'en'
+  ? `${count} completed ${count === 1 ? 'race' : 'races'}`
+  : formatSloveneCount(count, 'completed-race');
+
+const formatRegionStatus = (region: ReturnType<typeof getSloveniaMapRegions>[number], language: SloveniaMapLanguage) => {
+  const state = language === 'en' ? (region.visited ? 'visited' : 'not visited') : (region.visited ? 'obiskana' : 'še ni obiskana');
+  const races = region.completedEventCount > 0
+    ? formatCompletedRaceCount(region.completedEventCount, language)
+    : (language === 'en' ? 'no completed races' : 'brez opravljenih tekov');
+  return `${region.label}: ${state}, ${races}.`;
+};
+
+export const renderSloveniaRegionStatusList = (progress: SeasonRegionProgress[], language: SloveniaMapLanguage, className = '') => {
+  const classes = ['slovenia-map-status-list', className].filter(Boolean).join(' ');
+  const items = getSloveniaMapRegions(progress, language)
+    .map((region) => `<li>${escapeHtml(formatRegionStatus(region, language))}</li>`)
+    .join('');
+  return `<ul class="${classes}" data-slovenia-map-status-list>${items}</ul>`;
+};
+
 export const renderSloveniaRegionsMap = (progress: SeasonRegionProgress[], language: SloveniaMapLanguage, variant: SloveniaMapVariant = 'full') => {
   const regions = getSloveniaMapRegions(progress, language);
   const visited = regions.filter((region) => region.visited).length;
@@ -57,11 +77,7 @@ export const renderSloveniaRegionsMap = (progress: SeasonRegionProgress[], langu
     ? `${visited} of 12 statistical regions visited. Visited regions are highlighted and marked with a check.`
     : `Obiskanih je ${visited} od 12 statističnih regij. Obiskane regije so poudarjene in označene s kljukico.`;
   const regionMarkup = regions.map((region) => {
-    const state = language === 'en' ? (region.visited ? 'visited' : 'not visited') : (region.visited ? 'obiskana' : 'še ni obiskana');
-    const races = region.completedEventCount > 0
-      ? (language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : `${region.completedEventCount} ${region.completedEventCount === 1 ? 'opravljen tek' : region.completedEventCount === 2 ? 'opravljena teka' : region.completedEventCount < 5 ? 'opravljeni teki' : 'opravljenih tekov'}`)
-      : (language === 'en' ? 'no completed races' : 'brez opravljenih tekov');
-    const aria = `${region.label}: ${state}, ${races}.`;
+    const aria = formatRegionStatus(region, language);
     return `<g class="slovenia-map-region${region.visited ? ' is-visited' : ''}" aria-label="${escapeHtml(aria)}" data-region-key="${escapeHtml(region.key)}" data-visited="${region.visited}"><path d="${region.path}" vector-effect="non-scaling-stroke"></path>${region.visited ? `<g class="slovenia-map-check" aria-hidden="true" transform="translate(${region.check[0]} ${region.check[1]})"><circle r="9"></circle><path d="M-4 0 -1 4 5 -4"></path></g>` : ''}</g>`;
   }).join('');
   return `<figure class="slovenia-map slovenia-map--${variant}" data-slovenia-map><svg viewBox="0 0 450 300" role="img" aria-labelledby="slovenia-map-title-${variant} slovenia-map-description-${variant}" xmlns="http://www.w3.org/2000/svg"><title id="slovenia-map-title-${variant}">${title}</title><desc id="slovenia-map-description-${variant}">${description}</desc><path class="slovenia-map-outline" d="${SLOVENIA_OUTLINE_PATH}" vector-effect="non-scaling-stroke" aria-hidden="true"></path><g>${regionMarkup}</g></svg>${variant === 'full' ? `<figcaption class="sr-only">${description}</figcaption>` : ''}</figure>`;

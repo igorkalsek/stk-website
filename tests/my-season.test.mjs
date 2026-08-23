@@ -180,6 +180,26 @@ describe('Slovenia regional progress map', () => {
     assert.match(visited, /class="slovenia-map-outline"/);
   });
 
+  it('renders a complete screen-reader list beside the compact home map', async () => {
+    const { renderSloveniaRegionStatusList } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const list = renderSloveniaRegionStatusList([{ key: 'gorenjska', label: 'Gorenjska', visited: true, completedEventCount: 2 }], 'sl', 'sr-only');
+    assert.match(list, /class="slovenia-map-status-list sr-only"/);
+    assert.equal((list.match(/<li>/g) ?? []).length, 12);
+    assert.match(list, /Gorenjska: obiskana, 2 opravljena teka\./);
+    assert.match(list, /Pomurska: še ni obiskana, brez opravljenih tekov\./);
+    const homeClient = readFileSync(new URL('../src/my-stk-client.ts', import.meta.url), 'utf8');
+    assert.match(homeClient, /renderSloveniaRegionStatusList\(regions, language, 'sr-only'\)/);
+  });
+
+  it('uses the shared Slovene grammar for regional completed-race counts', async () => {
+    const { renderSloveniaRegionStatusList } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const expected = new Map([[1, '1 opravljen tek'], [2, '2 opravljena teka'], [3, '3 opravljeni teki'], [4, '4 opravljeni teki'], [5, '5 opravljenih tekov'], [22, '22 opravljenih tekov'], [23, '23 opravljenih tekov'], [24, '24 opravljenih tekov'], [25, '25 opravljenih tekov']]);
+    for (const [count, label] of expected) {
+      const list = renderSloveniaRegionStatusList([{ key: 'gorenjska', label: 'Gorenjska', visited: true, completedEventCount: count }], 'sl');
+      assert.match(list, new RegExp(`Gorenjska: obiskana, ${label}\\.`));
+    }
+  });
+
   it('supports the complete state and shares one renderer between season and home', async () => {
     const { renderSloveniaRegionsMap, SLOVENIA_STATISTICAL_REGIONS } = await import('../.cache/dist-test/utils-slovenia-map.js');
     const complete = SLOVENIA_STATISTICAL_REGIONS.map((region) => ({ key: region.key, label: region.sl, visited: true, completedEventCount: 1 }));
@@ -188,5 +208,6 @@ describe('Slovenia regional progress map', () => {
     const homeClient = readFileSync(new URL('../src/my-stk-client.ts', import.meta.url), 'utf8');
     assert.match(seasonClient, /renderSloveniaRegionsMap\(regionProgress, language, 'full'\)/);
     assert.match(homeClient, /renderSloveniaRegionsMap\(regions, language, 'compact'\)/);
+    assert.doesNotMatch(renderSloveniaRegionsMap(complete, 'sl', 'compact'), /tabindex=/);
   });
 });
