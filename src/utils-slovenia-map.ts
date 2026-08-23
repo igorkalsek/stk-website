@@ -37,9 +37,19 @@ const escapeHtml = (value: string | number) => String(value).replace(/[&<>"']/g,
 const regionKey = (value: string) => normalizeCanonicalSeasonRegionKey(value);
 
 export const getSloveniaMapRegions = (progress: SeasonRegionProgress[], language: SloveniaMapLanguage) => {
-  const byKey = new Map(progress.map((region) => [regionKey(region.key || region.label), region]));
+  const byKey = new Map<string, SeasonRegionProgress>();
+  progress.forEach((region) => {
+    const key = regionKey(region.key || region.label);
+    if (!key) return;
+    const existing = byKey.get(key);
+    byKey.set(key, existing ? {
+      ...existing,
+      visited: existing.visited || region.visited,
+      completedEventCount: existing.completedEventCount + region.completedEventCount
+    } : { ...region });
+  });
   return SLOVENIA_STATISTICAL_REGIONS.map((geometry) => {
-    const region = byKey.get(regionKey(geometry.key)) ?? { key: geometry.key, label: geometry.sl, visited: false, completedEventCount: 0 };
+    const region = byKey.get(regionKey(geometry.key)!) ?? { key: geometry.key, label: geometry.sl, visited: false, completedEventCount: 0 };
     const canonicalLabel = geometry.key === 'jugovzhodna slovenija' ? 'Jugovzhodna' : geometry.sl;
     return { ...geometry, ...region, label: language === 'en' ? formatSeasonRegionLabel(canonicalLabel, language) : geometry.sl };
   });

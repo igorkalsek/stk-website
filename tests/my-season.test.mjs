@@ -217,6 +217,23 @@ describe('Slovenia regional progress map', () => {
     assert.equal(achievement(legacyOnly, 'nomad').current, 0);
   });
 
+  it('merges canonical aliases into one visited region and sums completed races', async () => {
+    const { getSloveniaMapRegions, renderSloveniaRegionsMap, renderSloveniaRegionStatusList } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const aliases = [
+      { key: 'jugovzhodna', label: 'Jugovzhodna', visited: true, completedEventCount: 1 },
+      { key: 'jugovzhodna slovenija', label: 'Jugovzhodna Slovenija', visited: true, completedEventCount: 2 }
+    ];
+    const mapped = getSloveniaMapRegions(aliases, 'sl');
+    const southeast = mapped.filter((region) => region.nuts === 'SI037');
+    assert.equal(southeast.length, 1);
+    assert.equal(southeast[0].visited, true);
+    assert.equal(southeast[0].completedEventCount, 3);
+    const map = renderSloveniaRegionsMap(aliases, 'sl', 'full');
+    assert.equal((map.match(/data-visited="true"/g) ?? []).length, 1);
+    assert.match(map, /Jugovzhodna Slovenija: obiskana, 3 opravljeni teki\./);
+    assert.match(renderSloveniaRegionStatusList(aliases, 'sl'), /Jugovzhodna Slovenija: obiskana, 3 opravljeni teki\./);
+  });
+
   it('supports the complete state and shares one renderer between season and home', async () => {
     const { renderSloveniaRegionsMap, SLOVENIA_STATISTICAL_REGIONS } = await import('../.cache/dist-test/utils-slovenia-map.js');
     const complete = SLOVENIA_STATISTICAL_REGIONS.map((region) => ({ key: region.key, label: region.sl, visited: true, completedEventCount: 1 }));
