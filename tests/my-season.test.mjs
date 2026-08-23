@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
 import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
+import { renderSeason } from '../.cache/dist-test/my-races-client.js';
 import { attachMyStkAdditionalData, enrichMyStkWhenReady, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
@@ -118,6 +119,63 @@ describe('My STK season', () => {
     assert.doesNotMatch(['asfalt', 'makadam', 'gorski tek'].map((surface) => formatSeasonSurfaceLabel(surface, 'en')).join(' · '), /asfalt|makadam|gorski tek/i);
   });
   it('keeps unresolved references safe', () => assert.doesNotThrow(() => getSeasonAchievements([item('old', { resolved: false })])));
+  it('renders linked live stamps, unlinked legacy stamps, and decorative surface symbols', () => {
+    const legacy = { ...item('legacy', { resolved: false }), snapshot: { version: 1, eventId: 'legacy', year: '2026', date: '2026-08-01', title: 'Stari tek', place: 'Celje', region: 'Savinjska', surface: 'trail' } };
+    const html = renderSeason([item('road'), item('trail', { surface: 'trail' }), item('mountain', { surface: 'gorski tek' }), legacy], canonicalRegions, 'sl');
+    assert.match(html, /<a class="season-stamp is-road" href="\/tek\/2026\//);
+    assert.match(html, /<article class="season-stamp is-unresolved is-trail">[\s\S]*Stari tek[\s\S]*podrobnosti niso več na voljo/);
+    assert.doesNotMatch(html.match(/<article class="season-stamp is-unresolved[\s\S]*?<\/article>/)?.[0] ?? '', /href=/);
+    assert.match(html, /season-stamp is-trail/); assert.match(html, /season-stamp is-mountain/);
+    assert.equal((html.match(/season-stamp-icon/g) ?? []).length, 4);
+    for (const svg of html.match(/<svg class="(?:season-stamp-icon|achievement-symbol)"[\s\S]*?<\/svg>/g) ?? []) assert.doesNotMatch(svg, /tabindex|focusable/);
+  });
+  it('uses neutral stamps and truthful localized labels for mixed and non-standard surfaces', () => {
+    const races = [item('road'), item('trail', { surface: 'trail' }), item('mountain', { surface: 'gorski tek' }), item('mixed', { surface: 'cesta/trail' }), item('gravel', { surface: 'makadam' })];
+    const getStamp = (html, id) => (html.match(/<a class="season-stamp [^"]+"[^>]*>[\s\S]*?<\/a>/g) ?? []).find((stamp) => stamp.includes(`<strong>${id}</strong>`)) ?? '';
+    const sl = renderSeason(races, canonicalRegions, 'sl');
+    const en = renderSeason(races, canonicalRegions, 'en');
+    assert.match(getStamp(sl, 'road'), /data-surface-icon="road"[\s\S]*STK · cesta/);
+    assert.match(getStamp(sl, 'trail'), /data-surface-icon="trail"[\s\S]*STK · trail/);
+    assert.match(getStamp(sl, 'mountain'), /data-surface-icon="mountain"[\s\S]*STK · gorski tek/);
+    for (const [id, slLabel, enLabel] of [['mixed', 'cesta\/trail', 'Road\/trail'], ['gravel', 'makadam', 'Gravel road']]) {
+      const slStamp = getStamp(sl, id); const enStamp = getStamp(en, id);
+      assert.match(slStamp, /class="season-stamp is-other"/); assert.match(enStamp, /class="season-stamp is-other"/);
+      assert.match(slStamp, /data-surface-icon="other"/); assert.match(enStamp, /data-surface-icon="other"/);
+      assert.match(slStamp, new RegExp(`STK · ${slLabel}`)); assert.match(enStamp, new RegExp(`STK · ${enLabel}`));
+      assert.doesNotMatch(slStamp, /data-surface-icon="road"|STK · Cesta/); assert.doesNotMatch(enStamp, /data-surface-icon="road"|STK · Road(?:<|\s)/);
+      const icon = slStamp.match(/<svg class="season-stamp-icon"[\s\S]*?<\/svg>/)?.[0] ?? '';
+      assert.match(icon, /aria-hidden="true"/); assert.doesNotMatch(icon, /tabindex|focusable/);
+    }
+  });
+  it('reserves mobile stamp space for the seal and switches narrow passports to one column', () => {
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    const mobileRule = css.indexOf('.season-stamp { min-height: 108px;');
+    const mobile = css.slice(css.lastIndexOf('@media (max-width: 720px)', mobileRule), mobileRule + 100);
+    const narrowRule = css.indexOf('.season-passport { grid-template-columns: 1fr; }', mobileRule);
+    const narrow = css.slice(css.lastIndexOf('@media (max-width: 600px)', narrowRule), narrowRule + 70);
+    assert.match(mobile, /\.season-stamp \{ min-height: 108px; padding: \.7rem 4\.3rem \.7rem \.7rem; \}/);
+    assert.match(narrow, /\.season-passport \{ grid-template-columns: 1fr; \}/);
+    assert.match(css, /\.season-stamp-seal \{[^}]*right: \.75rem;[^}]*width: 3rem;[^}]*height: 3rem;/);
+  });
+  it('renders equivalent localized achievement states without changing thresholds', () => {
+    const races = many(3, i => ({ region: canonicalRegions[i], surface: i === 0 ? 'cesta' : 'trail' }));
+    const sl = renderSeason(races, canonicalRegions, 'sl');
+    const en = renderSeason(races, canonicalRegions, 'en');
+    const emptySl = renderSeason([], canonicalRegions, 'sl');
+    const emptyEn = renderSeason([], canonicalRegions, 'en');
+    for (const [key, target] of [['debut', 1], ['five', 5], ['ten', 10], ['nomad', 6], ['all-terrain', 3], ['veteran', 20]]) {
+      assert.match(sl, new RegExp(`data-achievement="${key}"[\\s\\S]*?<progress max="${target}"`));
+    }
+    assert.match(sl, /data-achievement-state="achieved"[\s\S]*Osvojeno/);
+    assert.match(sl, /data-achievement-state="next"[\s\S]*Naslednji dosežek/);
+    assert.match(sl, /data-achievement-state="active"[\s\S]*V napredku/);
+    assert.match(emptySl, /data-achievement-state="locked"[\s\S]*Zaklenjeno/);
+    assert.match(en, /data-achievement-state="achieved"[\s\S]*Achieved/);
+    assert.match(en, /data-achievement-state="next"[\s\S]*Next achievement/);
+    assert.match(en, /data-achievement-state="active"[\s\S]*In progress/);
+    assert.match(emptyEn, /data-achievement-state="locked"[\s\S]*Locked/);
+    assert.equal((sl.match(/<svg class="achievement-symbol" aria-hidden="true"/g) ?? []).length, 6);
+  });
   it('keeps live stats outside async dashboard replacement', () => {
     const client = readFileSync('src/my-stk-client.ts', 'utf8'); const home = readFileSync('src/pages/index.astro', 'utf8');
     assert.doesNotMatch(client, /outerHTML/); assert.match(client, /content\.innerHTML/); assert.match(home, /data-my-stk-content[\s\S]*data-my-stk-global-stats/);
