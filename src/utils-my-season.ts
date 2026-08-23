@@ -19,6 +19,17 @@ const SURFACES: Record<string, BasicSurface> = {
 /** Combined and unknown values intentionally return null: one event can prove only one category. */
 export const normalizeBasicSurface = (value: string): BasicSurface | null => SURFACES[normalize(value)] ?? null;
 export const normalizeRegionKey = (value: string) => normalize(value);
+export const CANONICAL_SEASON_REGION_KEYS = new Set([
+  'pomurska', 'podravska', 'koroška', 'savinjska', 'zasavska', 'posavska',
+  'jugovzhodna', 'primorsko-notranjska', 'osrednjeslovenska', 'gorenjska',
+  'goriška', 'obalno-kraška'
+]);
+const SEASON_REGION_ALIASES: Record<string, string> = { 'jugovzhodna slovenija': 'jugovzhodna' };
+export const normalizeCanonicalSeasonRegionKey = (value: string) => {
+  const key = normalizeRegionKey(value);
+  const canonical = SEASON_REGION_ALIASES[key] ?? key;
+  return CANONICAL_SEASON_REGION_KEYS.has(canonical) ? canonical : null;
+};
 export const formatSeasonRegionLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishRegion(value) : value;
 export const formatSeasonSurfaceLabel = (value: string, language: 'sl' | 'en') => language === 'en' ? formatEnglishSurface(value) : value;
 
@@ -38,7 +49,7 @@ export const getNextSavedRace = (items: SavedRaceResolution[]) => items.find((it
 
 export const getSeasonSummary = (items: SavedRaceResolution[], year: PublicYear = DEFAULT_PUBLIC_YEAR, todayIso?: string) => {
   const completed = getCompletedRaces(items, year, todayIso);
-  const regions = new Set(completed.map((item) => normalizeRegionKey(item.event?.region ?? item.snapshot?.region ?? '')).filter(Boolean));
+  const regions = new Set(completed.map((item) => normalizeCanonicalSeasonRegionKey(item.event?.region ?? item.snapshot?.region ?? '')).filter((value): value is string => Boolean(value)));
   const surfaces = new Set(completed.map((item) => normalizeBasicSurface(item.event?.surface ?? item.snapshot?.surface ?? '')).filter((value): value is BasicSurface => Boolean(value)));
   return { completed, completedCount: completed.length, distinctEventCount: completed.length, regionCount: regions.size, surfaceCount: surfaces.size, regions, surfaces };
 };
@@ -83,6 +94,7 @@ const FORMS: Record<SloveneCountKind, [string, string, string, string]> = {
 };
 export const formatSloveneCount = (count: number, kind: SloveneCountKind) => {
   const mod100 = Math.abs(count) % 100;
-  const form = mod100 === 1 ? 0 : mod100 === 2 ? 1 : (mod100 === 3 || mod100 === 4) ? 2 : 3;
+  const mod10 = mod100 % 10;
+  const form = mod100 >= 11 && mod100 <= 14 ? 3 : mod10 === 1 ? 0 : mod10 === 2 ? 1 : (mod10 === 3 || mod10 === 4) ? 2 : 3;
   return `${count} ${FORMS[kind][form]}`;
 };

@@ -6,6 +6,7 @@ import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
 import { attachMyStkAdditionalData, enrichMyStkWhenReady, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
+const canonicalRegions = ['Pomurska', 'Podravska', 'Koroška', 'Savinjska', 'Zasavska', 'Posavska', 'Jugovzhodna', 'Primorsko-notranjska', 'Osrednjeslovenska', 'Gorenjska', 'Goriška', 'Obalno-kraška'];
 const many = (n, options = {}) => Array.from({ length: n }, (_, index) => item(String(index), typeof options === 'function' ? options(index) : options));
 const achievement = (items, key, year = '2026') => getSeasonAchievements(items, year).find((value) => value.key === key);
 
@@ -83,10 +84,10 @@ describe('My STK season', () => {
     assert.equal(formatSeasonRegionLabel(progress[0].label, 'en'), 'Upper Carniola');
   });
   it('keeps Nomad as a six-region milestone while region progress continues to Y/Y', () => {
-    const six = many(6, i => ({ region: `R${i}` })); const eight = many(8, i => ({ region: `R${i}` }));
+    const six = many(6, i => ({ region: canonicalRegions[i] })); const eight = many(8, i => ({ region: canonicalRegions[i] }));
     assert.equal(achievement(six, 'nomad').achieved, true);
-    assert.equal(getSeasonRegionProgress(six, many(8).map((_, i) => `R${i}`)).filter((r) => r.visited).length, 6);
-    assert.equal(getSeasonRegionProgress(eight, many(8).map((_, i) => `R${i}`)).filter((r) => r.visited).length, 8);
+    assert.equal(getSeasonRegionProgress(six, canonicalRegions.slice(0, 8)).filter((r) => r.visited).length, 6);
+    assert.equal(getSeasonRegionProgress(eight, canonicalRegions.slice(0, 8)).filter((r) => r.visited).length, 8);
   });
   it('handles achievement thresholds', () => {
     assert.equal(achievement([], 'debut').achieved, false); assert.equal(achievement([item('a')], 'debut').achieved, true);
@@ -101,7 +102,7 @@ describe('My STK season', () => {
   });
   it('selects the next achievement deterministically and handles all complete', () => {
     assert.equal(getNextAchievement([])?.key, 'debut'); assert.equal(getNextAchievement(many(1))?.key, 'five');
-    assert.equal(getNextAchievement(many(20, i => ({ region: `R${i}`, surface: ['cesta', 'trail', 'gorski'][i % 3] }))), null);
+    assert.equal(getNextAchievement(many(20, i => ({ region: canonicalRegions[i % canonicalRegions.length], surface: ['cesta', 'trail', 'gorski'][i % 3] }))), null);
   });
   it('formats Slovene race, region and achievement counts', () => {
     for (const [kind, expected] of [['completed-race', ['1 opravljen tek','2 opravljena teka','3 opravljeni teki','5 opravljenih tekov']], ['region', ['1 regija','2 regiji','3 regije','5 regij']], ['achievement', ['1 dosežek','2 dosežka','3 dosežki','5 dosežkov']]]) assert.deepEqual([1,2,3,5].map((n) => formatSloveneCount(n, kind)), expected);
@@ -193,11 +194,27 @@ describe('Slovenia regional progress map', () => {
 
   it('uses the shared Slovene grammar for regional completed-race counts', async () => {
     const { renderSloveniaRegionStatusList } = await import('../.cache/dist-test/utils-slovenia-map.js');
-    const expected = new Map([[1, '1 opravljen tek'], [2, '2 opravljena teka'], [3, '3 opravljeni teki'], [4, '4 opravljeni teki'], [5, '5 opravljenih tekov'], [22, '22 opravljenih tekov'], [23, '23 opravljenih tekov'], [24, '24 opravljenih tekov'], [25, '25 opravljenih tekov']]);
+    const expected = new Map([[1, '1 opravljen tek'], [2, '2 opravljena teka'], [3, '3 opravljeni teki'], [4, '4 opravljeni teki'], [5, '5 opravljenih tekov'], [22, '22 opravljena teka'], [23, '23 opravljeni teki'], [24, '24 opravljeni teki'], [25, '25 opravljenih tekov']]);
     for (const [count, label] of expected) {
+      assert.equal(formatSloveneCount(count, 'completed-race'), label);
       const list = renderSloveniaRegionStatusList([{ key: 'gorenjska', label: 'Gorenjska', visited: true, completedEventCount: count }], 'sl');
       assert.match(list, new RegExp(`Gorenjska: obiskana, ${label}\\.`));
     }
+  });
+
+  it('ignores unknown legacy regions in map counters and the Nomad achievement', async () => {
+    const { getSloveniaMapRegions } = await import('../.cache/dist-test/utils-slovenia-map.js');
+    const items = [...canonicalRegions.map((region, index) => item(`canonical-${index}`, { region })), item('legacy', { region: 'Stara napačna regija' })];
+    const progress = getSeasonRegionProgress(items, [...canonicalRegions, 'Stara napačna regija']);
+    const mapped = getSloveniaMapRegions(progress, 'sl');
+    const visitedMapRegions = mapped.filter((region) => region.visited).length;
+    assert.equal(mapped.length, 12);
+    assert.equal(visitedMapRegions, 12);
+    assert.equal(getSeasonSummary(items).regionCount, visitedMapRegions);
+    assert.ok(visitedMapRegions <= 12);
+    const legacyOnly = [item('legacy-only', { region: 'Stara napačna regija' })];
+    assert.equal(getSeasonSummary(legacyOnly).regionCount, 0);
+    assert.equal(achievement(legacyOnly, 'nomad').current, 0);
   });
 
   it('supports the complete state and shares one renderer between season and home', async () => {

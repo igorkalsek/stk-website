@@ -1,4 +1,4 @@
-import { formatSeasonRegionLabel, formatSloveneCount, normalizeRegionKey, type SeasonRegionProgress } from './utils-my-season.js';
+import { formatSeasonRegionLabel, formatSloveneCount, normalizeCanonicalSeasonRegionKey, type SeasonRegionProgress } from './utils-my-season.js';
 
 /**
  * Geometry: Eurostat GISCO NUTS 2024, NUTS level 3 and national boundary,
@@ -34,16 +34,12 @@ export type SloveniaMapLanguage = 'sl' | 'en';
 export type SloveniaMapVariant = 'full' | 'compact';
 
 const escapeHtml = (value: string | number) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character] ?? character);
-const REGION_KEY_ALIASES: Record<string, string> = { jugovzhodna: 'jugovzhodna slovenija' };
-const regionKey = (value: string) => {
-  const normalized = normalizeRegionKey(value);
-  return REGION_KEY_ALIASES[normalized] ?? normalized;
-};
+const regionKey = (value: string) => normalizeCanonicalSeasonRegionKey(value);
 
 export const getSloveniaMapRegions = (progress: SeasonRegionProgress[], language: SloveniaMapLanguage) => {
   const byKey = new Map(progress.map((region) => [regionKey(region.key || region.label), region]));
   return SLOVENIA_STATISTICAL_REGIONS.map((geometry) => {
-    const region = byKey.get(geometry.key) ?? { key: geometry.key, label: geometry.sl, visited: false, completedEventCount: 0 };
+    const region = byKey.get(regionKey(geometry.key)) ?? { key: geometry.key, label: geometry.sl, visited: false, completedEventCount: 0 };
     const canonicalLabel = geometry.key === 'jugovzhodna slovenija' ? 'Jugovzhodna' : geometry.sl;
     return { ...geometry, ...region, label: language === 'en' ? formatSeasonRegionLabel(canonicalLabel, language) : geometry.sl };
   });

@@ -10,7 +10,7 @@ import { backfillCompletedRaceSnapshots, getCompletedRaceSnapshotKey } from './u
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from './utils-additional.js';
 import { buildRegistrationDeadlineViews } from './utils-registration-deadlines.js';
 import { renderActionIcon } from './utils-action-icons.js';
-import { renderSloveniaRegionsMap, renderSloveniaRegionStatusList } from './utils-slovenia-map.js';
+import { getSloveniaMapRegions, renderSloveniaRegionsMap, renderSloveniaRegionStatusList } from './utils-slovenia-map.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
@@ -86,22 +86,23 @@ export const initMyStk = async (root = document) => {
   const activeEvents = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)).filter(Boolean);
   const availableRegions = activeEvents.map((event) => event!.region).filter(Boolean);
   const regions = getSeasonRegionProgress(items, availableRegions, DEFAULT_PUBLIC_YEAR);
+  const visitedRegionCount = getSloveniaMapRegions(regions, language).filter((region) => region.visited).length;
   const summary = getSeasonSummary(items, DEFAULT_PUBLIC_YEAR);
   const achievements = getSeasonAchievements(items, DEFAULT_PUBLIC_YEAR);
   const nextRace = getNextSavedRace(items);
   const nomad = achievements.find((item) => item.key === 'nomad')!;
   const totalRegions = 12;
-  const regionalCopy = summary.regionCount === 0
+  const regionalCopy = visitedRegionCount === 0
     ? (language === 'en' ? 'Choose your first region to explore.' : 'Izberite prvo regijo za odkrivanje.')
     : nomad.achieved
-      ? `${language === 'en' ? 'Nomad ✓' : 'Nomad ✓'}${summary.regionCount < totalRegions ? ` · ${language === 'en' ? `${totalRegions - summary.regionCount} regions to all of Slovenia.` : `Še ${formatSloveneCount(totalRegions - summary.regionCount, 'region')} do cele Slovenije.`}` : ''}`
-      : language === 'en' ? `${6 - summary.regionCount} regions to the Nomad achievement.` : `Še ${formatSloveneCount(6 - summary.regionCount, 'region')} do dosežka Nomad.`;
+      ? `${language === 'en' ? 'Nomad ✓' : 'Nomad ✓'}${visitedRegionCount < totalRegions ? ` · ${language === 'en' ? `${totalRegions - visitedRegionCount} regions to all of Slovenia.` : `Še ${formatSloveneCount(totalRegions - visitedRegionCount, 'region')} do cele Slovenije.`}` : ''}`
+      : language === 'en' ? `${6 - visitedRegionCount} regions to the Nomad achievement.` : `Še ${formatSloveneCount(6 - visitedRegionCount, 'region')} do dosežka Nomad.`;
   const completedCopy = language === 'en' ? `${summary.completedCount} completed races` : formatSloveneCount(summary.completedCount, 'completed-race');
   const distinctCopy = language === 'en' ? `${summary.distinctEventCount} different events` : formatSloveneCount(summary.distinctEventCount, 'distinct-event');
   const completedLabel = completedCopy.replace(/^\d+\s+/, '');
   const distinctLabel = distinctCopy.replace(/^\d+\s+/, '');
   const nextCard = renderMyStkNextRace(nextRace, language, todayIso, finder);
-  content.innerHTML = `<div class="my-stk-heading"><h2 id="my-stk-title">${language === 'en' ? 'My STK' : 'Moj STK'}</h2></div><div class="my-stk-dashboard"><article class="my-stk-next-card"><span class="eyebrow">${language === 'en' ? 'My next race' : 'Naslednji moj tek'}</span>${nextCard}</article><article><span class="eyebrow">${language === 'en' ? `My ${DEFAULT_PUBLIC_YEAR} season` : `Moja sezona ${DEFAULT_PUBLIC_YEAR}`}</span><div class="my-stk-season-summary"><span class="season-metric season-metric-primary"><strong>${summary.completedCount}</strong><span>${escapeHtml(completedLabel)}</span></span><span class="season-metric"><strong>${summary.regionCount} / ${totalRegions}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(distinctLabel)}</span></span></div><progress max="${Math.max(nomad.target, 1)}" value="${nomad.current}" aria-label="${language === 'en' ? 'Progress to Nomad achievement' : 'Napredek do dosežka Nomad'}"></progress><a class="button button-small button-secondary-light" href="${language === 'en' ? '/en/my-races/?view=season' : '/moji-teki/?view=season'}">${language === 'en' ? 'Open my season' : 'Odpri mojo sezono'}</a></article><article class="my-stk-discovery-card"><span class="eyebrow">${language === 'en' ? 'Exploring Slovenia' : 'Odkrivam Slovenijo'}</span><h3>${summary.regionCount} / ${totalRegions} ${language === 'en' ? 'regions' : 'regij'}</h3>${renderSloveniaRegionsMap(regions, language, 'compact')}${renderSloveniaRegionStatusList(regions, language, 'sr-only')}<p>${regionalCopy}</p><a class="button button-small button-secondary-light" href="${finder}" data-region-discovery>${language === 'en' ? 'Discover a race in a new region' : 'Odkrij tek v novi regiji'}</a></article></div>`;
+  content.innerHTML = `<div class="my-stk-heading"><h2 id="my-stk-title">${language === 'en' ? 'My STK' : 'Moj STK'}</h2></div><div class="my-stk-dashboard"><article class="my-stk-next-card"><span class="eyebrow">${language === 'en' ? 'My next race' : 'Naslednji moj tek'}</span>${nextCard}</article><article><span class="eyebrow">${language === 'en' ? `My ${DEFAULT_PUBLIC_YEAR} season` : `Moja sezona ${DEFAULT_PUBLIC_YEAR}`}</span><div class="my-stk-season-summary"><span class="season-metric season-metric-primary"><strong>${summary.completedCount}</strong><span>${escapeHtml(completedLabel)}</span></span><span class="season-metric"><strong>${visitedRegionCount} / ${totalRegions}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(distinctLabel)}</span></span></div><progress max="${Math.max(nomad.target, 1)}" value="${nomad.current}" aria-label="${language === 'en' ? 'Progress to Nomad achievement' : 'Napredek do dosežka Nomad'}"></progress><a class="button button-small button-secondary-light" href="${language === 'en' ? '/en/my-races/?view=season' : '/moji-teki/?view=season'}">${language === 'en' ? 'Open my season' : 'Odpri mojo sezono'}</a></article><article class="my-stk-discovery-card"><span class="eyebrow">${language === 'en' ? 'Exploring Slovenia' : 'Odkrivam Slovenijo'}</span><h3>${visitedRegionCount} / ${totalRegions} ${language === 'en' ? 'regions' : 'regij'}</h3>${renderSloveniaRegionsMap(regions, language, 'compact')}${renderSloveniaRegionStatusList(regions, language, 'sr-only')}<p>${regionalCopy}</p><a class="button button-small button-secondary-light" href="${finder}" data-region-discovery>${language === 'en' ? 'Discover a race in a new region' : 'Odkrij tek v novi regiji'}</a></article></div>`;
   content.querySelector('[data-region-discovery]')?.addEventListener('click', () => trackStkEvent({ event_type: 'region_discovery_clicked', language, placement: 'home_my_stk' }));
   await enrichMyStkWhenReady(items, additionalRequests, years, () => runtime.renderVersion === renderVersion, (enrichedItems) => {
     const enrichedNextRace = getNextSavedRace(enrichedItems);
