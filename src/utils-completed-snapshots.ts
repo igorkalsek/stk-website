@@ -20,10 +20,16 @@ export const validateCompletedRaceSnapshotsState = (value: unknown): CompletedRa
   return { version: 1, snapshots };
 };
 export const readCompletedRaceSnapshots = (storage?: MinimalStorage | null): CompletedRaceSnapshotsState => { try { return validateCompletedRaceSnapshotsState(JSON.parse(storage?.getItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY) || 'null')) ?? { version: 1, snapshots: [] }; } catch { return { version: 1, snapshots: [] }; } };
-export const upsertCompletedRaceSnapshot = (storage: MinimalStorage | null | undefined, event: Pick<PublicRaceEvent, 'row' | 'id' | 'date' | 'title' | 'year' | 'place' | 'region' | 'surface' | 'naziv_prireditve'>) => {
-  const state = readCompletedRaceSnapshots(storage); const snapshot: CompletedRaceSnapshot = { version: 1, eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title, place: event.place, region: event.region, surface: event.surface };
+type SnapshotEvent = Pick<PublicRaceEvent, 'row' | 'id' | 'date' | 'title' | 'year' | 'place' | 'region' | 'surface' | 'naziv_prireditve'>;
+export const upsertCompletedRaceSnapshot = (storage: MinimalStorage | null | undefined, event: SnapshotEvent, explicitEventId = getStableEventId(event)) => {
+  const state = readCompletedRaceSnapshots(storage); const snapshot: CompletedRaceSnapshot = { version: 1, eventId: explicitEventId, year: event.year, date: event.date, title: event.title, place: event.place, region: event.region, surface: event.surface };
   const snapshots = [snapshot, ...state.snapshots.filter((item) => getCompletedRaceSnapshotKey(item) !== getCompletedRaceSnapshotKey(snapshot))];
   try { storage?.setItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY, JSON.stringify({ version: 1, snapshots })); return Boolean(storage); } catch { return false; }
+};
+export const ensureCompletedRaceSnapshot = (storage: MinimalStorage | null | undefined, event: SnapshotEvent, explicitEventId: string) => {
+  const state = readCompletedRaceSnapshots(storage);
+  if (state.snapshots.some((item) => getCompletedRaceSnapshotKey(item) === `${event.year}:${explicitEventId}`)) return true;
+  return upsertCompletedRaceSnapshot(storage, event, explicitEventId);
 };
 
 /** Backfills only missing snapshots for valid, resolved historical completions. Never dispatches or overwrites. */

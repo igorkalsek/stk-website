@@ -203,6 +203,28 @@ describe('saved races UI interactions', () => {
     assert.deepEqual(browserEvents, []);
   });
 
+  it('does not overwrite an existing historical snapshot during detail initialization', async () => {
+    const select = new FakeSelect({ detailMetadata: true });
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(), status: 'completed' }])));
+    const historical = { version: 1, eventId: 'r000173', year: '2026', date: '2026-05-10', title: 'Original title', place: 'Original place', region: 'Original region', surface: 'trail' };
+    storage.setItem(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY, JSON.stringify({ version: 1, snapshots: [historical] }));
+    await setupSavedRaceUi({ controls: [select], storage });
+    assert.deepEqual(JSON.parse(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY)).snapshots, [historical]);
+  });
+
+  it('preserves the saved eventId when backfilling a rowless detail event', async () => {
+    const eventId = '2026-original-api-title-place';
+    const select = new FakeSelect({ eventId, detailMetadata: true });
+    const storage = createMemoryStorage();
+    storage.setItem(SAVED_RACES_STORAGE_KEY, JSON.stringify(state([{ ...race(eventId), title: 'Normalized display title', status: 'completed' }])));
+    select.dataset.eventTitle = 'Normalized display title';
+    await setupSavedRaceUi({ controls: [select], storage });
+    const [snapshot] = JSON.parse(storage.value(COMPLETED_RACE_SNAPSHOTS_STORAGE_KEY)).snapshots;
+    assert.equal(snapshot.eventId, eventId);
+    assert.equal(`${snapshot.year}:${snapshot.eventId}`, `2026:${eventId}`);
+  });
+
   it('does not backfill a future legacy completion from detail metadata', async () => {
     const select = new FakeSelect({ year: '2027', date: '2027-05-10', detailMetadata: true });
     const storage = createMemoryStorage();
