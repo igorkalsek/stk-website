@@ -176,6 +176,26 @@ describe('My STK season', () => {
     assert.match(emptyEn, /data-achievement-state="locked"[\s\S]*Locked/);
     assert.equal((sl.match(/<svg class="achievement-symbol" aria-hidden="true"/g) ?? []).length, 6);
   });
+  it('compacts region progress for zero, one and all visited regions in both languages', () => {
+    const emptySl = renderSeason([], canonicalRegions, 'sl');
+    assert.match(emptySl, /Opravi tek in obišči svojo prvo regijo/);
+    assert.match(emptySl, /<summary>Preostale regije \(12\)<\/summary>/);
+    const oneEn = renderSeason([item('one')], canonicalRegions, 'en');
+    assert.match(oneEn, /season-regions-visited[\s\S]*Upper Carniola/);
+    assert.match(oneEn, /<summary>Remaining regions \(11\)<\/summary>/);
+    const all = renderSeason(many(12, (index) => ({ region: canonicalRegions[index] })), canonicalRegions, 'sl');
+    assert.equal((all.match(/class="season-region is-visited"/g) ?? []).length, 12);
+    assert.doesNotMatch(all, /season-regions-disclosure|Preostale regije/);
+  });
+  it('shows each ordinary achievement value once while retaining the All-terrain breakdown', () => {
+    const html = renderSeason([item('road')], canonicalRegions, 'en');
+    const five = html.match(/data-achievement="five"[\s\S]*?<\/article>/)?.[0] ?? '';
+    assert.equal((five.match(/class="achievement-value">1 \/ 5/g) ?? []).length, 1);
+    assert.doesNotMatch(five, /<p>1 \/ 5<\/p>/);
+    assert.match(five, /<progress max="5" value="1" aria-label="Five: 1 \/ 5">/);
+    const terrain = html.match(/data-achievement="all-terrain"[\s\S]*?<\/article>/)?.[0] ?? '';
+    assert.match(terrain, /Road ✓ · Trail ○ · Mountain ○/);
+  });
   it('keeps live stats outside async dashboard replacement', () => {
     const client = readFileSync('src/my-stk-client.ts', 'utf8'); const home = readFileSync('src/pages/index.astro', 'utf8');
     assert.doesNotMatch(client, /outerHTML/); assert.match(client, /content\.innerHTML/); assert.match(home, /data-my-stk-content[\s\S]*data-my-stk-global-stats/);

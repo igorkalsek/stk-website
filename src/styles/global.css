@@ -5907,7 +5907,7 @@ main {
 .season-region.is-visited { border-color: rgba(16, 64, 80, .26); background: rgba(200, 230, 201, .16); box-shadow: inset 3px 0 0 var(--deep-teal); }
 .season-region > span { padding-left: 1.35rem; color: var(--muted); font-size: .78rem; }
 
-.season-passport { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .8rem; }
+.season-passport { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 360px)); justify-content: start; gap: .8rem; }
 .season-stamp { position: relative; display: grid; min-width: 0; min-height: 126px; align-content: center; gap: .18rem; padding: .85rem 4.3rem .85rem .9rem; overflow: hidden; border: 2px solid rgba(16, 64, 80, .68); border-radius: 16px 13px 17px 12px; background: #fbfcf7; color: var(--ink); text-align: left; text-decoration: none; box-shadow: inset 0 0 0 3px #fbfcf7, inset 0 0 0 4px rgba(16, 64, 80, .28); transform: rotate(-.35deg); }
 .season-stamp:nth-child(even) { transform: rotate(.35deg); }
 .season-stamp:hover { border-color: var(--deep-teal); background: rgba(200, 230, 201, .16); color: var(--deep-teal); }
@@ -5922,6 +5922,7 @@ main {
 .season-stamp.is-mountain { border-style: double; border-width: 3px; }
 .season-stamp-date { color: var(--ink); font-size: .75rem; font-weight: 750; }
 .season-stamp-meta { color: var(--muted); font-size: .74rem; line-height: 1.25; text-transform: uppercase; }
+.season-stamp-meta, .season-stamp-date, .season-stamp-mark { min-width: 0; overflow-wrap: anywhere; }
 .season-stamp.is-unresolved { border-style: dashed; background: #f5f6f2; }
 .season-stamp-unavailable { margin-top: .2rem; color: #59645d; font-size: .68rem; line-height: 1.2; }
 
@@ -5969,7 +5970,7 @@ main {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .my-stk-loading span, .stat-loading { animation: stk-skeleton 1.4s ease-in-out infinite alternate; }
+  .my-stk-loading span, .stat-loading, .season-loading-skeleton span { animation: stk-skeleton 1.4s ease-in-out infinite alternate; }
 }
 @keyframes stk-skeleton { to { opacity: .5; } }
 
@@ -5993,6 +5994,18 @@ main {
 .season-region-list { padding-top: .8rem; border-top: 1px solid var(--line); }
 .season-region-list > h3 { font-size: 1rem; }
 .season-region-list .season-regions { opacity: .88; }
+.season-regions-disclosure { margin-top: .75rem; border: 1px solid var(--line); border-radius: 11px; background: #f7faf6; }
+.season-regions-disclosure summary { padding: .75rem .9rem; color: var(--deep-teal); font-weight: 800; cursor: pointer; }
+.season-regions-disclosure summary:focus-visible { outline: 3px solid rgba(240, 160, 48, .6); outline-offset: 2px; }
+.season-regions-disclosure .season-regions { padding: 0 .75rem .75rem; }
+.season-regions-start { margin: 0; color: var(--muted); }
+.season-map-cta { margin-top: 1rem; }
+.season-loading-status { margin-bottom: .75rem; color: var(--deep-teal); font-weight: 800; }
+.season-loading-skeleton { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.season-loading-skeleton span { display: block; border-radius: 14px; background: #e4ece6; }
+.season-loading-summary { grid-column: 1 / -1; height: 104px; }
+.season-loading-map { grid-column: 1 / -1; height: min(34vw, 260px); min-height: 180px; }
+.season-loading-card { height: 112px; }
 .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 @media (max-width: 620px) {
   .season-map-panel { grid-template-columns: 1fr; gap: .65rem; }
@@ -6000,6 +6013,9 @@ main {
   .season-map-copy .eyebrow, .season-map-copy h3, .season-map-copy p { grid-column: 1 / -1; }
   .season-map-copy h3 { margin-bottom: .25rem; }
   .season-map-count { font-size: 1.55rem; }
+  .season-passport { grid-template-columns: minmax(0, 1fr); }
+  .season-loading-skeleton { grid-template-columns: 1fr; }
+  .season-loading-card { grid-column: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .slovenia-map-outline { fill: none; stroke: var(--deep-teal); stroke-width: 5; stroke-linejoin: round; opacity: .72; }
