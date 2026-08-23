@@ -1,6 +1,8 @@
 import { trackStkEvent } from './lib/stkAnalytics.js';
 import { getSavedRaceStatus, isRaceSaved, isSavedRaceStatus, readSavedRaces, removeSavedRaceFromStorage, SAVED_RACE_STATUS_COPY, SAVED_RACE_STATUS_LABELS, setSavedRaceStatusInStorage, toggleSavedRaceInStorage, type MinimalStorage, type SavedRaceInput } from './utils-saved-races.js';
 import { dispatchSavedRacesChanged } from './saved-races-events.js';
+import { isCompletionAllowed } from './utils-date.js';
+import { ensureCompletedRaceSnapshot, upsertCompletedRaceSnapshot } from './utils-completed-snapshots.js';
 
 type Language = 'sl' | 'en';
 const LABELS = {
@@ -48,6 +50,14 @@ const prepareStatusControl = (control: HTMLSelectElement) => {
     const copy = SAVED_RACE_STATUS_COPY[language];
     control.append(new Option(copy.empty, ''), new Option(SAVED_RACE_STATUS_LABELS[language].following, 'following'), new Option(SAVED_RACE_STATUS_LABELS[language].planning, 'planning'), new Option(SAVED_RACE_STATUS_LABELS[language].registered, 'registered'), new Option(SAVED_RACE_STATUS_LABELS[language].completed, 'completed'));
   }
+  const completed = Array.from(control.options).find((option) => option.value === 'completed');
+  if (completed) completed.disabled = !isCompletionAllowed(control.dataset.eventDate || '');
+};
+const ensureCompletedSnapshotForControl = (control: HTMLSelectElement, race: SavedRaceInput, status: string | null, overwrite = false) => {
+  if (status !== 'completed' || !isCompletionAllowed(race.date) || !['eventPlace', 'eventRegion', 'eventSurface'].every((key) => key in control.dataset)) return;
+  const event = { id: race.eventId, row: '', year: race.year, date: race.date, title: race.title, naziv_prireditve: race.title, place: control.dataset.eventPlace || '', region: control.dataset.eventRegion || '', surface: control.dataset.eventSurface || '' };
+  if (overwrite) upsertCompletedRaceSnapshot(getStorage(), event, race.eventId);
+  else ensureCompletedRaceSnapshot(getStorage(), event, race.eventId);
 };
 
 export const initSavedRaceButtons = (root: ParentNode = document) => {
@@ -84,6 +94,7 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
     const race = getRace(control);
     const current = race ? getSavedRaceStatus(state, race) : null;
     setControlState(control, current);
+    if (race) ensureCompletedSnapshotForControl(control, race, current);
     if (control.dataset.raceStatusInitialized === 'true') return;
     control.dataset.raceStatusInitialized = 'true';
     control.addEventListener('change', () => {
@@ -92,9 +103,11 @@ export const initSavedRaceButtons = (root: ParentNode = document) => {
       const beforeStatus = getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace);
       const nextStatus = control.value;
       if (nextStatus && isSavedRaceStatus(nextStatus)) {
+        if (nextStatus === 'completed' && !isCompletionAllowed(changedRace.date)) { setControlState(control, beforeStatus); return; }
         const result = setSavedRaceStatusInStorage(getStorage(), changedRace, nextStatus);
         if (!result.persistent) return;
         syncRaceControls(changedRace, true, nextStatus);
+        ensureCompletedSnapshotForControl(control, changedRace, nextStatus, true);
         if (!beforeStatus) trackStkEvent({ event_type: 'race_saved', event_id: changedRace.eventId, event_name: changedRace.title, event_date: changedRace.date, event_year: changedRace.year, language: getLanguage(control), placement: getPlacement(control) });
         if (beforeStatus !== nextStatus && getSavedRaceStatus(readSavedRaces(getStorage()).state, changedRace) === nextStatus) dispatchSavedRacesChanged();
       } else {

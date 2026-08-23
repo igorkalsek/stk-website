@@ -23,6 +23,9 @@ export type PublicRaceEvent = {
   kidsRaces: boolean;
 };
 
+/** Detail/archive mapping deliberately has no date cutoff. */
+export const mapPublicRaceEventForDetail = (item: ApiRecord, year: string) => mapPublicRaceEvent(item, year, 0);
+
 type ApiRecord = Record<string, unknown>;
 
 const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];

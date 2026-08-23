@@ -10,12 +10,13 @@ const achievement = (items, key, year = '2026') => getSeasonAchievements(items, 
 
 describe('My STK season', () => {
   it('counts only completed races and deduplicates keys', () => assert.equal(getCompletedRaces([item('a'), item('a'), item('b', { status: 'planning' })]).length, 1));
-  it('scopes summaries and achievements to one public year', () => {
+  it('scopes completed races to one public year at a deterministic date', () => {
     const planning2027 = [item('done'), item('plan', { year: '2027', status: 'planning' })];
-    assert.equal(getSeasonSummary(planning2027, '2026').completedCount, 1);
+    assert.equal(getCompletedRaces(planning2027, '2026', '2026-08-23').length, 1);
     const both = [item('26'), item('27', { year: '2027' })];
-    assert.equal(getSeasonSummary(both, '2026').completedCount, 1); assert.equal(getSeasonSummary(both, '2027').completedCount, 1);
+    assert.equal(getCompletedRaces(both, '2026', '2026-08-23').length, 1); assert.equal(getCompletedRaces(both, '2027', '2026-08-23').length, 0);
   });
+  it('counts yesterday and today but rejects tomorrow defensively', () => { const dates = ['2026-08-21', '2026-08-22', '2026-08-23']; const rows = dates.map((date, i) => ({ ...item(String(i)), savedRace: { ...item(String(i)).savedRace, date }, event: { ...item(String(i)).event, date } })); assert.deepEqual(getCompletedRaces(rows, '2026', '2026-08-22').map((row) => row.savedRace.date), dates.slice(0, 2)); });
   it('selects only a non-completed upcoming next race', () => {
     assert.equal(getNextSavedRace([item('today', { timing: 'upcoming' })]), null);
     assert.equal(getNextSavedRace([item('future-complete', { timing: 'upcoming' })]), null);
@@ -27,6 +28,15 @@ describe('My STK season', () => {
     const progress = getSeasonRegionProgress([item('a'), item('b', { region: ' gorenjska ' }), item('c', { region: 'Goriška' })], ['', 'Gorenjska', 'gorenjska', 'Goriška', 'Savinjska']);
     assert.deepEqual(progress.map(({ key, visited, completedEventCount }) => [key, visited, completedEventCount]), [['gorenjska', true, 2], ['goriška', true, 1], ['savinjska', false, 0]]);
     assert.equal(getSeasonRegionProgress([], ['A', 'B']).filter((r) => r.visited).length, 0);
+  });
+  it('includes snapshot-only regions once and keeps the denominator consistent', () => {
+    const unresolved = { ...item('archived', { resolved: false }), snapshot: { version: 1, eventId: 'archived', year: '2026', date: '2026-08-01', title: 'Archived', place: 'Kraj', region: ' Gorenjska ', surface: 'cesta' } };
+    const liveWithSameSnapshot = { ...item('live', { region: 'gorenjska' }), snapshot: { version: 1, eventId: 'live', year: '2026', date: '2026-08-01', title: 'Live', place: 'Kraj', region: 'GORENJSKA', surface: 'cesta' } };
+    const items = [unresolved, liveWithSameSnapshot];
+    const progress = getSeasonRegionProgress(items, ['Gorenjska'], '2026', '2026-08-23');
+    assert.deepEqual(progress.map(({ key, label, visited, completedEventCount }) => [key, label, visited, completedEventCount]), [['gorenjska', 'Gorenjska', true, 2]]);
+    assert.ok(getSeasonSummary(items, '2026', '2026-08-23').regionCount <= progress.length);
+    assert.equal(formatSeasonRegionLabel(progress[0].label, 'en'), 'Upper Carniola');
   });
   it('keeps Nomad as a six-region milestone while region progress continues to Y/Y', () => {
     const six = many(6, i => ({ region: `R${i}` })); const eight = many(8, i => ({ region: `R${i}` }));

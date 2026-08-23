@@ -6,7 +6,7 @@ import { getPublicYearData } from '../../utils-build-data';
 import { DEFAULT_PUBLIC_YEAR } from '../../utils-public-year';
 import { selectUpcomingHomepageEvents } from '../../utils-home-events';
 
-const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearData(DEFAULT_PUBLIC_YEAR)).events);
+const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearData(DEFAULT_PUBLIC_YEAR)).upcomingEvents);
 ---
 
 <BaseLayout
