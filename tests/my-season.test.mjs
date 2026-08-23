@@ -147,6 +147,16 @@ describe('My STK season', () => {
       assert.match(icon, /aria-hidden="true"/); assert.doesNotMatch(icon, /tabindex|focusable/);
     }
   });
+  it('reserves mobile stamp space for the seal and switches narrow passports to one column', () => {
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    const mobileRule = css.indexOf('.season-stamp { min-height: 108px;');
+    const mobile = css.slice(css.lastIndexOf('@media (max-width: 720px)', mobileRule), mobileRule + 100);
+    const narrowRule = css.indexOf('.season-passport { grid-template-columns: 1fr; }', mobileRule);
+    const narrow = css.slice(css.lastIndexOf('@media (max-width: 600px)', narrowRule), narrowRule + 70);
+    assert.match(mobile, /\.season-stamp \{ min-height: 108px; padding: \.7rem 4\.3rem \.7rem \.7rem; \}/);
+    assert.match(narrow, /\.season-passport \{ grid-template-columns: 1fr; \}/);
+    assert.match(css, /\.season-stamp-seal \{[^}]*right: \.75rem;[^}]*width: 3rem;[^}]*height: 3rem;/);
+  });
   it('renders equivalent localized achievement states without changing thresholds', () => {
     const races = many(3, i => ({ region: canonicalRegions[i], surface: i === 0 ? 'cesta' : 'trail' }));
     const sl = renderSeason(races, canonicalRegions, 'sl');

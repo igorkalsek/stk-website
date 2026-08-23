@@ -5839,10 +5839,13 @@ main {
   .my-stk-dashboard article { padding: .9rem; }
   .season-regions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .season-passport { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .season-stamp { min-height: 108px; padding: .7rem; }
+  .season-stamp { min-height: 108px; padding: .7rem 4.3rem .7rem .7rem; }
   .my-stk-loading { grid-template-columns: 1fr; }
   .my-stk-loading span:not(:first-child) { display: none; }
   .my-stk-region-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .season-passport { grid-template-columns: 1fr; }
 }
 @media (max-width: 430px) {
   .my-stk-season-summary, .season-summary { gap: .35rem; padding-inline: .7rem; }
@@ -5850,7 +5853,6 @@ main {
   .season-metric strong { font-size: 1.18rem; }
   .season-metric span { font-size: .75rem; }
   .season-regions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
-  .season-passport { grid-template-columns: 1fr; }
   .season-region { min-height: 48px; padding: .5rem; font-size: .82rem; }
   .season-region > span { display: none; }
   .my-stk-region-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
