@@ -4062,6 +4062,116 @@ main {
   .my-race-remove { min-height: 44px; padding: 0.5rem; }
 }
 
+/* The plan is a chronological agenda; the axis is structural, not interactive. */
+.my-race-agenda {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.my-race-agenda-item {
+  position: relative;
+  min-width: 0;
+  padding: 0 0 1rem 2rem;
+}
+
+.my-race-axis-marker {
+  position: absolute;
+  top: 2.8rem;
+  bottom: -0.4rem;
+  left: 0.55rem;
+  width: 2px;
+  background: rgba(16, 64, 80, 0.18);
+}
+
+.my-race-axis-marker::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #628178;
+  box-shadow: 0 0 0 1px rgba(16, 64, 80, 0.24);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.my-race-agenda-item:last-child .my-race-axis-marker {
+  bottom: calc(100% - 2.8rem);
+}
+
+.my-race-month {
+  margin: 0 0 0.55rem;
+  color: var(--deep-teal);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.my-race-card.is-next {
+  border-color: rgba(16, 64, 80, 0.34);
+  background: linear-gradient(100deg, rgba(232, 246, 238, 0.72), #fff 42%);
+  box-shadow: 0 5px 18px rgba(16, 64, 80, 0.08);
+}
+
+.my-race-next-label {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  color: #315f52;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.my-race-card.is-completed {
+  border-color: rgba(21, 128, 61, 0.26);
+  background: rgba(240, 249, 244, 0.78);
+}
+
+.my-race-card.is-completed::before {
+  color: #166534;
+  content: "✓";
+  font-weight: 900;
+}
+
+@media (min-width: 980px) {
+  .my-race-card {
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .my-race-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .my-race-actions-primary,
+  .my-race-actions-secondary {
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 430px) {
+  .my-race-agenda-item { padding-left: 1.35rem; }
+  .my-race-axis-marker { left: 0.25rem; }
+  .my-race-overview { grid-template-columns: minmax(0, 1fr); }
+  .my-race-date,
+  .my-race-main,
+  .my-race-card-status { grid-column: 1; grid-row: auto; }
+  .race-status-select { width: 100%; max-width: 100%; }
+}
+
 .home-hero-card {
   border-radius: 22px;
   background:
