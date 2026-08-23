@@ -1,6 +1,6 @@
 const routePath = '<path d="M4 19V5l5-2 6 2 5-2v14l-5 2-6-2-5 2Z"/><path d="M9 3v14M15 5v14"/>';
 
-export type RaceActionIcon = 'registration' | 'notice' | 'calendar' | 'facts' | 'ticket' | 'route' | 'family' | 'notes' | 'vote' | 'link' | 'location' | 'share' | 'ultra' | 'elevation' | 'cup' | 'distances' | 'free' | 'race-day-registration';
+export type RaceActionIcon = 'registration' | 'notice' | 'calendar' | 'facts' | 'ticket' | 'route' | 'family' | 'notes' | 'vote' | 'link' | 'location' | 'share' | 'ultra' | 'elevation' | 'cup' | 'distances' | 'free' | 'race-day-registration' | 'remove';
 
 const paths: Record<RaceActionIcon, string> = {
   registration: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
@@ -20,7 +20,8 @@ const paths: Record<RaceActionIcon, string> = {
   cup: '<path d="M8 4h8v4a4 4 0 0 1-8 0Z"/><path d="M8 6H5a3 3 0 0 0 3 5M16 6h3a3 3 0 0 1-3 5M12 12v5M9 20h6M10 17h4"/>',
   distances: routePath,
   free: '<circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 11h6"/>',
-  'race-day-registration': '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8.5 16l2 2 5-5"/>'
+  'race-day-registration': '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8.5 16l2 2 5-5"/>',
+  remove: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/>'
 };
 
 export const renderActionIcon = (icon: RaceActionIcon): string =>

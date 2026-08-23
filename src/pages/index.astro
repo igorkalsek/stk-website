@@ -1376,6 +1376,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
           element.textContent = value === null ? 'Ni podatka' : numberFormatter.format(value);
+          element.classList.remove('stat-loading');
+          element.removeAttribute('aria-label');
         }
       }
 
