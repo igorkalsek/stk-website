@@ -26,6 +26,19 @@ export const attachMyStkAdditionalData = (items: ReturnType<typeof resolveSavedR
   return items.map((item) => enrichedByKey.has(item.key) ? { ...item, event: enrichedByKey.get(item.key)! } : item);
 };
 
+export const enrichMyStkWhenReady = async (
+  items: ReturnType<typeof resolveSavedRaces>,
+  requests: Map<PublicYear, Promise<Awaited<ReturnType<typeof fetchAdditionalEventData>>>>,
+  years: PublicYear[],
+  isCurrent: () => boolean,
+  apply: (items: ReturnType<typeof attachMyStkAdditionalData>) => void
+) => {
+  const rowsByYear = new Map<PublicYear, Awaited<ReturnType<typeof fetchAdditionalEventData>>>();
+  await Promise.all(years.map(async (year) => rowsByYear.set(year, await requests.get(year)!)));
+  if (!isCurrent()) return;
+  apply(attachMyStkAdditionalData(items, rowsByYear, years));
+};
+
 export const renderMyStkNextRace = (nextRace: ReturnType<typeof getNextSavedRace>, language: 'sl' | 'en', todayIso: string, finder: string) => {
   if (!nextRace?.event) return `<p>${language === 'en' ? 'You do not have a next race yet.' : 'Nimate še naslednjega teka.'}</p><a href="${finder}">${language === 'en' ? 'Find your next race' : 'Poiščite naslednji tek'}</a>`;
   const event = nextRace.event;
@@ -90,11 +103,9 @@ export const initMyStk = async (root = document) => {
   const regionGrid = regions.map((region) => `<span class="my-stk-region${region.visited ? ' is-visited' : ''}"><span aria-hidden="true">${region.visited ? '✓' : '○'}</span>${escapeHtml(formatSeasonRegionLabel(region.label, language))}</span>`).join('');
   content.innerHTML = `<div class="my-stk-heading"><h2 id="my-stk-title">${language === 'en' ? 'My STK' : 'Moj STK'}</h2></div><div class="my-stk-dashboard"><article class="my-stk-next-card"><span class="eyebrow">${language === 'en' ? 'My next race' : 'Naslednji moj tek'}</span>${nextCard}</article><article><span class="eyebrow">${language === 'en' ? `My ${DEFAULT_PUBLIC_YEAR} season` : `Moja sezona ${DEFAULT_PUBLIC_YEAR}`}</span><div class="my-stk-season-summary"><span class="season-metric season-metric-primary"><strong>${summary.completedCount}</strong><span>${escapeHtml(completedLabel)}</span></span><span class="season-metric"><strong>${summary.regionCount} / ${totalRegions}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(distinctLabel)}</span></span></div><progress max="${Math.max(nomad.target, 1)}" value="${nomad.current}" aria-label="${language === 'en' ? 'Progress to Nomad achievement' : 'Napredek do dosežka Nomad'}"></progress><a class="button button-small button-secondary-light" href="${language === 'en' ? '/en/my-races/?view=season' : '/moji-teki/?view=season'}">${language === 'en' ? 'Open my season' : 'Odpri mojo sezono'}</a></article><article class="my-stk-discovery-card"><span class="eyebrow">${language === 'en' ? 'Exploring Slovenia' : 'Odkrivam Slovenijo'}</span><h3>${summary.regionCount} / ${totalRegions} ${language === 'en' ? 'regions' : 'regij'}</h3><div class="my-stk-region-grid" aria-label="${language === 'en' ? 'Regional progress' : 'Napredek po regijah'}">${regionGrid}</div><p>${regionalCopy}</p><a class="button button-small button-secondary-light" href="${finder}" data-region-discovery>${language === 'en' ? 'Discover a race in a new region' : 'Odkrij tek v novi regiji'}</a></article></div>`;
   content.querySelector('[data-region-discovery]')?.addEventListener('click', () => trackStkEvent({ event_type: 'region_discovery_clicked', language, placement: 'home_my_stk' }));
-  const additionalByYear = new Map<PublicYear, Awaited<ReturnType<typeof fetchAdditionalEventData>>>();
-  await Promise.all(years.map(async (year) => additionalByYear.set(year, await additionalRequests.get(year)!)));
-  if (runtime.renderVersion !== renderVersion) return;
-  const enrichedItems = attachMyStkAdditionalData(items, additionalByYear, years);
-  const enrichedNextRace = getNextSavedRace(enrichedItems);
-  const nextCardMount = content.querySelector<HTMLElement>('.my-stk-next-card');
-  if (nextCardMount && enrichedNextRace?.event && 'additionalData' in enrichedNextRace.event && enrichedNextRace.event.additionalData) nextCardMount.innerHTML = `<span class="eyebrow">${language === 'en' ? 'My next race' : 'Naslednji moj tek'}</span>${renderMyStkNextRace(enrichedNextRace, language, todayIso, finder)}`;
+  await enrichMyStkWhenReady(items, additionalRequests, years, () => runtime.renderVersion === renderVersion, (enrichedItems) => {
+    const enrichedNextRace = getNextSavedRace(enrichedItems);
+    const nextCardMount = content.querySelector<HTMLElement>('.my-stk-next-card');
+    if (nextCardMount && enrichedNextRace?.event && 'additionalData' in enrichedNextRace.event && enrichedNextRace.event.additionalData) nextCardMount.innerHTML = `<span class="eyebrow">${language === 'en' ? 'My next race' : 'Naslednji moj tek'}</span>${renderMyStkNextRace(enrichedNextRace, language, todayIso, finder)}`;
+  });
 };

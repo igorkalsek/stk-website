@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
 import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
-import { attachMyStkAdditionalData, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
+import { attachMyStkAdditionalData, enrichMyStkWhenReady, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
 const many = (n, options = {}) => Array.from({ length: n }, (_, index) => item(String(index), typeof options === 'function' ? options(index) : options));
@@ -19,13 +19,27 @@ describe('My STK review regressions', () => {
     assert.match(renderMyStkNextRace(enriched, 'sl', '2026-08-23', '/iskalnik-tekov/'), /Naslednji prijavni rok[\s\S]*10\. sep/);
   });
 
-  it('renders the base dashboard before awaiting optional additional data', () => {
-    const client = readFileSync('src/my-stk-client.ts', 'utf8');
-    const masterAwait = client.indexOf('await Promise.all(years.map(async (year) => { try { const response');
-    const baseRender = client.indexOf('content.innerHTML =', masterAwait);
-    const optionalAwait = client.indexOf('await Promise.all(years.map(async (year) => additionalByYear');
-    assert.ok(masterAwait >= 0 && baseRender > masterAwait && optionalAwait > baseRender);
-    assert.match(client, /runtime\.renderVersion !== renderVersion[\s\S]*additionalByYear[\s\S]*runtime\.renderVersion !== renderVersion/);
+  it('renders before controlled optional enrichment, applies its deadline, and rejects a stale render', async () => {
+    const event = { id: '', row: '101', year: '2026', title: 'Testni tek', naziv_prireditve: 'Testni tek', date: '2026-09-20', dateValue: 1, place: 'Kraj', region: 'Gorenjska', surface: 'cesta', distances: '', startTime: '', noticeUrl: '', registrationUrl: '', voteUrl: '', publicNotes: '', cup: '', familyFriendly: false, kidsRaces: false, displayTitle: 'Testni tek' };
+    const race = { key: '2026:r000101', status: 'upcoming', savedRace: { version: 2, eventId: 'r000101', year: '2026', date: event.date, title: event.title, status: 'planning' }, event };
+    const additional = [{ year: '2026', masterSheet: '2026', masterRow: '101', masterRowNumber: 101, date: event.date, eventTitle: event.title, reliability: 'visoka', registrationDeadline: '2026-09-10', earlyRegistrationDeadline: '' }];
+    let resolveAdditional;
+    const pendingAdditional = new Promise((resolve) => { resolveAdditional = resolve; });
+    let card = renderMyStkNextRace(race, 'sl', '2026-08-23', '/iskalnik-tekov/');
+    const enrichment = enrichMyStkWhenReady([race], new Map([['2026', pendingAdditional]]), ['2026'], () => true, ([enriched]) => { card = renderMyStkNextRace(enriched, 'sl', '2026-08-23', '/iskalnik-tekov/'); });
+    assert.match(card, /Testni tek/);
+    assert.doesNotMatch(card, /Naslednji prijavni rok/);
+    resolveAdditional(additional);
+    await enrichment;
+    assert.match(card, /Naslednji prijavni rok[\s\S]*10\. sep/);
+
+    const currentCard = card;
+    let resolveStale;
+    const stalePending = new Promise((resolve) => { resolveStale = resolve; });
+    const staleEnrichment = enrichMyStkWhenReady([race], new Map([['2026', stalePending]]), ['2026'], () => false, () => { card = 'stale render'; });
+    resolveStale(additional);
+    await staleEnrichment;
+    assert.equal(card, currentCard);
   });
 
   it('clears localized statistic skeleton semantics after values load', () => {
