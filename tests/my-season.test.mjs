@@ -3,10 +3,54 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
 import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
+import { attachMyStkAdditionalData, enrichMyStkWhenReady, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
 const many = (n, options = {}) => Array.from({ length: n }, (_, index) => item(String(index), typeof options === 'function' ? options(index) : options));
 const achievement = (items, key, year = '2026') => getSeasonAchievements(items, year).find((value) => value.key === key);
+
+describe('My STK review regressions', () => {
+  it('joins additional data with the stable sheet-row event key and renders its deadline', () => {
+    const event = { id: '', row: '101', year: '2026', title: 'Testni tek', naziv_prireditve: 'Testni tek', date: '2026-09-20', dateValue: 1, place: 'Kraj', region: 'Gorenjska', surface: 'cesta', distances: '', startTime: '', noticeUrl: '', registrationUrl: '', voteUrl: '', publicNotes: '', cup: '', familyFriendly: false, kidsRaces: false, displayTitle: 'Testni tek' };
+    const race = { key: '2026:r000101', status: 'upcoming', savedRace: { version: 2, eventId: 'r000101', year: '2026', date: event.date, title: event.title, status: 'planning' }, event };
+    const additional = [{ year: '2026', masterSheet: '2026', masterRow: '101', masterRowNumber: 101, date: event.date, eventTitle: event.title, reliability: 'visoka', registrationDeadline: '2026-09-10', earlyRegistrationDeadline: '', organizer: '', organizerWebsite: '', distances: '', surface: '', startTime: '', registrationUrl: '', noticeUrl: '', publicNotes: '', cup: '', familyFriendly: '', kidsRaces: '', feeMin: '', feeMax: '', raceDayRegistration: '', routeUrl: '', elevationGain: '' }];
+    const [enriched] = attachMyStkAdditionalData([race], new Map([['2026', additional]]), ['2026']);
+    assert.equal(enriched.event.additionalData.registrationDeadline, '2026-09-10');
+    assert.match(renderMyStkNextRace(enriched, 'sl', '2026-08-23', '/iskalnik-tekov/'), /Naslednji prijavni rok[\s\S]*10\. sep/);
+  });
+
+  it('renders before controlled optional enrichment, applies its deadline, and rejects a stale render', async () => {
+    const event = { id: '', row: '101', year: '2026', title: 'Testni tek', naziv_prireditve: 'Testni tek', date: '2026-09-20', dateValue: 1, place: 'Kraj', region: 'Gorenjska', surface: 'cesta', distances: '', startTime: '', noticeUrl: '', registrationUrl: '', voteUrl: '', publicNotes: '', cup: '', familyFriendly: false, kidsRaces: false, displayTitle: 'Testni tek' };
+    const race = { key: '2026:r000101', status: 'upcoming', savedRace: { version: 2, eventId: 'r000101', year: '2026', date: event.date, title: event.title, status: 'planning' }, event };
+    const additional = [{ year: '2026', masterSheet: '2026', masterRow: '101', masterRowNumber: 101, date: event.date, eventTitle: event.title, reliability: 'visoka', registrationDeadline: '2026-09-10', earlyRegistrationDeadline: '' }];
+    let resolveAdditional;
+    const pendingAdditional = new Promise((resolve) => { resolveAdditional = resolve; });
+    let card = renderMyStkNextRace(race, 'sl', '2026-08-23', '/iskalnik-tekov/');
+    const enrichment = enrichMyStkWhenReady([race], new Map([['2026', pendingAdditional]]), ['2026'], () => true, ([enriched]) => { card = renderMyStkNextRace(enriched, 'sl', '2026-08-23', '/iskalnik-tekov/'); });
+    assert.match(card, /Testni tek/);
+    assert.doesNotMatch(card, /Naslednji prijavni rok/);
+    resolveAdditional(additional);
+    await enrichment;
+    assert.match(card, /Naslednji prijavni rok[\s\S]*10\. sep/);
+
+    const currentCard = card;
+    let resolveStale;
+    const stalePending = new Promise((resolve) => { resolveStale = resolve; });
+    const staleEnrichment = enrichMyStkWhenReady([race], new Map([['2026', stalePending]]), ['2026'], () => false, () => { card = 'stale render'; });
+    resolveStale(additional);
+    await staleEnrichment;
+    assert.equal(card, currentCard);
+  });
+
+  it('clears localized statistic skeleton semantics after values load', () => {
+    for (const file of ['src/pages/index.astro', 'src/pages/en/index.astro']) {
+      const source = readFileSync(file, 'utf8');
+      assert.match(source, /element\.textContent = value/);
+      assert.match(source, /element\.classList\.remove\('stat-loading'\)/);
+      assert.match(source, /element\.removeAttribute\('aria-label'\)/);
+    }
+  });
+});
 
 describe('My STK season', () => {
   it('counts only completed races and deduplicates keys', () => assert.equal(getCompletedRaces([item('a'), item('a'), item('b', { status: 'planning' })]).length, 1));
