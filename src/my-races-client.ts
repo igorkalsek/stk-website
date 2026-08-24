@@ -17,6 +17,12 @@ import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-sloveni
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
 const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
+const pageRenderVersions = new WeakMap<object, number>();
+export const beginMyRacesRender = (mount: object) => {
+  const renderVersion = (pageRenderVersions.get(mount) ?? 0) + 1;
+  pageRenderVersions.set(mount, renderVersion);
+  return () => pageRenderVersions.get(mount) === renderVersion;
+};
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const formatDate = (value: string, language: 'sl' | 'en') => value ? new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`)) : '';
 const SLOVENIAN_GENITIVE_MONTHS = ['januarja', 'februarja', 'marca', 'aprila', 'maja', 'junija', 'julija', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'] as const;
@@ -262,24 +268,36 @@ export const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availa
   const summaryEvent = language === 'en' ? `${summary.distinctEventCount} different events` : formatSloveneCount(summary.distinctEventCount, 'distinct-event');
   const summaryRaceLabel = summaryRace.replace(/^\d+\s+/, '');
   const summaryEventLabel = summaryEvent.replace(/^\d+\s+/, '');
-  const regionCards = regions.map((region) => {
+  const regionCard = (region: typeof regions[number]) => {
     const state = region.visited
       ? (language === 'en' ? `${region.completedEventCount} completed ${region.completedEventCount === 1 ? 'race' : 'races'}` : formatSloveneCount(region.completedEventCount, 'completed-race'))
       : (language === 'en' ? 'Not visited yet' : 'Še ni obiskana');
     return `<article class="season-region${region.visited ? ' is-visited' : ''}"><strong><span aria-hidden="true">${region.visited ? '✓' : '○'}</span> ${escapeHtml(formatSeasonRegionLabel(region.label, language))}</strong><span>${escapeHtml(state)}</span></article>`;
-  }).join('');
+  };
+  const visitedRegionCards = regions.filter((region) => region.visited).map(regionCard).join('');
+  const remainingRegions = regions.filter((region) => !region.visited);
+  const remainingRegionCards = remainingRegions.map(regionCard).join('');
+  const regionDisclosure = remainingRegions.length ? `<details class="season-regions-disclosure"><summary>${language === 'en' ? 'Remaining regions' : 'Preostale regije'} (${remainingRegions.length})</summary><div class="season-regions season-regions-remaining">${remainingRegionCards}</div></details>` : '';
+  const regionCta = remainingRegions.length ? `<a class="button button-small button-secondary-light season-map-cta" href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${language === 'en' ? 'Discover a race in a new region' : 'Odkrij tek v novi regiji'}</a>` : '';
   const nextAchievementCopy = nextAchievement ? `${language === 'en' ? 'Next achievement' : 'Naslednji dosežek'}: ${ACHIEVEMENT_NAMES[language][nextAchievement.key]} · ${nextAchievement.current}/${nextAchievement.target}` : (language === 'en' ? 'All achievements completed' : 'Vsi dosežki so osvojeni');
   const nomad = achievements.find((achievement) => achievement.key === 'nomad')!;
   const nomadCopy = nomad.achieved
     ? (language === 'en' ? 'Nomad achieved' : 'Dosežek Nomad je osvojen')
     : (language === 'en' ? `${nomad.target - nomad.current} regions to the Nomad achievement` : `Še ${formatSloveneCount(nomad.target - nomad.current, 'region')} do dosežka Nomad`);
   const summaryStrip = `<div class="season-summary"><span class="season-metric season-metric-primary"><strong>${summary.completedCount}</strong><span>${escapeHtml(summaryRaceLabel)}</span></span><span class="season-metric"><strong>${visitedRegionCount} / ${regions.length}</strong><span>${language === 'en' ? 'regions' : 'regij'}</span></span><span class="season-metric"><strong>${summary.distinctEventCount}</strong><span>${escapeHtml(summaryEventLabel)}</span></span><div class="season-next-achievement"><span class="action-icon">${renderActionIcon('cup')}</span><div><strong>${escapeHtml(nextAchievementCopy)}</strong>${nextAchievement ? `<progress max="${nextAchievement.target}" value="${nextAchievement.current}" aria-label="${escapeHtml(nextAchievementCopy)}"></progress>` : ''}</div></div></div>`;
-  return `<section class="my-season" aria-labelledby="my-season-title"><div class="my-season-heading"><h2 id="my-season-title">${copy.title}</h2><button class="button button-small button-secondary-light" type="button" data-toggle-past-races>${language === 'en' ? 'Add a past race' : 'Dodaj pretekli tek'}</button></div><section class="past-race-picker" data-past-race-picker hidden><label>${language === 'en' ? 'Search by race name or place' : 'Išči po nazivu teka ali kraju'}<input type="search" data-past-race-search></label><div data-past-race-results></div></section>${summaryStrip}<section class="season-map-panel" aria-labelledby="season-map-heading"><div class="season-map-copy"><span class="eyebrow">${copy.exploring}</span><h3 id="season-map-heading">${language === 'en' ? 'My running Slovenia' : 'Moja tekaška Slovenija'}</h3><strong class="season-map-count">${visitedRegionCount} / ${regions.length} ${language === 'en' ? 'regions' : 'regij'}</strong><p>${escapeHtml(nomadCopy)}</p></div>${renderSloveniaRegionsMap(regionProgress, language, 'full')}</section>${summary.completedCount ? '' : `<p class="season-empty">${copy.empty}</p>`}<section class="my-season-section season-region-list"><h3>${copy.exploring}</h3><div class="season-regions">${regionCards}</div></section>${summary.completedCount ? `<section class="my-season-section"><h3>${copy.passport}</h3><div class="season-passport">${stamps}</div></section>` : ''}<section class="my-season-section achievements-section"><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => { const isNext = nextAchievement?.key === achievement.key; const state = achievement.achieved ? copy.achieved : isNext ? copy.next : achievement.current > 0 ? copy.active : copy.locked; return `<article class="achievement-card${achievement.achieved ? ' is-achieved' : achievement.current > 0 ? ' is-active' : ' is-locked'}${isNext ? ' is-next' : ''}" data-achievement="${achievement.key}" data-achievement-state="${achievement.achieved ? 'achieved' : isNext ? 'next' : achievement.current > 0 ? 'active' : 'locked'}"><div class="achievement-heading"><span class="achievement-icon" aria-hidden="true">${renderAchievementIcon(achievement.key)}</span><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4><span class="achievement-status">${state}</span></div><strong class="achievement-value">${achievement.current} / ${achievement.target}</strong></div><p>${progress(achievement)}</p><progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress></article>`; }).join('')}</div></section></section>`;
+  return `<section class="my-season" aria-labelledby="my-season-title"><div class="my-season-heading"><h2 id="my-season-title">${copy.title}</h2><button class="button button-small button-secondary-light" type="button" data-toggle-past-races>${language === 'en' ? 'Add a past race' : 'Dodaj pretekli tek'}</button></div><section class="past-race-picker" data-past-race-picker hidden><label>${language === 'en' ? 'Search by race name or place' : 'Išči po nazivu teka ali kraju'}<input type="search" data-past-race-search></label><div data-past-race-results></div></section>${summaryStrip}<section class="season-map-panel" aria-labelledby="season-map-heading"><div class="season-map-copy"><span class="eyebrow">${copy.exploring}</span><h3 id="season-map-heading">${language === 'en' ? 'My running Slovenia' : 'Moja tekaška Slovenija'}</h3><strong class="season-map-count">${visitedRegionCount} / ${regions.length} ${language === 'en' ? 'regions' : 'regij'}</strong><p>${escapeHtml(nomadCopy)}</p>${regionCta}</div>${renderSloveniaRegionsMap(regionProgress, language, 'full')}</section>${summary.completedCount ? '' : `<p class="season-empty">${copy.empty}</p>`}<section class="my-season-section season-region-list"><h3>${copy.exploring}</h3>${visitedRegionCards ? `<div class="season-regions season-regions-visited">${visitedRegionCards}</div>` : `<p class="season-regions-start">${language === 'en' ? 'Complete a race to visit your first region.' : 'Opravi tek in obišči svojo prvo regijo.'}</p>`}${regionDisclosure}</section>${summary.completedCount ? `<section class="my-season-section"><h3>${copy.passport}</h3><div class="season-passport">${stamps}</div></section>` : ''}<section class="my-season-section achievements-section"><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => { const isNext = nextAchievement?.key === achievement.key; const state = achievement.achieved ? copy.achieved : isNext ? copy.next : achievement.current > 0 ? copy.active : copy.locked; return `<article class="achievement-card${achievement.achieved ? ' is-achieved' : achievement.current > 0 ? ' is-active' : ' is-locked'}${isNext ? ' is-next' : ''}" data-achievement="${achievement.key}" data-achievement-state="${achievement.achieved ? 'achieved' : isNext ? 'next' : achievement.current > 0 ? 'active' : 'locked'}"><div class="achievement-heading"><span class="achievement-icon" aria-hidden="true">${renderAchievementIcon(achievement.key)}</span><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4><span class="achievement-status">${state}</span></div><strong class="achievement-value">${achievement.current} / ${achievement.target}</strong></div>${achievement.key === 'all-terrain' ? `<p>${progress(achievement)}</p>` : ''}<progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress></article>`; }).join('')}</div></section></section>`;
 };
 
 const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, availableRegions: string[], language: 'sl' | 'en') => {
   const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
-  if (seasonMount && 'mySeasonApp' in seasonMount.dataset) seasonMount.innerHTML = renderSeason(items, availableRegions, language);
+  if (seasonMount && 'mySeasonApp' in seasonMount.dataset) {
+    seasonMount.innerHTML = renderSeason(items, availableRegions, language);
+    seasonMount.classList.remove('season-loading');
+    delete seasonMount.dataset.seasonLoading;
+    seasonMount.removeAttribute('aria-label');
+    seasonMount.setAttribute('aria-live', 'polite');
+    seasonMount.closest<HTMLElement>('[data-my-races-panel="season"]')?.removeAttribute('aria-busy');
+  }
 };
 
 export const initMyRacesTabs = (root = document) => {
@@ -289,6 +307,10 @@ export const initMyRacesTabs = (root = document) => {
     root.querySelectorAll<HTMLElement>('[data-my-races-panel]').forEach((panel) => { panel.hidden = panel.dataset.myRacesPanel !== selected; });
     tabs.forEach((tab) => { const active = tab === button; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
     if (selected === 'season') {
+      const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
+      if (seasonMount?.dataset.seasonLoading !== undefined) {
+        seasonMount.closest<HTMLElement>('[data-my-races-panel="season"]')?.setAttribute('aria-busy', 'true');
+      }
       const language = root.querySelector<HTMLElement>('[data-my-races-app]')?.dataset.language;
       trackStkPageLoadEventOnce(`season_viewed:${location.pathname}`, { event_type: 'season_viewed', language, placement: 'my_races' });
       trackStkPageLoadEventOnce(`achievement_viewed:${location.pathname}`, { event_type: 'achievement_viewed', language, placement: 'my_races' });
@@ -310,6 +332,7 @@ export const initMyRacesTabs = (root = document) => {
 export const initMyRacesPage = async (root = document) => {
   const mount = root.querySelector<HTMLElement>('[data-my-races-app]');
   if (!mount) return;
+  const isCurrentRender = beginMyRacesRender(mount);
   const language = mount.dataset.language === 'en' ? 'en' : 'sl';
   const labels = LABELS[language];
   const storage = getStorage();
@@ -332,6 +355,7 @@ export const initMyRacesPage = async (root = document) => {
     return { payloads, apiOk, additionalRowsByYear };
   };
   const data = await (pageDataCache.get(mount) ?? pageDataCache.set(mount, loadData()).get(mount)!);
+  if (!isCurrentRender()) return;
   const { payloads, apiOk, additionalRowsByYear } = data;
   const todayIso = getTodayIsoInLjubljana();
   let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getCompletedRaces, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface } from '../.cache/dist-test/utils-my-season.js';
 import { getInitialMyRacesView } from '../.cache/dist-test/utils-my-races.js';
-import { renderSeason } from '../.cache/dist-test/my-races-client.js';
+import { beginMyRacesRender, renderSeason } from '../.cache/dist-test/my-races-client.js';
 import { attachMyStkAdditionalData, enrichMyStkWhenReady, renderMyStkNextRace } from '../.cache/dist-test/my-stk-client.js';
 
 const item = (id, { year = '2026', status = 'completed', timing = 'past-or-unresolved', region = 'Gorenjska', surface = 'cesta', resolved = true } = {}) => ({ key: `${year}:${id}`, status: timing, savedRace: { version: 2, eventId: id, year, date: `${year}-08-01`, title: id, status }, event: resolved ? { id, year, title: id, date: `${year}-08-01`, dateValue: 1, region, surface, place: 'Kraj' } : null });
@@ -12,6 +12,17 @@ const many = (n, options = {}) => Array.from({ length: n }, (_, index) => item(S
 const achievement = (items, key, year = '2026') => getSeasonAchievements(items, year).find((value) => value.key === key);
 
 describe('My STK review regressions', () => {
+  it('rejects a stale My races render after a newer render begins', async () => {
+    const mount = {};
+    const firstIsCurrent = beginMyRacesRender(mount);
+    let release;
+    const pending = new Promise((resolve) => { release = resolve; });
+    const staleResult = pending.then(() => firstIsCurrent());
+    const secondIsCurrent = beginMyRacesRender(mount);
+    release();
+    assert.equal(await staleResult, false);
+    assert.equal(secondIsCurrent(), true);
+  });
   it('joins additional data with the stable sheet-row event key and renders its deadline', () => {
     const event = { id: '', row: '101', year: '2026', title: 'Testni tek', naziv_prireditve: 'Testni tek', date: '2026-09-20', dateValue: 1, place: 'Kraj', region: 'Gorenjska', surface: 'cesta', distances: '', startTime: '', noticeUrl: '', registrationUrl: '', voteUrl: '', publicNotes: '', cup: '', familyFriendly: false, kidsRaces: false, displayTitle: 'Testni tek' };
     const race = { key: '2026:r000101', status: 'upcoming', savedRace: { version: 2, eventId: 'r000101', year: '2026', date: event.date, title: event.title, status: 'planning' }, event };
@@ -175,6 +186,31 @@ describe('My STK season', () => {
     assert.match(en, /data-achievement-state="active"[\s\S]*In progress/);
     assert.match(emptyEn, /data-achievement-state="locked"[\s\S]*Locked/);
     assert.equal((sl.match(/<svg class="achievement-symbol" aria-hidden="true"/g) ?? []).length, 6);
+  });
+  it('compacts region progress for zero, one and all visited regions in both languages', () => {
+    const emptySl = renderSeason([], canonicalRegions, 'sl');
+    assert.match(emptySl, /Opravi tek in obišči svojo prvo regijo/);
+    assert.match(emptySl, /<summary>Preostale regije \(12\)<\/summary>/);
+    assert.match(emptySl, />Odkrij tek v novi regiji<\/a>/);
+    const oneEn = renderSeason([item('one')], canonicalRegions, 'en');
+    assert.match(oneEn, /season-regions-visited[\s\S]*Upper Carniola/);
+    assert.match(oneEn, /<summary>Remaining regions \(11\)<\/summary>/);
+    assert.match(oneEn, />Discover a race in a new region<\/a>/);
+    const allRaces = many(12, (index) => ({ region: canonicalRegions[index] }));
+    const allSl = renderSeason(allRaces, canonicalRegions, 'sl');
+    const allEn = renderSeason(allRaces, canonicalRegions, 'en');
+    assert.equal((allSl.match(/class="season-region is-visited"/g) ?? []).length, 12);
+    assert.doesNotMatch(allSl, /season-regions-disclosure|Preostale regije|Odkrij tek v novi regiji/);
+    assert.doesNotMatch(allEn, /season-regions-disclosure|Remaining regions|Discover a race in a new region/);
+  });
+  it('shows each ordinary achievement value once while retaining the All-terrain breakdown', () => {
+    const html = renderSeason([item('road')], canonicalRegions, 'en');
+    const five = html.match(/data-achievement="five"[\s\S]*?<\/article>/)?.[0] ?? '';
+    assert.equal((five.match(/class="achievement-value">1 \/ 5/g) ?? []).length, 1);
+    assert.doesNotMatch(five, /<p>1 \/ 5<\/p>/);
+    assert.match(five, /<progress max="5" value="1" aria-label="Five: 1 \/ 5">/);
+    const terrain = html.match(/data-achievement="all-terrain"[\s\S]*?<\/article>/)?.[0] ?? '';
+    assert.match(terrain, /Road ✓ · Trail ○ · Mountain ○/);
   });
   it('keeps live stats outside async dashboard replacement', () => {
     const client = readFileSync('src/my-stk-client.ts', 'utf8'); const home = readFileSync('src/pages/index.astro', 'utf8');
