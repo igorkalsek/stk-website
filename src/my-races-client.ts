@@ -398,35 +398,55 @@ export const initMyRacesPage = async (root = document) => {
     render(updating);
   };
 
-  const bindPastRacePicker = () => {
+  const renderPastRacePickerResults = () => {
     const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
     const resultsMount = picker?.querySelector<HTMLElement>('[data-past-race-results]');
-    const renderPastResults = (query = '') => {
-      if (!resultsMount) return;
-      if (pastEventsState === 'loading' || pastEventsState === 'idle') { resultsMount.innerHTML = `<p role="status">${escapeHtml(labels.pastLoading)}</p>`; return; }
-      if (pastEventsState === 'error') { resultsMount.innerHTML = `<p class="notice warning">${escapeHtml(labels.pastError)}</p>`; return; }
-      const q = query.trim().toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI');
-      const results = pastEvents.filter((event) => !q || `${event.title} ${event.place}`.toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI').includes(q)).slice(0, 30);
-      if (!results.length) { resultsMount.innerHTML = `<p>${escapeHtml(labels.pastEmpty)}</p>`; return; }
-      resultsMount.innerHTML = results.map((event) => { const eventId = getStableEventId(event); const added = getSavedRaceStatus(readSavedRaces(storage).state, { year: event.year, eventId }) === 'completed'; return `<article class="past-race-result"><div><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))} · ${escapeHtml(event.place)} · ${escapeHtml(formatSeasonRegionLabel(event.region, language))}</span></div><button class="button button-small" type="button" data-add-past-race="${escapeHtml(`${event.year}:${eventId}`)}"${added ? ' disabled' : ''}>${added ? (language === 'en' ? 'Already added' : 'Že dodano') : (language === 'en' ? 'I completed this race' : 'Opravil sem ta tek')}</button></article>`; }).join('');
-      resultsMount.querySelectorAll<HTMLButtonElement>('[data-add-past-race]').forEach((button) => button.addEventListener('click', () => { const event = pastEvents.find((candidate) => `${candidate.year}:${getStableEventId(candidate)}` === button.dataset.addPastRace); if (!event || !isCompletionAllowed(event.date, todayIso)) return; const result = setSavedRaceStatusInStorage(storage, { eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title }, 'completed'); if (result.persistent) { upsertCompletedRaceSnapshot(storage, event); dispatchSavedRacesChanged(); initMyRacesPage(root); } }));
-    };
-    root.querySelector<HTMLButtonElement>('[data-toggle-past-races]')?.addEventListener('click', () => { if (!picker) return; picker.hidden = !picker.hidden; if (!picker.hidden) { if (pastEventsState === 'idle') void loadPastEvents(); renderPastResults(picker.querySelector<HTMLInputElement>('input')?.value); picker.querySelector<HTMLInputElement>('input')?.focus(); } });
-    picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', (event) => renderPastResults((event.currentTarget as HTMLInputElement).value));
+    if (!picker || !resultsMount) return;
+    if (pastEventsState === 'loading' || pastEventsState === 'idle') { resultsMount.innerHTML = `<p role="status">${escapeHtml(labels.pastLoading)}</p>`; return; }
+    if (pastEventsState === 'error') { resultsMount.innerHTML = `<p class="notice warning">${escapeHtml(labels.pastError)}</p>`; return; }
+    const query = picker.querySelector<HTMLInputElement>('[data-past-race-search]')?.value ?? '';
+    const q = query.trim().toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI');
+    const results = pastEvents.filter((event) => !q || `${event.title} ${event.place}`.toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI').includes(q)).slice(0, 30);
+    if (!results.length) { resultsMount.innerHTML = `<p>${escapeHtml(labels.pastEmpty)}</p>`; return; }
+    resultsMount.innerHTML = results.map((event) => { const eventId = getStableEventId(event); const added = getSavedRaceStatus(readSavedRaces(storage).state, { year: event.year, eventId }) === 'completed'; return `<article class="past-race-result"><div><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))} · ${escapeHtml(event.place)} · ${escapeHtml(formatSeasonRegionLabel(event.region, language))}</span></div><button class="button button-small" type="button" data-add-past-race="${escapeHtml(`${event.year}:${eventId}`)}"${added ? ' disabled' : ''}>${added ? (language === 'en' ? 'Already added' : 'Že dodano') : (language === 'en' ? 'I completed this race' : 'Opravil sem ta tek')}</button></article>`; }).join('');
+    resultsMount.querySelectorAll<HTMLButtonElement>('[data-add-past-race]').forEach((button) => button.addEventListener('click', () => { const event = pastEvents.find((candidate) => `${candidate.year}:${getStableEventId(candidate)}` === button.dataset.addPastRace); if (!event || !isCompletionAllowed(event.date, todayIso)) return; const result = setSavedRaceStatusInStorage(storage, { eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title }, 'completed'); if (result.persistent) { upsertCompletedRaceSnapshot(storage, event); dispatchSavedRacesChanged(); initMyRacesPage(root); } }));
+  };
+
+  const bindPastRacePicker = () => {
+    const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
+    root.querySelector<HTMLButtonElement>('[data-toggle-past-races]')?.addEventListener('click', () => {
+      if (!picker) return;
+      picker.hidden = !picker.hidden;
+      if (!picker.hidden) {
+        if (pastEventsState === 'idle') void loadPastEvents();
+        renderPastRacePickerResults();
+        picker.querySelector<HTMLInputElement>('input')?.focus();
+      }
+    });
+    picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', renderPastRacePickerResults);
   };
 
   const render = (updating: boolean) => {
     if (!isCurrentRender()) return;
     const previousPicker = root.querySelector<HTMLElement>('[data-past-race-picker]');
+    const previousSearch = previousPicker?.querySelector<HTMLInputElement>('[data-past-race-search]');
     const restorePicker = Boolean(previousPicker && !previousPicker.hidden);
-    const pickerQuery = previousPicker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.value ?? '';
+    const restoreSearchFocus = previousSearch === document.activeElement;
+    const pickerQuery = previousSearch?.value ?? '';
+    const selectionStart = previousSearch?.selectionStart ?? pickerQuery.length;
+    const selectionEnd = previousSearch?.selectionEnd ?? selectionStart;
     const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
     updateSeasonMount(root, resolved, availableRegions, language);
     bindPastRacePicker();
     if (restorePicker) {
       const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
       const search = picker?.querySelector<HTMLInputElement>('[data-past-race-search]');
-      if (picker && search) { picker.hidden = false; search.value = pickerQuery; search.dispatchEvent(new Event('input')); }
+      if (picker && search) {
+        picker.hidden = false;
+        search.value = pickerQuery;
+        renderPastRacePickerResults();
+        if (restoreSearchFocus) { search.focus(); search.setSelectionRange(selectionStart, selectionEnd); }
+      }
     }
     const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
     const counts = countSavedRaceStatuses(resolved);
@@ -435,7 +455,9 @@ export const initMyRacesPage = async (root = document) => {
     const exportableUpcoming = getExportableUpcomingRaceEvents(resolved, language);
     const other = filtered.filter((item) => item.status !== 'upcoming');
     const emptyFiltered = activeFilter !== 'all' && !filtered.length;
-    mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${updating ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
+    if (updateStatusMount) updateStatusMount.innerHTML = updating ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
+    mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
@@ -450,7 +472,7 @@ export const initMyRacesPage = async (root = document) => {
   const loadPastEvents = async () => {
     if (pastEventsState === 'loading' || pastEventsState === 'ready') return;
     pastEventsState = 'loading';
-    bindPastRacePicker();
+    renderPastRacePickerResults();
     try {
       const payload = await masterRequest(DEFAULT_PUBLIC_YEAR);
       if (!isCurrentRender()) return;
