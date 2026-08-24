@@ -369,6 +369,7 @@ export const initMyRacesPage = async (root = document) => {
   let pastEvents: NonNullable<ReturnType<typeof mapPublicRaceEvent>>[] = [];
   let pastEventsState: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
   const requiredYears = [...new Set(saved.map((race) => race.year))].filter((year): year is PublicYear => SUPPORTED_PUBLIC_YEARS.includes(year as PublicYear));
+  const pendingRequiredRequests = new Set(requiredYears.flatMap((year) => [`master:${year}`, `additional:${year}`]));
   const requestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map() };
   pageDataCache.set(mount, requestCache);
   const masterRequest = (year: PublicYear): Promise<unknown> => {
@@ -393,9 +394,9 @@ export const initMyRacesPage = async (root = document) => {
     return items.map((item) => ({ ...item, snapshot: snapshots.get(item.key) ?? null }));
   };
   let resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
-  const rebuildAndRender = (updating: boolean) => {
+  const rebuildAndRender = () => {
     resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
-    render(updating);
+    render();
   };
 
   const renderPastRacePickerResults = () => {
@@ -426,7 +427,7 @@ export const initMyRacesPage = async (root = document) => {
     picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', renderPastRacePickerResults);
   };
 
-  const render = (updating: boolean) => {
+  const render = () => {
     if (!isCurrentRender()) return;
     const previousPicker = root.querySelector<HTMLElement>('[data-past-race-picker]');
     const previousSearch = previousPicker?.querySelector<HTMLInputElement>('[data-past-race-search]');
@@ -456,7 +457,7 @@ export const initMyRacesPage = async (root = document) => {
     const other = filtered.filter((item) => item.status !== 'upcoming');
     const emptyFiltered = activeFilter !== 'all' && !filtered.length;
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
-    if (updateStatusMount) updateStatusMount.innerHTML = updating ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
+    if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
     mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
@@ -467,7 +468,7 @@ export const initMyRacesPage = async (root = document) => {
   };
 
   // First paint is entirely local: saved references, statuses and completed snapshots.
-  render(requiredYears.length > 0);
+  render();
 
   const loadPastEvents = async () => {
     if (pastEventsState === 'loading' || pastEventsState === 'ready') return;
@@ -484,33 +485,34 @@ export const initMyRacesPage = async (root = document) => {
       pastEvents = [];
       pastEventsState = 'error';
     }
-    render(requiredYears.length > 0);
+    render();
   };
 
-  const yearLoads = requiredYears.map(async (year) => {
-    const optional = additionalRequest(year).then((rows) => {
+  const yearLoads = requiredYears.flatMap((year) => {
+    const masterLoad = masterRequest(year).then((payload) => {
       if (!isCurrentRender()) return;
-      additionalRowsByYear[year] = rows;
-      rebuildAndRender(true);
-    }).catch(() => { /* optional enrichment never removes the dashboard */ });
-    try {
-      payloads[year] = await masterRequest(year);
+      payloads[year] = payload;
       if (year === DEFAULT_PUBLIC_YEAR) {
-        pastEvents = toApiRecords(payloads[year]).map((record) => mapPublicRaceEvent(record, year, 0)).filter((event): event is NonNullable<typeof event> => Boolean(event && isCompletionAllowed(event.date, todayIso)));
+        pastEvents = toApiRecords(payload).map((record) => mapPublicRaceEvent(record, year, 0)).filter((event): event is NonNullable<typeof event> => Boolean(event && isCompletionAllowed(event.date, todayIso)));
         pastEventsState = 'ready';
       }
-    } catch {
-      if (!isCurrentRender()) return optional;
+    }).catch(() => {
+      if (!isCurrentRender()) return;
       failedMasterYears.add(year);
       if (year === DEFAULT_PUBLIC_YEAR) pastEventsState = 'error';
-      rebuildAndRender(true);
-      return optional;
-    }
-    if (!isCurrentRender()) return optional;
-    rebuildAndRender(true);
-    return optional;
+    }).finally(() => {
+      pendingRequiredRequests.delete(`master:${year}`);
+      if (isCurrentRender()) rebuildAndRender();
+    });
+    const additionalLoad = additionalRequest(year).then((rows) => {
+      if (isCurrentRender()) additionalRowsByYear[year] = rows;
+    }).catch(() => { /* optional enrichment never removes the dashboard */ }).finally(() => {
+      pendingRequiredRequests.delete(`additional:${year}`);
+      if (isCurrentRender()) rebuildAndRender();
+    });
+    return [masterLoad, additionalLoad];
   });
 
   await Promise.allSettled(yearLoads);
-  if (isCurrentRender()) render(false);
+  if (isCurrentRender()) render();
 };

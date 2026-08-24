@@ -390,13 +390,44 @@ test('finishes the past-race picker with a localized error while preserving the 
   await openMyRaces(page, '/moji-teki/?view=season');
   await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
   await expect(page.getByText('Preteklih tekov trenutno ni bilo mogoče naložiti.')).toBeVisible();
-  await expect(page.getByRole('status', { name: 'Nalagamo pretekle teke …' })).toHaveCount(0);
+  await expect(page.locator('[data-past-race-results]').getByRole('status')).toHaveCount(0);
   await expect(page.locator('[data-my-season-app]')).toBeVisible();
   const localCard = card(page, '2026:r000101');
   await expect(localCard).toContainText(byId.r000101.title);
-  await expect(localCard).toContainText('15. avgust 2026');
+  await expect(localCard).toContainText('2026-08-15');
   await expect(localCard).toHaveAttribute('data-key', '2026:r000101');
+  await expect(localCard.locator('[data-my-race-status-select]')).toHaveAttribute('data-event-id', 'r000101');
   await expect(localCard.getByLabel('Moj status')).toHaveValue('following');
+});
+
+test('keeps the global status tied to required 2027 requests while the separate 2026 picker loads locally', async ({ page }) => {
+  let releaseAdditional2027!: () => void;
+  let releaseMaster2026!: () => void;
+  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
+  const master2026Gate = new Promise<void>((resolve) => { releaseMaster2026 = resolve; });
+  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+  const past2026 = { ...races2026[0], datum: '2026-01-10', naziv_prireditve: 'Ljubljana Winter Run' };
+  const { requestCounts } = await mockMyRacesApis(page, { races2026: [past2026], races2027: [race2027], additional2027Gate, master2026Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101_2027', 'following')]);
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
+  const globalStatusMount = page.locator('[data-my-races-update-status-mount]');
+  await expect(globalStatusMount.getByRole('status')).toHaveText('Posodabljamo podatke …');
+  await expect.poll(() => requestCounts.master2027).toBe(1);
+  expect(requestCounts.additional2026).toBe(0);
+
+  releaseAdditional2027();
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  const pickerStatusMount = page.locator('[data-past-race-results]');
+  await expect(pickerStatusMount.getByRole('status')).toHaveText('Nalagamo pretekle teke …');
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  await expect.poll(() => requestCounts.master2026).toBe(1);
+
+  releaseMaster2026();
+  await expect(pickerStatusMount.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.past-race-result')).toContainText('Ljubljana Winter Run');
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  expect(requestCounts).toMatchObject({ master2026: 1, master2027: 1, additional2026: 0, additional2027: 1 });
 });
 
 test('keeps one picker listener and one master request while a pending picker is closed and reopened', async ({ page }) => {
@@ -410,7 +441,10 @@ test('keeps one picker listener and one master request while a pending picker is
 
   await toggle.click();
   await expect(picker).toBeVisible();
-  await expect(page.getByRole('status', { name: 'Nalagamo pretekle teke …' })).toBeVisible();
+  const pickerStatus = page.locator('[data-past-race-results]').getByRole('status');
+  await expect(pickerStatus).toHaveCount(1);
+  await expect(pickerStatus).toHaveText('Nalagamo pretekle teke …');
+  await expect(pickerStatus).not.toHaveAttribute('aria-hidden');
   await expect.poll(() => requestCounts.master2026).toBe(1);
   await toggle.click();
   await expect(picker).toBeHidden();
@@ -420,16 +454,20 @@ test('keeps one picker listener and one master request while a pending picker is
   releaseMaster();
   await expect(page.locator('.past-race-result').first()).toBeVisible();
   expect(requestCounts.master2026).toBe(1);
-  await expect(page.getByRole('status', { name: 'Nalagamo pretekle teke …' })).toHaveCount(0);
+  await expect(page.locator('[data-past-race-results]').getByRole('status')).toHaveCount(0);
 });
 
 test('preserves picker focus, value, selection and filtered results across enrichment', async ({ page }) => {
   let releaseMaster!: () => void;
   const master2026Gate = new Promise<void>((resolve) => { releaseMaster = resolve; });
-  await mockMyRacesApis(page, { master2026Gate });
+  const ljubljanaPast = { ...races2026[0], datum: '2026-01-10', naziv_prireditve: 'Ljubljana Winter Run', kraj: 'Ljubljana' };
+  const mariborPast = { ...races2026[1], datum: '2026-02-10', naziv_prireditve: 'Maribor Winter Trail', kraj: 'Maribor' };
+  await mockMyRacesApis(page, { master2026Gate, races2026: [ljubljanaPast, mariborPast] });
   await seedV2SavedRaces(page, []);
-  await openMyRaces(page, '/moji-teki/?view=season');
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
   await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  const loadingStatus = page.locator('[data-past-race-results]').getByRole('status');
+  await expect(loadingStatus).toHaveText('Nalagamo pretekle teke …');
   const search = page.getByRole('searchbox', { name: 'Išči po nazivu teka ali kraju' });
   await search.fill('Ljubljana');
   await search.evaluate((input: HTMLInputElement) => input.setSelectionRange(3, 7));
@@ -441,8 +479,8 @@ test('preserves picker focus, value, selection and filtered results across enric
   await expect(restoredSearch).toBeFocused();
   await expect(restoredSearch).toHaveValue('Ljubljana');
   await expect.poll(() => restoredSearch.evaluate((input: HTMLInputElement) => [input.selectionStart, input.selectionEnd])).toEqual([3, 7]);
-  await expect(page.locator('.past-race-result')).toContainText('Ljubljana Test Run');
-  await expect(page.locator('.past-race-result')).not.toContainText('Maribor Test Trail');
+  await expect(page.locator('.past-race-result')).toContainText('Ljubljana Winter Run');
+  await expect(page.locator('.past-race-result')).not.toContainText('Maribor Winter Trail');
 });
 
 function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
@@ -911,10 +949,13 @@ for (const statusCase of [
     await mockMyRacesApis(page, { masterGate });
     await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
     await page.goto(statusCase.path);
-    await expect(page.getByRole('status', { name: statusCase.text })).toHaveCount(1);
-    await expect(page.locator('[data-my-races-update-status-mount]')).toBeVisible();
+    const statusMount = page.locator('[data-my-races-update-status-mount]');
+    const status = statusMount.getByRole('status');
+    await expect(status).toHaveCount(1);
+    await expect(status).toHaveText(statusCase.text);
+    await expect(status).not.toHaveAttribute('aria-hidden');
     releaseMaster();
-    await expect(page.getByRole('status', { name: statusCase.text })).toHaveCount(0);
+    await expect(statusMount.getByRole('status')).toHaveCount(0);
   });
 }
 
@@ -931,13 +972,14 @@ test('renders local plan and season before controlled API promises resolve, then
 
   const localCard = card(page, '2026:r000101');
   await expect(localCard).toContainText(byId.r000101.title);
-  await expect(localCard).toContainText('15. avgust 2026');
+  await expect(localCard).toContainText('2026-08-15');
   await expect(localCard).toHaveAttribute('data-key', '2026:r000101');
+  await expect(localCard.locator('[data-my-race-status-select]')).toHaveAttribute('data-event-id', 'r000101');
   await expect(localCard.getByLabel('Moj status')).toHaveValue('completed');
   await expect(page.locator('[data-my-season-app]')).toContainText('Local snapshot race');
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   await expect(page.locator('.season-loading-skeleton')).toHaveCount(0);
-  await expect(page.getByRole('status', { name: 'Posodabljamo podatke …' })).toHaveCount(1);
+  await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Posodabljamo podatke …');
 
   releaseMaster();
   await expect(page.locator('[data-my-races-app]')).toContainText('Ljubljana 10K Trail');
@@ -953,7 +995,7 @@ test('clears progressive status and aria-busy for English success and master fai
   await mockMyRacesApis(page, { masterGate });
   await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
   await page.goto('/en/my-races/?view=season');
-  await expect(page.getByRole('status', { name: 'Updating race details …' })).toHaveCount(1);
+  await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Updating race details …');
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   releaseMaster();
   await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
