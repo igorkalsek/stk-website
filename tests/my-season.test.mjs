@@ -191,12 +191,17 @@ describe('My STK season', () => {
     const emptySl = renderSeason([], canonicalRegions, 'sl');
     assert.match(emptySl, /Opravi tek in obišči svojo prvo regijo/);
     assert.match(emptySl, /<summary>Preostale regije \(12\)<\/summary>/);
+    assert.match(emptySl, />Odkrij tek v novi regiji<\/a>/);
     const oneEn = renderSeason([item('one')], canonicalRegions, 'en');
     assert.match(oneEn, /season-regions-visited[\s\S]*Upper Carniola/);
     assert.match(oneEn, /<summary>Remaining regions \(11\)<\/summary>/);
-    const all = renderSeason(many(12, (index) => ({ region: canonicalRegions[index] })), canonicalRegions, 'sl');
-    assert.equal((all.match(/class="season-region is-visited"/g) ?? []).length, 12);
-    assert.doesNotMatch(all, /season-regions-disclosure|Preostale regije/);
+    assert.match(oneEn, />Discover a race in a new region<\/a>/);
+    const allRaces = many(12, (index) => ({ region: canonicalRegions[index] }));
+    const allSl = renderSeason(allRaces, canonicalRegions, 'sl');
+    const allEn = renderSeason(allRaces, canonicalRegions, 'en');
+    assert.equal((allSl.match(/class="season-region is-visited"/g) ?? []).length, 12);
+    assert.doesNotMatch(allSl, /season-regions-disclosure|Preostale regije|Odkrij tek v novi regiji/);
+    assert.doesNotMatch(allEn, /season-regions-disclosure|Remaining regions|Discover a race in a new region/);
   });
   it('shows each ordinary achievement value once while retaining the All-terrain breakdown', () => {
     const html = renderSeason([item('road')], canonicalRegions, 'en');
