@@ -15,8 +15,8 @@ import { dispatchSavedRacesChanged } from './saved-races-events.js';
 import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-slovenia-map.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-type MyRacesDataCache = { payloads: Record<string, unknown>; apiOk: boolean; additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> };
-const pageDataCache = new WeakMap<HTMLElement, Promise<MyRacesDataCache>>();
+type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>> };
+const pageDataCache = new WeakMap<HTMLElement, MyRacesRequestCache>();
 const pageRenderVersions = new WeakMap<object, number>();
 export const beginMyRacesRender = (mount: object) => {
   const renderVersion = (pageRenderVersions.get(mount) ?? 0) + 1;
@@ -64,10 +64,10 @@ export const formatDeadlineDateAfterUntil = (value: string, language: 'sl' | 'en
   return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ...(includeYear ? { year: 'numeric' as const } : {}) }).format(date);
 };
 
-type Labels = Record<'nextDeadline' | 'deadlines' | 'viewRace' | 'earlyRegistration' | 'registrationDeadline' | 'addDeadline' | 'addRace' | 'daysLeft' | 'tomorrow' | 'today' | 'loading' | 'empty' | 'search' | 'upcoming' | 'other' | 'unresolved' | 'remove' | 'details' | 'google' | 'apple' | 'outlook' | 'apiError' | 'storageError' | 'local' | 'downloadAll' | 'downloadAllNote' | 'calendarError' | 'emptyFilter' | 'nextRace', string>;
+type Labels = Record<'updating' | 'pastLoading' | 'nextDeadline' | 'deadlines' | 'viewRace' | 'earlyRegistration' | 'registrationDeadline' | 'addDeadline' | 'addRace' | 'daysLeft' | 'tomorrow' | 'today' | 'loading' | 'empty' | 'search' | 'upcoming' | 'other' | 'unresolved' | 'remove' | 'details' | 'google' | 'apple' | 'outlook' | 'apiError' | 'storageError' | 'local' | 'downloadAll' | 'downloadAllNote' | 'calendarError' | 'emptyFilter' | 'nextRace', string>;
 const LABELS: Record<'sl' | 'en', Labels> = {
-  sl: { nextDeadline: 'Naslednji prijavni rok', deadlines: 'Prijavni roki', viewRace: 'Prikaži v načrtu', earlyRegistration: 'Cenejša prijava do', registrationDeadline: 'Prijave do', addDeadline: 'Dodaj rok v koledar', addRace: 'Dodaj tek v koledar', daysLeft: 'še {n} dni', tomorrow: 'jutri', today: 'danes', loading: 'Nalagamo shranjene teke …', empty: 'Nimate še shranjenih tekov.', search: 'Odprite iskalnik tekov', upcoming: 'Moj tekaški načrt', other: 'Pretekli ali trenutno nerazrešeni teki', unresolved: 'Shranjena referenca', remove: 'Odstrani', details: 'Podrobnosti', google: 'Google koledar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.', storageError: 'Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov.', local: 'Shranjeno samo v tem brskalniku · brez računa in sinhronizacije med napravami.', downloadAll: 'Prenesi vse prihodnje teke (.ics)', downloadAllNote: 'Datoteka vsebuje prihodnje shranjene teke, razen tekov z oznako Opravljen.', emptyFilter: 'V tem statusu ni shranjenih tekov.', nextRace: 'Naslednji tek', calendarError: 'Koledarske datoteke trenutno ni bilo mogoče pripraviti.' },
-  en: { nextDeadline: 'Next registration deadline', deadlines: 'Registration deadlines', viewRace: 'Show in race plan', earlyRegistration: 'Early registration until', registrationDeadline: 'Registration until', addDeadline: 'Add deadline to calendar', addRace: 'Add race to calendar', daysLeft: '{n} days left', tomorrow: 'tomorrow', today: 'today', loading: 'Loading saved races …', empty: 'You have not saved any races yet.', search: 'Open race finder', upcoming: 'My race plan', other: 'Past or currently unresolved races', unresolved: 'Saved reference', remove: 'Remove', details: 'Details', google: 'Google Calendar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'The API is currently unavailable. Basic saved references are shown below.', storageError: 'The browser currently does not allow access to saved races.', local: 'Stored only in this browser · no account or cross-device sync.', downloadAll: 'Download all upcoming races (.ics)', downloadAllNote: 'The file contains upcoming saved races except races marked Completed.', emptyFilter: 'There are no saved races with this status.', nextRace: 'Next race', calendarError: 'The calendar file could not be prepared at this time.' }
+  sl: { updating: 'Posodabljamo podatke …', pastLoading: 'Nalagamo pretekle teke …', nextDeadline: 'Naslednji prijavni rok', deadlines: 'Prijavni roki', viewRace: 'Prikaži v načrtu', earlyRegistration: 'Cenejša prijava do', registrationDeadline: 'Prijave do', addDeadline: 'Dodaj rok v koledar', addRace: 'Dodaj tek v koledar', daysLeft: 'še {n} dni', tomorrow: 'jutri', today: 'danes', loading: 'Nalagamo shranjene teke …', empty: 'Nimate še shranjenih tekov.', search: 'Odprite iskalnik tekov', upcoming: 'Moj tekaški načrt', other: 'Pretekli ali trenutno nerazrešeni teki', unresolved: 'Shranjena referenca', remove: 'Odstrani', details: 'Podrobnosti', google: 'Google koledar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.', storageError: 'Brskalnik trenutno ne dovoljuje dostopa do shranjenih tekov.', local: 'Shranjeno samo v tem brskalniku · brez računa in sinhronizacije med napravami.', downloadAll: 'Prenesi vse prihodnje teke (.ics)', downloadAllNote: 'Datoteka vsebuje prihodnje shranjene teke, razen tekov z oznako Opravljen.', emptyFilter: 'V tem statusu ni shranjenih tekov.', nextRace: 'Naslednji tek', calendarError: 'Koledarske datoteke trenutno ni bilo mogoče pripraviti.' },
+  en: { updating: 'Updating race details …', pastLoading: 'Loading past races …', nextDeadline: 'Next registration deadline', deadlines: 'Registration deadlines', viewRace: 'Show in race plan', earlyRegistration: 'Early registration until', registrationDeadline: 'Registration until', addDeadline: 'Add deadline to calendar', addRace: 'Add race to calendar', daysLeft: '{n} days left', tomorrow: 'tomorrow', today: 'today', loading: 'Loading saved races …', empty: 'You have not saved any races yet.', search: 'Open race finder', upcoming: 'My race plan', other: 'Past or currently unresolved races', unresolved: 'Saved reference', remove: 'Remove', details: 'Details', google: 'Google Calendar', apple: 'Apple/iCal', outlook: 'Outlook', apiError: 'The API is currently unavailable. Basic saved references are shown below.', storageError: 'The browser currently does not allow access to saved races.', local: 'Stored only in this browser · no account or cross-device sync.', downloadAll: 'Download all upcoming races (.ics)', downloadAllNote: 'The file contains upcoming saved races except races marked Completed.', emptyFilter: 'There are no saved races with this status.', nextRace: 'Next race', calendarError: 'The calendar file could not be prepared at this time.' }
 };
 
 export const getStorage = (): MinimalStorage | null => {
@@ -338,79 +338,110 @@ export const initMyRacesPage = async (root = document) => {
   const storage = getStorage();
   if (!storage) {
     trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races' });
-    mount.innerHTML = `<p class="notice warning">${labels.storageError}</p>${renderLocalNotice(labels)}`; updateSeasonMount(root, [], [], language); return; }
+    mount.innerHTML = `<p class="notice warning">${labels.storageError}</p>${renderLocalNotice(labels)}`;
+    updateSeasonMount(root, [], [], language);
+    return;
+  }
+
   const saved = readSavedRaces(storage).state.races;
   trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
-  mount.textContent = labels.loading;
-  const loadData = async (): Promise<MyRacesDataCache> => {
-    const payloads: Record<string, unknown> = {};
-    let apiOk = true;
-    const additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> = {};
-    await Promise.all(SUPPORTED_PUBLIC_YEARS.map(async (year: PublicYear) => {
-      const additionalPromise = fetchAdditionalEventData(year).catch(() => [] as AdditionalEventData[]);
-      try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } }); if (!response.ok) throw new Error(String(response.status)); payloads[year] = await response.json(); }
-      catch { apiOk = false; }
-      additionalRowsByYear[year] = await additionalPromise;
-    }));
-    return { payloads, apiOk, additionalRowsByYear };
-  };
-  const data = await (pageDataCache.get(mount) ?? pageDataCache.set(mount, loadData()).get(mount)!);
-  if (!isCurrentRender()) return;
-  const { payloads, apiOk, additionalRowsByYear } = data;
   const todayIso = getTodayIsoInLjubljana();
-  let resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));
-  const snapshotState = backfillCompletedRaceSnapshots(storage, resolved, todayIso);
-  const snapshotByKey = new Map(snapshotState.snapshots.map((item) => [getCompletedRaceSnapshotKey(item), item]));
-  resolved = resolved.map((item) => ({ ...item, snapshot: snapshotByKey.get(item.key) ?? null }));
-  try {
-    const attached = SUPPORTED_PUBLIC_YEARS.flatMap((year) => {
-      const additionalRows = additionalRowsByYear[year] ?? [];
-      if (!additionalRows.length || !isAdditionalDataEnabledForYear(year)) return [];
-      return attachAdditionalDataByMasterRow(resolved.filter((item) => item.event?.year === year).map((item) => item.event!), additionalRows, year);
-    });
-    if (attached.length) {
-      const byKey = new Map(attached.map((event) => [`${event.year}:${getStableEventId(event)}`, event]));
-      resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
-    }
-  } catch { /* optional additional data */ }
-  const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
-  updateSeasonMount(root, resolved, availableRegions, language);
-  const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
-  root.querySelector<HTMLButtonElement>('[data-toggle-past-races]')?.addEventListener('click', () => { if (picker) { picker.hidden = !picker.hidden; if (!picker.hidden) picker.querySelector<HTMLInputElement>('input')?.focus(); } });
-  const pastEvents = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, 0)).filter((event): event is NonNullable<typeof event> => Boolean(event && isCompletionAllowed(event.date, todayIso)));
-  const renderPastResults = (query = '') => { if (!picker) return; const q = query.trim().toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI'); const results = pastEvents.filter((event) => !q || `${event.title} ${event.place}`.toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI').includes(q)).slice(0, 30); picker.querySelector<HTMLElement>('[data-past-race-results]')!.innerHTML = results.map((event) => { const eventId = getStableEventId(event); const added = getSavedRaceStatus(readSavedRaces(storage).state, { year: event.year, eventId }) === 'completed'; return `<article class="past-race-result"><div><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))} · ${escapeHtml(event.place)} · ${escapeHtml(formatSeasonRegionLabel(event.region, language))}</span></div><button class="button button-small" type="button" data-add-past-race="${escapeHtml(`${event.year}:${eventId}`)}"${added ? ' disabled' : ''}>${added ? (language === 'en' ? 'Already added' : 'Že dodano') : (language === 'en' ? 'I completed this race' : 'Opravil sem ta tek')}</button></article>`; }).join(''); picker.querySelectorAll<HTMLButtonElement>('[data-add-past-race]').forEach((button) => button.addEventListener('click', () => { const event = pastEvents.find((candidate) => `${candidate.year}:${getStableEventId(candidate)}` === button.dataset.addPastRace); if (!event || !isCompletionAllowed(event.date, todayIso)) return; const race = { eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title }; const result = setSavedRaceStatusInStorage(storage, race, 'completed'); if (result.persistent) { upsertCompletedRaceSnapshot(storage, event); dispatchSavedRacesChanged(); initMyRacesPage(root); } })); };
-  picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', (event) => renderPastResults((event.currentTarget as HTMLInputElement).value)); renderPastResults();
+  const payloads: Record<string, unknown> = {};
+  const additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> = {};
+  const failedMasterYears = new Set<PublicYear>();
+  let pastEvents: NonNullable<ReturnType<typeof mapPublicRaceEvent>>[] | null = null;
+  const requiredYears = [...new Set(saved.map((race) => race.year))].filter((year): year is PublicYear => SUPPORTED_PUBLIC_YEARS.includes(year as PublicYear));
+  const requestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map() };
+  pageDataCache.set(mount, requestCache);
+  const masterRequest = (year: PublicYear): Promise<unknown> => {
+    const existing = requestCache.master.get(year);
+    if (existing) return existing;
+    const request = fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } })
+      .then((response) => { if (!response.ok) throw new Error(String(response.status)); return response.json(); });
+    requestCache.master.set(year, request);
+    return request;
+  };
+  const additionalRequest = (year: PublicYear): Promise<AdditionalEventData[]> => {
+    const existing = requestCache.additional.get(year);
+    if (existing) return existing;
+    const request = fetchAdditionalEventData(year);
+    requestCache.additional.set(year, request);
+    return request;
+  };
 
-  const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
-  const counts = countSavedRaceStatuses(resolved);
-  const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
-  const upcoming = filtered.filter((item) => item.status === 'upcoming');
-  const exportableUpcoming = getExportableUpcomingRaceEvents(resolved, language);
-  const other = filtered.filter((item) => item.status !== 'upcoming');
-  const emptyFiltered = activeFilter !== 'all' && !filtered.length;
-  mount.innerHTML = `${apiOk ? '' : `<p class="notice warning">${labels.apiError}</p>`}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
-  mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
-  mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
-  mount.querySelectorAll<HTMLSelectElement>('[data-my-race-status-select]').forEach((select) => select.addEventListener('change', () => {
-    const status = select.value; const race = { eventId: select.dataset.eventId || '', year: select.dataset.eventYear || '', date: select.dataset.eventDate || '', title: select.dataset.eventTitle || '' };
-    const before = getSavedRaceStatus(readSavedRaces(storage).state, race);
-    if (isSavedRaceStatus(status)) {
-      if (status === 'completed' && !isCompletionAllowed(race.date, todayIso)) { select.value = before || ''; return; }
-      const result = setSavedRaceStatusInStorage(storage, race, status);
-      const event = resolved.find((item) => item.key === `${race.year}:${race.eventId}`)?.event;
-      if (result.persistent && status === 'completed' && event) upsertCompletedRaceSnapshot(storage, event);
-      if (result.persistent && before !== status && getSavedRaceStatus(readSavedRaces(storage).state, race) === status) dispatchSavedRacesChanged();
-    } else removeSavedRaceFromMyRaces(storage, race, { eventName: race.title, eventDate: race.date, language });
-    initMyRacesPage(root);
-  }));
-  mount.querySelectorAll<HTMLButtonElement>('[data-mark-completed]').forEach((button) => button.addEventListener('click', () => {
-    const item = resolved.find((candidate) => candidate.savedRace.eventId === button.dataset.eventId && candidate.savedRace.year === button.dataset.eventYear);
-    if (!item?.event || !isCompletionAllowed(item.event.date, todayIso)) return;
-    const result = setSavedRaceStatusInStorage(storage, { eventId: item.savedRace.eventId, year: item.savedRace.year, date: item.event.date, title: item.event.title }, 'completed');
-    if (result.persistent) { upsertCompletedRaceSnapshot(storage, item.event); dispatchSavedRacesChanged(); initMyRacesPage(root); }
-  }));
-  mount.querySelectorAll<HTMLButtonElement>('[data-remove-saved-race]').forEach((button) => button.addEventListener('click', () => {
-    removeSavedRaceFromMyRaces(getStorage(), { eventId: button.dataset.eventId || '', year: button.dataset.eventYear || '' }, { eventName: button.dataset.eventTitle || '', eventDate: button.dataset.eventDate || '', language });
-    initMyRacesPage(root);
-  }));
+  const withSnapshots = (items: ReturnType<typeof resolveSavedRaces>) => {
+    const snapshotState = backfillCompletedRaceSnapshots(storage, items, todayIso);
+    const snapshots = new Map(snapshotState.snapshots.map((item) => [getCompletedRaceSnapshotKey(item), item]));
+    return items.map((item) => ({ ...item, snapshot: snapshots.get(item.key) ?? null }));
+  };
+  let resolved = withSnapshots(sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso)));
+
+  const bindPastRacePicker = () => {
+    const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
+    const resultsMount = picker?.querySelector<HTMLElement>('[data-past-race-results]');
+    const renderPastResults = (query = '') => {
+      if (!resultsMount) return;
+      if (!pastEvents) { resultsMount.innerHTML = `<p role="status">${escapeHtml(labels.pastLoading)}</p>`; return; }
+      const q = query.trim().toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI');
+      const results = pastEvents.filter((event) => !q || `${event.title} ${event.place}`.toLocaleLowerCase(language === 'en' ? 'en' : 'sl-SI').includes(q)).slice(0, 30);
+      resultsMount.innerHTML = results.map((event) => { const eventId = getStableEventId(event); const added = getSavedRaceStatus(readSavedRaces(storage).state, { year: event.year, eventId }) === 'completed'; return `<article class="past-race-result"><div><strong>${escapeHtml(event.title)}</strong><span>${escapeHtml(formatDate(event.date, language))} · ${escapeHtml(event.place)} · ${escapeHtml(formatSeasonRegionLabel(event.region, language))}</span></div><button class="button button-small" type="button" data-add-past-race="${escapeHtml(`${event.year}:${eventId}`)}"${added ? ' disabled' : ''}>${added ? (language === 'en' ? 'Already added' : 'Že dodano') : (language === 'en' ? 'I completed this race' : 'Opravil sem ta tek')}</button></article>`; }).join('');
+      resultsMount.querySelectorAll<HTMLButtonElement>('[data-add-past-race]').forEach((button) => button.addEventListener('click', () => { const event = pastEvents?.find((candidate) => `${candidate.year}:${getStableEventId(candidate)}` === button.dataset.addPastRace); if (!event || !isCompletionAllowed(event.date, todayIso)) return; const result = setSavedRaceStatusInStorage(storage, { eventId: getStableEventId(event), year: event.year, date: event.date, title: event.title }, 'completed'); if (result.persistent) { upsertCompletedRaceSnapshot(storage, event); dispatchSavedRacesChanged(); initMyRacesPage(root); } }));
+    };
+    root.querySelector<HTMLButtonElement>('[data-toggle-past-races]')?.addEventListener('click', () => { if (!picker) return; picker.hidden = !picker.hidden; if (!picker.hidden) { renderPastResults(picker.querySelector<HTMLInputElement>('input')?.value); picker.querySelector<HTMLInputElement>('input')?.focus(); } });
+    picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', (event) => renderPastResults((event.currentTarget as HTMLInputElement).value));
+  };
+
+  const render = (updating: boolean) => {
+    if (!isCurrentRender()) return;
+    const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
+    updateSeasonMount(root, resolved, availableRegions, language);
+    bindPastRacePicker();
+    const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
+    const counts = countSavedRaceStatuses(resolved);
+    const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
+    const upcoming = filtered.filter((item) => item.status === 'upcoming');
+    const exportableUpcoming = getExportableUpcomingRaceEvents(resolved, language);
+    const other = filtered.filter((item) => item.status !== 'upcoming');
+    const emptyFiltered = activeFilter !== 'all' && !filtered.length;
+    mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${updating ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
+    mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
+    mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
+    mount.querySelectorAll<HTMLSelectElement>('[data-my-race-status-select]').forEach((select) => select.addEventListener('change', () => { const status = select.value; const race = { eventId: select.dataset.eventId || '', year: select.dataset.eventYear || '', date: select.dataset.eventDate || '', title: select.dataset.eventTitle || '' }; const before = getSavedRaceStatus(readSavedRaces(storage).state, race); if (isSavedRaceStatus(status)) { if (status === 'completed' && !isCompletionAllowed(race.date, todayIso)) { select.value = before || ''; return; } const result = setSavedRaceStatusInStorage(storage, race, status); const event = resolved.find((item) => item.key === `${race.year}:${race.eventId}`)?.event; if (result.persistent && status === 'completed' && event) upsertCompletedRaceSnapshot(storage, event); if (result.persistent && before !== status && getSavedRaceStatus(readSavedRaces(storage).state, race) === status) dispatchSavedRacesChanged(); } else removeSavedRaceFromMyRaces(storage, race, { eventName: race.title, eventDate: race.date, language }); initMyRacesPage(root); }));
+    mount.querySelectorAll<HTMLButtonElement>('[data-mark-completed]').forEach((button) => button.addEventListener('click', () => { const item = resolved.find((candidate) => candidate.savedRace.eventId === button.dataset.eventId && candidate.savedRace.year === button.dataset.eventYear); if (!item?.event || !isCompletionAllowed(item.event.date, todayIso)) return; const result = setSavedRaceStatusInStorage(storage, { eventId: item.savedRace.eventId, year: item.savedRace.year, date: item.event.date, title: item.event.title }, 'completed'); if (result.persistent) { upsertCompletedRaceSnapshot(storage, item.event); dispatchSavedRacesChanged(); initMyRacesPage(root); } }));
+    mount.querySelectorAll<HTMLButtonElement>('[data-remove-saved-race]').forEach((button) => button.addEventListener('click', () => { removeSavedRaceFromMyRaces(getStorage(), { eventId: button.dataset.eventId || '', year: button.dataset.eventYear || '' }, { eventName: button.dataset.eventTitle || '', eventDate: button.dataset.eventDate || '', language }); initMyRacesPage(root); }));
+  };
+
+  // First paint is entirely local: saved references, statuses and completed snapshots.
+  render(requiredYears.length > 0);
+
+  const enrichFromAdditional = (year: PublicYear) => {
+    const rows = additionalRowsByYear[year] ?? [];
+    if (!rows.length || !isAdditionalDataEnabledForYear(year)) return;
+    const attached = attachAdditionalDataByMasterRow(resolved.filter((item) => item.event?.year === year).map((item) => item.event!), rows, year);
+    const byKey = new Map(attached.map((event) => [`${event.year}:${getStableEventId(event)}`, event]));
+    resolved = resolved.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
+  };
+
+  const yearLoads = requiredYears.map(async (year) => {
+    const optional = additionalRequest(year).then((rows) => { if (!isCurrentRender()) return; additionalRowsByYear[year] = rows; enrichFromAdditional(year); render(true); }).catch(() => { /* optional enrichment never removes the dashboard */ });
+    try { payloads[year] = await masterRequest(year); }
+    catch { failedMasterYears.add(year); render(true); return optional; }
+    if (!isCurrentRender()) return optional;
+    resolved = withSnapshots(sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso)));
+    if (additionalRowsByYear[year]) enrichFromAdditional(year);
+    render(true);
+    return optional;
+  });
+
+  // The complete current calendar is only needed by the past-race picker.
+  const pickerLoad = masterRequest(DEFAULT_PUBLIC_YEAR).then((payload) => {
+    if (!isCurrentRender()) return;
+    payloads[DEFAULT_PUBLIC_YEAR] = payload;
+    pastEvents = toApiRecords(payload).map((record) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, 0)).filter((event): event is NonNullable<typeof event> => Boolean(event && isCompletionAllowed(event.date, todayIso)));
+    if (!requiredYears.includes(DEFAULT_PUBLIC_YEAR)) render(requiredYears.length > 0);
+  }).catch(() => { if (isCurrentRender() && !requiredYears.includes(DEFAULT_PUBLIC_YEAR)) { pastEvents = []; render(requiredYears.length > 0); } });
+
+  await Promise.allSettled([...yearLoads, pickerLoad]);
+  if (isCurrentRender()) render(false);
 };
