@@ -221,6 +221,16 @@ describe('my races page source contract', () => {
     assert.doesNotMatch(en, /<p class="eyebrow">My races/);
   });
 
+  it('keeps full dashboards out of live regions while announcing only concise update statuses', () => {
+    for (const page of [sl, en]) {
+      assert.doesNotMatch(page, /data-my-races-app[^>]*aria-live/);
+      assert.doesNotMatch(page, /data-my-season-app[^>]*aria-live/);
+      assert.match(page, /data-my-races-update-status-mount/);
+    }
+    assert.match(client, /data-my-races-update-status[^>]*>\$\{escapeHtml\(labels\.updating\)\}/);
+    assert.match(client, /role="status" aria-live="polite" data-my-races-update-status/);
+    assert.match(client, /seasonMount\.removeAttribute\('aria-live'\)/);
+  });
   it('uses the existing saved races storage key through utilities', () => assert.match(client, /readSavedRaces/));
   it('implements only upcoming local ICS export without changing storage', () => {
     assert.match(client, /data-download-upcoming-races-ics/);

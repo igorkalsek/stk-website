@@ -307,7 +307,7 @@ const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSav
     seasonMount.classList.remove('season-loading');
     delete seasonMount.dataset.seasonLoading;
     seasonMount.removeAttribute('aria-label');
-    seasonMount.setAttribute('aria-live', 'polite');
+    seasonMount.removeAttribute('aria-live');
     seasonMount.closest<HTMLElement>('[data-my-races-panel="season"]')?.removeAttribute('aria-busy');
   }
 };
