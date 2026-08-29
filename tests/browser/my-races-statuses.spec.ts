@@ -430,6 +430,28 @@ test('keeps the global status tied to required 2027 requests while the separate 
   expect(requestCounts).toMatchObject({ master2026: 1, master2027: 1, additional2026: 0, additional2027: 1 });
 });
 
+test('restores focus to the same past-race result action across another year enrichment', async ({ page }) => {
+  let releaseMaster2027!: () => void;
+  let releaseAdditional2027!: () => void;
+  const master2027Gate = new Promise<void>((resolve) => { releaseMaster2027 = resolve; });
+  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
+  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+  await mockMyRacesApis(page, { races2027: [race2027], master2027Gate, additional2027Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000101_2027', 'following')]);
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
+  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  const resultButton = page.locator('[data-add-past-race="2026:r000104"]');
+  await expect(resultButton).toBeVisible();
+  await resultButton.focus();
+  await expect(resultButton).toBeFocused();
+
+  releaseMaster2027();
+  await expect(page.locator('[data-add-past-race="2026:r000104"]')).toBeFocused();
+  releaseAdditional2027();
+  await expect(page.locator('[data-add-past-race="2026:r000104"]')).toBeFocused();
+  await expect(page.locator('[data-past-race-picker]')).toBeVisible();
+});
+
 test('keeps one picker listener and one master request while a pending picker is closed and reopened', async ({ page }) => {
   let releaseMaster!: () => void;
   const master2026Gate = new Promise<void>((resolve) => { releaseMaster = resolve; });
@@ -958,6 +980,21 @@ for (const statusCase of [
     await expect(statusMount.getByRole('status')).toHaveCount(0);
   });
 }
+
+test('restores a focused plan filter by stable filter identity after enrichment', async ({ page }) => {
+  let releaseAdditional!: () => void;
+  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
+  await mockMyRacesApis(page, { additional2026Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await openMyRaces(page);
+  const followingFilter = filter(page, 'following');
+  await followingFilter.focus();
+  await expect(followingFilter).toBeFocused();
+
+  releaseAdditional();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+  await expect(filter(page, 'following')).toBeFocused();
+});
 
 test('keeps a focused English status selector usable while additional enrichment settles', async ({ page }) => {
   let releaseAdditional!: () => void;
