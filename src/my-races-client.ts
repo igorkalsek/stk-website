@@ -404,14 +404,16 @@ export const initMyRacesPage = async (root = document) => {
     const existing = requestCache.master.get(year);
     if (existing) return existing;
     const request = fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } })
-      .then((response) => { if (!response.ok) throw new Error(String(response.status)); return response.json(); });
+      .then((response) => { if (!response.ok) throw new Error(String(response.status)); return response.json(); })
+      .catch((error) => { if (requestCache.master.get(year) === request) requestCache.master.delete(year); throw error; });
     requestCache.master.set(year, request);
     return request;
   };
   const additionalRequest = (year: PublicYear): Promise<AdditionalEventData[]> => {
     const existing = requestCache.additional.get(year);
     if (existing) return existing;
-    const request = fetchAdditionalEventData(year);
+    const request = fetchAdditionalEventData(year)
+      .catch((error) => { if (requestCache.additional.get(year) === request) requestCache.additional.delete(year); throw error; });
     requestCache.additional.set(year, request);
     return request;
   };
@@ -447,7 +449,7 @@ export const initMyRacesPage = async (root = document) => {
       if (!picker) return;
       picker.hidden = !picker.hidden;
       if (!picker.hidden) {
-        if (pastEventsState === 'idle') void loadPastEvents();
+        if (pastEventsState === 'idle' || pastEventsState === 'error') void loadPastEvents();
         renderPastRacePickerResults();
         picker.querySelector<HTMLInputElement>('input')?.focus();
       }

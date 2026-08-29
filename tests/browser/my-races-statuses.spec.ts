@@ -150,7 +150,7 @@ async function freezeLjubljanaDate(page: Page, todayIso = '2026-07-15') {
   }, todayIso);
 }
 
-async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; masterGate?: Promise<void>; master2026Gate?: Promise<void>; master2027Gate?: Promise<void>; additionalGate?: Promise<void>; additional2026Gate?: Promise<void>; additional2027Gate?: Promise<void> } = {}) {
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; masterFailures2026?: number; masterGate?: Promise<void>; master2026RetryGate?: Promise<void>; master2026Gate?: Promise<void>; master2027Gate?: Promise<void>; additionalGate?: Promise<void>; additional2026Gate?: Promise<void>; additional2027Gate?: Promise<void> } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -183,8 +183,9 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
     }
 
     requestCounts.master2026 += 1;
-    if (options.master2026Gate) await options.master2026Gate;
-    if (options.masterStatus && options.masterStatus >= 400) return route.fulfill({ status: options.masterStatus, contentType: 'application/json', body: JSON.stringify({ error: 'master failed' }) });
+    if (requestCounts.master2026 > 1 && options.master2026RetryGate) await options.master2026RetryGate;
+    else if (options.master2026Gate) await options.master2026Gate;
+    if ((options.masterStatus && options.masterStatus >= 400) || requestCounts.master2026 <= (options.masterFailures2026 ?? 0)) return route.fulfill({ status: options.masterStatus ?? 503, contentType: 'application/json', body: JSON.stringify({ error: 'master failed' }) });
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(options.races2026 ?? races2026) });
   });
 
@@ -450,6 +451,33 @@ test('restores focus to the same past-race result action across another year enr
   releaseAdditional2027();
   await expect(page.locator('[data-add-past-race="2026:r000104"]')).toBeFocused();
   await expect(page.locator('[data-past-race-picker]')).toBeVisible();
+});
+
+test('retries a transient past-race master failure once after closing and reopening the picker', async ({ page }) => {
+  let releaseRetry!: () => void;
+  const master2026RetryGate = new Promise<void>((resolve) => { releaseRetry = resolve; });
+  const { requestCounts } = await mockMyRacesApis(page, { masterFailures2026: 1, master2026RetryGate });
+  await seedV2SavedRaces(page, []);
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
+  const toggle = page.getByRole('button', { name: 'Dodaj pretekli tek' });
+  const pickerResults = page.locator('[data-past-race-results]');
+
+  await toggle.click();
+  await expect(pickerResults.getByText('Preteklih tekov trenutno ni bilo mogoče naložiti.')).toBeVisible();
+  expect(requestCounts.master2026).toBe(1);
+  await toggle.click();
+  await toggle.click();
+  await expect(pickerResults.getByRole('status')).toHaveText('Nalagamo pretekle teke …');
+  await expect.poll(() => requestCounts.master2026).toBe(2);
+  await toggle.click();
+  await toggle.click();
+  expect(requestCounts.master2026).toBe(2);
+
+  releaseRetry();
+  await expect(pickerResults.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.past-race-result').first()).toBeVisible();
+  expect(requestCounts.master2026).toBe(2);
+  await expect(page.locator('[data-my-season-app]')).toBeVisible();
 });
 
 test('keeps one picker listener and one master request while a pending picker is closed and reopened', async ({ page }) => {
