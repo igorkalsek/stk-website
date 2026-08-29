@@ -1077,6 +1077,39 @@ test('clears progressive status and aria-busy for English success and master fai
   await expect(page.locator('.my-season')).toBeVisible();
 });
 
+for (const seasonDisclosureCase of [
+  { path: '/moji-teki/?view=season', summary: 'Preostale regije' },
+  { path: '/en/my-races/?view=season', summary: 'Remaining regions' }
+]) {
+  test(`preserves the open regions disclosure and summary focus at ${seasonDisclosureCase.path}`, async ({ page }) => {
+    let releaseMaster!: () => void;
+    let releaseAdditional!: () => void;
+    const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+    const additionalGate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
+    await mockMyRacesApis(page, { masterGate, additionalGate });
+    await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+    await freezeLjubljanaDate(page);
+    await page.goto(seasonDisclosureCase.path);
+    const disclosure = page.locator('.season-regions-disclosure');
+    const summary = disclosure.locator('summary');
+    await summary.click();
+    await summary.focus();
+    await expect(disclosure).toHaveAttribute('open', '');
+    await expect(summary).toBeFocused();
+
+    releaseMaster();
+    const afterMaster = page.locator('.season-regions-disclosure');
+    await expect(afterMaster).toHaveAttribute('open', '');
+    await expect(afterMaster.locator('summary')).toBeFocused();
+    await expect(afterMaster.locator('summary')).toContainText(seasonDisclosureCase.summary);
+
+    releaseAdditional();
+    const afterAdditional = page.locator('.season-regions-disclosure');
+    await expect(afterAdditional).toHaveAttribute('open', '');
+    await expect(afterAdditional.locator('summary')).toBeFocused();
+  });
+}
+
 test('keeps season regions, achievements and stamps compact and accessible', async ({ page }) => {
   await mockMyRacesApis(page);
   await seedV2SavedRaces(page, [v2Race('r000104', 'completed')]);

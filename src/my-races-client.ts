@@ -291,7 +291,13 @@ export const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availa
 const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, availableRegions: string[], language: 'sl' | 'en') => {
   const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
   if (seasonMount && 'mySeasonApp' in seasonMount.dataset) {
+    const previousRegionsDisclosure = seasonMount.querySelector<HTMLDetailsElement>('.season-regions-disclosure');
+    const restoreRegionsDisclosure = Boolean(previousRegionsDisclosure?.open);
+    const restoreRegionsFocus = Boolean(previousRegionsDisclosure?.contains(document.activeElement));
     seasonMount.innerHTML = renderSeason(items, availableRegions, language);
+    const regionsDisclosure = seasonMount.querySelector<HTMLDetailsElement>('.season-regions-disclosure');
+    if (regionsDisclosure && restoreRegionsDisclosure) regionsDisclosure.open = true;
+    if (regionsDisclosure && restoreRegionsFocus) regionsDisclosure.querySelector<HTMLElement>('summary')?.focus();
     seasonMount.classList.remove('season-loading');
     delete seasonMount.dataset.seasonLoading;
     seasonMount.removeAttribute('aria-label');
