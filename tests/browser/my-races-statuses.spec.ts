@@ -982,6 +982,25 @@ test('keeps a focused English status selector usable while additional enrichment
   await expect(card(page, '2026:r000101').locator('[data-my-race-deadline]')).toBeVisible();
 });
 
+test('restores focus to the same English race-calendar action after enrichment', async ({ page }) => {
+  let releaseAdditional!: () => void;
+  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
+  await mockMyRacesApis(page, { additional2026Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await openMyRaces(page, '/en/my-races/');
+  const disclosure = card(page, '2026:r000101').locator('[data-race-calendar-menu]');
+  await disclosure.locator('summary').click();
+  const outlookAction = disclosure.locator('[data-calendar-action="outlook"]');
+  await outlookAction.focus();
+  await expect(outlookAction).toBeFocused();
+
+  releaseAdditional();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+  const restoredDisclosure = card(page, '2026:r000101').locator('[data-race-calendar-menu]');
+  await expect(restoredDisclosure).toHaveAttribute('open', '');
+  await expect(restoredDisclosure.locator('[data-calendar-action="outlook"]')).toBeFocused();
+});
+
 test('keeps an open deadline calendar disclosure by race identity across another year enrichment', async ({ page }) => {
   let releaseMaster2027!: () => void;
   let releaseAdditional2027!: () => void;
@@ -997,12 +1016,16 @@ test('keeps an open deadline calendar disclosure by race identity across another
   await expect(disclosure).toBeVisible();
   await disclosure.locator('summary').click();
   await expect(disclosure).toHaveAttribute('open', '');
+  const googleAction = disclosure.locator('[data-calendar-action="google"]');
+  await googleAction.focus();
+  await expect(googleAction).toBeFocused();
 
   releaseMaster2027();
   releaseAdditional2027();
   await expect(card(page, '2027:r000101')).toBeVisible();
   const restoredDisclosure = card(page, '2026:r000101').locator('[data-my-race-deadline][data-deadline-kind="registration"] .deadline-calendar-menu');
   await expect(restoredDisclosure).toHaveAttribute('open', '');
+  await expect(restoredDisclosure.locator('[data-calendar-action="google"]')).toBeFocused();
 });
 
 test('renders local plan and season before controlled API promises resolve, then enriches progressively', async ({ page }) => {

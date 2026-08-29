@@ -123,7 +123,7 @@ const renderDeadlineCalendarMenu = (input: DeadlineEvent, labels: Labels) => {
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
   if (!google && !ics && !outlook) return '';
-  return `<details class="deadline-calendar-menu"><summary>${escapeHtml(labels.addDeadline)}</summary><div class="deadline-calendar-actions">${google ? `<a href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
+  return `<details class="deadline-calendar-menu"><summary>${escapeHtml(labels.addDeadline)}</summary><div class="deadline-calendar-actions">${google ? `<a data-calendar-action="google" href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a data-calendar-action="apple" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a data-calendar-action="outlook" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
 };
 
 const deadlineLabel = (deadline: RegistrationDeadlineView, labels: Labels) => deadline.kind === 'early' ? labels.earlyRegistration : labels.registrationDeadline;
@@ -147,7 +147,7 @@ const renderRaceCalendarMenu = (event: { title: string; date: string; noticeUrl?
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
   if (!google && !ics && !outlook) return '';
-  return `<details class="race-calendar-menu" data-race-calendar-menu><summary><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.addRace)}</summary><div class="race-calendar-actions" data-race-calendar-actions>${google ? `<a href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
+  return `<details class="race-calendar-menu" data-race-calendar-menu><summary><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.addRace)}</summary><div class="race-calendar-actions" data-race-calendar-actions>${google ? `<a data-calendar-action="google" href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a data-calendar-action="apple" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a data-calendar-action="outlook" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
 };
 
 
@@ -442,6 +442,12 @@ export const initMyRacesPage = async (root = document) => {
       raceKey: details.closest<HTMLElement>('[data-key]')?.dataset.key ?? '',
       kind: details.matches('[data-race-calendar-menu]') ? 'race' : details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? ''
     })).filter((item) => item.raceKey && item.kind);
+    const activeCalendarLink = mount.contains(document.activeElement) ? (document.activeElement as HTMLElement).closest<HTMLAnchorElement>('[data-calendar-action]') : null;
+    const activeCalendarIdentity = activeCalendarLink ? {
+      raceKey: activeCalendarLink.closest<HTMLElement>('[data-key]')?.dataset.key ?? '',
+      kind: activeCalendarLink.closest('[data-race-calendar-menu]') ? 'race' : activeCalendarLink.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? '',
+      action: activeCalendarLink.dataset.calendarAction ?? ''
+    } : null;
     const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
     updateSeasonMount(root, resolved, availableRegions, language);
     bindPastRacePicker();
@@ -477,6 +483,7 @@ export const initMyRacesPage = async (root = document) => {
       const raceCard = [...mount.querySelectorAll<HTMLElement>('[data-key]')].find((card) => card.dataset.key === raceKey);
       const disclosure = kind === 'race' ? raceCard?.querySelector<HTMLDetailsElement>('[data-race-calendar-menu]') : [...(raceCard?.querySelectorAll<HTMLDetailsElement>('[data-my-race-deadline] .deadline-calendar-menu') ?? [])].find((details) => details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind === kind);
       if (disclosure) disclosure.open = true;
+      if (disclosure && activeCalendarIdentity?.raceKey === raceKey && activeCalendarIdentity.kind === kind) disclosure.querySelector<HTMLAnchorElement>(`[data-calendar-action="${activeCalendarIdentity.action}"]`)?.focus();
     });
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
