@@ -959,6 +959,52 @@ for (const statusCase of [
   });
 }
 
+test('keeps a focused English status selector usable while additional enrichment settles', async ({ page }) => {
+  let releaseAdditional!: () => void;
+  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
+  await mockMyRacesApis(page, { additional2026Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await openMyRaces(page, '/en/my-races/');
+  const raceCard = card(page, '2026:r000101');
+  const status = raceCard.getByLabel('My status');
+  await expect(status).toHaveValue('following');
+  await status.focus();
+  await expect(status).toBeFocused();
+
+  releaseAdditional();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+  await expect(status).toBeFocused();
+  await expect(status).toHaveValue('following');
+  await status.selectOption('planning');
+  await expect(status).toHaveValue('planning');
+  await status.press('Tab');
+  await expect(card(page, '2026:r000101').getByLabel('My status')).toHaveValue('planning');
+  await expect(card(page, '2026:r000101').locator('[data-my-race-deadline]')).toBeVisible();
+});
+
+test('keeps an open deadline calendar disclosure by race identity across another year enrichment', async ({ page }) => {
+  let releaseMaster2027!: () => void;
+  let releaseAdditional2027!: () => void;
+  const master2027Gate = new Promise<void>((resolve) => { releaseMaster2027 = resolve; });
+  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
+  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+  const additional2027 = [{ ...additional2026[0], leto: '2027', master_sheet: '2027', datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run', rok_cenejse_prijave: '', rok_prijave: '2027-08-01' }];
+  await mockMyRacesApis(page, { races2027: [race2027], additional2027, master2027Gate, additional2027Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000101_2027', 'following')]);
+  await openMyRaces(page);
+  const deadline = card(page, '2026:r000101').locator('[data-my-race-deadline][data-deadline-kind="registration"]');
+  const disclosure = deadline.locator('.deadline-calendar-menu');
+  await expect(disclosure).toBeVisible();
+  await disclosure.locator('summary').click();
+  await expect(disclosure).toHaveAttribute('open', '');
+
+  releaseMaster2027();
+  releaseAdditional2027();
+  await expect(card(page, '2027:r000101')).toBeVisible();
+  const restoredDisclosure = card(page, '2026:r000101').locator('[data-my-race-deadline][data-deadline-kind="registration"] .deadline-calendar-menu');
+  await expect(restoredDisclosure).toHaveAttribute('open', '');
+});
+
 test('renders local plan and season before controlled API promises resolve, then enriches progressively', async ({ page }) => {
   let releaseMaster!: () => void;
   let releaseAdditional!: () => void;
@@ -982,7 +1028,7 @@ test('renders local plan and season before controlled API promises resolve, then
   await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Posodabljamo podatke …');
 
   releaseMaster();
-  await expect(page.locator('[data-my-races-app]')).toContainText('Ljubljana 10K Trail');
+  await expect(page.locator('[data-my-races-app]')).toContainText(byId.r000101.title);
   await expect(page.locator('[data-my-race-deadline]')).toHaveCount(0);
   releaseAdditional();
   await expect(page.locator('[data-my-race-deadline]')).toContainText('23. julija');

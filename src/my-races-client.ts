@@ -427,6 +427,7 @@ export const initMyRacesPage = async (root = document) => {
     picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', renderPastRacePickerResults);
   };
 
+  let deferredPlanControl: HTMLSelectElement | null = null;
   const render = () => {
     if (!isCurrentRender()) return;
     const previousPicker = root.querySelector<HTMLElement>('[data-past-race-picker]');
@@ -436,6 +437,11 @@ export const initMyRacesPage = async (root = document) => {
     const pickerQuery = previousSearch?.value ?? '';
     const selectionStart = previousSearch?.selectionStart ?? pickerQuery.length;
     const selectionEnd = previousSearch?.selectionEnd ?? selectionStart;
+    const activeStatusSelect = mount.contains(document.activeElement) && (document.activeElement as HTMLElement).matches('[data-my-race-status-select]') ? document.activeElement as HTMLSelectElement : null;
+    const openDisclosures = [...mount.querySelectorAll<HTMLDetailsElement>('details[open]')].map((details) => ({
+      raceKey: details.closest<HTMLElement>('[data-key]')?.dataset.key ?? '',
+      kind: details.matches('[data-race-calendar-menu]') ? 'race' : details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? ''
+    })).filter((item) => item.raceKey && item.kind);
     const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
     updateSeasonMount(root, resolved, availableRegions, language);
     bindPastRacePicker();
@@ -458,7 +464,20 @@ export const initMyRacesPage = async (root = document) => {
     const emptyFiltered = activeFilter !== 'all' && !filtered.length;
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
     if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
+    if (activeStatusSelect) {
+      if (deferredPlanControl !== activeStatusSelect) {
+        deferredPlanControl = activeStatusSelect;
+        activeStatusSelect.addEventListener('blur', () => { deferredPlanControl = null; if (isCurrentRender()) render(); }, { once: true });
+      }
+      return;
+    }
+    deferredPlanControl = null;
     mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    openDisclosures.forEach(({ raceKey, kind }) => {
+      const raceCard = [...mount.querySelectorAll<HTMLElement>('[data-key]')].find((card) => card.dataset.key === raceKey);
+      const disclosure = kind === 'race' ? raceCard?.querySelector<HTMLDetailsElement>('[data-race-calendar-menu]') : [...(raceCard?.querySelectorAll<HTMLDetailsElement>('[data-my-race-deadline] .deadline-calendar-menu') ?? [])].find((details) => details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind === kind);
+      if (disclosure) disclosure.open = true;
+    });
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
