@@ -982,11 +982,27 @@ test('renders local plan and season before controlled API promises resolve, then
   await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Posodabljamo podatke …');
 
   releaseMaster();
-  await expect(page.locator('[data-my-races-app]')).toContainText(byId.r000101.title);
+  await expect(localCard.getByRole('link', { name: byId.r000101.title })).toHaveCount(1);
+  await expect(localCard).toContainText('Ljubljana, Osrednjeslovenska');
   await expect(page.locator('[data-my-race-deadline]')).toHaveCount(0);
   releaseAdditional();
   await expect(page.locator('[data-my-race-deadline]')).toContainText('23. julija');
   await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+});
+
+test('hides a cached Master warning after the last saved race for that year is removed', async ({ page }) => {
+  const { requestCounts } = await mockMyRacesApis(page, { masterStatus: 503 });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await page.goto('/moji-teki/');
+
+  const savedCard = card(page, '2026:r000101');
+  await expect(savedCard).toContainText(byId.r000101.title);
+  await expect(page.getByText('API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.')).toBeVisible();
+  await savedCard.getByRole('button', { name: `Odstrani: ${byId.r000101.title}` }).click();
+
+  await expect(savedCard).toHaveCount(0);
+  await expect(page.getByText('API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.')).toHaveCount(0);
+  expect(requestCounts.master2026).toBe(1);
 });
 
 test('clears progressive status and aria-busy for English success and master failure', async ({ page }) => {

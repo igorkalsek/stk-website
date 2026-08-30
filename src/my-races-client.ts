@@ -441,7 +441,8 @@ export const initMyRacesPage = async (root = document) => {
     const emptyFiltered = activeFilter !== 'all' && !filtered.length;
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
     if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
-    mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    const hasRequiredMasterFailure = requiredYears.some((year) => failedMasterYears.has(year));
+    mount.innerHTML = `${hasRequiredMasterFailure ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
@@ -471,27 +472,41 @@ export const initMyRacesPage = async (root = document) => {
     renderPastRacePickerResults();
   };
 
-  const yearLoads = requiredYears.flatMap((year) => {
-    const loads: Promise<unknown>[] = [];
-    if (payloads[year] === undefined) loads.push(masterRequest(year).catch(() => { failedMasterYears.add(year); }).finally(() => pendingRequiredRequests.delete(`master:${year}`)));
-    if (additionalRowsByYear[year] === undefined) loads.push(additionalRequest(year).catch(() => { /* optional enrichment */ }).finally(() => pendingRequiredRequests.delete(`additional:${year}`)));
-    return loads;
-  });
-
-  if (!yearLoads.length) return;
-  await Promise.allSettled(yearLoads);
-  if (!isCurrentRender()) return;
-  resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
-  const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
-  if (updateStatusMount) updateStatusMount.innerHTML = '';
+  let reconciliationQueued = false;
   const reconcileWhenIdle = () => {
     if (!isCurrentRender()) return;
     const active = document.activeElement as HTMLElement | null;
     if (active && (mount.contains(active) || root.querySelector('[data-my-season-app]')?.contains(active))) {
-      active.addEventListener('blur', () => queueMicrotask(reconcileWhenIdle), { once: true });
+      if (!reconciliationQueued) {
+        reconciliationQueued = true;
+        active.addEventListener('blur', () => {
+          reconciliationQueued = false;
+          queueMicrotask(reconcileWhenIdle);
+        }, { once: true });
+      }
       return;
     }
+    reconciliationQueued = false;
     render();
   };
-  reconcileWhenIdle();
+
+  const rebuildAndReconcile = () => {
+    if (!isCurrentRender()) return;
+    resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
+    reconcileWhenIdle();
+  };
+
+  const masterLoads = requiredYears.flatMap((year) => payloads[year] === undefined ? [masterRequest(year)
+    .then(() => { failedMasterYears.delete(year); }, () => { failedMasterYears.add(year); })
+    .finally(() => {
+      pendingRequiredRequests.delete(`master:${year}`);
+      rebuildAndReconcile();
+    })] : []);
+  const additionalLoads = requiredYears.flatMap((year) => additionalRowsByYear[year] === undefined ? [additionalRequest(year)
+    .catch(() => { /* optional enrichment */ })
+    .finally(() => pendingRequiredRequests.delete(`additional:${year}`))] : []);
+
+  if (!masterLoads.length && !additionalLoads.length) return;
+  if (additionalLoads.length) void Promise.allSettled(additionalLoads).then(rebuildAndReconcile);
+  await Promise.allSettled([...masterLoads, ...additionalLoads]);
 };
