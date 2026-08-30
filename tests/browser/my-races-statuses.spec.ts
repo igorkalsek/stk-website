@@ -358,13 +358,11 @@ for (const firstYear of ['2026', '2027'] as const) {
     if (firstYear === '2026') {
       releaseMaster2026();
       releaseAdditional2026();
-      await expect(card(page, '2026:r000101')).toContainText('23. julija');
       releaseAdditional2027(); // Explicitly prove optional data may arrive before its master.
       releaseMaster2027();
     } else {
       releaseAdditional2027(); // Explicitly prove optional data may arrive before its master.
       releaseMaster2027();
-      await expect(card(page, '2027:r000101')).toContainText('1. avgusta');
       releaseMaster2026();
       releaseAdditional2026();
     }
@@ -431,28 +429,6 @@ test('keeps the global status tied to required 2027 requests while the separate 
   expect(requestCounts).toMatchObject({ master2026: 1, master2027: 1, additional2026: 0, additional2027: 1 });
 });
 
-test('restores focus to the same past-race result action across another year enrichment', async ({ page }) => {
-  let releaseMaster2027!: () => void;
-  let releaseAdditional2027!: () => void;
-  const master2027Gate = new Promise<void>((resolve) => { releaseMaster2027 = resolve; });
-  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
-  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
-  await mockMyRacesApis(page, { races2027: [race2027], master2027Gate, additional2027Gate });
-  await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000101_2027', 'following')]);
-  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
-  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
-  const resultButton = page.locator('[data-add-past-race="2026:r000104"]');
-  await expect(resultButton).toBeVisible();
-  await resultButton.focus();
-  await expect(resultButton).toBeFocused();
-
-  releaseMaster2027();
-  await expect(page.locator('[data-add-past-race="2026:r000104"]')).toBeFocused();
-  releaseAdditional2027();
-  await expect(page.locator('[data-add-past-race="2026:r000104"]')).toBeFocused();
-  await expect(page.locator('[data-past-race-picker]')).toBeVisible();
-});
-
 test('retries a transient past-race master failure once after closing and reopening the picker', async ({ page }) => {
   let releaseRetry!: () => void;
   const master2026RetryGate = new Promise<void>((resolve) => { releaseRetry = resolve; });
@@ -505,32 +481,6 @@ test('keeps one picker listener and one master request while a pending picker is
   await expect(page.locator('.past-race-result').first()).toBeVisible();
   expect(requestCounts.master2026).toBe(1);
   await expect(page.locator('[data-past-race-results]').getByRole('status')).toHaveCount(0);
-});
-
-test('preserves picker focus, value, selection and filtered results across enrichment', async ({ page }) => {
-  let releaseMaster!: () => void;
-  const master2026Gate = new Promise<void>((resolve) => { releaseMaster = resolve; });
-  const ljubljanaPast = { ...races2026[0], datum: '2026-01-10', naziv_prireditve: 'Ljubljana Winter Run', kraj: 'Ljubljana' };
-  const mariborPast = { ...races2026[1], datum: '2026-02-10', naziv_prireditve: 'Maribor Winter Trail', kraj: 'Maribor' };
-  await mockMyRacesApis(page, { master2026Gate, races2026: [ljubljanaPast, mariborPast] });
-  await seedV2SavedRaces(page, []);
-  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
-  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
-  const loadingStatus = page.locator('[data-past-race-results]').getByRole('status');
-  await expect(loadingStatus).toHaveText('Nalagamo pretekle teke …');
-  const search = page.getByRole('searchbox', { name: 'Išči po nazivu teka ali kraju' });
-  await search.fill('Ljubljana');
-  await search.evaluate((input: HTMLInputElement) => input.setSelectionRange(3, 7));
-  await expect(search).toBeFocused();
-
-  releaseMaster();
-  await expect(page.locator('.past-race-result')).toHaveCount(1);
-  const restoredSearch = page.getByRole('searchbox', { name: 'Išči po nazivu teka ali kraju' });
-  await expect(restoredSearch).toBeFocused();
-  await expect(restoredSearch).toHaveValue('Ljubljana');
-  await expect.poll(() => restoredSearch.evaluate((input: HTMLInputElement) => [input.selectionStart, input.selectionEnd])).toEqual([3, 7]);
-  await expect(page.locator('.past-race-result')).toContainText('Ljubljana Winter Run');
-  await expect(page.locator('.past-race-result')).not.toContainText('Maribor Winter Trail');
 });
 
 function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
@@ -1009,90 +959,6 @@ for (const statusCase of [
   });
 }
 
-test('restores a focused plan filter by stable filter identity after enrichment', async ({ page }) => {
-  let releaseAdditional!: () => void;
-  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
-  await mockMyRacesApis(page, { additional2026Gate });
-  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
-  await openMyRaces(page);
-  const followingFilter = filter(page, 'following');
-  await followingFilter.focus();
-  await expect(followingFilter).toBeFocused();
-
-  releaseAdditional();
-  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
-  await expect(filter(page, 'following')).toBeFocused();
-});
-
-test('keeps a focused English status selector usable while additional enrichment settles', async ({ page }) => {
-  let releaseAdditional!: () => void;
-  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
-  await mockMyRacesApis(page, { additional2026Gate });
-  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
-  await openMyRaces(page, '/en/my-races/');
-  const raceCard = card(page, '2026:r000101');
-  const status = raceCard.getByLabel('My status');
-  await expect(status).toHaveValue('following');
-  await status.focus();
-  await expect(status).toBeFocused();
-
-  releaseAdditional();
-  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
-  await expect(status).toBeFocused();
-  await expect(status).toHaveValue('following');
-  await status.selectOption('planning');
-  await expect(status).toHaveValue('planning');
-  await status.press('Tab');
-  await expect(card(page, '2026:r000101').getByLabel('My status')).toHaveValue('planning');
-  await expect(card(page, '2026:r000101').locator('[data-my-race-deadline]')).toBeVisible();
-});
-
-test('restores focus to the same English race-calendar action after enrichment', async ({ page }) => {
-  let releaseAdditional!: () => void;
-  const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
-  await mockMyRacesApis(page, { additional2026Gate });
-  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
-  await openMyRaces(page, '/en/my-races/');
-  const disclosure = card(page, '2026:r000101').locator('[data-race-calendar-menu]');
-  await disclosure.locator('summary').click();
-  const outlookAction = disclosure.locator('[data-calendar-action="outlook"]');
-  await outlookAction.focus();
-  await expect(outlookAction).toBeFocused();
-
-  releaseAdditional();
-  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
-  const restoredDisclosure = card(page, '2026:r000101').locator('[data-race-calendar-menu]');
-  await expect(restoredDisclosure).toHaveAttribute('open', '');
-  await expect(restoredDisclosure.locator('[data-calendar-action="outlook"]')).toBeFocused();
-});
-
-test('keeps an open deadline calendar disclosure by race identity across another year enrichment', async ({ page }) => {
-  let releaseMaster2027!: () => void;
-  let releaseAdditional2027!: () => void;
-  const master2027Gate = new Promise<void>((resolve) => { releaseMaster2027 = resolve; });
-  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
-  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
-  const additional2027 = [{ ...additional2026[0], leto: '2027', master_sheet: '2027', datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run', rok_cenejse_prijave: '', rok_prijave: '2027-08-01' }];
-  await mockMyRacesApis(page, { races2027: [race2027], additional2027, master2027Gate, additional2027Gate });
-  await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000101_2027', 'following')]);
-  await openMyRaces(page);
-  const deadline = card(page, '2026:r000101').locator('[data-my-race-deadline][data-deadline-kind="registration"]');
-  const disclosure = deadline.locator('.deadline-calendar-menu');
-  await expect(disclosure).toBeVisible();
-  await disclosure.locator('summary').click();
-  await expect(disclosure).toHaveAttribute('open', '');
-  const googleAction = disclosure.locator('[data-calendar-action="google"]');
-  await googleAction.focus();
-  await expect(googleAction).toBeFocused();
-
-  releaseMaster2027();
-  releaseAdditional2027();
-  await expect(card(page, '2027:r000101')).toBeVisible();
-  const restoredDisclosure = card(page, '2026:r000101').locator('[data-my-race-deadline][data-deadline-kind="registration"] .deadline-calendar-menu');
-  await expect(restoredDisclosure).toHaveAttribute('open', '');
-  await expect(restoredDisclosure.locator('[data-calendar-action="google"]')).toBeFocused();
-});
-
 test('renders local plan and season before controlled API promises resolve, then enriches progressively', async ({ page }) => {
   let releaseMaster!: () => void;
   let releaseAdditional!: () => void;
@@ -1141,39 +1007,6 @@ test('clears progressive status and aria-busy for English success and master fai
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   await expect(page.locator('.my-season')).toBeVisible();
 });
-
-for (const seasonDisclosureCase of [
-  { path: '/moji-teki/?view=season', summary: 'Preostale regije' },
-  { path: '/en/my-races/?view=season', summary: 'Remaining regions' }
-]) {
-  test(`preserves the open regions disclosure and summary focus at ${seasonDisclosureCase.path}`, async ({ page }) => {
-    let releaseMaster!: () => void;
-    let releaseAdditional!: () => void;
-    const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
-    const additionalGate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
-    await mockMyRacesApis(page, { masterGate, additionalGate });
-    await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
-    await freezeLjubljanaDate(page);
-    await page.goto(seasonDisclosureCase.path);
-    const disclosure = page.locator('.season-regions-disclosure');
-    const summary = disclosure.locator('summary');
-    await summary.click();
-    await summary.focus();
-    await expect(disclosure).toHaveAttribute('open', '');
-    await expect(summary).toBeFocused();
-
-    releaseMaster();
-    const afterMaster = page.locator('.season-regions-disclosure');
-    await expect(afterMaster).toHaveAttribute('open', '');
-    await expect(afterMaster.locator('summary')).toBeFocused();
-    await expect(afterMaster.locator('summary')).toContainText(seasonDisclosureCase.summary);
-
-    releaseAdditional();
-    const afterAdditional = page.locator('.season-regions-disclosure');
-    await expect(afterAdditional).toHaveAttribute('open', '');
-    await expect(afterAdditional.locator('summary')).toBeFocused();
-  });
-}
 
 test('keeps season regions, achievements and stamps compact and accessible', async ({ page }) => {
   await mockMyRacesApis(page);

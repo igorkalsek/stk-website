@@ -15,7 +15,7 @@ import { dispatchSavedRacesChanged } from './saved-races-events.js';
 import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-slovenia-map.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>> };
+type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>>; payloads: Record<string, unknown>; additionalRows: Partial<Record<PublicYear, AdditionalEventData[]>>; failedMasterYears: Set<PublicYear> };
 const pageDataCache = new WeakMap<HTMLElement, MyRacesRequestCache>();
 const pageRenderVersions = new WeakMap<object, number>();
 export const beginMyRacesRender = (mount: object) => {
@@ -123,7 +123,7 @@ const renderDeadlineCalendarMenu = (input: DeadlineEvent, labels: Labels) => {
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
   if (!google && !ics && !outlook) return '';
-  return `<details class="deadline-calendar-menu"><summary>${escapeHtml(labels.addDeadline)}</summary><div class="deadline-calendar-actions">${google ? `<a data-calendar-action="google" href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a data-calendar-action="apple" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a data-calendar-action="outlook" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
+  return `<details class="deadline-calendar-menu"><summary>${escapeHtml(labels.addDeadline)}</summary><div class="deadline-calendar-actions">${google ? `<a href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
 };
 
 const deadlineLabel = (deadline: RegistrationDeadlineView, labels: Labels) => deadline.kind === 'early' ? labels.earlyRegistration : labels.registrationDeadline;
@@ -147,7 +147,7 @@ const renderRaceCalendarMenu = (event: { title: string; date: string; noticeUrl?
   const ics = buildIcsDataUrl(cal);
   const outlook = buildOutlookCalendarEventUrl(cal);
   if (!google && !ics && !outlook) return '';
-  return `<details class="race-calendar-menu" data-race-calendar-menu><summary><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.addRace)}</summary><div class="race-calendar-actions" data-race-calendar-actions>${google ? `<a data-calendar-action="google" href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a data-calendar-action="apple" href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a data-calendar-action="outlook" href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
+  return `<details class="race-calendar-menu" data-race-calendar-menu><summary><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.addRace)}</summary><div class="race-calendar-actions" data-race-calendar-actions>${google ? `<a href="${escapeHtml(google)}" target="_blank" rel="noopener">${escapeHtml(labels.google)}</a>` : ''}${ics ? `<a href="${escapeHtml(ics)}" download="${escapeHtml(buildIcsFilename(cal))}">${escapeHtml(labels.apple)}</a>` : ''}${outlook ? `<a href="${escapeHtml(outlook)}" target="_blank" rel="noopener">${escapeHtml(labels.outlook)}</a>` : ''}</div></details>`;
 };
 
 
@@ -288,22 +288,10 @@ export const renderSeason = (items: ReturnType<typeof resolveSavedRaces>, availa
   return `<section class="my-season" aria-labelledby="my-season-title"><div class="my-season-heading"><h2 id="my-season-title">${copy.title}</h2><button class="button button-small button-secondary-light" type="button" data-toggle-past-races>${language === 'en' ? 'Add a past race' : 'Dodaj pretekli tek'}</button></div><section class="past-race-picker" data-past-race-picker hidden><label>${language === 'en' ? 'Search by race name or place' : 'Išči po nazivu teka ali kraju'}<input type="search" data-past-race-search></label><div data-past-race-results></div></section>${summaryStrip}<section class="season-map-panel" aria-labelledby="season-map-heading"><div class="season-map-copy"><span class="eyebrow">${copy.exploring}</span><h3 id="season-map-heading">${language === 'en' ? 'My running Slovenia' : 'Moja tekaška Slovenija'}</h3><strong class="season-map-count">${visitedRegionCount} / ${regions.length} ${language === 'en' ? 'regions' : 'regij'}</strong><p>${escapeHtml(nomadCopy)}</p>${regionCta}</div>${renderSloveniaRegionsMap(regionProgress, language, 'full')}</section>${summary.completedCount ? '' : `<p class="season-empty">${copy.empty}</p>`}<section class="my-season-section season-region-list"><h3>${copy.exploring}</h3>${visitedRegionCards ? `<div class="season-regions season-regions-visited">${visitedRegionCards}</div>` : `<p class="season-regions-start">${language === 'en' ? 'Complete a race to visit your first region.' : 'Opravi tek in obišči svojo prvo regijo.'}</p>`}${regionDisclosure}</section>${summary.completedCount ? `<section class="my-season-section"><h3>${copy.passport}</h3><div class="season-passport">${stamps}</div></section>` : ''}<section class="my-season-section achievements-section"><h3>${copy.achievements}</h3><div class="achievement-grid">${achievements.map((achievement) => { const isNext = nextAchievement?.key === achievement.key; const state = achievement.achieved ? copy.achieved : isNext ? copy.next : achievement.current > 0 ? copy.active : copy.locked; return `<article class="achievement-card${achievement.achieved ? ' is-achieved' : achievement.current > 0 ? ' is-active' : ' is-locked'}${isNext ? ' is-next' : ''}" data-achievement="${achievement.key}" data-achievement-state="${achievement.achieved ? 'achieved' : isNext ? 'next' : achievement.current > 0 ? 'active' : 'locked'}"><div class="achievement-heading"><span class="achievement-icon" aria-hidden="true">${renderAchievementIcon(achievement.key)}</span><div><h4>${ACHIEVEMENT_NAMES[language][achievement.key]}</h4><span class="achievement-status">${state}</span></div><strong class="achievement-value">${achievement.current} / ${achievement.target}</strong></div>${achievement.key === 'all-terrain' ? `<p>${progress(achievement)}</p>` : ''}<progress max="${achievement.target}" value="${achievement.current}" aria-label="${escapeHtml(ACHIEVEMENT_NAMES[language][achievement.key])}: ${achievement.current} / ${achievement.target}"></progress></article>`; }).join('')}</div></section></section>`;
 };
 
-const seasonMountContainsActiveLink = (root: ParentNode) => {
-  const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
-  const active = document.activeElement;
-  return seasonMount?.contains(active) && active instanceof HTMLAnchorElement ? active.getAttribute('href') ?? '' : '';
-};
-
 const updateSeasonMount = (root: ParentNode, items: ReturnType<typeof resolveSavedRaces>, availableRegions: string[], language: 'sl' | 'en') => {
   const seasonMount = root.querySelector<HTMLElement>('[data-my-season-app]');
   if (seasonMount && 'mySeasonApp' in seasonMount.dataset) {
-    const previousRegionsDisclosure = seasonMount.querySelector<HTMLDetailsElement>('.season-regions-disclosure');
-    const restoreRegionsDisclosure = Boolean(previousRegionsDisclosure?.open);
-    const restoreRegionsFocus = Boolean(previousRegionsDisclosure?.contains(document.activeElement));
     seasonMount.innerHTML = renderSeason(items, availableRegions, language);
-    const regionsDisclosure = seasonMount.querySelector<HTMLDetailsElement>('.season-regions-disclosure');
-    if (regionsDisclosure && restoreRegionsDisclosure) regionsDisclosure.open = true;
-    if (regionsDisclosure && restoreRegionsFocus) regionsDisclosure.querySelector<HTMLElement>('summary')?.focus();
     seasonMount.classList.remove('season-loading');
     delete seasonMount.dataset.seasonLoading;
     seasonMount.removeAttribute('aria-label');
@@ -358,21 +346,6 @@ export const rebuildProgressiveRaceResolutions = (
   return items.map((item) => byKey.has(item.key) ? { ...item, event: byKey.get(item.key)! } : item);
 };
 
-const getPlanFocusIdentity = (element: Element | null) => {
-  if (!(element instanceof HTMLElement) || element.matches('[data-my-race-status-select], [data-calendar-action]')) return '';
-  const raceKey = element.closest<HTMLElement>('[data-key]')?.dataset.key ?? '';
-  if (element instanceof HTMLAnchorElement) return JSON.stringify({ type: 'link', raceKey, href: element.getAttribute('href') ?? '' });
-  if (element instanceof HTMLButtonElement) {
-    for (const key of ['myRacesStatusFilter', 'removeSavedRace', 'markCompleted', 'addPastRace'] as const) if (element.dataset[key] !== undefined) return JSON.stringify({ type: 'button', raceKey, key, value: element.dataset[key] ?? '', year: element.dataset.eventYear ?? '' });
-    if (element.matches('[data-download-upcoming-races-ics]')) return JSON.stringify({ type: 'button', key: 'download' });
-  }
-  if (element instanceof HTMLElement && element.tagName === 'SUMMARY') {
-    const details = element.closest('details');
-    const kind = details?.matches('[data-race-calendar-menu]') ? 'race' : details?.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? '';
-    if (raceKey && kind) return JSON.stringify({ type: 'summary', raceKey, kind });
-  }
-  return '';
-};
 
 export const initMyRacesPage = async (root = document) => {
   const mount = root.querySelector<HTMLElement>('[data-my-races-app]');
@@ -391,20 +364,21 @@ export const initMyRacesPage = async (root = document) => {
   const saved = readSavedRaces(storage).state.races;
   trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
   const todayIso = getTodayIsoInLjubljana();
-  const payloads: Record<string, unknown> = {};
-  const additionalRowsByYear: Partial<Record<PublicYear, AdditionalEventData[]>> = {};
-  const failedMasterYears = new Set<PublicYear>();
+  const requestCache: MyRacesRequestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map(), payloads: {}, additionalRows: {}, failedMasterYears: new Set() };
+  pageDataCache.set(mount, requestCache);
+  const payloads = requestCache.payloads;
+  const additionalRowsByYear = requestCache.additionalRows;
+  const failedMasterYears = requestCache.failedMasterYears;
   let pastEvents: NonNullable<ReturnType<typeof mapPublicRaceEvent>>[] = [];
   let pastEventsState: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
   const requiredYears = [...new Set(saved.map((race) => race.year))].filter((year): year is PublicYear => SUPPORTED_PUBLIC_YEARS.includes(year as PublicYear));
-  const pendingRequiredRequests = new Set(requiredYears.flatMap((year) => [`master:${year}`, `additional:${year}`]));
-  const requestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map() };
-  pageDataCache.set(mount, requestCache);
+  const pendingRequiredRequests = new Set(requiredYears.flatMap((year) => [payloads[year] === undefined ? `master:${year}` : '', additionalRowsByYear[year] === undefined ? `additional:${year}` : '']).filter(Boolean));
   const masterRequest = (year: PublicYear): Promise<unknown> => {
     const existing = requestCache.master.get(year);
     if (existing) return existing;
     const request = fetch(`${API_BASE}${buildMasterApiPath(year)}`, { headers: { Accept: 'application/json' } })
       .then((response) => { if (!response.ok) throw new Error(String(response.status)); return response.json(); })
+      .then((payload) => { requestCache.payloads[year] = payload; requestCache.failedMasterYears.delete(year); return payload; })
       .catch((error) => { if (requestCache.master.get(year) === request) requestCache.master.delete(year); throw error; });
     requestCache.master.set(year, request);
     return request;
@@ -413,6 +387,7 @@ export const initMyRacesPage = async (root = document) => {
     const existing = requestCache.additional.get(year);
     if (existing) return existing;
     const request = fetchAdditionalEventData(year)
+      .then((rows) => { requestCache.additionalRows[year] = rows; return rows; })
       .catch((error) => { if (requestCache.additional.get(year) === request) requestCache.additional.delete(year); throw error; });
     requestCache.additional.set(year, request);
     return request;
@@ -424,11 +399,6 @@ export const initMyRacesPage = async (root = document) => {
     return items.map((item) => ({ ...item, snapshot: snapshots.get(item.key) ?? null }));
   };
   let resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
-  const rebuildAndRender = () => {
-    resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
-    render();
-  };
-
   const renderPastRacePickerResults = () => {
     const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
     const resultsMount = picker?.querySelector<HTMLElement>('[data-past-race-results]');
@@ -457,47 +427,11 @@ export const initMyRacesPage = async (root = document) => {
     picker?.querySelector<HTMLInputElement>('[data-past-race-search]')?.addEventListener('input', renderPastRacePickerResults);
   };
 
-  let deferredPlanControl: HTMLSelectElement | null = null;
   const render = () => {
     if (!isCurrentRender()) return;
-    const previousPicker = root.querySelector<HTMLElement>('[data-past-race-picker]');
-    const previousSearch = previousPicker?.querySelector<HTMLInputElement>('[data-past-race-search]');
-    const restorePicker = Boolean(previousPicker && !previousPicker.hidden);
-    const restoreSearchFocus = previousSearch === document.activeElement;
-    const activePastRaceButtonKey = previousPicker?.contains(document.activeElement) ? (document.activeElement as HTMLElement).closest<HTMLButtonElement>('[data-add-past-race]')?.dataset.addPastRace ?? '' : '';
-    const restorePastToggleFocus = root.querySelector('[data-toggle-past-races]') === document.activeElement;
-    const activeSeasonLinkHref = seasonMountContainsActiveLink(root);
-    const pickerQuery = previousSearch?.value ?? '';
-    const selectionStart = previousSearch?.selectionStart ?? pickerQuery.length;
-    const selectionEnd = previousSearch?.selectionEnd ?? selectionStart;
-    const activeStatusSelect = mount.contains(document.activeElement) && (document.activeElement as HTMLElement).matches('[data-my-race-status-select]') ? document.activeElement as HTMLSelectElement : null;
-    const openDisclosures = [...mount.querySelectorAll<HTMLDetailsElement>('details[open]')].map((details) => ({
-      raceKey: details.closest<HTMLElement>('[data-key]')?.dataset.key ?? '',
-      kind: details.matches('[data-race-calendar-menu]') ? 'race' : details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? ''
-    })).filter((item) => item.raceKey && item.kind);
-    const activeCalendarLink = mount.contains(document.activeElement) ? (document.activeElement as HTMLElement).closest<HTMLAnchorElement>('[data-calendar-action]') : null;
-    const activeCalendarIdentity = activeCalendarLink ? {
-      raceKey: activeCalendarLink.closest<HTMLElement>('[data-key]')?.dataset.key ?? '',
-      kind: activeCalendarLink.closest('[data-race-calendar-menu]') ? 'race' : activeCalendarLink.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind ?? '',
-      action: activeCalendarLink.dataset.calendarAction ?? ''
-    } : null;
-    const activePlanFocusIdentity = mount.contains(document.activeElement) ? getPlanFocusIdentity(document.activeElement) : '';
     const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
     updateSeasonMount(root, resolved, availableRegions, language);
     bindPastRacePicker();
-    if (restorePicker) {
-      const picker = root.querySelector<HTMLElement>('[data-past-race-picker]');
-      const search = picker?.querySelector<HTMLInputElement>('[data-past-race-search]');
-      if (picker && search) {
-        picker.hidden = false;
-        search.value = pickerQuery;
-        renderPastRacePickerResults();
-        if (restoreSearchFocus) { search.focus(); search.setSelectionRange(selectionStart, selectionEnd); }
-        else if (activePastRaceButtonKey) [...picker.querySelectorAll<HTMLButtonElement>('[data-add-past-race]')].find((button) => button.dataset.addPastRace === activePastRaceButtonKey)?.focus();
-      }
-    }
-    if (restorePastToggleFocus) root.querySelector<HTMLButtonElement>('[data-toggle-past-races]')?.focus();
-    else if (activeSeasonLinkHref) [...root.querySelectorAll<HTMLAnchorElement>('[data-my-season-app] a[href]')].find((link) => link.getAttribute('href') === activeSeasonLinkHref)?.focus();
     const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
     const counts = countSavedRaceStatuses(resolved);
     const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
@@ -507,22 +441,7 @@ export const initMyRacesPage = async (root = document) => {
     const emptyFiltered = activeFilter !== 'all' && !filtered.length;
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
     if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
-    if (activeStatusSelect) {
-      if (deferredPlanControl !== activeStatusSelect) {
-        deferredPlanControl = activeStatusSelect;
-        activeStatusSelect.addEventListener('blur', () => { deferredPlanControl = null; if (isCurrentRender()) render(); }, { once: true });
-      }
-      return;
-    }
-    deferredPlanControl = null;
     mount.innerHTML = `${failedMasterYears.size ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
-    openDisclosures.forEach(({ raceKey, kind }) => {
-      const raceCard = [...mount.querySelectorAll<HTMLElement>('[data-key]')].find((card) => card.dataset.key === raceKey);
-      const disclosure = kind === 'race' ? raceCard?.querySelector<HTMLDetailsElement>('[data-race-calendar-menu]') : [...(raceCard?.querySelectorAll<HTMLDetailsElement>('[data-my-race-deadline] .deadline-calendar-menu') ?? [])].find((details) => details.closest<HTMLElement>('[data-my-race-deadline]')?.dataset.deadlineKind === kind);
-      if (disclosure) disclosure.open = true;
-      if (disclosure && activeCalendarIdentity?.raceKey === raceKey && activeCalendarIdentity.kind === kind) disclosure.querySelector<HTMLAnchorElement>(`[data-calendar-action="${activeCalendarIdentity.action}"]`)?.focus();
-    });
-    if (activePlanFocusIdentity) [...mount.querySelectorAll<HTMLElement>('a[href], button, summary')].find((element) => getPlanFocusIdentity(element) === activePlanFocusIdentity)?.focus();
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
@@ -549,34 +468,30 @@ export const initMyRacesPage = async (root = document) => {
       pastEvents = [];
       pastEventsState = 'error';
     }
-    render();
+    renderPastRacePickerResults();
   };
 
   const yearLoads = requiredYears.flatMap((year) => {
-    const masterLoad = masterRequest(year).then((payload) => {
-      if (!isCurrentRender()) return;
-      payloads[year] = payload;
-      if (year === DEFAULT_PUBLIC_YEAR) {
-        pastEvents = toApiRecords(payload).map((record) => mapPublicRaceEvent(record, year, 0)).filter((event): event is NonNullable<typeof event> => Boolean(event && isCompletionAllowed(event.date, todayIso)));
-        pastEventsState = 'ready';
-      }
-    }).catch(() => {
-      if (!isCurrentRender()) return;
-      failedMasterYears.add(year);
-      if (year === DEFAULT_PUBLIC_YEAR) pastEventsState = 'error';
-    }).finally(() => {
-      pendingRequiredRequests.delete(`master:${year}`);
-      if (isCurrentRender()) rebuildAndRender();
-    });
-    const additionalLoad = additionalRequest(year).then((rows) => {
-      if (isCurrentRender()) additionalRowsByYear[year] = rows;
-    }).catch(() => { /* optional enrichment never removes the dashboard */ }).finally(() => {
-      pendingRequiredRequests.delete(`additional:${year}`);
-      if (isCurrentRender()) rebuildAndRender();
-    });
-    return [masterLoad, additionalLoad];
+    const loads: Promise<unknown>[] = [];
+    if (payloads[year] === undefined) loads.push(masterRequest(year).catch(() => { failedMasterYears.add(year); }).finally(() => pendingRequiredRequests.delete(`master:${year}`)));
+    if (additionalRowsByYear[year] === undefined) loads.push(additionalRequest(year).catch(() => { /* optional enrichment */ }).finally(() => pendingRequiredRequests.delete(`additional:${year}`)));
+    return loads;
   });
 
+  if (!yearLoads.length) return;
   await Promise.allSettled(yearLoads);
-  if (isCurrentRender()) render();
+  if (!isCurrentRender()) return;
+  resolved = withSnapshots(rebuildProgressiveRaceResolutions(saved, payloads, additionalRowsByYear, todayIso));
+  const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
+  if (updateStatusMount) updateStatusMount.innerHTML = '';
+  const reconcileWhenIdle = () => {
+    if (!isCurrentRender()) return;
+    const active = document.activeElement as HTMLElement | null;
+    if (active && (mount.contains(active) || root.querySelector('[data-my-season-app]')?.contains(active))) {
+      active.addEventListener('blur', () => queueMicrotask(reconcileWhenIdle), { once: true });
+      return;
+    }
+    render();
+  };
+  reconcileWhenIdle();
 };
