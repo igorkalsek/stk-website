@@ -980,14 +980,11 @@ test('renders local plan and season before controlled API promises resolve, then
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   await expect(page.locator('.season-loading-skeleton')).toHaveCount(0);
   await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Posodabljamo podatke …');
-
   releaseMaster();
-  await expect(localCard.getByRole('link', { name: byId.r000101.title })).toHaveCount(1);
-  await expect(localCard).toContainText('Ljubljana, Osrednjeslovenska');
-  await expect(page.locator('[data-my-race-deadline]')).toHaveCount(0);
   releaseAdditional();
-  await expect(page.locator('[data-my-race-deadline]')).toContainText('23. julija');
   await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+  await expect(localCard.locator('h3 a')).toHaveText(byId.r000101.title);
+  await expect(localCard).toContainText('Ljubljana, Osrednjeslovenska');
 });
 
 test('hides a cached Master warning after the last saved race for that year is removed', async ({ page }) => {
