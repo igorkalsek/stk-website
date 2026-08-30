@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { countSavedRaceStatuses, filterSavedRaceResolutionsByStatus, resolveSavedRaces, sortResolvedSavedRaces } from '../.cache/dist-test/utils-my-races.js';
-import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, removeSavedRaceFromMyRaces, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
+import { getExportableUpcomingRaceEvents, getStorage, initMyRacesPage, rebuildProgressiveRaceResolutions, removeSavedRaceFromMyRaces, renderPrimaryActionLinks } from '../.cache/dist-test/my-races-client.js';
 import { attachAdditionalDataByMasterRow } from '../.cache/dist-test/utils-additional.js';
 import { getStableEventId } from '../.cache/dist-test/utils-event-detail.js';
 
@@ -49,6 +49,19 @@ describe('my races resolver', () => {
   it('sorts upcoming resolved races by date', () => {
     const items = resolveSavedRaces([saved('r000002'), saved('r000001')], { 2026: [apiEvent({ row: '2', date: '2026-09-01' }), apiEvent({ row: '1', date: '2026-03-01' })] }, '2026-01-01');
     assert.deepEqual(sortResolvedSavedRaces(items).map((item) => item.key), ['2026:r000001', '2026:r000002']);
+  });
+
+  it('rebuilds deterministically from every loaded master and additional year', () => {
+    const races = [saved('r000101', '2026', '2026-08-15'), saved('r000201', '2027', '2027-08-15')];
+    const payloads = { 2026: [apiEvent({ row: '101', date: '2026-08-15', title: 'Race 2026' })], 2027: [apiEvent({ row: '201', year: '2027', date: '2027-08-15', title: 'Race 2027' })] };
+    const row2026 = additional('2026-08-15', 'Race 2026', '2026-07-23', '', 'visoka', '101');
+    const row2027 = { ...additional('2027-08-15', 'Race 2027', '2027-08-01', '', 'visoka', '201'), year: '2027', masterSheet: '2027' };
+    const forward = rebuildProgressiveRaceResolutions(races, payloads, { 2026: [row2026], 2027: [row2027] }, '2026-07-01');
+    const reversePayloads = { 2027: payloads[2027], 2026: payloads[2026] };
+    const reverse = rebuildProgressiveRaceResolutions(races, reversePayloads, { 2027: [row2027], 2026: [row2026] }, '2026-07-01');
+    const deadlines = (items) => items.map((item) => item.event?.additionalData?.registrationDeadline);
+    assert.deepEqual(deadlines(forward), ['2026-07-23', '2027-08-01']);
+    assert.deepEqual(deadlines(reverse), deadlines(forward));
   });
 });
 
@@ -208,6 +221,16 @@ describe('my races page source contract', () => {
     assert.doesNotMatch(en, /<p class="eyebrow">My races/);
   });
 
+  it('keeps full dashboards out of live regions while announcing only concise update statuses', () => {
+    for (const page of [sl, en]) {
+      assert.doesNotMatch(page, /data-my-races-app[^>]*aria-live/);
+      assert.doesNotMatch(page, /data-my-season-app[^>]*aria-live/);
+      assert.match(page, /data-my-races-update-status-mount/);
+    }
+    assert.match(client, /data-my-races-update-status[^>]*>\$\{escapeHtml\(labels\.updating\)\}/);
+    assert.match(client, /role="status" aria-live="polite" data-my-races-update-status/);
+    assert.match(client, /seasonMount\.removeAttribute\('aria-live'\)/);
+  });
   it('uses the existing saved races storage key through utilities', () => assert.match(client, /readSavedRaces/));
   it('implements only upcoming local ICS export without changing storage', () => {
     assert.match(client, /data-download-upcoming-races-ics/);

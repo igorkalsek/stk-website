@@ -150,7 +150,7 @@ async function freezeLjubljanaDate(page: Page, todayIso = '2026-07-15') {
   }, todayIso);
 }
 
-async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; masterGate?: Promise<void> } = {}) {
+async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; additional2027?: unknown[]; races2026?: unknown[]; races2027?: unknown[]; additionalStatus?: number; masterStatus?: number; masterFailures2026?: number; masterGate?: Promise<void>; master2026RetryGate?: Promise<void>; master2026Gate?: Promise<void>; master2027Gate?: Promise<void>; additionalGate?: Promise<void>; additional2026Gate?: Promise<void>; additional2027Gate?: Promise<void> } = {}) {
   const analytics: unknown[] = [];
   const pageErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -160,25 +160,32 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
     if (!isExpectedAdditionalFailure) pageErrors.push(msg.text());
   });
 
-  const requestCounts = { master2026: 0, master2027: 0, additional: 0 };
+  const requestCounts = { master2026: 0, master2027: 0, additional: 0, additional2026: 0, additional2027: 0 };
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
-    if (options.masterGate) await options.masterGate;
-
     if (url.pathname === '/additional') {
+      if (options.additionalGate) await options.additionalGate;
+      const additionalYear = url.searchParams.get('year') === '2027' ? '2027' : '2026';
+      if (additionalYear === '2027' && options.additional2027Gate) await options.additional2027Gate;
+      if (additionalYear === '2026' && options.additional2026Gate) await options.additional2026Gate;
       requestCounts.additional += 1;
+      requestCounts[additionalYear === '2027' ? 'additional2027' : 'additional2026'] += 1;
       if (options.additionalStatus && options.additionalStatus >= 400) return route.fulfill({ status: options.additionalStatus, contentType: 'application/json', body: JSON.stringify({ error: 'additional failed' }) });
       const rows = url.searchParams.get('year') === '2027' ? options.additional2027 ?? [] : options.additional ?? additional2026;
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: rows }) });
     }
 
+    if (options.masterGate) await options.masterGate;
     if (url.searchParams.get('year') === '2027') {
       requestCounts.master2027 += 1;
+      if (options.master2027Gate) await options.master2027Gate;
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(options.races2027 ?? []) });
     }
 
     requestCounts.master2026 += 1;
-    if (options.masterStatus && options.masterStatus >= 400) return route.fulfill({ status: options.masterStatus, contentType: 'application/json', body: JSON.stringify({ error: 'master failed' }) });
+    if (requestCounts.master2026 > 1 && options.master2026RetryGate) await options.master2026RetryGate;
+    else if (options.master2026Gate) await options.master2026Gate;
+    if ((options.masterStatus && options.masterStatus >= 400) || requestCounts.master2026 <= (options.masterFailures2026 ?? 0)) return route.fulfill({ status: options.masterStatus ?? 503, contentType: 'application/json', body: JSON.stringify({ error: 'master failed' }) });
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(options.races2026 ?? races2026) });
   });
 
@@ -324,8 +331,156 @@ test('attaches a 2027 deadline only to the matching 2027 saved race', async ({ p
   await expect(registrationDeadline).toHaveCount(1);
   await expect(registrationDeadline).toContainText('1. avgusta');
   await expect(raceCard).not.toContainText('23. julija');
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(0);
+  expect(requestCounts.additional2027).toBe(1);
+  expect(requestCounts.master2026).toBe(0);
+  expect(requestCounts.master2027).toBe(1);
   await expectNoUnexpectedErrors(pageErrors);
+});
+
+for (const firstYear of ['2026', '2027'] as const) {
+  test(`keeps both years enriched when ${firstYear} resolves first`, async ({ page }) => {
+    let releaseMaster2026!: () => void;
+    let releaseMaster2027!: () => void;
+    let releaseAdditional2026!: () => void;
+    let releaseAdditional2027!: () => void;
+    const master2026Gate = new Promise<void>((resolve) => { releaseMaster2026 = resolve; });
+    const master2027Gate = new Promise<void>((resolve) => { releaseMaster2027 = resolve; });
+    const additional2026Gate = new Promise<void>((resolve) => { releaseAdditional2026 = resolve; });
+    const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
+    const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+    const additional2027 = [{ ...additional2026[0], leto: '2027', master_sheet: '2027', datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run', rok_cenejse_prijave: '', rok_prijave: '2027-08-01' }];
+    const { requestCounts } = await mockMyRacesApis(page, { races2027: [race2027], additional2027, master2026Gate, master2027Gate, additional2026Gate, additional2027Gate });
+    await seedV2SavedRaces(page, [v2Race('r000101', 'following'), v2Race('r000101_2027', 'following')]);
+    await freezeLjubljanaDate(page);
+    await page.goto('/moji-teki/');
+
+    if (firstYear === '2026') {
+      releaseMaster2026();
+      releaseAdditional2026();
+      releaseAdditional2027(); // Explicitly prove optional data may arrive before its master.
+      releaseMaster2027();
+    } else {
+      releaseAdditional2027(); // Explicitly prove optional data may arrive before its master.
+      releaseMaster2027();
+      releaseMaster2026();
+      releaseAdditional2026();
+    }
+
+    await expect(card(page, '2026:r000101')).toContainText('23. julija');
+    await expect(card(page, '2027:r000101')).toContainText('1. avgusta');
+    expect(requestCounts).toMatchObject({ master2026: 1, master2027: 1, additional2026: 1, additional2027: 1 });
+  });
+}
+
+test('does not fetch race details for an empty local dashboard and loads the past calendar only on demand', async ({ page }) => {
+  const { requestCounts } = await mockMyRacesApis(page);
+  await seedV2SavedRaces(page, []);
+  await openMyRaces(page, '/moji-teki/?view=season');
+  expect(requestCounts).toMatchObject({ master2026: 0, master2027: 0, additional2026: 0, additional2027: 0 });
+  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  await expect.poll(() => requestCounts.master2026).toBe(1);
+  expect(requestCounts).toMatchObject({ master2027: 0, additional2026: 0, additional2027: 0 });
+});
+
+test('finishes the past-race picker with a localized error while preserving the local dashboard', async ({ page }) => {
+  await mockMyRacesApis(page, { masterStatus: 503 });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await openMyRaces(page, '/moji-teki/?view=season');
+  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  await expect(page.getByText('Preteklih tekov trenutno ni bilo mogoče naložiti.')).toBeVisible();
+  await expect(page.locator('[data-past-race-results]').getByRole('status')).toHaveCount(0);
+  await expect(page.locator('[data-my-season-app]')).toBeVisible();
+  const localCard = card(page, '2026:r000101');
+  await expect(localCard).toContainText(byId.r000101.title);
+  await expect(localCard).toContainText('2026-08-15');
+  await expect(localCard).toHaveAttribute('data-key', '2026:r000101');
+  await expect(localCard.locator('[data-my-race-status-select]')).toHaveAttribute('data-event-id', 'r000101');
+  await expect(localCard.getByLabel('Moj status')).toHaveValue('following');
+});
+
+test('keeps the global status tied to required 2027 requests while the separate 2026 picker loads locally', async ({ page }) => {
+  let releaseAdditional2027!: () => void;
+  let releaseMaster2026!: () => void;
+  const additional2027Gate = new Promise<void>((resolve) => { releaseAdditional2027 = resolve; });
+  const master2026Gate = new Promise<void>((resolve) => { releaseMaster2026 = resolve; });
+  const race2027 = { ...races2026[0], datum: '2027-08-15', naziv_prireditve: 'Ljubljana Future Run' };
+  const past2026 = { ...races2026[0], datum: '2026-01-10', naziv_prireditve: 'Ljubljana Winter Run' };
+  const { requestCounts } = await mockMyRacesApis(page, { races2026: [past2026], races2027: [race2027], additional2027Gate, master2026Gate });
+  await seedV2SavedRaces(page, [v2Race('r000101_2027', 'following')]);
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
+  const globalStatusMount = page.locator('[data-my-races-update-status-mount]');
+  await expect(globalStatusMount.getByRole('status')).toHaveText('Posodabljamo podatke …');
+  await expect.poll(() => requestCounts.master2027).toBe(1);
+  expect(requestCounts.additional2026).toBe(0);
+
+  releaseAdditional2027();
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Dodaj pretekli tek' }).click();
+  const pickerStatusMount = page.locator('[data-past-race-results]');
+  await expect(pickerStatusMount.getByRole('status')).toHaveText('Nalagamo pretekle teke …');
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  await expect.poll(() => requestCounts.master2026).toBe(1);
+
+  releaseMaster2026();
+  await expect(pickerStatusMount.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.past-race-result')).toContainText('Ljubljana Winter Run');
+  await expect(globalStatusMount.getByRole('status')).toHaveCount(0);
+  expect(requestCounts).toMatchObject({ master2026: 1, master2027: 1, additional2026: 0, additional2027: 1 });
+});
+
+test('retries a transient past-race master failure once after closing and reopening the picker', async ({ page }) => {
+  let releaseRetry!: () => void;
+  const master2026RetryGate = new Promise<void>((resolve) => { releaseRetry = resolve; });
+  const { requestCounts } = await mockMyRacesApis(page, { masterFailures2026: 1, master2026RetryGate });
+  await seedV2SavedRaces(page, []);
+  await openMyRaces(page, '/moji-teki/?view=season', '2026-07-15');
+  const toggle = page.getByRole('button', { name: 'Dodaj pretekli tek' });
+  const pickerResults = page.locator('[data-past-race-results]');
+
+  await toggle.click();
+  await expect(pickerResults.getByText('Preteklih tekov trenutno ni bilo mogoče naložiti.')).toBeVisible();
+  expect(requestCounts.master2026).toBe(1);
+  await toggle.click();
+  await toggle.click();
+  await expect(pickerResults.getByRole('status')).toHaveText('Nalagamo pretekle teke …');
+  await expect.poll(() => requestCounts.master2026).toBe(2);
+  await toggle.click();
+  await toggle.click();
+  expect(requestCounts.master2026).toBe(2);
+
+  releaseRetry();
+  await expect(pickerResults.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.past-race-result').first()).toBeVisible();
+  expect(requestCounts.master2026).toBe(2);
+  await expect(page.locator('[data-my-season-app]')).toBeVisible();
+});
+
+test('keeps one picker listener and one master request while a pending picker is closed and reopened', async ({ page }) => {
+  let releaseMaster!: () => void;
+  const master2026Gate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+  const { requestCounts } = await mockMyRacesApis(page, { master2026Gate });
+  await seedV2SavedRaces(page, []);
+  await openMyRaces(page, '/moji-teki/?view=season');
+  const toggle = page.getByRole('button', { name: 'Dodaj pretekli tek' });
+  const picker = page.locator('[data-past-race-picker]');
+
+  await toggle.click();
+  await expect(picker).toBeVisible();
+  const pickerStatus = page.locator('[data-past-race-results]').getByRole('status');
+  await expect(pickerStatus).toHaveCount(1);
+  await expect(pickerStatus).toHaveText('Nalagamo pretekle teke …');
+  await expect(pickerStatus).not.toHaveAttribute('aria-hidden');
+  await expect.poll(() => requestCounts.master2026).toBe(1);
+  await toggle.click();
+  await expect(picker).toBeHidden();
+  await toggle.click();
+  await expect(picker).toBeVisible();
+  expect(requestCounts.master2026).toBe(1);
+  releaseMaster();
+  await expect(page.locator('.past-race-result').first()).toBeVisible();
+  expect(requestCounts.master2026).toBe(1);
+  await expect(page.locator('[data-past-race-results]').getByRole('status')).toHaveCount(0);
 });
 
 function expectNoPersonalStatusInAnalytics(analytics: unknown[]) {
@@ -454,22 +609,25 @@ test('updates the next deadline summary eligibility when saved status changes wi
 
   await openMyRaces(page);
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(1);
+  expect(requestCounts.additional2027).toBe(0);
   expect(requestCounts.master2026).toBe(1);
-  expect(requestCounts.master2027).toBe(1);
+  expect(requestCounts.master2027).toBe(0);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('completed');
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(0);
   await expect(card(page, '2026:r000101').locator('[data-my-race-deadlines]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(1);
+  expect(requestCounts.additional2027).toBe(0);
   expect(requestCounts.master2026).toBe(1);
-  expect(requestCounts.master2027).toBe(1);
+  expect(requestCounts.master2027).toBe(0);
 
   await card(page, '2026:r000101').getByLabel('Moj status').selectOption('following');
   await expect(page.locator('[data-next-registration-deadline]')).toHaveCount(1);
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(1);
+  expect(requestCounts.additional2027).toBe(0);
   expect(requestCounts.master2026).toBe(1);
-  expect(requestCounts.master2027).toBe(1);
+  expect(requestCounts.master2027).toBe(0);
   await expectNoUnexpectedErrors(pageErrors);
 });
 
@@ -492,9 +650,10 @@ test('filters deadline groups together with race cards', async ({ page }) => {
     await expect(card(page, key)).toBeVisible();
     await expect(deadlineGroup(page, key)).toBeVisible();
   }
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(1);
+  expect(requestCounts.additional2027).toBe(0);
   expect(requestCounts.master2026).toBe(1);
-  expect(requestCounts.master2027).toBe(1);
+  expect(requestCounts.master2027).toBe(0);
 
   await filter(page, 'planning').click();
   await expect(filter(page, 'planning')).toHaveAttribute('aria-pressed', 'true');
@@ -545,9 +704,10 @@ test('filters deadline groups together with race cards', async ({ page }) => {
     await expect(deadlineGroup(page, key)).toBeVisible();
   }
 
-  expect(requestCounts.additional).toBe(2);
+  expect(requestCounts.additional2026).toBe(1);
+  expect(requestCounts.additional2027).toBe(0);
   expect(requestCounts.master2026).toBe(1);
-  expect(requestCounts.master2027).toBe(1);
+  expect(requestCounts.master2027).toBe(0);
   await expectNoUnexpectedErrors(pageErrors);
 });
 
@@ -777,39 +937,86 @@ test('opens plan by default and supports the shared season deep link and accessi
   expect(overflows).toBe(false);
 });
 
-test('shows and safely clears the localized season loading state on success and API failure', async ({ page }) => {
+for (const statusCase of [
+  { path: '/moji-teki/', text: 'Posodabljamo podatke …' },
+  { path: '/moji-teki/?view=season', text: 'Posodabljamo podatke …' },
+  { path: '/en/my-races/', text: 'Updating race details …' },
+  { path: '/en/my-races/?view=season', text: 'Updating race details …' }
+]) {
+  test(`exposes one update status in the active view at ${statusCase.path}`, async ({ page }) => {
+    let releaseMaster!: () => void;
+    const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+    await mockMyRacesApis(page, { masterGate });
+    await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+    await page.goto(statusCase.path);
+    const statusMount = page.locator('[data-my-races-update-status-mount]');
+    const status = statusMount.getByRole('status');
+    await expect(status).toHaveCount(1);
+    await expect(status).toHaveText(statusCase.text);
+    await expect(status).not.toHaveAttribute('aria-hidden');
+    releaseMaster();
+    await expect(statusMount.getByRole('status')).toHaveCount(0);
+  });
+}
+
+test('renders local plan and season before controlled API promises resolve, then enriches progressively', async ({ page }) => {
+  let releaseMaster!: () => void;
+  let releaseAdditional!: () => void;
+  const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+  const additionalGate = new Promise<void>((resolve) => { releaseAdditional = resolve; });
+  await mockMyRacesApis(page, { masterGate, additionalGate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'completed')]);
+  await page.addInitScript(() => localStorage.setItem('stkCompletedRaceSnapshotsV1', JSON.stringify({ version: 1, snapshots: [{ version: 1, eventId: 'r000101', year: '2026', date: '2026-08-15', title: 'Local snapshot race', place: 'Ljubljana', region: 'Gorenjska', surface: 'Cesta' }] })));
+  await freezeLjubljanaDate(page, '2026-09-01');
+  await page.goto('/moji-teki/?view=season');
+
+  const localCard = card(page, '2026:r000101');
+  await expect(localCard).toContainText(byId.r000101.title);
+  await expect(localCard).toContainText('2026-08-15');
+  await expect(localCard).toHaveAttribute('data-key', '2026:r000101');
+  await expect(localCard.locator('[data-my-race-status-select]')).toHaveAttribute('data-event-id', 'r000101');
+  await expect(localCard.getByLabel('Moj status')).toHaveValue('completed');
+  await expect(page.locator('[data-my-season-app]')).toContainText('Local snapshot race');
+  await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
+  await expect(page.locator('.season-loading-skeleton')).toHaveCount(0);
+  await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Posodabljamo podatke …');
+  releaseMaster();
+  releaseAdditional();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+  await expect(localCard.locator('h3 a')).toHaveText(byId.r000101.title);
+  await expect(localCard).toContainText('Ljubljana, Osrednjeslovenska');
+});
+
+test('hides a cached Master warning after the last saved race for that year is removed', async ({ page }) => {
+  const { requestCounts } = await mockMyRacesApis(page, { masterStatus: 503 });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
+  await page.goto('/moji-teki/');
+
+  const savedCard = card(page, '2026:r000101');
+  await expect(savedCard).toContainText(byId.r000101.title);
+  await expect(page.getByText('API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.')).toBeVisible();
+  await savedCard.getByRole('button', { name: `Odstrani: ${byId.r000101.title}` }).click();
+
+  await expect(savedCard).toHaveCount(0);
+  await expect(page.getByText('API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.')).toHaveCount(0);
+  expect(requestCounts.master2026).toBe(1);
+});
+
+test('clears progressive status and aria-busy for English success and master failure', async ({ page }) => {
   let releaseMaster!: () => void;
   const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
   await mockMyRacesApis(page, { masterGate });
-  await page.goto('/moji-teki/?view=season');
-  const panel = page.locator('[data-my-races-panel="season"]');
-  const status = page.getByRole('status');
-  await expect(panel).toHaveAttribute('aria-busy', 'true');
-  await expect(status).toHaveText('Pripravljamo tvojo sezono …');
-  await expect(status).not.toHaveAttribute('aria-hidden');
-  await expect(page.locator('.season-loading-skeleton')).toBeVisible();
-  await expect(page.locator('.season-loading-skeleton')).toHaveAttribute('aria-hidden', 'true');
-  releaseMaster();
-  await expect(page.locator('[data-my-season-app]')).not.toHaveAttribute('data-season-loading');
-  await expect(status).toHaveCount(0);
-  await expect(panel).not.toHaveAttribute('aria-busy');
-  await expect(page.locator('[data-my-season-app]')).not.toHaveAttribute('aria-label');
-
-  await page.unrouteAll({ behavior: 'wait' });
-  let releaseEnglishMaster!: () => void;
-  const englishMasterGate = new Promise<void>((resolve) => { releaseEnglishMaster = resolve; });
-  await mockMyRacesApis(page, { masterGate: englishMasterGate });
+  await seedV2SavedRaces(page, [v2Race('r000101', 'following')]);
   await page.goto('/en/my-races/?view=season');
-  const englishStatus = page.getByRole('status');
-  await expect(englishStatus).toHaveText('Preparing your season …');
-  await expect(englishStatus).not.toHaveAttribute('aria-hidden');
-  releaseEnglishMaster();
-  await expect(englishStatus).toHaveCount(0);
+  await expect(page.locator('[data-my-races-update-status-mount]').getByRole('status')).toHaveText('Updating race details …');
+  await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
+  releaseMaster();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
 
   await page.unrouteAll({ behavior: 'wait' });
   await mockMyRacesApis(page, { masterStatus: 503 });
-  await page.goto('/en/my-races/?view=season');
-  await expect(page.getByRole('status', { name: 'Preparing your season …' })).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
   await expect(page.locator('[data-my-races-panel="season"]')).not.toHaveAttribute('aria-busy');
   await expect(page.locator('.my-season')).toBeVisible();
 });
