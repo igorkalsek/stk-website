@@ -194,7 +194,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from '../utils-additional';
   import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
   import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
-  import { hashOrganizerSnapshotV2, resolveOrganizerSnapshotInput } from '../organizer-confirmation-snapshot';
+  import { buildOrganizerSnapshotV2, hashOrganizerSnapshotV2, resolveOrganizerSnapshotInput } from '../organizer-confirmation-snapshot';
 
   const form = document.querySelector('[data-proposal-form]');
   const isEnglish = document.documentElement.lang?.startsWith('en') || window.location.pathname.startsWith('/en/');
@@ -591,8 +591,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
 
   const renderConfirmationSummary = (snapshot) => {
     const summary = document.querySelector('.confirmation-summary'); summary.replaceChildren();
-    const master = snapshot.master; const additional = snapshot.additional || {};
-    const fee = [additional.prijavnina_min_eur, additional.prijavnina_max_eur].filter(Boolean).join('–');
+    const master = snapshot; const additional = snapshot;
+    const fee = [snapshot.prijavnina_min_eur, snapshot.prijavnina_max_eur].filter(Boolean).join('–');
     const fields = [
       [isEnglish ? 'Date' : 'Datum', master.datum], [isEnglish ? 'Race name' : 'Naziv teka', master.naziv_prireditve],
       [isEnglish ? 'Place and region' : 'Kraj in regija', [master.kraj, master.regija].filter(Boolean).join(' · ')],
@@ -621,8 +621,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       const masterPayload = await masterResponse.json(); const additionalPayload = await additionalResponse.json();
       const snapshot = resolveOrganizerSnapshotInput(prefill.year, prefill.eventKey.toUpperCase(), toApiRecords(masterPayload), toApiRecords(additionalPayload));
       if (!snapshot) throw new Error('invalid');
-      confirmationSnapshot = { input: snapshot, hash: await hashOrganizerSnapshotV2(snapshot) };
-      renderConfirmationSummary(snapshot); confirmationValid.hidden = false; confirmationInvalid.hidden = true; button.disabled = false; setStatus(notice);
+      confirmationSnapshot = { input: snapshot, canonical: buildOrganizerSnapshotV2(snapshot), hash: await hashOrganizerSnapshotV2(snapshot) };
+      renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true; button.disabled = false; setStatus(notice);
     } catch { confirmationSnapshot = null; confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
   };
 

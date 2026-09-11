@@ -21,10 +21,12 @@ export const onRequest = async ({ request, env }: { request: Request; env: Recor
   try {
     const upstream = await fetch(UPSTREAM, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.fromEntries(ALLOWED.map((key) => [key, body[key]]))), signal: controller.signal });
     let result: unknown; try { result = await upstream.json(); } catch { return response(503, 'UNAVAILABLE'); }
-    const status = result && typeof result === 'object' ? String((result as Record<string, unknown>).status ?? '') : '';
-    if (upstream.ok && status === 'ACCEPTED') return response(200, 'ACCEPTED', true);
-    if (status === 'SNAPSHOT_CHANGED') return response(409, 'SNAPSHOT_CHANGED');
-    if (['INVALID_REQUEST', 'EVENT_NOT_FOUND'].includes(status)) return response(400, status);
+    const resultRecord = result && typeof result === 'object' && !Array.isArray(result) ? result as Record<string, unknown> : null;
+    const successStatus = resultRecord?.ok === true ? String(resultRecord.status ?? '') : '';
+    const failureCode = resultRecord?.ok === false ? String(resultRecord.code ?? '') : '';
+    if (upstream.ok && successStatus === 'ACCEPTED') return response(200, 'ACCEPTED', true);
+    if (failureCode === 'SNAPSHOT_CHANGED') return response(409, 'SNAPSHOT_CHANGED');
+    if (['INVALID_REQUEST', 'EVENT_NOT_FOUND'].includes(failureCode)) return response(400, failureCode);
     return response(503, 'UNAVAILABLE');
   } catch { return response(503, 'UNAVAILABLE'); } finally { clearTimeout(timeout); }
 };

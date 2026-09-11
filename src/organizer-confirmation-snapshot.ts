@@ -14,41 +14,27 @@ export const ORGANIZER_ADDITIONAL_FIELDS = [
 type RecordLike = Record<string, unknown>;
 export type OrganizerSnapshotInput = { year: unknown; master_row: unknown; event_id: unknown; master: RecordLike; additional?: RecordLike | null };
 
-const whitespace = (value: unknown) => value == null ? '' : String(value).normalize('NFC').replace(/\s+/g, ' ').trim();
+const whitespace = (value: unknown) => value == null ? '' : String(value).replace(/\s+/g, ' ').trim();
 const date = (value: unknown) => {
   const clean = whitespace(value);
-  const iso = clean.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (iso) return `${iso[1]}-${iso[2].padStart(2, '0')}-${iso[3].padStart(2, '0')}`;
-  const sl = clean.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);
-  return sl ? `${sl[3]}-${sl[2].padStart(2, '0')}-${sl[1].padStart(2, '0')}` : clean;
-};
-const number = (value: unknown) => {
-  const clean = whitespace(value).replace(',', '.');
-  if (!clean) return '';
-  const parsed = Number(clean);
-  return Number.isFinite(parsed) ? String(parsed) : clean;
+  const match = clean.match(/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/);
+  return match ? `${match[1]}-${match[2]}-${match[3]}` : clean;
 };
 const url = (value: unknown) => {
   const clean = whitespace(value);
-  if (!clean) return '';
-  try {
-    const parsed = new URL(clean);
-    if (!/^https?:$/.test(parsed.protocol)) return clean;
-    parsed.protocol = parsed.protocol.toLowerCase();
-    return parsed.href;
-  } catch { return clean; }
+  return clean.replace(/^HTTPS?:\/\//, (protocol) => protocol.toLowerCase());
 };
 const time = (value: unknown) => {
   const clean = whitespace(value);
-  const match = clean.match(/^(\d{1,2})(?:[:.]|\s*h\s*)(\d{1,2})$/i);
+  const match = clean.match(/^(\d{1,2}):(\d{2})$/);
   if (!match) return clean;
   const hours = Number(match[1]); const minutes = Number(match[2]);
   return hours < 24 && minutes < 60 ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}` : clean;
 };
 const yesNo = (value: unknown) => {
   const clean = whitespace(value).toLocaleUpperCase('sl-SI');
-  if (['DA', 'YES', 'TRUE', '1'].includes(clean)) return 'DA';
-  if (['NE', 'NO', 'FALSE', '0'].includes(clean)) return 'NE';
+  if (clean === 'DA') return 'DA';
+  if (clean === 'NE') return 'NE';
   return clean;
 };
 
@@ -57,17 +43,16 @@ export const canonicalizeOrganizerField = (field: string, value: unknown) => {
   if (field === 'cas_zacetka') return time(value);
   if (field === 'prijave_na_dan_dogodka') return yesNo(value);
   if (['povezava_razpis', 'povezava_prijava', 'trasa_url', 'organizator_url'].includes(field)) return url(value);
-  if (['prijavnina_min_eur', 'prijavnina_max_eur', 'visinski_m_plus'].includes(field)) return number(value);
   return whitespace(value);
 };
 
 export const buildOrganizerSnapshotV2 = (input: OrganizerSnapshotInput) => ({
   snapshot_version: ORGANIZER_SNAPSHOT_VERSION,
   year: whitespace(input.year),
-  master_row: number(input.master_row),
+  master_row: Number(whitespace(input.master_row)),
   event_id: whitespace(input.event_id).toUpperCase(),
-  master: Object.fromEntries(ORGANIZER_MASTER_FIELDS.map((key) => [key, canonicalizeOrganizerField(key, input.master[key])])),
-  additional: Object.fromEntries(ORGANIZER_ADDITIONAL_FIELDS.map((key) => [key, canonicalizeOrganizerField(key, input.additional?.[key])]))
+  ...Object.fromEntries(ORGANIZER_MASTER_FIELDS.map((key) => [key, canonicalizeOrganizerField(key, input.master[key])])),
+  ...Object.fromEntries(ORGANIZER_ADDITIONAL_FIELDS.map((key) => [key, canonicalizeOrganizerField(key, input.additional?.[key])]))
 });
 
 export const serializeOrganizerSnapshotV2 = (input: OrganizerSnapshotInput) => JSON.stringify(buildOrganizerSnapshotV2(input));
@@ -83,13 +68,17 @@ export const resolveOrganizerSnapshotInput = (year: string, eventId: string, mas
   const candidates = masters.filter((item) => whitespace(item.row ?? item.master_row) === row && date(item.datum).startsWith(`${year}-`));
   if (candidates.length !== 1) return null;
   const master = candidates[0];
-  const strictAdditional = additionals.filter((item) =>
-    whitespace(item.leto) === year && whitespace(item.master_sheet) === year &&
+  const strictAdditional = additionals.filter((item) => {
+    const masterSheet = whitespace(item.master_sheet);
+    const eventKey = whitespace(item.event_key ?? item.event_id).toUpperCase();
+    const currentIdentity = masterSheet === year && eventKey === eventId;
+    const legacy2026Identity = year === '2026' && !masterSheet && (!eventKey || eventKey === eventId);
+    return whitespace(item.leto) === year && (currentIdentity || legacy2026Identity) &&
     whitespace(item.master_row) === row && date(item.datum) === date(master.datum) &&
     whitespace(item.naziv_prireditve) === whitespace(master.naziv_prireditve) &&
-    whitespace(item.zanesljivost).toLocaleLowerCase('sl-SI') === 'visoka' &&
-    (!item.event_id || whitespace(item.event_id).toUpperCase() === eventId)
-  );
-  if (strictAdditional.length > 1) return null;
-  return { year, master_row: row, event_id: eventId, master, additional: strictAdditional[0] ?? null };
+    whitespace(item.kraj) === whitespace(master.kraj) &&
+    whitespace(item.zanesljivost).toLocaleLowerCase('sl-SI') === 'visoka';
+  });
+  if (strictAdditional.length !== 1) return null;
+  return { year, master_row: row, event_id: eventId, master, additional: strictAdditional[0] };
 };
