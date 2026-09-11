@@ -481,11 +481,15 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const isPickerGateActive = () => currentType() === 'existing' && !hasRaceContext && racePickerMode !== 'manual';
   const computeFieldRules = (type) => { const identity = getIdentityState(); const gated = type === 'existing' && !hasRaceContext && racePickerMode !== 'manual'; const rules = getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); return gated ? Object.fromEntries(Object.entries(rules).map(([key, rule]) => [key, { ...rule, visible: false, required: false, disabled: true }])) : rules; };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
-  const confirmationControls = () => Array.from(confirmationMode?.querySelectorAll('input,textarea,select,button') || []);
+  const confirmationControls = () => [confirmationOrganization, confirmationContact, confirmationEmail, confirmationStatement].filter(Boolean);
+  const setConfirmationControlsDisabled = (disabled) => confirmationControls().forEach((control) => {
+    control.disabled = disabled;
+    if (disabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); }
+  });
   const ordinaryControls = () => Array.from(form?.querySelectorAll('.proposal-type-fieldset input, [data-context-existing-radio], [data-race-picker] input, [data-race-picker] button, [data-race-search-back], .form-grid input, .form-grid select, .form-grid textarea') || []);
   const syncModeControlIsolation = () => {
     const confirmationEnabled = isConfirmationMode && hasValidConfirmationContext;
-    confirmationControls().forEach((control) => { control.disabled = !confirmationEnabled; if (!confirmationEnabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); } });
+    setConfirmationControlsDisabled(!confirmationEnabled);
     if (isConfirmationMode) ordinaryControls().forEach((control) => { control.disabled = true; control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); });
   };
   const applyTypeUx = () => {
@@ -609,7 +613,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   };
   const loadConfirmationRuntime = async (notice = '') => {
     if (!isConfirmationMode || !hasValidConfirmationContext) return;
-    confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true;
+    setConfirmationControlsDisabled(true); confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true;
     setStatus(notice || (isEnglish ? 'Loading current race information …' : 'Nalagamo aktualne podatke teka …'));
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 10_000);
@@ -625,8 +629,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       if (!snapshot) throw new Error('invalid');
       confirmationSnapshot = { input: snapshot, canonical: buildOrganizerSnapshotV2(snapshot), hash: await hashOrganizerSnapshotV2(snapshot) };
       renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true;
-      button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); setStatus(notice);
-    } catch { confirmationSnapshot = null; confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.hidden = true; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
+      setConfirmationControlsDisabled(false); button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); setStatus(notice);
+    } catch { confirmationSnapshot = null; setConfirmationControlsDisabled(true); confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.hidden = true; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
     finally { window.clearTimeout(timeout); }
   };
 
