@@ -81,13 +81,13 @@ export const resolveOrganizerSnapshotInput = (year: string, eventId: string, mas
   const strictAdditional = additionals.filter((item) => {
     const masterSheet = whitespace(item.master_sheet);
     const eventKey = canonicalEventKeyPart(item.event_key);
-    const currentIdentity = masterSheet === year && (!eventKey || eventKey === expectedAdditionalEventKey);
-    const legacy2026Identity = year === '2026' && !masterSheet && eventKey === expectedAdditionalEventKey;
+    const hasCanonicalEditionIdentity = buildOrganizerAdditionalEventKey(year, item) === expectedAdditionalEventKey;
+    const currentIdentity = masterSheet === year && whitespace(item.master_row) === row &&
+      hasCanonicalEditionIdentity && (!eventKey || eventKey === expectedAdditionalEventKey);
+    const legacy2026Identity = year === '2026' && !masterSheet &&
+      hasCanonicalEditionIdentity && eventKey === expectedAdditionalEventKey;
     return whitespace(item.leto) === year && (currentIdentity || legacy2026Identity) &&
-    whitespace(item.master_row) === row && date(item.datum) === date(master.datum) &&
-    whitespace(item.naziv_prireditve) === whitespace(master.naziv_prireditve) &&
-    whitespace(item.kraj) === whitespace(master.kraj) &&
-    whitespace(item.zanesljivost).toLocaleLowerCase('sl-SI') === 'visoka';
+      whitespace(item.zanesljivost).toLocaleLowerCase('sl-SI') === 'visoka';
   });
   if (strictAdditional.length > 1) return null;
   return { year, master_row: row, event_id: eventId, master, additional: strictAdditional[0] ?? null };
