@@ -4,7 +4,7 @@ import { googleProposalFormContract } from '../../src/proposal-form/proposal-for
 const contract = googleProposalFormContract;
 const normalizeLineEndings = (value: FormDataEntryValue | null | undefined) => String(value ?? '').replace(/\r\n?/g, '\n');
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
-const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=2027-dolgi-smarnogorski-tek&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
+const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=R000012&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa&otherDetails=Dru%C5%BEinam%20prijazno&organizator_naziv=%C5%A0D%20Objavljeno&organizator_url=https%3A%2F%2Fexample.com%2Forg`;
 const zagorjeContextQuery = 'event=21.%20Tek%20in%20pohod%20po%20Zagorski%20dolini&year=2026&date=2026-08-01&place=Zagorje%20ob%20Savi&region=Zasavska&startTime=18%3A00&distances=0%2C2%20km%20%C2%B7%200%2C3%20km%20%C2%B7%200%2C5%20km%20%C2%B7%201%20km%20%C2%B7%204%2C6%20km%20%C2%B7%207%2C5%20km%20%C2%B7%2010%2C3%20km&surface=Cesta&registrationMinEur=15&registrationMaxEur=25&registrationDescription=Otro%C5%A1ki%20teki&registrationDeadline=2026-08-01&earlyRegistrationDeadline=2026-07-27&dayOfRegistration=DA';
 
@@ -38,12 +38,12 @@ async function interceptForm(page: Page, options: InterceptOptions = {}): Promis
 async function mockRacePickerApi(page: Page, fail = false) {
   const row2026 = { row: '12', datum: '2026-07-19', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', kraj: 'Gorenje Jazne', regija: 'Goriška', status_dogodka: 'Potrjeno', vidno_v_javnem_koledarju: 'DA', tip_podlage: 'trail', razdalje_km: '10.5', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/razpis', povezava_prijava: 'https://example.com/prijava', pokal: 'Pokal STK' };
   const row2027 = { ...row2026, datum: '2027-07-19', naziv_prireditve: 'Prihodnji tek 2027' };
-  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01` });
+  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', event_key: `${year}|${year}-07-19|${year === '2027' ? 'prihodnji tek 2027' : row2026.naziv_prireditve.toLocaleLowerCase('sl-SI')}|gorenje jazne`, datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, kraj: 'Gorenje Jazne', zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01`, organizator_url: 'ftp://example.com/organizer' });
   await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => {
     if (fail) return route.abort();
     const url = new URL(route.request().url());
     const year = url.searchParams.get('year') === '2027' ? '2027' : '2026';
-    const body = url.pathname === '/additional' ? { data: [additional(year)] } : [year === '2027' ? row2027 : row2026];
+    const body = url.pathname === '/additional' ? { additional: [additional(year)] } : [year === '2027' ? row2027 : row2026];
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
 }
@@ -85,54 +85,67 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#proposal-description')).toHaveValue('Podatek, ki se ne sme izgubiti.');
   });
 
-  test('SL organizer confirmation validates and posts exactly once on mobile', async ({ page }) => {
-    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page);
+  test('SL organizer confirmation loads runtime data and posts claim without Google Forms', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page); await mockRacePickerApi(page);
+    let claimBody: Record<string, unknown> | null = null;
+    await page.route('**/api/organizer-claim', async (route) => { claimBody = route.request().postDataJSON(); await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, status: 'ACCEPTED' }) }); });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Objavljeni podatki o teku' })).toBeVisible();
-    await expect(page.locator('.proposal-type-fieldset')).toBeHidden(); await expect(page.locator('#proposal-date')).toBeHidden();
-    await expect.poll(() => page.locator('.form-grid').locator('input,select,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
-    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
-    await expect(page.getByRole('alert')).toContainText('Ime organizacije ali društva'); await expect(page.locator('#confirmation-organization')).toBeFocused();
-    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com');
+    const summary = page.getByRole('region', { name: 'Objavljeni podatki o teku' }).locator('.confirmation-summary');
+    await expect(summary).toContainText('Prihodnji tek 2027'); await expect(summary).toContainText('27');
+    await expect(summary.getByText('ftp://example.com/organizer', { exact: true })).toBeVisible();
+    await expect(summary.locator('a[href="ftp://example.com/organizer"]')).toHaveCount(0);
+    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-contact').fill('Ana Test'); await page.locator('#confirmation-email').fill('org@example.com');
     await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
     await expect(page.getByRole('alert')).toContainText('Potrjujem, da nastopam');
-    const publishedSummary = page.getByRole('region', { name: 'Objavljeni podatki o teku' }).locator('.confirmation-summary');
-    await expect(publishedSummary.getByText('Uradni naziv organizatorja')).toBeVisible();
-    await expect(publishedSummary.getByText('ŠD Objavljeno')).toBeVisible();
-    await expect(publishedSummary.getByText('Uradna spletna stran organizatorja')).toBeVisible();
-    await expect(publishedSummary).toContainText('Dolgi Šmarnogorski tek');
-    await expect(publishedSummary).toContainText('2027-05-01');
-    await expect(publishedSummary).toContainText('ŠD Objavljeno');
-    await expect(page.locator('#confirmation-statement')).toBeFocused();
     await page.locator('#confirmation-statement').check(); await page.getByRole('button', { name: 'Potrdite podatke' }).click();
-    await expect.poll(() => intercepted.getSubmissions()).toBe(1); const payload = intercepted.getPayload();
-    expect(payload?.get(contract.fields.proposalType)).toBe(contract.values.proposalTypes[1]);
-    expect(payload?.get(contract.fields.description)).toContain('Vrsta predloga: Potrditev podatkov organizatorja');
-    expect(payload?.get(contract.fields.organizer)).toBe('Da'); expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Ne vem');
-    expect(page.url()).not.toContain('docs.google.com'); expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await expect(page.getByRole('alert')).toContainText('Zahteva je prejeta'); expect(intercepted.getSubmissions()).toBe(0);
+    expect(claimBody).toEqual({ year: '2027', event_id: 'R000012', organizer_name: 'ŠD Test', contact_name: 'Ana Test', organizer_email: 'org@example.com', declaration: true, displayed_snapshot_hash: expect.stringMatching(/^[a-f0-9]{64}$/) });
+    expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
     await assertNoConsoleErrors(page, errors);
   });
 
-  test('EN organizer confirmation preserves correction and safe return links', async ({ page }) => {
-    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page);
+  test('EN confirmation handles SNAPSHOT_CHANGED, reloads and preserves correction link', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const intercepted = await interceptForm(page); await mockRacePickerApi(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.fulfill({ status: 409, contentType: 'application/json', body: JSON.stringify({ ok: false, status: 'SNAPSHOT_CHANGED' }) }); });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`/en/add-or-correct-race/?mode=confirm&${completeContextQuery.replace('lang=sl', 'lang=en').replace('/tek/2027/', '/en/races/2027/')}`); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Published race information' })).toBeVisible();
-    const publishedSummary = page.getByRole('region', { name: 'Published race information' }).locator('.confirmation-summary');
-    await expect(publishedSummary.getByText('Official organizer name')).toBeVisible();
-    await expect(publishedSummary.getByText('ŠD Objavljeno')).toBeVisible();
     await expect(page.getByRole('link', { name: 'The information is not correct – open the correction form' })).not.toHaveAttribute('href', /mode=confirm/);
     await page.locator('#confirmation-organization').fill('Test Club'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
-    await page.getByRole('button', { name: 'Confirm information' }).click(); await expect.poll(() => intercepted.getSubmissions()).toBe(1);
-    expect(intercepted.getPayload()?.get(contract.fields.description)).toContain('Vrsta predloga: Potrditev podatkov organizatorja'); await assertNoConsoleErrors(page, errors);
+    await page.getByRole('button', { name: 'Confirm information' }).click(); await expect(page.getByRole('alert')).toContainText('information has changed');
+    await expect(page.locator('#confirmation-statement')).not.toBeChecked();
+    await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeEnabled();
+    expect(claims).toBe(1); expect(intercepted.getSubmissions()).toBe(0);
+    await page.waitForTimeout(50);
+    expect(errors.filter((error) => !(error.includes('Failed to load resource') && /\b409\b/.test(error)))).toEqual([]);
   });
 
   test('confirmation without race context explains next steps and cannot post', async ({ page }) => {
-    const intercepted = await interceptForm(page); await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
+    const intercepted = await interceptForm(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.abort(); });
+    await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Podatki o teku manjkajo' })).toBeVisible();
     await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
-    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0);
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0); expect(claims).toBe(0);
+  });
+
+  test('stalled confirmation runtime fetch aborts and remains fail closed', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const form = await interceptForm(page);
+    await page.addInitScript(() => {
+      const nativeSetTimeout = window.setTimeout;
+      window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 10_000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
+    });
+    let claims = 0;
+    await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => { await new Promise((resolve) => setTimeout(resolve, 100)); await route.abort(); });
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.abort(); });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Aktualnih podatkov teka ni bilo mogoče varno naložiti.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0);
+    await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
+    expect(claims).toBe(0); expect(form.getSubmissions()).toBe(0); await assertNoConsoleErrors(page, errors);
   });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -888,16 +901,31 @@ test.describe('native proposal form', () => {
   });
 
   test('confirmation timeout restores the localized confirmation button label', async ({ page }) => {
-    await page.addInitScript(() => {
-      const nativeSetTimeout = window.setTimeout;
-      window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 12000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
-    });
-    const form = await interceptForm(page, { responseMode: 'hang' });
+    const form = await interceptForm(page); await mockRacePickerApi(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ ok: false, status: 'UNAVAILABLE' }) }); });
     await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
     await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
-    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); await expect.poll(() => form.getSubmissions()).toBe(1);
-    await expect(page.getByRole('alert')).toContainText('Predloga trenutno ni bilo mogoče poslati.');
-    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click();
+    await expect(page.getByRole('alert')).toContainText('Potrditev je začasno nedosegljiva.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeEnabled();
+    expect(claims).toBe(1); expect(form.getSubmissions()).toBe(0);
+    expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  });
+
+  test('stalled organizer claim aborts once and restores safe retry UX', async ({ page }) => {
+    const form = await interceptForm(page); await mockRacePickerApi(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await new Promise((resolve) => setTimeout(resolve, 100)); await route.abort(); });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await page.evaluate(() => { const nativeSetTimeout = window.setTimeout; window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 10_000 ? nativeSetTimeout(handler, 25, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout; });
+    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click();
+    await expect(page.getByRole('alert')).toContainText('Potrditev je začasno nedosegljiva.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeEnabled();
+    expect(claims).toBe(1); expect(form.getSubmissions()).toBe(0);
+    await page.waitForTimeout(150); expect(claims).toBe(1);
+    await expect(page.locator('#confirmation-organization')).toHaveValue('ŠD Test'); await expect(page.locator('#confirmation-email')).toHaveValue('org@example.com');
+    expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   });
 
   test('fallback analytics redacts prefilled values from target URL', async ({ page }) => {

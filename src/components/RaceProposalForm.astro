@@ -74,10 +74,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
           <dl class="confirmation-summary"></dl>
           <div class="confirmation-fields">
             <div><label for="confirmation-organization">{lang === 'en' ? 'Organization or club name' : 'Ime organizacije ali društva'} <span aria-hidden="true">*</span></label><input id="confirmation-organization" required autocomplete="organization" /></div>
+            <p class="confirmation-value">{lang === 'en' ? 'After confirming your email address, you will also receive a free basic overview of interest in your race on STK over the last 30 days.' : 'Po potrditvi e-poštnega naslova boste prejeli tudi brezplačen osnovni pregled zanimanja za vaš tek na STK za zadnjih 30 dni.'}</p>
             <div><label for="confirmation-contact">{lang === 'en' ? 'Contact person name' : 'Ime kontaktne osebe'}</label><input id="confirmation-contact" autocomplete="name" /></div>
             <div><label for="confirmation-email">{lang === 'en' ? 'Organizer email' : 'Organizatorski e-naslov'} <span aria-hidden="true">*</span></label><input id="confirmation-email" type="email" pattern={emailPattern} required autocomplete="email" /></div>
             <label class="confirmation-statement"><input id="confirmation-statement" type="checkbox" required /> <span>{lang === 'en' ? 'I confirm that I am acting on behalf of the organizer and that the public race information shown above is correct.' : 'Potrjujem, da nastopam v imenu organizatorja in da so zgoraj prikazani javni podatki o teku pravilni.'}</span></label>
-            <div><label for="confirmation-note">{lang === 'en' ? 'Optional note' : 'Neobvezna opomba'}</label><textarea id="confirmation-note" rows="4"></textarea></div>
           </div>
           <p><a class="confirmation-correction-link" href="#">{lang === 'en' ? 'The information is not correct – open the correction form' : 'Podatki niso pravilni – odprite obrazec za popravek'}</a></p>
         </div>
@@ -191,9 +191,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   import { googleProposalFormContract as contract } from '../proposal-form/proposal-form-contract';
   import { proposalFormLocales } from '../proposal-form/proposal-form-locales';
   import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationSubmission, buildNewRaceDescription, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidEntryFeeRange } from '../proposal-form/proposal-form-controller';
-  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from '../utils-additional';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, toAdditionalArray } from '../utils-additional';
   import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
   import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
+  import { buildOrganizerSnapshotV2, hashOrganizerSnapshotV2, resolveOrganizerSnapshotInput } from '../organizer-confirmation-snapshot';
 
   const form = document.querySelector('[data-proposal-form]');
   const isEnglish = document.documentElement.lang?.startsWith('en') || window.location.pathname.startsWith('/en/');
@@ -204,7 +205,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const hasRaceContext = Boolean(prefill.eventKey || (prefill.eventTitle && prefill.date && prefill.place));
   const proposalMode = parseProposalMode(params.get('mode'));
   const isConfirmationMode = proposalMode === 'confirm';
-  const hasValidConfirmationContext = Boolean(prefill.eventKey && prefill.year && prefill.eventTitle && prefill.date && prefill.place);
+  const hasValidConfirmationContext = Boolean(/^R\d{6}$/i.test(prefill.eventKey) && /^(2026|2027)$/.test(prefill.year));
+  let confirmationSnapshot = null;
   const contextSection = document.querySelector('[data-correction-context]');
 
   const showAllChangesButton = document.querySelector('[data-show-all-changes]');
@@ -240,7 +242,6 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const confirmationContact = document.querySelector('#confirmation-contact');
   const confirmationEmail = document.querySelector('#confirmation-email');
   const confirmationStatement = document.querySelector('#confirmation-statement');
-  const confirmationNote = document.querySelector('#confirmation-note');
   const submitTarget = document.querySelector('[data-submit-target]');
   const backendSubmitForm = document.querySelector('[data-backend-submit-form]');
   const allowedAdditionalValues = contract.values.additionalData;
@@ -480,11 +481,15 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const isPickerGateActive = () => currentType() === 'existing' && !hasRaceContext && racePickerMode !== 'manual';
   const computeFieldRules = (type) => { const identity = getIdentityState(); const gated = type === 'existing' && !hasRaceContext && racePickerMode !== 'manual'; const rules = getProposalFieldRules({ frontendType: type || 'new', hasRaceContext, hasCompleteRaceIdentity: identity.date && identity.title && identity.place && identity.region, identity }); return gated ? Object.fromEntries(Object.entries(rules).map(([key, rule]) => [key, { ...rule, visible: false, required: false, disabled: true }])) : rules; };
   const setDescriptionCopy = (label, helper, placeholder = copy.placeholders.description) => { if (descriptionLabel) descriptionLabel.textContent = label; if (descriptionHelper) descriptionHelper.textContent = helper; if (description) { description.dataset.fieldLabel = label; description.placeholder = placeholder; } };
-  const confirmationControls = () => Array.from(confirmationMode?.querySelectorAll('input,textarea,select,button') || []);
+  const confirmationControls = () => [confirmationOrganization, confirmationContact, confirmationEmail, confirmationStatement].filter(Boolean);
+  const setConfirmationControlsDisabled = (disabled) => confirmationControls().forEach((control) => {
+    control.disabled = disabled;
+    if (disabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); }
+  });
   const ordinaryControls = () => Array.from(form?.querySelectorAll('.proposal-type-fieldset input, [data-context-existing-radio], [data-race-picker] input, [data-race-picker] button, [data-race-search-back], .form-grid input, .form-grid select, .form-grid textarea') || []);
   const syncModeControlIsolation = () => {
     const confirmationEnabled = isConfirmationMode && hasValidConfirmationContext;
-    confirmationControls().forEach((control) => { control.disabled = !confirmationEnabled; if (!confirmationEnabled) { control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); } });
+    setConfirmationControlsDisabled(!confirmationEnabled);
     if (isConfirmationMode) ordinaryControls().forEach((control) => { control.disabled = true; control.removeAttribute('aria-invalid'); control.setCustomValidity?.(''); });
   };
   const applyTypeUx = () => {
@@ -556,9 +561,9 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     const mode = proposalMode;
     if (!hasRaceContext && mode && mode !== 'confirm') { const modeRadio = form?.querySelector(`input[name="proposal-type-ui"][value="${mode}"]`); if (modeRadio) modeRadio.checked = true; }
     if (isConfirmationMode) {
-      confirmationMode.hidden = false; confirmationValid.hidden = !hasValidConfirmationContext; confirmationInvalid.hidden = hasValidConfirmationContext;
+      confirmationMode.hidden = false; confirmationValid.hidden = true; confirmationInvalid.hidden = false;
       proposalFieldset.hidden = true; racePicker.hidden = true; raceBack.hidden = true; document.querySelector('.form-grid').hidden = true; document.querySelector('.proposal-hand-off').hidden = true;
-      contextSection.hidden = true; resetButton.hidden = true; button.hidden = !hasValidConfirmationContext;
+      contextSection.hidden = true; resetButton.hidden = true; button.hidden = true; button.disabled = true;
       if (button) button.textContent = isEnglish ? 'Confirm information' : 'Potrdite podatke';
       if (formTitle) formTitle.textContent = isEnglish ? 'Confirm race information' : 'Potrdite podatke o teku';
       if (formHelper) formHelper.textContent = isEnglish ? 'Review the public race information shown below before confirming it.' : 'Pred potrditvijo preglejte spodaj prikazane javne podatke o teku.';
@@ -588,6 +593,47 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     form?.setAttribute('data-proposal-runtime-ready', 'true');
   };
 
+  const renderConfirmationSummary = (snapshot) => {
+    const summary = document.querySelector('.confirmation-summary'); summary.replaceChildren();
+    const master = snapshot; const additional = snapshot;
+    const fee = [snapshot.prijavnina_min_eur, snapshot.prijavnina_max_eur].filter(Boolean).join('–');
+    const fields = [
+      [isEnglish ? 'Date' : 'Datum', master.datum], [isEnglish ? 'Race name' : 'Naziv teka', master.naziv_prireditve],
+      [isEnglish ? 'Place and region' : 'Kraj in regija', [master.kraj, master.regija].filter(Boolean).join(' · ')],
+      [isEnglish ? 'Surface' : 'Podlaga', master.tip_podlage], [isEnglish ? 'Distances' : 'Razdalje', master.razdalje_km],
+      [isEnglish ? 'Start time' : 'Ura', master.cas_zacetka], [isEnglish ? 'Official announcement' : 'Razpis', master.povezava_razpis, true],
+      [isEnglish ? 'Registration' : 'Prijava', master.povezava_prijava, true], [isEnglish ? 'Cup or series' : 'Pokal ali serija', master.pokal_serija],
+      [isEnglish ? 'Public note' : 'Javna opomba', master.opombe_javne], [isEnglish ? 'Entry fee' : 'Prijavnina', fee],
+      [isEnglish ? 'Entry fee description' : 'Opis prijavnine', additional.prijavnina_opis], [isEnglish ? 'Registration deadline' : 'Rok prijave', additional.rok_prijave],
+      [isEnglish ? 'Cheaper registration deadline' : 'Rok cenejše prijave', additional.rok_cenejse_prijave], [isEnglish ? 'Race-day registration' : 'Prijave na dan', additional.prijave_na_dan_dogodka],
+      [isEnglish ? 'Elevation gain' : 'Višinski metri', additional.visinski_m_plus], [isEnglish ? 'Route' : 'Trasa', additional.trasa_url, true],
+      [isEnglish ? 'Organizer' : 'Organizator', additional.organizator_naziv], [isEnglish ? 'Organizer website' : 'Spletna stran organizatorja', additional.organizator_url, true]
+    ];
+    for (const [label, value, link] of fields) if (value) { const dt = document.createElement('dt'); dt.textContent = label; const dd = document.createElement('dd'); if (link && isSafeHttpUrl(value)) { const a = document.createElement('a'); a.href = value; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = value; dd.append(a); } else dd.textContent = value; summary.append(dt, dd); }
+  };
+  const loadConfirmationRuntime = async (notice = '') => {
+    if (!isConfirmationMode || !hasValidConfirmationContext) return;
+    setConfirmationControlsDisabled(true); confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true;
+    setStatus(notice || (isEnglish ? 'Loading current race information …' : 'Nalagamo aktualne podatke teka …'));
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10_000);
+    try {
+      const yearPath = prefill.year === '2026' ? '/' : `/?year=${encodeURIComponent(prefill.year)}`;
+      const [masterResponse, additionalResponse] = await Promise.all([
+        fetch(`https://stk-master-api.igor-kalsek.workers.dev${yearPath}`, { headers: { Accept: 'application/json' }, signal: controller.signal }),
+        fetch(`https://stk-master-api.igor-kalsek.workers.dev/additional?year=${encodeURIComponent(prefill.year)}`, { headers: { Accept: 'application/json' }, signal: controller.signal })
+      ]);
+      if (!masterResponse.ok || !additionalResponse.ok) throw new Error('unavailable');
+      const masterPayload = await masterResponse.json(); const additionalPayload = await additionalResponse.json();
+      const snapshot = resolveOrganizerSnapshotInput(prefill.year, prefill.eventKey.toUpperCase(), toApiRecords(masterPayload), toAdditionalArray(additionalPayload));
+      if (!snapshot) throw new Error('invalid');
+      confirmationSnapshot = { input: snapshot, canonical: buildOrganizerSnapshotV2(snapshot), hash: await hashOrganizerSnapshotV2(snapshot) };
+      renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true;
+      setConfirmationControlsDisabled(false); button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); setStatus(notice);
+    } catch { confirmationSnapshot = null; setConfirmationControlsDisabled(true); confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.hidden = true; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
+    finally { window.clearTimeout(timeout); }
+  };
+
   showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions(); updateFallbackLink(); });
   const focusBasicCorrectionField = (key) => { const field = form?.querySelector(`[data-basic-correction-field="${key}"]`); field?.scrollIntoView({ behavior: 'smooth', block: 'center' }); field?.focus({ preventScroll: true }); };
   const focusStructuredField = (category) => { const map = { 'Prijavnina / startnina': 'entryFee', 'Rok prijave': 'registrationDeadline', 'Cenejša prijava / sprememba cene': 'cheaperRegistration', 'Prijave na dan dogodka': 'raceDayRegistration', 'Višinski metri': 'elevationGain', 'Trasa / zemljevid / GPX': 'routeUrl' }; const field = form?.querySelector(`[data-structured-field="${map[category] || 'entryFee'}"]`); field?.scrollIntoView({ behavior: 'smooth', block: 'center' }); field?.focus({ preventScroll: true }); };
@@ -613,22 +659,30 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = isConfirmationMode ? confirmationSubmitLabel() : copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
   const markSubmitted = (attempt) => { if (submissionState !== 'submitting' || attempt !== armedSubmissionAttempt) return; submissionState = 'submitted-unverified'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = true; button.hidden = true; button.textContent = copy.submit; } if (resetButton && !isConfirmationMode) { resetButton.hidden = false; resetButton.textContent = copy.newProposal; } setStatus(isConfirmationMode ? (isEnglish ? 'The confirmation was sent for manual review.' : 'Potrditev je bila poslana v ročni pregled.') : copy.submitted, 'success'); };
   submitTarget?.addEventListener('load', () => { if (submissionState !== 'submitting' || !armedSubmissionAttempt) return; markSubmitted(armedSubmissionAttempt); });
-  form?.addEventListener('submit', (event) => {
+  form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (submissionState === 'submitting' || submissionState === 'submitted-unverified') return;
     submissionState = 'validating';
     if (isConfirmationMode) {
-      if (!hasValidConfirmationContext) { submissionState = 'failed'; setStatus(isEnglish ? 'Valid race information is required.' : 'Za potrditev so potrebni veljavni podatki o teku.'); return; }
+      if (!confirmationSnapshot) { submissionState = 'failed'; setStatus(isEnglish ? 'Valid current race information is required.' : 'Za potrditev so potrebni veljavni aktualni podatki teka.'); return; }
       const confirmationFields = [confirmationOrganization, confirmationEmail, confirmationStatement];
       const invalid = confirmationFields.filter((field) => !field.checkValidity());
       if (invalid.length) { submissionState = 'failed'; showErrors(invalid); invalid[0].focus(); return; }
-      setFieldValue(contract.fields.date, prefill.date); syncDateParts();
       if (errors) { errors.hidden = true; errors.textContent = ''; errors.classList.remove('success'); }
-      currentSubmissionAttempt += 1; armedSubmissionAttempt = currentSubmissionAttempt;
       if (button) { button.disabled = true; button.textContent = isEnglish ? 'Sending …' : 'Pošiljanje …'; }
-      submissionState = 'submitting'; window.clearTimeout(submitTimeoutId);
-      submitTimeoutId = window.setTimeout(() => restoreAfterSubmitFailure(), 12000);
-      submitCanonicalEntries(currentGoogleFormsEntries());
+      submissionState = 'submitting';
+      const payload = { year: String(confirmationSnapshot.input.year), event_id: String(confirmationSnapshot.input.event_id), organizer_name: confirmationOrganization.value.trim(), contact_name: confirmationContact.value.trim(), organizer_email: confirmationEmail.value.trim(), declaration: true, displayed_snapshot_hash: confirmationSnapshot.hash };
+      const claimController = new AbortController(); const claimTimeout = window.setTimeout(() => claimController.abort(), 10_000);
+      try {
+        const response = await fetch('/api/organizer-claim', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload), signal: claimController.signal });
+        const result = await response.json().catch(() => null); const status = result?.status;
+        if (response.ok && result?.ok === true && status === 'ACCEPTED') { submissionState = 'submitted-unverified'; confirmationOrganization.value = ''; confirmationContact.value = ''; confirmationEmail.value = ''; confirmationStatement.checked = false; button.hidden = true; setStatus(isEnglish ? 'Request received. Check your email for the next step. After you confirm the address, STK will verify this race edition and prepare a basic overview of interest in your race.' : 'Zahteva je prejeta. Preverite e-pošto za naslednji korak. Po potrditvi naslova bo STK preveril potrjeno izdajo in pripravil osnovni pregled zanimanja za vaš tek.', 'success'); return; }
+        if (status === 'SNAPSHOT_CHANGED') { confirmationSnapshot = null; confirmationStatement.checked = false; const changedNotice = isEnglish ? 'The race information has changed. Current information was reloaded; check it again before confirming.' : 'Podatki teka so se medtem spremenili. Aktualni podatki so ponovno naloženi; še enkrat jih preverite pred potrditvijo.'; submissionState = 'failed'; await loadConfirmationRuntime(changedNotice); return; }
+        if (['INVALID_REQUEST', 'EVENT_NOT_FOUND'].includes(status)) setStatus(isEnglish ? 'The race context is no longer valid.' : 'Podatki o izbranem teku niso več veljavni.');
+        else setStatus(isEnglish ? 'Confirmation is temporarily unavailable. Please try again later.' : 'Potrditev je začasno nedosegljiva. Poskusite znova pozneje.');
+      } catch { setStatus(isEnglish ? 'Confirmation is temporarily unavailable. Please try again later.' : 'Potrditev je začasno nedosegljiva. Poskusite znova pozneje.'); }
+      finally { window.clearTimeout(claimTimeout); }
+      submissionState = 'failed'; if (button) { button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); }
       return;
     }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
@@ -664,6 +718,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   });
   form?.addEventListener('reset', (event) => { if (hasRaceContext && submissionState !== 'submitted-unverified' && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } window.clearTimeout(submitTimeoutId); armedSubmissionAttempt = 0; setTimeout(() => { submissionState = 'idle'; if (errors) { errors.hidden = true; errors.classList.remove('success'); } if (resetButton) { resetButton.hidden = false; resetButton.textContent = hasRaceContext ? (isEnglish ? 'Clear entered changes' : 'Počisti vnesene spremembe') : copy.clear; } if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); applyRuntimeContext(); initializeSelectedRaceDiffFields(); form.querySelectorAll('[data-basic-correction-field], [data-structured-field]').forEach((field) => { if (field.dataset.structuredField !== 'correctionIntent') field.dispatchEvent(new Event('input', { bubbles: true })); }); updateChangeSummary(); syncDateParts(); updateFallbackLink(); }, 0); });
   applyRuntimeContext();
+  void loadConfirmationRuntime();
   initializeSelectedRaceDiffFields();
   updateChangeSummary();
 </script>

@@ -88,6 +88,17 @@ test('future organiser tools are explicitly in development and have no non-funct
   assert.doesNotMatch(component, /<button|claim_race/);
 });
 
+test('organizer confirmation is presented as an active bilingual finder CTA', () => {
+  assert.match(component, /Potrdite podatke svojega teka/);
+  assert.match(component, /Poiščite in potrdite svoj tek/);
+  assert.match(component, /Confirm your race information/);
+  assert.match(component, /Find and confirm your race/);
+  assert.match(component, /brezplačen osnovni pregled zanimanja[^<]+zadnjih 30 dni/);
+  assert.match(component, /free basic overview of interest[^<]+last 30 days/);
+  assert.match(component, /const finderHref = en \? '\/en\/find-races\/' : '\/iskalnik-tekov\/'/);
+  assert.match(component, /data-organizer-placement="confirmation"/);
+});
+
 test('shared workflow provides equivalent SL and EN links and the planner marks step one current', () => {
   for (const route of ['/za-organizatorje/termini-2027/', '/en/for-organizers/2027-race-dates/', '/dodaj-ali-popravi-tek/', '/en/add-or-correct-race/']) assert.match(workflow, new RegExp(route.replaceAll('/', '\\/')));
   assert.match(workflow, /Preverite termin/);

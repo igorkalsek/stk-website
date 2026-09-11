@@ -26,5 +26,13 @@ const capabilities = en ? ['race page views', 'registration clicks', 'race-info 
     <div class="cta-row"><a class="button organizer-dark-button" href={finderHref} data-organizer-action="find_race" data-organizer-placement="main">{en ? 'Find your race' : 'Poiščite svoj tek'}</a><a class="button button-primary" href={formHref} data-organizer-action="add_race" data-organizer-placement="main">{en ? 'Add or correct a race' : 'Dodajte ali popravite tek'}</a></div>
   </section>
 
+  <section class="section container organizer-actions organizer-confirmation-card" aria-labelledby="organizer-confirmation-title">
+    <div>
+      <h2 id="organizer-confirmation-title">{en ? 'Confirm your race information' : 'Potrdite podatke svojega teka'}</h2>
+      <p>{en ? 'Find your race and choose “Confirm race information” on its race page. After confirming your email address, you will receive a free basic overview of interest in your race on STK over the last 30 days.' : 'Poiščite svoj tek in na njegovi strani izberite »Potrdite pravilnost podatkov«. Po potrditvi e-poštnega naslova boste prejeli brezplačen osnovni pregled zanimanja za vaš tek na STK za zadnjih 30 dni.'}</p>
+    </div>
+    <div class="cta-row"><a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="confirmation">{en ? 'Find and confirm your race' : 'Poiščite in potrdite svoj tek'}</a></div>
+  </section>
+
   <section class="section container promotion-section" id="promotion" aria-labelledby="promotion-title"><OrganizerWorkflow {lang} active={3} compact /><div class="organizer-claim-card"><div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="promotion-title">{en ? 'Promotion and statistics' : 'Promocija in statistika'}</h2></div><p>{en ? 'When this feature becomes available, you will be able to monitor:' : 'Ko bo funkcija na voljo, boste lahko spremljali:'}</p><ul class="organizer-capabilities">{capabilities.map((item) => <li>{item}</li>)}</ul><p>{en ? 'Future verified race profiles could also make updates and promotion easier. These tools are not available yet.' : 'Prihodnji preverjeni profili tekov bi lahko olajšali tudi posodabljanje in promocijo. Ta orodja še niso na voljo.'}</p></div></section>
 </main>

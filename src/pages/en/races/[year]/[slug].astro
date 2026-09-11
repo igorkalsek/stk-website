@@ -1,5 +1,6 @@
 ---
 import RelatedRaceCards from '../../../../components/RelatedRaceCards.astro';
+import OrganizerConfirmationBadge from '../../../../components/OrganizerConfirmationBadge.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { type AdditionalEventData } from '../../../../utils-additional';
 import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl, buildRegistrationDeadlineCalendarInput } from '../../../../utils-calendar';
@@ -393,9 +394,10 @@ const jsonLd = event ? {
 
               <div class="event-detail-organizer-panel">
                 <h2>Are you the organizer of this race?</h2>
+                <OrganizerConfirmationBadge year={event.year} eventId={getStableEventId(event)} lang="en" />
                 <p>Help runners find accurate information. Send an update for the official notice, registration, course, entry fees, children’s races or other race details.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-primary" href={confirmationUrl}>Confirm that the information is correct</a>
+                  <a class="button button-small button-primary" href={confirmationUrl} data-organizer-confirmation-cta>Confirm that the information is correct</a>
                   <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Suggest an update or correction</a>
                 </div>
               </div>
