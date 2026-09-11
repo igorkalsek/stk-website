@@ -559,7 +559,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (isConfirmationMode) {
       confirmationMode.hidden = false; confirmationValid.hidden = true; confirmationInvalid.hidden = false;
       proposalFieldset.hidden = true; racePicker.hidden = true; raceBack.hidden = true; document.querySelector('.form-grid').hidden = true; document.querySelector('.proposal-hand-off').hidden = true;
-      contextSection.hidden = true; resetButton.hidden = true; button.hidden = false; button.disabled = true;
+      contextSection.hidden = true; resetButton.hidden = true; button.hidden = true; button.disabled = true;
       if (button) button.textContent = isEnglish ? 'Confirm information' : 'Potrdite podatke';
       if (formTitle) formTitle.textContent = isEnglish ? 'Confirm race information' : 'Potrdite podatke o teku';
       if (formHelper) formHelper.textContent = isEnglish ? 'Review the public race information shown below before confirming it.' : 'Pred potrditvijo preglejte spodaj prikazane javne podatke o teku.';
@@ -622,8 +622,9 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       const snapshot = resolveOrganizerSnapshotInput(prefill.year, prefill.eventKey.toUpperCase(), toApiRecords(masterPayload), toApiRecords(additionalPayload));
       if (!snapshot) throw new Error('invalid');
       confirmationSnapshot = { input: snapshot, canonical: buildOrganizerSnapshotV2(snapshot), hash: await hashOrganizerSnapshotV2(snapshot) };
-      renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true; button.disabled = false; setStatus(notice);
-    } catch { confirmationSnapshot = null; confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
+      renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true;
+      button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); setStatus(notice);
+    } catch { confirmationSnapshot = null; confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.hidden = true; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
   };
 
   showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions(); updateFallbackLink(); });

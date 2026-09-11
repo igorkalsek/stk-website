@@ -113,15 +113,19 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('link', { name: 'The information is not correct – open the correction form' })).not.toHaveAttribute('href', /mode=confirm/);
     await page.locator('#confirmation-organization').fill('Test Club'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
     await page.getByRole('button', { name: 'Confirm information' }).click(); await expect(page.getByRole('alert')).toContainText('information has changed');
-    await expect(page.locator('#confirmation-statement')).not.toBeChecked(); await expect(page.getByRole('button', { name: 'Confirm information' })).toBeEnabled();
+    await expect(page.locator('#confirmation-statement')).not.toBeChecked();
+    await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeEnabled();
     expect(claims).toBe(1); expect(intercepted.getSubmissions()).toBe(0); await assertNoConsoleErrors(page, errors);
   });
 
   test('confirmation without race context explains next steps and cannot post', async ({ page }) => {
-    const intercepted = await interceptForm(page); await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
+    const intercepted = await interceptForm(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.abort(); });
+    await page.goto('/dodaj-ali-popravi-tek/?mode=confirm'); await waitForProposalRuntime(page);
     await expect(page.getByRole('heading', { name: 'Podatki o teku manjkajo' })).toBeVisible();
     await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
-    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0);
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0); expect(claims).toBe(0);
   });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -877,16 +881,15 @@ test.describe('native proposal form', () => {
   });
 
   test('confirmation timeout restores the localized confirmation button label', async ({ page }) => {
-    await page.addInitScript(() => {
-      const nativeSetTimeout = window.setTimeout;
-      window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 12000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
-    });
-    const form = await interceptForm(page, { responseMode: 'hang' });
+    const form = await interceptForm(page); await mockRacePickerApi(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ ok: false, status: 'UNAVAILABLE' }) }); });
     await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
     await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
-    await page.getByRole('button', { name: 'Potrdite podatke' }).click(); await expect.poll(() => form.getSubmissions()).toBe(1);
-    await expect(page.getByRole('alert')).toContainText('Predloga trenutno ni bilo mogoče poslati.');
-    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click();
+    await expect(page.getByRole('alert')).toContainText('Potrditev je začasno nedosegljiva.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeEnabled();
+    expect(claims).toBe(1); expect(form.getSubmissions()).toBe(0);
+    expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   });
 
   test('fallback analytics redacts prefilled values from target URL', async ({ page }) => {
