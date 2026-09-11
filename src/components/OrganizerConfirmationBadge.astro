@@ -1,0 +1,23 @@
+---
+const { year, eventId, lang = 'sl' } = Astro.props as { year: string; eventId: string; lang?: 'sl' | 'en' };
+const en = lang === 'en';
+---
+<p class="organizer-confirmation-badge" data-organizer-confirmation-badge data-year={year} data-event-id={eventId.toUpperCase()} hidden title={en ? 'The organizer reviewed and confirmed the currently published information for this event.' : 'Organizator je pregledal in potrdil trenutno objavljene podatke tega dogodka.'}>
+  {en ? '✓ Data confirmed by organizer' : '✓ Podatke potrdil organizator'}
+</p>
+<script>
+  import { hasConfirmedOrganizerData } from '../organizer-confirmation-status';
+  for (const badge of document.querySelectorAll<HTMLElement>('[data-organizer-confirmation-badge]')) {
+    const year = badge.dataset.year ?? ''; const eventId = badge.dataset.eventId ?? '';
+    fetch(`https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=${encodeURIComponent(year)}`, { headers: { Accept: 'application/json' } })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((payload) => {
+        if (!hasConfirmedOrganizerData(payload, year, eventId)) return;
+        badge.hidden = false;
+        badge.closest('.event-detail-organizer-panel')?.querySelector<HTMLElement>('[data-organizer-confirmation-cta]')?.setAttribute('hidden', '');
+      }).catch(() => undefined);
+  }
+</script>
+<style>
+  .organizer-confirmation-badge{width:fit-content;margin:0;padding:7px 10px;border:1px solid rgba(50,121,61,.35);border-radius:999px;background:rgba(200,230,201,.55);color:var(--green-dark);font-size:.9rem;font-weight:800;line-height:1.25}
+</style>
