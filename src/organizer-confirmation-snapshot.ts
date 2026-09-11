@@ -62,23 +62,33 @@ export const hashOrganizerSnapshotV2 = async (input: OrganizerSnapshotInput) => 
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 };
 
+const canonicalEventKeyPart = (value: unknown) => whitespace(value).toLocaleLowerCase('sl-SI');
+
+export const buildOrganizerAdditionalEventKey = (year: string, edition: RecordLike) => [
+  year,
+  date(edition.datum),
+  canonicalEventKeyPart(edition.naziv_prireditve),
+  canonicalEventKeyPart(edition.kraj)
+].join('|');
+
 export const resolveOrganizerSnapshotInput = (year: string, eventId: string, masters: RecordLike[], additionals: RecordLike[]): OrganizerSnapshotInput | null => {
   if (!/^(2026|2027)$/.test(year) || !/^R\d{6}$/.test(eventId)) return null;
   const row = String(Number(eventId.slice(1)));
   const candidates = masters.filter((item) => whitespace(item.row ?? item.master_row) === row && date(item.datum).startsWith(`${year}-`));
   if (candidates.length !== 1) return null;
   const master = candidates[0];
+  const expectedAdditionalEventKey = buildOrganizerAdditionalEventKey(year, master);
   const strictAdditional = additionals.filter((item) => {
     const masterSheet = whitespace(item.master_sheet);
-    const eventKey = whitespace(item.event_key ?? item.event_id).toUpperCase();
-    const currentIdentity = masterSheet === year && eventKey === eventId;
-    const legacy2026Identity = year === '2026' && !masterSheet && (!eventKey || eventKey === eventId);
+    const eventKey = canonicalEventKeyPart(item.event_key);
+    const currentIdentity = masterSheet === year && (!eventKey || eventKey === expectedAdditionalEventKey);
+    const legacy2026Identity = year === '2026' && !masterSheet && eventKey === expectedAdditionalEventKey;
     return whitespace(item.leto) === year && (currentIdentity || legacy2026Identity) &&
     whitespace(item.master_row) === row && date(item.datum) === date(master.datum) &&
     whitespace(item.naziv_prireditve) === whitespace(master.naziv_prireditve) &&
     whitespace(item.kraj) === whitespace(master.kraj) &&
     whitespace(item.zanesljivost).toLocaleLowerCase('sl-SI') === 'visoka';
   });
-  if (strictAdditional.length !== 1) return null;
-  return { year, master_row: row, event_id: eventId, master, additional: strictAdditional[0] };
+  if (strictAdditional.length > 1) return null;
+  return { year, master_row: row, event_id: eventId, master, additional: strictAdditional[0] ?? null };
 };

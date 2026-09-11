@@ -64,15 +64,44 @@ test('real content and edition identity changes alter the backend golden hash', 
 });
 
 const master = { row: '2', datum: '2026-10-10', naziv_prireditve: 'Testni tek', kraj: 'Kranj' };
-const additional = { leto: '2026', master_sheet: '2026', master_row: '2', event_key: 'R000002', datum: '2026-10-10', naziv_prireditve: 'Testni tek', kraj: 'Kranj', zanesljivost: 'visoka' };
-test('resolver accepts normal current identity and supported 2026 legacy row', () => {
-  assert.ok(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [additional]));
-  const legacy = { ...additional }; delete legacy.master_sheet; delete legacy.event_key;
-  assert.ok(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [legacy]));
+const compositeEventKey = '2026|2026-10-10|testni tek|kranj';
+const additional = { leto: '2026', master_sheet: '2026', master_row: '2', event_key: compositeEventKey, datum: '2026-10-10', naziv_prireditve: 'Testni tek', kraj: 'Kranj', zanesljivost: 'visoka', prijavnina_min_eur: '10' };
+
+test('resolver accepts current row with correct or omitted composite event key', () => {
+  assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [additional])?.additional, additional);
+  const withoutEventKey = { ...additional }; delete withoutEventKey.event_key;
+  assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [withoutEventKey])?.additional, withoutEventKey);
 });
-test('resolver rejects wrong place/event key, duplicates, and wrong year', () => {
-  assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [{ ...additional, kraj: 'Maribor' }]), null);
-  assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [{ ...additional, event_key: 'R000003' }]), null);
+
+test('wrong composite event key is ignored and leaves Additional fields empty', () => {
+  const resolved = resolveOrganizerSnapshotInput('2026', 'R000002', [master], [{ ...additional, event_key: '2026|2026-10-10|drug tek|kranj' }]);
+  assert.ok(resolved);
+  assert.equal(resolved.additional, null);
+  assert.equal(buildOrganizerSnapshotV2(resolved).prijavnina_min_eur, '');
+});
+
+test('2026 legacy requires the correct composite event key', () => {
+  const legacy = { ...additional }; delete legacy.master_sheet;
+  assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [legacy])?.additional, legacy);
+  const emptyLegacyKey = { ...legacy, event_key: '' };
+  const resolved = resolveOrganizerSnapshotInput('2026', 'R000002', [master], [emptyLegacyKey]);
+  assert.ok(resolved);
+  assert.equal(resolved.additional, null);
+});
+
+test('no Additional row produces a valid empty-Additional snapshot', () => {
+  const resolved = resolveOrganizerSnapshotInput('2026', 'R000002', [master], []);
+  assert.ok(resolved);
+  assert.equal(resolved.additional, null);
+  for (const field of ORGANIZER_ADDITIONAL_FIELDS) assert.equal(buildOrganizerSnapshotV2(resolved)[field], '');
+});
+
+test('duplicate valid Additional rows fail closed', () => {
   assert.equal(resolveOrganizerSnapshotInput('2026', 'R000002', [master], [additional, { ...additional }]), null);
+});
+
+test('resolver rejects wrong edition identity and wrong requested year', () => {
+  const wrongPlace = resolveOrganizerSnapshotInput('2026', 'R000002', [master], [{ ...additional, kraj: 'Maribor' }]);
+  assert.ok(wrongPlace); assert.equal(wrongPlace.additional, null);
   assert.equal(resolveOrganizerSnapshotInput('2027', 'R000002', [master], [additional]), null);
 });

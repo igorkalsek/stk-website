@@ -38,7 +38,7 @@ async function interceptForm(page: Page, options: InterceptOptions = {}): Promis
 async function mockRacePickerApi(page: Page, fail = false) {
   const row2026 = { row: '12', datum: '2026-07-19', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', kraj: 'Gorenje Jazne', regija: 'Goriška', status_dogodka: 'Potrjeno', vidno_v_javnem_koledarju: 'DA', tip_podlage: 'trail', razdalje_km: '10.5', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/razpis', povezava_prijava: 'https://example.com/prijava', pokal: 'Pokal STK' };
   const row2027 = { ...row2026, datum: '2027-07-19', naziv_prireditve: 'Prihodnji tek 2027' };
-  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', event_key: 'R000012', datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, kraj: 'Gorenje Jazne', zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01` });
+  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', event_key: `${year}|${year}-07-19|${year === '2027' ? 'prihodnji tek 2027' : row2026.naziv_prireditve.toLocaleLowerCase('sl-SI')}|gorenje jazne`, datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, kraj: 'Gorenje Jazne', zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01` });
   await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => {
     if (fail) return route.abort();
     const url = new URL(route.request().url());
