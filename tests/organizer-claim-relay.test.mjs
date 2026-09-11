@@ -1,9 +1,25 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {onRequest} from '../.cache/dist-test/functions/api/organizer-claim.js';
 const payload={year:'2026',event_id:'R000175',organizer_name:'ŠD Test',contact_name:'Ana',organizer_email:'ana@example.com',declaration:true,displayed_snapshot_hash:'a'.repeat(64)};
 const call=(body=payload,env={STK_ORGANIZER_CLAIM_RELAY_ENABLED:'true'},headers={})=>onRequest({request:new Request('https://stk.test/api/organizer-claim',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify(body)}),env});
+const streamedCall = (chunks) => {
+  const stream = new ReadableStream({ start(controller) { for (const chunk of chunks) controller.enqueue(new TextEncoder().encode(chunk)); controller.close(); } });
+  const request = new Request('https://stk.test/api/organizer-claim', { method: 'POST', headers: { 'content-type': 'application/json' }, body: stream, duplex: 'half' });
+  return onRequest({ request, env: { STK_ORGANIZER_CLAIM_RELAY_ENABLED: 'true' } });
+};
 test('relay is POST only, JSON only and disabled by default',async()=>{let r=await onRequest({request:new Request('https://stk.test'),env:{}});assert.equal(r.status,405);r=await onRequest({request:new Request('https://stk.test',{method:'POST'}),env:{}});assert.equal(r.status,503);assert.equal((await r.json()).status,'NOT_CONFIGURED');r=await onRequest({request:new Request('https://stk.test',{method:'POST',body:'x'}),env:{STK_ORGANIZER_CLAIM_RELAY_ENABLED:'true'}});assert.equal(r.status,415)});
 test('relay validates exact schema, email, hash and body limit',async()=>{assert.equal((await call({...payload,note:'x'})).status,400);assert.equal((await call({...payload,organizer_email:'bad'})).status,400);assert.equal((await call({...payload,displayed_snapshot_hash:'A'.repeat(64)})).status,400);assert.equal((await call(payload,undefined,{'content-length':'8193'})).status,413)});
 test('relay sanitizes accepted and changed upstream responses',async(t)=>{const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);globalThis.fetch=async()=>new Response(JSON.stringify({ok:true,status:'ACCEPTED',claim_id:'secret'}),{status:200,headers:{'x-secret':'x'}});let r=await call();assert.deepEqual(await r.json(),{ok:true,status:'ACCEPTED'});assert.equal(r.headers.get('x-secret'),null);assert.equal(r.headers.get('cache-control'),'no-store');globalThis.fetch=async()=>new Response(JSON.stringify({ok:false,code:'SNAPSHOT_CHANGED',reason:'private'}),{status:409});r=await call();assert.equal(r.status,409);assert.deepEqual(await r.json(),{ok:false,status:'SNAPSHOT_CHANGED'})});
 test('relay converts non-JSON and network failure to safe unavailable',async(t)=>{const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);globalThis.fetch=async()=>new Response('upstream detail');let r=await call();assert.deepEqual(await r.json(),{ok:false,status:'UNAVAILABLE'});globalThis.fetch=async()=>{throw new Error('private')};r=await call();assert.deepEqual(await r.json(),{ok:false,status:'UNAVAILABLE'})});
 
 test('relay reads backend failure code and ignores failure status',async(t)=>{const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);globalThis.fetch=async()=>new Response(JSON.stringify({ok:false,status:'SNAPSHOT_CHANGED'}),{status:409});const r=await call();assert.equal(r.status,503);assert.deepEqual(await r.json(),{ok:false,status:'UNAVAILABLE'})});
+
+test('relay enforces body bytes while streaming without Content-Length', async () => {
+  assert.equal((await streamedCall(['x'.repeat(4096), 'x'.repeat(4097)])).status, 413);
+  assert.equal((await streamedCall(['ž'.repeat(4097)])).status, 413, 'multibyte UTF-8 is measured in bytes');
+});
+
+test('relay rejects malformed JSON under the streaming limit', async () => {
+  const result = await streamedCall(['{"year":']);
+  assert.equal(result.status, 400);
+  assert.deepEqual(await result.json(), { ok: false, status: 'INVALID_REQUEST' });
+});

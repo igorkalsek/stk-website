@@ -38,7 +38,7 @@ async function interceptForm(page: Page, options: InterceptOptions = {}): Promis
 async function mockRacePickerApi(page: Page, fail = false) {
   const row2026 = { row: '12', datum: '2026-07-19', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', kraj: 'Gorenje Jazne', regija: 'Goriška', status_dogodka: 'Potrjeno', vidno_v_javnem_koledarju: 'DA', tip_podlage: 'trail', razdalje_km: '10.5', cas_zacetka: '10:00', povezava_razpis: 'https://example.com/razpis', povezava_prijava: 'https://example.com/prijava', pokal: 'Pokal STK' };
   const row2027 = { ...row2026, datum: '2027-07-19', naziv_prireditve: 'Prihodnji tek 2027' };
-  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', event_key: `${year}|${year}-07-19|${year === '2027' ? 'prihodnji tek 2027' : row2026.naziv_prireditve.toLocaleLowerCase('sl-SI')}|gorenje jazne`, datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, kraj: 'Gorenje Jazne', zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01` });
+  const additional = (year: string) => ({ leto: year, master_sheet: year, master_row: '12', event_key: `${year}|${year}-07-19|${year === '2027' ? 'prihodnji tek 2027' : row2026.naziv_prireditve.toLocaleLowerCase('sl-SI')}|gorenje jazne`, datum: `${year}-07-19`, naziv_prireditve: year === '2027' ? 'Prihodnji tek 2027' : row2026.naziv_prireditve, kraj: 'Gorenje Jazne', zanesljivost: 'visoka', prijavnina_min_eur: year === '2027' ? '27' : '16', rok_prijave: `${year}-07-01`, organizator_url: 'ftp://example.com/organizer' });
   await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => {
     if (fail) return route.abort();
     const url = new URL(route.request().url());
@@ -94,6 +94,8 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('heading', { name: 'Objavljeni podatki o teku' })).toBeVisible();
     const summary = page.getByRole('region', { name: 'Objavljeni podatki o teku' }).locator('.confirmation-summary');
     await expect(summary).toContainText('Prihodnji tek 2027'); await expect(summary).toContainText('27');
+    await expect(summary.getByText('ftp://example.com/organizer', { exact: true })).toBeVisible();
+    await expect(summary.locator('a[href="ftp://example.com/organizer"]')).toHaveCount(0);
     await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-contact').fill('Ana Test'); await page.locator('#confirmation-email').fill('org@example.com');
     await page.getByRole('button', { name: 'Potrdite podatke' }).click(); expect(intercepted.getSubmissions()).toBe(0);
     await expect(page.getByRole('alert')).toContainText('Potrjujem, da nastopam');
@@ -131,6 +133,7 @@ test.describe('native proposal form', () => {
   });
 
   test('stalled confirmation runtime fetch aborts and remains fail closed', async ({ page }) => {
+    const errors = collectConsoleErrors(page); const form = await interceptForm(page);
     await page.addInitScript(() => {
       const nativeSetTimeout = window.setTimeout;
       window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 10_000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
@@ -142,7 +145,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Aktualnih podatkov teka ni bilo mogoče varno naložiti.');
     await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0);
     await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
-    expect(claims).toBe(0);
+    expect(claims).toBe(0); expect(form.getSubmissions()).toBe(0); await assertNoConsoleErrors(page, errors);
   });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
@@ -906,6 +909,22 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('alert')).toContainText('Potrditev je začasno nedosegljiva.');
     await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeEnabled();
     expect(claims).toBe(1); expect(form.getSubmissions()).toBe(0);
+    expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  });
+
+  test('stalled organizer claim aborts once and restores safe retry UX', async ({ page }) => {
+    const form = await interceptForm(page); await mockRacePickerApi(page); let claims = 0;
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await new Promise((resolve) => setTimeout(resolve, 100)); await route.abort(); });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await page.evaluate(() => { const nativeSetTimeout = window.setTimeout; window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 10_000 ? nativeSetTimeout(handler, 25, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout; });
+    await page.locator('#confirmation-organization').fill('ŠD Test'); await page.locator('#confirmation-email').fill('org@example.com'); await page.locator('#confirmation-statement').check();
+    await page.getByRole('button', { name: 'Potrdite podatke' }).click();
+    await expect(page.getByRole('alert')).toContainText('Potrditev je začasno nedosegljiva.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Potrdite podatke', exact: true })).toBeEnabled();
+    expect(claims).toBe(1); expect(form.getSubmissions()).toBe(0);
+    await page.waitForTimeout(150); expect(claims).toBe(1);
+    await expect(page.locator('#confirmation-organization')).toHaveValue('ŠD Test'); await expect(page.locator('#confirmation-email')).toHaveValue('org@example.com');
     expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   });
 

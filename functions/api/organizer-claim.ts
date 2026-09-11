@@ -2,15 +2,38 @@ const UPSTREAM = 'https://script.google.com/macros/s/AKfycbzn9QzNSCE1oyKDFsm0TEF
 const ALLOWED = ['year', 'event_id', 'organizer_name', 'contact_name', 'organizer_email', 'declaration', 'displayed_snapshot_hash'] as const;
 const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
 const response = (status: number, code: string, ok = false) => new Response(JSON.stringify({ ok, status: code }), { status, headers });
+const MAX_BODY_BYTES = 8192;
+
+const readBoundedBody = async (request: Request) => {
+  if (!request.body) return new Uint8Array();
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      return null;
+    }
+    chunks.push(value);
+  }
+  const body = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
+  return body;
+};
 
 export const onRequest = async ({ request, env }: { request: Request; env: Record<string, string | undefined> }) => {
   if (request.method !== 'POST') return response(405, 'METHOD_NOT_ALLOWED');
   if (env.STK_ORGANIZER_CLAIM_RELAY_ENABLED !== 'true') return response(503, 'NOT_CONFIGURED');
   if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return response(415, 'INVALID_REQUEST');
   const declaredLength = Number(request.headers.get('content-length') || 0);
-  if (declaredLength > 8192) return response(413, 'INVALID_REQUEST');
-  const bodyText = await request.text();
-  if (new TextEncoder().encode(bodyText).byteLength > 8192) return response(413, 'INVALID_REQUEST');
+  if (declaredLength > MAX_BODY_BYTES) return response(413, 'INVALID_REQUEST');
+  const bodyBytes = await readBoundedBody(request);
+  if (!bodyBytes) return response(413, 'INVALID_REQUEST');
+  const bodyText = new TextDecoder().decode(bodyBytes);
   let body: Record<string, unknown>;
   try { body = JSON.parse(bodyText); } catch { return response(400, 'INVALID_REQUEST'); }
   if (!body || Array.isArray(body) || Object.keys(body).length !== ALLOWED.length || !ALLOWED.every((key) => Object.hasOwn(body, key))) return response(400, 'INVALID_REQUEST');

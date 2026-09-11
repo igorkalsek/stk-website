@@ -51,6 +51,12 @@ test('canonicalization mirrors backend clean text, URL, date, time and DA/NE sem
   assert.equal(snapshot.prijave_na_dan_dogodka, 'DA');
 });
 
+test('non-HTTP URL text remains part of the canonical snapshot and hash', async () => {
+  const unsafe = { ...fixture, additional: { ...fixture.additional, organizator_url: 'ftp://example.com/organizer' } };
+  assert.equal(buildOrganizerSnapshotV2(unsafe).organizator_url, 'ftp://example.com/organizer');
+  assert.notEqual(await hashOrganizerSnapshotV2(unsafe), await hashOrganizerSnapshotV2(fixture));
+});
+
 test('real content and edition identity changes alter the backend golden hash', async () => {
   for (const [scope, key, value] of [
     ['master', 'datum', '2026-10-11'], ['master', 'cas_zacetka', '11:00'], ['master', 'razdalje_km', '21'],

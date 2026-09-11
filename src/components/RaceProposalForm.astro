@@ -605,7 +605,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       [isEnglish ? 'Elevation gain' : 'Višinski metri', additional.visinski_m_plus], [isEnglish ? 'Route' : 'Trasa', additional.trasa_url, true],
       [isEnglish ? 'Organizer' : 'Organizator', additional.organizator_naziv], [isEnglish ? 'Organizer website' : 'Spletna stran organizatorja', additional.organizator_url, true]
     ];
-    for (const [label, value, link] of fields) if (value && (!link || isSafeHttpUrl(value))) { const dt = document.createElement('dt'); dt.textContent = label; const dd = document.createElement('dd'); if (link) { const a = document.createElement('a'); a.href = value; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = value; dd.append(a); } else dd.textContent = value; summary.append(dt, dd); }
+    for (const [label, value, link] of fields) if (value) { const dt = document.createElement('dt'); dt.textContent = label; const dd = document.createElement('dd'); if (link && isSafeHttpUrl(value)) { const a = document.createElement('a'); a.href = value; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = value; dd.append(a); } else dd.textContent = value; summary.append(dt, dd); }
   };
   const loadConfirmationRuntime = async (notice = '') => {
     if (!isConfirmationMode || !hasValidConfirmationContext) return;
@@ -668,15 +668,17 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       if (button) { button.disabled = true; button.textContent = isEnglish ? 'Sending …' : 'Pošiljanje …'; }
       submissionState = 'submitting';
       const payload = { year: String(confirmationSnapshot.input.year), event_id: String(confirmationSnapshot.input.event_id), organizer_name: confirmationOrganization.value.trim(), contact_name: confirmationContact.value.trim(), organizer_email: confirmationEmail.value.trim(), declaration: true, displayed_snapshot_hash: confirmationSnapshot.hash };
+      const claimController = new AbortController(); const claimTimeout = window.setTimeout(() => claimController.abort(), 10_000);
       try {
-        const response = await fetch('/api/organizer-claim', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
+        const response = await fetch('/api/organizer-claim', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload), signal: claimController.signal });
         const result = await response.json().catch(() => null); const status = result?.status;
         if (response.ok && result?.ok === true && status === 'ACCEPTED') { submissionState = 'submitted-unverified'; confirmationOrganization.value = ''; confirmationContact.value = ''; confirmationEmail.value = ''; confirmationStatement.checked = false; button.hidden = true; setStatus(isEnglish ? 'Request received. Check your email for the next step. After you confirm the address, STK will verify this race edition and prepare a basic overview of interest in your race.' : 'Zahteva je prejeta. Preverite e-pošto za naslednji korak. Po potrditvi naslova bo STK preveril potrjeno izdajo in pripravil osnovni pregled zanimanja za vaš tek.', 'success'); return; }
         if (status === 'SNAPSHOT_CHANGED') { confirmationSnapshot = null; confirmationStatement.checked = false; const changedNotice = isEnglish ? 'The race information has changed. Current information was reloaded; check it again before confirming.' : 'Podatki teka so se medtem spremenili. Aktualni podatki so ponovno naloženi; še enkrat jih preverite pred potrditvijo.'; submissionState = 'failed'; await loadConfirmationRuntime(changedNotice); return; }
         if (['INVALID_REQUEST', 'EVENT_NOT_FOUND'].includes(status)) setStatus(isEnglish ? 'The race context is no longer valid.' : 'Podatki o izbranem teku niso več veljavni.');
         else setStatus(isEnglish ? 'Confirmation is temporarily unavailable. Please try again later.' : 'Potrditev je začasno nedosegljiva. Poskusite znova pozneje.');
       } catch { setStatus(isEnglish ? 'Confirmation is temporarily unavailable. Please try again later.' : 'Potrditev je začasno nedosegljiva. Poskusite znova pozneje.'); }
-      submissionState = 'failed'; if (button) { button.disabled = false; button.textContent = confirmationSubmitLabel(); }
+      finally { window.clearTimeout(claimTimeout); }
+      submissionState = 'failed'; if (button) { button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); }
       return;
     }
     validateSource(); form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
