@@ -191,7 +191,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   import { googleProposalFormContract as contract } from '../proposal-form/proposal-form-contract';
   import { proposalFormLocales } from '../proposal-form/proposal-form-locales';
   import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationSubmission, buildNewRaceDescription, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidEntryFeeRange } from '../proposal-form/proposal-form-controller';
-  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from '../utils-additional';
+  import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, toAdditionalArray } from '../utils-additional';
   import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
   import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
   import { buildOrganizerSnapshotV2, hashOrganizerSnapshotV2, resolveOrganizerSnapshotInput } from '../organizer-confirmation-snapshot';
@@ -611,20 +611,23 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (!isConfirmationMode || !hasValidConfirmationContext) return;
     confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.disabled = true;
     setStatus(notice || (isEnglish ? 'Loading current race information …' : 'Nalagamo aktualne podatke teka …'));
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10_000);
     try {
       const yearPath = prefill.year === '2026' ? '/' : `/?year=${encodeURIComponent(prefill.year)}`;
       const [masterResponse, additionalResponse] = await Promise.all([
-        fetch(`https://stk-master-api.igor-kalsek.workers.dev${yearPath}`, { headers: { Accept: 'application/json' } }),
-        fetch(`https://stk-master-api.igor-kalsek.workers.dev/additional?year=${encodeURIComponent(prefill.year)}`, { headers: { Accept: 'application/json' } })
+        fetch(`https://stk-master-api.igor-kalsek.workers.dev${yearPath}`, { headers: { Accept: 'application/json' }, signal: controller.signal }),
+        fetch(`https://stk-master-api.igor-kalsek.workers.dev/additional?year=${encodeURIComponent(prefill.year)}`, { headers: { Accept: 'application/json' }, signal: controller.signal })
       ]);
       if (!masterResponse.ok || !additionalResponse.ok) throw new Error('unavailable');
       const masterPayload = await masterResponse.json(); const additionalPayload = await additionalResponse.json();
-      const snapshot = resolveOrganizerSnapshotInput(prefill.year, prefill.eventKey.toUpperCase(), toApiRecords(masterPayload), toApiRecords(additionalPayload));
+      const snapshot = resolveOrganizerSnapshotInput(prefill.year, prefill.eventKey.toUpperCase(), toApiRecords(masterPayload), toAdditionalArray(additionalPayload));
       if (!snapshot) throw new Error('invalid');
       confirmationSnapshot = { input: snapshot, canonical: buildOrganizerSnapshotV2(snapshot), hash: await hashOrganizerSnapshotV2(snapshot) };
       renderConfirmationSummary(confirmationSnapshot.canonical); confirmationValid.hidden = false; confirmationInvalid.hidden = true;
       button.hidden = false; button.disabled = false; button.textContent = confirmationSubmitLabel(); setStatus(notice);
     } catch { confirmationSnapshot = null; confirmationValid.hidden = true; confirmationInvalid.hidden = false; button.hidden = true; button.disabled = true; setStatus(isEnglish ? 'Current race information could not be loaded safely.' : 'Aktualnih podatkov teka ni bilo mogoče varno naložiti.'); }
+    finally { window.clearTimeout(timeout); }
   };
 
   showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions(); updateFallbackLink(); });

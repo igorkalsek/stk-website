@@ -7,6 +7,7 @@ import {
   hashOrganizerSnapshotV2,
   resolveOrganizerSnapshotInput
 } from '../.cache/dist-test/organizer-confirmation-snapshot.js';
+import { toAdditionalArray } from '../.cache/dist-test/utils-additional.js';
 
 const BACKEND_GOLDEN_EXPECTED = 'e0dab2cef34692809f287ab5cca52cb2dc1b003688373b232f0a5eff0ba14542';
 const fixture = {
@@ -101,6 +102,27 @@ test('no Additional row produces a valid empty-Additional snapshot', () => {
   assert.ok(resolved);
   assert.equal(resolved.additional, null);
   for (const field of ORGANIZER_ADDITIONAL_FIELDS) assert.equal(buildOrganizerSnapshotV2(resolved)[field], '');
+});
+
+test('established Additional API envelope enriches canonical fields and hash', async () => {
+  const apiRow = {
+    ...additional,
+    rok_prijave: '2026-09-30',
+    trasa_url: 'https://example.com/route',
+    organizator_naziv: 'ŠD Test',
+    organizator_url: 'https://example.com/organizer'
+  };
+  const rows = toAdditionalArray({ additional: [apiRow] });
+  const enrichedInput = resolveOrganizerSnapshotInput('2026', 'R000002', [master], rows);
+  const emptyInput = resolveOrganizerSnapshotInput('2026', 'R000002', [master], []);
+  assert.ok(enrichedInput); assert.ok(emptyInput);
+  const snapshot = buildOrganizerSnapshotV2(enrichedInput);
+  assert.equal(snapshot.prijavnina_min_eur, '10');
+  assert.equal(snapshot.rok_prijave, '2026-09-30');
+  assert.equal(snapshot.trasa_url, 'https://example.com/route');
+  assert.equal(snapshot.organizator_naziv, 'ŠD Test');
+  assert.equal(snapshot.organizator_url, 'https://example.com/organizer');
+  assert.notEqual(await hashOrganizerSnapshotV2(enrichedInput), await hashOrganizerSnapshotV2(emptyInput));
 });
 
 test('duplicate valid Additional rows fail closed', () => {

@@ -43,7 +43,7 @@ async function mockRacePickerApi(page: Page, fail = false) {
     if (fail) return route.abort();
     const url = new URL(route.request().url());
     const year = url.searchParams.get('year') === '2027' ? '2027' : '2026';
-    const body = url.pathname === '/additional' ? { data: [additional(year)] } : [year === '2027' ? row2027 : row2026];
+    const body = url.pathname === '/additional' ? { additional: [additional(year)] } : [year === '2027' ? row2027 : row2026];
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
 }
@@ -116,7 +116,9 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#confirmation-statement')).not.toBeChecked();
     await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Confirm information', exact: true })).toBeEnabled();
-    expect(claims).toBe(1); expect(intercepted.getSubmissions()).toBe(0); await assertNoConsoleErrors(page, errors);
+    expect(claims).toBe(1); expect(intercepted.getSubmissions()).toBe(0);
+    await page.waitForTimeout(50);
+    expect(errors.filter((error) => !(error.includes('Failed to load resource') && /\b409\b/.test(error)))).toEqual([]);
   });
 
   test('confirmation without race context explains next steps and cannot post', async ({ page }) => {
@@ -126,6 +128,21 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('heading', { name: 'Podatki o teku manjkajo' })).toBeVisible();
     await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
     await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0); expect(intercepted.getSubmissions()).toBe(0); expect(claims).toBe(0);
+  });
+
+  test('stalled confirmation runtime fetch aborts and remains fail closed', async ({ page }) => {
+    await page.addInitScript(() => {
+      const nativeSetTimeout = window.setTimeout;
+      window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => timeout === 10_000 ? nativeSetTimeout(handler, 0, ...args) : nativeSetTimeout(handler, timeout, ...args)) as typeof window.setTimeout;
+    });
+    let claims = 0;
+    await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', async (route) => { await new Promise((resolve) => setTimeout(resolve, 100)); await route.abort(); });
+    await page.route('**/api/organizer-claim', async (route) => { claims += 1; await route.abort(); });
+    await page.goto(`/dodaj-ali-popravi-tek/?mode=confirm&${completeContextQuery}`); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Aktualnih podatkov teka ni bilo mogoče varno naložiti.');
+    await expect(page.getByRole('button', { name: 'Potrdite podatke' })).toHaveCount(0);
+    await expect.poll(() => page.locator('.confirmation-mode').locator('input,textarea').evaluateAll((controls: HTMLInputElement[]) => controls.every((control) => control.disabled))).toBe(true);
+    expect(claims).toBe(0);
   });
   test('SL new race URL helpers, hidden links, exact payload, mobile and no console errors', async ({ page }) => {
     const errors = collectConsoleErrors(page);
