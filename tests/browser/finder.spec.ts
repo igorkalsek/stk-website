@@ -37,13 +37,13 @@ function additional(master_row: string, datum: string, naziv_prireditve: string,
   return { leto, master_sheet: leto, master_row, datum, naziv_prireditve, zanesljivost: 'visoka', prijavnina_min_eur, prijavnina_max_eur, rok_prijave, rok_cenejse_prijave, prijave_na_dan_dogodka, visinski_m_plus, trasa_url };
 }
 
-async function mockFinderApis(page: Page) {
+async function mockFinderApis(page: Page, masterRaces: { '2026': ReturnType<typeof race>[]; '2027': ReturnType<typeof race>[] } = { '2026': races2026, '2027': races2027 }) {
   const analytics: unknown[] = [];
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/additional') return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? additional2027 : additional2026 } });
     if (url.pathname === '/top') return route.fulfill({ json: { data: [] } });
-    return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? races2027 : races2026 } });
+    return route.fulfill({ json: { data: masterRaces[url.searchParams.get('year') === '2027' ? '2027' : '2026'] } });
   });
   await page.route(`${ANALYTICS_HOST}/**`, async (route) => {
     const postData = route.request().postData();
@@ -207,6 +207,76 @@ test('preserves 2027 additional quick picks through the shared English finder st
   for (const quick of ['deadlines-soon', 'budget', 'route']) {
     await expect(page.locator(`[data-quick-pick="${quick}"]`)).toHaveAttribute('aria-pressed', 'true');
   }
+});
+
+test('@smoke preserves English finder context through a detail opened in a new tab', async ({ page, context }) => {
+  const masterRaces = {
+    '2026': [
+      race('123', '2026-08-15', 'Rožnik trail', 'Ljubljana', 'Osrednjeslovenska', 'trail', '10', 'družinam prijazno otroški tek'),
+      race('102', '2026-09-20', 'Maribor Road 5K', 'Maribor', 'Podravska', 'cesta', '5', '')
+    ],
+    '2027': races2027
+  };
+  await mockFinderApis(page, masterRaces);
+  await page.goto('/en/find-races/?q=Ro%C5%BEnik&region=Osrednjeslovenska&surface=trail&sort=registration-min&family=1&quick=trail,kids');
+  await expect(page.locator('[data-result-count]')).toHaveText('1 race');
+
+  const detailHref = await page.locator('.search-detail-cta').getAttribute('href');
+  expect(detailHref).toContain('/en/races/2026/r000123-roznik-trail/?from=');
+  const detailPage = await context.newPage();
+  await freezeFinderDate(detailPage);
+  await mockFinderApis(detailPage, masterRaces);
+  await detailPage.goto(detailHref!);
+  await expect(detailPage.getByRole('link', { name: 'Back to results' })).toBeVisible();
+  await expect(detailPage.locator('a[hreflang="sl"]').first()).toHaveAttribute('href', /\/tek\/2026\/r000123-roznik-trail\/\?from=%2Fiskalnik-tekov%2F/);
+  await detailPage.reload();
+  await expect(detailPage.getByRole('link', { name: 'Back to results' })).toBeVisible();
+  await detailPage.getByRole('link', { name: 'Back to results' }).click();
+
+  await expect(detailPage).toHaveURL(/\/en\/find-races\/\?q=Ro%C5%BEnik&region=Osrednjeslovenska&surface=trail&sort=registration-min&family=1&quick=trail%2Ckids/);
+  await expect(detailPage.locator('[data-filter="search"]')).toHaveValue('Rožnik');
+  await expect(detailPage.locator('[data-filter="region"]')).toHaveValue('Osrednjeslovenska');
+  await expect(detailPage.locator('[data-filter="surface"]')).toHaveValue('trail');
+  await expect(detailPage.locator('[data-filter="sort"]')).toHaveValue('registration-min');
+  await expect(detailPage.locator('[data-filter="family"]')).toBeChecked();
+  await expect(detailPage.locator('[data-quick-pick="trail"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(detailPage.locator('[data-quick-pick="kids"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(detailPage.locator('[data-search-results]')).toContainText('Rožnik trail');
+  await expect(detailPage.locator('[data-search-results]')).not.toContainText('Maribor Road 5K');
+});
+
+test('@smoke preserves the 2027 Slovenian finder year and filters through detail navigation', async ({ page }) => {
+  const masterRaces = {
+    '2026': races2026,
+    '2027': [
+      race('20', '2027-07-31', 'K24 Ultra Trail', 'Črna na Koroškem', 'Koroška', 'trail', '100', ''),
+      race('201', '2027-05-01', 'Koper Spring Run', 'Koper', 'Obalno-kraška', 'cesta', '10', '')
+    ]
+  };
+  await mockFinderApis(page, masterRaces);
+  await page.goto('/iskalnik-tekov/?year=2027&q=K24&region=Koro%C5%A1ka&surface=trail&distance=ultra&quick=trail');
+  await expect(page.locator('[data-result-count]')).toHaveText('1 dogodek');
+  await page.locator('.search-event-title-link').click();
+  await expect(page).toHaveURL(/\/tek\/2027\/r000020-k24-ultra-trail\/\?from=/);
+  await expect(page.getByRole('link', { name: 'Nazaj na rezultate' })).toBeVisible();
+  await page.getByRole('link', { name: 'Nazaj na rezultate' }).click();
+
+  await expect(page).toHaveURL(/\/iskalnik-tekov\/\?year=2027&q=K24&region=Koro%C5%A1ka&surface=trail&distance=ultra&quick=trail/);
+  await expect(page.locator('[data-filter="search"]')).toHaveValue('K24');
+  await expect(page.locator('[data-filter="region"]')).toHaveValue('Koroška');
+  await expect(page.locator('[data-filter="surface"]')).toHaveValue('trail');
+  await expect(page.locator('[data-filter="distance"]')).toHaveValue('ultra');
+  await expect(page.locator('[data-quick-pick="trail"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-search-results]')).toContainText('K24 Ultra Trail');
+  await expect(page.locator('[data-search-results]')).not.toContainText('Koper Spring Run');
+});
+
+test('keeps direct and unsafe detail visits on the year-aware finder fallback', async ({ page }) => {
+  const directPath = '/en/races/2026/r000123-roznik-trail/';
+  await page.goto(directPath);
+  await expect(page.getByRole('link', { name: 'Back to race finder' }).last()).toHaveAttribute('href', '/en/find-races/');
+  await page.goto(`${directPath}?from=${encodeURIComponent('https://evil.example/en/find-races/?q=secret')}`);
+  await expect(page.getByRole('link', { name: 'Back to race finder' }).last()).toHaveAttribute('href', '/en/find-races/');
 });
 
 

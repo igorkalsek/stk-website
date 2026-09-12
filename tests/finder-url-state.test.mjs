@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
-import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, serializeFinderUrlState, stateForYear } from '../.cache/dist-test/utils-finder-url-state.js';
+import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, resolveFinderReturnUrl, serializeFinderUrlState, stateForYear } from '../.cache/dist-test/utils-finder-url-state.js';
 
 const qs = (state) => serializeFinderUrlState(state).toString();
 
@@ -39,11 +39,64 @@ describe('finder URL state utility', () => {
   it('keeps local my-races private during serialization', () => assert.equal(qs({ sort: 'my-races' }), ''));
 });
 
+describe('finder return context', () => {
+  const complete2027State = parseFinderUrlState(new URLSearchParams('year=2027&q=Nočna 10ka&month=08&region=Gorenjska&surface=trail&distance=over-10-to-half&fee=20&deadline=within-14&sort=registration-deadline&family=1&raceDay=1&route=1&elevation=max-800&quick=trail,kids'));
+
+  const returnParamsFromDetail = (detailUrl) => new URL(detailUrl, 'https://tekaski-koledar.si').searchParams;
+
+  it('builds a Slovenian detail navigation URL with every supported 2027 finder parameter', () => {
+    const detailUrl = buildDetailUrlWithFinderReturn('/tek/2027/nocna-10ka/', '/iskalnik-tekov/', complete2027State);
+    const resolved = resolveFinderReturnUrl(returnParamsFromDetail(detailUrl), 'sl', '2027');
+    assert.equal(resolved.hasContext, true);
+    assert.equal(resolved.href, '/iskalnik-tekov/?year=2027&q=No%C4%8Dna+10ka&month=08&region=Gorenjska&surface=trail&distance=over-10-to-half&fee=20&deadline=within-14&sort=registration-deadline&family=1&raceDay=1&route=1&elevation=max-800&quick=trail%2Ckids');
+  });
+
+  it('builds and resolves the equivalent English return context for 2026', () => {
+    const state = parseFinderUrlState(new URLSearchParams({ q: 'Ljubljana & trail', region: 'Osrednjeslovenska', surface: 'trail', quick: 'budget,route' }));
+    const detailUrl = buildDetailUrlWithFinderReturn('/en/races/2026/ljubljana-trail/', '/en/find-races/', state);
+    const resolved = resolveFinderReturnUrl(returnParamsFromDetail(detailUrl), 'en', '2026');
+    assert.equal(resolved.hasContext, true);
+    assert.equal(resolved.href, '/en/find-races/?q=Ljubljana+%26+trail&region=Osrednjeslovenska&surface=trail&quick=budget%2Croute');
+  });
+
+  it('uses the year-aware localized fallback when no context exists', () => {
+    assert.deepEqual(resolveFinderReturnUrl(new URLSearchParams(), 'sl', '2026'), {
+      href: '/iskalnik-tekov/', hasContext: false, state: parseFinderUrlState(new URLSearchParams())
+    });
+    assert.equal(resolveFinderReturnUrl(new URLSearchParams(), 'en', '2027').href, '/en/find-races/?year=2027');
+  });
+
+  it('rejects external, protocol-relative, malformed, cross-language and wrong-year returns', () => {
+    const invalidReturns = [
+      'https://evil.example/iskalnik-tekov/?q=x',
+      '//evil.example/iskalnik-tekov/?q=x',
+      'not-a-path',
+      '/en/find-races/?q=x',
+      '/iskalnik-tekov/?year=2026&q=x'
+    ];
+    for (const value of invalidReturns) {
+      const resolved = resolveFinderReturnUrl(new URLSearchParams({ from: value }), 'sl', '2027');
+      assert.equal(resolved.hasContext, false);
+      assert.equal(resolved.href, '/iskalnik-tekov/?year=2027');
+    }
+  });
+
+  it('sanitizes unknown and invalid finder parameters through the existing validator', () => {
+    const resolved = resolveFinderReturnUrl(new URLSearchParams({
+      from: '/en/find-races/?q=Trail&unknown=secret&sort=my-races&quick=trail,invalid&family=true&route=1'
+    }), 'en', '2026');
+    assert.equal(resolved.hasContext, true);
+    assert.equal(resolved.href, '/en/find-races/?q=Trail&route=1&quick=trail');
+  });
+});
+
 describe('finder pages share URL state wiring', () => {
   const sl = readFileSync(new URL('../src/finder/race-finder-controller.ts', import.meta.url), 'utf8');
   const en = sl;
   const slPage = readFileSync(new URL('../src/pages/iskalnik-tekov.astro', import.meta.url), 'utf8');
   const enPage = readFileSync(new URL('../src/pages/en/find-races.astro', import.meta.url), 'utf8');
+  const slDetail = readFileSync(new URL('../src/pages/tek/[year]/[slug].astro', import.meta.url), 'utf8');
+  const enDetail = readFileSync(new URL('../src/pages/en/races/[year]/[slug].astro', import.meta.url), 'utf8');
   it('applies URL state after populateFilters', () => { for (const page of [sl,en]) assert.match(page, /populateFilters\(\);\s*applyFinderUrlStateToControls/); });
   it('initial hydration does not mark userInteracted', () => { for (const page of [sl,en]) assert.match(page, /userInteracted: false/); });
   it('input and change use replaceState', () => { for (const page of [sl,en]) assert.match(page, /history\.replaceState/); });
@@ -54,6 +107,22 @@ describe('finder pages share URL state wiring', () => {
     assert.match(slPage, /initializeRaceFinder\(sloveneRaceFinderLocale\)/);
     assert.match(enPage, /initializeRaceFinder\(englishRaceFinderLocale\)/);
     assert.match(sl, /utils-finder-url-state/);
+  });
+  it('adds the same explicit return context to title and detail links', () => {
+    assert.match(sl, /const detailPath = buildDetailUrlWithFinderReturn\([\s\S]*getFinderUrlStateForUrl\(\)/);
+    assert.match(sl, /search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}"/);
+    assert.match(sl, /search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}"/);
+  });
+  it('hydrates localized detail return links without changing canonical or share URLs', () => {
+    assert.match(slDetail, /data-finder-return-language="sl"/);
+    assert.match(enDetail, /data-finder-return-language="en"/);
+    assert.match(slDetail, /data-finder-return-context-label="Nazaj na rezultate"/);
+    assert.match(enDetail, /data-finder-return-context-label="Back to results"/);
+    for (const detail of [slDetail, enDetail]) {
+      assert.match(detail, /initializeFinderReturnLinks/);
+      assert.match(detail, /canonicalPath=\{canonicalPath\}/);
+      assert.match(detail, /canonicalUrl=\{event \? shareUrl : undefined\}/);
+    }
   });
   it('Copy link has no manual analytics call nearby', () => { for (const page of [sl,en]) { const start = page.indexOf("copyLinkButton?.addEventListener"); assert.doesNotMatch(page.slice(start, start + 700), /trackStkEvent/); } });
   it('preferences are not written to URL', () => { for (const page of [sl,en]) assert.doesNotMatch(page, /preferenceDistanceInputs[\s\S]{0,300}syncUrlFromControls/); });
