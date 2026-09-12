@@ -71,6 +71,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const activeFiltersElement = document.querySelector<HTMLElement>('[data-active-filters]');
   const activeFilterCountElement = document.querySelector<HTMLElement>('[data-active-filters-count]');
   const activeFilterListElement = document.querySelector<HTMLElement>('[data-active-filter-list]');
+  const mobileFilterPanel = document.querySelector<HTMLDetailsElement>('[data-mobile-filter-panel]');
+  const mobileFilterCountElement = document.querySelector<HTMLElement>('[data-mobile-filter-count]');
   const preferencePanel = document.querySelector<HTMLElement>('[data-race-preferences-panel]');
   const preferenceCompactElement = document.querySelector<HTMLElement>('[data-preferences-compact]');
   const preferenceFormElement = document.querySelector<HTMLElement>('[data-preferences-form]');
@@ -108,6 +110,10 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     document.querySelectorAll<HTMLElement>('[data-selected-year]').forEach((element) => {
       element.textContent = activeYear;
     });
+  };
+  const mobileFilterMedia = window.matchMedia('(max-width: 959px)');
+  const syncMobileFilterPanel = (isMobile = mobileFilterMedia.matches) => {
+    if (mobileFilterPanel) mobileFilterPanel.open = !isMobile;
   };
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
@@ -458,8 +464,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   });
 
   const renderActiveFilters = (finderState = getFinderUrlStateForUrl()) => {
-    if (!activeFiltersElement || !activeFilterListElement) return;
     const chips = getActiveFinderFilters(stateForYear(finderState, activeYear), locale.language, getActiveFilterLabelLookup());
+    if (mobileFilterCountElement) {
+      mobileFilterCountElement.hidden = chips.length === 0;
+      mobileFilterCountElement.textContent = chips.length ? `(${chips.length})` : '';
+    }
+    if (!activeFiltersElement || !activeFilterListElement) return;
     activeFiltersElement.hidden = chips.length === 0;
     if (activeFilterCountElement) activeFilterCountElement.textContent = chips.length ? formatActiveFinderFilterCount(chips.length, locale.language) : '';
     activeFilterListElement.innerHTML = chips.map((filter) => `
@@ -1189,7 +1199,9 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   window.addEventListener('popstate', restoreFromCurrentUrl);
   window.addEventListener('pageshow', (event) => { if (event.persisted) restoreFromCurrentUrl(); });
+  mobileFilterMedia.addEventListener('change', (event) => syncMobileFilterPanel(event.matches));
 
+  syncMobileFilterPanel();
   updateAdvancedFiltersSummary();
   initializeYearUi();
   syncPreferenceControls();

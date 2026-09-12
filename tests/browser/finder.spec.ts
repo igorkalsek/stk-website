@@ -246,6 +246,7 @@ test('@smoke preserves English finder context through a detail opened in a new t
 });
 
 test('@smoke preserves the 2027 Slovenian finder year and filters through detail navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
   const masterRaces = {
     '2026': races2026,
     '2027': [
@@ -267,6 +268,8 @@ test('@smoke preserves the 2027 Slovenian finder year and filters through detail
   await expect(page.locator('[data-filter="surface"]')).toHaveValue('trail');
   await expect(page.locator('[data-filter="distance"]')).toHaveValue('ultra');
   await expect(page.locator('[data-quick-pick="trail"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-mobile-filter-panel]')).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-active-filters]')).toBeVisible();
   await expect(page.locator('[data-search-results]')).toContainText('K24 Ultra Trail');
   await expect(page.locator('[data-search-results]')).not.toContainText('Koper Spring Run');
 });
@@ -336,6 +339,9 @@ test('uses a desktop sidebar with separate results column and toolbar sort', asy
   await expect(page.locator('.finder-sidebar')).toBeVisible();
   await expect(page.locator('.finder-results-column')).toBeVisible();
   await expect(page.locator('.finder-results-toolbar [data-filter="sort"]')).toBeVisible();
+  await expect(page.locator('[data-mobile-filter-panel]')).toHaveAttribute('open', '');
+  await expect(page.locator('[data-mobile-filter-panel] > summary')).not.toBeVisible();
+  await expect(page.locator('[data-filter="month"]')).toBeVisible();
   const sidebar = await page.locator('.finder-sidebar').boundingBox();
   const results = await page.locator('.finder-results-column').boundingBox();
   expect(sidebar).toBeTruthy();
@@ -353,14 +359,60 @@ test('stacks finder workspace on mobile without horizontal overflow', async ({ p
   expect(sidebar).toBeTruthy();
   expect(results).toBeTruthy();
   expect(results!.y).toBeGreaterThan(sidebar!.y);
+  await expect(page.locator('[data-filter="search"]')).toBeVisible();
+  await expect(page.locator('[data-mobile-filter-panel]')).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-filter="month"]')).not.toBeVisible();
+  await expect(page.locator('#results-title')).toBeVisible();
+  await expect(page.locator('[data-search-results] .event-card').first()).toBeVisible();
+  const firstCard = await page.locator('[data-search-results] .event-card').first().boundingBox();
+  expect(firstCard).toBeTruthy();
+  expect(firstCard!.y).toBeLessThan(1000);
   await expect(page.locator('[data-more-filters]')).not.toHaveAttribute('open', '');
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
-  expect(overflow).toBe(false);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+
+  await page.setViewportSize({ width: 768, height: 900 });
+  await expect(page.locator('[data-mobile-filter-panel]')).not.toHaveAttribute('open', '');
+  await expect(page.locator('[data-filter="month"]')).not.toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+});
+
+test('keeps mobile filters accessible while active filters stay beside results in SL and EN', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  for (const [path, filterLabel, quickLabel] of [
+    ['/iskalnik-tekov/', 'Filtri', 'S traso'],
+    ['/en/find-races/', 'Filters', 'With route']
+  ] as const) {
+    await openFinder(page, path);
+    const mobileFilters = page.locator('[data-mobile-filter-panel]');
+    const mobileSummary = mobileFilters.locator(':scope > summary');
+    await expect(mobileSummary).toContainText(filterLabel);
+    await mobileSummary.click();
+    await expect(mobileFilters).toHaveAttribute('open', '');
+    await expect(mobileFilters.locator('[data-filter="month"]')).toBeVisible();
+    await expect(mobileFilters.getByRole('button', { name: quickLabel })).toBeVisible();
+
+    const moreFilters = mobileFilters.locator('[data-more-filters]');
+    await moreFilters.locator('summary').click();
+    await expect(moreFilters.locator('[data-filter="surface"]')).toBeVisible();
+    await moreFilters.locator('summary').click();
+    await expect(moreFilters.locator('[data-filter="surface"]')).not.toBeVisible();
+
+    await mobileFilters.locator('[data-quick-pick="route"]').click();
+    await expect(page).toHaveURL(/quick=route/);
+    await expect(mobileSummary).toContainText('(1)');
+    await mobileSummary.click();
+    await expect(mobileFilters).not.toHaveAttribute('open', '');
+    await expect(chip(page, 'quick', 'route')).toBeVisible();
+    await page.locator('[data-active-filters] [data-clear-filters]').click();
+    await expect(page).not.toHaveURL(/quick=route/);
+    await expect(page.locator('[data-active-filters]')).not.toBeVisible();
+    await expect(mobileSummary).not.toContainText('(1)');
+  }
 });
 
 test('shows primary filters and keeps optional filters in one disclosure', async ({ page }) => {
   await openFinder(page, '/iskalnik-tekov/', 'sl');
-  await expect(page.locator('.finder-primary-filters [data-filter="search"]')).toBeVisible();
+  await expect(page.locator('[data-filter="search"]')).toBeVisible();
   await expect(page.locator('.finder-primary-filters [data-filter="month"]')).toBeVisible();
   await expect(page.locator('.finder-primary-filters [data-filter="region"]')).toBeVisible();
   await expect(page.locator('.finder-primary-filters [data-filter="distance"]')).toBeVisible();
