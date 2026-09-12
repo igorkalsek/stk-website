@@ -78,17 +78,19 @@ test('organizer journey retains proposal and finder routes without fictional sta
   assert.match(component, /\/dodaj-ali-popravi-tek\//);
   assert.match(component, /\/en\/add-or-correct-race\//);
   assert.doesNotMatch(component, /PRIMER PRIKAZA · PROTOTIP/);
-  assert.match(component, /Ko bo funkcija na voljo/);
+  assert.match(component, /Naprednejše statistike in dodatna promocijska orodja so še v pripravi/);
   assert.doesNotMatch(component, /1\.248|384|127|82/);
 });
 
 test('future organiser tools are explicitly in development and have no non-functional control', () => {
-  assert.match(component, /Promocija in statistika/);
+  assert.match(component, /Napredna statistika in promocijska orodja/);
   assert.match(component, /V PRIPRAVI/);
   assert.doesNotMatch(component, /<button|claim_race/);
 });
 
 test('organizer confirmation is presented as an active bilingual finder CTA', () => {
+  assert.match(component, /NA VOLJO ZDAJ/);
+  assert.match(component, /AVAILABLE NOW/);
   assert.match(component, /Potrdite podatke svojega teka/);
   assert.match(component, /Poiščite in potrdite svoj tek/);
   assert.match(component, /Confirm your race information/);

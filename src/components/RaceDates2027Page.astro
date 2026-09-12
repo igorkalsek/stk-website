@@ -25,7 +25,7 @@ const finderHref=en?'/en/find-races/':'/iskalnik-tekov/'; const formHref=en?'/en
     <p class="planning-updated" data-planning-updated hidden={!formatPlanningUpdated(payload?.generated_at ?? '',lang)}>{en?'Last updated:':'Nazadnje osveženo:'} <time>{formatPlanningUpdated(payload?.generated_at ?? '',lang)}</time></p>
   </section>
   <section class="section container planning-browser" aria-labelledby="overview-title">
-    <div class="planning-fallback" data-planning-fallback hidden={Boolean(payload)} role="status">{en?'The race date planner is temporarily unavailable. Please try again later.':'Načrtovalnik terminov trenutno ni na voljo. Poskusite znova nekoliko pozneje.'}</div>
+    <div class="planning-fallback" data-planning-fallback data-planning-status data-state={payload?'ready':'loading'} hidden={Boolean(payload)} role="status" aria-live="polite">{en?'Loading race dates …':'Nalagamo termine …'}</div>
     <div data-planning-content hidden={!payload}>
       <form class="planning-filters" aria-label={en?'Filter the planner':'Filtriranje načrtovalnika'}>
         <label><span>{en?'Month':'Mesec'}</span><select name="month" data-planning-filter><option value="">{en?'All months':'Vsi meseci'}</option>{months.map((m,i)=><option value={String(i+1).padStart(2,'0')}>{m}</option>)}</select></label>
