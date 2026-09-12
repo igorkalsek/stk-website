@@ -2060,9 +2060,31 @@ main {
   grid-column: 1 / -1;
 }
 
+.empty-recovery-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.empty-recovery-action {
+  justify-content: flex-start;
+  max-width: 100%;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+  text-align: left;
+  white-space: normal;
+}
+
 .empty-clear-button {
   margin-top: 4px;
   width: fit-content;
+}
+
+@media (max-width: 520px) {
+  .empty-recovery-actions,
+  .empty-recovery-action {
+    width: 100%;
+  }
 }
 
 @media (min-width: 720px) {

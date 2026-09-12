@@ -12,6 +12,11 @@ export interface ActiveFilterChip {
   ariaLabel: string;
 }
 
+export interface FinderRecoverySuggestion {
+  filter: ActiveFilterChip;
+  resultCount: number;
+}
+
 export type ActiveFilterLabelLookup = Partial<Record<Exclude<ActiveFilterKind, 'q' | 'family' | 'raceDay' | 'route' | 'quick'>, Record<string, string>>>;
 
 const SEARCH_LABELS = { sl: 'Iskanje', en: 'Search' } as const;
@@ -73,6 +78,49 @@ export const removeActiveFinderFilter = (input: Partial<FinderUrlState>, kind: A
   else if (kind === 'quick') state.quick = state.quick.filter((quick) => quick !== value);
   else state[kind] = '';
   return sanitizeFinderUrlState(state);
+};
+
+export const getFinderRecoverySuggestions = (
+  input: Partial<FinderUrlState>,
+  language: FinderLanguage,
+  countResults: (state: FinderUrlState) => number,
+  lookup: ActiveFilterLabelLookup = {},
+  limit = 3
+): FinderRecoverySuggestion[] => getActiveFinderFilters(input, language, lookup)
+  .filter((filter) => filter.kind !== 'sort')
+  .map((filter, order) => ({
+    filter,
+    order,
+    resultCount: countResults(removeActiveFinderFilter(input, filter.kind, filter.value))
+  }))
+  .filter((suggestion) => suggestion.resultCount > 0)
+  .sort((a, b) => b.resultCount - a.resultCount || a.order - b.order)
+  .slice(0, Math.max(0, limit))
+  .map(({ filter, resultCount }) => ({ filter, resultCount }));
+
+export const formatFinderRecoveryAction = (
+  filter: ActiveFilterChip,
+  language: FinderLanguage,
+  resultCountLabel: string
+) => {
+  if (filter.kind === 'q') {
+    return language === 'en'
+      ? `Remove search \"${filter.value}\" · ${resultCountLabel}`
+      : `Odstranite iskanje \"${filter.value}\" · ${resultCountLabel}`;
+  }
+  if (filter.kind === 'quick') {
+    return language === 'en'
+      ? `Remove \"${filter.label}\" · ${resultCountLabel}`
+      : `Odstranite \"${filter.label}\" · ${resultCountLabel}`;
+  }
+  if (filter.kind === 'family' || filter.kind === 'raceDay' || filter.kind === 'route') {
+    return language === 'en'
+      ? `Remove ${filter.label} · ${resultCountLabel}`
+      : `Odstranite ${filter.label} · ${resultCountLabel}`;
+  }
+  return language === 'en'
+    ? `Remove ${KIND_LABELS.en[filter.kind]}: ${filter.label} · ${resultCountLabel}`
+    : `Odstranite ${KIND_LABELS.sl[filter.kind]}: ${filter.label} · ${resultCountLabel}`;
 };
 
 export const formatActiveFinderFilterCount = (count: number, language: FinderLanguage) => {

@@ -240,6 +240,113 @@ test('preserves a user filter change and avoids duplicate search analytics durin
   expect(analytics.filter((event: any) => event.event_type === 'search_performed')).toHaveLength(1);
 });
 
+test('@smoke recovers from ordinary Slovenian no-results with one filter removal on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const analytics = await mockFinderApis(page);
+  await page.goto('/iskalnik-tekov/');
+  await expect(page.locator('.search-event-card').first()).toBeVisible();
+
+  const mobilePanel = page.locator('[data-mobile-filter-panel]');
+  await mobilePanel.locator(':scope > summary').click();
+  await page.locator('[data-filter="region"]').selectOption('Podravska');
+  await page.locator('[data-filter="distance"]').selectOption('over-5-to-10');
+  await mobilePanel.locator(':scope > summary').click();
+
+  const empty = page.locator('.search-empty-card');
+  await expect(empty.getByRole('heading', { name: 'S trenutno kombinacijo filtrov ni zadetkov.' })).toBeVisible();
+  await expect(empty).toContainText('Do rezultatov lahko pridete tako:');
+  const recoveryActions = empty.locator('[data-recovery-actions] .empty-recovery-action');
+  await expect(recoveryActions).toHaveCount(2);
+  await expect(recoveryActions.nth(0)).toHaveText('Odstranite Regija: Podravska · 1 dogodek');
+  await expect(recoveryActions.nth(1)).toHaveText('Odstranite Razdalja: Nad 5 do 10 km · 1 dogodek');
+  await expect(mobilePanel).not.toHaveAttribute('open', '');
+  await expect(mobilePanel.locator(':scope > summary')).toContainText('(2)');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'search_performed').length).toBe(1);
+  expect(analytics.filter((event: any) => event.event_type === 'no_results_search')).toHaveLength(1);
+
+  await recoveryActions.nth(0).click();
+  await expect(page).toHaveURL(/\/iskalnik-tekov\/\?distance=over-5-to-10$/);
+  await expect(chip(page, 'region')).toHaveCount(0);
+  await expect(chip(page, 'distance', 'over-5-to-10')).toBeVisible();
+  await expect(mobilePanel.locator(':scope > summary')).toContainText('(1)');
+  await expect(mobilePanel).not.toHaveAttribute('open', '');
+  await expect(page.locator('.search-event-card')).toHaveCount(1);
+  await expect(page.locator('.search-event-card')).toContainText('Ljubljana 10K Trail');
+  await expect(page.locator('.search-detail-cta')).toHaveAttribute('href', /from=%2Fiskalnik-tekov%2F%3Fdistance%3Dover-5-to-10/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'search_performed').length).toBe(2);
+  expect(analytics.filter((event: any) => event.event_type === 'no_results_search')).toHaveLength(1);
+});
+
+test('localizes query-only recovery in English, escapes user text, and safely removes the query', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E', 'en');
+  const empty = page.locator('.search-empty-card');
+  await expect(empty.getByRole('heading', { name: 'No races match the current combination of filters.' })).toBeVisible();
+  await expect(empty).toContainText('Try one of these changes:');
+  const recovery = empty.locator('[data-remove-filter="q"]');
+  await expect(recovery).toHaveText('Remove search "<img src=x onerror=alert(1)>" · 4 races');
+  await expect(empty.locator('img')).toHaveCount(0);
+  await recovery.click();
+  await expect(page).toHaveURL(/\/en\/find-races\/$/);
+  await expect(page.locator('[data-filter="search"]')).toHaveValue('');
+  await expect(page.locator('.search-event-card')).toHaveCount(4);
+});
+
+test('removes a quick pick through recovery while preserving the remaining filter state', async ({ page }) => {
+  await openFinder(page, '/en/find-races/?region=Podravska&quick=trail', 'en');
+  const recovery = page.locator('.search-empty-card [data-remove-filter="quick"][data-remove-filter-value="trail"]');
+  await expect(recovery).toHaveText('Remove "Trail challenges" · 1 race');
+  await recovery.click();
+  await expect(page).toHaveURL(/\/en\/find-races\/\?region=Podravska$/);
+  await expect(page.locator('[data-quick-pick="trail"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('[data-filter="region"]')).toHaveValue('Podravska');
+  await expect(chip(page, 'region', 'Podravska')).toBeVisible();
+  await expect(chip(page, 'quick', 'trail')).toHaveCount(0);
+  await expect(page.locator('.search-event-card')).toContainText('Maribor Road 5K');
+});
+
+test('waits for additional readiness before showing quick-pick recovery', async ({ page }) => {
+  const additionalGate = deferred();
+  await mockControlledFinderApis(page, { additionalGate: additionalGate.promise });
+  await page.goto('/iskalnik-tekov/?region=Podravska&quick=trail');
+
+  await expect(page.locator('.search-event-card')).toContainText('Maribor Road 5K');
+  await expect(page.locator('[data-recovery-actions]')).toHaveCount(0);
+  await expect(page.locator('.search-empty-card')).toHaveCount(0);
+
+  additionalGate.resolve();
+  await expect(page.locator('.search-empty-card')).toBeVisible();
+  await expect(page.locator('.search-empty-card [data-remove-filter="quick"][data-remove-filter-value="trail"]')).toHaveText('Odstranite "Trail izzivi" · 1 dogodek');
+});
+
+test('keeps the Races for me empty state separate from filter recovery', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('stkRacePreferencesV1', JSON.stringify({
+      version: 1,
+      distanceBuckets: [],
+      surfaceCategories: [],
+      regions: ['Gorenjska'],
+      familyFriendly: false,
+      active: true
+    }));
+  });
+  await openFinder(page, '/en/find-races/', 'en');
+  const empty = page.locator('.search-empty-card');
+  await expect(empty.getByRole('heading', { name: 'No races match the selected preferences.' })).toBeVisible();
+  await expect(empty.locator('[data-recovery-actions]')).toHaveCount(0);
+  await expect(empty.getByRole('button', { name: 'Edit preferences' })).toBeVisible();
+  await expect(empty.getByRole('button', { name: 'Show all races' })).toBeVisible();
+});
+
+test('offers deterministic recovery for a representative 2027 filter combination', async ({ page }) => {
+  await openFinder(page, '/iskalnik-tekov/?year=2027&region=Podravska&distance=up-to-5', 'sl');
+  const actions = page.locator('[data-recovery-actions] .empty-recovery-action');
+  await expect(actions).toHaveCount(2);
+  await expect(actions.nth(0)).toHaveText('Odstranite Regija: Podravska · 1 dogodek');
+  await expect(actions.nth(1)).toHaveText('Odstranite Razdalja: Do 5 km · 1 dogodek');
+});
+
 test('@smoke restores shareable URL filters, chips and language/year links', async ({ page }) => {
   await openFinder(page, '/en/find-races/?q=Ljubljana&month=08&surface=trail&distance=over-5-to-10&quick=route');
   await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');

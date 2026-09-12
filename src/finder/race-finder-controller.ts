@@ -12,7 +12,7 @@
   import { initSavedRaceButtons } from '../saved-races-client';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
   import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
-  import { formatActiveFinderFilterCount, getActiveFinderFilters, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
+  import { formatActiveFinderFilterCount, formatFinderRecoveryAction, getActiveFinderFilters, getFinderRecoverySuggestions, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
 
@@ -520,19 +520,6 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     }
   };
 
-  const stripQuickPickDerivedFilters = (finderState: FinderUrlState): FinderUrlState => {
-    const next = { ...finderState, quick: [...finderState.quick] };
-    if (next.quick.includes('deadlines-soon')) {
-      if (next.deadline === 'within-14') next.deadline = '';
-      if (next.sort === 'registration-deadline') next.sort = 'date';
-    }
-    if (next.quick.includes('budget') && next.fee === '20') next.fee = '';
-    if (next.quick.includes('first-race') && ['cesta', 'cesta/trail'].includes(normalize(next.surface))) next.surface = '';
-    if (next.quick.includes('kids')) next.family = false;
-    if (next.quick.includes('route')) next.route = false;
-    return next;
-  };
-
   const applyDirectFinderStateToControls = (finderState: FinderUrlState) => {
     if (searchInput) searchInput.value = finderState.q;
     if (monthSelect) monthSelect.value = [...monthSelect.options].some((option) => option.value === finderState.month) ? finderState.month : '';
@@ -548,13 +535,37 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (elevationSelect) elevationSelect.value = finderState.elevation;
   };
 
+  function pickFirstAvailableSurface(preferredSurfaces: string[]) {
+    const availableSurfaces = new Map([...new Set(state.events.map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
+    return preferredSurfaces.map((surface) => availableSurfaces.get(surface)).find(Boolean) ?? '';
+  }
+
+  const resolveFinderStateWithQuickPicks = (finderState: FinderUrlState): FinderUrlState => {
+    const resolved = stateForYear({ ...finderState, quick: [...finderState.quick] }, activeYear);
+    for (const quickPick of resolved.quick) {
+      if (quickPick === 'deadlines-soon') {
+        resolved.deadline = 'within-14';
+        resolved.sort = 'registration-deadline';
+      } else if (quickPick === 'budget') {
+        resolved.fee = '20';
+      } else if (quickPick === 'first-race') {
+        const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail']);
+        if (beginnerSurface) resolved.surface = beginnerSurface;
+      } else if (quickPick === 'kids') {
+        resolved.family = true;
+      } else if (quickPick === 'route') {
+        resolved.route = true;
+      }
+    }
+    return resolved;
+  };
+
   const rebuildControlsFromFinderState = (finderState: FinderUrlState) => {
     const normalizedState = stateForYear(finderState, activeYear);
-    directFinderState = stripQuickPickDerivedFilters({ ...normalizedState, quick: [] });
-    applyDirectFinderStateToControls(directFinderState);
+    directFinderState = { ...normalizedState, quick: [] };
+    applyDirectFinderStateToControls(resolveFinderStateWithQuickPicks(normalizedState));
     selectedQuickPicks.clear();
-    stateForYear(finderState, activeYear).quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
-    for (const quickPick of selectedQuickPicks) applyQuickPick(quickPick);
+    normalizedState.quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
     updateQuickPickStates();
   };
 
@@ -568,11 +579,6 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     state.visibleCount = PAGE_SIZE;
     renderResults();
     syncUrlFromControls();
-  };
-
-  const pickFirstAvailableSurface = (preferredSurfaces: string[]) => {
-    const availableSurfaces = new Map([...new Set(state.events.map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
-    return preferredSurfaces.map((surface) => availableSurfaces.get(surface)).find(Boolean) ?? '';
   };
 
   const quickPickMatches: Record<string, (filters: any) => boolean> = {
@@ -616,51 +622,52 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     }
   };
 
-  const applyQuickPick = (quickPick: string) => {
-    if (quickPick === 'deadlines-soon') {
-      if (deadlineSelect) deadlineSelect.value = 'within-14';
-      if (sortSelect) sortSelect.value = 'registration-deadline';
-    } else if (quickPick === 'budget') {
-      if (registrationFeeSelect) registrationFeeSelect.value = '20';
-    } else if (quickPick === 'first-race') {
-      const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail']);
-      if (surfaceSelect && beginnerSurface) surfaceSelect.value = beginnerSurface;
-    } else if (quickPick === 'trail') {
-      // Trail challenges use a dedicated quick-pick filter so trail and mountain races can both match.
-    } else if (quickPick === 'kids') {
-      if (familyInput) familyInput.checked = true;
-    } else if (quickPick === 'route') {
-      if (routeInput) routeInput.checked = true;
-    }
-  };
-
-  const removeQuickPick = (quickPick: string) => {
-    if (quickPick === 'deadlines-soon') {
-      if (deadlineSelect?.value === 'within-14') deadlineSelect.value = '';
-      if (sortSelect?.value === 'registration-deadline') sortSelect.value = 'date';
-    } else if (quickPick === 'budget') {
-      if (registrationFeeSelect?.value === '20') registrationFeeSelect.value = '';
-    } else if (quickPick === 'first-race') {
-      if (surfaceSelect && ['cesta', 'cesta/trail'].includes(normalize(surfaceSelect.value))) surfaceSelect.value = '';
-    } else if (quickPick === 'trail') {
-      // No visible field is owned by this quick pick.
-    } else if (quickPick === 'kids') {
-      if (familyInput?.checked) familyInput.checked = false;
-    } else if (quickPick === 'route') {
-      if (routeInput?.checked) routeInput.checked = false;
-    }
-  };
-
   const toggleQuickPick = (quickPick: string) => {
     const isActive = getActiveQuickPickValues().includes(quickPick);
     if (isActive) {
       selectedQuickPicks.delete(quickPick);
-      removeQuickPick(quickPick);
     } else {
       selectedQuickPicks.add(quickPick);
-      applyQuickPick(quickPick);
     }
   };
+
+  const getFiltersForFinderState = (finderState: FinderUrlState): ReturnType<typeof getFilters> => {
+    const resolved = resolveFinderStateWithQuickPicks(stateForYear(finderState, activeYear));
+    return {
+      search: normalize(resolved.q),
+      month: resolved.month,
+      region: resolved.region,
+      surface: resolved.surface,
+      distance: resolved.distance,
+      registrationFee: resolved.fee,
+      deadlineFilter: resolved.deadline,
+      sort: resolved.sort,
+      elevation: resolved.elevation,
+      family: resolved.family,
+      dayOfRegistration: resolved.raceDay,
+      route: resolved.route,
+      quickPick: resolved.quick.join(',')
+    };
+  };
+
+  const matchesFinderEvent = (event: RaceEvent, filters: ReturnType<typeof getFilters>, deferAdditionalSelection: boolean) => {
+    if (filters.search && !event.searchText.includes(filters.search)) return false;
+    if (filters.month && event.month !== filters.month) return false;
+    if (filters.region && event.region !== filters.region) return false;
+    if (filters.surface && event.surface !== filters.surface) return false;
+    if (!matchesRaceDistanceFilter(event.distances, filters.distance)) return false;
+    if (!deferAdditionalSelection && filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
+    if (!deferAdditionalSelection && filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
+    if (!deferAdditionalSelection && filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
+    if (filters.family && !event.familyFriendly) return false;
+    if (!deferAdditionalSelection && filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
+    if (!deferAdditionalSelection && filters.route && !hasRouteData(event)) return false;
+    if (!deferAdditionalSelection && filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
+    return true;
+  };
+
+  const filterFinderEvents = (filters: ReturnType<typeof getFilters>, deferAdditionalSelection: boolean) =>
+    state.events.filter((event) => matchesFinderEvent(event, filters, deferAdditionalSelection));
 
   let searchAnalyticsTimer: number | undefined;
 
@@ -840,7 +847,32 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         <div class="event-meta">
           <span class="pill">${escapeHtml(pill)}</span>
         </div>
-        ${showClearAction ? `<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>${locale.clearFiltersLabel}</button>` : ''}
+        ${showClearAction ? `<button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>${escapeHtml(locale.clearFiltersLabel)}</button>` : ''}
+      </article>
+    `;
+  };
+
+  const renderFilterEmptyState = (suggestions: ReturnType<typeof getFinderRecoverySuggestions>) => {
+    if (!resultsElement) return;
+    const hasSuggestions = suggestions.length > 0;
+    const message = hasSuggestions ? locale.messages.recoveryIntro : locale.messages.removeFiltersMessage;
+    resultsElement.innerHTML = `
+      <article class="event-card search-empty-card">
+        <h3>${escapeHtml(String(locale.messages.noFilterMatchesTitle))}</h3>
+        <p>${escapeHtml(String(message))}</p>
+        <div class="event-meta">
+          <span class="pill">${escapeHtml(String(locale.messages.filtersPill))}</span>
+        </div>
+        ${hasSuggestions ? `
+          <div class="empty-recovery-actions" aria-label="${escapeHtml(String(locale.messages.recoveryActionsLabel))}" data-recovery-actions>
+            ${suggestions.map(({ filter, resultCount }) => `
+              <button class="button button-small button-secondary-light empty-recovery-action" type="button" data-remove-filter="${escapeHtml(filter.kind)}" data-remove-filter-value="${escapeHtml(filter.value)}">
+                ${escapeHtml(formatFinderRecoveryAction(filter, locale.language, locale.formatResultCount(resultCount)))}
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+        <button class="button button-small button-secondary-light empty-clear-button" type="button" data-clear-filters>${escapeHtml(locale.clearFiltersLabel)}</button>
       </article>
     `;
   };
@@ -965,21 +997,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       return;
     }
 
-    state.filtered = state.events.filter((event) => {
-      if (filters.search && !event.searchText.includes(filters.search)) return false;
-      if (filters.month && event.month !== filters.month) return false;
-      if (filters.region && event.region !== filters.region) return false;
-      if (filters.surface && event.surface !== filters.surface) return false;
-      if (!matchesRaceDistanceFilter(event.distances, filters.distance)) return false;
-      if (!deferAdditionalSelection && filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
-      if (!deferAdditionalSelection && filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
-      if (!deferAdditionalSelection && filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
-      if (filters.family && !event.familyFriendly) return false;
-      if (!deferAdditionalSelection && filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
-      if (!deferAdditionalSelection && filters.route && !hasRouteData(event)) return false;
-      if (!deferAdditionalSelection && filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
-      return true;
-    });
+    state.filtered = filterFinderEvents(filters, deferAdditionalSelection);
     preferenceMatches.clear();
     let personalizedResultsSignature = '';
     if (filters.sort === 'my-races' && hasPreferences()) {
@@ -1028,7 +1046,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         renderEmptyState(String(locale.messages.noPreferenceMatchesTitle), String(locale.messages.noPreferenceMatchesMessage), String(locale.messages.myRacesPill), false);
         resultsElement?.querySelector('.event-meta')?.insertAdjacentHTML('afterend', `<div class="event-actions"><button class="button button-small button-secondary-light" type="button" data-edit-preferences>${locale.messages.editPreferences}</button><button class="button button-small button-primary" type="button" data-show-all-races>${locale.messages.showAllRaces}</button></div>`);
       } else {
-        renderEmptyState(String(locale.messages.noFilterMatchesTitle), filters.quickPick ? String(locale.messages.tooManyFiltersMessage) : String(locale.messages.removeFiltersMessage), String(locale.messages.filtersPill), true);
+        const recoverySuggestions = deferAdditionalSelection
+          ? []
+          : getFinderRecoverySuggestions(
+              getFinderUrlStateForUrl(),
+              locale.language,
+              (finderState) => filterFinderEvents(getFiltersForFinderState(finderState), false).length,
+              getActiveFilterLabelLookup()
+            );
+        renderFilterEmptyState(recoverySuggestions);
       }
       if (moreElement) moreElement.hidden = true;
       return;

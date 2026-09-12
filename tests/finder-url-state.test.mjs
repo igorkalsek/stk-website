@@ -101,7 +101,7 @@ describe('finder pages share URL state wiring', () => {
   it('initial hydration does not mark userInteracted', () => { for (const page of [sl,en]) assert.match(page, /userInteracted: false/); });
   it('input and change use replaceState', () => { for (const page of [sl,en]) assert.match(page, /history\.replaceState/); });
   it('clear removes params', () => { for (const page of [sl,en]) assert.match(page, /clearFinderUrlState\(activeYear\)/); });
-  it('quick picks are restored', () => { for (const page of [sl,en]) assert.match(page, /stateForYear\(finderState, activeYear\)\.quick\.forEach/); });
+  it('quick picks are restored', () => { for (const page of [sl,en]) assert.match(page, /normalizedState\.quick\.forEach\(\(quickPick\) => selectedQuickPicks\.add\(quickPick\)\)/); });
   it('popstate reapplies state', () => { for (const page of [sl,en]) assert.match(page, /addEventListener\('popstate', restoreFromCurrentUrl\)/); });
   it('Slovenian and English use the same controller and URL utility', () => {
     assert.match(slPage, /initializeRaceFinder\(sloveneRaceFinderLocale\)/);
