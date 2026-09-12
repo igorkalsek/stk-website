@@ -164,13 +164,13 @@ const jsonLd = event ? {
 
 <BaseLayout title={title} description={description} lang="en" canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: slovenePath }, { lang: 'en', href: buildEnglishEventDetailPath(event) }] : []} languageSwitchHref={slovenePath} brandHref="/en/" brandLabel="Slovenski Tekaški Koledar - English home" navLabel="Main navigation" menuLabel="Menu">
   {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-  <main>
+  <main data-finder-return-root data-finder-return-language="en" data-finder-return-year={year} data-finder-language-detail-path={slovenePath}>
     {event ? (
       <>
         <section class="section container event-detail-top-section" aria-labelledby="event-detail-title">
           <div class="event-detail-profile-hero">
             <nav class="event-detail-breadcrumb" aria-label="Navigation">
-              <a href={searchPath}>Race finder</a>
+              <a href={searchPath} data-finder-return-link>Race finder</a>
               <span aria-hidden="true">›</span>
               <span>{event.title}</span>
             </nav>
@@ -404,7 +404,7 @@ const jsonLd = event ? {
             </aside>
           </div>
           <RelatedRaceCards races={relatedRaces} language="en" />
-          <p class="event-detail-back"><a class="button button-secondary-light" href={searchPath}>Back to race finder</a></p>
+          <p class="event-detail-back"><a class="button button-secondary-light" href={searchPath} data-finder-return-link data-finder-return-context-label="Back to results">Back to race finder</a></p>
         </section>
       </>
     ) : (
@@ -417,6 +417,11 @@ const jsonLd = event ? {
     )}
   </main>
 </BaseLayout>
+
+<script>
+  import { initializeFinderReturnLinks } from '../../../../utils-finder-url-state';
+  initializeFinderReturnLinks();
+</script>
 
 <script>
   import { trackStkPageLoadEventOnce } from '../../../../lib/stkAnalytics';

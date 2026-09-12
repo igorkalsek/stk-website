@@ -26,8 +26,10 @@ const DEADLINES = new Set(['within-7', 'within-14', 'within-30', 'early-ending',
 const SORTS = new Set(['date', 'registration-deadline', 'registration-min', 'registration-max']);
 const ELEVATIONS = new Set(['max-300', 'max-800', 'max-1500', 'over-1500']);
 export const FINDER_QUICK_ORDER = ['deadlines-soon', 'budget', 'first-race', 'trail', 'kids', 'route'] as const;
+export const FINDER_RETURN_PARAM = 'from';
 const QUICK = new Set<string>(FINDER_QUICK_ORDER);
 const PARAM_ORDER = ['year', 'q', 'month', 'region', 'surface', 'distance', 'fee', 'deadline', 'sort', 'family', 'raceDay', 'route', 'elevation', 'quick'] as const;
+const FINDER_PATHS = { sl: '/iskalnik-tekov/', en: '/en/find-races/' } as const;
 
 export const defaultFinderUrlState = (): FinderUrlState => ({
   year: DEFAULT_FINDER_YEAR,
@@ -133,3 +135,83 @@ export const buildFinderUrlForYear = (pathname: string, state: Partial<FinderUrl
 
 export const buildFinderUrlForLanguage = (state: Partial<FinderUrlState>, language: 'sl' | 'en') =>
   buildFinderUrl(language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/', sanitizeFinderUrlState(state));
+
+export const buildFinderReturnUrl = (
+  pathname: string,
+  state: Partial<FinderUrlState>
+): string => buildFinderUrl(pathname, state);
+
+export const buildDetailUrlWithFinderReturn = (
+  detailPath: string,
+  finderPath: string,
+  state: Partial<FinderUrlState>,
+  origin = 'https://tekaski-koledar.si'
+): string => {
+  const detailUrl = new URL(detailPath, origin);
+  detailUrl.searchParams.set(FINDER_RETURN_PARAM, buildFinderReturnUrl(finderPath, state));
+  return `${detailUrl.pathname}${detailUrl.search}${detailUrl.hash}`;
+};
+
+export type ResolvedFinderReturn = {
+  href: string;
+  hasContext: boolean;
+  state: FinderUrlState;
+};
+
+export const resolveFinderReturnUrl = (
+  params: URLSearchParams,
+  language: 'sl' | 'en',
+  detailYear: PublicFinderYear,
+  origin = 'https://tekaski-koledar.si'
+): ResolvedFinderReturn => {
+  const pathname = FINDER_PATHS[language];
+  const fallbackState = sanitizeFinderUrlState({ year: detailYear });
+  const fallback: ResolvedFinderReturn = {
+    href: buildFinderUrl(pathname, fallbackState),
+    hasContext: false,
+    state: fallbackState
+  };
+  const rawReturn = params.get(FINDER_RETURN_PARAM);
+  if (!rawReturn || !rawReturn.startsWith('/') || rawReturn.startsWith('//')) return fallback;
+
+  try {
+    const candidate = new URL(rawReturn, origin);
+    if (candidate.origin !== origin || candidate.pathname !== pathname) return fallback;
+    const state = parseFinderUrlState(candidate.searchParams);
+    if (state.year !== detailYear) return fallback;
+    return {
+      href: buildFinderUrl(pathname, state),
+      hasContext: true,
+      state
+    };
+  } catch {
+    return fallback;
+  }
+};
+
+export const initializeFinderReturnLinks = () => {
+  const root = document.querySelector<HTMLElement>('[data-finder-return-root]');
+  const language = root?.dataset.finderReturnLanguage === 'en' ? 'en' : 'sl';
+  const detailYear = root?.dataset.finderReturnYear === '2027' ? '2027' : '2026';
+  const resolved = resolveFinderReturnUrl(new URLSearchParams(window.location.search), language, detailYear, window.location.origin);
+
+  document.querySelectorAll<HTMLAnchorElement>('[data-finder-return-link]').forEach((link) => {
+    link.href = resolved.href;
+    if (resolved.hasContext && link.dataset.finderReturnContextLabel) {
+      link.textContent = link.dataset.finderReturnContextLabel;
+    }
+  });
+
+  if (!resolved.hasContext) return;
+  const targetLanguage = language === 'en' ? 'sl' : 'en';
+  const targetDetailPath = root?.dataset.finderLanguageDetailPath;
+  if (!targetDetailPath) return;
+  const targetFinderPath = FINDER_PATHS[targetLanguage];
+  const targetFinderReturn = buildFinderUrl(targetFinderPath, resolved.state);
+  document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
+    const target = new URL(link.href, window.location.origin);
+    if (target.origin !== window.location.origin || target.pathname !== targetDetailPath) return;
+    target.searchParams.set(FINDER_RETURN_PARAM, targetFinderReturn);
+    link.href = `${target.pathname}${target.search}${target.hash}`;
+  });
+};

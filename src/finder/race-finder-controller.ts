@@ -11,7 +11,7 @@
   import { renderActionIcon } from '../utils-action-icons';
   import { initSavedRaceButtons } from '../saved-races-client';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
-  import { buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
+  import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
   import { formatActiveFinderFilterCount, getActiveFinderFilters, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
@@ -857,7 +857,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       noticeUrl: event.noticeUrl,
       registrationUrl: event.registrationUrl
     });
-    const detailPath = locale.buildDetailPath(event);
+    const detailPath = buildDetailUrlWithFinderReturn(
+      locale.buildDetailPath(event),
+      locale.finderPath,
+      getFinderUrlStateForUrl(),
+      window.location.origin
+    );
     const renderableVoteUrl = getRenderableVoteUrl(event);
     const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false });
     const routeAction = event.additionalData?.routeUrl
