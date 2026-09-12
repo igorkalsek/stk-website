@@ -21,13 +21,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <form class="finder-workspace container" data-search-form>
       <aside class="finder-sidebar" aria-labelledby="filters-title">
-        <h2 id="filters-title">Filtri</h2>
+        <h2 class="finder-sidebar-title" id="filters-title">Filtri</h2>
+
+        <label class="field finder-search-field">
+          <span>Iskanje</span>
+          <input type="search" name="search" placeholder="Ime teka ali kraj" autocomplete="off" data-filter="search" />
+        </label>
+
+        <details class="finder-filter-panel" data-mobile-filter-panel open>
+          <summary><span>Filtri</span><span data-mobile-filter-count hidden></span></summary>
+          <div class="finder-filter-panel-content">
 
         <div class="finder-primary-filters">
-          <label class="field">
-            <span>Iskanje</span>
-            <input type="search" name="search" placeholder="Ime teka ali kraj" autocomplete="off" data-filter="search" />
-          </label>
           <label class="field">
             <span>Mesec</span>
             <select name="month" data-filter="month" disabled><option value="">Vsi meseci</option></select>
@@ -104,6 +109,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <button class="button button-small button-secondary-light copy-link-button" type="button" data-copy-link>Kopiraj povezavo</button>
           <span class="muted-note" data-copy-link-status aria-live="polite"></span>
         </div>
+          </div>
+        </details>
       </aside>
 
       <section class="finder-results-column" aria-labelledby="results-title">
