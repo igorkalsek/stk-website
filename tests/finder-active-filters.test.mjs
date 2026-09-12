@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { getActiveFinderFilters, removeActiveFinderFilter, formatActiveFinderFilterCount } from '../.cache/dist-test/utils-finder-active-filters.js';
+import { formatActiveFinderFilterCount, formatFinderRecoveryAction, getActiveFinderFilters, getFinderRecoverySuggestions, removeActiveFinderFilter } from '../.cache/dist-test/utils-finder-active-filters.js';
 import { parseFinderUrlState } from '../.cache/dist-test/utils-finder-url-state.js';
 import { readFileSync } from 'node:fs';
 
@@ -31,6 +31,68 @@ describe('active finder filters utility', () => {
   it('formats localized counts', () => assert.deepEqual([1,2,3,5].map((n) => formatActiveFinderFilterCount(n, 'sl')), ['1 filter','2 filtra','3 filtri','5 filtrov']));
 });
 
+describe('finder no-results recovery utility', () => {
+  const countMatches = (events) => (state) => events.filter((event) =>
+    (!state.q || event.title.toLocaleLowerCase('sl-SI').includes(state.q.toLocaleLowerCase('sl-SI')))
+    && (!state.region || event.region === state.region)
+    && (state.distance === 'all' || event.distance === state.distance)
+    && (!state.family || event.family)
+    && (!state.quick.includes('trail') || event.trail)
+  ).length;
+  const events = [
+    { title: 'Alpine trail', region: 'Gorenjska', distance: 'ultra', family: false, trail: true },
+    { title: 'City five', region: 'Podravska', distance: 'up-to-5', family: true, trail: false },
+    { title: 'Forest ten', region: 'Savinjska', distance: 'over-5-to-10', family: true, trail: true },
+    { title: 'River ten', region: 'Goriška', distance: 'over-5-to-10', family: false, trail: true }
+  ];
+
+  it('offers a filter whose removal restores results and omits one that still returns zero', () => {
+    const suggestions = getFinderRecoverySuggestions(
+      { region: 'Primorska', distance: 'ultra' },
+      'sl',
+      countMatches(events),
+      { region: { Primorska: 'Primorska' }, distance: { ultra: 'Nad 42,2 km' } }
+    );
+    assert.deepEqual(suggestions.map(({ filter, resultCount }) => [filter.kind, resultCount]), [['region', 1]]);
+  });
+
+  it('sorts multiple recoveries by result count, uses active-filter order for ties, and caps the list at three', () => {
+    const suggestions = getFinderRecoverySuggestions(
+      { q: 'missing', region: 'Gorenjska', distance: 'up-to-5', family: true, quick: ['trail'], sort: 'registration-min' },
+      'en',
+      (state) => ({ q: 8, region: 5, distance: 5, family: 3, quick: 2 }[
+        !state.q ? 'q' : !state.region ? 'region' : state.distance === 'all' ? 'distance' : !state.family ? 'family' : !state.quick.length ? 'quick' : 'none'
+      ] ?? 0)
+    );
+    assert.deepEqual(suggestions.map(({ filter, resultCount }) => [filter.kind, resultCount]), [['q', 8], ['region', 5], ['distance', 5]]);
+    assert.equal(suggestions.some(({ filter }) => filter.kind === 'sort'), false);
+  });
+
+  it('supports query, boolean, and quick-pick candidates', () => {
+    const suggestions = getFinderRecoverySuggestions(
+      { q: 'missing', family: true, quick: ['trail'] },
+      'en',
+      (state) => !state.q ? 4 : !state.family ? 3 : !state.quick.length ? 2 : 0
+    );
+    assert.deepEqual(suggestions.map(({ filter }) => filter.kind), ['q', 'family', 'quick']);
+  });
+
+  it('formats safe localized query, quick-pick, and result-count labels', () => {
+    const [query] = getActiveFinderFilters({ q: '<script>' }, 'en');
+    const [quick] = getActiveFinderFilters({ quick: ['trail'] }, 'sl');
+    const [family] = getActiveFinderFilters({ family: true }, 'en');
+    const [region] = getActiveFinderFilters({ region: 'Gorenjska' }, 'sl');
+    assert.equal(formatFinderRecoveryAction(query, 'en', '4 races'), 'Remove search "<script>" · 4 races');
+    assert.equal(formatFinderRecoveryAction(quick, 'sl', '2 dogodka'), 'Odstranite "Trail izzivi" · 2 dogodka');
+    assert.equal(formatFinderRecoveryAction(family, 'en', '1 race'), 'Remove Family-friendly · 1 race');
+    assert.equal(formatFinderRecoveryAction(region, 'sl', '3 dogodki'), 'Odstranite Regija: Gorenjska · 3 dogodki');
+  });
+
+  it('returns no suggestion when no single removal restores results', () => {
+    assert.deepEqual(getFinderRecoverySuggestions({ q: 'missing', region: 'Primorska' }, 'sl', () => 0), []);
+  });
+});
+
 describe('active finder filters page wiring', () => {
   it('URL hydration restores chips', () => { for (const page of [sl,en]) assert.match(page, /applyFinderUrlStateToControls\(stateForYear\(initialUrlState, activeYear\)\)[\s\S]*renderResults\(\);[\s\S]*syncUrlFromControls\(\)/); });
   it('popstate restores chips without analytics', () => { for (const page of [sl,en]) { const i = page.indexOf('restoreFromCurrentUrl'); assert.match(page.slice(i, i + 500), /state\.userInteracted = false/); assert.doesNotMatch(page.slice(i, i + 500), /trackStkEvent/); } });
@@ -42,6 +104,14 @@ describe('active finder filters page wiring', () => {
   });
   it('chip listener has no manual analytics call', () => { for (const page of [sl,en]) { const i = page.indexOf('removeActiveFilterChip'); assert.doesNotMatch(page.slice(i, i + 900), /trackStkEvent/); } });
   it('search debounce is cancelled before removing a filter', () => { for (const page of [sl,en]) assert.match(page, /const removeActiveFilterChip[\s\S]*if \(searchUrlTimer\) window\.clearTimeout\(searchUrlTimer\)/); });
+  it('main results and recovery simulations reuse the same side-effect-free matcher', () => {
+    for (const page of [sl,en]) {
+      assert.match(page, /state\.filtered = filterFinderEvents\(filters, deferAdditionalSelection\)/);
+      assert.match(page, /\(finderState\) => filterFinderEvents\(getFiltersForFinderState\(finderState\), false\)\.length/);
+      const start = page.indexOf('const filterFinderEvents');
+      assert.doesNotMatch(page.slice(start, page.indexOf('let searchAnalyticsTimer', start)), /trackStkEvent|renderResults|fetch\(/);
+    }
+  });
 });
 
 describe('quick-pick derived filter rebuild contract', () => {
@@ -52,13 +122,14 @@ describe('quick-pick derived filter rebuild contract', () => {
     assert.match(css, /\.active-filters\[hidden\]\s*{\s*display:\s*none;/);
   });
   it('quick trail creates only its quick chip in the visual summary', () => assert.deepEqual(getActiveFinderFilters({ quick: ['trail'] }, 'sl').map((chip) => chip.label), ['Trail izzivi']));
-  it('quick-derived ordinary chips are stripped when URL state is rebuilt', () => {
+  it('quick-derived controls are resolved from canonical URL state', () => {
     for (const page of pages) {
-      assert.match(page, /if \(next\.quick\.includes\('budget'\) && next\.fee === '20'\) next\.fee = ''/);
-      assert.match(page, /if \(next\.quick\.includes\('kids'\)\) next\.family = false/);
-      assert.match(page, /if \(next\.quick\.includes\('route'\)\) next\.route = false/);
-      assert.match(page, /if \(next\.quick\.includes\('deadlines-soon'\)\)[\s\S]*next\.deadline = ''[\s\S]*next\.sort = 'date'/);
-      assert.match(page, /if \(next\.quick\.includes\('first-race'\)[\s\S]*next\.surface = ''/);
+      assert.match(page, /const resolveFinderStateWithQuickPicks/);
+      assert.match(page, /quickPick === 'budget'[\s\S]*resolved\.fee = '20'/);
+      assert.match(page, /quickPick === 'kids'[\s\S]*resolved\.family = true/);
+      assert.match(page, /quickPick === 'route'[\s\S]*resolved\.route = true/);
+      assert.match(page, /quickPick === 'deadlines-soon'[\s\S]*resolved\.deadline = 'within-14'[\s\S]*resolved\.sort = 'registration-deadline'/);
+      assert.match(page, /quickPick === 'first-race'[\s\S]*resolved\.surface = beginnerSurface/);
     }
   });
   it('removing a quick chip rebuilds from canonical URL state, renders once, and syncs once', () => {
@@ -88,7 +159,7 @@ describe('quick-pick derived filter rebuild contract', () => {
     }
   });
   it('Slovenian and English pages keep matching direct and derived rebuild logic', () => {
-    const snippets = ['stripQuickPickDerivedFilters', 'rebuildControlsFromFinderState', 'getFinderUrlStateForUrl', 'updateDirectFinderStateFromControl'];
+    const snippets = ['resolveFinderStateWithQuickPicks', 'rebuildControlsFromFinderState', 'getFinderUrlStateForUrl', 'updateDirectFinderStateFromControl'];
     for (const snippet of snippets) assert.equal(sl.includes(snippet), en.includes(snippet));
   });
 });
