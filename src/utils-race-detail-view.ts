@@ -194,9 +194,12 @@ export const formatFamilyPublicNote = (value: string, language: DetailLanguage =
   return formatted.replace(/\s+([.;,])/g, '$1');
 };
 
-const familyNoteSentences = (notes: string) => notes
-  .split(/(?<=[.!?])\s+/)
+const splitNoteSentences = (notes: string) => notes
+  .split(/(?<=[!?])\s+|(?<=\.)\s+(?=["'“„‘]?\p{Lu})/u)
   .map((sentence) => sentence.trim())
+  .filter(Boolean);
+
+const familyNoteSentences = (notes: string) => splitNoteSentences(notes)
   .filter((sentence) => sentence && hasFamilyNoteContext(sentence));
 
 const extractChildrenDistancesLabel = (notes: string, language: DetailLanguage) => {
@@ -359,8 +362,7 @@ export const buildPublicNotes = (event: DetailEvent, language: DetailLanguage, f
   if (!notes) return '';
   const formattedNotes = language === 'en' ? formatEnglishPublicNotes(notes) : notes;
   const normalizedFamily = new Set(familyInfo.map(normalizeNote));
-  const remaining = formattedNotes
-    .split(/(?<=[.!?])\s+/)
+  const remaining = splitNoteSentences(formattedNotes)
     .filter((sentence) => !normalizedFamily.has(normalizeNote(formatFamilyPublicNote(sentence, language))))
     .join(' ')
     .trim();

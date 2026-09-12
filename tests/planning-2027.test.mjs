@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { allPlanningWeekends, buildPlanningMonthSections, buildPlanningOverview, buildPlanningWeeks, fetchPlanning2027, filterPlanningEvents, filterPlanningWeekendOccupancyEvents, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSummaryLabel, formatPlanningSurface, formatPlanningUpdated, formatPlanningWeekEventCount, formatPlanningWeekendOccupancy, formatPlanningWeekStatus, hasPlanningMonthSection, hasPlanningWeekTarget, parsePlanningPayload, planningWeekendsForMonth, planningWeekTargetMatchesEvents } from '../.cache/dist-test/utils-planning-2027.js';
+import { initializePlanning2027, setPlanningLoadState } from '../.cache/dist-test/planning-2027-client.js';
 
 const row = (overrides = {}) => ({ naziv_prireditve: 'Testni tek', datum: '', predvideno_od: '', predvideno_do: '', kraj: 'Kraj', regija: 'Gorenjska', tip_podlage: 'cesta/trail', status: 'pričakovano', ...overrides });
 const payload = (data) => ({ ok: true, type: 'planning_2027', source: 'tekaski-koledar-master', year: '2027', generated_at: '2026-08-10', row_count: data.length, columns: ['naziv_prireditve', 'datum', 'predvideno_od', 'predvideno_do', 'kraj', 'regija', 'tip_podlage', 'status'], data });
@@ -223,6 +224,36 @@ test('planning fetch returns a safe null fallback for an unavailable or invalid 
   assert.equal(await fetchPlanning2027(async () => new Response('{}')), null);
 });
 
+test('planner distinguishes loading, ready and actual error states in both languages', async () => {
+  const status = { dataset: {}, hidden: true, textContent: '' };
+  const content = { hidden: true };
+  const root = {
+    querySelector: (selector) => selector === '[data-planning-status]' ? status : selector === '[data-planning-content]' ? content : null,
+    querySelectorAll: () => []
+  };
+
+  setPlanningLoadState(root, 'loading', 'sl');
+  assert.deepEqual([status.dataset.state, status.hidden, status.textContent, content.hidden], ['loading', false, 'Nalagamo termine …', true]);
+  setPlanningLoadState(root, 'ready', 'en');
+  assert.deepEqual([status.dataset.state, status.hidden, content.hidden], ['ready', true, false]);
+  setPlanningLoadState(root, 'error', 'en');
+  assert.deepEqual([status.dataset.state, status.hidden, status.textContent, content.hidden], ['error', false, 'The race date planner is temporarily unavailable. Please try again later.', true]);
+
+  status.dataset = {};
+  const transition = initializePlanning2027(root, null, 'sl', async () => new Response('{}'));
+  assert.deepEqual([status.dataset.state, status.textContent], ['loading', 'Nalagamo termine …']);
+  await transition;
+  assert.deepEqual([status.dataset.state, status.textContent], ['error', 'Načrtovalnik terminov trenutno ni na voljo. Poskusite znova nekoliko pozneje.']);
+
+  status.dataset = {};
+  await initializePlanning2027(root, null, 'en', async () => new Response(JSON.stringify(payload([]))));
+  assert.deepEqual([status.dataset.state, status.hidden, content.hidden], ['ready', true, false]);
+
+  status.dataset = {};
+  await initializePlanning2027(root, payload([]), 'sl', async () => new Response('{}'));
+  assert.deepEqual([status.dataset.state, status.hidden, content.hidden], ['ready', true, false]);
+});
+
 test('pages remove demo data, provide localized labels and preserve responsive details and analytics contract', () => {
   const component = readFileSync('src/components/RaceDates2027Page.astro', 'utf8');
   const organizer = readFileSync('src/components/OrganizerPage.astro', 'utf8');
@@ -231,6 +262,9 @@ test('pages remove demo data, provide localized labels and preserve responsive d
   for (const label of ['Potrjeno', 'Pričakovano', 'Termin znan', 'Confirmed', 'Expected', 'Date window known', 'Datum še ni znan', 'Date not yet known']) assert.match(component, new RegExp(label));
   assert.match(component, /data-planning-filter/);
   assert.match(component, /data-planning-fallback/);
+  assert.match(component, /data-planning-status/);
+  assert.match(component, /Nalagamo termine/);
+  assert.match(component, /Loading race dates/);
   assert.match(component, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
   assert.match(component, /formatPlanningEventCount\(w\.events\.length,lang,'show'\)/);
   assert.match(component, /formatPlanningWeekEventCount\('weekend'/);

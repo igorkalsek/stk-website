@@ -139,6 +139,18 @@ describe('race detail view model', () => {
     assert.doesNotMatch(buildPublicNotes(event, 'en', family), /Otroški tek/);
   });
 
+  it('keeps Slovene dates and decimal values intact while separating actual note sentences', () => {
+    const event = { ...baseEvent, familyFriendly: true, publicNotes: 'Dogodek poteka 18.–20. 9. 2026. Družinam prijazno: brezplačni otroški tek 19. 9. ob 15:00. Prijave so odprte.' };
+    const family = buildFamilyInfo(event, 'sl');
+
+    assert.deepEqual(family, ['Družinam prijazno: brezplačni otroški tek 19. 9. ob 15:00.']);
+    assert.equal(buildPublicNotes(event, 'sl', family), 'Dogodek poteka 18.–20. 9. 2026. Prijave so odprte.');
+
+    const decimalEvent = { ...baseEvent, familyFriendly: true, publicNotes: 'Družinam prijazno: otroški tek 1.5 km. Prijave so odprte.' };
+    assert.deepEqual(buildFamilyInfo(decimalEvent, 'sl'), ['Družinam prijazno: otroški tek 1,5 km.']);
+    assert.equal(buildPublicNotes(decimalEvent, 'sl', buildFamilyInfo(decimalEvent, 'sl')), 'Prijave so odprte.');
+  });
+
   it('labels route links that point to the same notice URL without changing analytics', () => {
     const same = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf/' } };
     const different = { ...baseEvent, noticeUrl: 'https://example.com/info.pdf?type=notice', additionalData: { ...richAdditional, routeUrl: 'https://example.com/info.pdf?type=route' } };
