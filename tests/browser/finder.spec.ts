@@ -57,6 +57,44 @@ async function mockFinderApis(page: Page, masterRaces: { '2026': ReturnType<type
   return analytics;
 }
 
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((done) => { resolve = done; });
+  return { promise, resolve };
+}
+
+async function mockControlledFinderApis(page: Page, options: {
+  additionalGate?: Promise<void>;
+  failAdditional?: boolean;
+  topGate?: Promise<void>;
+  failTop?: boolean;
+} = {}) {
+  const analytics: unknown[] = [];
+  await page.route(`${API_HOST}/**`, async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/additional') {
+      if (options.additionalGate) await options.additionalGate;
+      if (options.failAdditional) return route.fulfill({ status: 503, body: 'Unavailable' });
+      return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? additional2027 : additional2026 } });
+    }
+    if (url.pathname === '/top') {
+      if (options.topGate) await options.topGate;
+      if (options.failTop) return route.fulfill({ status: 503, body: 'Unavailable' });
+      return route.fulfill({ json: { data: [] } });
+    }
+    return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? races2027 : races2026 } });
+  });
+  await page.route(`${ANALYTICS_HOST}/**`, async (route) => {
+    const postData = route.request().postData();
+    if (postData) analytics.push(JSON.parse(postData));
+    return route.fulfill({ status: 204, body: '' });
+  });
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: undefined });
+  });
+  return analytics;
+}
+
 async function freezeFinderDate(page: Page) {
   const clock = (page as Page & { clock?: { setFixedTime: (date: Date) => Promise<void> } }).clock;
   if (clock?.setFixedTime) {
@@ -125,6 +163,81 @@ test('localizes single English result count as 1 race', async ({ page }) => {
 test('localizes single Slovenian result count as 1 dogodek', async ({ page }) => {
   await openFinder(page, '/iskalnik-tekov/?q=Maribor', 'sl');
   await expect(page.locator('[data-result-count]')).toHaveText('1 dogodek');
+});
+
+test('renders Master results before delayed additional and top enrichment', async ({ page }) => {
+  const additionalGate = deferred();
+  const topGate = deferred();
+  await mockControlledFinderApis(page, { additionalGate: additionalGate.promise, topGate: topGate.promise });
+  await page.goto('/en/find-races/?q=Ljubljana&region=Osrednjeslovenska');
+
+  const firstCard = page.locator('.search-event-card').first();
+  await expect(firstCard).toContainText('Ljubljana 10K Trail');
+  await expect(page.locator('[data-search-status]')).toHaveText('Loading registration, route and elevation details …');
+  await expect(firstCard.locator('.event-chip-additional-price, .event-chip-additional-route')).toHaveCount(0);
+  await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
+  await expect(page.locator('[data-filter="region"]')).toHaveValue('Osrednjeslovenska');
+  await firstCard.locator('[data-saved-race-button]').click();
+  await expect(firstCard.locator('[data-saved-race-button]')).toHaveAttribute('aria-pressed', 'true');
+  await page.waitForTimeout(1000);
+  await expect(firstCard).toBeVisible();
+
+  additionalGate.resolve();
+  await expect(firstCard.locator('.event-chip-additional-price, .event-chip-additional-route')).not.toHaveCount(0);
+  await expect(firstCard.locator('[data-saved-race-button]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-filter="search"]')).toHaveValue('Ljubljana');
+  await expect(page).toHaveURL(/q=Ljubljana&region=Osrednjeslovenska/);
+  topGate.resolve();
+});
+
+test('keeps Master results usable when additional and top enrichment fail', async ({ page }) => {
+  await mockControlledFinderApis(page, { failAdditional: true, failTop: true });
+  await page.goto('/iskalnik-tekov/?fee=20');
+
+  await expect(page.locator('.search-event-card').first()).toBeVisible();
+  await expect(page.locator('[data-search-results]')).toContainText('Ljubljana 10K Trail');
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+  await expect(page.locator('[data-search-status]')).toHaveText('Dodatni podatki trenutno niso dosegljivi. Prikazani so teki, ki ustrezajo razpoložljivim filtrom.');
+  await expect(page.locator('.search-empty-card')).toHaveCount(0);
+});
+
+test('defers an additional-dependent filter and sort without showing a false empty state', async ({ page }) => {
+  const additionalGate = deferred();
+  await mockControlledFinderApis(page, { additionalGate: additionalGate.promise });
+  await page.goto('/iskalnik-tekov/?fee=20&sort=registration-min');
+
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+  await expect(page.locator('[data-filter="sort"]')).toHaveValue('registration-min');
+  await expect(chip(page, 'fee', '20')).toBeVisible();
+  await expect(page.locator('.search-empty-card')).toHaveCount(0);
+  await expect(page.locator('.search-event-card')).toHaveCount(4);
+  await expect(page.locator('.search-event-card').first()).toContainText('Ljubljana 10K Trail');
+
+  additionalGate.resolve();
+  await expect(page.locator('.search-event-card')).toHaveCount(3);
+  await expect(page.locator('.search-event-card').first()).toContainText('Maribor Road 5K');
+  await expect(page.locator('[data-filter="registration-fee"]')).toHaveValue('20');
+  await expect(page.locator('[data-filter="sort"]')).toHaveValue('registration-min');
+});
+
+test('preserves a user filter change and avoids duplicate search analytics during enrichment', async ({ page }) => {
+  const additionalGate = deferred();
+  const analytics = await mockControlledFinderApis(page, { additionalGate: additionalGate.promise });
+  await page.goto('/iskalnik-tekov/');
+  await expect(page.locator('.search-event-card').first()).toBeVisible();
+
+  await page.locator('[data-filter="region"]').selectOption('Podravska');
+  await expect(page.locator('[data-search-results]')).toContainText('Maribor Road 5K');
+  await expect(page.locator('[data-search-results]')).not.toContainText('Ljubljana 10K Trail');
+  await expect(page).toHaveURL(/region=Podravska/);
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'search_performed').length).toBe(1);
+
+  additionalGate.resolve();
+  await expect(page.locator('[data-search-results]')).toContainText('Maribor Road 5K');
+  await expect(page.locator('[data-filter="region"]')).toHaveValue('Podravska');
+  await expect(page).toHaveURL(/region=Podravska/);
+  await page.waitForTimeout(800);
+  expect(analytics.filter((event: any) => event.event_type === 'search_performed')).toHaveLength(1);
 });
 
 test('@smoke restores shareable URL filters, chips and language/year links', async ({ page }) => {

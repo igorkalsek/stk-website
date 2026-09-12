@@ -34,11 +34,13 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const PAGE_SIZE = 30;
   const dateFormatter = new Intl.DateTimeFormat(locale.dateLocale, { day: 'numeric', month: 'short', year: 'numeric' });
   
-  const state: { activeYear: PublicYear; events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
+  type AdditionalLoadStatus = 'disabled' | 'loading' | 'ready' | 'failed';
+  const state: { activeYear: PublicYear; events: RaceEvent[]; filtered: RaceEvent[]; apiAvailable: boolean; additionalStatus: AdditionalLoadStatus; visibleCount: number; userInteracted: boolean; lastLoggedSearchSignature: string } = {
     activeYear,
     events: [],
     filtered: [],
     apiAvailable: true,
+    additionalStatus: additionalDataEnabled ? 'loading' : 'disabled',
     visibleCount: PAGE_SIZE,
     userInteracted: false,
     lastLoggedSearchSignature: ''
@@ -355,7 +357,6 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       return compareByDate(a, b);
     });
 
-
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
     `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
@@ -410,6 +411,18 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     route: Boolean(routeInput?.checked),
     quickPick: getActiveQuickPickValues().join(',')
   });
+
+  const additionalSorts = new Set(['registration-min', 'registration-max', 'registration-deadline']);
+  const usesAdditionalData = (filters: ReturnType<typeof getFilters>) =>
+    Boolean(
+      filters.registrationFee ||
+      filters.deadlineFilter ||
+      filters.elevation ||
+      filters.dayOfRegistration ||
+      filters.route ||
+      additionalSorts.has(filters.sort) ||
+      filters.quickPick.split(',').some((quickPick) => ['deadlines-soon', 'budget', 'route', 'trail'].includes(quickPick))
+    );
 
 
   const updateDirectFinderStateFromControl = (control: EventTarget | null) => {
@@ -932,6 +945,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const renderResults = () => {
     const filters = getFilters();
+    const deferAdditionalSelection = additionalDataEnabled && state.additionalStatus !== 'ready' && usesAdditionalData(filters);
     updateAdvancedFiltersSummary(filters);
 
     if (!state.apiAvailable) {
@@ -957,13 +971,13 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       if (filters.region && event.region !== filters.region) return false;
       if (filters.surface && event.surface !== filters.surface) return false;
       if (!matchesRaceDistanceFilter(event.distances, filters.distance)) return false;
-      if (filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
-      if (filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
-      if (filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
+      if (!deferAdditionalSelection && filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
+      if (!deferAdditionalSelection && filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
+      if (!deferAdditionalSelection && filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
       if (filters.family && !event.familyFriendly) return false;
-      if (filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
-      if (filters.route && !hasRouteData(event)) return false;
-      if (filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
+      if (!deferAdditionalSelection && filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
+      if (!deferAdditionalSelection && filters.route && !hasRouteData(event)) return false;
+      if (!deferAdditionalSelection && filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;
       return true;
     });
     preferenceMatches.clear();
@@ -974,7 +988,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       state.filtered = matches.map((match) => match.event as unknown as RaceEvent);
       personalizedResultsSignature = JSON.stringify({ filters: { ...filters, search: '' }, results: matches.map((match) => match.event.id) });
     } else {
-      state.filtered = sortEvents(state.filtered, filters.sort);
+      state.filtered = sortEvents(state.filtered, deferAdditionalSelection && additionalSorts.has(filters.sort) ? 'date' : filters.sort);
     }
 
     const count = state.filtered.length;
@@ -987,10 +1001,16 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       : filters.deadlineFilter
         ? locale.messages.deadlineStatus
         : getRaceFinderResultDescription(filters.sort, preferenceLanguage);
-    setStatus(String(statusMessage));
+    setStatus(String(
+      state.additionalStatus === 'loading'
+        ? locale.messages.additionalLoading
+        : deferAdditionalSelection && state.additionalStatus === 'failed'
+          ? locale.messages.additionalUnavailable
+          : statusMessage
+    ));
     if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
-    trackSearchResult(filters, count);
-    if (personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
+    if (!deferAdditionalSelection) trackSearchResult(filters, count);
+    if (!deferAdditionalSelection && personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
       personalizedResultsLastSignature = personalizedResultsSignature;
       const { search, ...safePersonalizedFilters } = filters;
       trackStkEvent({
@@ -1022,7 +1042,40 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     updateQuickPickStates();
   };
 
+  let loadGeneration = 0;
+
+  const loadAdditionalData = async (generation: number) => {
+    try {
+      const rows = await fetchAdditionalEventData(activeYear);
+      if (generation !== loadGeneration) return;
+      state.events = attachAdditionalDataByMasterRow(state.events, rows, activeYear);
+      state.additionalStatus = 'ready';
+      renderResults();
+    } catch (error) {
+      if (generation !== loadGeneration) return;
+      state.additionalStatus = 'failed';
+      console.warn(`${locale.emptyDefaultPill} additional data skipped`, error);
+      renderResults();
+    }
+  };
+
+  const loadVoteData = async (generation: number) => {
+    try {
+      const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
+      if (!topResponse.ok) return;
+      const topPayload = await topResponse.json();
+      if (generation !== loadGeneration) return;
+      state.events = enrichEventsWithVoteUrls(state.events, toArray(topPayload));
+      renderResults();
+    } catch (error) {
+      if (generation !== loadGeneration) return;
+      console.warn(`${locale.emptyDefaultPill} vote enrichment skipped`, error);
+    }
+  };
+
   const loadEvents = async () => {
+    const generation = ++loadGeneration;
+    state.additionalStatus = additionalDataEnabled ? 'loading' : 'disabled';
     setStatus(String(locale.messages.loading));
 
     try {
@@ -1030,35 +1083,18 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       if (!response.ok) throw new Error(`API status ${response.status}`);
 
       const payload = await response.json();
-      let events = getPublicUpcomingEvents(toArray(payload));
-
-      try {
-        if (additionalDataEnabled) {
-          events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData(activeYear), activeYear);
-        }
-      } catch (error) {
-        console.warn(`${locale.emptyDefaultPill} additional data skipped`, error);
-      }
-
-      if (activeYear === DEFAULT_PUBLIC_YEAR) {
-        try {
-          const topResponse = await fetch(TOP_API_URL, { headers: { Accept: 'application/json' } });
-          if (topResponse.ok) {
-            const topPayload = await topResponse.json();
-            events = enrichEventsWithVoteUrls(events, toArray(topPayload));
-          }
-        } catch (error) {
-          console.warn(`${locale.emptyDefaultPill} vote enrichment skipped`, error);
-        }
-      }
-
-      state.events = events;
+      if (generation !== loadGeneration) return;
+      state.events = getPublicUpcomingEvents(toArray(payload));
       state.apiAvailable = true;
       populateFilters();
       applyFinderUrlStateToControls(stateForYear(initialUrlState, activeYear));
       renderResults();
       syncUrlFromControls();
+
+      if (additionalDataEnabled) void loadAdditionalData(generation);
+      if (activeYear === DEFAULT_PUBLIC_YEAR) void loadVoteData(generation);
     } catch (error) {
+      if (generation !== loadGeneration) return;
       console.error(`${locale.emptyDefaultPill} API error`, error);
       state.apiAvailable = false;
       renderResults();
