@@ -7,13 +7,13 @@ const enSource = readFileSync(new URL('../src/pages/en/index.astro', import.meta
 
 describe('homepage recent updates rendering', () => {
   it('renders Slovenian recent update titles as links when matched', () => {
-    assert.match(slSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=20'\),\s*loadJson\('\/'\)/s);
+    assert.match(slSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4'\),\s*loadJson\('\/'\)/s);
     assert.match(slSource, /buildHomepageEventDetailPath\(matchedEvent\.event/);
     assert.match(slSource, /<h3>\$\{detailPath \? `<a href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(title\)\}<\/a>` : escapeHtml\(title\)\}<\/h3>/);
   });
 
   it('renders English recent update titles as links when matched', () => {
-    assert.match(enSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=20'\),\s*loadJson\('\/'\)/s);
+    assert.match(enSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4'\),\s*loadJson\('\/'\)/s);
     assert.match(enSource, /buildEnglishHomepageEventDetailPath\(matchedEvent\.event/);
     assert.match(enSource, /<h3>\$\{detailPath \? `<a href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(title\)\}<\/a>` : escapeHtml\(title\)\}<\/h3>/);
   });
@@ -31,5 +31,10 @@ describe('homepage recent updates rendering', () => {
       assert.match(source, /data-analytics-event-id="\$\{escapeHtml\(analyticsEventId\)\}"/);
       assert.match(source, /const analyticsAttributes = detailPath[\s\S]*: '';/);
     }
+  });
+
+  it('keeps the updates block compact by rendering at most four entries', () => {
+    assert.match(slSource, /\]\.slice\(0, 4\);/);
+    assert.match(enSource, /\]\.slice\(0, 4\);/);
   });
 });

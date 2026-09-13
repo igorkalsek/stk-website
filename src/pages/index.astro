@@ -23,63 +23,16 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       <div class="home-hero-card hero-card">
         <div class="home-hero-main">
           <div class="home-hero-copy hero-content">
-            <div class="home-hero-brand">
-              <img class="home-hero-logo" src="/stk-logo.jpeg" alt="" aria-hidden="true" />
-              <div>
-                <span class="home-hero-brand-name">Slovenski Tekaški Koledar</span>
-                <span class="home-hero-brand-note">Neodvisen tekaški vodič za Slovenijo</span>
-              </div>
-            </div>
             <h1 id="hero-title">Tek se začne tukaj</h1>
-            <p class="hero-lead">Potrjene tekaške prireditve, prijave, razpisi in koristni podatki na enem mestu.</p>
-            <p class="hero-sublead">
-              Iščite po datumu, regiji, podlagi ali razdalji ter zanimive teke shranite med Moje teke.
-            </p>
+            <p class="hero-lead">Potrjeni teki, roki prijav in uradne povezave na enem mestu.</p>
             <div class="home-hero-actions hero-actions" aria-label="Glavne povezave">
-              <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Poiščite tek</a>
+              <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Najdi tek</a>
               <a class="button button-secondary hero-secondary-cta" href="/moji-teki/">Moji teki</a>
               <a class="home-hero-text-link" href="/stk-tekobot/">Vprašajte Tekobota</a>
             </div>
           </div>
-          <aside class="hero-preview" aria-label="Predogled koledarja">
-            <div class="hero-preview-heading">
-              <span class="hero-preview-kicker" data-hero-preview-title>Izpostavljeno v naslednjih dneh</span>
-              <p class="hero-preview-helper" data-hero-preview-helper>Izbor prihodnjih tekov.</p>
-            </div>
-            <ol class="hero-preview-list" data-hero-preview-list>
-              <li><span>nalagamo</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>
-            </ol>
-          </aside>
         </div>
       </div>
-
-      <div class="home-entry-grid" aria-label="Glavne možnosti">
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><circle cx="14" cy="14" r="7"/><path d="m20 20 6 6"/></svg>
-          </div>
-          <h2>Najdite pravi tek</h2>
-          <p>Filtrirajte po datumu, regiji, podlagi ali razdalji.</p>
-          <a class="home-entry-link" href="/iskalnik-tekov/">Odprite iskalnik</a>
-        </article>
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><rect x="7" y="8" width="18" height="18" rx="3"/><path d="M11 5v6M21 5v6M7 14h18M16 18l1.5 3 3.5.5-2.5 2.4.6 3.4-3.1-1.6-3.1 1.6.6-3.4-2.5-2.4 3.5-.5z"/></svg>
-          </div>
-          <h2>Načrtujte svoje teke</h2>
-          <p>Shranite teke in spremljajte prijavne roke.</p>
-          <a class="home-entry-link" href="/moji-teki/">Odprite Moje teke</a>
-        </article>
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><rect x="6" y="9" width="20" height="15" rx="5"/><path d="M12 24l-4 4v-6M12 16h.01M20 16h.01M12 20h8M16 6v3"/></svg>
-          </div>
-          <h2>Vprašajte Tekobota</h2>
-          <p>Poiščite tek z vprašanjem.</p>
-          <a class="home-entry-link" href="/stk-tekobot/">Odprite Tekobota</a>
-        </article>
-      </div>
-
     </section>
 
     <section class="section container home-current-sections" aria-labelledby="current-title">
@@ -118,74 +71,61 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       </div>
     </section>
 
+    <section class="section container home-secondary-section" aria-labelledby="voted-title">
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="voted-title">Največ zanimanja</h2>
+          <p data-top-description>Izbor prihodnjih tekov.</p>
+        </div>
+        <div class="section-heading-actions">
+          <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
+        </div>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Podatke še nalagamo</h3>
+          <p>Izbrani prihodnji teki bodo prikazani tukaj.</p>
+          <div class="event-meta">
+            <span class="pill">Prihajajoči teki</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">Izbor prihodnjih tekov.</p>
+    </section>
+
+    <section class="section container home-update-section" aria-labelledby="updates-title">
+      <article class="home-update-panel">
+        <div class="home-update-heading">
+          <span class="eyebrow eyebrow-light">Zadnje posodobitve</span>
+          <h2 id="updates-title">Sveže spremembe v koledarju</h2>
+          <p>Najnovejše spremembe pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
+        </div>
+        <div class="card-grid" data-recent-updates>
+          <article class="update-card">
+            <h3>Podatke še nalagamo</h3>
+            <p>Zadnje spremembe se bodo prikazale tukaj.</p>
+          </article>
+        </div>
+      </article>
+    </section>
+
     <section class="container home-calendar-stats my-stk" data-my-stk data-language="sl" aria-labelledby="my-stk-title">
       <div data-my-stk-content><div class="my-stk-heading"><h2 id="my-stk-title">Moj STK</h2></div><div class="my-stk-loading" role="status" aria-label="Nalagamo vašo tekaško sezono"><span></span><span></span><span></span></div></div>
       <p class="my-stk-global-stats" data-my-stk-global-stats>STK 2026 · <span class="stat-loading" data-stat="confirmed_public_events_total" aria-label="Nalaganje"></span> potrjenih prireditev · <span class="stat-loading" data-stat="family_friendly_total" aria-label="Nalaganje"></span> družinam prijaznih · <span class="stat-loading" data-stat="group_runs_total" aria-label="Nalaganje"></span> skupinskih tekov</p>
     </section>
 
-      <section class="section container home-secondary-section" aria-labelledby="voted-title">
-        <div class="section-heading section-heading-with-action">
-          <div>
-            <h2 id="voted-title">Največ zanimanja</h2>
-            <p data-top-description>Izbor prihodnjih tekov.</p>
-          </div>
-          <div class="section-heading-actions">
-            <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
-          </div>
-        </div>
-        <div class="card-grid" data-top-events>
-          <article class="event-card">
-            <h3>Podatke še nalagamo</h3>
-            <p>Izbrani prihodnji teki bodo prikazani tukaj.</p>
-            <div class="event-meta">
-              <span class="pill">Prihajajoči teki</span>
-            </div>
-          </article>
-        </div>
-        <p class="data-note" data-status="top">Izbor prihodnjih tekov.</p>
-      </section>
-
-    <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
-      <div class="section-heading">
-        <h2 id="trust-updates-title">Zanesljivi podatki, ki se redno posodabljajo</h2>
-      </div>
-      <div class="home-trust-updates-grid">
-        <article class="home-trust-panel" aria-labelledby="trust-title">
-          <span class="eyebrow eyebrow-light">Zakaj STK</span>
-          <h3 id="trust-title">Potrjene informacije za lažje načrtovanje</h3>
-          <p>STK na enem mestu združuje potrjene tekaške dogodke, uradne povezave do razpisov in prijav ter praktične podatke za načrtovanje nastopa.</p>
-          <ul class="home-trust-benefits">
-            <li>Potrjeni javni dogodki</li>
-            <li>Povezave do uradnih razpisov in prijav</li>
-            <li>Redno pregledani in posodobljeni podatki</li>
-            <li>Neodvisen pregled tekaških prireditev po Sloveniji</li>
-          </ul>
-          <div class="feature-chip-list home-trust-chips" aria-label="Dodatni podatki v iskalniku">
-            <span class="feature-chip">Startnine</span>
-            <span class="feature-chip">Roki prijav</span>
-            <span class="feature-chip">Višinski metri</span>
-            <span class="feature-chip">Trase / GPX</span>
-            <span class="feature-chip">Otroški teki</span>
-          </div>
-          <div class="home-trust-actions">
-            <a class="button button-primary" href="/iskalnik-tekov/">Odprite iskalnik</a>
-            <a class="button button-secondary-light" href="/o-projektu-in-zasebnost/">O projektu in zasebnosti</a>
-          </div>
-        </article>
-        <article class="home-update-panel" aria-labelledby="updates-title">
-          <div class="home-update-heading">
-            <span class="eyebrow eyebrow-light">Zadnje posodobitve</span>
-            <h3 id="updates-title">Sveže spremembe v koledarju</h3>
-            <p>Najnovejše spremembe pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
-          </div>
-          <div class="card-grid" data-recent-updates>
-            <article class="update-card">
-              <h3>Podatke še nalagamo</h3>
-              <p>Zadnje spremembe se bodo prikazale tukaj.</p>
-            </article>
-          </div>
-        </article>
-      </div>
+    <section class="section container home-trust-section" aria-labelledby="trust-title">
+      <article class="home-trust-panel">
+        <span class="eyebrow eyebrow-light">Zakaj STK</span>
+        <h2 id="trust-title">Potrjene informacije za lažje načrtovanje</h2>
+        <p>Neodvisen pregled potrjenih tekov z uradnimi povezavami in redno posodobljenimi podatki.</p>
+        <ul class="home-trust-benefits">
+          <li>Potrjeni javni dogodki</li>
+          <li>Uradni razpisi in prijave</li>
+          <li>Redno pregledani podatki</li>
+        </ul>
+        <a class="home-utility-link" href="/o-projektu-in-zasebnost/">O projektu in zasebnosti</a>
+      </article>
     </section>
 
     <section class="section container home-utility-section" aria-labelledby="utility-title">
@@ -843,13 +783,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     return Number.isFinite(dateValue) ? dateValue : null;
   };
 
-  const compareEventDateThenTitle = (a: ApiRecord, b: ApiRecord) => {
-    const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
-    if (dateDifference !== 0) return dateDifference;
-
-    return getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
-  };
-
   const eventRowKey = (event: ApiRecord) => {
     const matchedMasterRow = pick(event, ['__matched_master_row']);
     if (matchedMasterRow) return matchedMasterRow;
@@ -1017,66 +950,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     }
 
     return rankedEvents;
-  };
-
-
-  const renderHeroPreview = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
-    const titleElement = document.querySelector('[data-hero-preview-title]');
-    const helperElement = document.querySelector('[data-hero-preview-helper]');
-    const listElement = document.querySelector('[data-hero-preview-list]');
-    if (!listElement) return;
-
-    const todayValue = todayStartValue();
-    const cutoffValue = daysFromToday(14);
-    const selectedIds = new Set<string>();
-    const upcomingInterestEvents: ApiRecord[] = [];
-
-    for (const event of interestEvents) {
-      if (upcomingInterestEvents.length >= 3) break;
-      const dateValue = eventDateValue(event);
-      if (dateValue === null || dateValue < todayValue || dateValue > cutoffValue) continue;
-      const identity = eventIdentity(event);
-      if (identity && selectedIds.has(identity)) continue;
-      if (identity) selectedIds.add(identity);
-      upcomingInterestEvents.push(event);
-    }
-
-    const fallbackEvents: ApiRecord[] = [];
-    const nearestFallbackEvents = fallbackCandidates
-      .filter((event) => {
-        const dateValue = eventDateValue(event);
-        return dateValue !== null && dateValue >= todayValue;
-      })
-      .sort(compareEventDateThenTitle);
-    for (const event of nearestFallbackEvents) {
-      if (upcomingInterestEvents.length + fallbackEvents.length >= 3) break;
-      const identity = eventIdentity(event);
-      if (identity && selectedIds.has(identity)) continue;
-      if (identity) selectedIds.add(identity);
-      fallbackEvents.push(event);
-    }
-    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents].sort(compareEventDateThenTitle);
-
-    if (titleElement) {
-      titleElement.textContent = 'Izpostavljeno v naslednjih dneh';
-    }
-    if (helperElement) {
-      helperElement.textContent = 'Izbor prihodnjih tekov.';
-    }
-
-    if (!previewEvents.length) {
-      listElement.innerHTML = '<li><span>kmalu</span><strong>Prihajajoči teki bodo prikazani tukaj.</strong></li>';
-      return;
-    }
-
-    listElement.innerHTML = previewEvents.map((event) => {
-      const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const detailPath = eventDetailPath(event);
-      const title = getDisplayEventTitle(getEventTitle(event));
-      const place = getEventField(event, 'kraj', ['place', 'city', 'location']);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
-    }).join('');
-    initSavedRaceButtons(listElement);
   };
 
   type DeadlineType = 'early' | 'registration';
@@ -1296,8 +1169,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
-      renderHeroPreview(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1475,7 +1346,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
     try {
       const [recentResult, masterResult] = await Promise.allSettled([
-        loadJson('/recent_updates?days=7&limit=20'),
+        loadJson('/recent_updates?days=7&limit=4'),
         loadJson('/')
       ]);
       if (recentResult.status === 'rejected') throw recentResult.reason;
@@ -1488,7 +1359,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         ...updatedEvents,
         ...newEvents,
         ...confirmedEvents
-      ].slice(0, 20);
+      ].slice(0, 4);
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 

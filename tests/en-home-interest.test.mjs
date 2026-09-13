@@ -34,25 +34,9 @@ describe('English home interest section', () => {
     assert.ok(source.includes('<h3><a href="${escapeHtml(eventDetailPath(event))}">'));
   });
 
-  it('links all homepage event title surfaces through English detail paths', () => {
+  it('links deadline and race collection titles through English detail paths', () => {
     assert.ok(source.includes('<strong><a href="${escapeHtml(eventDetailPath(item.event))}">${escapeHtml(item.title)}</a></strong>'));
-    assert.ok(source.includes('<strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>'));
     assert.ok(source.includes('<h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>'));
     assert.doesNotMatch(source, /buildEventDetailPath/);
-  });
-});
-
-describe('English home hero preview', () => {
-  it('uses interest events plus nearest fallback events and hides interest vote counts', () => {
-    assert.match(source, /const interestPreviewEvents = await getInterestPreviewRaces\(events, 20\)\.catch\(\(\) => \[\]\);/);
-    assert.match(source, /renderHeroPreview\(interestPreviewEvents, events\);/);
-    assert.match(source, /helperElement\.textContent = 'A selection of upcoming races\.';/);
-    assert.doesNotMatch(source, /Most votes among upcoming races\./);
-  });
-
-  it('sorts the final hero preview by date and links titles to English detail pages', () => {
-    assert.match(source, /const previewEvents = \[\.\.\.upcomingInterestEvents, \.\.\.fallbackEvents\]\.sort\(compareEventDateThenTitle\);/);
-    assert.match(source, /const detailPath = eventDetailPath\(event\);/);
-    assert.ok(source.includes('<strong><a href=\"${escapeHtml(detailPath)}\">'));
   });
 });
