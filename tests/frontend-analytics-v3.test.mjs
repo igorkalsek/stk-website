@@ -133,6 +133,12 @@ describe('frontend analytics v3 contract', () => {
     assert.match(enFinder, /placement: 'personalized_results'/);
   });
 
+  it('keeps calendar interactions on their card placement and supports target-url redaction', () => {
+    assert.match(analytics, /calendar_add_clicked[^\n]+placement/);
+    assert.match(analytics, /getAnalyticsTargetUrl\(link, link\.href\)/);
+    assert.match(analytics, /shouldRedactAnalyticsTargetUrl\(link\) \? '' : getStkTargetDomain\(link\.href\)/);
+  });
+
   it('centralizes activation tracking after the persisted false to true transition', () => {
     assert.equal((slFinder.match(/writeRacePreferences\(/g) ?? []).length, 1);
     assert.match(slFinder, /const persistRacePreferences = \(nextPreferences: RacePreferencesV1\)/);
@@ -238,14 +244,14 @@ describe('frontend analytics v3 contract', () => {
   });
 
 
-  it('tracks one related-race child-link click with target related card identity', async () => {
+  it('tracks related and featured card actions with their inherited placement', async () => {
     const payloads = [];
     let clickHandler;
     class FakeElement {
       constructor({ dataset = {}, parent = null, href = '', tag = 'div', className = '', target = '' } = {}) {
         this.dataset = dataset;
         this.parent = parent;
-        this.href = href ? `https://tekaski-koledar.si${href}` : '';
+        this.href = href ? (/^https?:/.test(href) ? href : `https://tekaski-koledar.si${href}`) : '';
         this.rawHref = href;
         this.tag = tag;
         this.className = className;
@@ -263,6 +269,7 @@ describe('frontend analytics v3 contract', () => {
         let node = this;
         while (node) {
           if (selector.includes('[data-stk-event-id]') && node.dataset.stkEventId) return node;
+          if (selector.includes('[data-analytics-event-name]') && node.dataset.analyticsEventName) return node;
           if (selector.includes('.related-race-card') && node.className.split(' ').includes('related-race-card')) return node;
           node = node.parent;
         }
@@ -293,6 +300,14 @@ describe('frontend analytics v3 contract', () => {
     initializeStkAnalyticsClickTracking();
     clickHandler({ target: link });
 
+    const featuredCard = new FakeElement({
+      className: 'home-featured-race',
+      dataset: { analyticsEventId: 'r000226', analyticsEventName: 'Featured race', analyticsEventDate: '2026-09-26', analyticsEventYear: '2026', analyticsPlacement: 'home_featured' }
+    });
+    clickHandler({ target: new FakeElement({ tag: 'a', href: '/tek/2026/r000226-featured-race/', parent: featuredCard }) });
+    clickHandler({ target: new FakeElement({ tag: 'a', href: 'https://example.com/register?token=private', parent: featuredCard, dataset: { analyticsLinkType: 'prijava', analyticsRedactTargetUrl: 'true' }, target: '_blank' }) });
+    clickHandler({ target: new FakeElement({ tag: 'a', href: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=private', parent: featuredCard, dataset: { analyticsCalendarType: 'google', analyticsRedactTargetUrl: 'true' }, target: '_blank' }) });
+
     const sent = await Promise.all(payloads);
     if (originalElement) globalThis.Element = originalElement;
     else delete globalThis.Element;
@@ -300,11 +315,18 @@ describe('frontend analytics v3 contract', () => {
     else delete globalThis.HTMLElement;
     if (originalHTMLAnchorElement) globalThis.HTMLAnchorElement = originalHTMLAnchorElement;
     else delete globalThis.HTMLAnchorElement;
-    assert.equal(sent.length, 1);
+    assert.equal(sent.length, 4);
     assert.equal(sent[0].event_type, 'related_race_clicked');
     assert.equal(sent[0].event_id, 'rel-123');
     assert.equal(sent[0].event_year, '2026');
     assert.equal(sent[0].placement, 'related_races');
+    assert.deepEqual(sent.slice(1).map(({ event_type, placement }) => ({ event_type, placement })), [
+      { event_type: 'event_card_clicked', placement: 'home_featured' },
+      { event_type: 'external_link_clicked', placement: 'home_featured' },
+      { event_type: 'calendar_add_clicked', placement: 'home_featured' }
+    ]);
+    assert.equal(sent[2].target_url, 'https://example.com/register');
+    assert.equal(sent[3].target_url, 'https://calendar.google.com/calendar/render');
   });
 
 

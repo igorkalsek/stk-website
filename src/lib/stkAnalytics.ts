@@ -537,13 +537,14 @@ export const initializeStkAnalyticsClickTracking = () => {
 
     const calendarType = inferCalendarType(link);
     if (calendarType) {
-      trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType, action_type: `${calendarType}_calendar_click`, target_url: link.href, target_domain: getStkTargetDomain(link.href) });
+      const targetUrl = getAnalyticsTargetUrl(link, link.href);
+      trackStkEvent({ event_type: 'calendar_add_clicked', ...context, calendar_type: calendarType, action_type: `${calendarType}_calendar_click`, target_url: targetUrl, target_domain: shouldRedactAnalyticsTargetUrl(link) ? '' : getStkTargetDomain(link.href), placement });
       return;
     }
 
     const isVote = link.dataset.analyticsAction === 'vote' || /glasuj|vote/i.test(link.textContent ?? '');
     if (isVote) {
-      trackStkEvent({ event_type: 'vote_clicked', ...context, action_type: 'vote_click', target_url: link.href, target_domain: getStkTargetDomain(link.href) });
+      trackStkEvent({ event_type: 'vote_clicked', ...context, action_type: 'vote_click', target_url: link.href, target_domain: getStkTargetDomain(link.href), placement });
       return;
     }
 

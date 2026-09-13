@@ -34,7 +34,14 @@ describe('homepage recent updates rendering', () => {
   });
 
   it('keeps the updates block compact by rendering at most four entries', () => {
-    assert.match(slSource, /\]\.slice\(0, 4\);/);
-    assert.match(enSource, /\]\.slice\(0, 4\);/);
+    assert.match(slSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
+    assert.match(enSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
+  });
+
+  it('fails closed instead of guessing when canonical recency is unavailable', () => {
+    for (const source of [slSource, enSource]) {
+      assert.match(source, /RECENT_UPDATES_GLOBAL_ORDER = NOT_AVAILABLE_FROM_CONTRACT/);
+      assert.doesNotMatch(source, /sort\([^\n]*datum/);
+    }
   });
 });

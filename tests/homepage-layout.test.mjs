@@ -51,6 +51,8 @@ test('homepages preserve race sections and follow the compact editorial order', 
   assert.match(pages.en, /<h2 id="nearest-title">Upcoming races<\/h2>/);
   for (const [lang, source] of Object.entries(pages)) {
     const orderedSections = [
+      'home-stats-strip',
+      'home-featured-upcoming',
       'home-current-sections',
       'home-secondary-section',
       'home-update-section',
@@ -64,6 +66,20 @@ test('homepages preserve race sections and follow the compact editorial order', 
         `${lang} should place ${orderedSections[index - 1]} before ${orderedSections[index]}`
       );
     }
+  }
+});
+
+test('homepages restore a compact stats strip and featured discovery before current races', () => {
+  assert.match(pages.sl, /home-stats-strip[\s\S]*confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
+  assert.match(pages.en, /home-stats-strip[\s\S]*confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
+  assert.match(pages.sl, /<h2 id="featured-upcoming-title">Izpostavljeno v naslednjih dneh<\/h2>/);
+  assert.match(pages.en, /<h2 id="featured-upcoming-title">Featured in the coming days<\/h2>/);
+  for (const source of Object.values(pages)) {
+    assert.match(source, /selectFeaturedUpcomingEvents\(interestEvents, fallbackCandidates/);
+    assert.match(source, /limit: 3/);
+    assert.match(source, /cutoffValue: daysFromToday\(14\)/);
+    assert.match(source, /data-analytics-placement="home_featured"/);
+    assert.doesNotMatch(source, /home_featured_upcoming/);
   }
 });
 
