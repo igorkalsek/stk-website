@@ -8,9 +8,6 @@ const pages = {
 };
 
 const requiredSelectors = [
-  'data-hero-preview-title',
-  'data-hero-preview-helper',
-  'data-hero-preview-list',
   'data-stat',
   'data-registration-deadlines-section',
   'data-registration-deadlines',
@@ -39,25 +36,43 @@ test('homepages include final utility cards and expected links', () => {
 
 
 
-test('mobile compaction keeps every homepage entry link available', () => {
-  assert.match(pages.sl, /href="\/iskalnik-tekov\/">Odprite iskalnik<\/a>[\s\S]*href="\/moji-teki\/">Odprite Moje teke<\/a>[\s\S]*href="\/stk-tekobot\/">Odprite Tekobota<\/a>/);
-  assert.match(pages.en, /href="\/en\/find-races\/">Open race search<\/a>[\s\S]*href="\/en\/my-races\/">Open My races<\/a>[\s\S]*href="\/en\/stk-tekobot\/">Open Tekobot<\/a>/);
+test('hero keeps the primary paths and removes the duplicate promotional trio', () => {
+  assert.match(pages.sl, /href="\/iskalnik-tekov\/">Najdi tek<\/a>[\s\S]*href="\/moji-teki\/">Moji teki<\/a>[\s\S]*href="\/stk-tekobot\/">Vprašajte Tekobota<\/a>/);
+  assert.match(pages.en, /href="\/en\/find-races\/">Find a race<\/a>[\s\S]*href="\/en\/my-races\/">My races<\/a>[\s\S]*href="\/en\/stk-tekobot\/">Ask STK Tekobot<\/a>/);
+  for (const [lang, source] of Object.entries(pages)) {
+    assert.doesNotMatch(source, /home-entry-grid|home-entry-card|hero-preview/, `${lang} should not render repeated promotional or race-preview blocks`);
+  }
+  assert.doesNotMatch(pages.sl, /Najdite pravi tek|Načrtujte svoje teke/);
+  assert.doesNotMatch(pages.en, /Find the right race|Plan your races/);
 });
 
-test('homepages label the nearest-event section accurately and place current races before statistics', () => {
+test('homepages preserve race sections and follow the compact editorial order', () => {
   assert.match(pages.sl, /<h2 id="nearest-title">Naslednji teki<\/h2>/);
   assert.match(pages.en, /<h2 id="nearest-title">Upcoming races<\/h2>/);
   for (const [lang, source] of Object.entries(pages)) {
-    assert.ok(source.indexOf('home-current-sections') < source.indexOf('home-calendar-stats'), `${lang} should show current races before statistics`);
+    const orderedSections = [
+      'home-current-sections',
+      'home-secondary-section',
+      'home-update-section',
+      'home-calendar-stats',
+      'home-trust-section',
+      'home-utility-section'
+    ];
+    for (let index = 1; index < orderedSections.length; index += 1) {
+      assert.ok(
+        source.indexOf(orderedSections[index - 1]) < source.indexOf(orderedSections[index]),
+        `${lang} should place ${orderedSections[index - 1]} before ${orderedSections[index]}`
+      );
+    }
   }
 });
 
-test('homepages use neutral preview copy before and after loading', () => {
-  assert.match(pages.sl, /data-hero-preview-helper>Izbor prihodnjih tekov\.<\/p>/);
-  assert.match(pages.sl, /helperElement\.textContent = 'Izbor prihodnjih tekov\.';/);
+test('homepages use neutral interest copy before and after loading', () => {
+  assert.match(pages.sl, /data-top-description>Izbor prihodnjih tekov\.<\/p>/);
+  assert.match(pages.sl, /description\.textContent = 'Izbor prihodnjih tekov\.';/);
   assert.doesNotMatch(pages.sl, /Po glasovih tekačev|zanimanju obiskovalcev/);
-  assert.match(pages.en, /data-hero-preview-helper>A selection of upcoming races\.<\/p>/);
-  assert.match(pages.en, /helperElement\.textContent = 'A selection of upcoming races\.';/);
+  assert.match(pages.en, /data-top-description>A selection of upcoming races\.<\/p>/);
+  assert.match(pages.en, /description\.textContent = 'A selection of upcoming races\.';/);
   assert.doesNotMatch(pages.en, /runner votes|visitor interest/);
 });
 

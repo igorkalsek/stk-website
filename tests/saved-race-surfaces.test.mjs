@@ -21,8 +21,8 @@ const allSurfaceSources = [files.homeSl, files.homeEn, files.familySl, files.fam
 describe('saved race button surfaces', () => {
   it('adds saved race buttons to all requested Slovenian and English surfaces', () => {
     allSurfaceSources.forEach((source) => assert.match(source, /data-saved-race-button/));
-    assert.match(files.homeSl, /data-hero-preview-list[\s\S]*data-nearest-events[\s\S]*data-top-events/);
-    assert.match(files.homeEn, /data-hero-preview-list[\s\S]*data-nearest-events[\s\S]*data-top-events/);
+    assert.match(files.homeSl, /data-nearest-events[\s\S]*data-top-events/);
+    assert.match(files.homeEn, /data-nearest-events[\s\S]*data-top-events/);
   });
 
   it('uses stable event IDs and the required data attributes', () => {
@@ -52,13 +52,9 @@ describe('saved race button surfaces', () => {
 
 
 
-  it('uses icon-only saved race buttons in the compact homepage hero preview only', () => {
-    assert.match(files.homeSl, /renderSavedRaceButton\(event, title, dateValue, place, true\)/);
-    assert.match(files.homeEn, /renderSavedRaceButton\(event, title, dateValue, place, true\)/);
-    assert.match(files.homeSl, /data-saved-race-icon-only="true"/);
-    assert.match(files.homeEn, /data-saved-race-icon-only="true"/);
-    assert.match(files.homeSl, /data-saved-race-remove-label="Odstrani iz Mojih tekov"/);
-    assert.match(files.homeEn, /data-saved-race-remove-label="Remove from My races"/);
+  it('keeps full save controls on the remaining homepage race collections', () => {
+    assert.doesNotMatch(files.homeSl, /renderSavedRaceButton\([^\n]+, true\)/);
+    assert.doesNotMatch(files.homeEn, /renderSavedRaceButton\([^\n]+, true\)/);
     assert.match(files.homeSl, /iconOnly \? '' : '<span data-saved-race-label>Shrani tek<\/span>'/);
     assert.match(files.homeEn, /iconOnly \? '' : '<span data-saved-race-label>Save race<\/span>'/);
     [files.familySl, files.familyEn, files.votedSl, files.votedEn, files.related].forEach((source) => {
