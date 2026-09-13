@@ -28,11 +28,11 @@ const originalElement = globalThis.Element;
 const originalHTMLElement = globalThis.HTMLElement;
 const originalHTMLAnchorElement = globalThis.HTMLAnchorElement;
 
-const installAnalyticsBrowser = () => {
+const installAnalyticsBrowser = ({ optedOut = false } = {}) => {
   const payloads = [];
   globalThis.window = {
     location: { pathname: '/test/', search: '', href: 'https://tekaski-koledar.si/test/' },
-    localStorage: { getItem: () => null },
+    localStorage: { getItem: (key) => optedOut && key === 'stkAnalyticsOptOut' ? 'true' : null },
     setTimeout: (callback) => { callback(); return 0; }
   };
   globalThis.document = { referrer: '', body: {} };
@@ -58,7 +58,7 @@ afterEach(() => {
 });
 describe('frontend analytics v3 contract', () => {
   it('keeps existing events and allows all new frontend event types', () => {
-    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'personalized_results_used']) {
+    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'preference_mode_activated', 'personalized_results_used']) {
       assert.match(analytics, new RegExp(`'${eventType}'`));
     }
   });
@@ -68,6 +68,44 @@ describe('frontend analytics v3 contract', () => {
       assert.match(analytics, new RegExp(`'${placement}'`));
     }
     assert.match(analytics, /placement: normalizePlacement\(payload\.placement\)/);
+  });
+
+  it('emits a privacy-minimal site-level preference activation body', async () => {
+    const payloads = installAnalyticsBrowser();
+    trackStkEvent({
+      event_type: 'preference_mode_activated',
+      page_path: '/en/find-races/?q=private-query&region=Gorenjska',
+      language: 'en',
+      placement: 'finder_results',
+      event_id: 'private-race',
+      event_name: 'Private race',
+      event_date: '2026-09-13',
+      event_year: '2026',
+      event_key: '2026:private-race',
+      target_url: 'https://example.com/private',
+      action_type: 'private-action',
+      search_query: 'private-query',
+      filters_json: '{"region":"Gorenjska"}',
+      results_count: 42,
+      target_domain: 'example.com',
+      calendar_type: 'google',
+      referrer: 'https://example.com/private-referrer',
+      notes: 'private note'
+    });
+
+    assert.deepEqual(await Promise.all(payloads), [{
+      event_type: 'preference_mode_activated',
+      page_path: '/en/find-races/',
+      language: 'en',
+      user_agent_group: 'desktop',
+      placement: 'personalized_results'
+    }]);
+  });
+
+  it('honors analytics opt-out for preference activation', () => {
+    const payloads = installAnalyticsBrowser({ optedOut: true });
+    trackStkEvent({ event_type: 'preference_mode_activated', language: 'sl', placement: 'personalized_results' });
+    assert.equal(payloads.length, 0);
   });
 
   it('tracks save and unsave only after an actual local state change', () => {
@@ -83,14 +121,27 @@ describe('frontend analytics v3 contract', () => {
   });
 
   it('assigns placements for finder cards, related races, my races, and personalized results', () => {
-    assert.match(slFinder, /data-analytics-placement="finder_results"/);
-    assert.match(enFinder, /data-analytics-placement="finder_results"/);
+    assert.match(slFinder, /const personalizedRankingUsed = filters\.sort === 'my-races' && hasPreferences\(\)/);
+    assert.match(slFinder, /const analyticsPlacement = personalizedRankingUsed \? 'personalized_results' : 'finder_results'/);
+    assert.match(slFinder, /renderEvent\(event, analyticsPlacement\)/);
+    assert.match(slFinder, /data-analytics-placement="\$\{analyticsPlacement\}"/);
     assert.match(slFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.year\)\}"/);
     assert.match(enFamily, /data-analytics-placement="family_results"[\s\S]{0,260}data-analytics-event-year="\$\{escapeHtml\(event\.year\)\}"/);
     assert.match(related, /data-analytics-placement="related_races"/);
     assert.match(myRacesClient, /data-analytics-placement="my_races"/);
     assert.match(slFinder, /placement: 'personalized_results'/);
     assert.match(enFinder, /placement: 'personalized_results'/);
+  });
+
+  it('centralizes activation tracking after the persisted false to true transition', () => {
+    assert.equal((slFinder.match(/writeRacePreferences\(/g) ?? []).length, 1);
+    assert.match(slFinder, /const persistRacePreferences = \(nextPreferences: RacePreferencesV1\)/);
+    assert.match(slFinder, /const previousPreferences = racePreferences;[\s\S]{0,320}isRacePreferenceActivation\(previousPreferences, racePreferences\)/);
+    assert.match(slFinder, /isRacePreferenceActivation\(previousPreferences, racePreferences\)[\s\S]{0,220}event_type: 'preference_mode_activated'/);
+    assert.match(slFinder, /savePreferencesButton[\s\S]{0,420}persistRacePreferences\(next\)/);
+    assert.match(slFinder, /persistPreferenceActiveState\(true\)/);
+    assert.match(slFinder, /persistPreferenceActiveState\(sortSelect\.value === 'my-races'\)/);
+    assert.doesNotMatch(slFinder, /loadEvents[\s\S]{0,500}preference_mode_activated/);
   });
 
   it('tracks related clicks with target card identity and suppresses duplicate listener registration', () => {

@@ -6,7 +6,7 @@
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
-  import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
+  import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, isRacePreferenceActivation, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
   import { buildPrimaryActions } from '../utils-race-detail-view';
   import { renderActionIcon } from '../utils-action-icons';
   import { initSavedRaceButtons } from '../saved-races-client';
@@ -813,12 +813,23 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const state = getRacePreferencePanelState({ preferences: racePreferences, editing: preferencesEditing });
     setPreferencePanelState(state, focusTarget);
   };
+  const persistRacePreferences = (nextPreferences: RacePreferencesV1) => {
+    const previousPreferences = racePreferences;
+    const result = writeRacePreferences(getStorage(), nextPreferences);
+    racePreferences = result.preferences;
+    preferencesPersistent = result.persistent;
+    if (isRacePreferenceActivation(previousPreferences, racePreferences)) {
+      trackStkEvent({
+        event_type: 'preference_mode_activated',
+        language: locale.language,
+        placement: 'personalized_results'
+      });
+    }
+  };
   const persistPreferenceActiveState = (active: boolean) => {
     const validated = validateRacePreferences({ ...racePreferences, active });
     if (!validated) return;
-    const result = writeRacePreferences(getStorage(), validated);
-    racePreferences = result.preferences;
-    preferencesPersistent = result.persistent;
+    persistRacePreferences(validated);
   };
   const populatePreferenceRegions = () => {
     if (!preferenceRegionList) return;
@@ -893,7 +904,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     return '';
   };
 
-  const renderEvent = (event: RaceEvent) => {
+  const renderEvent = (event: RaceEvent, analyticsPlacement: 'finder_results' | 'personalized_results') => {
     const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
     const metaItems = [
@@ -955,7 +966,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       : '';
 
     return `
-      <article class="event-card search-event-card search-event-row" data-analytics-placement="finder_results" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
+      <article class="event-card search-event-card search-event-row" data-analytics-placement="${analyticsPlacement}" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
         <div class="search-event-date search-event-row-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
           ${event.familyFriendly ? `<span class="pill pill-family">${locale.familyFriendlyLabel}</span>` : ''}
@@ -1000,7 +1011,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     state.filtered = filterFinderEvents(filters, deferAdditionalSelection);
     preferenceMatches.clear();
     let personalizedResultsSignature = '';
-    if (filters.sort === 'my-races' && hasPreferences()) {
+    const personalizedRankingUsed = filters.sort === 'my-races' && hasPreferences();
+    if (personalizedRankingUsed) {
       const matches = rankRacesForPreferences({ events: state.filtered as any, preferences: racePreferences });
       matches.forEach((match) => preferenceMatches.set(match.event.id, match));
       state.filtered = matches.map((match) => match.event as unknown as RaceEvent);
@@ -1061,7 +1073,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     }
 
     if (resultsElement) {
-      resultsElement.innerHTML = visibleEvents.map(renderEvent).join('');
+      const analyticsPlacement = personalizedRankingUsed ? 'personalized_results' : 'finder_results';
+      resultsElement.innerHTML = visibleEvents.map((event) => renderEvent(event, analyticsPlacement)).join('');
       initSavedRaceButtons(resultsElement);
     }
     if (moreElement) moreElement.hidden = visibleCount >= count;
@@ -1146,8 +1159,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   savePreferencesButton?.addEventListener('click', () => {
     const next = collectPreferenceControls(true);
     if (!next || (!next.distanceBuckets.length && !next.surfaceCategories.length && !next.regions.length && !next.familyFriendly)) { setPreferenceMessage(String(locale.messages.choosePreference)); return; }
-    const result = writeRacePreferences(getStorage(), next);
-    racePreferences = result.preferences; preferencesPersistent = result.persistent;
+    persistRacePreferences(next);
     preferencesEditing = false;
     setPreferenceMessage(preferencesPersistent ? String(locale.messages.preferencesSaved) : String(locale.messages.preferencesSessionOnly));
     if (sortSelect) sortSelect.value = 'my-races';

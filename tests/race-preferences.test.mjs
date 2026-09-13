@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   RACE_PREFERENCES_STORAGE_KEY,
   getRacePreferenceReasonLabels,
+  isRacePreferenceActivation,
   parseRacePreferencesJson,
   rankRacesForPreferences,
   readRacePreferences,
@@ -27,6 +28,22 @@ test('storage validation accepts valid V1 and sanitizes malformed values', () =>
 
 test('empty preferences do not activate personalized mode', () => {
   assert.equal(validateRacePreferences({ version: 1, distanceBuckets: [], surfaceCategories: [], regions: [], familyFriendly: false, active: true }).active, false);
+});
+
+test('preference activation is only the false to true state transition', () => {
+  const transitions = [
+    [false, false, false],
+    [false, true, true],
+    [true, true, false],
+    [true, false, false]
+  ];
+  const emitted = [];
+  for (const [previous, next, expected] of transitions) {
+    const activated = isRacePreferenceActivation({ active: previous }, { active: next });
+    assert.equal(activated, expected, `${previous} -> ${next}`);
+    if (activated) emitted.push('preference_mode_activated');
+  }
+  assert.deepEqual(emitted, ['preference_mode_activated']);
 });
 
 test('storage failures keep in-memory preferences and reset removes the key', () => {

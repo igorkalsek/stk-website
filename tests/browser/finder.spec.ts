@@ -535,8 +535,9 @@ test('supports Back/Forward URL restoration without duplicate search analytics',
 
 test('keeps Races for me private while emitting only safe personalized analytics', async ({ page }) => {
   const analytics = await mockFinderApis(page);
-  await page.goto('/en/find-races/?q=private-query');
+  await page.goto('/en/find-races/?q=Ljubljana');
   await expect(page.locator('[data-result-count]')).toContainText(/race/i);
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'finder_results');
   await page.getByRole('button', { name: 'Set preferences' }).click();
   await page.locator('[data-preference-distance="over-5-to-10"]').check();
   await page.locator('[data-preference-surface="trail"]').check();
@@ -544,10 +545,67 @@ test('keeps Races for me private while emitting only safe personalized analytics
   await expect(page.locator('[data-filter="sort"]')).toHaveValue('my-races');
   await expect(page).not.toHaveURL(/my-races/);
   await expect.poll(() => page.evaluate(() => localStorage.getItem('stkRacePreferencesV1') ?? '')).toContain('over-5-to-10');
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'personalized_results');
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'preference_mode_activated').length).toBe(1);
+  const activation = analytics.find((event: any) => event.event_type === 'preference_mode_activated') as any;
+  expect(activation).toEqual({
+    event_type: 'preference_mode_activated',
+    page_path: '/en/find-races/',
+    language: 'en',
+    user_agent_group: 'desktop',
+    placement: 'personalized_results'
+  });
+  const personalizedCard = page.locator('.search-event-card').first();
+  await personalizedCard.locator('[data-saved-race-button]').click();
+  await personalizedCard.locator('[data-saved-race-button]').click();
+  for (const selector of ['.search-event-title-link', 'a[href="https://example.com/register"]']) {
+    const link = personalizedCard.locator(selector);
+    await link.evaluate((element) => element.addEventListener('click', (event) => event.preventDefault(), { once: true }));
+    await link.click();
+  }
+  for (const eventType of ['race_saved', 'race_unsaved', 'event_card_clicked', 'external_link_clicked']) {
+    await expect.poll(() => analytics.find((event: any) => event.event_type === eventType)?.placement).toBe('personalized_results');
+  }
   await expect.poll(() => analytics.find((event: any) => event.event_type === 'personalized_results_used')).toBeTruthy();
   const personalized = analytics.find((event: any) => event.event_type === 'personalized_results_used') as any;
-  expect(personalized.filters_json).not.toContain('private-query');
+  expect(personalized.filters_json).not.toContain('Ljubljana');
   expect(personalized.filters_json).not.toContain('over-5-to-10');
+});
+
+test('tracks each real preference activation once without page-load, edit, render, filter, deactivation or reset false positives', async ({ page }) => {
+  await seedStoredPreferences(page, true);
+  const analytics = await mockFinderApis(page);
+  await page.goto('/en/find-races/');
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'personalized_results');
+  expect(analytics.filter((event: any) => event.event_type === 'preference_mode_activated')).toHaveLength(0);
+
+  await page.goto('/iskalnik-tekov/?year=2027');
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'personalized_results');
+  expect(analytics.filter((event: any) => event.event_type === 'preference_mode_activated')).toHaveLength(0);
+  await page.goto('/en/find-races/');
+
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await page.locator('[data-save-preferences]').click();
+  await page.locator('[data-filter="region"]').selectOption('Osrednjeslovenska');
+  await page.reload();
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'personalized_results');
+  expect(analytics.filter((event: any) => event.event_type === 'preference_mode_activated')).toHaveLength(0);
+
+  await page.getByRole('button', { name: 'Show all races' }).click();
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'finder_results');
+  expect(analytics.filter((event: any) => event.event_type === 'preference_mode_activated')).toHaveLength(0);
+
+  await page.getByRole('button', { name: 'Show races for me' }).click();
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'preference_mode_activated').length).toBe(1);
+  await expect(page.locator('.search-event-card').first()).toHaveAttribute('data-analytics-placement', 'personalized_results');
+
+  await page.locator('[data-filter="sort"]').selectOption('date');
+  await page.locator('[data-filter="sort"]').selectOption('my-races');
+  await expect.poll(() => analytics.filter((event: any) => event.event_type === 'preference_mode_activated').length).toBe(2);
+
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await page.getByRole('button', { name: 'Reset preference' }).click();
+  expect(analytics.filter((event: any) => event.event_type === 'preference_mode_activated')).toHaveLength(2);
 });
 
 

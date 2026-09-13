@@ -49,6 +49,11 @@ const uniqueLimitedStrings = (values: unknown, allowed?: readonly string[]) => {
 export const hasMeaningfulRacePreferences = (preferences: Pick<RacePreferencesV1, 'distanceBuckets' | 'surfaceCategories' | 'regions' | 'familyFriendly'>) =>
   preferences.distanceBuckets.length > 0 || preferences.surfaceCategories.length > 0 || preferences.regions.length > 0 || preferences.familyFriendly;
 
+export const isRacePreferenceActivation = (
+  previous: Pick<RacePreferencesV1, 'active'>,
+  next: Pick<RacePreferencesV1, 'active'>
+) => previous.active === false && next.active === true;
+
 export const validateRacePreferences = (value: unknown): RacePreferencesV1 | null => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
