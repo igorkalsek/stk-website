@@ -19,6 +19,7 @@ type StkAnalyticsEventType =
   | 'achievement_viewed'
   | 'region_discovery_clicked'
   | 'my_races_bulk_ics_exported'
+  | 'preference_mode_activated'
   | 'personalized_results_used'
   | 'organizer_action_clicked';
 
@@ -121,6 +122,7 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'achievement_viewed',
   'region_discovery_clicked',
   'my_races_bulk_ics_exported',
+  'preference_mode_activated',
   'personalized_results_used',
   'organizer_action_clicked'
 ]);
@@ -221,7 +223,7 @@ const getPagePath = () => {
   return `${window.location.pathname}${window.location.search}`.slice(0, MAX_FIELD_LENGTH);
 };
 
-const getOrganizerPagePath = (value: unknown) => {
+const getSiteLevelPagePath = (value: unknown) => {
   const fallbackPath = typeof window === 'undefined' ? '' : window.location.pathname;
   const pagePath = trimText(value || fallbackPath);
   if (!pagePath) return '';
@@ -299,10 +301,20 @@ const buildBody = (payload: StkAnalyticsPayload) => {
     placement: normalizePlacement(payload.placement)
   };
 
+  if (body.event_type === 'preference_mode_activated') {
+    return {
+      event_type: body.event_type,
+      page_path: getSiteLevelPagePath(payload.page_path),
+      language: body.language,
+      user_agent_group: body.user_agent_group,
+      placement: 'personalized_results'
+    } as typeof body;
+  }
+
   if (body.event_type === 'organizer_action_clicked') {
     return {
       event_type: body.event_type,
-      page_path: getOrganizerPagePath(payload.page_path),
+      page_path: getSiteLevelPagePath(payload.page_path),
       language: body.language,
       user_agent_group: body.user_agent_group,
       action_type: body.action_type,
