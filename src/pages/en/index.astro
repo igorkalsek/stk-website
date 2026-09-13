@@ -29,63 +29,16 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       <div class="home-hero-card hero-card">
         <div class="home-hero-main">
           <div class="home-hero-copy hero-content">
-            <div class="home-hero-brand">
-              <img class="home-hero-logo" src="/stk-logo.jpeg" alt="" aria-hidden="true" />
-              <div>
-                <span class="home-hero-brand-name">Slovenski Tekaški Koledar</span>
-                <span class="home-hero-brand-note">Slovenia’s independent running guide</span>
-              </div>
-            </div>
             <h1 id="hero-title">Your race starts here</h1>
-            <p class="hero-lead">Confirmed races, registration links, official information and practical details in one place.</p>
-            <p class="hero-sublead">
-              Search by date, region, terrain or distance, then save interesting events to My races.
-            </p>
+            <p class="hero-lead">Confirmed races, registration deadlines and official links in one place.</p>
             <div class="home-hero-actions hero-actions" aria-label="Main links">
               <a class="button button-primary hero-primary-cta" href="/en/find-races/">Find a race</a>
               <a class="button button-secondary hero-secondary-cta" href="/en/my-races/">My races</a>
               <a class="home-hero-text-link" href="/en/stk-tekobot/">Ask STK Tekobot</a>
             </div>
           </div>
-          <aside class="hero-preview" aria-label="Calendar preview">
-            <div class="hero-preview-heading">
-              <span class="hero-preview-kicker" data-hero-preview-title>Highlighted in the next days</span>
-              <p class="hero-preview-helper" data-hero-preview-helper>A selection of upcoming races.</p>
-            </div>
-            <ol class="hero-preview-list" data-hero-preview-list>
-              <li><span>loading</span><strong>Upcoming races will appear here.</strong></li>
-            </ol>
-          </aside>
         </div>
       </div>
-
-      <div class="home-entry-grid" aria-label="Main options">
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><circle cx="14" cy="14" r="7"/><path d="m20 20 6 6"/></svg>
-          </div>
-          <h2>Find the right race</h2>
-          <p>Filter by date, region, terrain or distance.</p>
-          <a class="home-entry-link" href="/en/find-races/">Open race search</a>
-        </article>
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><rect x="7" y="8" width="18" height="18" rx="3"/><path d="M11 5v6M21 5v6M7 14h18M16 18l1.5 3 3.5.5-2.5 2.4.6 3.4-3.1-1.6-3.1 1.6.6-3.4-2.5-2.4 3.5-.5z"/></svg>
-          </div>
-          <h2>Plan your races</h2>
-          <p>Save races and follow registration deadlines.</p>
-          <a class="home-entry-link" href="/en/my-races/">Open My races</a>
-        </article>
-        <article class="home-entry-card">
-          <div class="home-entry-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" focusable="false"><rect x="6" y="9" width="20" height="15" rx="5"/><path d="M12 24l-4 4v-6M12 16h.01M20 16h.01M12 20h8M16 6v3"/></svg>
-          </div>
-          <h2>Ask STK Tekobot</h2>
-          <p>Find a race with a question.</p>
-          <a class="home-entry-link" href="/en/stk-tekobot/">Open Tekobot</a>
-        </article>
-      </div>
-
     </section>
 
     <section class="section container home-current-sections" aria-labelledby="current-title">
@@ -124,74 +77,61 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       </div>
     </section>
 
+    <section class="section container home-secondary-section" aria-labelledby="voted-title">
+      <div class="section-heading section-heading-with-action">
+        <div>
+          <h2 id="voted-title">Races attracting the most interest</h2>
+          <p data-top-description>A selection of upcoming races.</p>
+        </div>
+        <div class="section-heading-actions">
+          <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
+        </div>
+      </div>
+      <div class="card-grid" data-top-events>
+        <article class="event-card">
+          <h3>Loading data</h3>
+          <p>Selected upcoming races will appear here.</p>
+          <div class="event-meta">
+            <span class="pill">Upcoming races</span>
+          </div>
+        </article>
+      </div>
+      <p class="data-note" data-status="top">A selection of upcoming races.</p>
+    </section>
+
+    <section class="section container home-update-section" aria-labelledby="updates-title">
+      <article class="home-update-panel">
+        <div class="home-update-heading">
+          <span class="eyebrow eyebrow-light">Latest updates</span>
+          <h2 id="updates-title">Fresh calendar changes</h2>
+          <p>The latest calendar changes help you quickly see what was added or corrected.</p>
+        </div>
+        <div class="card-grid" data-recent-updates>
+          <article class="update-card">
+            <h3>Loading data</h3>
+            <p>Latest changes will appear here.</p>
+          </article>
+        </div>
+      </article>
+    </section>
+
     <section class="container home-calendar-stats my-stk" data-my-stk data-language="en" aria-labelledby="my-stk-title">
       <div data-my-stk-content><div class="my-stk-heading"><h2 id="my-stk-title">My STK</h2></div><div class="my-stk-loading" role="status" aria-label="Loading your running season"><span></span><span></span><span></span></div></div>
       <p class="my-stk-global-stats" data-my-stk-global-stats>STK 2026 · <span class="stat-loading" data-stat="confirmed_public_events_total" aria-label="Loading"></span> confirmed events · <span class="stat-loading" data-stat="family_friendly_total" aria-label="Loading"></span> family-friendly · <span class="stat-loading" data-stat="group_runs_total" aria-label="Loading"></span> group runs</p>
     </section>
 
-      <section class="section container home-secondary-section" aria-labelledby="voted-title">
-        <div class="section-heading section-heading-with-action">
-          <div>
-            <h2 id="voted-title">Races attracting the most interest</h2>
-            <p data-top-description>A selection of upcoming races.</p>
-          </div>
-          <div class="section-heading-actions">
-            <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
-          </div>
-        </div>
-        <div class="card-grid" data-top-events>
-          <article class="event-card">
-            <h3>Loading data</h3>
-            <p>Selected upcoming races will appear here.</p>
-            <div class="event-meta">
-              <span class="pill">Upcoming races</span>
-            </div>
-          </article>
-        </div>
-        <p class="data-note" data-status="top">A selection of upcoming races.</p>
-      </section>
-
-    <section class="section container home-trust-updates" aria-labelledby="trust-updates-title">
-      <div class="section-heading">
-        <h2 id="trust-updates-title">Reliable race information, regularly updated</h2>
-      </div>
-      <div class="home-trust-updates-grid">
-        <article class="home-trust-panel" aria-labelledby="trust-title">
-          <span class="eyebrow eyebrow-light">Why STK</span>
-          <h3 id="trust-title">Confirmed information for easier planning</h3>
-          <p>STK brings together confirmed races, official announcement and registration links, and practical details for planning your next event.</p>
-          <ul class="home-trust-benefits">
-            <li>Confirmed public races</li>
-            <li>Official announcement and registration links</li>
-            <li>Regularly reviewed and updated information</li>
-            <li>An independent overview of running events in Slovenia</li>
-          </ul>
-          <div class="feature-chip-list home-trust-chips" aria-label="Extra details in race search">
-            <span class="feature-chip">Entry fees</span>
-            <span class="feature-chip">Registration deadlines</span>
-            <span class="feature-chip">Elevation gain</span>
-            <span class="feature-chip">Routes / GPX</span>
-            <span class="feature-chip">Kids’ races</span>
-          </div>
-          <div class="home-trust-actions">
-            <a class="button button-primary" href="/en/find-races/">Open race search</a>
-            <a class="button button-secondary-light" href="/o-projektu-in-zasebnost/">About the project and privacy</a>
-          </div>
-        </article>
-        <article class="home-update-panel" aria-labelledby="updates-title">
-          <div class="home-update-heading">
-            <span class="eyebrow eyebrow-light">Latest updates</span>
-            <h3 id="updates-title">Fresh calendar changes</h3>
-            <p>The latest calendar changes help you quickly see what was added or corrected.</p>
-          </div>
-          <div class="card-grid" data-recent-updates>
-            <article class="update-card">
-              <h3>Loading data</h3>
-              <p>Latest changes will appear here.</p>
-            </article>
-          </div>
-        </article>
-      </div>
+    <section class="section container home-trust-section" aria-labelledby="trust-title">
+      <article class="home-trust-panel">
+        <span class="eyebrow eyebrow-light">Why STK</span>
+        <h2 id="trust-title">Confirmed information for easier planning</h2>
+        <p>An independent overview of confirmed races with official links and regularly updated information.</p>
+        <ul class="home-trust-benefits">
+          <li>Confirmed public races</li>
+          <li>Official announcements and registration</li>
+          <li>Regularly reviewed information</li>
+        </ul>
+        <a class="home-utility-link" href="/o-projektu-in-zasebnost/">About the project and privacy</a>
+      </article>
     </section>
 
     <section class="section container home-utility-section" aria-labelledby="utility-title">
@@ -860,13 +800,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     return Number.isFinite(dateValue) ? dateValue : null;
   };
 
-  const compareEventDateThenTitle = (a: ApiRecord, b: ApiRecord) => {
-    const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
-    if (dateDifference !== 0) return dateDifference;
-
-    return getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
-  };
-
   const eventRowKey = (event: ApiRecord) => {
     const matchedMasterRow = pick(event, ['__matched_master_row']);
     if (matchedMasterRow) return matchedMasterRow;
@@ -1014,68 +947,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     }
 
     return { events, rawEvents };
-  };
-
-
-  const removeHeroVotes = (event: ApiRecord) => ({ ...event, votes_total: undefined });
-
-  const renderHeroPreview = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[] = []) => {
-    const titleElement = document.querySelector('[data-hero-preview-title]');
-    const helperElement = document.querySelector('[data-hero-preview-helper]');
-    const listElement = document.querySelector('[data-hero-preview-list]');
-    if (!listElement) return;
-
-    const todayValue = todayStartValue();
-    const cutoffValue = daysFromToday(14);
-    const selectedIds = new Set<string>();
-    const upcomingInterestEvents: ApiRecord[] = [];
-
-    for (const event of interestEvents) {
-      if (upcomingInterestEvents.length >= 3) break;
-      const dateValue = eventDateValue(event);
-      if (dateValue === null || dateValue < todayValue || dateValue > cutoffValue) continue;
-      const identity = eventIdentity(event);
-      if (identity && selectedIds.has(identity)) continue;
-      if (identity) selectedIds.add(identity);
-      upcomingInterestEvents.push(event);
-    }
-
-    const fallbackEvents: ApiRecord[] = [];
-    const nearestFallbackEvents = fallbackCandidates
-      .filter((event) => {
-        const dateValue = eventDateValue(event);
-        return dateValue !== null && dateValue >= todayValue;
-      })
-      .sort(compareEventDateThenTitle);
-    for (const event of nearestFallbackEvents) {
-      if (upcomingInterestEvents.length + fallbackEvents.length >= 3) break;
-      const identity = eventIdentity(event);
-      if (identity && selectedIds.has(identity)) continue;
-      if (identity) selectedIds.add(identity);
-      fallbackEvents.push(removeHeroVotes(event));
-    }
-    const previewEvents = [...upcomingInterestEvents, ...fallbackEvents].sort(compareEventDateThenTitle);
-
-    if (titleElement) {
-      titleElement.textContent = 'Highlighted in the next days';
-    }
-    if (helperElement) {
-      helperElement.textContent = 'A selection of upcoming races.';
-    }
-
-    if (!previewEvents.length) {
-      listElement.innerHTML = '<li><span>soon</span><strong>Upcoming races will appear here.</strong></li>';
-      return;
-    }
-
-    listElement.innerHTML = previewEvents.map((event) => {
-      const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const detailPath = eventDetailPath(event);
-      const title = getDisplayEventTitle(getEventTitle(event));
-      const place = getEventField(event, 'kraj', ['place', 'city', 'location']);
-      return `<li><span>${escapeHtml(formatDateBadge(dateValue))}</span><strong><a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a></strong>${renderSavedRaceButton(event, title, dateValue, place, true)}</li>`;
-    }).join('');
-    initSavedRaceButtons(listElement);
   };
 
   type DeadlineType = 'early' | 'registration';
@@ -1304,8 +1175,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
-      renderHeroPreview(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1487,7 +1356,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
     try {
       const [recentResult, masterResult] = await Promise.allSettled([
-        loadJson('/recent_updates?days=7&limit=20'),
+        loadJson('/recent_updates?days=7&limit=4'),
         loadJson('/')
       ]);
       if (recentResult.status === 'rejected') throw recentResult.reason;
@@ -1500,7 +1369,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         ...updatedEvents,
         ...newEvents,
         ...confirmedEvents
-      ].slice(0, 20);
+      ].slice(0, 4);
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 

@@ -38,7 +38,7 @@ test('homepages retain the existing default social metadata', () => {
 });
 
 test('primary CTAs retain copy, hrefs, and analytics hooks', () => {
-  assert.match(pages.sl, /<a class="button button-primary hero-primary-cta" href="\/iskalnik-tekov\/">Poiščite tek<\/a>/);
+  assert.match(pages.sl, /<a class="button button-primary hero-primary-cta" href="\/iskalnik-tekov\/">Najdi tek<\/a>/);
   assert.match(pages.en, /<a class="button button-primary hero-primary-cta" href="\/en\/find-races\/">Find a race<\/a>/);
   for (const source of Object.values(pages)) {
     assert.match(source, /data-analytics-placement=/);
