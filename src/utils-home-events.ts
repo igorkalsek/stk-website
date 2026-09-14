@@ -9,6 +9,48 @@ export const selectUpcomingHomepageEvents = (events: PublicRaceEvent[], limit = 
   )
   .slice(0, limit);
 
+type FeaturedSelectionOptions<T> = {
+  todayValue: number;
+  cutoffValue: number;
+  limit?: number;
+  getDateValue: (event: T) => number | null;
+  getIdentity: (event: T) => string;
+  compareFallback: (a: T, b: T) => number;
+};
+
+export const selectFeaturedUpcomingEvents = <T>(
+  interestEvents: T[],
+  fallbackCandidates: T[],
+  options: FeaturedSelectionOptions<T>
+) => {
+  const limit = Math.max(0, options.limit ?? 3);
+  const selectedIdentities = new Set<string>();
+  const selected: T[] = [];
+
+  const add = (event: T) => {
+    const identity = options.getIdentity(event);
+    if (!identity || selectedIdentities.has(identity) || selected.length >= limit) return;
+    selectedIdentities.add(identity);
+    selected.push(event);
+  };
+
+  for (const event of interestEvents) {
+    const dateValue = options.getDateValue(event);
+    if (dateValue === null || dateValue < options.todayValue || dateValue > options.cutoffValue) continue;
+    add(event);
+    if (selected.length >= limit) return selected;
+  }
+
+  for (const event of [...fallbackCandidates].sort(options.compareFallback)) {
+    const dateValue = options.getDateValue(event);
+    if (dateValue === null || dateValue < options.todayValue) continue;
+    add(event);
+    if (selected.length >= limit) break;
+  }
+
+  return selected;
+};
+
 export const buildHomepageCalendarEventInput = (event: PublicRaceEvent, language: 'sl' | 'en') => ({
   title: event.displayTitle,
   date: event.date,
@@ -73,6 +115,81 @@ const pickPathString = (item: HomepageApiRecord, paths: string[]) => {
     if (text) return text;
   }
   return '';
+};
+
+export type HomepageRecentUpdateGroups = {
+  updatedEvents: HomepageApiRecord[];
+  newEvents: HomepageApiRecord[];
+  confirmedEvents: HomepageApiRecord[];
+};
+
+export type HomepageRecentUpdateSelection = {
+  canOrderGlobally: boolean;
+  items: HomepageApiRecord[];
+};
+
+const parseRecentUpdateDateValue = (value: string) => {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const dateValue = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const date = new Date(dateValue);
+  return date.getUTCFullYear() === Number(match[1]) &&
+    date.getUTCMonth() === Number(match[2]) - 1 &&
+    date.getUTCDate() === Number(match[3])
+    ? dateValue
+    : null;
+};
+
+const recentUpdateIdentity = (item: HomepageApiRecord) => {
+  const eventId = pickPathString(item, ['event_id', 'eventId', 'id', 'event.event_id', 'event.eventId', 'event.id']);
+  const normalizedEventId = normalizeHomepageEventId(eventId);
+  if (normalizedEventId) return `id:${normalizedEventId}`;
+
+  const row = pickPathString(item, ['row', 'master_row', 'masterRow', 'event.row', 'event.master_row', 'event.masterRow']);
+  if (row) return `row:${row}`;
+
+  const date = pickPathString(item, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
+  const title = pickPathString(item, ['naziv_prireditve', 'naziv', 'event.naziv_prireditve', 'event.naziv', 'title', 'name']);
+  const place = pickPathString(item, ['kraj', 'event.kraj', 'place', 'city', 'location']);
+  return naturalKey(date, title, place) ? `natural:${naturalKey(date, title, place)}` : '';
+};
+
+export const selectHomepageRecentUpdates = (
+  groups: HomepageRecentUpdateGroups,
+  limit = 4
+): HomepageRecentUpdateSelection => {
+  const tagged = [
+    ...groups.updatedEvents.map((item) => ({ ...item, update_type: 'updated' })),
+    ...groups.newEvents.map((item) => ({ ...item, update_type: 'new' })),
+    ...groups.confirmedEvents.map((item) => ({ ...item, update_type: 'confirmed' }))
+  ].map((item, sourceIndex) => ({
+    item,
+    sourceIndex,
+    dateValue: parseRecentUpdateDateValue(pickPathString(item, ['recent_update_date', 'event.recent_update_date']))
+  }));
+
+  if (tagged.some(({ dateValue }) => dateValue === null)) {
+    return { canOrderGlobally: false, items: [] };
+  }
+
+  tagged.sort((a, b) =>
+    (b.dateValue as number) - (a.dateValue as number) ||
+    pickPathString(a.item, ['naziv_prireditve', 'naziv', 'title', 'name'])
+      .localeCompare(pickPathString(b.item, ['naziv_prireditve', 'naziv', 'title', 'name']), 'sl-SI') ||
+    a.sourceIndex - b.sourceIndex
+  );
+
+  const identities = new Set<string>();
+  const items: HomepageApiRecord[] = [];
+  for (const { item, sourceIndex } of tagged) {
+    const identity = recentUpdateIdentity(item) || `unidentified:${sourceIndex}`;
+    if (identities.has(identity)) continue;
+    identities.add(identity);
+    items.push(item);
+    if (items.length >= Math.max(0, limit)) break;
+  }
+
+  return { canOrderGlobally: true, items };
 };
 
 export const getHomepageRowCandidates = (item: HomepageApiRecord) => {

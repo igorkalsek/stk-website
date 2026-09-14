@@ -41,6 +41,24 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       </div>
     </section>
 
+    <section class="container home-stats-strip" aria-label="Slovenian Race Calendar statistics">
+      <p>
+        <span class="home-stats-label">STK 2026</span>
+        <span class="home-stats-primary"><strong class="stat-loading" data-stat="confirmed_public_events_total" aria-label="Loading"></strong> confirmed races</span>
+        <span><strong class="stat-loading" data-stat="family_friendly_total" aria-label="Loading"></strong> family-friendly</span>
+        <span><strong class="stat-loading" data-stat="group_runs_total" aria-label="Loading"></strong> group runs</span>
+      </p>
+    </section>
+
+    <section class="section container home-featured-upcoming" aria-labelledby="featured-upcoming-title">
+      <div class="section-heading home-featured-heading">
+        <h2 id="featured-upcoming-title">Featured in the coming days</h2>
+      </div>
+      <ol class="home-featured-list" data-featured-upcoming>
+        <li class="home-featured-loading" role="status">Selecting nearby upcoming races.</li>
+      </ol>
+    </section>
+
     <section class="section container home-current-sections" aria-labelledby="current-title">
       <div class="section-heading home-current-heading">
         <span class="eyebrow">At a glance</span>
@@ -170,8 +188,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { renderActionIcon } from '../../utils-action-icons';
   import { getDisplayEventTitle } from '../../utils-events';
   import { getStableEventId } from '../../utils-event-detail';
-  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent } from '../../utils-home-events';
+  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
+  import { initializeFeaturedRaceImpressionTracking } from '../../lib/stkAnalytics';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -689,8 +708,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   };
 
 
-  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
+  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number], redactTargetUrl = false) =>
+    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"${redactTargetUrl ? ' data-analytics-redact-target-url="true"' : ''}><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
   const renderCalendarOptions = ({ title, date, location = '', noticeUrl = '', registrationUrl = '' }: {
     title: string;
@@ -698,7 +717,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     location?: string;
     noticeUrl?: string;
     registrationUrl?: string;
-  }) => {
+  }, redactTargetUrl = false) => {
     const event = { title, date, location, noticeUrl, registrationUrl, language: 'en' as const };
     const googleUrl = buildGoogleCalendarEventUrl(event);
     const icsUrl = buildIcsDataUrl(event);
@@ -707,11 +726,11 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     if (!googleUrl && !icsUrl && !outlookUrl) return '';
 
     const options = [
-      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer">Google</a>`,
-      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Apple / iCal</a>`,
+      googleUrl && `<a href="${escapeHtml(googleUrl)}" target="_blank" rel="noopener noreferrer"${redactTargetUrl ? ' data-analytics-redact-target-url="true"' : ''}>Google</a>`,
+      icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}"${redactTargetUrl ? ' data-analytics-redact-target-url="true"' : ''}>Apple / iCal</a>`,
       outlookUrl
-        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer">Outlook</a>`
-        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}">Outlook / .ics</a>`
+        ? `<a href="${escapeHtml(outlookUrl)}" target="_blank" rel="noopener noreferrer"${redactTargetUrl ? ' data-analytics-redact-target-url="true"' : ''}>Outlook</a>`
+        : icsUrl && `<a href="${escapeHtml(icsUrl)}" download="${escapeHtml(icsFilename)}"${redactTargetUrl ? ' data-analytics-redact-target-url="true"' : ''}>Outlook / .ics</a>`
     ].filter(Boolean).join('');
 
     return `
@@ -798,6 +817,11 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     const date = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
     const dateValue = parseIsoDateValue(date);
     return Number.isFinite(dateValue) ? dateValue : null;
+  };
+
+  const compareEventDateThenTitle = (a: ApiRecord, b: ApiRecord) => {
+    const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
+    return dateDifference || getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
   };
 
   const eventRowKey = (event: ApiRecord) => {
@@ -922,6 +946,51 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     }
 
     return rankedEvents;
+  };
+
+  const renderFeaturedUpcoming = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[]) => {
+    const list = document.querySelector('[data-featured-upcoming]');
+    if (!list) return;
+
+    const featuredEvents = selectFeaturedUpcomingEvents(interestEvents, fallbackCandidates, {
+      todayValue: todayStartValue(),
+      cutoffValue: daysFromToday(14),
+      limit: 3,
+      getDateValue: eventDateValue,
+      getIdentity: eventIdentity,
+      compareFallback: compareEventDateThenTitle
+    });
+
+    if (!featuredEvents.length) {
+      list.innerHTML = '<li class="home-featured-loading">No nearby confirmed races are available right now.</li>';
+      return;
+    }
+
+    list.innerHTML = featuredEvents.map((event) => {
+      const title = getDisplayEventTitle(getEventTitle(event));
+      const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
+      const date = formatDate(dateValue);
+      const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
+      const region = getEventField(event, 'regija', ['region']);
+      const analyticsEventId = eventIdValue(canonicalDetailEvent(event)) || eventIdValue(event);
+      const explicitAnalyticsYear = getEventField(canonicalDetailEvent(event), 'year', ['leto']);
+      const analyticsEventYear = /^202[67]$/.test(explicitAnalyticsYear)
+        ? explicitAnalyticsYear
+        : (dateValue.match(/^(202[67])-/)?.[1] ?? '');
+      const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
+      const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
+      const primaryAction = buildPrimaryActions({ registrationUrl, noticeUrl }, 'en')[0];
+      const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl }, true);
+      const actions = [
+        primaryAction ? renderPrimaryActionLink(primaryAction, true) : '',
+        calendarOptions,
+        renderSavedRaceButton(event, title, dateValue, location, true)
+      ].filter(Boolean).join('');
+
+      return `<li><article class="home-featured-race" data-analytics-featured-impression="true" data-analytics-placement="home_featured" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(analyticsEventYear)}"><time datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time><div class="home-featured-race-copy"><h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3><p>${escapeHtml(joinParts([location, region && region !== location ? region : '']))}</p></div>${actions ? `<div class="home-featured-actions">${actions}</div>` : ''}</article></li>`;
+    }).join('');
+    initSavedRaceButtons(list);
+    initializeFeaturedRaceImpressionTracking(list);
   };
 
 
@@ -1175,6 +1244,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
+      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
+      renderFeaturedUpcoming(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1204,7 +1275,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
         const links = [
-          ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'en').map(renderPrimaryActionLink),
+          ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'en').map((action) => renderPrimaryActionLink(action)),
           calendarOptions,
           renderSavedRaceButton(event, title, dateValue, location)
         ].filter(Boolean).join('');
@@ -1251,8 +1322,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       };
 
       for (const [key, value] of Object.entries(values)) {
-        const element = document.querySelector(`[data-stat="${key}"]`);
-        if (element) {
+        for (const element of document.querySelectorAll(`[data-stat="${key}"]`)) {
           element.textContent = value === null ? 'No data' : numberFormatter.format(value);
           element.classList.remove('stat-loading');
           element.removeAttribute('aria-label');
@@ -1365,11 +1435,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         ? buildHomepageMasterEventIndex(getMasterRows(masterResult.value))
         : null;
       if (masterResult.status === 'rejected') setDebug('master', 'no');
-      const updates = [
-        ...updatedEvents,
-        ...newEvents,
-        ...confirmedEvents
-      ].slice(0, 4);
+      const recentSelection = selectHomepageRecentUpdates({ updatedEvents, newEvents, confirmedEvents }, 4);
+      if (!recentSelection.canOrderGlobally) throw new Error('RECENT_UPDATES_GLOBAL_ORDER = NOT_AVAILABLE_FROM_CONTRACT');
+      const updates = recentSelection.items;
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 

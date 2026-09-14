@@ -4142,6 +4142,147 @@ main {
   outline-offset: 3px;
 }
 
+.home-stats-strip {
+  margin-top: 10px;
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 12px;
+  background: rgba(200, 230, 201, 0.2);
+  padding: 9px 14px;
+}
+
+.home-stats-strip p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.home-stats-strip p > span:not(:first-child)::before {
+  margin-right: 14px;
+  color: rgba(16, 64, 80, 0.34);
+  content: "·";
+}
+
+.home-stats-strip .home-stats-label {
+  color: var(--deep-teal);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.home-stats-strip strong {
+  color: var(--deep-teal);
+  font-size: 0.96rem;
+}
+
+.home-stats-strip .home-stats-primary,
+.home-stats-strip .home-stats-primary strong {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.home-featured-upcoming {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.home-featured-heading {
+  margin-bottom: 8px;
+}
+
+.home-featured-heading h2 {
+  font-size: clamp(1.12rem, 2.5vw, 1.4rem);
+}
+
+.home-featured-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-featured-race {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 5px 10px;
+  min-width: 0;
+  min-height: 66px;
+  align-items: center;
+  border: 1px solid rgba(16, 64, 80, 0.12);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 8px;
+}
+
+.home-featured-race > time {
+  grid-row: 1 / span 2;
+  color: #704406;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.home-featured-race-copy {
+  min-width: 0;
+}
+
+.home-featured-race-copy h3,
+.home-featured-race-copy p {
+  margin: 0;
+}
+
+.home-featured-race-copy h3 {
+  font-size: 0.9rem;
+  line-height: 1.18;
+}
+
+.home-featured-race-copy p {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-featured-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+}
+
+.home-featured-actions .button,
+.home-featured-actions .calendar-menu summary {
+  min-height: 34px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+}
+
+.home-featured-actions .saved-race-icon-button {
+  width: 34px;
+  min-width: 34px;
+  padding: 0;
+}
+
+.home-featured-loading {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--muted);
+  padding: 12px;
+  font-size: 0.86rem;
+}
+
 .home-stats-band.stats-strip {
   position: relative;
   overflow: hidden;
@@ -4717,6 +4858,69 @@ main {
 }
 
 @media (max-width: 520px) {
+  .home-stats-strip {
+    padding: 7px 10px;
+  }
+
+  .home-stats-strip p {
+    gap: 2px 8px;
+    font-size: 0.75rem;
+  }
+
+  .home-stats-strip p > span:not(:first-child)::before {
+    margin-right: 8px;
+  }
+
+  .home-featured-upcoming {
+    padding-top: 7px;
+  }
+
+  .home-featured-list {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .home-featured-race {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    min-height: 54px;
+    gap: 4px 8px;
+    padding: 5px 7px;
+  }
+
+  .home-featured-race > time {
+    grid-row: 1;
+  }
+
+  .home-featured-race-copy p {
+    display: none;
+  }
+
+  .home-featured-actions {
+    grid-column: 3;
+    grid-row: 1;
+    flex-wrap: nowrap;
+  }
+
+  .home-featured-actions .button,
+  .home-featured-actions .calendar-menu summary {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .home-featured-actions .button:not(.saved-race-icon-button) > span:last-child,
+  .home-featured-actions .calendar-menu summary > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
   .home-current-sections {
     border-radius: 0;
     padding: 20px 16px;
