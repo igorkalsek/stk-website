@@ -21,6 +21,7 @@ type StkAnalyticsEventType =
   | 'my_races_bulk_ics_exported'
   | 'preference_mode_activated'
   | 'personalized_results_used'
+  | 'featured_race_impression'
   | 'organizer_action_clicked';
 
 export type StkAnalyticsPlacement =
@@ -124,6 +125,7 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'my_races_bulk_ics_exported',
   'preference_mode_activated',
   'personalized_results_used',
+  'featured_race_impression',
   'organizer_action_clicked'
 ]);
 
@@ -311,6 +313,18 @@ const buildBody = (payload: StkAnalyticsPayload) => {
     } as typeof body;
   }
 
+  if (body.event_type === 'featured_race_impression') {
+    return {
+      event_type: body.event_type,
+      page_path: getSiteLevelPagePath(payload.page_path || body.page_path),
+      language: body.language,
+      event_id: body.event_id,
+      event_year: body.event_year,
+      user_agent_group: body.user_agent_group,
+      placement: body.placement
+    } as typeof body;
+  }
+
   if (body.event_type === 'organizer_action_clicked') {
     return {
       event_type: body.event_type,
@@ -356,6 +370,10 @@ export const trackStkEvent = (payload: StkAnalyticsPayload) => {
   if (!ALLOWED_EVENT_TYPES.has(payload.event_type)) return;
 
   const body = buildBody(payload);
+  if (
+    body.event_type === 'featured_race_impression' &&
+    (!/^R\d{6}$/.test(body.event_id) || !/^202[67]$/.test(body.event_year) || body.placement !== 'home_featured')
+  ) return;
   if (EVENT_SCOPED_EVENT_TYPES.has(body.event_type) && (!/^\d{4}$/.test(body.event_year) || (!body.event_id && (!body.event_name || !body.event_date)))) return;
   if (body.event_type === 'external_link_clicked' && body.target_url && isInternalStkNavigationTarget(body.target_url)) return;
   if ((body.event_type === 'search_performed' || body.event_type === 'no_results_search') && !body.search_query && !body.filters_json) return;
@@ -468,6 +486,8 @@ const isTekobotHref = (href: string) => {
 
 let hasInitializedStkAnalyticsClickTracking = false;
 const pageLoadTrackedEventsByScope = new WeakMap<object, Set<string>>();
+const featuredImpressionTrackedEventsByScope = new WeakMap<object, Set<string>>();
+const featuredImpressionObserversByRoot = new WeakMap<object, IntersectionObserver>();
 
 export const initializeStkAnalyticsClickTracking = () => {
   if (typeof document === 'undefined' || hasInitializedStkAnalyticsClickTracking) return;
@@ -561,6 +581,75 @@ export const initializeStkAnalyticsClickTracking = () => {
       });
     }
   }, { capture: true });
+};
+
+export const initializeFeaturedRaceImpressionTracking = (root?: ParentNode) => {
+  if (typeof document === 'undefined' || typeof IntersectionObserver === 'undefined') return null;
+
+  const trackingRoot = root ?? document;
+  const scope = document.body || document.documentElement || document;
+  const elements = Array.from(
+    trackingRoot.querySelectorAll<HTMLElement>('[data-analytics-featured-impression="true"]')
+  );
+  if (!elements.length) return null;
+
+  featuredImpressionObserversByRoot.get(trackingRoot as object)?.disconnect();
+
+  const trackedEvents = featuredImpressionTrackedEventsByScope.get(scope) ?? new Set<string>();
+  featuredImpressionTrackedEventsByScope.set(scope, trackedEvents);
+
+  const getIdentity = (element: HTMLElement) => {
+    const context = getEventContext(element);
+    const eventId = String(context.event_id || '').trim().toUpperCase();
+    const eventYear = String(context.event_year || '').trim();
+    const placement = getPlacement(element);
+
+    if (!/^R\d{6}$/.test(eventId)) return null;
+    if (!/^202[67]$/.test(eventYear)) return null;
+    if (placement !== 'home_featured') return null;
+
+    return {
+      eventId,
+      eventYear,
+      key: `${eventYear}:${eventId}`
+    };
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting || entry.intersectionRatio < 0.5) continue;
+      if (!(entry.target instanceof HTMLElement)) continue;
+
+      const element = entry.target;
+      const identity = getIdentity(element);
+
+      if (!identity || trackedEvents.has(identity.key)) {
+        observer.unobserve(element);
+        continue;
+      }
+
+      trackedEvents.add(identity.key);
+
+      trackStkEvent({
+        event_type: 'featured_race_impression',
+        event_id: identity.eventId,
+        event_year: identity.eventYear,
+        placement: 'home_featured'
+      });
+
+      observer.unobserve(element);
+    }
+  }, { threshold: 0.5 });
+
+  featuredImpressionObserversByRoot.set(trackingRoot as object, observer);
+
+  for (const element of elements) {
+    const identity = getIdentity(element);
+    if (!identity || trackedEvents.has(identity.key)) continue;
+    observer.observe(element);
+  }
+
+  return observer;
 };
 
 export const filtersToAnalyticsJson = (filters: Record<string, string | boolean>) => {

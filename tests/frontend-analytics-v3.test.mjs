@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, it } from 'node:test';
-import { initializeStkAnalyticsClickTracking, trackStkEvent, trackStkPageLoadEventOnce } from '../.cache/dist-test/lib/stkAnalytics.js';
+import { initializeFeaturedRaceImpressionTracking, initializeStkAnalyticsClickTracking, trackStkEvent, trackStkPageLoadEventOnce } from '../.cache/dist-test/lib/stkAnalytics.js';
 import { rankRacesForPreferences } from '../.cache/dist-test/utils-race-preferences.js';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -19,6 +19,8 @@ const slTop = read('src/pages/najbolj-glasovani-teki.astro');
 const enTop = read('src/pages/en/most-voted-races.astro');
 const slGroupRuns = read('src/pages/skupinski-teki.astro');
 const enGroupRuns = read('src/pages/en/group-runs.astro');
+const slHome = read('src/pages/index.astro');
+const enHome = read('src/pages/en/index.astro');
 const eventDetailUtils = read('src/utils-event-detail.ts');
 
 const originalWindow = globalThis.window;
@@ -27,6 +29,7 @@ const originalNavigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 
 const originalElement = globalThis.Element;
 const originalHTMLElement = globalThis.HTMLElement;
 const originalHTMLAnchorElement = globalThis.HTMLAnchorElement;
+const originalIntersectionObserver = globalThis.IntersectionObserver;
 
 const installAnalyticsBrowser = ({ optedOut = false } = {}) => {
   const payloads = [];
@@ -55,10 +58,12 @@ afterEach(() => {
   else delete globalThis.HTMLElement;
   if (originalHTMLAnchorElement) globalThis.HTMLAnchorElement = originalHTMLAnchorElement;
   else delete globalThis.HTMLAnchorElement;
+  if (originalIntersectionObserver) globalThis.IntersectionObserver = originalIntersectionObserver;
+  else delete globalThis.IntersectionObserver;
 });
 describe('frontend analytics v3 contract', () => {
   it('keeps existing events and allows all new frontend event types', () => {
-    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'preference_mode_activated', 'personalized_results_used']) {
+    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'preference_mode_activated', 'personalized_results_used', 'featured_race_impression']) {
       assert.match(analytics, new RegExp(`'${eventType}'`));
     }
   });
@@ -100,6 +105,128 @@ describe('frontend analytics v3 contract', () => {
       user_agent_group: 'desktop',
       placement: 'personalized_results'
     }]);
+  });
+
+  it('emits a strict privacy-minimal featured impression payload', async () => {
+    const payloads = installAnalyticsBrowser();
+
+    trackStkEvent({
+      event_type: 'featured_race_impression',
+      event_id: 'R000301',
+      event_year: '2026',
+      placement: 'home_featured',
+      event_name: 'Must not be sent',
+      event_date: '2026-09-26',
+      target_url: 'https://example.com/private',
+      action_type: 'private-action',
+      search_query: 'private-query',
+      filters_json: '{"private":true}',
+      notes: 'private note'
+    });
+
+    trackStkEvent({
+      event_type: 'featured_race_impression',
+      event_id: 'not-canonical',
+      event_year: '2026',
+      placement: 'home_featured'
+    });
+
+    trackStkEvent({
+      event_type: 'featured_race_impression',
+      event_id: 'R000301',
+      event_year: '2025',
+      placement: 'home_featured'
+    });
+
+    trackStkEvent({
+      event_type: 'featured_race_impression',
+      event_id: 'R000301',
+      event_year: '2026',
+      placement: 'home_interest'
+    });
+
+    assert.deepEqual(await Promise.all(payloads), [{
+      event_type: 'featured_race_impression',
+      page_path: '/test/',
+      language: 'sl',
+      event_id: 'R000301',
+      event_year: '2026',
+      user_agent_group: 'desktop',
+      placement: 'home_featured'
+    }]);
+  });
+
+  it('tracks a featured impression only after actual visibility and only once per page lifecycle', async () => {
+    const payloads = installAnalyticsBrowser();
+
+    class FakeElement {
+      constructor(dataset) { this.dataset = dataset; }
+      closest() { return this; }
+      querySelector() { return null; }
+    }
+
+    globalThis.Element = FakeElement;
+    globalThis.HTMLElement = FakeElement;
+
+    let callback;
+    let options;
+    const observed = new Set();
+
+    globalThis.IntersectionObserver = class {
+      constructor(nextCallback, nextOptions) {
+        callback = nextCallback;
+        options = nextOptions;
+      }
+      observe(element) { observed.add(element); }
+      unobserve(element) { observed.delete(element); }
+      disconnect() { observed.clear(); }
+    };
+
+    const element = new FakeElement({
+      analyticsFeaturedImpression: 'true',
+      analyticsPlacement: 'home_featured',
+      analyticsEventId: 'R000301',
+      analyticsEventName: 'Tek okoli jezera',
+      analyticsEventDate: '2026-09-26',
+      analyticsEventYear: '2026'
+    });
+
+    const root = { querySelectorAll: () => [element] };
+
+    initializeFeaturedRaceImpressionTracking(root);
+
+    assert.equal(payloads.length, 0);
+    assert.equal(observed.has(element), true);
+    assert.equal(options.threshold, 0.5);
+
+    callback([{ target: element, isIntersecting: true, intersectionRatio: 0.49 }]);
+    assert.equal(payloads.length, 0);
+
+    callback([{ target: element, isIntersecting: true, intersectionRatio: 0.5 }]);
+    assert.equal(payloads.length, 1);
+
+    callback([{ target: element, isIntersecting: true, intersectionRatio: 1 }]);
+    assert.equal(payloads.length, 1);
+
+    const [payload] = await Promise.all(payloads);
+
+    assert.deepEqual(payload, {
+      event_type: 'featured_race_impression',
+      page_path: '/test/',
+      language: 'sl',
+      event_id: 'R000301',
+      event_year: '2026',
+      user_agent_group: 'desktop',
+      placement: 'home_featured'
+    });
+  });
+
+  it('wires featured visibility tracking to both localized homepages', () => {
+    for (const source of [slHome, enHome]) {
+      assert.match(source, /data-analytics-featured-impression="true"/);
+      assert.match(source, /initializeFeaturedRaceImpressionTracking\(list\)/);
+      assert.match(source, /eventIdValue\(canonicalDetailEvent\(event\)\) \|\| eventIdValue\(event\)/);
+    }
   });
 
   it('honors analytics opt-out for preference activation', () => {

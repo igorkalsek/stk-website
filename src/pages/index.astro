@@ -182,6 +182,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { renderActionIcon } from '../utils-action-icons';
   import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
   import { initSavedRaceButtons } from '../saved-races-client';
+  import { initializeFeaturedRaceImpressionTracking } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
   import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates } from '../utils-home-events';
@@ -999,7 +1000,11 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       const date = formatDate(dateValue);
       const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
       const region = getEventField(event, 'regija', ['region']);
-      const analyticsEventId = getEventStableId(event, title, dateValue, location);
+      const analyticsEventId = eventIdValue(canonicalDetailEvent(event)) || eventIdValue(event);
+      const explicitAnalyticsYear = getEventField(canonicalDetailEvent(event), 'year', ['leto']);
+      const analyticsEventYear = /^202[67]$/.test(explicitAnalyticsYear)
+        ? explicitAnalyticsYear
+        : (dateValue.match(/^(202[67])-/)?.[1] ?? '');
       const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
       const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
       const primaryAction = buildPrimaryActions({ registrationUrl, noticeUrl }, 'sl')[0];
@@ -1010,9 +1015,10 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         renderSavedRaceButton(event, title, dateValue, location, true)
       ].filter(Boolean).join('');
 
-      return `<li><article class="home-featured-race" data-analytics-placement="home_featured" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}"><time datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time><div class="home-featured-race-copy"><h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3><p>${escapeHtml(joinParts([location, region && region !== location ? region : '']))}</p></div>${actions ? `<div class="home-featured-actions">${actions}</div>` : ''}</article></li>`;
+      return `<li><article class="home-featured-race" data-analytics-featured-impression="true" data-analytics-placement="home_featured" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(analyticsEventYear)}"><time datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time><div class="home-featured-race-copy"><h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3><p>${escapeHtml(joinParts([location, region && region !== location ? region : '']))}</p></div>${actions ? `<div class="home-featured-actions">${actions}</div>` : ''}</article></li>`;
     }).join('');
     initSavedRaceButtons(list);
+    initializeFeaturedRaceImpressionTracking(list);
   };
 
   type DeadlineType = 'early' | 'registration';
