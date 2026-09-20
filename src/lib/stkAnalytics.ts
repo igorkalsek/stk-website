@@ -26,6 +26,7 @@ type StkAnalyticsEventType =
 
 export type StkAnalyticsPlacement =
   | 'home_featured'
+  | 'home_updates'
   | 'home_this_week'
   | 'home_interest'
   | 'finder_results'
@@ -131,6 +132,7 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
 
 const ALLOWED_PLACEMENTS = new Set<StkAnalyticsPlacement>([
   'home_featured',
+  'home_updates',
   'home_this_week',
   'home_interest',
   'finder_results',

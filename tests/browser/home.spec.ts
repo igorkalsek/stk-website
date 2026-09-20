@@ -38,7 +38,7 @@ const homes = [
   }
 ];
 
-async function mockHomepageApis(page: Page) {
+async function mockHomepageApis(page: Page, withRecentUpdate = false) {
   const events = [
     ['1', '2026-09-13', 'Fallback race', 'Kranj'],
     ['2', '2026-09-26', 'Ranked race two', 'Velenje'],
@@ -55,6 +55,9 @@ async function mockHomepageApis(page: Page) {
   } }));
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
+    if (url.pathname === '/recent_updates' && withRecentUpdate) {
+      return route.fulfill({ json: { updated_events: [{ ...events[1], recent_update_date: '2026-09-20' }] } });
+    }
     if (url.pathname === '/stats') {
       return route.fulfill({ json: { confirmed_public_events_total: 0, family_friendly_total: 0, group_runs_total: 0 } });
     }
@@ -66,6 +69,17 @@ async function mockHomepageApis(page: Page) {
 }
 
 for (const home of homes) {
+  test(`${home.path} keeps the recent-update card placement in the intercepted click request`, async ({ page }) => {
+    await mockHomepageApis(page, true);
+    await page.goto(home.path);
+    const card = page.locator('[data-recent-updates] .update-card[data-analytics-placement="home_updates"]');
+    await expect(card.locator('h3 a')).toBeVisible();
+    const requestPromise = page.waitForRequest((request) => request.url().startsWith(`${ANALYTICS_HOST}/`) && request.method() === 'POST' && JSON.parse(request.postData() ?? '{}').event_type === 'event_card_clicked');
+    await card.locator('h3 a').click();
+    const body = JSON.parse((await requestPromise).postData() ?? '{}');
+    expect(body).toMatchObject({ event_type: 'event_card_clicked', placement: 'home_updates', event_id: 'r000002', event_year: '2026', event_key: '2026:r000002' });
+  });
+
   test(`${home.path} keeps key paths and the compact section hierarchy`, async ({ page }) => {
     await mockHomepageApis(page);
     await page.goto(home.path);
