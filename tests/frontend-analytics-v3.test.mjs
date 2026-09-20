@@ -69,10 +69,44 @@ describe('frontend analytics v3 contract', () => {
   });
 
   it('serializes placement with the writer-approved allowlist', () => {
-    for (const placement of ['home_featured', 'home_this_week', 'home_interest', 'finder_results', 'family_results', 'most_voted_results', 'race_detail', 'related_races', 'my_races', 'personalized_results', 'personal_calendar', 'unknown']) {
+    for (const placement of ['home_featured', 'home_updates', 'home_this_week', 'home_interest', 'finder_results', 'family_results', 'most_voted_results', 'race_detail', 'related_races', 'my_races', 'personalized_results', 'personal_calendar', 'unknown']) {
       assert.match(analytics, new RegExp(`'${placement}'`));
     }
     assert.match(analytics, /placement: normalizePlacement\(payload\.placement\)/);
+  });
+
+  it('preserves home update clicks, existing placements, race identity, and the serialized body format', async () => {
+    const payloads = installAnalyticsBrowser();
+    const placements = ['home_updates', 'home_featured', 'home_this_week', 'home_interest', 'finder_results', 'family_results', 'most_voted_results', 'race_detail', 'related_races', 'my_races', 'home_my_stk', 'personalized_results', 'personal_calendar', 'organizer_home', 'organizer_workflow', 'unknown', 'not_allowed'];
+    for (const placement of placements) {
+      trackStkEvent({ event_type: 'event_card_clicked', page_path: '/', language: 'sl', event_id: 'R000301', event_name: 'Testni tek', event_date: '2026-09-26', event_year: '2026', placement });
+    }
+
+    const serialized = await Promise.all(payloads);
+    assert.equal(serialized.length, placements.length);
+    for (const [index, placement] of placements.entries()) {
+      assert.deepEqual(serialized[index], {
+        event_type: 'event_card_clicked',
+        page_path: '/',
+        language: 'sl',
+        event_id: 'R000301',
+        event_name: 'Testni tek',
+        event_date: '2026-09-26',
+        event_year: '2026',
+        event_key: '2026:R000301',
+        target_url: '',
+        action_type: '',
+        search_query: '',
+        filters_json: '',
+        results_count: '',
+        target_domain: '',
+        calendar_type: '',
+        referrer: '',
+        user_agent_group: 'desktop',
+        notes: '',
+        placement: placement === 'not_allowed' ? '' : placement
+      });
+    }
   });
 
   it('emits a privacy-minimal site-level preference activation body', async () => {
