@@ -1,4 +1,4 @@
-const UPSTREAM = 'https://script.google.com/macros/s/AKfycbzn9QzNSCE1oyKDFsm0TEFIzGSaettC6ErglCLWzlmwXiOd0wcnwsQVFJglFlnFpuNR/exec?endpoint=organizer-claim';
+const UPSTREAM = 'https://script.google.com/macros/s/AKfycbzNCSp6qjxwFTmxTEJpFpNET6duD4ChwPhKTXAAYKedaUEDih3AClwVKTr1wmVSKSSA/exec?endpoint=organizer-claim';
 const ALLOWED = ['year', 'event_id', 'organizer_name', 'contact_name', 'organizer_email', 'declaration', 'displayed_snapshot_hash'] as const;
 const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
 const response = (status: number, code: string, ok = false) => new Response(JSON.stringify({ ok, status: code }), { status, headers });
