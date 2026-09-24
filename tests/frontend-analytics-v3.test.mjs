@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, it } from 'node:test';
-import { initializeFeaturedRaceImpressionTracking, initializeStkAnalyticsClickTracking, trackStkEvent, trackStkPageLoadEventOnce } from '../.cache/dist-test/lib/stkAnalytics.js';
+import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking, initializeStkAnalyticsClickTracking, trackStkEvent, trackStkPageLoadEventOnce } from '../.cache/dist-test/lib/stkAnalytics.js';
 import { rankRacesForPreferences } from '../.cache/dist-test/utils-race-preferences.js';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -63,7 +63,7 @@ afterEach(() => {
 });
 describe('frontend analytics v3 contract', () => {
   it('keeps existing events and allows all new frontend event types', () => {
-    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'preference_mode_activated', 'personalized_results_used', 'featured_race_impression']) {
+    for (const eventType of ['search_performed', 'no_results_search', 'external_link_clicked', 'calendar_add_clicked', 'vote_clicked', 'tekobot_clicked', 'share_clicked', 'correction_clicked', 'copy_clicked', 'race_saved', 'race_unsaved', 'event_detail_viewed', 'event_card_clicked', 'related_race_clicked', 'my_races_viewed', 'my_races_bulk_ics_exported', 'preference_mode_activated', 'personalized_results_used', 'featured_race_impression', 'race_card_impression']) {
       assert.match(analytics, new RegExp(`'${eventType}'`));
     }
   });
@@ -255,6 +255,52 @@ describe('frontend analytics v3 contract', () => {
     });
   });
 
+  it('tracks only allowlisted visible race cards once per page lifecycle', async () => {
+    const payloads = installAnalyticsBrowser();
+
+    class FakeElement {
+      constructor(dataset) { this.dataset = dataset; }
+      closest() { return this; }
+      querySelector() { return null; }
+    }
+
+    globalThis.Element = FakeElement;
+    globalThis.HTMLElement = FakeElement;
+
+    let callback;
+    const observed = new Set();
+    globalThis.IntersectionObserver = class {
+      constructor(nextCallback) { callback = nextCallback; }
+      observe(element) { observed.add(element); }
+      unobserve(element) { observed.delete(element); }
+      disconnect() { observed.clear(); }
+    };
+
+    const update = new FakeElement({ analyticsRaceCardImpression: 'true', analyticsPlacement: 'home_updates', analyticsEventId: 'r12', analyticsEventYear: '2026' });
+    const related = new FakeElement({ analyticsRaceCardImpression: 'true', analyticsPlacement: 'related_races', analyticsEventId: 'R000013', analyticsEventYear: '2027' });
+    const finder = new FakeElement({ analyticsRaceCardImpression: 'true', analyticsPlacement: 'finder_results', analyticsEventId: 'R000014', analyticsEventYear: '2026' });
+    initializeRaceCardImpressionTracking({ querySelectorAll: () => [update, related, finder] });
+
+    assert.equal(observed.has(update), true);
+    assert.equal(observed.has(related), true);
+    assert.equal(observed.has(finder), false);
+
+    callback([
+      { target: update, isIntersecting: true, intersectionRatio: 0.49 },
+      { target: related, isIntersecting: true, intersectionRatio: 0.5 }
+    ]);
+    callback([
+      { target: update, isIntersecting: true, intersectionRatio: 0.5 },
+      { target: related, isIntersecting: true, intersectionRatio: 1 }
+    ]);
+    callback([{ target: update, isIntersecting: true, intersectionRatio: 1 }]);
+
+    assert.deepEqual(await Promise.all(payloads), [
+      { event_type: 'race_card_impression', page_path: '/test/', language: 'sl', event_id: 'R000013', event_year: '2027', user_agent_group: 'desktop', placement: 'related_races' },
+      { event_type: 'race_card_impression', page_path: '/test/', language: 'sl', event_id: 'R000012', event_year: '2026', user_agent_group: 'desktop', placement: 'home_updates' }
+    ]);
+  });
+
   it('wires featured visibility tracking to both localized homepages', () => {
     for (const source of [slHome, enHome]) {
       assert.match(source, /data-analytics-featured-impression="true"/);
@@ -263,9 +309,24 @@ describe('frontend analytics v3 contract', () => {
     }
   });
 
+  it('wires race-card visibility only to stable home updates and related races', () => {
+    for (const source of [slHome, enHome]) {
+      assert.match(source, /data-analytics-race-card-impression="true"/);
+      assert.match(source, /initializeRaceCardImpressionTracking\(container\)/);
+    }
+    assert.match(related, /data-analytics-race-card-impression=/);
+    assert.doesNotMatch(slFinder, /data-analytics-race-card-impression/);
+  });
+
   it('honors analytics opt-out for preference activation', () => {
     const payloads = installAnalyticsBrowser({ optedOut: true });
     trackStkEvent({ event_type: 'preference_mode_activated', language: 'sl', placement: 'personalized_results' });
+    assert.equal(payloads.length, 0);
+  });
+
+  it('honors analytics opt-out for race-card impressions', () => {
+    const payloads = installAnalyticsBrowser({ optedOut: true });
+    trackStkEvent({ event_type: 'race_card_impression', event_id: 'R000012', event_year: '2026', placement: 'home_updates' });
     assert.equal(payloads.length, 0);
   });
 

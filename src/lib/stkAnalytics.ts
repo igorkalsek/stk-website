@@ -22,6 +22,7 @@ type StkAnalyticsEventType =
   | 'preference_mode_activated'
   | 'personalized_results_used'
   | 'featured_race_impression'
+  | 'race_card_impression'
   | 'organizer_action_clicked';
 
 export type StkAnalyticsPlacement =
@@ -66,12 +67,38 @@ export type StkAnalyticsPayload = {
   placement?: StkAnalyticsPlacement | string;
 };
 
+type StkAnalyticsBody = {
+  event_type: StkAnalyticsEventType;
+  page_path: string;
+  language: string;
+  placement: StkAnalyticsPlacement | '' | string;
+  event_id?: string;
+  event_name?: string;
+  event_date?: string;
+  event_year?: string;
+  event_key?: string;
+  target_url?: string;
+  action_type?: string;
+  search_query?: string;
+  filters_json?: string;
+  results_count?: number | string;
+  target_domain?: string;
+  calendar_type?: string;
+  referrer?: string;
+  user_agent_group?: UserAgentGroup;
+  notes?: string;
+  release_id?: string;
+};
+
 const STK_SITE_EVENTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwSm--BvE-xGB9ZMMjyXFZRh9wNeHUEpUeJyM6aJAUEsV-HIoarel4_bN1Tlf8gG-Z3/exec';
 const MAX_FIELD_LENGTH = 500;
 const MAX_JSON_FIELD_LENGTH = 1000;
 const MAX_QUERY_LENGTH = 120;
 const STK_ANALYTICS_OPT_OUT_KEY = 'stkAnalyticsOptOut';
 const isStkAnalyticsDev = () => Boolean((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV);
+const STK_RELEASE_ID = typeof __STK_RELEASE_ID__ === 'string' && /^[0-9a-f]{12}$/.test(__STK_RELEASE_ID__)
+  ? __STK_RELEASE_ID__
+  : '';
 
 const STK_CANONICAL_HOSTS = new Set(['tekaski-koledar.si', 'www.tekaski-koledar.si']);
 const STK_LOCAL_HOSTS = new Set(['localhost', '127.0.0.1']);
@@ -127,6 +154,7 @@ const ALLOWED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'preference_mode_activated',
   'personalized_results_used',
   'featured_race_impression',
+  'race_card_impression',
   'organizer_action_clicked'
 ]);
 
@@ -279,10 +307,19 @@ const EVENT_SCOPED_EVENT_TYPES = new Set<StkAnalyticsEventType>([
   'race_unsaved',
   'event_detail_viewed',
   'event_card_clicked',
-  'related_race_clicked'
+  'related_race_clicked',
+  'race_card_impression'
 ]);
 
-const buildBody = (payload: StkAnalyticsPayload) => {
+const RACE_CARD_IMPRESSION_PLACEMENTS = new Set<StkAnalyticsPlacement>([
+  'home_updates',
+  'related_races'
+]);
+
+const withReleaseContext = <T extends Record<string, unknown>>(body: T): T & { release_id?: string } =>
+  STK_RELEASE_ID ? { ...body, release_id: STK_RELEASE_ID } : body;
+
+const buildBody = (payload: StkAnalyticsPayload): StkAnalyticsBody => {
   const body = {
     event_type: ALLOWED_EVENT_TYPES.has(payload.event_type) ? payload.event_type : 'external_link_clicked',
     page_path: trimText(payload.page_path || getPagePath()),
@@ -306,17 +343,17 @@ const buildBody = (payload: StkAnalyticsPayload) => {
   };
 
   if (body.event_type === 'preference_mode_activated') {
-    return {
+    return withReleaseContext({
       event_type: body.event_type,
       page_path: getSiteLevelPagePath(payload.page_path),
       language: body.language,
       user_agent_group: body.user_agent_group,
       placement: 'personalized_results'
-    } as typeof body;
+    });
   }
 
-  if (body.event_type === 'featured_race_impression') {
-    return {
+  if (body.event_type === 'featured_race_impression' || body.event_type === 'race_card_impression') {
+    return withReleaseContext({
       event_type: body.event_type,
       page_path: getSiteLevelPagePath(payload.page_path || body.page_path),
       language: body.language,
@@ -324,21 +361,21 @@ const buildBody = (payload: StkAnalyticsPayload) => {
       event_year: body.event_year,
       user_agent_group: body.user_agent_group,
       placement: body.placement
-    } as typeof body;
+    });
   }
 
   if (body.event_type === 'organizer_action_clicked') {
-    return {
+    return withReleaseContext({
       event_type: body.event_type,
       page_path: getSiteLevelPagePath(payload.page_path),
       language: body.language,
       user_agent_group: body.user_agent_group,
       action_type: body.action_type,
       placement: body.placement
-    } as typeof body;
+    });
   }
 
-  return body;
+  return withReleaseContext(body);
 };
 
 const sendBody = (body: ReturnType<typeof buildBody>) => {
@@ -374,9 +411,13 @@ export const trackStkEvent = (payload: StkAnalyticsPayload) => {
   const body = buildBody(payload);
   if (
     body.event_type === 'featured_race_impression' &&
-    (!/^R\d{6}$/.test(body.event_id) || !/^202[67]$/.test(body.event_year) || body.placement !== 'home_featured')
+    (!/^R\d{6}$/.test(String(body.event_id || '')) || !/^202[67]$/.test(String(body.event_year || '')) || body.placement !== 'home_featured')
   ) return;
-  if (EVENT_SCOPED_EVENT_TYPES.has(body.event_type) && (!/^\d{4}$/.test(body.event_year) || (!body.event_id && (!body.event_name || !body.event_date)))) return;
+  if (
+    body.event_type === 'race_card_impression' &&
+    (!/^R\d{6}$/.test(String(body.event_id || '')) || !/^202[67]$/.test(String(body.event_year || '')) || !RACE_CARD_IMPRESSION_PLACEMENTS.has(body.placement as StkAnalyticsPlacement))
+  ) return;
+  if (EVENT_SCOPED_EVENT_TYPES.has(body.event_type) && (!/^\d{4}$/.test(String(body.event_year || '')) || (!body.event_id && (!body.event_name || !body.event_date)))) return;
   if (body.event_type === 'external_link_clicked' && body.target_url && isInternalStkNavigationTarget(body.target_url)) return;
   if ((body.event_type === 'search_performed' || body.event_type === 'no_results_search') && !body.search_query && !body.filters_json) return;
 
@@ -488,8 +529,8 @@ const isTekobotHref = (href: string) => {
 
 let hasInitializedStkAnalyticsClickTracking = false;
 const pageLoadTrackedEventsByScope = new WeakMap<object, Set<string>>();
-const featuredImpressionTrackedEventsByScope = new WeakMap<object, Set<string>>();
-const featuredImpressionObserversByRoot = new WeakMap<object, IntersectionObserver>();
+const impressionTrackedEventsByScope = new WeakMap<object, Set<string>>();
+const impressionObserversByRoot = new WeakMap<object, IntersectionObserver>();
 
 export const initializeStkAnalyticsClickTracking = () => {
   if (typeof document === 'undefined' || hasInitializedStkAnalyticsClickTracking) return;
@@ -585,35 +626,50 @@ export const initializeStkAnalyticsClickTracking = () => {
   }, { capture: true });
 };
 
-export const initializeFeaturedRaceImpressionTracking = (root?: ParentNode) => {
+const canonicalAnalyticsEventId = (value: unknown) => {
+  const match = String(value ?? '').trim().match(/^[rR]?0*(\d{1,6})$/);
+  if (!match) return '';
+  const numericId = Number(match[1]);
+  return Number.isInteger(numericId) && numericId > 0
+    ? `R${String(numericId).padStart(6, '0')}`
+    : '';
+};
+
+export const initializeStkAnalyticsImpressionTracking = (root?: ParentNode) => {
   if (typeof document === 'undefined' || typeof IntersectionObserver === 'undefined') return null;
 
   const trackingRoot = root ?? document;
   const scope = document.body || document.documentElement || document;
   const elements = Array.from(
-    trackingRoot.querySelectorAll<HTMLElement>('[data-analytics-featured-impression="true"]')
+    trackingRoot.querySelectorAll<HTMLElement>('[data-analytics-featured-impression="true"], [data-analytics-race-card-impression="true"]')
   );
   if (!elements.length) return null;
 
-  featuredImpressionObserversByRoot.get(trackingRoot as object)?.disconnect();
+  impressionObserversByRoot.get(trackingRoot as object)?.disconnect();
 
-  const trackedEvents = featuredImpressionTrackedEventsByScope.get(scope) ?? new Set<string>();
-  featuredImpressionTrackedEventsByScope.set(scope, trackedEvents);
+  const trackedEvents = impressionTrackedEventsByScope.get(scope) ?? new Set<string>();
+  impressionTrackedEventsByScope.set(scope, trackedEvents);
 
   const getIdentity = (element: HTMLElement) => {
     const context = getEventContext(element);
-    const eventId = String(context.event_id || '').trim().toUpperCase();
+    const eventId = canonicalAnalyticsEventId(element.dataset.analyticsEventId || context.event_id);
     const eventYear = String(context.event_year || '').trim();
     const placement = getPlacement(element);
+    const eventType: StkAnalyticsEventType = element.dataset.analyticsFeaturedImpression === 'true'
+      ? 'featured_race_impression'
+      : 'race_card_impression';
 
-    if (!/^R\d{6}$/.test(eventId)) return null;
+    if (!eventId) return null;
     if (!/^202[67]$/.test(eventYear)) return null;
-    if (placement !== 'home_featured') return null;
+    if (eventType === 'featured_race_impression' && placement !== 'home_featured') return null;
+    if (eventType === 'race_card_impression' && !RACE_CARD_IMPRESSION_PLACEMENTS.has(placement)) return null;
 
     return {
       eventId,
       eventYear,
-      key: `${eventYear}:${eventId}`
+      eventType,
+      placement,
+      key: `${eventType}:${placement}:${eventYear}:${eventId}`
     };
   };
 
@@ -633,17 +689,17 @@ export const initializeFeaturedRaceImpressionTracking = (root?: ParentNode) => {
       trackedEvents.add(identity.key);
 
       trackStkEvent({
-        event_type: 'featured_race_impression',
+        event_type: identity.eventType,
         event_id: identity.eventId,
         event_year: identity.eventYear,
-        placement: 'home_featured'
+        placement: identity.placement
       });
 
       observer.unobserve(element);
     }
   }, { threshold: 0.5 });
 
-  featuredImpressionObserversByRoot.set(trackingRoot as object, observer);
+  impressionObserversByRoot.set(trackingRoot as object, observer);
 
   for (const element of elements) {
     const identity = getIdentity(element);
@@ -653,6 +709,12 @@ export const initializeFeaturedRaceImpressionTracking = (root?: ParentNode) => {
 
   return observer;
 };
+
+export const initializeFeaturedRaceImpressionTracking = (root?: ParentNode) =>
+  initializeStkAnalyticsImpressionTracking(root);
+
+export const initializeRaceCardImpressionTracking = (root?: ParentNode) =>
+  initializeStkAnalyticsImpressionTracking(root);
 
 export const filtersToAnalyticsJson = (filters: Record<string, string | boolean>) => {
   const selected = Object.fromEntries(
