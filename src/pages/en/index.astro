@@ -190,7 +190,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { getStableEventId } from '../../utils-event-detail';
   import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
-  import { initializeFeaturedRaceImpressionTracking } from '../../lib/stkAnalytics';
+  import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../../lib/stkAnalytics';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -1480,9 +1480,12 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const canonicalDate = matchedEvent.event ? getEventField(matchedEvent.event, 'datum', ['date', 'event_date', 'Datum']) : '';
         const canonicalYear = matchedEvent.event ? getEventYear(matchedEvent.event) : '';
         const analyticsEventId = matchedEvent.event && canonicalDate ? getEventStableId(matchedEvent.event, canonicalTitle, canonicalDate, getEventField(matchedEvent.event, 'kraj', ['place', 'city', 'location'])) : '';
+        const impressionAttribute = /^r\d{6}$/i.test(analyticsEventId) && /^202[67]$/.test(canonicalYear)
+          ? ' data-analytics-race-card-impression="true"'
+          : '';
         if (!detailPath && debugEnabled) console.debug('[STK English home] Recent update not linked', matchedEvent.reason, update);
         const analyticsAttributes = detailPath
-          ? ` data-analytics-placement="home_updates" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(canonicalTitle)}" data-analytics-event-date="${escapeHtml(canonicalDate)}" data-analytics-event-year="${escapeHtml(canonicalYear)}"`
+          ? ` data-analytics-placement="home_updates" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(canonicalTitle)}" data-analytics-event-date="${escapeHtml(canonicalDate)}" data-analytics-event-year="${escapeHtml(canonicalYear)}"${impressionAttribute}`
           : '';
 
         return `
@@ -1494,6 +1497,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           </article>
         `;
       }).join('');
+      initializeRaceCardImpressionTracking(container);
       setStatus('updates', '');
     } catch (error) {
       logDebugError('Recent updates failed', error);

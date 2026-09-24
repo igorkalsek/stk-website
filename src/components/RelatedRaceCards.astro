@@ -10,6 +10,7 @@ const copy = language === 'en'
 const headingId = `related-races-${language}`;
 const formatDate = (value: string) => new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
 const metadata = (race: RelatedRaceCard) => [race.place, race.region, race.surface, race.distances ? formatRaceDistances(race.distances, language) : ''].filter(Boolean);
+const hasCanonicalAnalyticsId = (value: string) => /^r\d{6}$/i.test(value);
 ---
 {races.length > 0 && (
   <section class="related-races-section" aria-labelledby={headingId}>
@@ -17,7 +18,7 @@ const metadata = (race: RelatedRaceCard) => [race.place, race.region, race.surfa
     <ul class="related-races-grid" aria-label={copy.aria}>
       {races.map((race) => (
         <li class="related-race-item">
-          <article class="related-race-card" data-stk-event-id={race.id} data-stk-event-name={race.title} data-stk-event-date={race.date} data-stk-event-year={race.year} data-analytics-placement="related_races">
+          <article class="related-race-card" data-stk-event-id={race.id} data-stk-event-name={race.title} data-stk-event-date={race.date} data-stk-event-year={race.year} data-analytics-event-id={race.stableEventId} data-analytics-placement="related_races" data-analytics-race-card-impression={hasCanonicalAnalyticsId(race.stableEventId) ? 'true' : undefined}>
             <div class="related-race-card-body">
               <time class="related-race-date" datetime={race.date}>{formatDate(race.date)}</time>
               <h3 class="related-race-title">
