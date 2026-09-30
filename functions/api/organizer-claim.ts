@@ -1,4 +1,11 @@
-const UPSTREAM = 'https://script.google.com/macros/s/AKfycbzNCSp6qjxwFTmxTEJpFpNET6duD4ChwPhKTXAAYKedaUEDih3AClwVKTr1wmVSKSSA/exec?endpoint=organizer-claim';
+// Known public Content deployment must never be selected as organizer upstream.
+const PUBLIC_CONTENT_URL = 'https://script.google.com/macros/s/AKfycbzn9QzNSCE1oyKDFsm0TEFIzGSaettC6ErglCLWzlmwXiOd0wcnwsQVFJglFlnFpuNR/exec';
+// One server-only upstream; no default, fallback or automatic cutover.
+const organizerUpstream = (value: unknown): string | null => {
+  if (typeof value !== 'string' || value.length > 512 || value === PUBLIC_CONTENT_URL || /\s/.test(value) ||
+    !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]{20,200}\/exec$/.test(value)) return null;
+  return `${value}?endpoint=organizer-claim`;
+};
 const ALLOWED = ['year', 'event_id', 'organizer_name', 'contact_name', 'organizer_email', 'declaration', 'displayed_snapshot_hash'] as const;
 const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
 const response = (status: number, code: string, ok = false) => new Response(JSON.stringify({ ok, status: code }), { status, headers });
@@ -28,6 +35,8 @@ const readBoundedBody = async (request: Request) => {
 export const onRequest = async ({ request, env }: { request: Request; env: Record<string, string | undefined> }) => {
   if (request.method !== 'POST') return response(405, 'METHOD_NOT_ALLOWED');
   if (env.STK_ORGANIZER_CLAIM_RELAY_ENABLED !== 'true') return response(503, 'NOT_CONFIGURED');
+  const upstreamUrl = organizerUpstream(env.STK_ORGANIZER_CLAIM_UPSTREAM_URL);
+  if (!upstreamUrl) return response(503, 'NOT_CONFIGURED');
   if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return response(415, 'INVALID_REQUEST');
   const declaredLength = Number(request.headers.get('content-length') || 0);
   if (declaredLength > MAX_BODY_BYTES) return response(413, 'INVALID_REQUEST');
@@ -42,7 +51,7 @@ export const onRequest = async ({ request, env }: { request: Request; env: Recor
       !String(body.organizer_name).trim() || String(body.organizer_name).length > 200 || String(body.contact_name).length > 200) return response(400, 'INVALID_REQUEST');
   const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const upstream = await fetch(UPSTREAM, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.fromEntries(ALLOWED.map((key) => [key, body[key]]))), signal: controller.signal });
+    const upstream = await fetch(upstreamUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.fromEntries(ALLOWED.map((key) => [key, body[key]]))), signal: controller.signal });
     let result: unknown; try { result = await upstream.json(); } catch { return response(503, 'UNAVAILABLE'); }
     const resultRecord = result && typeof result === 'object' && !Array.isArray(result) ? result as Record<string, unknown> : null;
     const successStatus = resultRecord?.ok === true ? String(resultRecord.status ?? '') : '';

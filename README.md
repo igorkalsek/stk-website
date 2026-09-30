@@ -139,3 +139,52 @@ Each live section includes graceful fallback content if an API request fails or 
 - Do not create an admin system or login flow unless explicitly requested.
 - Do not implement custom voting logic yet.
 - Keep Slovene copy natural, concise, and practical.
+
+## Organizer deployment routing (DEV-001b)
+
+The organizer claim Pages function uses the server-only environment variable
+`STK_ORGANIZER_CLAIM_UPSTREAM_URL`. Set it to one base versioned Apps Script web
+app URL: `https://script.google.com/macros/s/<deployment-id>/exec`, without a
+query, fragment, whitespace or `/dev`. The function appends
+`?endpoint=organizer-claim`; missing/invalid configuration returns 503
+`NOT_CONFIGURED` without contacting an upstream. There is no fallback or
+multi-routing. The known public Content v32 deployment is explicitly rejected
+as an organizer upstream. URL validation alone does not prove deployment owner;
+the operator runtime preflight is still required for a new deployment.
+`STK_ORGANIZER_CLAIM_RELAY_ENABLED` remains a separate ingress
+switch. Public Content and Master routing is unchanged.
+
+Before deploying this code, configure the upstream variable to the existing
+organizer deployment URL to preserve current routing:
+
+```text
+https://script.google.com/macros/s/AKfycbzNCSp6qjxwFTmxTEJpFpNET6duD4ChwPhKTXAAYKedaUEDih3AClwVKTr1wmVSKSSA/exec
+```
+
+For the separately approved future STK Gmail cutover, pause organizer ingress
+and mutation/retry callers, wait for in-flight executions, and inventory pending
+claims/reports, active attempts and mailbox-scoped draft IDs. Create the new
+versioned deployment under `tekaski.koledar@gmail.com` in the same Content API
+project. Use the authenticated operator preflight from STK orodja to test the
+actual deployment runtime; editor execution is not deployment identity proof.
+
+Align these three values under the pause: website
+`STK_ORGANIZER_CLAIM_UPSTREAM_URL`, STK orodja
+`STK_ORGANIZER_CONFIRMATION_INTERNAL_URL`, and Content API
+`STK_ORGANIZER_ACCESS_PUBLIC_URL`. Save all OLD values for rollback. A rollback
+restores those three URLs under the pause and does not rewrite stored claims or
+messages. Keep the old deployment and review links already issued against either
+URL before resuming traffic. Existing magic links embed their original deployment
+URL and expire after 60 minutes; changing the relay cannot redirect them. Wait
+for outstanding tokens to expire and reconcile unresolved claims separately;
+do not delete `PENDING_EMAIL` rows or clear persisted drafts.
+
+Keep the admin Basic `STK_ORGANIZER_REPORT_ENABLED=false` in this task. A stored
+Gmail draft retry can bypass the Basic fetch, so that flag alone cannot pause
+mail delivery. With the flag false, the safe empty-input service probe returns
+`UNCONFIRMED`, not a successful authentication proof. Basic service auth remains
+UNCONFIRMED until runtime preflight on the new STK-owned deployment; even then,
+a disabled Basic flag cannot produce an authentication proof. The complete operator
+procedure and read-only inventory live in the apps-scripts repository at
+`projects/stk-content-api/ORGANIZER_ACCESS.md`. This source change performs no
+production deployment, configuration update, cutover or mail delivery.
