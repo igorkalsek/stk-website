@@ -1,12 +1,14 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {onRequest} from '../.cache/dist-test/functions/api/organizer-claim.js';
+const oldDeployment = 'https://script.google.com/macros/s/AKfycbzNCSp6qjxwFTmxTEJpFpNET6duD4ChwPhKTXAAYKedaUEDih3AClwVKTr1wmVSKSSA/exec';
+const relayEnv = { STK_ORGANIZER_CLAIM_RELAY_ENABLED: 'true', STK_ORGANIZER_CLAIM_UPSTREAM_URL: oldDeployment };
 const payload={year:'2026',event_id:'R000175',organizer_name:'ŠD Test',contact_name:'Ana',organizer_email:'ana@example.com',declaration:true,displayed_snapshot_hash:'a'.repeat(64)};
-const call=(body=payload,env={STK_ORGANIZER_CLAIM_RELAY_ENABLED:'true'},headers={})=>onRequest({request:new Request('https://stk.test/api/organizer-claim',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify(body)}),env});
+const call=(body=payload,env=relayEnv,headers={})=>onRequest({request:new Request('https://stk.test/api/organizer-claim',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify(body)}),env});
 const streamedCall = (chunks) => {
   const stream = new ReadableStream({ start(controller) { for (const chunk of chunks) controller.enqueue(new TextEncoder().encode(chunk)); controller.close(); } });
   const request = new Request('https://stk.test/api/organizer-claim', { method: 'POST', headers: { 'content-type': 'application/json' }, body: stream, duplex: 'half' });
-  return onRequest({ request, env: { STK_ORGANIZER_CLAIM_RELAY_ENABLED: 'true' } });
+  return onRequest({ request, env: relayEnv });
 };
-test('relay is POST only, JSON only and disabled by default',async()=>{let r=await onRequest({request:new Request('https://stk.test'),env:{}});assert.equal(r.status,405);r=await onRequest({request:new Request('https://stk.test',{method:'POST'}),env:{}});assert.equal(r.status,503);assert.equal((await r.json()).status,'NOT_CONFIGURED');r=await onRequest({request:new Request('https://stk.test',{method:'POST',body:'x'}),env:{STK_ORGANIZER_CLAIM_RELAY_ENABLED:'true'}});assert.equal(r.status,415)});
+test('relay is POST only, JSON only and disabled by default',async()=>{let r=await onRequest({request:new Request('https://stk.test'),env:{}});assert.equal(r.status,405);r=await onRequest({request:new Request('https://stk.test',{method:'POST'}),env:{}});assert.equal(r.status,503);assert.equal((await r.json()).status,'NOT_CONFIGURED');r=await onRequest({request:new Request('https://stk.test',{method:'POST',body:'x'}),env:relayEnv});assert.equal(r.status,415)});
 test('relay validates exact schema, email, hash and body limit',async()=>{assert.equal((await call({...payload,note:'x'})).status,400);assert.equal((await call({...payload,organizer_email:'bad'})).status,400);assert.equal((await call({...payload,displayed_snapshot_hash:'A'.repeat(64)})).status,400);assert.equal((await call(payload,undefined,{'content-length':'8193'})).status,413)});
 test('relay sanitizes accepted and changed upstream responses',async(t)=>{const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);globalThis.fetch=async()=>new Response(JSON.stringify({ok:true,status:'ACCEPTED',claim_id:'secret'}),{status:200,headers:{'x-secret':'x'}});let r=await call();assert.deepEqual(await r.json(),{ok:true,status:'ACCEPTED'});assert.equal(r.headers.get('x-secret'),null);assert.equal(r.headers.get('cache-control'),'no-store');globalThis.fetch=async()=>new Response(JSON.stringify({ok:false,code:'SNAPSHOT_CHANGED',reason:'private'}),{status:409});r=await call();assert.equal(r.status,409);assert.deepEqual(await r.json(),{ok:false,status:'SNAPSHOT_CHANGED'})});
 test('relay converts non-JSON and network failure to safe unavailable',async(t)=>{const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);globalThis.fetch=async()=>new Response('upstream detail');let r=await call();assert.deepEqual(await r.json(),{ok:false,status:'UNAVAILABLE'});globalThis.fetch=async()=>{throw new Error('private')};r=await call();assert.deepEqual(await r.json(),{ok:false,status:'UNAVAILABLE'})});
@@ -22,4 +24,38 @@ test('relay rejects malformed JSON under the streaming limit', async () => {
   const result = await streamedCall(['{"year":']);
   assert.equal(result.status, 400);
   assert.deepEqual(await result.json(), { ok: false, status: 'INVALID_REQUEST' });
+});
+
+
+test('relay requires one valid server-only exec URL and never falls back', async (t) => {
+  const original = globalThis.fetch; t.after(() => globalThis.fetch = original);
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; throw new Error('unexpected fetch'); };
+  for (const value of [undefined, '',
+    'https://script.google.com/macros/s/AKfycbzn9QzNSCE1oyKDFsm0TEFIzGSaettC6ErglCLWzlmwXiOd0wcnwsQVFJglFlnFpuNR/exec',
+    'http://script.google.com/macros/s/abcdefghijklmnopqrst/exec',
+    oldDeployment + '?endpoint=stats', oldDeployment + '#claim', oldDeployment + '\n',
+    oldDeployment.replace('/exec', '/dev'), oldDeployment.replace('script.google.com', 'evil.example'),
+    oldDeployment.replace('script.google.com', 'user:password@script.google.com'),
+    'https://script.google.com/macros/s/short/exec', 'https://script.google.com/macros/s/' + 'a'.repeat(201) + '/exec']) {
+    const r = await call(payload, { ...relayEnv, STK_ORGANIZER_CLAIM_UPSTREAM_URL: value });
+    assert.equal(r.status, 503); assert.deepEqual(await r.json(), {ok:false,status:'NOT_CONFIGURED'});
+  }
+  assert.equal(calls, 0);
+});
+
+test('relay cutover and rollback each use only the selected upstream', async (t) => {
+  const original = globalThis.fetch; t.after(() => globalThis.fetch = original);
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push({url, options});
+    return new Response(JSON.stringify({ok:true,status:'ACCEPTED'}));
+  };
+  const next = 'https://script.google.com/macros/s/AKfycb_new_STK_organizer_0123456789/exec';
+  for (const selected of [oldDeployment, next, oldDeployment]) {
+    assert.equal((await call(payload, {...relayEnv,STK_ORGANIZER_CLAIM_UPSTREAM_URL:selected})).status, 200);
+    assert.equal(calls.at(-1).url, selected + '?endpoint=organizer-claim');
+    assert.deepEqual(JSON.parse(calls.at(-1).options.body), payload);
+  }
+  assert.equal(calls.length, 3);
 });
