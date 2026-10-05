@@ -13,7 +13,20 @@ import {
 
 const jsonResponse = (payload, init = {}) => new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' }, ...init });
 
-test('master year payload fetch retries a temporary error and remains memoized per year', async () => {
+// Record request timeouts and advance only retry delays without real waiting.
+const mockMasterTimers = (t) => {
+  const delays = [];
+  t.mock.method(globalThis, 'setTimeout', (callback, delay) => {
+    delays.push(delay);
+    if (delay !== 15_000) queueMicrotask(callback);
+    return delays.length;
+  });
+  t.mock.method(globalThis, 'clearTimeout', () => {});
+  return delays;
+};
+
+test('master year payload fetch retries a temporary error and remains memoized per year', async (t) => {
+  const delays = mockMasterTimers(t);
   __resetBuildDataCachesForTests();
   let calls = 0;
   const fetchImpl = async () => {
@@ -44,21 +57,26 @@ test('master year payload fetch retries a temporary error and remains memoized p
   assert.deepEqual(retried, { ok: true });
   assert.deepEqual(cached, retried);
   assert.equal(calls, 2);
+  assert.deepEqual(delays, [15_000, 15_000, 1_000, 15_000]);
 });
 
-test('master year payload stops after three attempts and clears the rejected cache entry', async () => {
+test('master year payload stops after five attempts and clears the rejected cache entry', async (t) => {
+  const delays = mockMasterTimers(t);
   __resetBuildDataCachesForTests();
   let calls = 0;
   const fetchImpl = async () => {
     calls += 1;
-    if (calls <= 3) throw new Error(`network error ${calls}`);
+    if (calls <= 5) throw new Error(`network error ${calls}`);
     return jsonResponse({ ok: true });
   };
 
-  await assert.rejects(fetchMasterYearPayload('2026', fetchImpl), /network error 3/);
-  assert.equal(calls, 3);
+  const request = fetchMasterYearPayload('2026', fetchImpl);
+  assert.equal(fetchMasterYearPayload('2026', fetchImpl), request);
+  await assert.rejects(request, /network error 5/);
+  assert.equal(calls, 5);
+  assert.deepEqual(delays, [15_000, 1_000, 15_000, 2_000, 15_000, 4_000, 15_000, 8_000, 15_000]);
   assert.deepEqual(await fetchMasterYearPayload('2026', fetchImpl), { ok: true });
-  assert.equal(calls, 4);
+  assert.equal(calls, 6);
 });
 
 test('timedFetchJson aborts slow build-time requests', async () => {
@@ -240,6 +258,44 @@ test('detail paths fail the build when required year 2026 has no valid public ev
   }
 });
 
+test('required 2026 fetch exhaustion rejects detail paths and clears year caches', async (t) => {
+  mockMasterTimers(t);
+  __resetBuildDataCachesForTests();
+  const originalFetch = globalThis.fetch;
+  let requiredCalls = 0;
+  let recovered = false;
+  globalThis.fetch = async (url) => {
+    const year = String(url).includes('year=2027') ? '2027' : '2026';
+    if (year === '2026') {
+      requiredCalls += 1;
+      if (!recovered) return jsonResponse({}, { status: 404 });
+    }
+    return jsonResponse({ rows: [{
+      row: year,
+      datum: `${year}-12-01`,
+      naziv_prireditve: `Testni tek ${year}`,
+      kraj: 'Ljubljana',
+      status_dogodka: 'potrjeno',
+      vidno_v_javnem_koledarju: 'DA',
+    }] });
+  };
+
+  try {
+    const results = await Promise.allSettled([getDetailStaticPaths('sl'), getDetailStaticPaths('en')]);
+    for (const result of results) {
+      assert.equal(result.status, 'rejected');
+      assert.match(result.reason.message, /master 2026.*attempt 5\/5.*status 404/);
+    }
+    assert.equal(requiredCalls, 5);
+    recovered = true;
+    const paths = await getDetailStaticPaths('sl');
+    assert.deepEqual(paths.map((path) => path.params.year), ['2026', '2027']);
+    assert.equal(requiredCalls, 6);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('detail paths fail the build when either language has no required 2026 paths', () => {
   const event = { title: 'Testni tek' };
   const path = { params: { year: '2026', slug: 'testni-tek' }, props: { event, year: '2026', relatedRaces: [] } };
@@ -249,11 +305,16 @@ test('detail paths fail the build when either language has no required 2026 path
   assert.throws(() => assertRequiredDetailPaths({ ...baseData, enPaths: [] }, 'en'), /no EN detail paths.*2026/i);
 });
 
-test('unreachable optional future year is skipped without hiding required 2026 paths', async () => {
+test('unreachable optional future year is skipped without hiding required 2026 paths', async (t) => {
+  mockMasterTimers(t);
   __resetBuildDataCachesForTests();
   const originalFetch = globalThis.fetch;
+  let futureCalls = 0;
   globalThis.fetch = async (url) => {
-    if (String(url).includes('year=2027')) throw new Error('future year unavailable');
+    if (String(url).includes('year=2027')) {
+      futureCalls += 1;
+      throw new Error('future year unavailable');
+    }
     return jsonResponse({ rows: [{
       row: '2026',
       datum: '2026-12-01',
@@ -268,6 +329,7 @@ test('unreachable optional future year is skipped without hiding required 2026 p
     const paths = await getDetailStaticPaths('sl');
     assert.equal(paths.length, 1);
     assert.equal(paths[0].params.year, '2026');
+    assert.equal(futureCalls, 5);
   } finally {
     globalThis.fetch = originalFetch;
   }

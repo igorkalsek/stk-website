@@ -46,8 +46,8 @@ type BuildStats = {
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const TOP_API_URL = `${API_BASE}/top?scope=upcoming&limit=1000`;
 const DEFAULT_TIMEOUT_MS = 15_000;
-const MASTER_FETCH_ATTEMPTS = 3;
-const MASTER_RETRY_DELAY_MS = 100;
+const MASTER_FETCH_ATTEMPTS = 5;
+const MASTER_RETRY_DELAY_MS = 1_000;
 const timingEnabled = () => process.env.STK_BUILD_TIMING === '1';
 const now = () => performance.now();
 
@@ -89,7 +89,7 @@ export const fetchMasterYearPayload = (year: PublicYear, fetchImpl: FetchLike = 
           return await timedFetchJson(`${API_BASE}${buildMasterApiPath(year)}`, { label: `master ${year} (attempt ${attempt}/${MASTER_FETCH_ATTEMPTS})`, fetchImpl });
         } catch (error) {
           lastError = error;
-          if (attempt < MASTER_FETCH_ATTEMPTS) await new Promise((resolve) => setTimeout(resolve, MASTER_RETRY_DELAY_MS * attempt));
+          if (attempt < MASTER_FETCH_ATTEMPTS) await new Promise((resolve) => setTimeout(resolve, MASTER_RETRY_DELAY_MS * 2 ** (attempt - 1)));
         }
       }
       throw lastError;
