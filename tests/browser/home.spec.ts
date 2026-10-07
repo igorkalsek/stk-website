@@ -39,6 +39,7 @@ const homes = [
 ];
 
 async function mockHomepageApis(page: Page, withRecentUpdate = false) {
+  await page.clock.setFixedTime(new Date('2026-09-13T12:00:00Z'));
   const events = [
     ['1', '2026-09-13', 'Fallback race', 'Kranj'],
     ['2', '2026-09-26', 'Ranked race two', 'Velenje'],
@@ -56,7 +57,7 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false) {
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/recent_updates' && withRecentUpdate) {
-      return route.fulfill({ json: { updated_events: [{ ...events[1], recent_update_date: '2026-09-20' }] } });
+      return route.fulfill({ json: { updated_events: [{ ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' }] } });
     }
     if (url.pathname === '/stats') {
       return route.fulfill({ json: { confirmed_public_events_total: 0, family_friendly_total: 0, group_runs_total: 0 } });
@@ -78,6 +79,35 @@ for (const home of homes) {
     await card.locator('h3 a').click();
     const body = JSON.parse((await requestPromise).postData() ?? '{}');
     expect(body).toMatchObject({ event_type: 'event_card_clicked', placement: 'home_updates', event_id: 'r000002', event_year: '2026', event_key: '2026:r000002' });
+  });
+
+  test(`${home.path} renders classified metadata in global recency order and leaves unknown types unlabelled`, async ({ page }) => {
+    await mockHomepageApis(page);
+    const summaries: Record<string, string> = { new: 'Nov dogodek v koledarju.', confirmed: 'Dogodek je bil potrjen.', updated: 'Podatki dogodka so bili posodobljeni.' };
+    const race = (row: string, type: string, recent: string) => ({
+      row, datum: '2026-12-17', naziv_prireditve: `DEV-017 ${type}`, kraj: 'Ljubljana',
+      update_type: type, recent_update_date: recent, public_summary: summaries[type] ?? 'Neznana sprememba.'
+    });
+    await page.route(`${API_HOST}/recent_updates?**`, (route) => route.fulfill({ json: {
+      recent_updates_last_days: {
+        updated_events: [race('14', 'updated', '2026-10-04'), race('11', 'unknown', '2026-10-07')],
+        new_events: [race('12', 'new', '2026-10-06')],
+        confirmed_events: [race('13', 'confirmed', '2026-10-05')]
+      }
+    } }));
+    await page.goto(home.path);
+    const cards = page.locator('[data-recent-updates] .update-card');
+    await expect(cards).toHaveCount(4);
+    await expect(cards.locator('h3')).toHaveText(['DEV-017 unknown', 'DEV-017 new', 'DEV-017 confirmed', 'DEV-017 updated']);
+    const labels = home.path === '/' ? ['Dodano', 'Potrjeno', 'Posodobljeno'] : ['Added', 'Confirmed', 'Updated'];
+    await expect(cards.nth(0).locator('.update-meta')).not.toContainText(/Updated|Posodobljeno/);
+    if (home.path === '/en/') await expect(cards.nth(0)).not.toContainText('Calendar details for this race were updated.');
+    const translatedSummaries = home.path === '/' ? Object.values(summaries) : ['New event in the calendar.', 'The event was confirmed.', 'Calendar details for this race were updated.'];
+    for (const [index, label] of labels.entries()) {
+      await expect(cards.nth(index + 1).locator('.update-meta')).toContainText(label);
+      await expect(cards.nth(index + 1)).toContainText(translatedSummaries[index]);
+      await expect(cards.nth(index + 1).locator('.update-meta')).toContainText(home.path === '/' ? ' · dogodek ' : ' · event ');
+    }
   });
 
   test(`${home.path} keeps key paths and the compact section hierarchy`, async ({ page }) => {

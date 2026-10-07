@@ -159,11 +159,11 @@ export const selectHomepageRecentUpdates = (
   limit = 4
 ): HomepageRecentUpdateSelection => {
   const tagged = [
-    ...groups.updatedEvents.map((item) => ({ ...item, update_type: 'updated' })),
-    ...groups.newEvents.map((item) => ({ ...item, update_type: 'new' })),
-    ...groups.confirmedEvents.map((item) => ({ ...item, update_type: 'confirmed' }))
+    ...groups.updatedEvents,
+    ...groups.newEvents,
+    ...groups.confirmedEvents
   ].map((item, sourceIndex) => ({
-    item,
+    item: { ...item, update_type: item.update_type !== undefined ? item.update_type : pickPathValue(item, 'event.update_type') },
     sourceIndex,
     dateValue: parseRecentUpdateDateValue(pickPathString(item, ['recent_update_date', 'event.recent_update_date']))
   }));
@@ -190,6 +190,24 @@ export const selectHomepageRecentUpdates = (
   }
 
   return { canOrderGlobally: true, items };
+};
+
+export const formatHomepageRecentUpdateMeta = (
+  updateType: unknown,
+  recentUpdateDate: string,
+  eventDate: string,
+  language: 'sl' | 'en'
+): string => {
+  const labels: Record<string, string> = language === 'sl'
+    ? { new: 'Dodano', confirmed: 'Potrjeno', updated: 'Posodobljeno' }
+    : { new: 'Added', confirmed: 'Confirmed', updated: 'Updated' };
+  const type = String(updateType ?? '').trim().toLowerCase();
+  const label = Object.hasOwn(labels, type) ? labels[type] : '';
+  if (!recentUpdateDate || !label) return eventDate;
+  return [
+    `${label} ${recentUpdateDate}`,
+    eventDate ? `${language === 'sl' ? 'dogodek' : 'event'} ${eventDate}` : ''
+  ].filter(Boolean).join(' · ');
 };
 
 export const getHomepageRowCandidates = (item: HomepageApiRecord) => {

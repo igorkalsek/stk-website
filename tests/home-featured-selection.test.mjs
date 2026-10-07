@@ -54,15 +54,15 @@ describe('homepage recent updates selection', () => {
   it('sorts categories globally by canonical recency, preserves type and deduplicates', () => {
     const selection = selectHomepageRecentUpdates({
       updatedEvents: [
-        { row: '1', naziv_prireditve: 'Older update', recent_update_date: '2026-09-11' },
-        { row: '2', naziv_prireditve: 'Duplicate older update', recent_update_date: '2026-09-10' }
+        { row: '1', naziv_prireditve: 'Older update', update_type: 'updated', recent_update_date: '2026-09-11' },
+        { row: '2', naziv_prireditve: 'Duplicate older update', update_type: 'updated', recent_update_date: '2026-09-10' }
       ],
       newEvents: [
-        { row: '3', naziv_prireditve: 'Newest new race', recent_update_date: '2026-09-13' },
-        { row: '2', naziv_prireditve: 'Duplicate newer new race', recent_update_date: '2026-09-12' }
+        { row: '3', naziv_prireditve: 'Newest new race', update_type: 'new', recent_update_date: '2026-09-13' },
+        { row: '2', naziv_prireditve: 'Duplicate newer new race', update_type: 'new', recent_update_date: '2026-09-12' }
       ],
       confirmedEvents: [
-        { row: '4', naziv_prireditve: 'Confirmed race', recent_update_date: '2026-09-12' }
+        { row: '4', naziv_prireditve: 'Confirmed race', update_type: 'confirmed', recent_update_date: '2026-09-12' }
       ]
     }, 4);
 

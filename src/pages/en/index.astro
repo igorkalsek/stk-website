@@ -188,7 +188,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { renderActionIcon } from '../../utils-action-icons';
   import { getDisplayEventTitle } from '../../utils-events';
   import { getStableEventId } from '../../utils-event-detail';
-  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates } from '../../utils-home-events';
+  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates, formatHomepageRecentUpdateMeta } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../../lib/stkAnalytics';
 
@@ -686,13 +686,17 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const normalizeDescription = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC').replace(/\s+/g, ' ').trim();
 
   const RECENT_UPDATE_DESCRIPTIONS: Record<string, string> = {
+    [normalizeDescription('Nov dogodek v koledarju.')]: 'New event in the calendar.',
+    [normalizeDescription('Dogodek je bil potrjen.')]: 'The event was confirmed.',
+    [normalizeDescription('Podatki dogodka so bili posodobljeni.')]: 'Calendar details for this race were updated.',
     [normalizeDescription('Dodan otroški Tek Štrkcev 0.5 km, popravljena družinska opomba in dodana prijavna/informacijska povezava.')]:
       'Children’s race, family-friendly note and information/registration links were updated.'
   };
 
-  const getRecentUpdateDescription = (value: string) => {
+  const getRecentUpdateDescription = (value: string, updateType: unknown) => {
     if (!value) return '';
-    return RECENT_UPDATE_DESCRIPTIONS[normalizeDescription(value)] ?? 'Calendar details for this race were updated.';
+    return RECENT_UPDATE_DESCRIPTIONS[normalizeDescription(value)]
+      ?? (String(updateType ?? '').trim().toLowerCase() === 'updated' ? 'Calendar details for this race were updated.' : '');
   };
 
   const normalize = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
@@ -1462,10 +1466,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         ], 'Calendar update');
         const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
         const recentUpdateDate = formatDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
-        const updateDateMeta = recentUpdateDate
-          ? joinParts([`Updated ${recentUpdateDate}`, eventDate ? `event ${eventDate}` : ''])
-          : eventDate;
-        const changed = getRecentUpdateDescription(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba']));
+        const updateDateMeta = formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, eventDate, 'en');
+        const changed = getRecentUpdateDescription(pickPath(update, ['public_summary', 'event.public_summary', 'zadnja_sprememba', 'event.zadnja_sprememba']), update.update_type);
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
         const place = joinParts([location, region && region !== location ? region : '']);
