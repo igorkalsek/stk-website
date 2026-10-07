@@ -10,6 +10,7 @@ export const STATIC_SITEMAP_PATHS = [
   '/za-organizatorje/',
   '/za-organizatorje/termini-2027/',
   '/o-projektu-in-zasebnost/',
+  '/pogoji-uporabe/',
   '/en/',
   '/en/find-races/',
   '/en/most-voted-races/',
@@ -17,6 +18,7 @@ export const STATIC_SITEMAP_PATHS = [
   '/en/group-runs/',
   '/en/personal-calendar/',
   '/en/stk-tekobot/',
+  '/en/terms-of-use/',
   '/en/for-organizers/',
   '/en/for-organizers/2027-race-dates/',
 ];
