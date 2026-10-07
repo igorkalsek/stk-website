@@ -185,7 +185,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
-  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates } from '../utils-home-events';
+  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates, formatHomepageRecentUpdateMeta } from '../utils-home-events';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -1452,10 +1452,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         ], 'Posodobitev koledarja');
         const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
         const recentUpdateDate = formatDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
-        const updateDateMeta = recentUpdateDate
-          ? joinParts([`Posodobljeno ${recentUpdateDate}`, eventDate ? `dogodek ${eventDate}` : ''])
-          : eventDate;
-        const changed = formatDate(pickPath(update, ['zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
+        const updateDateMeta = formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, eventDate, 'sl');
+        const changed = formatDate(pickPath(update, ['public_summary', 'event.public_summary', 'zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
         const place = joinParts([location, region && region !== location ? region : '']);
