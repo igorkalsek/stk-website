@@ -1448,6 +1448,11 @@ main {
   padding-top: 16px;
 }
 
+.footer-bottom a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 @media (min-width: 680px) {
   .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

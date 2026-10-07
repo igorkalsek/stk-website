@@ -75,5 +75,8 @@ const links: FooterLink[] = isEnglish ? [
       </div>
     </div>
   </div>
-  <div class="container footer-bottom">© 2026 Slovenski Tekaški Koledar</div>
+  <div class="container footer-bottom">
+    {isEnglish ? '© 2026 Slovenian Running Calendar · STK database · ' : '© 2026 Slovenski tekaški koledar · Podatkovna zbirka STK · '}
+    <a href={isEnglish ? '/en/terms-of-use/' : '/pogoji-uporabe/'}>{isEnglish ? 'Terms of data use' : 'Pogoji uporabe'}</a>
+  </div>
 </footer>

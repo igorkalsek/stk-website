@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Props {
+  lang?: 'sl' | 'en';
+}
+
+const { lang = 'sl' } = Astro.props;
+const isEnglish = lang === 'en';
+const slPath = '/pogoji-uporabe/';
+const enPath = '/en/terms-of-use/';
+const title = isEnglish ? 'Terms of data use' : 'Pogoji uporabe podatkov';
+const description = isEnglish
+  ? 'Terms for personal use, sharing and partner use of the STK curated running event database.'
+  : 'Pogoji za osebno uporabo, deljenje in partnersko uporabo urejene zbirke podatkov o tekaških prireditvah STK.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  lang={lang}
+  canonicalPath={isEnglish ? enPath : slPath}
+  alternateLinks={[
+    { lang: 'sl', href: slPath },
+    { lang: 'en', href: enPath }
+  ]}
+  languageSwitchHref={isEnglish ? slPath : enPath}
+  brandHref={isEnglish ? '/en/' : '/'}
+  brandLabel={isEnglish ? 'Slovenski Tekaški Koledar - English home' : undefined}
+  navLabel={isEnglish ? 'Main navigation' : undefined}
+  menuLabel={isEnglish ? 'Menu' : undefined}
+>
+  <main>
+    <section class="container page-hero terms-hero" aria-labelledby="terms-title">
+      <span class="eyebrow">STK</span>
+      <h1 id="terms-title">{title}</h1>
+    </section>
+
+    <article class="container terms-content" aria-labelledby="terms-title">
+      {isEnglish ? (
+        <>
+          <p>The Slovenian Running Calendar (STK) collects, verifies, curates and regularly updates information about running events from publicly available and official sources.</p>
+          <p>You may use the data for personal and non-commercial purposes and share individual items with attribution to the source.</p>
+          <p>Without prior written permission from STK, automated bulk collection, systematic copying or extraction of the entire database or substantial parts of it is not permitted, nor is their republication, distribution or use in commercial databases, applications or services.</p>
+          <p>Normal indexing by search engines is permitted in accordance with the published rules for web crawlers.</p>
+          <p>If you would like to use STK data in an application, service, research study or partner project, <a href="mailto:tekaski.koledar@gmail.com">contact STK</a> to agree on how to use and access the data.</p>
+          <p>Individual event details may come from organisers and other cited public sources. These terms do not affect third parties’ rights to their content.</p>
+        </>
+      ) : (
+        <>
+          <p>Slovenski tekaški koledar (STK) zbira, preverja, ureja in redno posodablja podatke o tekaških prireditvah iz javno dostopnih in uradnih virov.</p>
+          <p>Podatke lahko uporabljate za osebne in nekomercialne namene ter jih posamično delite z navedbo vira.</p>
+          <p>Brez predhodnega pisnega dovoljenja STK ni dovoljena avtomatizirana množična pridobitev, sistematično kopiranje ali prevzemanje celotne zbirke oziroma njenih bistvenih delov, niti njihova ponovna objava, distribucija ali uporaba v komercialnih podatkovnih zbirkah, aplikacijah ali storitvah.</p>
+          <p>Običajno indeksiranje s strani spletnih iskalnikov je dovoljeno v skladu z objavljenimi pravili za spletne robote.</p>
+          <p>Če želite podatke STK uporabljati v aplikaciji, storitvi, raziskavi ali partnerskem projektu, <a href="mailto:tekaski.koledar@gmail.com">se obrnite na STK</a> za dogovor o načinu uporabe in dostopu do podatkov.</p>
+          <p>Posamezni podatki o prireditvah lahko izvirajo od organizatorjev in drugih navedenih javnih virov. Ti pogoji ne posegajo v pravice tretjih oseb na njihovih vsebinah.</p>
+        </>
+      )}
+      <p><a href="mailto:tekaski.koledar@gmail.com">tekaski.koledar@gmail.com</a></p>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .terms-hero,
+  .terms-content {
+    max-width: 900px;
+  }
+
+  .terms-content {
+    border: 1px solid rgba(16, 64, 80, 0.1);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.86);
+    padding: clamp(18px, 4vw, 26px);
+    box-shadow: 0 12px 34px rgba(16, 64, 80, 0.06);
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .terms-content p {
+    margin: 0;
+  }
+
+  .terms-content p + p {
+    margin-top: 16px;
+  }
+
+  .terms-content a {
+    color: var(--deep-teal);
+    font-weight: 750;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
