@@ -55,6 +55,8 @@ const openGraphImageAlt = lang === 'en' ? 'Slovenski Tekaški Koledar logo' : 'L
     <meta name="theme-color" content="#104050" />
     <link rel="icon" type="image/jpeg" href="/stk-logo.jpeg" />
     <link rel="shortcut icon" type="image/jpeg" href="/stk-logo.jpeg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="STK" />
     <link rel="canonical" href={canonicalUrl} />
     {alternateLinks.map((link) => (
       <link rel="alternate" hreflang={link.lang} href={new URL(link.href, Astro.site).href} />
