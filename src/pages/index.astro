@@ -93,7 +93,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       <div class="section-heading section-heading-with-action">
         <div>
           <h2 id="voted-title">Največ zanimanja</h2>
-          <p data-top-description>Izbor prihodnjih tekov.</p>
+          <p data-top-description>Prihajajoči teki glede na zabeležene interakcije obiskovalcev STK – oglede, klike na razpise, prijave in druge akcije.</p>
         </div>
         <div class="section-heading-actions">
           <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
@@ -108,7 +108,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="top">Izbor prihodnjih tekov.</p>
+      <p class="data-note" data-status="top">Podatke o zanimanju nalagamo …</p>
     </section>
 
     <section class="section container home-update-section" aria-labelledby="updates-title">
@@ -926,7 +926,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       throw new Error(`Interest preview request failed: ${response.status}${reason}`);
     }
     const record = asRecord(payload);
-    if (!record || record.ok !== true || record.type !== 'interest_preview') {
+    if (!record || record.ok !== true || record.type !== 'interest_preview' || !Array.isArray(record.items)) {
       throw new Error('Interest preview response was not valid.');
     }
     return record;
@@ -1337,10 +1337,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
   async function loadTopEvents() {
     const container = document.querySelector('[data-top-events]');
-    const description = document.querySelector('[data-top-description]');
     if (!container) return;
 
-    const renderEvents = (events: ApiRecord[], options: { interestPreview: boolean }) => {
+    const renderEvents = (events: ApiRecord[]) => {
       container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenija');
@@ -1348,15 +1347,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const dateValue = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
         const date = formatDate(dateValue);
         const analyticsEventId = getEventStableId(event, title, dateValue, location);
-        const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
-        const metaItems = options.interestPreview
-          ? ''
-          : [
-              votes !== null
-                ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
-                : '<span class="event-chip pill-orange">Glasovanje odprto</span>'
-            ].filter(Boolean).join('');
 
         return `
           <article class="event-card" data-analytics-placement="home_interest" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
@@ -1365,7 +1356,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
               <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
-            ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
             ${renderSavedRaceButton(event, title, dateValue, location) ? `<div class="event-actions">${renderSavedRaceButton(event, title, dateValue, location)}</div>` : ''}
           </article>
         `;
@@ -1375,38 +1365,22 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     try {
       const masterRows = await getMasterRaceRows();
       const interestEvents = await getInterestPreviewRaces(masterRows, 5);
-      if (interestEvents.length) {
-        setDebug('top', 'yes');
-        setDebugTopDetails(interestEvents, interestEvents);
-        renderEvents(interestEvents, { interestPreview: true });
-        initSavedRaceButtons(container);
-        if (description) description.textContent = 'Izbor prihodnjih tekov.';
-        setStatus('top', 'Izbor prihodnjih tekov.');
-        return;
-      }
-    } catch (error) {
-      if (import.meta.env.DEV) console.warn('STK interest preview unavailable, falling back to voted races.', error);
-    }
-
-    try {
-      const topUpcomingResult = await getTopUpcomingRaces();
-      const topEvents = topUpcomingResult.events.slice(0, 5);
-      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 5);
       setDebug('top', 'yes');
-      if (!topEvents.length) {
-        setDebugTopDetails(topEvents, rawTopEvents);
-        setStatus('top', 'Trenutno ni prikazanih tekov z največ zanimanja.');
+      setDebugTopDetails(interestEvents, interestEvents);
+      if (!interestEvents.length) {
+        container.replaceChildren();
+        setStatus('top', 'Trenutno še ni dovolj podatkov o zanimanju.');
         return;
       }
 
-      setDebugTopDetails(topEvents, rawTopEvents);
-      renderEvents(topEvents, { interestPreview: false });
+      renderEvents(interestEvents);
       initSavedRaceButtons(container);
-      if (description) description.textContent = 'Izbor prihodnjih tekov.';
-      setStatus('top', 'Izbor prihodnjih tekov.');
+      setStatus('top', '');
     } catch (error) {
+      if (import.meta.env.DEV) console.warn('STK interest preview unavailable.', error);
       setDebug('top', 'no');
-      setStatus('top', 'Seznam trenutno ni dosegljiv, zato ostaja nadomestni prikaz.');
+      container.replaceChildren();
+      setStatus('top', 'Podatki o zanimanju trenutno niso na voljo.');
     }
   }
 
