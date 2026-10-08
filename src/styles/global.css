@@ -1091,6 +1091,8 @@ main {
 .organizer-page .section, .race-dates-page .section { padding-top: 36px; }
 .organizer-page .page-hero, .race-dates-page .page-hero { padding-bottom: 12px; }
 .organizer-page .page-hero h1 { max-width: 820px; }
+.organizer-page .section-heading .eyebrow,
+.organizer-confirmation-card .eyebrow { color: var(--deep-teal); }
 .organizer-dark-button { background: var(--deep-teal); color: var(--white); }
 .organizer-dark-button:hover { color: var(--white); }
 .organizer-workflow ol { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
@@ -4650,6 +4652,10 @@ main {
   box-shadow: none;
 }
 
+.home-current-layout .registration-deadlines-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+
 .home-current-layout .registration-deadlines-item {
   border-radius: 9px;
   padding: 8px 9px;
@@ -5437,7 +5443,7 @@ main {
   }
 
   .search-event-row {
-    grid-template-columns: 82px minmax(0, 1fr) auto;
+    grid-template-columns: 82px minmax(0, 1fr);
     align-items: center;
   }
 
@@ -5447,13 +5453,37 @@ main {
   }
 
   .search-event-row-actions {
+    grid-column: 2;
     justify-content: flex-end;
-    min-width: 150px;
+    min-width: 0;
   }
 
   .search-event-primary-actions,
   .search-event-secondary-actions {
     justify-content: flex-end;
+    max-width: 100%;
+  }
+
+  .search-event-primary-actions .button {
+    max-width: 100%;
+  }
+
+  .search-event-row .search-detail-cta {
+    flex: 0 1 auto;
+  }
+
+  .search-event-row .search-event-more-menu-options {
+    right: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .search-event-row {
+    grid-template-columns: 82px minmax(0, 1fr) 240px;
+  }
+
+  .search-event-row-actions {
+    grid-column: 3;
   }
 }
 
