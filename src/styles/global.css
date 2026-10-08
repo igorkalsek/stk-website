@@ -5518,6 +5518,27 @@ main {
     font-weight: 900;
   }
 
+  .finder-filter-panel > summary::after {
+    border-bottom: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    content: '';
+    flex: 0 0 8px;
+    height: 8px;
+    margin: 0 4px 4px auto;
+    transform: rotate(45deg);
+  }
+
+  .finder-filter-panel[open] > summary::after {
+    margin-bottom: 0;
+    transform: rotate(225deg);
+  }
+
+  .finder-filter-panel > summary:focus-visible,
+  .finder-sidebar .finder-more-filters > summary:focus-visible {
+    outline: 3px solid var(--deep-teal);
+    outline-offset: 3px;
+  }
+
   .finder-filter-panel > summary span:last-child {
     border-radius: 999px;
     background: rgba(240, 160, 48, 0.18);
@@ -5559,8 +5580,8 @@ main {
 
 @media (max-width: 520px) {
   .finder-hero {
-    gap: 10px;
-    padding: 24px 0 12px;
+    gap: 8px;
+    padding: 16px 0 8px;
   }
 
   .finder-hero h1 {
@@ -5569,7 +5590,12 @@ main {
 
   .finder-hero p {
     font-size: 1rem;
-    line-height: 1.5;
+    line-height: 1.4;
+  }
+
+  /* The filter labels provide these details directly below the introduction. */
+  .finder-intro-details {
+    display: none;
   }
 
   .finder-hero .year-switcher {
@@ -5589,12 +5615,42 @@ main {
   }
 
   .finder-workspace {
-    gap: 14px;
-    margin-top: 12px;
+    gap: 10px;
+    margin-top: 8px;
   }
 
   .finder-sidebar {
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .finder-sidebar .field input,
+  .finder-sidebar .field select,
+  .finder-sort-field select {
+    min-height: 44px;
+  }
+
+  .finder-results-toolbar {
+    gap: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+
+  .finder-results-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 10rem);
+    gap: 8px;
+  }
+
+  .finder-results-heading h2 {
+    font-size: 1.15rem;
+  }
+
+  .finder-sort-field {
+    min-width: 0;
+  }
+
+  .finder-results-column > .additional-data-note {
+    margin: 8px 0;
   }
 
   .finder-sidebar .finder-primary-filters {
@@ -5616,6 +5672,11 @@ main {
 
   .finder-sidebar .quick-pick {
     min-height: 44px;
+  }
+
+  .finder-sidebar .finder-more-filters > summary {
+    min-height: 44px;
+    padding: 10px 0;
   }
 
   .finder-sidebar .finder-more-filters,
@@ -5686,6 +5747,144 @@ main {
 
   .event-detail-my-race-panel .button {
     width: 100%;
+  }
+}
+
+/* Mobile profile: full title, compact date and facts, then the existing actions. */
+@media (max-width: 520px) {
+  .event-detail-top-section {
+    padding-top: 24px;
+  }
+
+  .event-detail-profile-hero {
+    padding: 1rem;
+  }
+
+  .event-detail-breadcrumb {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .event-detail-breadcrumb a {
+    align-items: center;
+    display: inline-flex;
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  .event-detail-breadcrumb > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .event-detail-language-switch {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .event-detail-language-switch a {
+    align-items: center;
+    display: inline-flex;
+    min-height: 44px;
+  }
+
+  .event-detail-hero-layout {
+    gap: 12px;
+  }
+
+  .event-detail-date-card {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 8px;
+    border-radius: 12px;
+    padding: 8px 12px;
+    width: fit-content;
+  }
+
+  .event-detail-date-card-day {
+    font-size: 1.4rem;
+    letter-spacing: 0;
+  }
+
+  .event-detail-date-card-month,
+  .event-detail-date-card-year {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .event-detail-profile-hero h1 {
+    font-size: 1.75rem;
+    line-height: 1.1;
+    margin: 0 0 8px;
+  }
+
+  .event-detail-date-line {
+    margin: 0;
+  }
+
+  .event-detail-hero-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .event-detail-hero-fact {
+    padding-left: 8px;
+  }
+
+  .event-detail-hero-badges,
+  .event-detail-status-row {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .event-detail-primary-actions {
+    margin-top: 12px;
+  }
+
+  .event-detail-official-actions {
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 8px;
+  }
+
+  /* Official information becomes the primary action when registration is absent. */
+  .event-detail-official-actions .button-secondary-light:first-child {
+    background: var(--orange);
+    color: #1e2b1e;
+    box-shadow: 0 14px 30px rgba(240, 160, 48, 0.24);
+  }
+
+  .event-detail-official-actions .button:focus-visible {
+    outline-color: var(--white);
+  }
+
+  .event-detail-my-race-panel .button:focus-visible {
+    outline-color: var(--deep-teal);
+  }
+
+  .event-detail-my-race-panel {
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+  }
+
+  .event-detail-my-race-actions {
+    gap: 8px;
+  }
+
+  .event-detail-my-race-panel .button,
+  .event-detail-my-race-panel select {
+    min-height: 44px;
+  }
+
+  .event-detail-my-race-panel .race-status-control {
+    gap: 8px;
+    margin-top: 0;
+    padding: 10px;
   }
 }
 
