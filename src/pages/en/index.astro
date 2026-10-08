@@ -99,7 +99,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       <div class="section-heading section-heading-with-action">
         <div>
           <h2 id="voted-title">Races attracting the most interest</h2>
-          <p data-top-description>A selection of upcoming races.</p>
+          <p data-top-description>Upcoming races ranked by recorded visitor interactions on STK, including race views, official information and registration clicks.</p>
         </div>
         <div class="section-heading-actions">
           <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
@@ -114,7 +114,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           </div>
         </article>
       </div>
-      <p class="data-note" data-status="top">A selection of upcoming races.</p>
+      <p class="data-note" data-status="top">Loading interest data …</p>
     </section>
 
     <section class="section container home-update-section" aria-labelledby="updates-title">
@@ -915,7 +915,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     const payload = await response.json().catch(() => null);
     if (!response.ok) throw new Error(`Interest preview request failed: ${response.status}`);
     const record = asRecord(payload);
-    if (!record || record.ok !== true || record.type !== 'interest_preview') throw new Error('Interest preview response was not valid.');
+    if (!record || record.ok !== true || record.type !== 'interest_preview' || !Array.isArray(record.items)) throw new Error('Interest preview response was not valid.');
     return record;
   };
 
@@ -1349,10 +1349,9 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
   async function loadTopEvents() {
     const container = document.querySelector('[data-top-events]');
-    const description = document.querySelector('[data-top-description]');
     if (!container) return;
 
-    const renderEvents = (events: ApiRecord[], options: { interestPreview: boolean }) => {
+    const renderEvents = (events: ApiRecord[]) => {
       container.innerHTML = events.map((event) => {
         const title = titleForEvent(event);
         const location = pickPath(event, ['kraj', 'event.kraj', 'race.kraj', 'data.kraj', 'location', 'place', 'city', 'regija', 'Regija'], 'Slovenia');
@@ -1360,15 +1359,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         const dateValue = pickPath(event, ['datum', 'event.datum', 'race.datum', 'data.datum', 'date', 'event_date', 'Datum']);
         const date = formatDate(dateValue);
         const analyticsEventId = getEventStableId(event, title, dateValue, location);
-        const votes = getTopEventVotes(event);
         const meta = joinParts([location, region && region !== location ? region : '']);
-        const metaItems = options.interestPreview
-          ? ''
-          : [
-              votes !== null
-                ? `<span class="event-chip pill-orange">${escapeHtml(formatVoteCount(votes))}</span>`
-                : '<span class="event-chip pill-orange">Voting open</span>'
-            ].filter(Boolean).join('');
 
         return `
           <article class="event-card" data-analytics-placement="home_interest" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(getEventYear(event))}">
@@ -1377,7 +1368,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
               <h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3>
             </div>
             ${meta ? `<p>${escapeHtml(meta)}</p>` : ''}
-            ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
             ${renderSavedRaceButton(event, title, dateValue, location) ? `<div class="event-actions">${renderSavedRaceButton(event, title, dateValue, location)}</div>` : ''}
           </article>
         `;
@@ -1387,40 +1377,23 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     try {
       const masterRows = await getMasterRaceRows();
       const interestEvents = await getInterestPreviewRaces(masterRows, 5);
-      if (interestEvents.length) {
-        setDebug('top', 'yes');
-        setDebugTopDetails(interestEvents, interestEvents);
-        renderEvents(interestEvents, { interestPreview: true });
-        initSavedRaceButtons(container);
-        if (description) description.textContent = 'A selection of upcoming races.';
-        setStatus('top', 'A selection of upcoming races.');
-        return;
-      }
-    } catch (error) {
-      logDebugError('Interest preview failed before voted fallback', error);
-      if (import.meta.env.DEV) console.warn('STK interest preview unavailable, falling back to voted races.', error);
-    }
-
-    try {
-      const topUpcomingResult = await getTopUpcomingRaces();
-      const topEvents = topUpcomingResult.events.slice(0, 5);
-      const rawTopEvents = topUpcomingResult.rawEvents.slice(0, 5);
       setDebug('top', 'yes');
-      if (!topEvents.length) {
-        setDebugTopDetails(topEvents, rawTopEvents);
-        setStatus('top', 'No races attracting interest are shown right now.');
+      setDebugTopDetails(interestEvents, interestEvents);
+      if (!interestEvents.length) {
+        container.replaceChildren();
+        setStatus('top', 'There is not enough interest data yet.');
         return;
       }
 
-      setDebugTopDetails(topEvents, rawTopEvents);
-      renderEvents(topEvents, { interestPreview: false });
+      renderEvents(interestEvents);
       initSavedRaceButtons(container);
-      if (description) description.textContent = 'A selection of upcoming races.';
-      setStatus('top', 'A selection of upcoming races.');
+      setStatus('top', '');
     } catch (error) {
-      logDebugError('Interest section voted fallback failed', error);
+      logDebugError('Interest preview failed', error);
+      if (import.meta.env.DEV) console.warn('STK interest preview unavailable.', error);
       setDebug('top', 'no');
-      setStatus('top', 'The list is currently unavailable.');
+      container.replaceChildren();
+      setStatus('top', 'Interest data is currently unavailable.');
     }
   }
 

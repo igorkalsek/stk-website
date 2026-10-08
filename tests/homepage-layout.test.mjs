@@ -83,13 +83,13 @@ test('homepages restore a compact stats strip and featured discovery before curr
   }
 });
 
-test('homepages use neutral interest copy before and after loading', () => {
-  assert.match(pages.sl, /data-top-description>Izbor prihodnjih tekov\.<\/p>/);
-  assert.match(pages.sl, /description\.textContent = 'Izbor prihodnjih tekov\.';/);
-  assert.doesNotMatch(pages.sl, /Po glasovih tekačev|zanimanju obiskovalcev/);
-  assert.match(pages.en, /data-top-description>A selection of upcoming races\.<\/p>/);
-  assert.match(pages.en, /description\.textContent = 'A selection of upcoming races\.';/);
-  assert.doesNotMatch(pages.en, /runner votes|visitor interest/);
+test('homepages explain recorded interest without overwriting the subtitle', () => {
+  assert.match(pages.sl, /data-top-description>Prihajajoči teki glede na zabeležene interakcije obiskovalcev STK – oglede, klike na razpise, prijave in druge akcije\.<\/p>/);
+  assert.match(pages.en, /data-top-description>Upcoming races ranked by recorded visitor interactions on STK, including race views, official information and registration clicks\.<\/p>/);
+  for (const source of Object.values(pages)) {
+    const loader = source.slice(source.indexOf('  async function loadTopEvents()'), source.indexOf('  async function loadRecentUpdates()'));
+    assert.doesNotMatch(loader, /description\.textContent|getTopUpcomingRaces|formatVoteCount/);
+  }
 });
 
 test('Slovene home declares the same language alternates as English home', () => {
