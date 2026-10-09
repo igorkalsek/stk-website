@@ -1,7 +1,5 @@
-// These keys are independent of saved races. No installation state is inferred from a UA.
+// This key is independent of saved races. No installation state is inferred from a UA.
 const DISMISSED_UNTIL_KEY = 'stkHomeScreenInviteDismissedUntilV1';
-const VISITED_KEY = 'stkHomeScreenInviteVisitedV1';
-const SESSION_KEY = 'stkHomeScreenInviteSessionV1';
 const DISMISSAL_MS = 90 * 24 * 60 * 60 * 1000;
 
 (() => {
@@ -16,7 +14,6 @@ const DISMISSAL_MS = 90 * 24 * 60 * 60 * 1000;
   const standalone = window.matchMedia('(display-mode: standalone)');
   const isStandalone = () => standalone.matches
     || navigator.standalone === true;
-  let returningVisit = false;
   let storageReady = false;
   let suppressed = false;
   let pending = null;
@@ -26,27 +23,22 @@ const DISMISSAL_MS = 90 * 24 * 60 * 60 * 1000;
 
   if ((iphone || android) && !isStandalone()) {
     try {
-      // One boolean per browser and per tab session. Reload/navigation preserves
-      // the session's eligibility; opening a fresh session after an earlier visit qualifies.
-      let session = sessionStorage.getItem(SESSION_KEY);
-      if (session === null) {
-        session = localStorage.getItem(VISITED_KEY) === '1' ? '1' : '0';
-        sessionStorage.setItem(SESSION_KEY, session);
-        localStorage.setItem(VISITED_KEY, '1');
-      }
-      returningVisit = session === '1';
+      // Probe only our dismissal key; leave existing values unchanged and
+      // restore an absent key. Read-only or inaccessible storage fails closed.
+      const existing = localStorage.getItem(DISMISSED_UNTIL_KEY);
+      localStorage.setItem(DISMISSED_UNTIL_KEY, existing ?? '0');
+      if (existing === null) localStorage.removeItem(DISMISSED_UNTIL_KEY);
       storageReady = true;
-    } catch { /* Without either storage, no invitation. */ }
+    } catch { /* Without local storage, no invitation. */ }
   }
 
   const update = () => {
     if (!card) return;
     card.hidden = true;
     if (installButton) installButton.hidden = !android || !pending || consumed;
-    if (!(iphone || android) || isStandalone() || !storageReady || !returningVisit || suppressed) return;
+    if (!(iphone || android) || isStandalone() || !storageReady || suppressed) return;
     try {
-      // Check both stores again, including after a restored page or storage change.
-      if (sessionStorage.getItem(SESSION_KEY) !== '1') return;
+      // Check suppression again after a restored page or storage change.
       const until = Number(localStorage.getItem(DISMISSED_UNTIL_KEY));
       if (Number.isFinite(until) && until > Date.now()) return;
       card.hidden = false;

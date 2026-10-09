@@ -3,14 +3,13 @@ import { expect, test, type Page } from '@playwright/test';
 // UA, standalone and installation events are simulated in Chromium, not physical devices.
 const safari = 'Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1';
 const android = 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36';
-const visitedKey = 'stkHomeScreenInviteVisitedV1';
 const key = 'stkHomeScreenInviteDismissedUntilV1';
 const days90 = 90 * 24 * 60 * 60 * 1000;
-async function setup(page: Page, options: { ua?: string; standalone?: boolean; displayMode?: boolean; until?: number; blocked?: 'read' | 'write'; returning?: boolean } = {}) {
+async function setup(page: Page, options: { ua?: string; standalone?: boolean; displayMode?: boolean; until?: number; blocked?: 'read' | 'write' } = {}) {
   await page.route('https://stk-master-api.igor-kalsek.workers.dev/**', route => route.fulfill({ json: { data: [] } }));
   await page.route('**/api/interest-preview', route => route.fulfill({ json: { ok: true, type: 'interest_preview', items: [] } }));
   await page.route('https://script.google.com/**', route => route.fulfill({ status: 204, body: '' }));
-  await page.addInitScript(({ options, safari, key, visitedKey }) => {
+  await page.addInitScript(({ options, safari, key }) => {
     Object.defineProperty(navigator, 'userAgent', { value: options.ua ?? safari });
     Object.defineProperty(navigator, 'standalone', { value: !!options.standalone });
     if (options.displayMode) {
@@ -21,11 +20,10 @@ async function setup(page: Page, options: { ua?: string; standalone?: boolean; d
         return media;
       };
     }
-    if (options.returning !== false) localStorage.setItem(visitedKey, '1');
     localStorage.setItem('stkSavedRacesV2', '{"version":2,"races":[]}');
     if (options.until !== undefined) localStorage.setItem(key, String(options.until));
     if (options.blocked) Storage.prototype[options.blocked === 'read' ? 'getItem' : 'setItem'] = () => { throw new DOMException('Unavailable', 'SecurityError'); };
-  }, { options, safari, key, visitedKey });
+  }, { options, safari, key });
 }
 for (const path of ['/', '/en/']) {
   for (const ua of [safari, android]) {
@@ -82,8 +80,18 @@ for (const [name, options] of Object.entries({
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     await setup(page, options);
+    await page.addInitScript(() => {
+      (window as any).inviteWasVisible = false;
+      const check = () => {
+        const invite = document.querySelector<HTMLElement>('[data-home-screen-invite]');
+        if (invite && !invite.hidden) (window as any).inviteWasVisible = true;
+      };
+      new MutationObserver(check).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
+      requestAnimationFrame(check);
+    });
     await page.goto('/');
     await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
+    expect(await page.evaluate(() => (window as any).inviteWasVisible)).toBe(false);
     expect(errors).toEqual([]);
   });
 }
@@ -119,16 +127,17 @@ for (const offset of [-1, 0, 1]) {
   });
 }
 for (const ua of [safari, android]) {
-  test(`first session stays hidden across reload/navigation; fresh visit qualifies (${ua.includes('Android') ? 'Android' : 'iPhone'})`, async ({ page, context }) => {
-    await setup(page, { ua, returning: false });
+  test(`first visit and reload/navigation remain visible without visit records (${ua.includes('Android') ? 'Android' : 'iPhone'})`, async ({ page, context }) => {
+    await setup(page, { ua });
     await page.goto('/');
-    await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
+    expect(await page.evaluate(() => Object.keys(localStorage))).toEqual(['stkSavedRacesV2']);
+    await expect(page.locator('[data-home-screen-invite]')).toBeVisible();
     await page.reload();
-    await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
+    await expect(page.locator('[data-home-screen-invite]')).toBeVisible();
     await page.goto('/en/');
-    await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
+    await expect(page.locator('[data-home-screen-invite]')).toBeVisible();
     const nextVisit = await context.newPage();
-    await setup(nextVisit, { ua, returning: false });
+    await setup(nextVisit, { ua });
     await nextVisit.goto('/');
     await expect(nextVisit.locator('[data-home-screen-invite]')).toBeVisible();
     await nextVisit.close();
@@ -209,7 +218,7 @@ test('consumed prompt failure falls back to instructions without an unhandled er
   await expect(page.locator('[data-install-platform="android"]')).toBeVisible();
   expect(errors).toEqual([]);
 });
-for (const [name, options] of Object.entries({ iphone: { ua: safari }, firstVisit: { ua: android, returning: false }, dismissed: { ua: android, until: Date.now() + days90 }, standalone: { ua: android, standalone: true } })) {
+for (const [name, options] of Object.entries({ iphone: { ua: safari }, dismissed: { ua: android, until: Date.now() + days90 }, standalone: { ua: android, standalone: true } })) {
   test(`pending event never bypasses eligibility: ${name}`, async ({ page }) => {
     await setup(page, options);
     await page.goto('/');
@@ -219,11 +228,11 @@ for (const [name, options] of Object.entries({ iphone: { ua: safari }, firstVisi
     expect(await page.evaluate(() => (window as any).installCalls)).toBe(0);
   });
 }
-test('unavailable session storage safely hides invitation', async ({ page }) => {
+test('session storage is no longer required for the invitation', async ({ page }) => {
   await setup(page);
   await page.addInitScript(() => { Object.defineProperty(window, 'sessionStorage', { get: () => { throw new DOMException('Unavailable', 'SecurityError'); } }); });
   await page.goto('/');
-  await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
+  await expect(page.locator('[data-home-screen-invite]')).toBeVisible();
 });
 test('manifest is served with correct MIME, paths and preserves iPhone metadata on SL/EN', async ({ page, request }) => {
   const response = await request.get('/manifest.webmanifest');
@@ -251,3 +260,17 @@ test('initial storage write failure safely hides invitation', async ({ page }) =
   await page.goto('/');
   await expect(page.locator('[data-home-screen-invite]')).toBeHidden();
 });
+
+for (const ua of [safari, android]) {
+  test(`obsolete visit/session keys are ignored and untouched (${ua === safari ? 'iPhone' : 'Android'})`, async ({ page }) => {
+    await setup(page, { ua });
+    await page.addInitScript(() => {
+      localStorage.setItem('stkHomeScreenInviteVisitedV1', '0');
+      sessionStorage.setItem('stkHomeScreenInviteSessionV1', '0');
+    });
+    await page.goto('/');
+    await expect(page.locator('[data-home-screen-invite]')).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem('stkHomeScreenInviteVisitedV1'))).toBe('0');
+    expect(await page.evaluate(() => sessionStorage.getItem('stkHomeScreenInviteSessionV1'))).toBe('0');
+  });
+}
