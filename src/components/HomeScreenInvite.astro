@@ -1,0 +1,87 @@
+---
+interface Props { lang: 'sl' | 'en' }
+const { lang } = Astro.props;
+const copy = lang === 'en' ? {
+  title: 'STK on your phone',
+  description: 'Add STK to your Home Screen and open the race calendar as an app. No App Store needed.',
+  how: 'How to add it?',
+  dismiss: 'Dismiss STK Home Screen invitation for 90 days',
+  steps: ['Open STK in Safari.', 'Choose Share → Add to Home Screen.', 'Make sure “Open as Web App” is enabled, then tap Add.'],
+  note: 'Your saved “My races” may not transfer automatically from Safari to the web app.'
+} : {
+  title: 'STK na vašem telefonu',
+  description: 'Dodajte STK na začetni zaslon in odpirajte tekaški koledar kot aplikacijo. Brez App Stora.',
+  how: 'Kako dodati?',
+  dismiss: 'Skrij povabilo za dodajanje STK na začetni zaslon za 90 dni',
+  steps: ['Odprite STK v Safariju.', 'Izberite Deli → Dodaj na začetni zaslon.', 'Preverite, da je vključeno »Open as Web App«, in tapnite Dodaj.'],
+  note: 'Shranjeni »Moji teki« se morda ne prenesejo samodejno iz Safarija v spletno aplikacijo.'
+};
+---
+
+<article class="home-utility-card home-screen-invite" data-home-screen-invite hidden aria-labelledby="home-screen-invite-title">
+  <span class="home-utility-mark" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><rect x="9" y="3" width="14" height="26" rx="3"/><path d="M14 7h4M15 25h2M16 12v8M12 16h8"/></svg></span>
+  <h3 id="home-screen-invite-title">{copy.title}</h3>
+  <p>{copy.description}</p>
+  <details>
+    <summary class="home-utility-link">{copy.how}</summary>
+    <ol>{copy.steps.map(step => <li>{step}</li>)}</ol>
+    <p class="home-screen-note">{copy.note}</p>
+  </details>
+  <button class="home-screen-dismiss" type="button" data-dismiss-home-screen-invite aria-label={copy.dismiss}>×</button>
+</article>
+
+<!-- Run during parsing: keep the server-rendered card hidden until all checks pass. -->
+<script is:inline>
+  (() => {
+    const card = document.querySelector('[data-home-screen-invite]');
+    if (!card) return;
+    const key = 'stkHomeScreenInviteDismissedUntilV1';
+    const duration = 90 * 24 * 60 * 60 * 1000;
+    const standalone = window.matchMedia('(display-mode: standalone)');
+    const supported = /iPhone/.test(navigator.userAgent)
+      && /AppleWebKit/.test(navigator.userAgent)
+      && /Version\/[\d.]+.*Mobile\/\S+.*Safari\//.test(navigator.userAgent)
+      && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo|GSA|FBAN|FBAV|Instagram/.test(navigator.userAgent);
+    const update = () => {
+      card.hidden = true;
+      if (!supported || navigator.standalone === true || standalone.matches) return;
+      try {
+        // Fail closed when storage cannot be read; never touch saved-race keys.
+        const until = Number(window.localStorage.getItem(key));
+        if (Number.isFinite(until) && until > Date.now()) return;
+        card.hidden = false;
+      } catch { /* Leave the invitation hidden. */ }
+    };
+    card.querySelector('[data-dismiss-home-screen-invite]').addEventListener('click', () => {
+      card.hidden = true;
+      try { window.localStorage.setItem(key, String(Date.now() + duration)); }
+      catch { /* Dismissal still applies to this page when persistence is unavailable. */ }
+    });
+    window.addEventListener('pageshow', update);
+    window.addEventListener('storage', event => {
+      if (event.key === key || event.key === null) update();
+    });
+    standalone.addEventListener('change', update);
+    update();
+  })();
+</script>
+
+<style>
+  .home-screen-invite[hidden] { display: none !important; }
+  .home-screen-invite { position: relative; padding-right: 54px; }
+  .home-screen-invite details { grid-column: 2; min-width: 0; }
+  .home-screen-invite summary { cursor: pointer; }
+  .home-screen-invite ol { margin: 10px 0; padding-left: 20px; }
+  .home-screen-invite li + li { margin-top: 6px; }
+  .home-screen-invite .home-screen-note { font-size: 0.875rem; margin-bottom: 0; }
+  .home-screen-dismiss {
+    position: absolute; top: 7px; right: 3px;
+    width: 44px; height: 44px; padding: 0;
+    border: 0; border-radius: 8px; background: transparent;
+    color: var(--deep-teal); font-size: 1.5rem; cursor: pointer;
+  }
+  .home-screen-dismiss:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--deep-teal); outline-offset: 3px;
+  }
+  @media (min-width: 720px) { .home-screen-invite { grid-column: 1 / -1; } }
+</style>

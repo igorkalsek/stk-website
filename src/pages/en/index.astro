@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeScreenInvite from '../../components/HomeScreenInvite.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 import HomeUpcomingRaces from '../../components/HomeUpcomingRaces.astro';
 import { getPublicYearData } from '../../utils-build-data';
@@ -176,6 +177,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           <p>Weekly race highlights, new events and important calendar updates.</p>
           <SocialLinks lang="en" labelledby="social-cta-title" />
         </article>
+        <HomeScreenInvite lang="en" />
       </div>
     </section>
 
