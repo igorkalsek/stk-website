@@ -1,4 +1,5 @@
 ---
+import homeScreenInviteScript from '../home-screen-invite-client.js?raw';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
@@ -55,6 +56,8 @@ const openGraphImageAlt = lang === 'en' ? 'Slovenski Tekaški Koledar logo' : 'L
     <meta name="theme-color" content="#104050" />
     <link rel="icon" type="image/jpeg" href="/stk-logo.jpeg" />
     <link rel="shortcut icon" type="image/jpeg" href="/stk-logo.jpeg" />
+    <script is:inline set:html={homeScreenInviteScript} />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="STK" />
     <link rel="canonical" href={canonicalUrl} />
