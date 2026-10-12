@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
   webServer: {
+    env: { PUBLIC_STK_TURNSTILE_SITE_KEY: '1x00000000000000000000AA' },
     command: 'npm run build && npm run preview -- --host 127.0.0.1',
     url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,

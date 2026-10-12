@@ -1,6 +1,6 @@
 ---
 import { googleProposalFormContract } from '../proposal-form/proposal-form-contract';
-import { buildGoogleFormsFallbackUrl, readProposalPrefill, basicChangeCategoryValues } from '../proposal-form/proposal-form-controller';
+import { readProposalPrefill, basicChangeCategoryValues } from '../proposal-form/proposal-form-controller';
 import { buildMasterApiPath, SUPPORTED_PUBLIC_YEARS } from '../utils-public-year';
 import { proposalFormLocales, proposalTypeOptions, canonicalSurfaceValues, surfaceLabels } from '../proposal-form/proposal-form-locales';
 import type { ProposalLanguage } from '../proposal-form/proposal-form-types';
@@ -10,7 +10,7 @@ const { lang = 'sl' } = Astro.props as { lang?: ProposalLanguage };
 const emailPattern = String.raw`[^@\s]+@[^@\s]+\.[^@\s]+`;
 const copy = proposalFormLocales[lang];
 const emptyPrefill = readProposalPrefill(new URLSearchParams(), lang);
-const fallbackUrl = buildGoogleFormsFallbackUrl(emptyPrefill);
+const sitekey = import.meta.env.PUBLIC_STK_TURNSTILE_SITE_KEY || '';
 const typeOptions = proposalTypeOptions(lang);
 const changeLabelFor = (value: string) => copy.labelsForValues.changeCategories[value as keyof typeof copy.labelsForValues.changeCategories];
 const changeGroups = [
@@ -53,8 +53,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       <p data-form-helper>{copy.noSource}</p>
     </div>
     <div class="form-status" data-error-summary hidden tabindex="-1" role="alert"></div>
-    <p class="proposal-hand-off">{copy.googleFormHandOff}</p>
-    <form class="proposal-form" method="post" action={googleProposalFormContract.responseUrl} target="proposal-form-target" data-proposal-form novalidate>
+    <p class="proposal-hand-off">{copy.submissionNote}</p>
+    <form class="proposal-form" method="post" action="/api/proposals" data-proposal-form novalidate>
       <fieldset class="proposal-type-fieldset">
         <legend>{copy.labels.proposalType}<span aria-hidden="true"> *</span></legend>
         <div class="proposal-type-grid">
@@ -175,14 +175,16 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
           <small id="proposal-email-helper" class="field-helper">{copy.helpers.email} <a href={lang === 'en' ? '/en/about/' : '/o-projektu-in-zasebnost/'}>{copy.helpers.privacy}</a></small>
         </div></div></section>
       </div>
+      <div class="proposal-protection" data-proposal-protection>
+        <div data-proposal-challenge role="group" tabindex="-1" data-sitekey={sitekey} aria-label={lang === 'en' ? 'Spam protection' : 'Zaščita pred spamom'}></div>
+        <small class="field-helper">{lang === 'en' ? 'Spam protection uses Cloudflare Turnstile.' : 'Za zaščito pred spamom uporabljamo Cloudflare Turnstile.'} <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">{lang === 'en' ? 'Privacy' : 'Zasebnost'}</a></small>
+      </div>
+      <noscript><p>{lang === 'en' ? 'Enable JavaScript to send your proposal.' : 'Za oddajo predloga omogočite JavaScript.'}</p></noscript>
       <div class="cta-row proposal-actions">
         <button class="button button-primary" type="submit" data-submit-button>{copy.submit}</button>
         <button class="button button-secondary-light" type="reset" data-reset-button>{hasInitialRaceContext ? (lang === 'en' ? 'Clear entered changes' : 'Počisti vnesene spremembe') : copy.clear}</button>
       </div>
-      <p class="proposal-fallback"><a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-correction-form-link data-analytics-link-type="correction_form" data-analytics-redact-target-url="true">{copy.fallback}</a></p>
     </form>
-    <iframe name="proposal-form-target" title="" data-submit-target hidden aria-hidden="true"></iframe>
-    <form method="post" action={googleProposalFormContract.responseUrl} target="proposal-form-target" data-backend-submit-form hidden aria-hidden="true"></form>
   </div>
 </section>
 <script type="application/json" data-race-api-paths set:html={JSON.stringify(raceApiPaths)}></script>
@@ -190,7 +192,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   // @ts-nocheck
   import { googleProposalFormContract as contract } from '../proposal-form/proposal-form-contract';
   import { proposalFormLocales } from '../proposal-form/proposal-form-locales';
-  import { readProposalPrefill, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationSubmission, buildNewRaceDescription, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidEntryFeeRange } from '../proposal-form/proposal-form-controller';
+  import { stkValidateProposal, STK_PROPOSAL_LIMITS } from '../proposal-form/proposal-validation';
+  import { readProposalPrefill, buildOrganizerConfirmationSubmission, buildNewRaceDescription, parsePreselectedChangeCategories, getProposalFieldRules, parseProposalMode, fieldCategoryMap, basicChangeCategoryValues, additionalDataValuesForStructuredDetails, hasStructuredAdditionalDetails, hasStructuredBasicCorrections, combineCorrectionDescription, isValidStructuredRouteUrl, isValidElevationGain, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidEntryFeeRange } from '../proposal-form/proposal-form-controller';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, toAdditionalArray } from '../utils-additional';
   import { mapPublicRaceEvent, toApiRecords } from '../utils-event-detail';
   import { buildRaceCorrectionContextUrl, searchPublicRaces } from '../proposal-form/race-correction-context';
@@ -232,7 +235,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const descriptionHelper = document.querySelector('[data-description-helper]');
   const formTitle = document.querySelector('[data-form-title]');
   const formHelper = document.querySelector('[data-form-helper]');
-  const fallbackLink = document.querySelector('[data-correction-form-link]');
+
   const contextExistingRadio = document.querySelector('[data-context-existing-radio]');
   const proposalFieldset = document.querySelector('.proposal-type-fieldset');
   const confirmationMode = document.querySelector('.confirmation-mode');
@@ -242,13 +245,10 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const confirmationContact = document.querySelector('#confirmation-contact');
   const confirmationEmail = document.querySelector('#confirmation-email');
   const confirmationStatement = document.querySelector('#confirmation-statement');
-  const submitTarget = document.querySelector('[data-submit-target]');
-  const backendSubmitForm = document.querySelector('[data-backend-submit-form]');
+
+
   const allowedAdditionalValues = contract.values.additionalData;
   let submissionState = 'idle';
-  let currentSubmissionAttempt = 0;
-  let armedSubmissionAttempt = 0;
-  let submitTimeoutId = 0;
   let showAllChangeOptions = false;
 
   const racePicker = document.querySelector('[data-race-picker]');
@@ -440,7 +440,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     const isOther = currentType() === 'other';
     return {
       proposalType: backendProposalType?.value || backendTypeForCurrentSelection(),
-      // Google Forms still requires race identity fields; do not expose these technical defaults in other-message UX.
+      // Preserve the legacy INBOX identity defaults; do not expose these technical defaults in other-message UX.
       date: isOther ? '2026-01-01' : fieldValue(contract.fields.date),
       title: isOther ? 'Drugo' : fieldValue(contract.fields.title),
       place: isOther ? 'Ni navedeno' : fieldValue(contract.fields.place),
@@ -453,26 +453,8 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       additionalData: selectedAdditionalValues()
     };
   };
-  const currentGoogleFormsEntries = () => buildGoogleFormsSubmissionEntries(currentSubmissionInput());
-  const currentGoogleFormsUrl = () => buildGoogleFormsSubmissionUrl(currentSubmissionInput());
-  const submitCanonicalEntries = (entries) => {
-    if (!backendSubmitForm) return;
-    backendSubmitForm.action = contract.responseUrl;
-    backendSubmitForm.target = 'proposal-form-target';
-    backendSubmitForm.replaceChildren();
-    for (const [name, value] of entries) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      backendSubmitForm.append(input);
-    }
-    HTMLFormElement.prototype.submit.call(backendSubmitForm);
-    backendSubmitForm.replaceChildren();
-  };
-  const updateFallbackLink = () => { if (!fallbackLink) return; fallbackLink.closest('.proposal-fallback').hidden = isConfirmationMode; if (!isConfirmationMode) fallbackLink.href = currentGoogleFormsUrl(); };
   const syncDescriptionRequirement = () => { if (description && currentType() === 'existing') { const required = requiresExplanation(); description.required = required; const mark = document.querySelector('[data-field-row="description"] [data-required-mark]'); if (mark) mark.hidden = !required; } };
-  const updateChangeSummary = () => { syncDescriptionRequirement(); if (currentType() !== 'existing') { if (changeSummary) changeSummary.hidden = true; setBackendType(); updateFallbackLink(); return; } const diffLabels = hasRaceContext ? [...basicCorrectionFields().filter((field) => normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue)).map((field) => field.dataset.fieldLabel), ...structuredFields().filter((field) => field.dataset.structuredField !== 'correctionIntent' && normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue)).map((field) => field.dataset.fieldLabel || field.closest('.structured-field')?.querySelector('label')?.textContent?.trim())].filter(Boolean) : []; const labels = hasRaceContext ? diffLabels : selectedChangeLabels(); if (changeSummary) { const heading = changeSummary.querySelector('strong'); if (heading) heading.textContent = labels.length ? (isEnglish ? `Changed details (${labels.length})` : `Spremenjeni podatki (${labels.length})`) : (isEnglish ? 'Change at least one detail or add an explanation.' : 'Spremenite vsaj en podatek ali dodajte pojasnilo.'); changeSummary.hidden = false; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (button && hasRaceContext) { const count = labels.length; button.textContent = count === 0 ? copy.submit : count === 1 ? (isEnglish ? 'Submit change' : 'Pošlji spremembo') : (isEnglish ? `Submit ${count} changes` : `Pošlji ${count} spremembe`); } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); updateFallbackLink(); };
+  const updateChangeSummary = () => { syncDescriptionRequirement(); if (currentType() !== 'existing') { if (changeSummary) changeSummary.hidden = true; setBackendType(); return; } const diffLabels = hasRaceContext ? [...basicCorrectionFields().filter((field) => normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue)).map((field) => field.dataset.fieldLabel), ...structuredFields().filter((field) => field.dataset.structuredField !== 'correctionIntent' && normalizeDiffValue(field.value) !== normalizeDiffValue(field.dataset.originalValue)).map((field) => field.dataset.fieldLabel || field.closest('.structured-field')?.querySelector('label')?.textContent?.trim())].filter(Boolean) : []; const labels = hasRaceContext ? diffLabels : selectedChangeLabels(); if (changeSummary) { const heading = changeSummary.querySelector('strong'); if (heading) heading.textContent = labels.length ? (isEnglish ? `Changed details (${labels.length})` : `Spremenjeni podatki (${labels.length})`) : (isEnglish ? 'Change at least one detail or add an explanation.' : 'Spremenite vsaj en podatek ali dodajte pojasnilo.'); changeSummary.hidden = false; if (changeChips) { changeChips.innerHTML = ''; for (const label of labels) { const chip = document.createElement('span'); chip.className = 'change-chip'; chip.textContent = label; changeChips.append(chip); } } } if (button && hasRaceContext) { const count = labels.length; button.textContent = count === 0 ? copy.submit : count === 1 ? (isEnglish ? 'Submit change' : 'Pošlji spremembo') : (isEnglish ? `Submit ${count} changes` : `Pošlji ${count} spremembe`); } if (description && !description.value) description.placeholder = buildChangePlaceholder(); setBackendType(); };
   const contextChangeError = () => isEnglish ? 'Enter at least one correction or additional detail.' : 'Vnesite vsaj en popravek ali dopolnitev.';
   const currentChangeError = () => hasRaceContext ? contextChangeError() : copy.changeError;
   const clearChangeError = () => { form?.querySelectorAll('input[name="proposal-change-category"]').forEach((box) => { box.setCustomValidity(''); box.removeAttribute('aria-invalid'); }); if (additionalError) additionalError.hidden = true; };
@@ -589,7 +571,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
       const correctionParams = new URLSearchParams(params); correctionParams.delete('mode'); const correctionLink = document.querySelector('.confirmation-correction-link'); correctionLink.href = `${window.location.pathname}?${correctionParams}`;
     }
     for (const value of parsePreselectedChangeCategories(params.get('changes'))) selectChangeCategory(value);
-    syncVisibleChangeOptions(); applyTypeUx(); syncModeControlIsolation(); validateSource(); updateFallbackLink();
+    syncVisibleChangeOptions(); applyTypeUx(); syncModeControlIsolation(); validateSource();
     form?.setAttribute('data-proposal-runtime-ready', 'true');
   };
 
@@ -634,7 +616,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     finally { window.clearTimeout(timeout); }
   };
 
-  showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions(); updateFallbackLink(); });
+  showAllChangesButton?.addEventListener('click', () => { showAllChangeOptions = true; syncVisibleChangeOptions();  });
   const focusBasicCorrectionField = (key) => { const field = form?.querySelector(`[data-basic-correction-field="${key}"]`); field?.scrollIntoView({ behavior: 'smooth', block: 'center' }); field?.focus({ preventScroll: true }); };
   const focusStructuredField = (category) => { const map = { 'Prijavnina / startnina': 'entryFee', 'Rok prijave': 'registrationDeadline', 'Cenejša prijava / sprememba cene': 'cheaperRegistration', 'Prijave na dan dogodka': 'raceDayRegistration', 'Višinski metri': 'elevationGain', 'Trasa / zemljevid / GPX': 'routeUrl' }; const field = form?.querySelector(`[data-structured-field="${map[category] || 'entryFee'}"]`); field?.scrollIntoView({ behavior: 'smooth', block: 'center' }); field?.focus({ preventScroll: true }); };
   form?.querySelectorAll('input[name="proposal-type-ui"]').forEach((radio) => radio.addEventListener('change', () => { racePickerMode = 'search'; if (raceSearch) raceSearch.value = ''; closeRaceResults(); applyTypeUx(); }));
@@ -650,18 +632,35 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   document.addEventListener('click', (event) => { if (racePicker && !racePicker.contains(event.target)) closeRaceResults(); });
   raceManual?.addEventListener('click', () => { racePickerMode = 'manual'; closeRaceResults(); applyTypeUx(); form?.querySelector('[data-field-row="date"] input')?.focus(); });
   raceBack?.addEventListener('click', () => { racePickerMode = 'search'; applyTypeUx(); raceSearch?.focus(); });
-  source?.addEventListener('blur', () => { validateSource(); updateFallbackLink(); });
-  source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary(); updateFallbackLink(); });
-  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field.dataset?.basicCorrectionField) { const err = document.querySelector(`[data-basic-error="${field.dataset.basicCorrectionField}"]`); if (err) err.hidden = true; } if (field.dataset?.structuredField === 'routeUrl') { const routeError = document.querySelector('[data-route-error]'); if (routeError) routeError.hidden = true; } if (field.dataset?.structuredField === 'elevationGain') { const elevationError = document.querySelector('[data-elevation-error]'); if (elevationError) elevationError.hidden = true; } updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
-  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else { updateErrorSummary(); updateFallbackLink(); syncDescriptionRequirement(); } });
+  source?.addEventListener('blur', () => { validateSource();  });
+  source?.addEventListener('input', () => { source.setCustomValidity(''); source.removeAttribute('aria-invalid'); if (sourceError) sourceError.hidden = true; if (sourceWarning) sourceWarning.hidden = true; updateErrorSummary();  });
+  form?.addEventListener('input', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); if (field.dataset?.basicCorrectionField) { const err = document.querySelector(`[data-basic-error="${field.dataset.basicCorrectionField}"]`); if (err) err.hidden = true; } if (field.dataset?.structuredField === 'routeUrl') { const routeError = document.querySelector('[data-route-error]'); if (routeError) routeError.hidden = true; } if (field.dataset?.structuredField === 'elevationGain') { const elevationError = document.querySelector('[data-elevation-error]'); if (elevationError) elevationError.hidden = true; } updateErrorSummary();  syncDescriptionRequirement(); } });
+  form?.addEventListener('change', (event) => { const field = event.target; if (field?.matches?.('input,select,textarea')) { field.setCustomValidity?.(''); field.removeAttribute('aria-invalid'); } if (field?.name === 'proposal-change-category') { if (selectedChangeValues().length) clearChangeError(); syncVisibleChangeOptions(); updateChangeSummary(); updateErrorSummary(); } else { updateErrorSummary();  syncDescriptionRequirement(); } });
   const setStatus = (message, kind = '') => { if (!errors) return; errors.hidden = !message; errors.textContent = message; errors.classList.toggle('success', kind === 'success'); if (message) errors.focus(); };
   const confirmationSubmitLabel = () => isEnglish ? 'Confirm information' : 'Potrdite podatke';
-  const restoreAfterSubmitFailure = () => { submissionState = 'failed'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = false; button.textContent = isConfirmationMode ? confirmationSubmitLabel() : copy.submit; } setStatus(copy.submitError); updateFallbackLink(); };
-  const markSubmitted = (attempt) => { if (submissionState !== 'submitting' || attempt !== armedSubmissionAttempt) return; submissionState = 'submitted-unverified'; armedSubmissionAttempt = 0; window.clearTimeout(submitTimeoutId); if (button) { button.disabled = true; button.hidden = true; button.textContent = copy.submit; } if (resetButton && !isConfirmationMode) { resetButton.hidden = false; resetButton.textContent = copy.newProposal; } setStatus(isConfirmationMode ? (isEnglish ? 'The confirmation was sent for manual review.' : 'Potrditev je bila poslana v ročni pregled.') : copy.submitted, 'success'); };
-  submitTarget?.addEventListener('load', () => { if (submissionState !== 'submitting' || !armedSubmissionAttempt) return; markSubmitted(armedSubmissionAttempt); });
+  let challengeToken = '';
+  let challengeWidget;
+  let proposalRequestId = '';
+  let proposalRequestBody = '';
+  const challenge = document.querySelector('[data-proposal-challenge]');
+  const resetChallenge = () => { challengeToken = ''; if (challengeWidget !== undefined) window.turnstile?.reset(challengeWidget); };
+  const challengeError = () => { challengeToken = ''; if (submissionState !== 'accepted') setStatus(copy.challengeError); };
+  const initializeChallenge = () => {
+    if (isConfirmationMode) { if (challenge) challenge.closest('[data-proposal-protection]').hidden = true; return; }
+    if (!challenge?.dataset.sitekey) return;
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.onload = () => {
+      if (!window.turnstile) { challengeError(); return; }
+      challengeWidget = window.turnstile.render(challenge, { sitekey: challenge.dataset.sitekey, action: 'race-proposal', language: isEnglish ? 'en' : 'sl', size: 'flexible', callback: (token) => { challengeToken = token; }, 'expired-callback': () => { resetChallenge(); }, 'error-callback': challengeError, 'timeout-callback': challengeError });
+    };
+    script.onerror = challengeError;
+    document.head.append(script);
+  };
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (submissionState === 'submitting' || submissionState === 'submitted-unverified') return;
+    if (submissionState === 'submitting' || submissionState === 'submitted-unverified' || submissionState === 'accepted') return;
     submissionState = 'validating';
     if (isConfirmationMode) {
       if (!confirmationSnapshot) { submissionState = 'failed'; setStatus(isEnglish ? 'Valid current race information is required.' : 'Za potrditev so potrebni veljavni aktualni podatki teka.'); return; }
@@ -707,22 +706,41 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (!hasValidDateParts) { const dateField = form?.elements.namedItem(contract.fields.date); if (dateField && isVisibleField(dateField) && !explicitInvalidFields.includes(dateField)) explicitInvalidFields.unshift(dateField); }
     if (!form.checkValidity() || explicitInvalidFields.length) { submissionState = 'failed'; const invalidFields = [...new Set([...explicitInvalidFields, ...visibleInvalidFields()])]; showErrors(invalidFields); form.reportValidity(); invalidFields[0]?.focus(); return; }
     if (errors) { errors.hidden = true; errors.textContent = ''; errors.classList.remove('success'); }
-    updateFallbackLink();
-    currentSubmissionAttempt += 1;
-    armedSubmissionAttempt = currentSubmissionAttempt;
-    if (button) { button.disabled = true; button.textContent = copy.openingGoogleForm; }
+
+    if (!challengeToken) { submissionState = 'failed'; setStatus(copy.challengeError); challenge?.focus(); return; }
+    const proposal = stkValidateProposal(currentSubmissionInput());
+    if (!proposal) { submissionState = 'failed'; setStatus(copy.serverValidationError); return; }
+    const serialized = JSON.stringify(proposal);
+    if (!proposalRequestId || serialized !== proposalRequestBody) { proposalRequestId = crypto.randomUUID(); proposalRequestBody = serialized; }
+    if (button) { button.disabled = true; button.textContent = copy.sending; }
+    resetButton.disabled = true;
     submissionState = 'submitting';
-    window.clearTimeout(submitTimeoutId);
-    submitTimeoutId = window.setTimeout(() => restoreAfterSubmitFailure(), 12000);
-    submitCanonicalEntries(currentGoogleFormsEntries());
+    const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), 20_000);
+    try {
+      const response = await fetch('/api/proposals', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ requestId: proposalRequestId, lang: isEnglish ? 'en' : 'sl', turnstileToken: challengeToken, proposal }), signal: controller.signal });
+      const result = await response.json().catch(() => null);
+      if (response.ok && result?.ok === true && ['ACCEPTED', 'DUPLICATE'].includes(result.status) && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(result.receipt || '')) {
+        submissionState = 'accepted'; button.hidden = true; resetButton.hidden = false; resetButton.textContent = copy.newProposal; setStatus(copy.submitted, 'success'); return;
+      }
+      submissionState = 'failed';
+      setStatus(result?.status === 'CHALLENGE_FAILED' ? copy.challengeError : result?.status === 'RATE_LIMITED' ? copy.rateError : result?.status === 'INVALID_REQUEST' ? copy.serverValidationError : copy.submitError);
+    } catch { submissionState = 'failed'; setStatus(copy.submitError); }
+    finally { window.clearTimeout(timer); resetButton.disabled = false; if (submissionState !== 'accepted') { button.disabled = false; button.textContent = copy.submit; resetChallenge(); } }
   });
-  form?.addEventListener('reset', (event) => { if (hasRaceContext && submissionState !== 'submitted-unverified' && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } window.clearTimeout(submitTimeoutId); armedSubmissionAttempt = 0; setTimeout(() => { submissionState = 'idle'; if (errors) { errors.hidden = true; errors.classList.remove('success'); } if (resetButton) { resetButton.hidden = false; resetButton.textContent = hasRaceContext ? (isEnglish ? 'Clear entered changes' : 'Počisti vnesene spremembe') : copy.clear; } if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); applyRuntimeContext(); initializeSelectedRaceDiffFields(); form.querySelectorAll('[data-basic-correction-field], [data-structured-field]').forEach((field) => { if (field.dataset.structuredField !== 'correctionIntent') field.dispatchEvent(new Event('input', { bubbles: true })); }); updateChangeSummary(); syncDateParts(); updateFallbackLink(); }, 0); });
+  form?.addEventListener('reset', (event) => { if (submissionState === 'submitting' && !isConfirmationMode) { event.preventDefault(); return; } if (hasRaceContext && submissionState !== 'submitted-unverified' && submissionState !== 'accepted' && !window.confirm(copy.resetConfirm)) { event.preventDefault(); return; } setTimeout(() => { submissionState = 'idle'; proposalRequestId = ''; proposalRequestBody = ''; resetChallenge(); if (errors) { errors.hidden = true; errors.classList.remove('success'); } if (resetButton) { resetButton.hidden = false; resetButton.textContent = hasRaceContext ? (isEnglish ? 'Clear entered changes' : 'Počisti vnesene spremembe') : copy.clear; } if (button) { button.disabled = false; button.textContent = copy.submit; button.hidden = false; } form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); applyRuntimeContext(); initializeSelectedRaceDiffFields(); form.querySelectorAll('[data-basic-correction-field], [data-structured-field]').forEach((field) => { if (field.dataset.structuredField !== 'correctionIntent') field.dispatchEvent(new Event('input', { bubbles: true })); }); updateChangeSummary(); syncDateParts();  }, 0); });
   applyRuntimeContext();
   void loadConfirmationRuntime();
+  initializeChallenge();
+  for (const [key, limit] of Object.entries(STK_PROPOSAL_LIMITS)) {
+    const name = key === 'officialAnnouncement' ? contract.fields.officialAnnouncement2026 : contract.fields[key];
+    const field = form?.elements.namedItem(name);
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) field.maxLength = limit;
+  }
   initializeSelectedRaceDiffFields();
   updateChangeSummary();
 </script>
 <style>
+  .proposal-protection { width:100%;max-width:360px;display:grid;gap:8px; }
   .proposal-hero { padding-bottom: 24px; } .proposal-note { font-weight: 700; color: var(--green-dark); }
   .correction-context { padding-top: 0; } .correction-context-card { display:grid; gap:8px; padding:20px; border-color:rgba(50,121,61,.22); background:linear-gradient(135deg,rgba(200,230,201,.62),rgba(255,255,255,.94)),var(--white); }
   .correction-context-card h2,.correction-context-card p{margin:0}.correction-context-back{width:fit-content;font-weight:700;color:var(--green-dark)}

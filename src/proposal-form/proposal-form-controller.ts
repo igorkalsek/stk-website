@@ -347,21 +347,4 @@ export const buildGoogleFormsSubmissionEntries = (submission: GoogleFormsSubmiss
   return entries;
 };
 
-export const buildGoogleFormsSubmissionUrl = (submission: GoogleFormsSubmissionUrlInput = {}) => {
-  const url = new URL(googleProposalFormContract.viewUrl);
-  url.searchParams.set('usp', 'pp_url');
-  for (const [name, value] of buildGoogleFormsSubmissionEntries(submission)) url.searchParams.append(name, value);
-  return url.href;
-};
-
-export const buildGoogleFormsFallbackUrl = (prefill: ProposalPrefill, proposalType = googleProposalFormContract.values.proposalTypes[1]) => buildGoogleFormsSubmissionUrl({
-  proposalType: prefill.eventTitle ? proposalType : '',
-  date: prefill.date,
-  title: prefill.eventTitle,
-  place: prefill.place,
-  region: prefill.eventTitle ? prefill.region || googleProposalFormContract.values.regions.at(-1)! : prefill.region,
-  officialSource: prefill.officialSourceUrl,
-  description: prefill.description
-});
-
 export const getYearContext = (dateOrYear: string) => dateOrYear.includes('2027') ? '2027' : '2026';
