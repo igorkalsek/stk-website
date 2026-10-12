@@ -1047,6 +1047,7 @@ test('keeps season regions, achievements and stamps compact and accessible', asy
 });
 
 test('refreshes the homepage My STK component after save and unsave without reloading', async ({ page }) => {
+  await freezeLjubljanaDate(page);
   await mockMyRacesApis(page);
   await page.addInitScript(([v1, v2]) => { localStorage.removeItem(v1); localStorage.removeItem(v2); }, [V1_KEY, V2_KEY]);
   await page.goto('/');
@@ -1056,9 +1057,11 @@ test('refreshes the homepage My STK component after save and unsave without relo
 
   await saveButton.click();
   await expect(page.locator('[data-my-stk] .my-stk-dashboard')).toBeVisible();
+  expect(await readSavedRacesV2(page)).toMatchObject({ version: 2, races: [v2Race('r000101', 'following')] });
 
   await saveButton.click();
   await expect(page.getByRole('heading', { name: 'Ustvarite svojo tekaško sezono' })).toBeVisible();
+  expect(await readSavedRacesV2(page)).toMatchObject({ version: 2, races: [] });
 });
 
 test('backfills a resolved legacy completion when the user opens only the homepage', async ({ page }) => {
