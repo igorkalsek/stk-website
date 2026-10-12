@@ -2,15 +2,17 @@
 
 2026-10-12, Europe/Ljubljana. **NOT READY FOR PRODUCTION CUTOVER.**
 DEV-023 remains **IN_PROGRESS**; DEV-012 remains **BLOCKED**.
-This work prepares two linked Draft PRs. No merge, deploy, clasp push, production
-secret change, Form closure or production INBOX test write is authorized here.
+This runbook now covers the linked Draft PRs #223/#96 and required Admin fix #138.
+The separately authorized isolated staging was completed; see
+[real staging evidence](DEV-023_PHASE2_STAGING.md). No merge, production deploy,
+production secret change, Form closure or production INBOX test write occurred.
 
 ## Preflight evidence
 
 - Website main/production: `b9701d3a9c619a295a3c5c93eca0d9f691ef3bae`, active Pages
-  `ca4d296a-7c9a-4e8f-ae53-35ac4daa360d`, on the STK public domains.
+  `ac06b715-a85b-446c-bc11-cdf37800fdf7`, on the STK public domains.
 - Admin main/production: `d674776e8b3db2d7045515b9aa5b7d41a6a757f4`, active Pages
-  `756ddc57-8c8c-4249-85ea-6540a6473921`. No Admin changes are needed.
+  `756ddc57-8c8c-4249-85ea-6540a6473921`. Real staging found a source-identity bug; Admin PR #138 is now required.
 - Apps Scripts main: `4f83c0afc878cd58f12cda6ad358e3a9297316b3`.
   Fresh authenticated Apps Script API read confirms sole versioned deployment v15;
   its full source matches the previously verified Phase 1 immutable package.
@@ -135,8 +137,9 @@ Do not log request bodies, secrets or signed envelopes in either provider.
 
 ## Validation performed
 
-All submission testing used synthetic values and mocked in-memory Sheets.
-No production INBOX was written. The real public Turnstile test widget was also
+The original local validation below used synthetic values and mocked in-memory Sheets.
+Subsequent real isolated Cloudflare/Google validation is recorded in
+[DEV-023_PHASE2_STAGING.md](DEV-023_PHASE2_STAGING.md). No production INBOX was written. The real public Turnstile test widget was also
 loaded locally, without an actual proposal POST; mobile/desktop fit was inspected.
 
 | Check | Result |
@@ -151,7 +154,8 @@ loaded locally, without an actual proposal POST; mobile/desktop fit was inspecte
 | Broader Apps orodja/content regressions | 19 of 20 files PASS. Existing organizer-access fixture fails at line 2498: fixed September 9 analytics record falls outside today's 30-day window, expected 1, actual 0. Reproduced without Phase 2 changes. |
 | `astro check` | Existing finder test line 567 reports TS2339 (`placement` on `{}`); that file is byte-identical to main. No new diagnostics in changed files. |
 | GitHub My races workflow | The homepage save/unsave test times out at lines 1055/1057. Reproduced on isolated actual main `b9701d3` with unchanged src/tests (only a separate local test port). Its fixed 2026 race fixtures are now past; no unrelated fix is included. |
-| Real Google staging/production integration | NOT RUN: no deployment or production secrets changed. Required staging gate remains open. |
+| Real Google staging integration | PASS: all eight SL/EN modes against real Pages/Siteverify/Google; receipts, fields, protection, duplicates, rates, failures and read-only Admin verified. See staging report. |
+| Production integration | Not activated or tested; production-specific approval/cutover gates remain. |
 
 Browser network submissions and site data were intercepted; official test-widget
 visual inspection allowed only localhost and challenges.cloudflare.com. Local
@@ -193,16 +197,16 @@ incoming requests. No KV/D1/Durable Object or external database is introduced.
 
 ## Coordinated cutover — future approved work only
 
-1. Review both Draft PRs and their pinned SHAs. Resolve/explicitly disposition
+1. Review Draft PRs #223/#96 and required Admin fix #138 and their pinned SHAs. Resolve/explicitly disposition
    baseline CI issues, recheck all production/main pointers and freeze this small
    intake package. Do not broaden or modify the v15 package.
-2. After separate staging approval, create a test-only standalone project and
+2. Completed in isolated staging on 2026-10-12: create a test-only standalone project and
    synthetic spreadsheet with the verified 30-column header. Upload only the
    three serving files, enable Advanced Sheets, set staging secrets and enable
    its cleanup trigger. Stage the paired Pages handler with dedicated staging
    credentials and a real staging widget; keep automation with dummy keys/mocked
    Siteverify separate from the real server-verification test.
-3. Prove real RAW append/echo behavior and Admin read/preview compatibility for
+3. Completed in isolated staging on 2026-10-12: prove real RAW append/echo behavior and Admin read/preview compatibility for
    every mode in SL/EN, 15 master-field defaults, date formats and additional
    descriptions. Verify missing/invalid/expired/reused tokens, tampering, replay,
    duplicates/rates/outages, organizer independence and recovery of ambiguous
@@ -279,8 +283,8 @@ retry or automatic cleanup is allowed to erase the uncertainty.
 
 ## Remaining P1 / P2 risks and decision
 
-- **P1 cutover gate:** real Google staging integration and real production
-  widget/secret pair are not proven; new code is deliberately undeployed/disabled.
+- **Resolved staging gate:** real Cloudflare/Siteverify/Google integration was verified in the isolated environment. Numeric-literal and Admin identity P1 defects were repaired in #96/#138.
+- **P1 production gate:** review/merge those fixes and verify the separate production writer/widget configuration; staging credentials must never be promoted.
 - **P1 cutover gate:** old Form is still accepting by design in this session.
   Closure, rejected direct POSTs, historical preservation and actual production
   receipt/INBOX readback must all be proven before declaring Phase 2 complete.
@@ -299,5 +303,4 @@ retry or automatic cleanup is allowed to erase the uncertainty.
 - **P2 baseline:** existing finder type diagnostic, aging organizer analytics
   fixture and homepage My races browser test fail independently of this change; no blanket all-tests-PASS claim.
 
-**NOT READY FOR PRODUCTION CUTOVER.** Implementation is prepared for review and
-staging verification; no production success or Phase 2 completion is claimed.
+**NOT READY FOR PRODUCTION CUTOVER.** The real staging gate is complete. Production activation requires review of #223/#96/#138, separate production provisioning, old Form bypass closure and an expressly approved legitimate production readback. No production success or Phase 2 completion is claimed.
