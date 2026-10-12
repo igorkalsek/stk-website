@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { googleProposalFormContract } from '../.cache/dist-test/proposal-form/proposal-form-contract.js';
-import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsFallbackUrl, buildGoogleFormsSubmissionEntries, buildGoogleFormsSubmissionUrl, buildOrganizerConfirmationDescription, buildOrganizerConfirmationSubmission, buildNewRaceDescription, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain, isValidEntryFeeRange } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
+import { requiredProposalFields, isSafeInternalReturnUrl, isSafeHttpUrl, readProposalPrefill, buildGoogleFormsSubmissionEntries, buildOrganizerConfirmationDescription, buildOrganizerConfirmationSubmission, buildNewRaceDescription, getYearContext, mapExistingChangeSelectionToProposalType, additionalDataValuesForChangeSelection, buildStructuredChangeDescription, buildChangePlaceholder, parsePreselectedChangeCategories, parseProposalMode, getProposalFieldRules, additionalDataValuesForStructuredDetails, buildStructuredAdditionalDescription, combineCorrectionDescription, hasStructuredBasicCorrections, structuredBasicCorrectionFields, buildStructuredBasicCorrectionDescription, isValidStructuredBasicDate, isValidStructuredBasicUrl, isValidStructuredRouteUrl, isValidElevationGain, isValidEntryFeeRange } from '../.cache/dist-test/proposal-form/proposal-form-controller.js';
 import { proposalFormLocales } from '../.cache/dist-test/proposal-form/proposal-form-locales.js';
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl, searchPublicRaces } from '../.cache/dist-test/proposal-form/race-correction-context.js';
 
 describe('proposal form contract', () => {
   it('uses plain-language hand-off and selected-race link copy', () => {
-    assert.equal(proposalFormLocales.sl.googleFormHandOff, 'Predlog bo poslan v pregled. Ostali boste na tej strani.');
-    assert.equal(proposalFormLocales.en.googleFormHandOff, 'The proposal will be submitted for review. You will remain on this page.');
+    assert.equal(proposalFormLocales.sl.submissionNote, 'Predlog bo poslan v pregled. Ostali boste na tej strani.');
+    assert.equal(proposalFormLocales.en.submissionNote, 'The proposal will be submitted for review. You will remain on this page.');
     assert.equal(proposalFormLocales.sl.addAnotherRace, 'Dodajte nov tek');
     assert.equal(proposalFormLocales.en.addAnotherRace, 'Add a new race');
     assert.equal(proposalFormLocales.sl.dynamicLabels.newDescription, 'Opis teka in dodatne informacije');
@@ -135,14 +135,6 @@ describe('proposal form contract', () => {
     assert.equal(buildStructuredAdditionalDescription({ lang: 'sl', details: {}, currentValues: { otherDetails: prefill.otherDetails } }), '');
   });
 
-  it('keeps structured business values identical between direct entries and fallback URL', () => {
-    const input = { proposalType: googleProposalFormContract.values.proposalTypes[2], date: '2026-09-12', title: 'Tek', place: 'Kranj', region: 'Gorenjska', officialSource: '', description: buildStructuredAdditionalDescription({ lang: 'sl', details: { registrationMinEur: '20', routeUrl: 'https://example.com/trasa' } }), organizer: 'Ne', officialAnnouncement: 'Ne vem', email: 'test@example.com', additionalData: additionalDataValuesForStructuredDetails({ registrationMinEur: '20', routeUrl: 'https://example.com/trasa' }) };
-    const direct = new URLSearchParams(buildGoogleFormsSubmissionEntries(input));
-    const fallback = new URL(buildGoogleFormsSubmissionUrl(input)).searchParams;
-    assert.equal(direct.get(googleProposalFormContract.fields.description), fallback.get(googleProposalFormContract.fields.description));
-    assert.deepEqual(direct.getAll(googleProposalFormContract.fields.additionalData), fallback.getAll(googleProposalFormContract.fields.additionalData));
-  });
-
   it('validates structured route URLs and elevation values', () => {
     assert.equal(isValidStructuredRouteUrl('https://example.com/route'), true);
     assert.equal(isValidStructuredRouteUrl('http://example.com/route'), true);
@@ -176,14 +168,6 @@ describe('proposal form contract', () => {
     assert.deepEqual(params.getAll(googleProposalFormContract.fields.additionalData), ['Prijavnina / startnina', 'Popravek napačnega dodatnega podatka']);
   });
 
-  it('preserves fallback prefill without storing private fields in URL/localStorage', () => {
-    const url = buildGoogleFormsFallbackUrl(readProposalPrefill(new URLSearchParams('event=Tek&date=2026-03-02&place=Kranj&source=detail&returnUrl=/tek/2026/tek/'), 'sl'));
-    assert.match(url, /entry\.528776717=Tek/); assert.doesNotMatch(url, /entry\.600388817/); assert.doesNotMatch(url, /entry\.1673153264=detail/);
-    const component = readFileSync(new URL('../src/components/RaceProposalForm.astro', import.meta.url), 'utf8');
-    assert.doesNotMatch(component, /localStorage|history\.pushState|Master API|Additional API/);
-    assert.match(component, /data-analytics-link-type="correction_form"/); assert.match(component, /data-additional-section hidden/); assert.match(component, /data-source-warning/);
-  });
-
   it('searches public races and builds correction context URLs', () => {
     const base = { id: '1', row: '12', year: '2026', date: '2026-07-19', dateValue: Date.parse('2026-07-19T00:00:00'), title: '20. Gorski tek na Bevkov vrh – trail 2026', displayTitle: '20. Gorski tek na Bevkov vrh – trail 2026', naziv_prireditve: '20. Gorski tek na Bevkov vrh – trail 2026', place: 'Gorenje Jazne', region: 'Goriška', surface: 'trail', distances: '10.5', startTime: '10:00', noticeUrl: 'https://example.com/razpis', registrationUrl: 'https://example.com/prijava', voteUrl: '', publicNotes: '', cup: 'Pokal Primorske', familyFriendly: false, kidsRaces: false };
     const races = [base, { ...base, row: '13', title: 'Šmarna gora', naziv_prireditve: 'Šmarna gora', place: 'Ljubljana', region: 'Osrednjeslovenska' }];
@@ -204,7 +188,7 @@ describe('proposal form contract', () => {
     assert.equal(parsed.searchParams.get('organizator_url'), 'https://example.com/organizator');
     assert.equal(parsed.searchParams.get('otherDetails'), 'Družinam prijazno: otroški teki.');
   });
-  it('does not add direct master or API writes', () => {
+  it('does not add direct master writes', () => {
     const sources = ['src/components/RaceProposalForm.astro','src/proposal-form/proposal-form-controller.ts'].map((f) => readFileSync(new URL(`../${f}`, import.meta.url),'utf8')).join('\n');
     assert.doesNotMatch(sources, /googleapis|spreadsheets|\bD1\b|\bKV\b|master_row|Master API|Additional API/i);
     assert.match(sources, /stk-master-api\.igor-kalsek\.workers\.dev/);

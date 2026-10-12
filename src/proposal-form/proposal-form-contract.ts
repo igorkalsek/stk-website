@@ -1,7 +1,4 @@
 export const googleProposalFormContract = {
-  formId: '1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw',
-  viewUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/viewform',
-  responseUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScBgO8Keau-2cZWHubhacvCmbzLbw0wlroE6-rR6TEJnzfgUw/formResponse',
   fields: {
     proposalType: 'entry.1029369192',
     additionalData: 'entry.577988475',

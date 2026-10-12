@@ -7,6 +7,9 @@ on:
       - 'src/pages/dodaj-ali-popravi-tek.astro'
       - 'src/pages/en/add-or-correct-race.astro'
       - 'src/proposal-form/**'
+      - 'functions/api/proposals.ts'
+      - 'tests/proposals-relay.test.mjs'
+      - 'tests/proposal-intake-integration.mjs'
       - 'tests/browser/proposal-form.spec.ts'
       - 'playwright.config.ts'
       - 'package.json'
@@ -25,6 +28,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: npm test
       - run: npm run test:browser:proposal-form
 
       - name: Upload Playwright report

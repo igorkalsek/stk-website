@@ -75,6 +75,6 @@ describe('STK analytics internal navigation guard', () => {
     assert.match(analyticsSource, /shouldRedactAnalyticsTargetUrl = \(element: HTMLElement\) => element\.dataset\.analyticsRedactTargetUrl === 'true'/);
     assert.match(analyticsSource, /`\$\{url\.origin\}\$\{url\.pathname\}`/);
     assert.match(analyticsSource, /target_domain: shouldRedactAnalyticsTargetUrl\(link\) \? ''/);
-    assert.match(proposalFormSource, /data-analytics-redact-target-url="true"/);
+    assert.doesNotMatch(proposalFormSource, /data-correction-form-link|formResponse|viewform/);
   });
 });

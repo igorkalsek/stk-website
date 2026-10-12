@@ -1,8 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import { buildGoogleFormsSubmissionEntries } from '../../src/proposal-form/proposal-form-controller';
 import { googleProposalFormContract } from '../../src/proposal-form/proposal-form-contract';
 
 const contract = googleProposalFormContract;
-const normalizeLineEndings = (value: FormDataEntryValue | null | undefined) => String(value ?? '').replace(/\r\n?/g, '\n');
 const correctionQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&source=https%3A%2F%2Fexample.com%2Fzelo-dolg-url%2Frazpis&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&lang=sl';
 const fullContextQuery = 'event=Dolgi%20%C5%A0marnogorski%20tek&year=2027&date=2027-05-01&place=Ljubljana&region=Osrednjeslovenska&eventKey=R000012&context=detail&source=detail&returnUrl=%2Ftek%2F2027%2Fdolgi-tek%2F&startTime=10%3A00&distances=10%20km%3B%2021%20km&noticeUrl=https%3A%2F%2Fexample.com%2Frazpis&surface=asfalt&cup=Pokal%20STK&elevationGain=650';
 const completeContextQuery = `${fullContextQuery}&registrationMinEur=20&registrationMaxEur=25&registrationDescription=Razli%C4%8Dne%20razdalje&registrationDeadline=2027-04-20&earlyRegistrationDeadline=2027-04-01&dayOfRegistration=Da&registrationUrl=https%3A%2F%2Fexample.com%2Fprijava&routeUrl=https%3A%2F%2Fexample.com%2Ftrasa&otherDetails=Dru%C5%BEinam%20prijazno&organizator_naziv=%C5%A0D%20Objavljeno&organizator_url=https%3A%2F%2Fexample.com%2Forg`;
@@ -10,27 +10,27 @@ const zagorjeContextQuery = 'event=21.%20Tek%20in%20pohod%20po%20Zagorski%20doli
 
 type InterceptedForm = { getPayloads: () => URLSearchParams[]; getPayload: () => URLSearchParams | undefined; getSubmissions: () => number; getUrls: () => string[]; getDirectPosts: () => number };
 type InterceptOptions = { responseMode?: 'fulfill' | 'hang' };
-const analyticsEndpointPattern = 'https://script.google.com/macros/s/**';
+const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
 
 async function interceptForm(page: Page, options: InterceptOptions = {}): Promise<InterceptedForm> {
   const urls: string[] = [];
   const posts: URLSearchParams[] = [];
-  await page.route(`${contract.viewUrl}**`, async (route) => {
-    urls.push(route.request().url());
-    await route.fulfill({ status: 200, contentType: 'text/html', body: '<html><title>Google form</title><body>Google form</body></html>' });
+  await page.route('https://docs.google.com/forms/**', async () => { throw new Error('Google Forms bypass'); });
+  await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js**', async route => {
+    await route.fulfill({ contentType: 'application/javascript', body: `let callback; window.turnstile = { render: (node, options) => { callback = options.callback; window.__syntheticChallengeOptions = options; callback('synthetic-token'); return 0; }, reset: () => callback('synthetic-retry-token') };` });
   });
-  await page.route(`${contract.responseUrl}**`, async (route) => {
+  await page.route('**/api/proposals', async route => {
     urls.push(route.request().url());
-    posts.push(new URLSearchParams(route.request().postData() ?? ''));
+    posts.push(new URLSearchParams(buildGoogleFormsSubmissionEntries(route.request().postDataJSON().proposal) as [string, string][]));
     if (options.responseMode === 'hang') return new Promise(() => undefined);
-    await route.fulfill({ status: 200, contentType: 'text/html', body: '<html><body>OK</body></html>' });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, status: 'ACCEPTED', receipt: '00000000-0000-4000-8000-000000000001' }) });
   });
   return {
     getPayloads: () => posts,
     getPayload: () => posts.at(-1),
     getSubmissions: () => posts.length,
     getUrls: () => urls,
-    getDirectPosts: () => posts.length
+    getDirectPosts: () => 0
   };
 }
 
@@ -237,14 +237,11 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.officialSource)).toBe('https://example.com/razpis/2026?zelo=dolg-url');
     const expectedDescription = 'Razdalje 10 km in 21 km, start ob 10.00.\n\nČas začetka: 10:00\nRazdalje: 10 km; 21 km\nVrsta podlage: asfalt\nPrijavna povezava: https://example.com/prijava\nPokal ali serija: Pokal STK\nUradni naziv organizatorja: ŠD Objavljeno\nUradna spletna stran organizatorja: https://example.com/organizator\nNajnižja prijavnina: 15\nNajvišja prijavnina: 25\nOpis prijavnine: Cena je odvisna od razdalje.\nRok prijave: 2026-08-01\nRok cenejše prijave: 2026-07-27\nPrijave na dan dogodka: Da\nVišinski metri: 450\nTrasa, zemljevid ali GPX: https://example.com/trasa\nDrugi dodatni podatki: Otroški teki';
     expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(expectedDescription);
-    expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Višinski metri', 'Trasa / zemljevid / GPX', 'Drugo']);
-    const fallbackParams = new URL(await page.locator('[data-correction-form-link]').getAttribute('href') || '').searchParams;
-    expect(fallbackParams.get(contract.fields.description)).toBe(expectedDescription);
-    expect(fallbackParams.getAll(contract.fields.additionalData)).toEqual(payload?.getAll(contract.fields.additionalData));
+    expect(payload?.getAll(contract.fields.additionalData)).toEqual(['Prijavnina / startnina', 'Rok prijave', 'Cenejša prijava / sprememba cene', 'Prijave na dan dogodka', 'Trasa / zemljevid / GPX', 'Višinski metri', 'Drugo']);
     expect(payload?.get(contract.fields.organizer)).toBe('Ne');
     expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Da');
     expect(payload?.get(contract.fields.email)).toBe('test@example.com');
-    expect(form.getUrls().at(-1)).toContain('/formResponse');
+    expect(form.getUrls().at(-1)).toContain('/api/proposals');
     expect(payload?.get(contract.fields.dateYear)).toBe('2026');
     expect(payload?.get(contract.fields.dateMonth)).toBe('9');
     expect(payload?.get(contract.fields.dateDay)).toBe('12');
@@ -254,7 +251,7 @@ test.describe('native proposal form', () => {
 
 
 
-  test('new race with empty date blocks submission before Google POST', async ({ page }) => {
+  test('new race with empty date blocks submission before protected POST', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
@@ -276,7 +273,7 @@ test.describe('native proposal form', () => {
     await expect(page.getByRole('button', { name: 'Pošlji predlog' })).toBeEnabled();
   });
 
-  test('valid new race posts formResponse once including date parts and stays on STK page', async ({ page }) => {
+  test('valid new race posts protected proposal once preserving identity and stays on STK page', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
@@ -306,18 +303,18 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.organizer)).toBe('Ne');
     expect(payload?.get(contract.fields.officialAnnouncement2026)).toBe('Da');
     expect(payload?.get(contract.fields.email)).toBe('test@example.com');
-    await expect(page.getByRole('alert')).toContainText('Predlog je bil poslan. Hvala za pomoč pri dopolnjevanju koledarja.');
+    await expect(page.getByRole('alert')).toContainText('Predlog je bil sprejet v pregled. Hvala za pomoč pri dopolnjevanju koledarja.');
     await expect(page).toHaveURL(/dodaj-ali-popravi-tek/);
   });
 
 
 
-  test('iframe load events before submit do not show success, double click sends one POST, fallback is current', async ({ page }) => {
+  test('no iframe can imply success and double click sends one protected POST', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
-    await page.locator('[data-submit-target]').evaluate((iframe: HTMLIFrameElement) => iframe.dispatchEvent(new Event('load')));
-    await expect(page.getByText('Predlog je bil poslan. Hvala za pomoč pri dopolnjevanju koledarja.')).toHaveCount(0);
+    await expect(page.locator('[data-submit-target], [data-correction-form-link]')).toHaveCount(0);
+    await expect(page.getByText('Predlog je bil sprejet v pregled. Hvala za pomoč pri dopolnjevanju koledarja.')).toHaveCount(0);
     await page.locator('#proposal-date').fill('2026-09-12');
     await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Enkratni tek');
     await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Maribor');
@@ -327,7 +324,7 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('once@example.com');
-    await expect(page.locator('[data-correction-form-link]')).toHaveAttribute('href', /entry\.528776717=Enkratni\+tek/);
+    await expect(page.locator('[data-correction-form-link]')).toHaveCount(0);
     await page.locator('[data-proposal-form]').evaluate((formElement: HTMLFormElement) => {
       formElement.requestSubmit();
       formElement.requestSubmit();
@@ -380,13 +377,13 @@ test.describe('native proposal form', () => {
     await expect(page.locator('#proposal-source')).not.toHaveAttribute('required', '');
   });
 
-  test('native form posts directly to hidden iframe target without viewform navigation', async ({ page }) => {
+  test('native form has only a same-origin protected action and no fallback', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
-    await expect(page.locator('[data-submit-target]')).toHaveCount(1);
-    await expect(page.locator('[data-proposal-form]')).toHaveAttribute('target', 'proposal-form-target');
-    await expect(page.locator('[data-proposal-form]')).toHaveAttribute('action', contract.responseUrl);
+    await expect(page.locator('[data-submit-target]')).toHaveCount(0);
+    await expect(page.locator('[data-proposal-form]')).not.toHaveAttribute('target');
+    await expect(page.locator('[data-proposal-form]')).toHaveAttribute('action', '/api/proposals');
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect.poll(() => form.getSubmissions()).toBe(0);
     expect(form.getDirectPosts()).toBe(0);
@@ -437,7 +434,7 @@ test.describe('native proposal form', () => {
     expect(form.getPayload()?.get(contract.fields.place)).toBe('Ljubljana');
     expect(form.getPayload()?.get(contract.fields.description)).toContain('Current: Ljubljana');
     expect(form.getPayload()?.get(contract.fields.description)).toContain('Proposed: Ljubljana Center');
-    expect(form.getUrls().at(-1)).toContain('/formResponse');
+    expect(form.getUrls().at(-1)).toContain('/api/proposals');
     await assertNoConsoleErrors(page, errors);
   });
 
@@ -561,7 +558,6 @@ test.describe('native proposal form', () => {
     expect(payload?.get(contract.fields.proposalType)).toBe('Popravek obstoječega vnosa v koledarju');
     expect(payload?.get(contract.fields.date)).toBe('2026-09-12');
     expect(payload?.get(contract.fields.title)).toBe('Tek z dodatnimi podatki');
-    const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
     const description = normalizeLineEndings(payload?.get(contract.fields.description));
     expect(description).toContain('Izbrane vrste sprememb: Datum ali ura');
     expect(description).toContain('Datum naj bo 13. 9. 2026.');
@@ -576,7 +572,7 @@ test.describe('native proposal form', () => {
   });
 
 
-  test('fallback URL and direct POST use equivalent canonical business values', async ({ page }) => {
+  test('protected POST preserves canonical business values', async ({ page }) => {
     const form = await interceptForm(page);
     await page.goto('/dodaj-ali-popravi-tek/');
     await waitForProposalRuntime(page);
@@ -597,17 +593,12 @@ test.describe('native proposal form', () => {
     await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
     await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Ne vem');
     await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('parity@example.com');
-    const fallbackParams = new URL(await page.locator('[data-correction-form-link]').getAttribute('href') ?? '').searchParams;
     await page.getByRole('button', { name: 'Pošlji predlog' }).click();
     await expect.poll(() => form.getSubmissions()).toBe(1);
     const payload = form.getPayload();
-    const normalizeLineEndings = (value: string | null | undefined) => value?.replace(/\r\n?/g, '\n') ?? null;
-    for (const field of [contract.fields.proposalType, contract.fields.date, contract.fields.dateYear, contract.fields.dateMonth, contract.fields.dateDay, contract.fields.title, contract.fields.place, contract.fields.region, contract.fields.officialSource, contract.fields.organizer, contract.fields.officialAnnouncement2026, contract.fields.email]) {
-      expect(payload?.get(field)).toBe(fallbackParams.get(field));
-    }
-    expect(normalizeLineEndings(payload?.get(contract.fields.description))).toBe(normalizeLineEndings(fallbackParams.get(contract.fields.description)));
-    expect(payload?.getAll(contract.fields.additionalData)).toEqual(fallbackParams.getAll(contract.fields.additionalData));
-    expect(fallbackParams.get('usp')).toBe('pp_url');
+    expect(payload?.get(contract.fields.title)).toBe('Tek za pariteto');
+    expect(payload?.get(contract.fields.description)).toContain('20');
+
   });
 
   test('reset clears structured additional fields', async ({ page }) => {
@@ -876,7 +867,7 @@ test.describe('native proposal form', () => {
     await page.addInitScript(() => {
       const nativeSetTimeout = window.setTimeout;
       window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => {
-        if (timeout === 12000) return nativeSetTimeout(handler, 0, ...args);
+        if (timeout === 20_000) return nativeSetTimeout(handler, 0, ...args);
         return nativeSetTimeout(handler, timeout, ...args);
       }) as typeof window.setTimeout;
     });
@@ -928,50 +919,68 @@ test.describe('native proposal form', () => {
     expect(page.url()).not.toContain('org%40example.com'); expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   });
 
-  test('fallback analytics redacts prefilled values from target URL', async ({ page }) => {
-    const analyticsPayloads: unknown[] = [];
-    await page.route(analyticsEndpointPattern, async (route) => {
-      const body = route.request().postData() ?? '';
-      if (body) analyticsPayloads.push(JSON.parse(body));
-      await route.fulfill({ status: 204, body: '' });
-    });
-    await page.goto('/dodaj-ali-popravi-tek/');
+  test('proposal has no Google Forms fallback or private data in outbound URLs', async ({ page }) => {
+    await interceptForm(page);
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new');
     await waitForProposalRuntime(page);
-    await enterSlovenianManualCorrectionMode(page);
-    await page.locator('#proposal-date').fill('2026-09-12');
-    await page.getByRole('textbox', { name: 'Naziv prireditve' }).fill('Zasebni naslov teka');
-    await page.getByRole('textbox', { name: 'Kraj', exact: true }).fill('Skrivni kraj');
-    await page.getByRole('combobox', { name: 'Regija' }).selectOption('Podravska');
-    await page.locator('#proposal-source').fill('https://example.com/skrivni-vir');
-    await page.getByTestId('additional-entry-fee-min').fill('20');
-    await page.getByTestId('additional-registration-deadline').fill('2026-08-10');
-    await page.getByTestId('additional-route-url').fill('https://example.com/skrivna-trasa');
-    await page.getByTestId('additional-other').fill('Zaseben strukturiran opis.');
-    await page.getByTestId('additional-correction-intent').selectOption('missing');
-    await page.getByRole('combobox', { name: 'Ali ste organizator?' }).selectOption('Ne');
-    await page.getByRole('combobox', { name: 'Ali je za izbrano leto že objavljen uradni razpis ali uradna objava?' }).selectOption('Da');
-    await page.getByRole('textbox', { name: 'Kontaktni e-naslov' }).fill('secret@example.com');
-    await page.locator('[data-correction-form-link]').click();
-    await expect.poll(() => analyticsPayloads.length).toBeGreaterThan(0);
-    const fallbackEvent = analyticsPayloads.find((payload): payload is Record<string, string> => {
-      if (!payload || typeof payload !== 'object') return false;
-      const eventPayload = payload as Record<string, string>;
-      return eventPayload.event_type === 'external_link_clicked' && eventPayload.action_type === 'google_form_click';
-    });
-    expect(fallbackEvent).toBeTruthy();
-    expect(fallbackEvent?.target_url).toContain('/viewform');
-    expect(fallbackEvent?.target_url).not.toContain('?');
-    expect(fallbackEvent?.target_domain).toBe('');
-    const serialized = JSON.stringify(analyticsPayloads);
-    for (const sensitive of ['Zasebni naslov teka', 'Skrivni kraj', 'skrivni-vir', 'Skrivna prijavnina', 'Skrivni rok', 'skrivna-trasa', 'Zaseben strukturiran opis', 'secret@example.com', '2026-09-12', 'entry.', 'usp=']) {
-      expect(serialized).not.toContain(sensitive);
-    }
+    await expect(page.locator('a[href*="docs.google.com/forms"], form[action*="docs.google.com/forms"], [data-correction-form-link], [data-submit-target]')).toHaveCount(0);
   });
 
-  test('unsafe returnUrl is not rendered', async ({ page }) => {
-    await page.goto('/dodaj-ali-popravi-tek/?event=Tek&source=detail&returnUrl=https://evil.test/&date=2026-02-02&place=Kraj');
-    await waitForProposalRuntime(page);
-    await expect(page.getByRole('link', { name: 'Nazaj na stran teka' })).toHaveCount(0);
-    await expect(page.locator('#proposal-source')).toHaveValue('');
+  for (const lang of ['sl', 'en']) {
+    test(`${lang} protected challenge errors preserve fields, reset token and retry same request safely`, async ({ page }) => {
+      await interceptForm(page);
+      const requests: any[] = [];
+      await page.route('**/api/proposals', async route => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ status: requests.length === 1 ? 400 : 200, contentType: 'application/json', body: JSON.stringify(requests.length === 1 ? { ok: false, status: 'CHALLENGE_FAILED' } : { ok: true, status: 'DUPLICATE', receipt: '00000000-0000-4000-8000-000000000001' }) });
+      });
+      await page.goto(lang === 'en' ? '/en/add-or-correct-race/?mode=new' : '/dodaj-ali-popravi-tek/?mode=new');
+      await waitForProposalRuntime(page);
+      for (const [selector,value] of [['#proposal-date','2027-05-15'],['#proposal-title','Sintetični tek'],['#proposal-place','Kranj'],['#proposal-description','Sintetični opis.'],['#proposal-email','synthetic@example.com']]) await page.locator(selector).fill(value);
+      await page.locator('#proposal-region').selectOption('Gorenjska'); await page.locator('#proposal-organizer').selectOption('Ne'); await page.locator('#proposal-announcement').selectOption('Ne vem');
+      await page.locator('[data-submit-button]').click();
+      await expect(page.getByRole('alert')).toContainText(lang === 'en' ? 'Spam verification failed' : 'Preverjanje proti spamu ni uspelo');
+      await expect(page.locator('#proposal-title')).toHaveValue('Sintetični tek'); await expect(page.locator('[data-submit-button]')).toBeEnabled();
+      await page.locator('[data-submit-button]').click();
+      await expect(page.getByRole('alert')).toContainText(lang === 'en' ? 'received for review' : 'sprejet v pregled');
+      expect(requests.length).toBe(2); expect(requests[0].requestId).toBe(requests[1].requestId); expect(requests[0].turnstileToken).not.toBe(requests[1].turnstileToken);
+    });
+  }
+  for (const width of [390, 768, 1440]) {
+    test(`protected form stays keyboard accessible without horizontal overflow at ${width}px`, async ({ page }, testInfo) => {
+      const errors = collectConsoleErrors(page); await interceptForm(page); await page.setViewportSize({ width, height: 900 });
+      await page.goto('/dodaj-ali-popravi-tek/?mode=new'); await waitForProposalRuntime(page);
+      await page.locator('#proposal-title').focus(); await page.keyboard.type('Sintetični tek'); await page.keyboard.press('Tab'); await expect(page.locator('#proposal-place')).toBeFocused();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath(`dev023-form-${width}.png`), fullPage: true });
+      await assertNoConsoleErrors(page, errors);
+    });
+  }
+
+  test('temporary Turnstile script failure can reload and retry without losing the proposal', async ({ page }) => {
+    const submitted = await interceptForm(page); let scriptRequests = 0;
+    await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js**', async route => {
+      scriptRequests += 1;
+      if (scriptRequests === 1) return route.abort();
+      await route.fulfill({ contentType: 'application/javascript', body: `window.turnstile = { render: (_node, options) => { options.callback('recovered-token'); return 0; }, reset: () => {} };` });
+    });
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new'); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Preverjanje proti spamu ni uspelo');
+    for (const [selector,value] of [['#proposal-date','2027-05-15'],['#proposal-title','Ohranjen sintetični tek'],['#proposal-place','Kranj'],['#proposal-description','Sintetični opis.'],['#proposal-email','synthetic@example.com']]) await page.locator(selector).fill(value);
+    await page.locator('#proposal-region').selectOption('Gorenjska'); await page.locator('#proposal-organizer').selectOption('Ne'); await page.locator('#proposal-announcement').selectOption('Ne vem');
+    await page.locator('[data-submit-button]').click();
+    await expect.poll(() => scriptRequests).toBe(2); await page.waitForFunction(() => !!(window as any).turnstile);
+    await expect(page.locator('#proposal-title')).toHaveValue('Ohranjen sintetični tek'); expect(submitted.getSubmissions()).toBe(0);
+    await page.locator('[data-submit-button]').click(); await expect(page.getByRole('alert')).toContainText('sprejet v pregled'); expect(submitted.getSubmissions()).toBe(1);
+  });
+
+  test('stalled challenge script has a bounded deadline and preserves editable fields', async ({ page }) => {
+    const form = await interceptForm(page);
+    await page.addInitScript(() => { const nativeSetTimeout = window.setTimeout; window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => nativeSetTimeout(handler, timeout === 8_000 ? 20 : timeout, ...args)) as typeof window.setTimeout; });
+    await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js**', async () => new Promise(() => {}));
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new', { waitUntil: 'domcontentloaded' }); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Preverjanje proti spamu ni uspelo');
+    await expect(page.locator('[data-submit-button]')).toBeEnabled();
+    await page.locator('#proposal-title').fill('Ohranjen osnutek'); await expect(page.locator('#proposal-title')).toHaveValue('Ohranjen osnutek'); expect(form.getSubmissions()).toBe(0);
   });
 });
