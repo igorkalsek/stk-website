@@ -144,12 +144,13 @@ loaded locally, without an actual proposal POST; mobile/desktop fit was inspecte
 | Website `npm test` | 531 pass, including 6 new relay/security tests and existing organizer relay tests. |
 | Paired `npm run test:proposal-integration` | 6 pass: actual Pages+GAS code, SL/EN all four modes, nonce signing, single-use token rejection, receipts/duplicates, per-IP/global caps, uncertain writes, Phase 1 read filtering and unchanged organizer metadata. |
 | Standalone `node --test …/proposal-intake-local-test.cjs` | 11 pass, including schema drift, lock contention, corruption/quota failure, replay, 200/day, cleanup and RAW literal safety. |
-| Website browser suite | 35 scenarios pass: new/correction/additional/Other, SL/EN, claim snapshot change/timeouts, single POST, challenge retry, keyboard, 390/768/1440 px without overflow. |
+| Website browser suite | 37 scenarios pass: new/correction/additional/Other, SL/EN, claim snapshot change/timeouts, single POST, challenge/script-load retry, keyboard, 390/768/1440 px without overflow. |
 | Website build | PASS, 657 static pages; Pages handler is separately compiled by `npm test`. Wrangler `pages functions build` also bundles all existing/new Functions successfully at compatibility date 2026-06-03, without a deploy. |
 | `git diff --check`, both branches | PASS. |
 | Current Admin helper tests at actual main | PASS, including Phase 1 manual format/mapping matrix, all 16 cases; a synthetic protected intake read/mapping check covers all four modes and all 15 field defaults with explicit existing header mapping. |
 | Broader Apps orodja/content regressions | 19 of 20 files PASS. Existing organizer-access fixture fails at line 2498: fixed September 9 analytics record falls outside today's 30-day window, expected 1, actual 0. Reproduced without Phase 2 changes. |
 | `astro check` | Existing finder test line 567 reports TS2339 (`placement` on `{}`); that file is byte-identical to main. No new diagnostics in changed files. |
+| GitHub My races workflow | The homepage save/unsave test times out at lines 1055/1057. Reproduced on isolated actual main `b9701d3` with unchanged src/tests (only a separate local test port). Its fixed 2026 race fixtures are now past; no unrelated fix is included. |
 | Real Google staging/production integration | NOT RUN: no deployment or production secrets changed. Required staging gate remains open. |
 
 Browser network submissions and site data were intercepted; official test-widget
@@ -170,7 +171,7 @@ npm run build
 git diff --check
 ```
 
-Local Chromium requires permission to launch outside the macOS sandbox. The two
+Local Chromium requires permission to launch outside the macOS sandbox. The
 baseline failures above were recorded rather than changing unrelated systems.
 
 ## Costs and limits
@@ -295,8 +296,8 @@ retry or automatic cleanup is allowed to erase the uncertainty.
 - **P2:** already-open legacy browser tabs may still display their old iframe
   success assumption even though the closed Form rejects the write. Reload is
   needed; only the new receipt-based UI can confirm actual acceptance.
-- **P2 baseline:** existing finder type diagnostic and aging organizer analytics
-  fixture fail independently of this change; no blanket all-tests-PASS claim.
+- **P2 baseline:** existing finder type diagnostic, aging organizer analytics
+  fixture and homepage My races browser test fail independently of this change; no blanket all-tests-PASS claim.
 
 **NOT READY FOR PRODUCTION CUTOVER.** Implementation is prepared for review and
 staging verification; no production success or Phase 2 completion is claimed.

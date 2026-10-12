@@ -947,13 +947,40 @@ test.describe('native proposal form', () => {
     });
   }
   for (const width of [390, 768, 1440]) {
-    test(`protected form stays keyboard accessible without horizontal overflow at ${width}px`, async ({ page }) => {
+    test(`protected form stays keyboard accessible without horizontal overflow at ${width}px`, async ({ page }, testInfo) => {
       const errors = collectConsoleErrors(page); await interceptForm(page); await page.setViewportSize({ width, height: 900 });
       await page.goto('/dodaj-ali-popravi-tek/?mode=new'); await waitForProposalRuntime(page);
       await page.locator('#proposal-title').focus(); await page.keyboard.type('Sintetični tek'); await page.keyboard.press('Tab'); await expect(page.locator('#proposal-place')).toBeFocused();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-      await page.screenshot({ path: `/private/tmp/dev023-form-${width}.png`, fullPage: true });
+      await page.screenshot({ path: testInfo.outputPath(`dev023-form-${width}.png`), fullPage: true });
       await assertNoConsoleErrors(page, errors);
     });
   }
+
+  test('temporary Turnstile script failure can reload and retry without losing the proposal', async ({ page }) => {
+    const submitted = await interceptForm(page); let scriptRequests = 0;
+    await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js**', async route => {
+      scriptRequests += 1;
+      if (scriptRequests === 1) return route.abort();
+      await route.fulfill({ contentType: 'application/javascript', body: `window.turnstile = { render: (_node, options) => { options.callback('recovered-token'); return 0; }, reset: () => {} };` });
+    });
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new'); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Preverjanje proti spamu ni uspelo');
+    for (const [selector,value] of [['#proposal-date','2027-05-15'],['#proposal-title','Ohranjen sintetični tek'],['#proposal-place','Kranj'],['#proposal-description','Sintetični opis.'],['#proposal-email','synthetic@example.com']]) await page.locator(selector).fill(value);
+    await page.locator('#proposal-region').selectOption('Gorenjska'); await page.locator('#proposal-organizer').selectOption('Ne'); await page.locator('#proposal-announcement').selectOption('Ne vem');
+    await page.locator('[data-submit-button]').click();
+    await expect.poll(() => scriptRequests).toBe(2); await page.waitForFunction(() => !!(window as any).turnstile);
+    await expect(page.locator('#proposal-title')).toHaveValue('Ohranjen sintetični tek'); expect(submitted.getSubmissions()).toBe(0);
+    await page.locator('[data-submit-button]').click(); await expect(page.getByRole('alert')).toContainText('sprejet v pregled'); expect(submitted.getSubmissions()).toBe(1);
+  });
+
+  test('stalled challenge script has a bounded deadline and preserves editable fields', async ({ page }) => {
+    const form = await interceptForm(page);
+    await page.addInitScript(() => { const nativeSetTimeout = window.setTimeout; window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => nativeSetTimeout(handler, timeout === 8_000 ? 20 : timeout, ...args)) as typeof window.setTimeout; });
+    await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js**', async () => new Promise(() => {}));
+    await page.goto('/dodaj-ali-popravi-tek/?mode=new', { waitUntil: 'domcontentloaded' }); await waitForProposalRuntime(page);
+    await expect(page.getByRole('alert')).toContainText('Preverjanje proti spamu ni uspelo');
+    await expect(page.locator('[data-submit-button]')).toBeEnabled();
+    await page.locator('#proposal-title').fill('Ohranjen osnutek'); await expect(page.locator('#proposal-title')).toHaveValue('Ohranjen osnutek'); expect(form.getSubmissions()).toBe(0);
+  });
 });

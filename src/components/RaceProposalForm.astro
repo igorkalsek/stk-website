@@ -640,22 +640,29 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
   const confirmationSubmitLabel = () => isEnglish ? 'Confirm information' : 'Potrdite podatke';
   let challengeToken = '';
   let challengeWidget;
+  let challengeLoading = false;
+  let challengeNeedsReset = false;
   let proposalRequestId = '';
   let proposalRequestBody = '';
   const challenge = document.querySelector('[data-proposal-challenge]');
-  const resetChallenge = () => { challengeToken = ''; if (challengeWidget !== undefined) window.turnstile?.reset(challengeWidget); };
-  const challengeError = () => { challengeToken = ''; if (submissionState !== 'accepted') setStatus(copy.challengeError); };
+  const resetChallenge = () => { challengeToken = ''; challengeNeedsReset = false; if (challengeWidget !== undefined) window.turnstile?.reset(challengeWidget); };
+  const challengeError = () => { challengeToken = ''; challengeNeedsReset = true; if (submissionState !== 'accepted') setStatus(copy.challengeError); };
   const initializeChallenge = () => {
     if (isConfirmationMode) { if (challenge) challenge.closest('[data-proposal-protection]').hidden = true; return; }
-    if (!challenge?.dataset.sitekey) return;
+    if (!challenge?.dataset.sitekey || challengeLoading) return;
+    challengeLoading = true;
     const script = document.createElement('script');
     script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
     script.async = true;
+    const loadDeadline = window.setTimeout(() => { challengeLoading = false; script.remove(); challengeError(); }, 8_000);
     script.onload = () => {
+      if (!script.isConnected) return;
+      window.clearTimeout(loadDeadline);
+      challengeLoading = false;
       if (!window.turnstile) { challengeError(); return; }
-      challengeWidget = window.turnstile.render(challenge, { sitekey: challenge.dataset.sitekey, action: 'race-proposal', language: isEnglish ? 'en' : 'sl', size: 'flexible', callback: (token) => { challengeToken = token; }, 'expired-callback': () => { resetChallenge(); }, 'error-callback': challengeError, 'timeout-callback': challengeError });
+      try { challengeWidget = window.turnstile.render(challenge, { sitekey: challenge.dataset.sitekey, action: 'race-proposal', language: isEnglish ? 'en' : 'sl', size: 'flexible', callback: (token) => { challengeToken = token; challengeNeedsReset = false; }, 'expired-callback': () => { resetChallenge(); }, 'error-callback': challengeError, 'timeout-callback': challengeError }); } catch { script.remove(); challengeError(); }
     };
-    script.onerror = challengeError;
+    script.onerror = () => { window.clearTimeout(loadDeadline); challengeLoading = false; script.remove(); challengeError(); };
     document.head.append(script);
   };
   form?.addEventListener('submit', async (event) => {
@@ -707,7 +714,7 @@ const hasInitialRaceContext = Boolean(emptyPrefill.eventKey || (emptyPrefill.eve
     if (!form.checkValidity() || explicitInvalidFields.length) { submissionState = 'failed'; const invalidFields = [...new Set([...explicitInvalidFields, ...visibleInvalidFields()])]; showErrors(invalidFields); form.reportValidity(); invalidFields[0]?.focus(); return; }
     if (errors) { errors.hidden = true; errors.textContent = ''; errors.classList.remove('success'); }
 
-    if (!challengeToken) { submissionState = 'failed'; setStatus(copy.challengeError); challenge?.focus(); return; }
+    if (!challengeToken) { submissionState = 'failed'; if (challengeWidget === undefined) initializeChallenge(); else if (challengeNeedsReset) resetChallenge(); setStatus(copy.challengeError); challenge?.focus(); return; }
     const proposal = stkValidateProposal(currentSubmissionInput());
     if (!proposal) { submissionState = 'failed'; setStatus(copy.serverValidationError); return; }
     const serialized = JSON.stringify(proposal);
