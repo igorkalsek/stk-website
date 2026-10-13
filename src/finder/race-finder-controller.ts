@@ -2,7 +2,7 @@
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
-  import { getStableEventId, mapPublicRaceEvent, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
+  import { getStableEventId, mapPublicRaceEvent, normalizeFinderSearchText, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
   import { formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
@@ -651,7 +651,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   };
 
   const matchesFinderEvent = (event: RaceEvent, filters: ReturnType<typeof getFilters>, deferAdditionalSelection: boolean) => {
-    if (filters.search && !event.searchText.includes(filters.search)) return false;
+    if (filters.search && !event.searchText.includes(normalizeFinderSearchText(filters.search))) return false;
     if (filters.month && event.month !== filters.month) return false;
     if (filters.region && event.region !== filters.region) return false;
     if (filters.surface && event.surface !== filters.surface) return false;
@@ -740,7 +740,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
           ...event,
           month: event.date.slice(5, 7),
           datum: event.date,
-          searchText: normalize(`${event.naziv_prireditve} ${event.place}`)
+          searchText: normalizeFinderSearchText(`${event.naziv_prireditve} ${event.place}`)
         };
       })
       .filter((event): event is RaceEvent => Boolean(event))

@@ -888,3 +888,103 @@ test('keeps compact finder labels localized in English', async ({ page }) => {
   await expect(page.locator('[data-search-results]')).toContainText('Details');
   await expect(page.locator('[data-search-results]')).toContainText('Google Calendar');
 });
+
+
+for (const language of ['sl', 'en'] as const) {
+  for (const year of ['2026', '2027'] as const) {
+    test(`matches Slovene carons without widening eligibility or filters (${language}, ${year})`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', error => errors.push(error.message));
+      page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+      page.on('requestfailed', request => {
+        // Rapid URL navigations can cancel the previous page's mocked analytics POST.
+        if (request.url().startsWith(ANALYTICS_HOST) && request.failure()?.errorText === 'net::ERR_ABORTED') return;
+        errors.push(`${request.url()}: ${request.failure()?.errorText}`);
+      });
+      page.on('response', response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
+      await page.clock.setFixedTime(new Date(`${year}-07-25T10:00:00+02:00`));
+      const masterRaces = {
+        '2026': [] as ReturnType<typeof race>[],
+        '2027': [] as ReturnType<typeof race>[]
+      };
+      masterRaces[year] = [
+        race('901', `${year}-10-24`, 'Čaven Vertikal & Trail', 'Lokavec', 'Goriška', 'trail', '10', ''),
+        race('902', `${year}-10-17`, 'Sabotin Trail Evening', 'Šmaver', 'Goriška', 'trail', '10', ''),
+        race('903', `${year}-01-01`, 'Čaven pretekli tek', 'Lokavec', 'Goriška', 'trail', '10', ''),
+        { ...race('904', `${year}-10-24`, 'Čaven skriti tek', 'Lokavec', 'Goriška', 'trail', '10', ''), vidno_v_javnem_koledarju: 'NE' },
+        { ...race('905', `${year}-10-24`, 'Čaven nepotrjeni tek', 'Lokavec', 'Goriška', 'trail', '10', ''), status_dogodka: 'nepotrjeno' },
+        race('906', `${year === '2026' ? '2027' : '2026'}-10-24`, 'Čaven drugo leto', 'Lokavec', 'Goriška', 'trail', '10', ''),
+        race('907', `${year}-11-24`, 'Road Run', 'Celje', 'Savinjska', 'cesta', '5', 'družinam prijazno')
+      ];
+      const analytics = await mockFinderApis(page, masterRaces);
+      const path = language === 'sl' ? '/iskalnik-tekov/' : '/en/find-races/';
+      const input = page.locator('[data-filter="search"]');
+      const cards = page.locator('.search-event-card');
+      await page.goto(`${path}?${new URLSearchParams({ year, q: 'Caven', month: '10', region: 'Goriška', surface: 'trail' })}`);
+      await expect(cards).toHaveCount(1);
+      await expect(cards).toContainText('Čaven Vertikal & Trail');
+      await expect(input).toHaveValue('Caven');
+      await expect(page.locator('a[data-language-switch]').first()).toHaveAttribute('href', /q=Caven/);
+      await page.reload();
+      await expect(cards).toHaveCount(1);
+
+      for (const query of ['Čaven', 'CAVEN', 'Šmaver', 'Smaver']) {
+        await input.fill(query);
+        await expect(cards).toHaveCount(1);
+        await expect(cards).toContainText(query.toLowerCase().includes('maver') ? 'Sabotin' : 'Čaven');
+        await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe(query);
+      }
+      for (const query of ['Cavet', 'Konjiški otroški tej', 'Konjiški otroški tek', 'Slovenija', 'Bled']) {
+        await input.fill(query);
+        await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe(query);
+        await expect(cards).toHaveCount(0);
+        await expect(page.locator('.search-empty-card')).toBeVisible();
+      }
+
+      const blockedFilters: Record<string, string>[] = [
+        { month: '11' }, { region: 'Savinjska' }, { distance: 'up-to-5' },
+        { family: '1' }, { fee: '20' }, { route: '1' }, { quick: 'kids' }
+      ];
+      for (const blocked of blockedFilters) {
+        await page.goto(`${path}?${new URLSearchParams({ year, q: 'Caven', ...blocked })}`);
+        const kind = Object.keys(blocked)[0];
+        const action = page.locator(`.search-empty-card [data-remove-filter="${kind}"]`);
+        await expect(action).toBeVisible();
+        await expect(cards).toHaveCount(0);
+        await action.click();
+        await expect(cards).toHaveCount(1);
+        await expect(input).toHaveValue('Caven');
+      }
+      await page.goto(`${path}?${new URLSearchParams({ year, q: 'Caven', month: '11', surface: 'cesta' })}`);
+      await expect(page.locator('.search-empty-card')).toBeVisible();
+      await expect(page.locator('.search-empty-card [data-remove-filter="q"]')).toBeVisible();
+      // Dropping only month or surface still gives zero, so neither is suggested.
+      await expect(page.locator('.search-empty-card [data-remove-filter="month"], .search-empty-card [data-remove-filter="surface"]')).toHaveCount(0);
+
+      // Recovery uses the folded query too, and requires an explicit filter removal.
+      await page.goto(`${path}?${new URLSearchParams({ year, q: 'Caven', month: '10', region: 'Goriška', surface: 'cesta' })}`);
+      await expect(cards).toHaveCount(0);
+      const recovery = page.locator('.search-empty-card [data-remove-filter="surface"]');
+      await expect(recovery).toHaveText(language === 'sl' ? 'Odstranite Podlaga: Cesta · 1 dogodek' : 'Remove Surface: Road · 1 race');
+      for (const width of [390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(recovery).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+      }
+      await recovery.click();
+      await expect(cards).toHaveCount(1);
+      await expect(input).toHaveValue('Caven');
+      await expect(page.locator('[data-filter="month"]')).toHaveValue('10');
+      await expect(page.locator('[data-filter="region"]')).toHaveValue('Goriška');
+      await expect.poll(() => new URL(page.url()).searchParams.get('surface')).toBe(null);
+      for (const width of [390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(cards).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+      }
+      await input.fill('Čaven');
+      await expect.poll(() => analytics.some((event: any) => event.event_type === 'search_performed' && event.search_query === 'Čaven' && event.results_count === 1 && JSON.parse(event.filters_json).search === 'čaven')).toBe(true);
+      expect(errors).toEqual([]);
+    });
+  }
+}
