@@ -2625,7 +2625,7 @@ main {
 }
 
 .event-detail-hero-fact dt {
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -2661,7 +2661,7 @@ main {
 }
 
 .event-detail-hero-chip strong {
-  color: rgba(255, 255, 255, 0.76);
+  color: #fff;
   font-size: 0.74rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
