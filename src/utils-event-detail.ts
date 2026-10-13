@@ -51,6 +51,12 @@ export const pickString = (item: ApiRecord, key: string): string => {
 
 export const normalizeSloveneText = (value: string) => value.toLocaleLowerCase('sl-SI').normalize('NFKC');
 
+/** Fold Slovene carons only for finder text matching; keep other normalization unchanged. */
+export const normalizeFinderSearchText = (value: string) => normalizeSloveneText(value)
+  .replace(/č/g, 'c')
+  .replace(/š/g, 's')
+  .replace(/ž/g, 'z');
+
 export const safeHttpUrl = (value: string) => {
   if (!value) return '';
   try {
