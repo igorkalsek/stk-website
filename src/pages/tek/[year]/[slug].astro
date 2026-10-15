@@ -290,6 +290,9 @@ const jsonLd = event ? {
                             <dd>
                               <span class="registration-deadline-absolute">{formatDate(deadline.date)}</span>
                               <span class="registration-deadline-relative" data-registration-deadline data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
+                              {deadline.kind === 'registration' && (event.registrationUrl || event.noticeUrl) && (
+                                <a href={event.registrationUrl || event.noticeUrl} target="_blank" rel="noopener noreferrer">Preverite pogoje prijave pri organizatorju</a>
+                              )}
                               {deadline.state !== 'past' && (
                                 <details class="deadline-calendar-menu"><summary>{deadlineCalendarLabels.add}</summary><div class="deadline-calendar-actions">
                                   {googleUrl && <a href={googleUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.google}</a>}

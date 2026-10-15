@@ -15,13 +15,13 @@ describe('registration deadline utilities', () => {
     assert.deepEqual(views.map((v) => v.state), ['future','tomorrow','today','past']);
   });
   it('formats Slovenian singular/plural and dedicated labels', () => {
-    assert.equal(formatRegistrationDeadlineRelative({ kind: 'registration', date: '2026-07-17', daysRemaining: 2, state: 'future' }, 'sl'), 'Prijave se zaprejo čez 2 dni');
-    assert.equal(formatRegistrationDeadlineRelative({ kind: 'registration', date: '2026-07-16', daysRemaining: 1, state: 'tomorrow' }, 'sl'), 'Prijave se zaprejo jutri');
+    assert.equal(formatRegistrationDeadlineRelative({ kind: 'registration', date: '2026-07-17', daysRemaining: 2, state: 'future' }, 'sl'), 'Rok prijave je čez 2 dni');
+    assert.equal(formatRegistrationDeadlineRelative({ kind: 'registration', date: '2026-07-16', daysRemaining: 1, state: 'tomorrow' }, 'sl'), 'Rok prijave je jutri');
     assert.equal(formatRegistrationDeadlineRelative({ kind: 'early', date: '2026-07-15', daysRemaining: 0, state: 'today' }, 'sl'), 'Cenejša prijava se konča danes');
     assert.equal(formatRegistrationDeadlineRelative({ kind: 'early', date: '2026-07-14', daysRemaining: -1, state: 'past' }, 'sl'), 'Rok cenejše prijave je potekel');
   });
   it('formats English labels', () => {
-    assert.equal(formatRegistrationDeadlineRelative({ kind: 'early', date: '2026-07-20', daysRemaining: 5, state: 'future' }, 'en'), 'Early registration ends in 5 days');
+    assert.equal(formatRegistrationDeadlineRelative({ kind: 'early', date: '2026-07-20', daysRemaining: 5, state: 'future' }, 'en'), 'Cheaper registration ends in 5 days');
     assert.equal(formatRegistrationDeadlineRelative({ kind: 'registration', date: '2026-07-14', daysRemaining: -1, state: 'past' }, 'en'), 'The registration deadline has passed');
   });
   it('orders early before final and deduplicates identical dates as registration', () => {
@@ -33,4 +33,33 @@ describe('registration deadline utilities', () => {
     assert.equal(buildRegistrationDeadlineViews({ todayIso: '2026-07-01', registrationDeadline: '2026-07-11' })[0].date, '2026-07-11');
     assert.deepEqual(buildRegistrationDeadlineViews({ todayIso: '2026-07-01' }), []);
   });
+});
+
+// Public /additional currently supplies dates, not verified final/online semantics.
+// These cases deliberately retain dates without inventing a closure claim.
+describe('Website P2: registration channels remain distinct', () => {
+  for (const scenario of [
+    { name: 'Lahinja Trail: online cutoff with race-day entry', regular: '2026-11-04', early: '2026-06-01', event: '2026-11-07' },
+    { name: 'actual final cutoff remains visible', regular: '2026-10-15', early: '', event: '2026-11-06' },
+    { name: 'online cutoff', regular: '2026-10-15', early: '', event: '2026-10-17' },
+    { name: 'advance and cheaper on the same date', regular: '2026-11-04', early: '2026-11-04', event: '2026-11-07' },
+    { name: 'separate regular and cheaper dates', regular: '2026-11-04', early: '2026-11-01', event: '2026-11-07' }
+  ]) {
+    it(scenario.name + ': day before, day of and day after in SL/EN', () => {
+      for (const offset of [-1, 0, 1]) {
+        const today = new Date(Date.parse(scenario.regular) + offset * 86400000).toISOString().slice(0, 10);
+        const views = buildRegistrationDeadlineViews({ todayIso: today, eventDate: scenario.event, registrationDeadline: scenario.regular, earlyRegistrationDeadline: scenario.early });
+        const regular = views.find(v => v.kind === 'registration');
+        assert.equal(regular.date, scenario.regular);
+        assert.equal(regular.daysRemaining, offset === 0 ? 0 : -offset);
+        for (const lang of ['sl', 'en']) {
+          for (const view of views) assert.doesNotMatch(formatRegistrationDeadlineRelative(view, lang), /zapre|closes/i);
+        }
+        if (offset === 0) {
+          assert.equal(formatRegistrationDeadlineRelative(regular, 'sl'), 'Rok prijave je danes');
+          assert.equal(formatRegistrationDeadlineRelative(regular, 'en'), 'Registration deadline today');
+        }
+      }
+    });
+  }
 });
