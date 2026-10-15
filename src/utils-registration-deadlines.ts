@@ -59,18 +59,20 @@ export const buildRegistrationDeadlineViews = ({
 
 const slDays = (days: number) => `${days} ${days === 1 ? 'dan' : 'dni'}`;
 
+// A date in rok_prijave does not prove that all registration channels close.
+// Keep its date/countdown; only the separately named cheaper field has known semantics.
 export const formatRegistrationDeadlineRelative = (deadline: RegistrationDeadlineView, language: 'sl' | 'en'): string => {
   if (language === 'en') {
     if (deadline.kind === 'early') {
-      if (deadline.state === 'past') return 'The early-registration deadline has passed';
-      if (deadline.state === 'today') return 'Early registration ends today';
-      if (deadline.state === 'tomorrow') return 'Early registration ends tomorrow';
-      return `Early registration ends in ${deadline.daysRemaining} days`;
+      if (deadline.state === 'past') return 'The cheaper-registration deadline has passed';
+      if (deadline.state === 'today') return 'Cheaper registration ends today';
+      if (deadline.state === 'tomorrow') return 'Cheaper registration ends tomorrow';
+      return `Cheaper registration ends in ${deadline.daysRemaining} days`;
     }
     if (deadline.state === 'past') return 'The registration deadline has passed';
-    if (deadline.state === 'today') return 'Registration closes today';
-    if (deadline.state === 'tomorrow') return 'Registration closes tomorrow';
-    return `Registration closes in ${deadline.daysRemaining} days`;
+    if (deadline.state === 'today') return 'Registration deadline today';
+    if (deadline.state === 'tomorrow') return 'Registration deadline tomorrow';
+    return `Registration deadline in ${deadline.daysRemaining} days`;
   }
   if (deadline.kind === 'early') {
     if (deadline.state === 'past') return 'Rok cenejše prijave je potekel';
@@ -79,9 +81,9 @@ export const formatRegistrationDeadlineRelative = (deadline: RegistrationDeadlin
     return `Cenejša prijava se konča čez ${slDays(deadline.daysRemaining)}`;
   }
   if (deadline.state === 'past') return 'Rok prijave je potekel';
-  if (deadline.state === 'today') return 'Prijave se zaprejo danes';
-  if (deadline.state === 'tomorrow') return 'Prijave se zaprejo jutri';
-  return `Prijave se zaprejo čez ${slDays(deadline.daysRemaining)}`;
+  if (deadline.state === 'today') return 'Rok prijave je danes';
+  if (deadline.state === 'tomorrow') return 'Rok prijave je jutri';
+  return `Rok prijave je čez ${slDays(deadline.daysRemaining)}`;
 };
 
 export const getRegistrationDeadlineCssState = (deadline: RegistrationDeadlineView): 'deadline-future' | 'deadline-soon' | 'deadline-today' | 'deadline-past' => {

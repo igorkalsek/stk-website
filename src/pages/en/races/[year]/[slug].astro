@@ -117,7 +117,7 @@ const raceHighlights = event ? buildRaceHighlightCards(event, 'en') : [];
 const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate) : [];
 const registrationDeadlineViews = event ? buildRegistrationDeadlineViews({ todayIso: event.date, eventDate: event.date, registrationDeadline: event.additionalData?.registrationDeadline, earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline }) : [];
 const deadlineCalendarLabels = { add: 'Add deadline to calendar', google: 'Google Calendar', apple: 'Apple/iCal', outlook: 'Outlook' };
-const deadlineKindLabels = { early: 'Early registration', registration: 'Registration deadline' };
+const deadlineKindLabels = { early: 'Cheaper registration', registration: 'Registration deadline' };
 const deadlineCalendarOptions = event ? registrationDeadlineViews.map((deadline) => {
   const input = buildRegistrationDeadlineCalendarInput({ eventId: getStableEventId(event), eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl: canonicalPath, registrationUrl: event.registrationUrl, language: 'en' });
   return { deadline, googleUrl: buildGoogleCalendarEventUrl(input), icsUrl: buildIcsDataUrl(input), icsFilename: buildIcsFilename(input), outlookUrl: buildOutlookCalendarEventUrl(input) };
@@ -290,6 +290,9 @@ const jsonLd = event ? {
                             <dd>
                               <span class="registration-deadline-absolute">{formatDate(deadline.date)}</span>
                               <span class="registration-deadline-relative" data-registration-deadline data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="en">{formatRegistrationDeadlineRelative(deadline, 'en')}</span>
+                              {deadline.kind === 'registration' && (event.registrationUrl || event.noticeUrl) && (
+                                <a href={event.registrationUrl || event.noticeUrl} target="_blank" rel="noopener noreferrer">Check registration terms with the organiser</a>
+                              )}
                               {deadline.state !== 'past' && (
                                 <details class="deadline-calendar-menu"><summary>{deadlineCalendarLabels.add}</summary><div class="deadline-calendar-actions">
                                   {googleUrl && <a href={googleUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.google}</a>}
