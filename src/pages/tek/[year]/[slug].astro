@@ -13,6 +13,7 @@ import { buildRaceShareUrls } from '../../../utils-race-share';
 import { type RelatedRaceCard } from '../../../utils-related-races';
 import { attachAdditionalDataCached, enrichEventsWithVoteUrlsCached, getDetailStaticPaths, maybePrintBuildTiming } from '../../../utils-build-data';
 import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '../../../proposal-form/race-correction-context';
+import { getProfileDeadlineEdition } from '../../../profile-deadline-v2';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../utils-registration-deadlines';
 import { renderActionIcon } from '../../../utils-action-icons';
 import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildOrganizerView, buildPrimaryActions, buildRaceHighlightCards, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../utils-race-detail-view';
@@ -289,7 +290,7 @@ const jsonLd = event ? {
                             <dt>{deadlineKindLabels[deadline.kind]}</dt>
                             <dd>
                               <span class="registration-deadline-absolute">{formatDate(deadline.date)}</span>
-                              <span class="registration-deadline-relative" data-registration-deadline data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
+                              <span class="registration-deadline-relative" data-registration-deadline data-deadline-edition={getProfileDeadlineEdition(event)} data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
                               {deadline.kind === 'registration' && (event.registrationUrl || event.noticeUrl) && (
                                 <a href={event.registrationUrl || event.noticeUrl} target="_blank" rel="noopener noreferrer">Preverite pogoje prijave pri organizatorju</a>
                               )}

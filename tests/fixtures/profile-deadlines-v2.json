@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "type": "deadlines",
+  "contract_version": 2,
+  "items": [
+    {
+      "race_id": "R000211",
+      "edition_id": "R000211|2026-11-07",
+      "deadline_id": "dl2|R000211|2026-11-07|2026-11-02",
+      "datum": "2026-11-07",
+      "deadline_date": "2026-11-02",
+      "deadline_type": "combined",
+      "deadline_components": [
+        {
+          "type": "advance",
+          "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+          "verified_at": "2026-10-15",
+          "valid_until": "2026-10-22"
+        },
+        {
+          "type": "cheaper",
+          "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+          "verified_at": "2026-10-15",
+          "valid_until": "2026-10-22"
+        }
+      ]
+    },
+    {
+      "race_id": "R000217",
+      "edition_id": "R000217|2026-11-07",
+      "deadline_id": "dl2|R000217|2026-11-07|2026-11-04",
+      "datum": "2026-11-07",
+      "deadline_date": "2026-11-04",
+      "deadline_type": "online",
+      "deadline_components": [
+        {
+          "type": "online",
+          "official_source": "https://protime.si/dogodek/lahinja-trail-2026/",
+          "verified_at": "2026-10-15",
+          "valid_until": "2026-10-22"
+        }
+      ]
+    },
+    {
+      "race_id": "R000218",
+      "edition_id": "R000218|2026-12-05",
+      "deadline_id": "dl2|R000218|2026-12-05|2026-11-20",
+      "datum": "2026-12-05",
+      "deadline_date": "2026-11-20",
+      "deadline_type": "final",
+      "deadline_components": [
+        {
+          "type": "final",
+          "official_source": "https://sd-smartno.si/wp-content/uploads/2026/09/6621_invitation.pdf",
+          "verified_at": "2026-10-15",
+          "valid_until": "2026-10-22"
+        }
+      ]
+    }
+  ]
+}
