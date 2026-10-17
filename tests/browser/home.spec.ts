@@ -44,7 +44,7 @@ const homes = [
   }
 ];
 
-async function mockHomepageApis(page: Page, withRecentUpdate = false) {
+async function mockHomepageApis(page: Page, withRecentUpdate = false, longTitle = false) {
   await page.clock.setFixedTime(new Date('2026-09-13T12:00:00Z'));
   const events = [
     ['1', '2026-09-13', 'Fallback race', 'Kranj'],
@@ -52,7 +52,8 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false) {
     ['3', '2026-09-27', 'Ranked race three', 'Slovenske Konjice'],
     ['4', '2026-09-14', 'Second fallback race', 'Celje']
   ].map(([row, datum, naziv_prireditve, kraj]) => ({
-    row, datum, naziv_prireditve, kraj, regija: 'Savinjska', status_dogodka: 'potrjeno',
+    row, datum, naziv_prireditve: longTitle && row === '2' ? 'Mednarodni družinski gorski ultramaraton – International family mountain race along the Slovenian trails' : naziv_prireditve,
+    kraj: longTitle && row === '3' ? '' : kraj, regija: longTitle && row === '3' ? '' : 'Savinjska', status_dogodka: 'potrjeno',
     votes_total: row === '2' ? 999 : 1,
     vidno_v_javnem_koledarju: 'DA', povezava_prijava: `https://example.com/register/${row}?private=drop`
   }));
@@ -64,7 +65,7 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false) {
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/recent_updates' && withRecentUpdate) {
-      const update = { ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' };
+      const update = { ...events[1], update_type: 'updated', recent_update_date: '2026-09-20', public_summary: 'Podatki dogodka so bili posodobljeni.' };
       return route.fulfill({ json: { ok: true, recent_updates_last_days: { years: ['2026', '2027'], updated_events: [update], events: [update] } } });
     }
     if (url.pathname === '/stats') {
@@ -175,7 +176,8 @@ for (const home of homes) {
     for (const [index, label] of labels.entries()) {
       await expect(cards.nth(index + 1).locator('.update-meta')).toContainText(label);
       await expect(cards.nth(index + 1)).toContainText(translatedSummaries[index]);
-      await expect(cards.nth(index + 1).locator('.update-meta')).toContainText(home.path === '/' ? ' · dogodek ' : ' · event ');
+      await expect(cards.nth(index + 1).locator('.update-meta')).not.toContainText(home.path === '/' ? 'dogodek' : 'event');
+      await expect(cards.nth(index + 1).locator('.update-event-meta time')).toHaveAttribute('datetime', '2026-12-17');
     }
   });
 
@@ -227,7 +229,7 @@ for (const home of homes) {
 for (const home of homes) {
   for (const width of [390, 1440]) {
     for (const state of ['success', 'master2027-down', 'recent-down', 'old-api', 'missing-events'] as const) {
-      test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }) => {
+      test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }, testInfo) => {
         await page.setViewportSize({ width, height: 1000 });
         await mockHomepageApis(page);
         await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
@@ -290,10 +292,81 @@ for (const home of homes) {
           await second.locator('a').click({ modifiers: ['ControlOrMeta'] });
           const body = JSON.parse((await click).postData() ?? '{}');
           expect(body).toMatchObject({ event_id: 'r000037', event_year: '2027', event_key: '2027:r000037', placement: 'home_updates' });
-          await page.locator('.home-update-section').screenshot({ path: `/private/tmp/dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png` });
+          await page.locator('.home-update-section').screenshot({ path: testInfo.outputPath(`dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png`) });
         }
         expect(await page.locator('body').evaluate(el => el.scrollWidth <= window.innerWidth)).toBe(true);
       });
     }
   }
+}
+
+// Geometry is checked against rendered controls, including a long title and absent location.
+for (const home of homes) for (const width of [390, 430, 768, 1440]) {
+  test(`${home.path} compact cards keep titles, rank and actions aligned at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await mockHomepageApis(page, true, true);
+    await page.goto(home.path);
+    const featured = page.locator('.home-featured-race');
+    const interest = page.locator('[data-top-events] .event-card');
+    await expect(featured).toHaveCount(3);
+    await expect(interest).toHaveCount(2);
+    if (width >= 768) {
+      const actionRows = await featured.locator('.home-featured-actions').evaluateAll(elements => elements.map(e => Math.round(e.getBoundingClientRect().top)));
+      expect(new Set(actionRows).size).toBe(1);
+    }
+    for (const card of await featured.all()) {
+      const controls = card.locator('.home-featured-actions > a, summary, [data-saved-race-button]');
+      for (const control of await controls.all()) {
+        const rect = (await control.boundingBox())!;
+        expect(rect.width).toBeGreaterThanOrEqual(44);
+        expect(rect.height).toBeGreaterThanOrEqual(44);
+        await page.keyboard.press('Tab');
+        await control.focus();
+        expect(await control.evaluate(e => getComputedStyle(e).outlineStyle)).not.toBe('none');
+      }
+      const title = (await card.locator('h3').boundingBox())!;
+      if (width <= 520) expect(title.width).toBeGreaterThan(240);
+      const menu = card.locator('details');
+      await menu.locator('summary').focus();
+      await page.keyboard.press('Enter');
+      await expect(menu).toHaveAttribute('open', '');
+      for (const link of await menu.locator('a').all()) {
+        const rect = (await link.boundingBox())!;
+        expect(rect.x).toBeGreaterThanOrEqual(0);
+        expect(rect.x + rect.width).toBeLessThanOrEqual(width);
+        expect(rect.height).toBeGreaterThanOrEqual(44);
+        await expect(link).toHaveAttribute('href', /^(https:|data:text\/calendar)/);
+      }
+      await menu.locator('summary').press('Enter');
+      const save = card.locator('[data-saved-race-button]');
+      await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'true');
+      await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'false');
+    }
+    for (const card of await interest.all()) {
+      const r = (await card.boundingBox())!;
+      const title = (await card.locator('h3').boundingBox())!;
+      const save = (await card.locator('[data-saved-race-button]').boundingBox())!;
+      expect(save.width).toBeGreaterThanOrEqual(44);
+      expect(save.height).toBeGreaterThanOrEqual(44);
+      expect(save.x).toBeGreaterThanOrEqual(title.x + title.width);
+      expect(save.y + save.height).toBeLessThanOrEqual(r.y + r.height);
+      if (width <= 520) {
+        expect(r.height).toBeLessThan(150);
+        expect(title.width).toBeGreaterThan(240);
+      }
+    }
+    expect(await interest.first().evaluate(e => getComputedStyle(e, '::before').content)).toContain('interest-rank');
+    const update = page.locator('.update-card').first();
+    await expect(update.locator('.update-meta')).toContainText(home.path === '/' ? 'Posodobljeno ·' : 'Updated ·');
+    await expect(update.locator('.update-meta')).not.toContainText(home.path === '/' ? '26. sep.' : '26 Sept');
+    await expect(update.locator('.update-event-meta time')).toHaveAttribute('datetime', '2026-09-26');
+    const description = update.locator('.update-description');
+    await expect(description).toBeVisible();
+    // Stress the same text container with a long localized description as well.
+    await description.evaluate((e, english) => {
+      e.textContent = (english ? 'The published race information and official links have been updated. ' : 'Objavljeni podatki teka in uradne povezave so bili posodobljeni. ').repeat(12);
+    }, home.path === '/en/');
+    expect(await description.evaluate(e => e.scrollWidth > e.clientWidth + 1)).toBe(false);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  });
 }

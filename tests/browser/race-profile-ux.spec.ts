@@ -9,7 +9,7 @@ const profiles = [
 ];
 
 for (const language of ['sl', 'en']) {
-  for (const width of [390, 430, 1440]) {
+  for (const width of [390, 430, 768, 1440]) {
     test(`profile content, actions and metadata: ${language} ${width}px`, async ({ page }) => {
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -34,6 +34,13 @@ for (const language of ['sl', 'en']) {
       for (const profile of profiles) {
         const path = `${language === 'sl' ? '/tek' : '/en/races'}/${profile.year}/${profile.slug}/`;
         await page.goto(path);
+        const hero = page.locator('.event-detail-profile-hero');
+        await expect(hero.locator('time')).toHaveCount(1);
+        await expect(hero.locator('time')).toHaveAttribute('datetime', new RegExp(`^${profile.year}-`));
+        await expect(hero.locator('.event-detail-date-line')).toHaveCount(0);
+        expect(await hero.locator('.event-detail-hero-chip strong').allTextContents()).not.toContain(language === 'sl' ? 'Regija' : 'Region');
+        const facts = hero.locator('.event-detail-hero-fact dd');
+        expect(await facts.evaluateAll(elements => elements.some(e => !e.textContent?.trim()))).toBe(false);
         const content = await page.locator('.event-detail-main-column').boundingBox();
         const tools = await page.locator('.event-detail-action-panel').boundingBox();
         expect(content).not.toBeNull(); expect(tools).not.toBeNull();
@@ -69,11 +76,21 @@ for (const language of ['sl', 'en']) {
         if (profile.past) await expect(page.locator('.event-detail-status-pill')).toHaveText(language === 'sl' ? 'Dogodek je že mimo' : 'This race has already passed');
 
         if (profile.slug.includes('hrastnik')) {
-          await expect(page.locator('.event-detail-hero-fact dt')).toHaveText(language === 'sl' ? ['Kraj', 'Podlaga'] : ['Location', 'Surface']);
+          await expect(page.locator('.event-detail-hero-fact dt')).toHaveText(language === 'sl' ? ['Kraj / regija', 'Podlaga'] : ['Location / region', 'Surface']);
           await expect(page.locator('.event-detail-highlights')).toHaveCount(0);
           await expect(page.locator('[data-registration-deadline]')).toHaveCount(0);
         }
         const save = page.locator('.event-detail-my-race-panel [data-saved-race-button]');
+        for (const control of [save, page.locator('[data-race-status-control]')]) {
+          const rect = (await control.boundingBox())!;
+          expect(rect.width).toBeGreaterThanOrEqual(44);
+          expect(rect.height).toBeGreaterThanOrEqual(44);
+          await page.keyboard.press('Tab');
+          await control.focus();
+          await expect(control).toBeFocused();
+          expect(await control.evaluate(e => getComputedStyle(e).outlineStyle)).not.toBe('none');
+        }
+        await expect(page.locator('[data-race-status-control]')).toHaveAccessibleName(language === 'sl' ? 'Moj status' : 'My status');
         await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'true');
         await page.locator('[data-race-status-control]').selectOption('planning');
         await expect(page.locator('[data-race-status-control]')).toHaveValue('planning');

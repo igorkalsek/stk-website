@@ -1,0 +1,1226 @@
+[
+  {
+    "width": 390,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.365940428445122
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.7978753999443775
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.578043467003476
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "lang": "sl",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.732810394170652
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.042923948681052
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.179097661960333
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.194097073690245
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.880592136671047
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.194244290600598
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.650749873638546
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.365940428445122
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.7978753999443775
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.578043467003476
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "lang": "en",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.732810394170652
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.042923948681052
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.179097661960333
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.119370342062272
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.880592136671047
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.194244290600598
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.650749873638546
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.7978753999443775
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.2100943790802665
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.58426466770745
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.179097661960333
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "sl",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.732810394170652
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.964632506556196
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.382171899395056
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.723021061611217
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.161740401743259
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.263899110363597
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.542602969198871
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.880592136671047
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.283302893560051
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.723021061611217
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.365940428445122
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.506325107636499
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.179097661960333
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "en",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.732810394170652
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.964632506556196
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.382171899395056
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.723021061611217
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.161740401743259
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.194097073690245
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.805904705888067
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.194244290600598
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.642798308246362
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 6.227477585350111
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.628324935567355
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.03576081916571
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.58426466770745
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "sl",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.8127019493342305
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.657144535593716
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.636995669306956
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.402846002999792
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.636995669306956
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.113901736450719
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.723021061611217
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.628324935567355
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.03576081916571
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.58426466770745
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.8127019493342305
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.657144535593716
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.636995669306956
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.84601221298234
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.341180673223822
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.636995669306956
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.113901736450719
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.723021061611217
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.533954912683955
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.042923948681052
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.657144535593716
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.298994855298468
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "sl",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.715613518206819
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.283302893560051
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.298994855298468
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.766056873205438
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.563553334974555
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "sl",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.716346760917324
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.542602969198871
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.36766938937876
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.365940428445122
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.042923948681052
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.578043467003476
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.225716806308966
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "confirmed": true,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.715613518206819
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.283302893560051
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.731022853863858
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.360037250838106
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".organizer-confirmation-badge",
+        "minimum": 10.766056873205438
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.563553334974555
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "confirmed": false,
+    "readings": [
+      {
+        "selector": ".event-detail-hero-chip strong",
+        "minimum": 5.567699437482886
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.457649885176153
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 6.1222474755390595
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.650749873638546
+      },
+      {
+        "selector": ".event-detail-hero-fact dt",
+        "minimum": 5.293282782388053
+      },
+      {
+        "selector": ".event-detail-date-card-year",
+        "minimum": 5.0391501163222365
+      },
+      {
+        "selector": ".event-detail-status-pill",
+        "minimum": 6.367237188363559
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".event-detail-highlight-text strong",
+        "minimum": 4.833288731643527
+      },
+      {
+        "selector": ".race-status-control .muted-note",
+        "minimum": 9.581491626464294
+      }
+    ]
+  }
+]

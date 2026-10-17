@@ -1,0 +1,1266 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 358,
+          "height": 327.578125
+        },
+        "stats": {
+          "x": 16,
+          "y": 434.578125,
+          "width": 358,
+          "height": 233.25
+        },
+        "featured": {
+          "x": 16,
+          "y": 677.828125,
+          "width": 358,
+          "height": 220.953125
+        },
+        "interest": {
+          "x": 16,
+          "y": 2709.875,
+          "width": 358,
+          "height": 1031.96875
+        },
+        "updates": {
+          "x": 16,
+          "y": 3783.84375,
+          "width": 358,
+          "height": 667.265625
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 713.828125,
+        "width": 358,
+        "height": 56
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        140,
+        140,
+        140
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 79,
+          "width": 358,
+          "height": 273.578125
+        },
+        "stats": {
+          "x": 16,
+          "y": 362.578125,
+          "width": 358,
+          "height": 226.21875
+        },
+        "featured": {
+          "x": 16,
+          "y": 598.796875,
+          "width": 358,
+          "height": 345.546875
+        },
+        "interest": {
+          "x": 16,
+          "y": 2755.4375,
+          "width": 358,
+          "height": 660.09375
+        },
+        "updates": {
+          "x": 16,
+          "y": 3457.53125,
+          "width": 358,
+          "height": 629.46875
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 634.796875,
+        "width": 358,
+        "height": 94.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        280,
+        280,
+        280
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 358,
+          "height": 735.078125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 568.078125,
+        "width": 326,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 626.078125,
+        "width": 326,
+        "height": 214
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 358,
+          "height": 618.828125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 517.828125,
+        "width": 326,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 575.828125,
+        "width": 326,
+        "height": 148
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 430,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 398,
+          "height": 328.625
+        },
+        "stats": {
+          "x": 16,
+          "y": 435.625,
+          "width": 398,
+          "height": 233.25
+        },
+        "featured": {
+          "x": 16,
+          "y": 678.875,
+          "width": 398,
+          "height": 220.953125
+        },
+        "interest": {
+          "x": 16,
+          "y": 2657.453125,
+          "width": 398,
+          "height": 1031.96875
+        },
+        "updates": {
+          "x": 16,
+          "y": 3731.421875,
+          "width": 398,
+          "height": 610.65625
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 714.875,
+        "width": 398,
+        "height": 56
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        180,
+        180,
+        180
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 79,
+          "width": 398,
+          "height": 274.625
+        },
+        "stats": {
+          "x": 16,
+          "y": 363.625,
+          "width": 398,
+          "height": 226.21875
+        },
+        "featured": {
+          "x": 16,
+          "y": 599.84375,
+          "width": 398,
+          "height": 345.546875
+        },
+        "interest": {
+          "x": 16,
+          "y": 2703.015625,
+          "width": 398,
+          "height": 660.09375
+        },
+        "updates": {
+          "x": 16,
+          "y": 3405.109375,
+          "width": 398,
+          "height": 630.65625
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 635.84375,
+        "width": 398,
+        "height": 94.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        320,
+        320,
+        320
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 430,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 398,
+          "height": 717.078125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 568.078125,
+        "width": 366,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 626.078125,
+        "width": 366,
+        "height": 196
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 398,
+          "height": 618.828125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 517.828125,
+        "width": 366,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 575.828125,
+        "width": 366,
+        "height": 148
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 736,
+          "height": 324.078125
+        },
+        "stats": {
+          "x": 16,
+          "y": 431.078125,
+          "width": 736,
+          "height": 129.375
+        },
+        "featured": {
+          "x": 16,
+          "y": 570.453125,
+          "width": 736,
+          "height": 208.15625
+        },
+        "interest": {
+          "x": 16,
+          "y": 1881.890625,
+          "width": 736,
+          "height": 604.75
+        },
+        "updates": {
+          "x": 16,
+          "y": 2535.03125,
+          "width": 736,
+          "height": 407.375
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 611.453125,
+        "width": 240,
+        "height": 113.171875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        156,
+        156,
+        156
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 736,
+          "height": 324.078125
+        },
+        "stats": {
+          "x": 16,
+          "y": 431.078125,
+          "width": 736,
+          "height": 116.03125
+        },
+        "featured": {
+          "x": 16,
+          "y": 557.109375,
+          "width": 736,
+          "height": 223.15625
+        },
+        "interest": {
+          "x": 16,
+          "y": 1883.546875,
+          "width": 736,
+          "height": 524.703125
+        },
+        "updates": {
+          "x": 16,
+          "y": 2456.640625,
+          "width": 736,
+          "height": 378.84375
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 598.109375,
+        "width": 240,
+        "height": 182.15625
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        156,
+        156,
+        156
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 145,
+          "width": 736,
+          "height": 906.46875
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 46.71875,
+        "y": 730,
+        "width": 674.5625,
+        "height": 48
+      },
+      "save": {
+        "x": 46.71875,
+        "y": 791.59375,
+        "width": 674.5625,
+        "height": 229.15625
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 145,
+          "width": 736,
+          "height": 832.640625
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 46.71875,
+        "y": 652.171875,
+        "width": 674.5625,
+        "height": 48
+      },
+      "save": {
+        "x": 46.71875,
+        "y": 713.765625,
+        "width": 674.5625,
+        "height": 233.15625
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 160,
+          "y": 99,
+          "width": 1120,
+          "height": 361.375
+        },
+        "stats": {
+          "x": 160,
+          "y": 470.375,
+          "width": 1120,
+          "height": 103.875
+        },
+        "featured": {
+          "x": 160,
+          "y": 584.25,
+          "width": 1120,
+          "height": 158.171875
+        },
+        "interest": {
+          "x": 160,
+          "y": 1537.703125,
+          "width": 1120,
+          "height": 534.578125
+        },
+        "updates": {
+          "x": 160,
+          "y": 2128.28125,
+          "width": 1120,
+          "height": 374.09375
+        }
+      },
+      "firstFeatured": {
+        "x": 160,
+        "y": 629.25,
+        "width": 368,
+        "height": 96.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        284,
+        284,
+        284
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 160,
+          "y": 99,
+          "width": 1120,
+          "height": 361.375
+        },
+        "stats": {
+          "x": 160,
+          "y": 470.375,
+          "width": 1120,
+          "height": 109.1875
+        },
+        "featured": {
+          "x": 160,
+          "y": 589.5625,
+          "width": 1120,
+          "height": 163.171875
+        },
+        "interest": {
+          "x": 160,
+          "y": 1548.015625,
+          "width": 1120,
+          "height": 423.53125
+        },
+        "updates": {
+          "x": 160,
+          "y": 2027.546875,
+          "width": 1120,
+          "height": 384.09375
+        }
+      },
+      "firstFeatured": {
+        "x": 160,
+        "y": 634.5625,
+        "width": 368,
+        "height": 118.171875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        284,
+        284,
+        284
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 160,
+          "y": 147,
+          "width": 1120,
+          "height": 705
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 200,
+        "y": 579.25,
+        "width": 1040,
+        "height": 48
+      },
+      "save": {
+        "x": 200,
+        "y": 640.84375,
+        "width": 1040,
+        "height": 171.15625
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 160,
+          "y": 147,
+          "width": 1120,
+          "height": 631.171875
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 200,
+        "y": 501.421875,
+        "width": 1040,
+        "height": 48
+      },
+      "save": {
+        "x": 200,
+        "y": 563.015625,
+        "width": 1040,
+        "height": 175.15625
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 358,
+          "height": 362.90625
+        },
+        "stats": {
+          "x": 16,
+          "y": 469.90625,
+          "width": 358,
+          "height": 233.25
+        },
+        "featured": {
+          "x": 16,
+          "y": 713.15625,
+          "width": 358,
+          "height": 220.953125
+        },
+        "interest": {
+          "x": 16,
+          "y": 2682.015625,
+          "width": 358,
+          "height": 1028.78125
+        },
+        "updates": {
+          "x": 16,
+          "y": 3752.796875,
+          "width": 358,
+          "height": 609.46875
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 749.15625,
+        "width": 358,
+        "height": 56
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        140,
+        140,
+        140
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 79,
+          "width": 358,
+          "height": 273.578125
+        },
+        "stats": {
+          "x": 16,
+          "y": 362.578125,
+          "width": 358,
+          "height": 226.21875
+        },
+        "featured": {
+          "x": 16,
+          "y": 598.796875,
+          "width": 358,
+          "height": 345.546875
+        },
+        "interest": {
+          "x": 16,
+          "y": 2692.25,
+          "width": 358,
+          "height": 692.09375
+        },
+        "updates": {
+          "x": 16,
+          "y": 3426.34375,
+          "width": 358,
+          "height": 629.46875
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 634.796875,
+        "width": 358,
+        "height": 94.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        280,
+        280,
+        280
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 358,
+          "height": 717.078125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 568.078125,
+        "width": 326,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 626.078125,
+        "width": 326,
+        "height": 196
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 358,
+          "height": 618.828125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 517.828125,
+        "width": 326,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 575.828125,
+        "width": 326,
+        "height": 148
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 430,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 398,
+          "height": 328.625
+        },
+        "stats": {
+          "x": 16,
+          "y": 435.625,
+          "width": 398,
+          "height": 209.75
+        },
+        "featured": {
+          "x": 16,
+          "y": 655.375,
+          "width": 398,
+          "height": 220.953125
+        },
+        "interest": {
+          "x": 16,
+          "y": 2597.5,
+          "width": 398,
+          "height": 996.78125
+        },
+        "updates": {
+          "x": 16,
+          "y": 3636.28125,
+          "width": 398,
+          "height": 610.65625
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 691.375,
+        "width": 398,
+        "height": 56
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        180,
+        180,
+        180
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 79,
+          "width": 398,
+          "height": 274.625
+        },
+        "stats": {
+          "x": 16,
+          "y": 363.625,
+          "width": 398,
+          "height": 200.703125
+        },
+        "featured": {
+          "x": 16,
+          "y": 574.328125,
+          "width": 398,
+          "height": 345.546875
+        },
+        "interest": {
+          "x": 16,
+          "y": 2641.046875,
+          "width": 398,
+          "height": 660.09375
+        },
+        "updates": {
+          "x": 16,
+          "y": 3343.140625,
+          "width": 398,
+          "height": 630.65625
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 610.328125,
+        "width": 398,
+        "height": 94.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        320,
+        320,
+        320
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 430,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 398,
+          "height": 717.078125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 568.078125,
+        "width": 366,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 626.078125,
+        "width": 366,
+        "height": 196
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 121,
+          "width": 398,
+          "height": 618.828125
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 32,
+        "y": 517.828125,
+        "width": 366,
+        "height": 48
+      },
+      "save": {
+        "x": 32,
+        "y": 575.828125,
+        "width": 366,
+        "height": 148
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 736,
+          "height": 324.078125
+        },
+        "stats": {
+          "x": 16,
+          "y": 431.078125,
+          "width": 736,
+          "height": 129.375
+        },
+        "featured": {
+          "x": 16,
+          "y": 570.453125,
+          "width": 736,
+          "height": 208.15625
+        },
+        "interest": {
+          "x": 16,
+          "y": 1935.15625,
+          "width": 736,
+          "height": 569.5625
+        },
+        "updates": {
+          "x": 16,
+          "y": 2553.109375,
+          "width": 736,
+          "height": 368.84375
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 611.453125,
+        "width": 240,
+        "height": 150.171875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        156,
+        156,
+        156
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 16,
+          "y": 97,
+          "width": 736,
+          "height": 324.078125
+        },
+        "stats": {
+          "x": 16,
+          "y": 431.078125,
+          "width": 736,
+          "height": 116.03125
+        },
+        "featured": {
+          "x": 16,
+          "y": 557.109375,
+          "width": 736,
+          "height": 223.15625
+        },
+        "interest": {
+          "x": 16,
+          "y": 1936.8125,
+          "width": 736,
+          "height": 507.109375
+        },
+        "updates": {
+          "x": 16,
+          "y": 2492.3125,
+          "width": 736,
+          "height": 378.84375
+        }
+      },
+      "firstFeatured": {
+        "x": 16,
+        "y": 598.109375,
+        "width": 240,
+        "height": 182.15625
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        156,
+        156,
+        156
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 145,
+          "width": 736,
+          "height": 906.46875
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 46.71875,
+        "y": 730,
+        "width": 674.5625,
+        "height": 48
+      },
+      "save": {
+        "x": 46.71875,
+        "y": 791.59375,
+        "width": 674.5625,
+        "height": 229.15625
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 16,
+          "y": 145,
+          "width": 736,
+          "height": 832.640625
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 46.71875,
+        "y": 652.171875,
+        "width": 674.5625,
+        "height": 48
+      },
+      "save": {
+        "x": 46.71875,
+        "y": 713.765625,
+        "width": 674.5625,
+        "height": 233.15625
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "kind": "home",
+    "before": {
+      "sections": {
+        "hero": {
+          "x": 160,
+          "y": 99,
+          "width": 1120,
+          "height": 361.375
+        },
+        "stats": {
+          "x": 160,
+          "y": 470.375,
+          "width": 1120,
+          "height": 103.875
+        },
+        "featured": {
+          "x": 160,
+          "y": 584.25,
+          "width": 1120,
+          "height": 158.171875
+        },
+        "interest": {
+          "x": 160,
+          "y": 1617.703125,
+          "width": 1120,
+          "height": 499.390625
+        },
+        "updates": {
+          "x": 160,
+          "y": 2173.09375,
+          "width": 1120,
+          "height": 374.09375
+        }
+      },
+      "firstFeatured": {
+        "x": 160,
+        "y": 629.25,
+        "width": 368,
+        "height": 96.1875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        284,
+        284,
+        284
+      ]
+    },
+    "after": {
+      "sections": {
+        "hero": {
+          "x": 160,
+          "y": 99,
+          "width": 1120,
+          "height": 361.375
+        },
+        "stats": {
+          "x": 160,
+          "y": 470.375,
+          "width": 1120,
+          "height": 109.1875
+        },
+        "featured": {
+          "x": 160,
+          "y": 589.5625,
+          "width": 1120,
+          "height": 163.171875
+        },
+        "interest": {
+          "x": 160,
+          "y": 1628.015625,
+          "width": 1120,
+          "height": 388.34375
+        },
+        "updates": {
+          "x": 160,
+          "y": 2072.359375,
+          "width": 1120,
+          "height": 384.09375
+        }
+      },
+      "firstFeatured": {
+        "x": 160,
+        "y": 634.5625,
+        "width": 368,
+        "height": 118.171875
+      },
+      "official": null,
+      "save": null,
+      "titleWidths": [
+        284,
+        284,
+        284
+      ]
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "kind": "profile",
+    "before": {
+      "sections": {
+        "profile": {
+          "x": 160,
+          "y": 147,
+          "width": 1120,
+          "height": 705
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 200,
+        "y": 579.25,
+        "width": 1040,
+        "height": 48
+      },
+      "save": {
+        "x": 200,
+        "y": 640.84375,
+        "width": 1040,
+        "height": 171.15625
+      },
+      "titleWidths": []
+    },
+    "after": {
+      "sections": {
+        "profile": {
+          "x": 160,
+          "y": 147,
+          "width": 1120,
+          "height": 631.171875
+        }
+      },
+      "firstFeatured": null,
+      "official": {
+        "x": 200,
+        "y": 501.421875,
+        "width": 1040,
+        "height": 48
+      },
+      "save": {
+        "x": 200,
+        "y": 563.015625,
+        "width": 1040,
+        "height": 175.15625
+      },
+      "titleWidths": []
+    },
+    "sameFeaturedOrder": true,
+    "sameActionTargetsExceptGeneratedIcsDtstamp": true,
+    "noOverflowOrPageErrors": true
+  }
+]

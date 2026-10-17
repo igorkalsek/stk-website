@@ -20,7 +20,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   ]}
   description="Neodvisen in redno posodobljen tekaški koledar za Slovenijo s potrjenimi prireditvami, razpisi, prijavami, družinam prijaznimi teki, skupinskimi teki in dodatnimi informacijami."
 >
-  <main>
+  <main class="home-page">
     <section class="hero container" aria-labelledby="hero-title">
       <div class="home-hero-card hero-card">
         <div class="home-hero-main">
@@ -176,6 +176,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
 <script>
   import { loadPublicYearStats } from '../utils-home-stats';
+  import { getTodayIsoInLjubljana } from '../utils-date';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { buildPrimaryActions } from '../utils-race-detail-view';
   import { renderActionIcon } from '../utils-action-icons';
@@ -636,7 +637,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   };
 
 
-  const formatDateBadge = formatSloveneDateBadge;
+  const formatDateBadge = (value: string) => formatSloveneDateBadge(value, value.slice(0, 4) !== getTodayIsoInLjubljana().slice(0, 4));
 
   const escapeHtml = (value: string | number) => {
     const characters: Record<string, string> = {
@@ -1423,9 +1424,10 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           'title',
           'name'
         ], 'Posodobitev koledarja');
-        const eventDate = formatDate(pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']));
+        const eventDateValue = pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
+        const eventDate = formatDate(eventDateValue);
         const recentUpdateDate = formatDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
-        const updateDateMeta = formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, eventDate, 'sl');
+        const updateDateMeta = formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, 'sl');
         const changed = formatDate(pickPath(update, ['public_summary', 'event.public_summary', 'zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
         const region = pickPath(update, ['regija', 'event.regija', 'region'], '');
@@ -1453,8 +1455,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           <article class="update-card"${analyticsAttributes}>
             ${updateDateMeta ? `<p class="update-meta">${escapeHtml(updateDateMeta)}</p>` : ''}
             <h3>${detailPath ? `<a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a>` : escapeHtml(title)}</h3>
-            ${place ? `<p>${escapeHtml(place)}</p>` : ''}
-            ${changed ? `<p>${escapeHtml(changed)}</p>` : ''}
+            <p class="update-event-meta">${eventDate ? `<time datetime="${escapeHtml(eventDateValue)}">${escapeHtml(eventDate)}</time>` : ''}${eventDate && place ? ' · ' : ''}${escapeHtml(place)}</p>
+            ${changed ? `<p class="update-description">${escapeHtml(changed)}</p>` : ''}
           </article>
         `;
       }).join('');

@@ -1,5 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('stkAnalyticsOptOut', 'true'));
+});
+
 // Sample the rendered background with text hidden, so gradients, translucent
 // chips and the page underneath are included without antialiased text pixels.
 async function contrastReadings(page: Page) {
@@ -75,7 +79,8 @@ for (const width of [390, 430, 768, 1440]) {
           elements.filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent));
         expect(clipped).toEqual([]);
         const readings = await contrastReadings(page);
-        expect(readings.some(r => r.selector === '.event-detail-hero-chip strong')).toBe(true);
+        // Region now belongs to the location fact; only actual cup/family chips remain.
+        expect(readings.filter(r => r.selector === '.event-detail-hero-chip strong')).toHaveLength(await page.locator('.event-detail-hero-chip strong').count());
         expect(readings.some(r => r.selector === '.event-detail-hero-fact dt')).toBe(true);
         for (const reading of readings) expect(reading.minimum, reading.selector).toBeGreaterThanOrEqual(4.5);
         console.log(JSON.stringify({ width, lang, confirmed, readings }));
