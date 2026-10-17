@@ -229,7 +229,7 @@ for (const home of homes) {
 for (const home of homes) {
   for (const width of [390, 1440]) {
     for (const state of ['success', 'master2027-down', 'recent-down', 'old-api', 'missing-events'] as const) {
-      test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }) => {
+      test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }, testInfo) => {
         await page.setViewportSize({ width, height: 1000 });
         await mockHomepageApis(page);
         await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
@@ -292,7 +292,7 @@ for (const home of homes) {
           await second.locator('a').click({ modifiers: ['ControlOrMeta'] });
           const body = JSON.parse((await click).postData() ?? '{}');
           expect(body).toMatchObject({ event_id: 'r000037', event_year: '2027', event_key: '2027:r000037', placement: 'home_updates' });
-          await page.locator('.home-update-section').screenshot({ path: `/private/tmp/dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png` });
+          await page.locator('.home-update-section').screenshot({ path: testInfo.outputPath(`dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png`) });
         }
         expect(await page.locator('body').evaluate(el => el.scrollWidth <= window.innerWidth)).toBe(true);
       });
