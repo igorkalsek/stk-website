@@ -140,14 +140,21 @@ const parseRecentUpdateDateValue = (value: string) => {
     : null;
 };
 
+// A row-derived R identifier is scoped to a year; it is not an edition-independent id.
+const recentUpdateYear = (item: HomepageApiRecord) => {
+  const explicit = pickPathString(item, ['year', 'master_sheet', 'leto', 'event.year', 'event.master_sheet', 'event.leto']);
+  const date = pickPathString(item, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
+  const dateYear = date.match(/^(202[67])-/)?.[1] ?? '';
+  if (explicit && (!/^202[67]$/.test(explicit) || dateYear && dateYear !== explicit)) return '';
+  return explicit || dateYear;
+};
+
 const recentUpdateIdentity = (item: HomepageApiRecord) => {
-  const eventId = pickPathString(item, ['event_id', 'eventId', 'id', 'event.event_id', 'event.eventId', 'event.id']);
-  const normalizedEventId = normalizeHomepageEventId(eventId);
-  if (normalizedEventId) return `id:${normalizedEventId}`;
-
-  const row = pickPathString(item, ['row', 'master_row', 'masterRow', 'event.row', 'event.master_row', 'event.masterRow']);
-  if (row) return `row:${row}`;
-
+  const year = recentUpdateYear(item);
+  const row = pickPathString(item, rowKeys);
+  if (year && row) return `row:${year}:${row}`;
+  const eventId = normalizeHomepageEventId(pickPathString(item, eventIdKeys));
+  if (year && eventId) return `id:${year}:${eventId}`;
   const date = pickPathString(item, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
   const title = pickPathString(item, ['naziv_prireditve', 'naziv', 'event.naziv_prireditve', 'event.naziv', 'title', 'name']);
   const place = pickPathString(item, ['kraj', 'event.kraj', 'place', 'city', 'location']);
@@ -158,6 +165,7 @@ export const selectHomepageRecentUpdates = (
   groups: HomepageRecentUpdateGroups,
   limit = 4
 ): HomepageRecentUpdateSelection => {
+  if (limit <= 0) return { canOrderGlobally: true, items: [] };
   const tagged = [
     ...groups.updatedEvents,
     ...groups.newEvents,
@@ -176,6 +184,7 @@ export const selectHomepageRecentUpdates = (
     (b.dateValue as number) - (a.dateValue as number) ||
     pickPathString(a.item, ['naziv_prireditve', 'naziv', 'title', 'name'])
       .localeCompare(pickPathString(b.item, ['naziv_prireditve', 'naziv', 'title', 'name']), 'sl-SI') ||
+    recentUpdateIdentity(a.item).localeCompare(recentUpdateIdentity(b.item)) ||
     a.sourceIndex - b.sourceIndex
   );
 
@@ -257,8 +266,8 @@ const uniqueIndex = (events: HomepageApiRecord[], keyFor: (event: HomepageApiRec
 };
 
 export const buildHomepageMasterEventIndex = (events: HomepageApiRecord[]) => ({
-  byRow: uniqueIndex(events, masterRow),
-  byEventId: uniqueIndex(events, (event) => normalizeHomepageEventId(masterRow(event))),
+  byRow: uniqueIndex(events, (event) => recentUpdateYear(event) && masterRow(event) ? `${recentUpdateYear(event)}:${masterRow(event)}` : ''),
+  byEventId: uniqueIndex(events, (event) => recentUpdateYear(event) && masterRow(event) ? `${recentUpdateYear(event)}:${normalizeHomepageEventId(masterRow(event))}` : ''),
   byNaturalKey: uniqueIndex(events, (event) => naturalKey(masterDate(event), masterTitle(event), masterPlace(event)))
 });
 
@@ -266,15 +275,20 @@ export const matchRecentUpdateToMasterEvent = (
   update: HomepageApiRecord,
   index: ReturnType<typeof buildHomepageMasterEventIndex>
 ): RecentUpdateMatch => {
-  for (const row of getHomepageRowCandidates(update)) {
-    const match = index.byRow.get(row);
-    if (match) return { event: match, reason: 'row' };
-  }
-
-  for (const key of eventIdKeys) {
-    const id = normalizeHomepageEventId(pickPathValue(update, key));
-    const match = id ? index.byEventId.get(id) : null;
-    if (match) return { event: match, reason: 'event_id' };
+  const year = recentUpdateYear(update);
+  if (!year) return { event: null, reason: 'missing_identity' };
+  const rows = getHomepageRowCandidates(update);
+  const ids = eventIdKeys.map((key) => normalizeHomepageEventId(pickPathValue(update, key))).filter(Boolean);
+  const candidates = [
+    ...rows.map((row) => index.byRow.get(`${year}:${row}`)),
+    ...ids.map((id) => index.byEventId.get(`${year}:${id}`))
+  ];
+  if (candidates.length) {
+    const match = candidates[0];
+    if (!match || candidates.some((candidate) => candidate !== match)) return { event: null, reason: 'not_unique_or_missing' };
+    const date = pickPathString(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
+    if (date && masterDate(match) !== date) return { event: null, reason: 'date_mismatch' };
+    return { event: match, reason: rows.length ? 'row' : 'event_id' };
   }
 
   const date = pickPathString(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
@@ -326,4 +340,35 @@ export const buildEnglishHomepageEventDetailPath = (
     naziv_prireditve: title,
     place: getHomepageEventField(canonicalEvent, 'kraj', ['place', 'city', 'location'])
   });
+};
+
+export const hasMultiYearRecentUpdatesContract = (payload: unknown): boolean => {
+  const root = homepageAsRecord(payload);
+  const block = homepageAsRecord(root?.recent_updates_last_days);
+  return root?.ok === true && Array.isArray(block?.years) &&
+    block.years.length === 2 && block.years[0] === '2026' && block.years[1] === '2027' &&
+    Array.isArray(block.events) && block.events.every(item => homepageAsRecord(item) !== null);
+};
+
+/** The opt-in API owns global ordering, including ties. Never re-sort by title. */
+export const selectCanonicalHomepageRecentUpdates = (
+  payload: unknown,
+  limit = 4
+): HomepageRecentUpdateSelection => {
+  if (!hasMultiYearRecentUpdatesContract(payload)) return { canOrderGlobally: false, items: [] };
+  const block = homepageAsRecord(homepageAsRecord(payload)?.recent_updates_last_days)!;
+  const events = block.events as HomepageApiRecord[];
+  if (events.some(item => parseRecentUpdateDateValue(pickPathString(item, ['recent_update_date'])) === null)) {
+    return { canOrderGlobally: false, items: [] };
+  }
+  const identities = new Set<string>();
+  const items: HomepageApiRecord[] = [];
+  for (const [index, item] of events.entries()) {
+    if (items.length >= Math.max(0, limit)) break;
+    const identity = recentUpdateIdentity(item) || `unidentified:${index}`;
+    if (identities.has(identity)) continue;
+    identities.add(identity);
+    items.push(item);
+  }
+  return { canOrderGlobally: true, items };
 };

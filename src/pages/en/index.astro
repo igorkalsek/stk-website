@@ -187,7 +187,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { renderActionIcon } from '../../utils-action-icons';
   import { getDisplayEventTitle } from '../../utils-events';
   import { getStableEventId } from '../../utils-event-detail';
-  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates, formatHomepageRecentUpdateMeta } from '../../utils-home-events';
+  import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, formatHomepageRecentUpdateMeta } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../../lib/stkAnalytics';
 
@@ -241,18 +241,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const getRecordArray = (record: ApiRecord | null, key: string): ApiRecord[] => {
     const value = record?.[key];
     return Array.isArray(value) ? value.filter(asRecord) as ApiRecord[] : [];
-  };
-
-  const getRecentUpdateGroups = (payload: unknown) => {
-    const root = asRecord(payload);
-    const recentUpdatesLastDays = asRecord(root?.recent_updates_last_days);
-    const source = recentUpdatesLastDays ?? root;
-
-    return {
-      updatedEvents: getRecordArray(source, 'updated_events'),
-      newEvents: getRecordArray(source, 'new_events'),
-      confirmedEvents: getRecordArray(source, 'confirmed_events')
-    };
   };
 
   const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
@@ -1411,23 +1399,25 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     if (!container) return;
 
     try {
-      const [recentResult, masterResult] = await Promise.allSettled([
-        loadJson('/recent_updates?days=7&limit=4'),
-        loadJson('/')
+      const [recentResult, masterResult, master2027Result] = await Promise.allSettled([
+        loadJson('/recent_updates?days=7&limit=4&years=2026,2027'),
+        loadJson('/'),
+        loadJson('/?year=2027')
       ]);
       if (recentResult.status === 'rejected') throw recentResult.reason;
-      const { updatedEvents, newEvents, confirmedEvents } = getRecentUpdateGroups(recentResult.value);
-      const masterIndex = masterResult.status === 'fulfilled'
-        ? buildHomepageMasterEventIndex(getMasterRows(masterResult.value))
-        : null;
+      if (!hasMultiYearRecentUpdatesContract(recentResult.value)) throw new Error('RECENT_UPDATES_MULTI_YEAR_CONTRACT_UNAVAILABLE');
+      const masterIndex = buildHomepageMasterEventIndex([
+        ...(masterResult.status === 'fulfilled' ? getMasterRows(masterResult.value) : []),
+        ...(master2027Result.status === 'fulfilled' ? getMasterRows(master2027Result.value) : [])
+      ]);
       if (masterResult.status === 'rejected') setDebug('master', 'no');
-      const recentSelection = selectHomepageRecentUpdates({ updatedEvents, newEvents, confirmedEvents }, 4);
+      const recentSelection = selectCanonicalHomepageRecentUpdates(recentResult.value, 4);
       if (!recentSelection.canOrderGlobally) throw new Error('RECENT_UPDATES_GLOBAL_ORDER = NOT_AVAILABLE_FROM_CONTRACT');
       const updates = recentSelection.items;
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 
-      if (!updatedEvents.length && !newEvents.length && !confirmedEvents.length) {
+      if (!updates.length) {
         container.innerHTML = `
           <article class="update-card">
             <p>There were no new public calendar updates in the last 7 days.</p>
@@ -1486,6 +1476,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     } catch (error) {
       logDebugError('Recent updates failed', error);
       setDebug('recent', 'no');
+      container.innerHTML = '<article class="update-card"><p>Fresh calendar changes are currently unavailable. Please try again later.</p></article>';
       setStatus('updates', 'Latest updates are currently unavailable, so the fallback view remains.');
     }
   }

@@ -9,20 +9,20 @@ const enSource = readFileSync(new URL('../src/pages/en/index.astro', import.meta
 
 describe('homepage recent updates rendering', () => {
   it('renders Slovenian recent update titles as links when matched', () => {
-    assert.match(slSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4'\),\s*loadJson\('\/'\)/s);
+    assert.match(slSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4&years=2026,2027'\),\s*loadJson\('\/'\),\s*loadJson\('\/\?year=2027'\)/s);
     assert.match(slSource, /buildHomepageEventDetailPath\(matchedEvent\.event/);
     assert.match(slSource, /<h3>\$\{detailPath \? `<a href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(title\)\}<\/a>` : escapeHtml\(title\)\}<\/h3>/);
   });
 
   it('renders English recent update titles as links when matched', () => {
-    assert.match(enSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4'\),\s*loadJson\('\/'\)/s);
+    assert.match(enSource, /Promise\.allSettled\(\[\s*loadJson\('\/recent_updates\?days=7&limit=4&years=2026,2027'\),\s*loadJson\('\/'\),\s*loadJson\('\/\?year=2027'\)/s);
     assert.match(enSource, /buildEnglishHomepageEventDetailPath\(matchedEvent\.event/);
     assert.match(enSource, /<h3>\$\{detailPath \? `<a href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(title\)\}<\/a>` : escapeHtml\(title\)\}<\/h3>/);
   });
 
   it('keeps recent updates visible when master loading fails', () => {
-    assert.match(slSource, /masterResult\.status === 'fulfilled'[\s\S]*: null/);
-    assert.match(enSource, /masterResult\.status === 'fulfilled'[\s\S]*: null/);
+    assert.match(slSource, /masterResult\.status === 'fulfilled'[\s\S]*master2027Result\.status === 'fulfilled'/);
+    assert.match(enSource, /masterResult\.status === 'fulfilled'[\s\S]*master2027Result\.status === 'fulfilled'/);
     assert.doesNotMatch(slSource, /throw masterResult\.reason/);
     assert.doesNotMatch(enSource, /throw masterResult\.reason/);
   });
@@ -36,8 +36,8 @@ describe('homepage recent updates rendering', () => {
   });
 
   it('keeps the updates block compact by rendering at most four entries', () => {
-    assert.match(slSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
-    assert.match(enSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
+    assert.match(slSource, /selectCanonicalHomepageRecentUpdates\(recentResult\.value, 4\)/);
+    assert.match(enSource, /selectCanonicalHomepageRecentUpdates\(recentResult\.value, 4\)/);
   });
 
   it('fails closed instead of guessing when canonical recency is unavailable', () => {

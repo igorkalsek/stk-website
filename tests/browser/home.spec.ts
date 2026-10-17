@@ -64,13 +64,14 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false) {
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/recent_updates' && withRecentUpdate) {
-      return route.fulfill({ json: { updated_events: [{ ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' }] } });
+      const update = { ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' };
+      return route.fulfill({ json: { ok: true, recent_updates_last_days: { years: ['2026', '2027'], updated_events: [update], events: [update] } } });
     }
     if (url.pathname === '/stats') {
       return route.fulfill({ json: { confirmed_public_events_total: 0, family_friendly_total: 0, group_runs_total: 0 } });
     }
     if (url.pathname === '/group-runs') return route.fulfill({ json: { row_count: 0 } });
-    if (url.pathname === '/') return route.fulfill({ json: { data: events } });
+    if (url.pathname === '/') return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? [] : events } });
     return route.fulfill({ json: { data: [] } });
   });
   await page.route(`${ANALYTICS_HOST}/**`, (route) => route.fulfill({ status: 204, body: '' }));
@@ -156,7 +157,8 @@ for (const home of homes) {
       update_type: type, recent_update_date: recent, public_summary: summaries[type] ?? 'Neznana sprememba.'
     });
     await page.route(`${API_HOST}/recent_updates?**`, (route) => route.fulfill({ json: {
-      recent_updates_last_days: {
+      ok: true, recent_updates_last_days: { years: ['2026', '2027'],
+        events: [race('11', 'unknown', '2026-10-07'), race('12', 'new', '2026-10-06'), race('13', 'confirmed', '2026-10-05'), race('14', 'updated', '2026-10-04')],
         updated_events: [race('14', 'updated', '2026-10-04'), race('11', 'unknown', '2026-10-07')],
         new_events: [race('12', 'new', '2026-10-06')],
         confirmed_events: [race('13', 'confirmed', '2026-10-05')]
@@ -219,5 +221,79 @@ for (const home of homes) {
       }));
       expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
     });
+  }
+}
+
+for (const home of homes) {
+  for (const width of [390, 1440]) {
+    for (const state of ['success', 'master2027-down', 'recent-down', 'old-api', 'missing-events'] as const) {
+      test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1000 });
+        await mockHomepageApis(page);
+        await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
+        const race = (year: string, row: string, title: string, date: string) => ({
+          year, row, datum: date, naziv_prireditve: title, kraj: 'Ljubljana',
+          status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA'
+        });
+        const oldRace = race('2026', '37', 'Same row 2026', '2026-12-20');
+        const backyard = race('2027', '37', 'Backyard Ultra Ljubljana 2027', '2027-10-08');
+        const maribor = race('2027', '38', 'Trail Maribor 2027', '2027-06-12');
+        await page.route(`${API_HOST}/**`, async (route) => {
+          const url = new URL(route.request().url());
+          if (url.pathname === '/') {
+            if (url.searchParams.get('year') === '2027' && state === 'master2027-down') return route.abort('failed');
+            return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? [backyard, maribor] : [oldRace] } });
+          }
+          if (url.pathname !== '/recent_updates') return route.fallback();
+          expect(url.searchParams.get('years')).toBe('2026,2027');
+          if (state === 'recent-down') return route.abort('failed');
+          return route.fulfill({ json: { ok: true, recent_updates_last_days: {
+            ...(state === 'old-api' ? {} : { years: ['2026', '2027'] }),
+            events: state === 'missing-events' ? undefined : [...[maribor, maribor, backyard].map(e => ({ ...e, update_type: 'new', recent_update_date: '2026-10-16', public_summary: 'Nov dogodek v koledarju.' })),
+              { ...oldRace, update_type: 'updated', recent_update_date: '2026-10-15' },
+              { row: '37', naziv_prireditve: 'Missing year', update_type: 'confirmed', recent_update_date: '2026-10-14' },
+              { row: '39', naziv_prireditve: 'Fifth card must be omitted', update_type: 'updated', recent_update_date: '2026-10-13' }
+            ],
+            new_events: [backyard, maribor].map(e => ({ ...e, update_type: 'new', recent_update_date: '2026-10-16', public_summary: 'Nov dogodek v koledarju.' })),
+            updated_events: [{ ...oldRace, update_type: 'updated', recent_update_date: '2026-10-15' }],
+            confirmed_events: [{ row: '37', naziv_prireditve: 'Missing year', update_type: 'confirmed', recent_update_date: '2026-10-14' }]
+          } } });
+        });
+        await page.goto(home.path);
+        const cards = page.locator('[data-recent-updates] .update-card');
+        if (state === 'recent-down' || state === 'old-api' || state === 'missing-events') {
+          await expect(cards).toContainText(home.path === '/' ? 'trenutno niso dosegljive' : 'currently unavailable');
+          await expect(cards.locator('a')).toHaveCount(0);
+          await expect(page.locator('[data-recent-updates] [data-analytics-event-year]')).toHaveCount(0);
+          await expect(cards).not.toContainText('Dodano');
+          await expect(cards).not.toContainText('Added');
+          return;
+        }
+        await expect(cards).toHaveCount(4);
+        await expect(cards.locator('h3')).toHaveText(['Trail Maribor 2027', 'Backyard Ultra Ljubljana 2027', 'Same row 2026', 'Missing year']);
+        const prefix = home.path === '/' ? '/tek/' : '/en/races/';
+        const first = cards.nth(0), second = cards.nth(1), third = cards.nth(2);
+        await expect(first).toContainText(home.path === '/' ? 'Dodano' : 'Added');
+        await expect(third.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2026/r000037-`));
+        await expect(third).toHaveAttribute('data-analytics-event-year', '2026');
+        await expect(cards.nth(3).locator('a')).toHaveCount(0);
+        await expect(cards.nth(3)).not.toHaveAttribute('data-analytics-event-year');
+        if (state === 'master2027-down') {
+          await expect(first.locator('a')).toHaveCount(0);
+          await expect(second.locator('a')).toHaveCount(0);
+          await expect(first).not.toHaveAttribute('data-analytics-event-year');
+        } else {
+          await expect(first.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000038-`));
+          await expect(second.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000037-`));
+          await expect(first).toHaveAttribute('data-analytics-event-year', '2027');
+          const click = page.waitForRequest(request => request.url().includes('script.google.com') && request.postData()?.includes('event_card_clicked') === true);
+          await second.locator('a').click({ modifiers: ['ControlOrMeta'] });
+          const body = JSON.parse((await click).postData() ?? '{}');
+          expect(body).toMatchObject({ event_id: 'r000037', event_year: '2027', event_key: '2027:r000037', placement: 'home_updates' });
+          await page.locator('.home-update-section').screenshot({ path: `/private/tmp/dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png` });
+        }
+        expect(await page.locator('body').evaluate(el => el.scrollWidth <= window.innerWidth)).toBe(true);
+      });
+    }
   }
 }

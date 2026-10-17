@@ -184,7 +184,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
-  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectHomepageRecentUpdates, formatHomepageRecentUpdateMeta } from '../utils-home-events';
+  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, formatHomepageRecentUpdateMeta } from '../utils-home-events';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -232,18 +232,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const getRecordArray = (record: ApiRecord | null, key: string): ApiRecord[] => {
     const value = record?.[key];
     return Array.isArray(value) ? value.filter(asRecord) as ApiRecord[] : [];
-  };
-
-  const getRecentUpdateGroups = (payload: unknown) => {
-    const root = asRecord(payload);
-    const recentUpdatesLastDays = asRecord(root?.recent_updates_last_days);
-    const source = recentUpdatesLastDays ?? root;
-
-    return {
-      updatedEvents: getRecordArray(source, 'updated_events'),
-      newEvents: getRecordArray(source, 'new_events'),
-      confirmedEvents: getRecordArray(source, 'confirmed_events')
-    };
   };
 
   const pick = (item: ApiRecord, keys: string[], fallback = ''): string => {
@@ -1398,23 +1386,25 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     if (!container) return;
 
     try {
-      const [recentResult, masterResult] = await Promise.allSettled([
-        loadJson('/recent_updates?days=7&limit=4'),
-        loadJson('/')
+      const [recentResult, masterResult, master2027Result] = await Promise.allSettled([
+        loadJson('/recent_updates?days=7&limit=4&years=2026,2027'),
+        loadJson('/'),
+        loadJson('/?year=2027')
       ]);
       if (recentResult.status === 'rejected') throw recentResult.reason;
-      const { updatedEvents, newEvents, confirmedEvents } = getRecentUpdateGroups(recentResult.value);
-      const masterIndex = masterResult.status === 'fulfilled'
-        ? buildHomepageMasterEventIndex(getMasterRows(masterResult.value))
-        : null;
+      if (!hasMultiYearRecentUpdatesContract(recentResult.value)) throw new Error('RECENT_UPDATES_MULTI_YEAR_CONTRACT_UNAVAILABLE');
+      const masterIndex = buildHomepageMasterEventIndex([
+        ...(masterResult.status === 'fulfilled' ? getMasterRows(masterResult.value) : []),
+        ...(master2027Result.status === 'fulfilled' ? getMasterRows(master2027Result.value) : [])
+      ]);
       if (masterResult.status === 'rejected') setDebug('master', 'no');
-      const recentSelection = selectHomepageRecentUpdates({ updatedEvents, newEvents, confirmedEvents }, 4);
+      const recentSelection = selectCanonicalHomepageRecentUpdates(recentResult.value, 4);
       if (!recentSelection.canOrderGlobally) throw new Error('RECENT_UPDATES_GLOBAL_ORDER = NOT_AVAILABLE_FROM_CONTRACT');
       const updates = recentSelection.items;
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 
-      if (!updatedEvents.length && !newEvents.length && !confirmedEvents.length) {
+      if (!updates.length) {
         container.innerHTML = `
           <article class="update-card">
             <p>V zadnjih 7 dneh ni bilo novih javnih sprememb v koledarju.</p>
@@ -1472,6 +1462,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       setStatus('updates', '');
     } catch (error) {
       setDebug('recent', 'no');
+      container.innerHTML = '<article class="update-card"><p>Sveže spremembe trenutno niso dosegljive. Poskusite znova pozneje.</p></article>';
       setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
     }
   }
