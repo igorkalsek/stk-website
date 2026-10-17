@@ -4090,6 +4090,7 @@ main {
 }
 
 .home-hero-card::after {
+  opacity: 0.16;
   right: clamp(20px, 5vw, 76px);
   bottom: clamp(28px, 6vw, 82px);
   width: min(46vw, 460px);
@@ -4156,6 +4157,10 @@ main {
 }
 
 .home-year-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  align-items: center;
   min-width: 0;
   border: 1px solid rgba(16, 64, 80, 0.16);
   border-radius: 12px;
@@ -4180,8 +4185,24 @@ main {
   margin: 0;
 }
 
+.home-year-stats p {
+  grid-column: 1 / -1;
+  gap: 3px 12px;
+}
+
+.home-year-stats header {
+  display: contents;
+}
+
+.home-year-stats small {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin-top: 4px;
+  color: var(--deep-teal);
+}
+
 .home-stats-strip .home-stats-label {
-  margin: 0 0 4px;
+  margin: 0;
   color: var(--deep-teal);
   font-size: 0.82rem;
   font-weight: 900;
@@ -4190,7 +4211,8 @@ main {
 
 .home-stats-strip strong {
   color: var(--deep-teal);
-  font-size: 0.96rem;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .home-stats-strip .home-stats-primary,
@@ -4200,10 +4222,13 @@ main {
 }
 
 .home-year-stats a {
+  grid-column: 2;
+  grid-row: 1;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  margin-bottom: -6px;
+  color: var(--deep-teal);
+  text-decoration: underline;
   font-weight: 700;
   text-underline-offset: 3px;
 }
@@ -4242,9 +4267,14 @@ main {
   list-style: none;
 }
 
+.home-featured-list > li {
+  display: grid;
+}
+
 .home-featured-race {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 5px 10px;
   min-width: 0;
   min-height: 66px;
@@ -4256,7 +4286,7 @@ main {
 }
 
 .home-featured-race > time {
-  grid-row: 1 / span 2;
+  grid-row: 1;
   color: #704406;
   font-size: 0.72rem;
   font-weight: 900;
@@ -4296,16 +4326,40 @@ main {
   gap: 3px;
 }
 
+.home-featured-actions .calendar-menu {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.home-featured-actions .calendar-menu-options {
+  position: absolute;
+  right: 0;
+  width: max-content;
+}
+
+.home-featured-actions .calendar-menu-options a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.home-featured-actions .button:focus-visible,
+.home-featured-actions summary:focus-visible,
+.home-secondary-section .saved-race-button:focus-visible {
+  outline: 3px solid var(--deep-teal);
+  outline-offset: 3px;
+}
+
 .home-featured-actions .button,
 .home-featured-actions .calendar-menu summary {
-  min-height: 34px;
+  min-height: 44px;
   padding: 5px 8px;
   font-size: 0.76rem;
 }
 
 .home-featured-actions .saved-race-icon-button {
-  width: 34px;
-  min-width: 34px;
+  width: 44px;
+  min-width: 44px;
   padding: 0;
 }
 
@@ -4759,7 +4813,7 @@ main {
 
 .home-secondary-section .event-card {
   counter-increment: interest-rank;
-  grid-template-columns: 30px 82px minmax(0, 1fr) auto;
+  grid-template-columns: 26px 82px minmax(0, 1fr) 44px;
   align-items: center;
   gap: 10px;
   border-bottom: 1px solid rgba(16, 64, 80, 0.1);
@@ -4767,8 +4821,10 @@ main {
 }
 
 .home-secondary-section .event-card::before {
+  grid-column: 1;
+  grid-row: 1 / span 2;
   content: counter(interest-rank, decimal-leading-zero);
-  color: rgba(16, 64, 80, 0.48);
+  color: var(--muted);
   font-size: 0.78rem;
   font-weight: 900;
 }
@@ -4778,12 +4834,20 @@ main {
 }
 
 .home-secondary-section .event-card h3 {
+  grid-column: 3;
+  grid-row: 1;
   font-size: 1rem;
+}
+
+.home-secondary-section .event-card-date {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .home-secondary-section .event-card > p {
   grid-column: 3;
-  margin: -5px 0 0;
+  grid-row: 2;
+  margin: 0;
   font-size: 0.86rem;
 }
 
@@ -4793,12 +4857,13 @@ main {
 
 .home-secondary-section .event-actions {
   grid-column: 4;
-  grid-row: 1 / span 3;
+  grid-row: 1 / span 2;
 }
 
 .home-secondary-section .saved-race-button {
-  width: 38px;
-  min-width: 38px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   border-color: transparent;
   background: transparent;
@@ -4838,8 +4903,10 @@ main {
 }
 
 .home-update-panel .update-meta {
-  color: #704406;
-  font-weight: 800;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .home-utility-section {
@@ -4893,7 +4960,7 @@ main {
   }
 
   .home-secondary-section .event-card {
-    grid-template-columns: 26px 70px minmax(0, 1fr) auto;
+    grid-template-columns: 24px 70px minmax(0, 1fr) 44px;
   }
 }
 
@@ -4917,7 +4984,7 @@ main {
   }
 
   .home-featured-race {
-    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-columns: 54px minmax(0, 1fr);
     min-height: 54px;
     gap: 4px 8px;
     padding: 5px 7px;
@@ -4928,12 +4995,13 @@ main {
   }
 
   .home-featured-race-copy p {
-    display: none;
+    white-space: normal;
   }
 
   .home-featured-actions {
-    grid-column: 3;
-    grid-row: 1;
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
     flex-wrap: nowrap;
   }
 
@@ -4972,17 +5040,36 @@ main {
   }
 
   .home-secondary-section .event-card {
-    grid-template-columns: 24px 66px minmax(0, 1fr);
+    grid-template-columns: 20px minmax(0, 1fr) 44px;
+    gap: 4px 8px;
   }
 
   .home-secondary-section .event-actions {
     grid-column: 3;
-    grid-row: auto;
+    grid-row: 1 / span 3;
+  }
+
+  .home-secondary-section .event-card::before {
+    grid-row: 1 / span 3;
+  }
+
+  .home-secondary-section .event-card-date {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 0;
+    background: transparent;
+    font-size: 0.78rem;
+  }
+
+  .home-secondary-section .event-card h3 {
+    grid-column: 2;
+    grid-row: 2;
   }
 
   .home-secondary-section .event-card > p,
   .home-secondary-section .event-details {
-    grid-column: 3;
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 
@@ -5749,6 +5836,14 @@ main {
   width: auto;
 }
 
+.event-detail-my-race-panel select {
+  min-height: 44px;
+}
+
+.event-detail-my-race-panel .muted-note {
+  color: var(--deep-teal);
+}
+
 .event-detail-action-panel {
   top: 5.5rem;
 }
@@ -5892,13 +5987,26 @@ main {
   }
 
   .event-detail-my-race-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     gap: 8px;
     margin-top: 10px;
     padding: 12px;
   }
 
   .event-detail-my-race-actions {
-    gap: 8px;
+    display: contents;
+  }
+
+  .event-detail-my-race-panel h2 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .event-detail-my-race-panel .saved-race-button {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
   }
 
   .event-detail-my-race-panel .button,
@@ -5907,9 +6015,20 @@ main {
   }
 
   .event-detail-my-race-panel .race-status-control {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
     gap: 8px;
     margin-top: 0;
-    padding: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .event-detail-my-race-panel .muted-note {
+    grid-column: 1 / -1;
+    margin: 0;
   }
 }
 
@@ -5925,6 +6044,19 @@ main {
 }
 
 @media (max-width: 520px) {
+  .home-page {
+    padding-top: 12px;
+  }
+
+  .home-page .hero {
+    padding: 12px 0 8px;
+  }
+
+  .home-hero-copy.hero-content {
+    gap: 12px;
+    padding: 22px 20px;
+  }
+
   .home-hero-copy .hero-sublead {
     margin-top: 8px;
     font-size: 0.9rem;
@@ -5933,7 +6065,8 @@ main {
 
   .home-hero-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .home-hero-actions .hero-primary-cta {
@@ -5944,6 +6077,11 @@ main {
   .home-hero-text-link {
     min-height: 44px;
     padding: 9px 10px;
+  }
+
+  .home-hero-text-link {
+    font-size: 0.9rem;
+    padding-inline: 4px;
   }
 }
 

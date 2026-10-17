@@ -204,7 +204,6 @@ export const selectHomepageRecentUpdates = (
 export const formatHomepageRecentUpdateMeta = (
   updateType: unknown,
   recentUpdateDate: string,
-  eventDate: string,
   language: 'sl' | 'en'
 ): string => {
   const labels: Record<string, string> = language === 'sl'
@@ -212,11 +211,7 @@ export const formatHomepageRecentUpdateMeta = (
     : { new: 'Added', confirmed: 'Confirmed', updated: 'Updated' };
   const type = String(updateType ?? '').trim().toLowerCase();
   const label = Object.hasOwn(labels, type) ? labels[type] : '';
-  if (!recentUpdateDate || !label) return eventDate;
-  return [
-    `${label} ${recentUpdateDate}`,
-    eventDate ? `${language === 'sl' ? 'dogodek' : 'event'} ${eventDate}` : ''
-  ].filter(Boolean).join(' · ');
+  return [label, recentUpdateDate].filter(Boolean).join(' · ');
 };
 
 export const getHomepageRowCandidates = (item: HomepageApiRecord) => {

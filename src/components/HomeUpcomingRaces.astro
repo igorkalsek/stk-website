@@ -5,6 +5,7 @@ import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId, ty
 import { buildPrimaryActions } from '../utils-race-detail-view';
 import { formatEnglishDateBadge } from '../utils-english';
 import { buildHomepageCalendarEventInput } from '../utils-home-events';
+import { getTodayIsoInLjubljana } from '../utils-date';
 import { formatSloveneDateBadge } from '../utils-slovenian';
 
 type Props = {
@@ -56,7 +57,7 @@ const cardsHtml = events.map((event) => {
     renderSavedRaceButton(event)
   ].filter(Boolean).join('');
 
-  return `<article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(getStableEventId(event))}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div class="event-card-heading"><time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formattedDate)}">${escapeHtml(formatDateBadge(event.date))}</time><h3><a href="${escapeHtml(detailPath(event))}">${escapeHtml(event.displayTitle)}</a></h3></div>${summary ? `<p>${escapeHtml(summary)}</p>` : ''}${links ? `<div class="event-actions">${links}</div>` : ''}</article>`;
+  return `<article class="event-card" data-analytics-placement="home_this_week" data-analytics-event-id="${escapeHtml(getStableEventId(event))}" data-analytics-event-name="${escapeHtml(event.displayTitle)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(event.year)}"><div class="event-card-heading"><time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formattedDate)}">${escapeHtml(formatDateBadge(event.date, event.year !== getTodayIsoInLjubljana().slice(0, 4)))}</time><h3><a href="${escapeHtml(detailPath(event))}">${escapeHtml(event.displayTitle)}</a></h3></div>${summary ? `<p>${escapeHtml(summary)}</p>` : ''}${links ? `<div class="event-actions">${links}</div>` : ''}</article>`;
 }).join('');
 ---
 

@@ -54,22 +54,23 @@ for (const [language, source, labels] of [
 ]) {
   describe(`${language} recent update metadata`, () => {
     it('uses the shared formatter with the actual update_type in the homepage', () => {
-      assert.ok(source.includes(`formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, eventDate, '${language}')`));
+      assert.ok(source.includes(`formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, '${language}')`));
+      assert.match(source, /class="update-event-meta".*<time datetime=/);
     });
     for (const [type, label] of Object.entries(labels)) {
-      it(`renders ${type} as ${label} and preserves the event date`, () => {
-        assert.equal(formatHomepageRecentUpdateMeta(type, '6 Oct 2026', '16 Oct 2026', language),
-          `${label} 6 Oct 2026 · ${language === 'sl' ? 'dogodek' : 'event'} 16 Oct 2026`);
+      it(`renders ${type} as ${label} separately from the event date`, () => {
+        assert.equal(formatHomepageRecentUpdateMeta(type, '6 Oct 2026', language),
+          `${label} · 6 Oct 2026`);
       });
     }
     it('does not label unknown types as Updated/Posodobljeno', () => {
       for (const type of [undefined, null, '', 'unknown', 'unconfirmed', 'toString', '__proto__']) {
-        assert.equal(formatHomepageRecentUpdateMeta(type, '6 Oct 2026', '16 Oct 2026', language), '16 Oct 2026');
-        assert.equal(formatHomepageRecentUpdateMeta(type, '6 Oct 2026', '', language), '');
+        assert.equal(formatHomepageRecentUpdateMeta(type, '6 Oct 2026', language), '6 Oct 2026');
+        assert.equal(formatHomepageRecentUpdateMeta(type, '', language), '');
       }
     });
-    it('preserves the event date when the change date is absent', () => {
-      assert.equal(formatHomepageRecentUpdateMeta('new', '', '16 Oct 2026', language), '16 Oct 2026');
+    it('keeps an absent change date distinct from the event date', () => {
+      assert.equal(formatHomepageRecentUpdateMeta('new', '', language), labels.new);
     });
   });
 }
@@ -92,6 +93,6 @@ it('does not infer missing, null or empty update types from a typed group', () =
       newEvents: [], confirmedEvents: []
     });
     assert.equal(selection.items[0].update_type, type);
-    assert.equal(formatHomepageRecentUpdateMeta(selection.items[0].update_type, '6 Oct', '16 Oct', 'en'), '16 Oct');
+    assert.equal(formatHomepageRecentUpdateMeta(selection.items[0].update_type, '6 Oct', 'en'), '6 Oct');
   }
 });

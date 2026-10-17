@@ -1,0 +1,1522 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 6.3952025525952365
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 5.277148499823833
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 4.727070788497085
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.483290614540635
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.730556408407113
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.625950244012044
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.227010918949397
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.153571862849626
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.928860959191558
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.898754131347594
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.24253476162335
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.575825817460511
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 430,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 6.877707018158548
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 4.9851430011475335
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 4.677506413069027
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.448331566580967
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.643482380641252
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.649470778366492
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.221159773985512
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.153571862849626
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.928860959191558
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.928860959191558
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 5.930082271814364
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 5.561916766093695
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 6.250794449219913
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.539570258623392
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.778208010678123
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.778208010678123
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.61002222973445
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 10.91209573600507
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.931884314184976
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.293762995823862
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.293762995823862
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.604326232179033
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.604326232179033
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 7.577806912156725
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 6.362774012222292
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 8.140859743598238
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.769704062041423
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.866038358769629
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.784299942218853
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.673127056989793
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 10.91209573600507
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.901777486341012
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.293762995823862
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.575825817460511
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 6.3952025525952365
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 5.277148499823833
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 4.727070788497085
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.483290614540635
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.643482380641252
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.625950244012044
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.198314597814825
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.153571862849626
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.928860959191558
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.898754131347594
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.293762995823862
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.575825817460511
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 430,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 6.877707018158548
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 4.9851430011475335
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 4.677506413069027
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.448331566580967
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.673127056989793
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.842008135739162
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.30586035946068
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.153571862849626
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.928860959191558
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.898754131347594
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 5.930082271814364
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 5.561916766093695
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 6.8421887782592385
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.539570258623392
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.778208010678123
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.778208010678123
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.736579261041687
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 10.91209573600507
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.247854357979309
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.242396291495172
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.886797164363837
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.293762995823862
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.595750500281246
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.24253476162335
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.581412211071949
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "readings": [
+      {
+        "selector": ".home-hero-copy h1",
+        "minimum": 7.577806912156725
+      },
+      {
+        "selector": ".hero-lead",
+        "minimum": 6.362774012222292
+      },
+      {
+        "selector": ".home-hero-text-link",
+        "minimum": 8.254001979905903
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.769704062041423
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.866038358769629
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 9.784299942218853
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-year-stats strong",
+        "minimum": 11.03287030632978
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 9.690861938847275
+      },
+      {
+        "selector": ".home-year-stats a",
+        "minimum": 10.91209573600507
+      },
+      {
+        "selector": ".home-year-stats small",
+        "minimum": 11.100533121752864
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race > time",
+        "minimum": 8.197579921523026
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race h3",
+        "minimum": 13.16167784255195
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.965188713242595
+      },
+      {
+        "selector": ".home-featured-race-copy p",
+        "minimum": 4.8568483625453975
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.26807938990877
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.274590472588088
+      },
+      {
+        "selector": "[data-top-events] h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": "[data-top-events] p",
+        "minimum": 4.592838139777859
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.223569567848214
+      },
+      {
+        "selector": ".home-update-panel h3",
+        "minimum": 10.249010611912
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-event-meta",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.584308812380118
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      },
+      {
+        "selector": ".home-update-panel .update-description",
+        "minimum": 4.572929216152341
+      }
+    ]
+  }
+]

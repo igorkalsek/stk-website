@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('stkAnalyticsOptOut', 'true'));
+});
+
 const api = 'https://stk-master-api.igor-kalsek.workers.dev';
 const race = (overrides = {}) => ({ datum: '2027-02-10', naziv_prireditve: 'Tek', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA', ...overrides });
 

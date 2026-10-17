@@ -1,0 +1,2378 @@
+[
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 390,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 390,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 358,
+        "height": 327.578125
+      },
+      "stats": {
+        "x": 16,
+        "y": 434.578125,
+        "width": 358,
+        "height": 233.25
+      },
+      "featured": {
+        "x": 16,
+        "y": 677.828125,
+        "width": 358,
+        "height": 220.953125
+      },
+      "interest": {
+        "x": 16,
+        "y": 2709.875,
+        "width": 358,
+        "height": 1031.96875
+      },
+      "updates": {
+        "x": 16,
+        "y": 3783.84375,
+        "width": 358,
+        "height": 667.265625
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 713.828125,
+      "width": 358,
+      "height": 56
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 713.828125,
+          "width": 358,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 724.84375,
+          "width": 140,
+          "height": 33.96875
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 774.828125,
+          "width": 358,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 785.84375,
+          "width": 140,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 835.828125,
+          "width": 358,
+          "height": 62.953125
+        },
+        "title": {
+          "x": 80,
+          "y": 841.828125,
+          "width": 140,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2918.046875,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 2937.765625,
+          "width": 246,
+          "height": 37.75
+        },
+        "save": {
+          "x": 127,
+          "y": 3022.25,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3072.25,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3101.40625,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3176.453125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3226.453125,
+          "width": 358,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3264.40625,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3348.25,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3398.25,
+          "width": 358,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3436.203125,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3520.046875,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3570.046875,
+          "width": 358,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3608,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3691.84375,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165359Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2F%0D%0A%20sabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165359Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fljubljanskimara%0D%0A%20ton.si%2F%5CnPrijava%3A%20https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165359Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fprijavim.se%2Fupl%0D%0A%20oads%2Frazpisi%2F6450_invitation.pdf%5CnPrijava%3A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fch%0D%0A%20eckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Posodobljeno 16. okt. 2026 · dogodek 17. okt. 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Podatki dogodka so bili posodobljeni.",
+      "Dodano 16. okt. 2026 · dogodek 12. jun. 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            Nov dogodek v koledarju."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 390,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 390,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 121,
+        "width": 358,
+        "height": 735.078125
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 32,
+      "y": 568.078125,
+      "width": 326,
+      "height": 48
+    },
+    "save": {
+      "x": 32,
+      "y": 626.078125,
+      "width": 326,
+      "height": 214
+    },
+    "links": [
+      {
+        "text": "Prijava",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 430,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 430,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 398,
+        "height": 328.625
+      },
+      "stats": {
+        "x": 16,
+        "y": 435.625,
+        "width": 398,
+        "height": 233.25
+      },
+      "featured": {
+        "x": 16,
+        "y": 678.875,
+        "width": 398,
+        "height": 220.953125
+      },
+      "interest": {
+        "x": 16,
+        "y": 2657.453125,
+        "width": 398,
+        "height": 1031.96875
+      },
+      "updates": {
+        "x": 16,
+        "y": 3731.421875,
+        "width": 398,
+        "height": 610.65625
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 714.875,
+      "width": 398,
+      "height": 56
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 714.875,
+          "width": 398,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 734.375,
+          "width": 180,
+          "height": 16.984375
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 775.875,
+          "width": 398,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 786.890625,
+          "width": 180,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 836.875,
+          "width": 398,
+          "height": 62.953125
+        },
+        "title": {
+          "x": 80,
+          "y": 842.875,
+          "width": 180,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2865.625,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 2885.34375,
+          "width": 286,
+          "height": 37.75
+        },
+        "save": {
+          "x": 127,
+          "y": 2969.828125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3019.828125,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3048.984375,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3124.03125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3174.03125,
+          "width": 398,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3211.984375,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3295.828125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3345.828125,
+          "width": 398,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3383.78125,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3467.625,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3517.625,
+          "width": 398,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3555.578125,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3639.421875,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165401Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2F%0D%0A%20sabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165401Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fljubljanskimara%0D%0A%20ton.si%2F%5CnPrijava%3A%20https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165401Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fprijavim.se%2Fupl%0D%0A%20oads%2Frazpisi%2F6450_invitation.pdf%5CnPrijava%3A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fch%0D%0A%20eckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Posodobljeno 16. okt. 2026 · dogodek 17. okt. 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Podatki dogodka so bili posodobljeni.",
+      "Dodano 16. okt. 2026 · dogodek 12. jun. 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            Nov dogodek v koledarju."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 430,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 430,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 121,
+        "width": 398,
+        "height": 717.078125
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 32,
+      "y": 568.078125,
+      "width": 366,
+      "height": 48
+    },
+    "save": {
+      "x": 32,
+      "y": 626.078125,
+      "width": 366,
+      "height": 196
+    },
+    "links": [
+      {
+        "text": "Prijava",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 768,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 768,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 736,
+        "height": 324.078125
+      },
+      "stats": {
+        "x": 16,
+        "y": 431.078125,
+        "width": 736,
+        "height": 129.375
+      },
+      "featured": {
+        "x": 16,
+        "y": 570.453125,
+        "width": 736,
+        "height": 208.15625
+      },
+      "interest": {
+        "x": 16,
+        "y": 1881.890625,
+        "width": 736,
+        "height": 604.75
+      },
+      "updates": {
+        "x": 16,
+        "y": 2535.03125,
+        "width": 736,
+        "height": 407.375
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 611.453125,
+      "width": 240,
+      "height": 113.171875
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 611.453125,
+          "width": 240,
+          "height": 113.171875
+        },
+        "title": {
+          "x": 91,
+          "y": 620.453125,
+          "width": 156,
+          "height": 33.96875
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 264,
+          "y": 611.453125,
+          "width": 240,
+          "height": 150.171875
+        },
+        "title": {
+          "x": 339,
+          "y": 620.453125,
+          "width": 156,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 512,
+          "y": 611.453125,
+          "width": 240,
+          "height": 167.15625
+        },
+        "title": {
+          "x": 587,
+          "y": 620.453125,
+          "width": 156,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2083.390625,
+          "width": 368,
+          "height": 117.640625
+        },
+        "title": {
+          "x": 149,
+          "y": 2095.390625,
+          "width": 186,
+          "height": 56.625
+        },
+        "save": {
+          "x": 345,
+          "y": 2124.203125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 384,
+          "y": 2083.390625,
+          "width": 368,
+          "height": 117.640625
+        },
+        "title": {
+          "x": 517,
+          "y": 2112.546875,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 713,
+          "y": 2122.484375,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 2201.03125,
+          "width": 368,
+          "height": 131.796875
+        },
+        "title": {
+          "x": 149,
+          "y": 2238.984375,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 345,
+          "y": 2248.921875,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 384,
+          "y": 2201.03125,
+          "width": 368,
+          "height": 131.796875
+        },
+        "title": {
+          "x": 517,
+          "y": 2230.1875,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 713,
+          "y": 2240.125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 2332.828125,
+          "width": 368,
+          "height": 153.8125
+        },
+        "title": {
+          "x": 149,
+          "y": 2361.34375,
+          "width": 186,
+          "height": 37.75
+        },
+        "save": {
+          "x": 345,
+          "y": 2391.734375,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165402Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2F%0D%0A%20sabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165402Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fljubljanskimara%0D%0A%20ton.si%2F%5CnPrijava%3A%20https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165402Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fprijavim.se%2Fupl%0D%0A%20oads%2Frazpisi%2F6450_invitation.pdf%5CnPrijava%3A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fch%0D%0A%20eckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Posodobljeno 16. okt. 2026 · dogodek 17. okt. 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Podatki dogodka so bili posodobljeni.",
+      "Dodano 16. okt. 2026 · dogodek 12. jun. 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            Nov dogodek v koledarju."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 768,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 768,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 145,
+        "width": 736,
+        "height": 906.46875
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 46.71875,
+      "y": 730,
+      "width": 674.5625,
+      "height": 48
+    },
+    "save": {
+      "x": 46.71875,
+      "y": 791.59375,
+      "width": 674.5625,
+      "height": 229.15625
+    },
+    "links": [
+      {
+        "text": "Prijava",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 1440,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 1440,
+    "sections": {
+      "hero": {
+        "x": 160,
+        "y": 99,
+        "width": 1120,
+        "height": 361.375
+      },
+      "stats": {
+        "x": 160,
+        "y": 470.375,
+        "width": 1120,
+        "height": 103.875
+      },
+      "featured": {
+        "x": 160,
+        "y": 584.25,
+        "width": 1120,
+        "height": 158.171875
+      },
+      "interest": {
+        "x": 160,
+        "y": 1537.703125,
+        "width": 1120,
+        "height": 534.578125
+      },
+      "updates": {
+        "x": 160,
+        "y": 2128.28125,
+        "width": 1120,
+        "height": 374.09375
+      }
+    },
+    "firstFeatured": {
+      "x": 160,
+      "y": 629.25,
+      "width": 368,
+      "height": 96.1875
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 160,
+          "y": 629.25,
+          "width": 368,
+          "height": 96.1875
+        },
+        "title": {
+          "x": 235,
+          "y": 638.25,
+          "width": 284,
+          "height": 16.984375
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 536,
+          "y": 629.25,
+          "width": 368,
+          "height": 96.1875
+        },
+        "title": {
+          "x": 611,
+          "y": 638.25,
+          "width": 284,
+          "height": 16.984375
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 912,
+          "y": 629.25,
+          "width": 368,
+          "height": 113.171875
+        },
+        "title": {
+          "x": 987,
+          "y": 638.25,
+          "width": 284,
+          "height": 33.96875
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 160,
+          "y": 1694.484375,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 293,
+          "y": 1723.640625,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 1733.578125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 720,
+          "y": 1694.484375,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 853,
+          "y": 1723.640625,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 1241,
+          "y": 1733.578125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 160,
+          "y": 1808.6875,
+          "width": 560,
+          "height": 131.796875
+        },
+        "title": {
+          "x": 293,
+          "y": 1846.640625,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 1856.578125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 720,
+          "y": 1808.6875,
+          "width": 560,
+          "height": 131.796875
+        },
+        "title": {
+          "x": 853,
+          "y": 1837.84375,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 1241,
+          "y": 1847.78125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 160,
+          "y": 1940.484375,
+          "width": 560,
+          "height": 131.796875
+        },
+        "title": {
+          "x": 293,
+          "y": 1978.4375,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 1988.375,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165404Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2F%0D%0A%20sabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165404Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fljubljanskimara%0D%0A%20ton.si%2F%5CnPrijava%3A%20https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0APrijava%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Prijava",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FSL%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165404Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3ADodano%20iz%20Slovenskega%20Teka%C5%A1kega%20Koledarja.%20Pred%20prijavo%20preveri%0D%0A%20te%20uradni%20razpis%20ali%20stran%20organizatorja.%5CnRazpis%3A%20https%3A%2F%2Fprijavim.se%2Fupl%0D%0A%20oads%2Frazpisi%2F6450_invitation.pdf%5CnPrijava%3A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fch%0D%0A%20eckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Dodano+iz+Slovenskega+Teka%C5%A1kega+Koledarja.+Pred+prijavo+preverite+uradni+razpis+ali+stran+organizatorja.%0ARazpis%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0APrijava%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Posodobljeno 16. okt. 2026 · dogodek 17. okt. 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Podatki dogodka so bili posodobljeni.",
+      "Posodobljeno 16. okt. 2026 · dogodek 5. dec. 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Podatki dogodka so bili posodobljeni.",
+      "Dodano 16. okt. 2026 · dogodek 12. jun. 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            Nov dogodek v koledarju."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "sl",
+    "width": 1440,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 1440,
+    "sections": {
+      "profile": {
+        "x": 160,
+        "y": 147,
+        "width": 1120,
+        "height": 705
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 200,
+      "y": 579.25,
+      "width": 1040,
+      "height": 48
+    },
+    "save": {
+      "x": 200,
+      "y": 640.84375,
+      "width": 1040,
+      "height": 171.15625
+    },
+    "links": [
+      {
+        "text": "Prijava",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Razpis",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 390,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 390,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 358,
+        "height": 362.90625
+      },
+      "stats": {
+        "x": 16,
+        "y": 469.90625,
+        "width": 358,
+        "height": 233.25
+      },
+      "featured": {
+        "x": 16,
+        "y": 713.15625,
+        "width": 358,
+        "height": 220.953125
+      },
+      "interest": {
+        "x": 16,
+        "y": 2682.015625,
+        "width": 358,
+        "height": 1028.78125
+      },
+      "updates": {
+        "x": 16,
+        "y": 3752.796875,
+        "width": 358,
+        "height": 609.46875
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 749.15625,
+      "width": 358,
+      "height": 56
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 749.15625,
+          "width": 358,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 760.171875,
+          "width": 140,
+          "height": 33.96875
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 810.15625,
+          "width": 358,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 821.171875,
+          "width": 140,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 871.15625,
+          "width": 358,
+          "height": 62.953125
+        },
+        "title": {
+          "x": 80,
+          "y": 877.15625,
+          "width": 140,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2922.1875,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 2941.90625,
+          "width": 246,
+          "height": 37.75
+        },
+        "save": {
+          "x": 127,
+          "y": 3026.390625,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3076.390625,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3105.546875,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3180.59375,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3230.59375,
+          "width": 358,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3268.546875,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3352.390625,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3402.390625,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3431.546875,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3506.59375,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3556.59375,
+          "width": 358,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3585.75,
+          "width": 246,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3660.796875,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165406Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Registration",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165406Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fljubljanskimaraton.si%2F%5CnRegistration%3A%20https%3A%2F%2Fregistration.ljub%0D%0A%20ljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Registration",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165406Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%5CnRegistration%3A%20%0D%0A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-v%0D%0A%20inski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Updated 16 Oct 2026 · event 17 Oct 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Calendar details for this race were updated.",
+      "Added 16 Oct 2026 · event 12 Jun 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            New event in the calendar."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 390,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 390,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 121,
+        "width": 358,
+        "height": 717.078125
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 32,
+      "y": 568.078125,
+      "width": 326,
+      "height": 48
+    },
+    "save": {
+      "x": 32,
+      "y": 626.078125,
+      "width": 326,
+      "height": 196
+    },
+    "links": [
+      {
+        "text": "Registration",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 430,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 430,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 398,
+        "height": 328.625
+      },
+      "stats": {
+        "x": 16,
+        "y": 435.625,
+        "width": 398,
+        "height": 209.75
+      },
+      "featured": {
+        "x": 16,
+        "y": 655.375,
+        "width": 398,
+        "height": 220.953125
+      },
+      "interest": {
+        "x": 16,
+        "y": 2597.5,
+        "width": 398,
+        "height": 996.78125
+      },
+      "updates": {
+        "x": 16,
+        "y": 3636.28125,
+        "width": 398,
+        "height": 610.65625
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 691.375,
+      "width": 398,
+      "height": 56
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 691.375,
+          "width": 398,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 710.875,
+          "width": 180,
+          "height": 16.984375
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 752.375,
+          "width": 398,
+          "height": 56
+        },
+        "title": {
+          "x": 80,
+          "y": 763.390625,
+          "width": 180,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 813.375,
+          "width": 398,
+          "height": 62.953125
+        },
+        "title": {
+          "x": 80,
+          "y": 819.375,
+          "width": 180,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2805.671875,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 2825.390625,
+          "width": 286,
+          "height": 37.75
+        },
+        "save": {
+          "x": 127,
+          "y": 2909.875,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 2959.875,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 2989.03125,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3064.078125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3114.078125,
+          "width": 398,
+          "height": 171.796875
+        },
+        "title": {
+          "x": 127,
+          "y": 3152.03125,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3235.875,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3285.875,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3315.03125,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3390.078125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 3440.078125,
+          "width": 398,
+          "height": 154.203125
+        },
+        "title": {
+          "x": 127,
+          "y": 3469.234375,
+          "width": 286,
+          "height": 18.875
+        },
+        "save": {
+          "x": 127,
+          "y": 3544.28125,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165408Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Registration",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165408Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fljubljanskimaraton.si%2F%5CnRegistration%3A%20https%3A%2F%2Fregistration.ljub%0D%0A%20ljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Registration",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165408Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%5CnRegistration%3A%20%0D%0A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-v%0D%0A%20inski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Updated 16 Oct 2026 · event 17 Oct 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Calendar details for this race were updated.",
+      "Added 16 Oct 2026 · event 12 Jun 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            New event in the calendar."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 430,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 430,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 121,
+        "width": 398,
+        "height": 717.078125
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 32,
+      "y": 568.078125,
+      "width": 366,
+      "height": 48
+    },
+    "save": {
+      "x": 32,
+      "y": 626.078125,
+      "width": 366,
+      "height": 196
+    },
+    "links": [
+      {
+        "text": "Registration",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 768,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 768,
+    "sections": {
+      "hero": {
+        "x": 16,
+        "y": 97,
+        "width": 736,
+        "height": 324.078125
+      },
+      "stats": {
+        "x": 16,
+        "y": 431.078125,
+        "width": 736,
+        "height": 129.375
+      },
+      "featured": {
+        "x": 16,
+        "y": 570.453125,
+        "width": 736,
+        "height": 208.15625
+      },
+      "interest": {
+        "x": 16,
+        "y": 1935.15625,
+        "width": 736,
+        "height": 569.5625
+      },
+      "updates": {
+        "x": 16,
+        "y": 2553.109375,
+        "width": 736,
+        "height": 368.84375
+      }
+    },
+    "firstFeatured": {
+      "x": 16,
+      "y": 611.453125,
+      "width": 240,
+      "height": 150.171875
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 16,
+          "y": 611.453125,
+          "width": 240,
+          "height": 150.171875
+        },
+        "title": {
+          "x": 91,
+          "y": 620.453125,
+          "width": 156,
+          "height": 33.96875
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 264,
+          "y": 611.453125,
+          "width": 240,
+          "height": 150.171875
+        },
+        "title": {
+          "x": 339,
+          "y": 620.453125,
+          "width": 156,
+          "height": 33.96875
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 512,
+          "y": 611.453125,
+          "width": 240,
+          "height": 167.15625
+        },
+        "title": {
+          "x": 587,
+          "y": 620.453125,
+          "width": 156,
+          "height": 50.953125
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 16,
+          "y": 2136.65625,
+          "width": 368,
+          "height": 117.640625
+        },
+        "title": {
+          "x": 149,
+          "y": 2148.65625,
+          "width": 186,
+          "height": 56.625
+        },
+        "save": {
+          "x": 345,
+          "y": 2177.46875,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 384,
+          "y": 2136.65625,
+          "width": 368,
+          "height": 117.640625
+        },
+        "title": {
+          "x": 517,
+          "y": 2165.8125,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 713,
+          "y": 2175.75,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 2254.296875,
+          "width": 368,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 149,
+          "y": 2283.453125,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 345,
+          "y": 2293.390625,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 384,
+          "y": 2254.296875,
+          "width": 368,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 517,
+          "y": 2283.453125,
+          "width": 186,
+          "height": 18.875
+        },
+        "save": {
+          "x": 713,
+          "y": 2293.390625,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 16,
+          "y": 2368.5,
+          "width": 368,
+          "height": 136.21875
+        },
+        "title": {
+          "x": 149,
+          "y": 2388.21875,
+          "width": 186,
+          "height": 37.75
+        },
+        "save": {
+          "x": 345,
+          "y": 2418.609375,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165410Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Registration",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165410Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fljubljanskimaraton.si%2F%5CnRegistration%3A%20https%3A%2F%2Fregistration.ljub%0D%0A%20ljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Registration",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165410Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%5CnRegistration%3A%20%0D%0A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-v%0D%0A%20inski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Updated 16 Oct 2026 · event 17 Oct 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Calendar details for this race were updated.",
+      "Added 16 Oct 2026 · event 12 Jun 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            New event in the calendar."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 768,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 768,
+    "sections": {
+      "profile": {
+        "x": 16,
+        "y": 145,
+        "width": 736,
+        "height": 906.46875
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 46.71875,
+      "y": 730,
+      "width": 674.5625,
+      "height": 48
+    },
+    "save": {
+      "x": 46.71875,
+      "y": 791.59375,
+      "width": 674.5625,
+      "height": 229.15625
+    },
+    "links": [
+      {
+        "text": "Registration",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 1440,
+    "kind": "home",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 1440,
+    "sections": {
+      "hero": {
+        "x": 160,
+        "y": 99,
+        "width": 1120,
+        "height": 361.375
+      },
+      "stats": {
+        "x": 160,
+        "y": 470.375,
+        "width": 1120,
+        "height": 103.875
+      },
+      "featured": {
+        "x": 160,
+        "y": 584.25,
+        "width": 1120,
+        "height": 158.171875
+      },
+      "interest": {
+        "x": 160,
+        "y": 1617.703125,
+        "width": 1120,
+        "height": 499.390625
+      },
+      "updates": {
+        "x": 160,
+        "y": 2173.09375,
+        "width": 1120,
+        "height": 374.09375
+      }
+    },
+    "firstFeatured": {
+      "x": 160,
+      "y": 629.25,
+      "width": 368,
+      "height": 96.1875
+    },
+    "featured": [
+      {
+        "card": {
+          "x": 160,
+          "y": 629.25,
+          "width": 368,
+          "height": 96.1875
+        },
+        "title": {
+          "x": 235,
+          "y": 638.25,
+          "width": 284,
+          "height": 16.984375
+        },
+        "text": "4. Sabotin Trail Evening"
+      },
+      {
+        "card": {
+          "x": 536,
+          "y": 629.25,
+          "width": 368,
+          "height": 96.1875
+        },
+        "title": {
+          "x": 611,
+          "y": 638.25,
+          "width": 284,
+          "height": 16.984375
+        },
+        "text": "30. NLB Ljubljanski maraton"
+      },
+      {
+        "card": {
+          "x": 912,
+          "y": 629.25,
+          "width": 368,
+          "height": 113.171875
+        },
+        "title": {
+          "x": 987,
+          "y": 638.25,
+          "width": 284,
+          "height": 33.96875
+        },
+        "text": "VinoTek 2026 - prvi čezmejni vinski tek v Sloveniji"
+      }
+    ],
+    "interest": [
+      {
+        "card": {
+          "x": 160,
+          "y": 1774.484375,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 293,
+          "y": 1803.640625,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 1813.578125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 720,
+          "y": 1774.484375,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 853,
+          "y": 1803.640625,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 1241,
+          "y": 1813.578125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 160,
+          "y": 1888.6875,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 293,
+          "y": 1917.84375,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 1927.78125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 720,
+          "y": 1888.6875,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 853,
+          "y": 1917.84375,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 1241,
+          "y": 1927.78125,
+          "width": 38,
+          "height": 38
+        }
+      },
+      {
+        "card": {
+          "x": 160,
+          "y": 2002.890625,
+          "width": 560,
+          "height": 114.203125
+        },
+        "title": {
+          "x": 293,
+          "y": 2032.046875,
+          "width": 378,
+          "height": 18.875
+        },
+        "save": {
+          "x": 681,
+          "y": 2041.984375,
+          "width": 38,
+          "height": 38
+        }
+      }
+    ],
+    "official": null,
+    "save": null,
+    "links": [
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=4.+Sabotin+Trail+Evening&dates=20261017%2F20261018&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-17-4-sabotin-trail-evening%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165411Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261017%0D%0ADTEND%3BVALUE%3DDATE%3A20261018%0D%0ASUMMARY%3A4.%20Sabotin%20Trail%20Evening%0D%0ALOCATION%3A%C5%A0maver%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=4.+Sabotin+Trail+Evening&startdt=2026-10-17&enddt=2026-10-18&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fgo4trail.si%2Fsl%2Fsabotin-trail-evening-17102026&location=%C5%A0maver"
+      },
+      {
+        "text": "Registration",
+        "href": "https://registration.ljubljanskimaraton.si/"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=30.+NLB+Ljubljanski+maraton&dates=20261018%2F20261019&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-18-30-nlb-ljubljanski-maraton%40slovenski-tekaski-koledar%0D%0ADTSTAMP%3A20261017T165411Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261018%0D%0ADTEND%3BVALUE%3DDATE%3A20261019%0D%0ASUMMARY%3A30.%20NLB%20Ljubljanski%20maraton%0D%0ALOCATION%3ALjubljana%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fljubljanskimaraton.si%2F%5CnRegistration%3A%20https%3A%2F%2Fregistration.ljub%0D%0A%20ljanskimaraton.si%2F%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=30.+NLB+Ljubljanski+maraton&startdt=2026-10-18&enddt=2026-10-19&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fljubljanskimaraton.si%2F%0ARegistration%3A+https%3A%2F%2Fregistration.ljubljanskimaraton.si%2F&location=Ljubljana"
+      },
+      {
+        "text": "Registration",
+        "href": "https://prijavim.se/calendar/checkings/6450/vinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji"
+      },
+      {
+        "text": "Google",
+        "href": "https://calendar.google.com/calendar/render?action=TEMPLATE&text=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&dates=20261031%2F20261101&details=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      },
+      {
+        "text": "Apple / iCal",
+        "href": "data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0D%0AVERSION%3A2.0%0D%0APRODID%3A-%2F%2FSlovenski%20Tekaski%20Koledar%2F%2FSTK%20Website%2F%2FEN%0D%0ACALSCALE%3AGREGORIAN%0D%0AMETHOD%3APUBLISH%0D%0ABEGIN%3AVEVENT%0D%0AUID%3A2026-10-31-vinotek-2026-prvi-cezmejni-vinski-tek-v-sloveniji%40slovenski-%0D%0A%20tekaski-koledar%0D%0ADTSTAMP%3A20261017T165411Z%0D%0ADTSTART%3BVALUE%3DDATE%3A20261031%0D%0ADTEND%3BVALUE%3DDATE%3A20261101%0D%0ASUMMARY%3AVinoTek%202026%20-%20prvi%20%C4%8Dezmejni%20vinski%20tek%20v%20Sloveniji%0D%0ALOCATION%3ASve%C4%8Dina%0D%0ADESCRIPTION%3AAdded%20from%20Slovenski%20Teka%C5%A1ki%20Koledar.%20Before%20registering%5C%2C%20chec%0D%0A%20k%20the%20official%20race%20announcement%20or%20the%20organizer%E2%80%99s%20website.%5CnOfficial%20inf%0D%0A%20o%3A%20https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%5CnRegistration%3A%20%0D%0A%20https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-v%0D%0A%20inski-tek-v-sloveniji%0D%0AEND%3AVEVENT%0D%0AEND%3AVCALENDAR%0D%0A"
+      },
+      {
+        "text": "Outlook",
+        "href": "https://outlook.live.com/calendar/0/action/compose?rru=addevent&subject=VinoTek+2026+-+prvi+%C4%8Dezmejni+vinski+tek+v+Sloveniji&startdt=2026-10-31&enddt=2026-11-01&allday=true&body=Added+from+Slovenski+Teka%C5%A1ki+Koledar.+Before+registering%2C+check+the+official+race+announcement+or+the+organizer%E2%80%99s+website.%0AOfficial+info%3A+https%3A%2F%2Fprijavim.se%2Fuploads%2Frazpisi%2F6450_invitation.pdf%0ARegistration%3A+https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6450%2Fvinotek-2026---prvi-cezmejni-vinski-tek-v-sloveniji&location=Sve%C4%8Dina"
+      }
+    ],
+    "updates": [
+      "Updated 16 Oct 2026 · event 17 Oct 2026\n            4. Sabotin Trail Evening\n            Šmaver · Goriška\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            23. Miklavžev tek 2026\n            Snovik · Osrednjeslovenska\n            Calendar details for this race were updated.",
+      "Updated 16 Oct 2026 · event 5 Dec 2026\n            25. Štanjelski tek\n            Štanjel · Obalno-kraška\n            Calendar details for this race were updated.",
+      "Added 16 Oct 2026 · event 12 Jun 2027\n            Trail Maribor 2027\n            Maribor · Podravska\n            New event in the calendar."
+    ]
+  },
+  {
+    "phase": "before",
+    "lang": "en",
+    "width": 1440,
+    "kind": "profile",
+    "status": 200,
+    "errors": [],
+    "scrollWidth": 1440,
+    "sections": {
+      "profile": {
+        "x": 160,
+        "y": 147,
+        "width": 1120,
+        "height": 705
+      }
+    },
+    "firstFeatured": null,
+    "featured": [],
+    "interest": [],
+    "official": {
+      "x": 200,
+      "y": 579.25,
+      "width": 1040,
+      "height": 48
+    },
+    "save": {
+      "x": 200,
+      "y": 640.84375,
+      "width": 1040,
+      "height": 171.15625
+    },
+    "links": [
+      {
+        "text": "Registration",
+        "href": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/"
+      },
+      {
+        "text": "Official info",
+        "href": "https://go4trail.si/sl"
+      }
+    ],
+    "updates": []
+  }
+]

@@ -1,3 +1,5 @@
+import { formatRaceDateBadge } from './utils-date.js';
+
 export const formatSloveneVoteCount = (count: number) => {
   const formattedCount = new Intl.NumberFormat('sl-SI').format(count);
   const absoluteCount = Math.abs(count);
@@ -11,20 +13,7 @@ export const formatSloveneVoteCount = (count: number) => {
   return `${formattedCount} glasov`;
 };
 
-export const formatSloveneDateBadge = (value: string) => {
-  if (!value) return '';
-
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return value;
-
-  const day = new Intl.DateTimeFormat('sl-SI', { weekday: 'short' })
-    .format(date)
-    .replace('.', '')
-    .toLocaleUpperCase('sl-SI');
-  const compactDate = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short' }).format(date);
-
-  return `${day} · ${compactDate}`;
-};
+export const formatSloveneDateBadge = (value: string, includeYear = false) => formatRaceDateBadge(value, 'sl', includeYear);
 
 const formatSloveneDistancePart = (value: string) => {
   const trimmed = value.trim();

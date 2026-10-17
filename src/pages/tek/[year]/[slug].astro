@@ -104,12 +104,11 @@ const savedRaceEventId = event ? getStableEventId(event) : '';
 const heroDateParts = event ? formatDateParts(event.date) : null;
 const heroFacts: HeroFact[] = event ? [
   ...(event.startTime ? [{ label: 'Ura', value: event.startTime }] : []),
-  ...(event.place ? [{ label: 'Kraj', value: event.place }] : []),
+  ...(event.place || event.region ? [{ label: event.place ? 'Kraj / regija' : 'Regija', value: [event.place, event.region !== event.place ? event.region : ''].filter(Boolean).join(' · ') }] : []),
   ...(event.distances ? [{ label: 'Razdalje', value: formatSloveneDistances(event.distances) }] : []),
   ...(event.surface ? [{ label: 'Podlaga', value: formatDetailSurface(event.surface, 'sl') }] : [])
 ] : [];
 const heroBadges = event ? [
-  event.region ? { label: 'Regija', value: event.region } : null,
   event.cup ? { label: 'Pokal ali serija', value: event.cup } : null,
   event.familyFriendly ? { label: 'Družine', value: 'Družinam prijazno' } : null
 ].filter((item): item is { label: string; value: string; featured?: boolean } => Boolean(item)) : [];
@@ -186,9 +185,6 @@ const jsonLd = event ? {
               )}
               <div class="event-detail-hero-copy">
                 <h1 id="event-detail-title">{event.title}</h1>
-                <p class="event-detail-date-line">
-                  <time datetime={event.date}>{formatDate(event.date)}</time>{event.place && <> · {event.place}</>}{event.region && <> · {event.region}</>}
-                </p>
                 <dl class="event-detail-hero-facts" aria-label="Najpomembnejši podatki">
                   {heroFacts.map((fact) => (
                     <div class="event-detail-hero-fact">

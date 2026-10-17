@@ -7,6 +7,9 @@ on:
       - 'tests/browser/my-races-statuses.spec.ts'
       - 'tests/browser/registration-deadlines.spec.ts'
       - 'tests/browser/race-profile-ux.spec.ts'
+      - 'tests/browser/home.spec.ts'
+      - 'tests/browser/home-stats.spec.ts'
+      - 'tests/browser/race-detail-contrast.spec.ts'
       - 'playwright.config.ts'
       - 'package.json'
       - 'package-lock.json'
@@ -26,6 +29,9 @@ jobs:
       - run: npm run test:browser:my-races
       - run: npx playwright test tests/browser/registration-deadlines.spec.ts --project=chromium
       - run: npm run test:browser:race-profiles
+      - run: npm run test:browser:home
+      - run: npx playwright test tests/browser/home-stats.spec.ts --project=chromium
+      - run: npx playwright test tests/browser/race-detail-contrast.spec.ts --project=chromium
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
