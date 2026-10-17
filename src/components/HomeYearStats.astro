@@ -1,0 +1,28 @@
+---
+interface Props { lang: 'sl' | 'en' }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const missing = en ? 'Not available' : 'Ni podatka';
+const loading = en ? 'Loading' : 'Nalaganje';
+const finder = en ? '/en/find-races/' : '/iskalnik-tekov/';
+---
+<article class="home-year-stats home-year-stats-primary" aria-labelledby="home-stats-2026">
+  <h2 id="home-stats-2026" class="home-stats-label">STK 2026</h2>
+  <p>
+    <span class="home-stats-primary"><strong class="stat-loading" data-stat="confirmed_public_events_total" aria-label={loading}></strong> {en ? 'confirmed races' : 'potrjenih tekov'}</span>
+    <span><strong class="stat-loading" data-stat="family_friendly_total" aria-label={loading}></strong> {en ? 'family-friendly' : 'družinam prijaznih'}</span>
+    <span><strong class="stat-loading" data-stat="group_runs_total" aria-label={loading}></strong> {en ? 'group runs' : 'skupinskih tekov'}</span>
+  </p>
+  <a href={`${finder}?year=2026`}>{en ? 'Race calendar 2026' : 'Koledar tekov 2026'}</a>
+</article>
+<article class="home-year-stats" aria-labelledby="home-stats-2027" data-home-year-stats="2027" data-missing={missing}>
+  <header>
+    <h2 id="home-stats-2027" class="home-stats-label">STK 2027</h2>
+    <small>{en ? 'Calendar in progress' : 'Koledar se dopolnjuje'}</small>
+  </header>
+  <p>
+    <span><strong data-year-stat="confirmed">{missing}</strong> {en ? 'confirmed races' : 'potrjenih tekov'}</span>
+    <span><strong data-year-stat="family">{missing}</strong> {en ? 'family-friendly' : 'družinam prijaznih'}</span>
+  </p>
+  <a href={`${finder}?year=2027`}>{en ? 'Explore races in 2027' : 'Raziščite teke 2027'}</a>
+</article>

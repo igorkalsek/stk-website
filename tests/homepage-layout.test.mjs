@@ -7,6 +7,8 @@ const pages = {
   en: readFileSync(new URL('../src/pages/en/index.astro', import.meta.url), 'utf8')
 };
 
+const yearStats = readFileSync(new URL('../src/components/HomeYearStats.astro', import.meta.url), 'utf8');
+
 const requiredSelectors = [
   'data-stat',
   'data-registration-deadlines-section',
@@ -70,8 +72,9 @@ test('homepages preserve race sections and follow the compact editorial order', 
 });
 
 test('homepages restore a compact stats strip and featured discovery before current races', () => {
-  assert.match(pages.sl, /home-stats-strip[\s\S]*confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
-  assert.match(pages.en, /home-stats-strip[\s\S]*confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
+  assert.match(pages.sl, /home-stats-strip[\s\S]*<HomeYearStats lang="sl"/);
+  assert.match(pages.en, /home-stats-strip[\s\S]*<HomeYearStats lang="en"/);
+  assert.match(yearStats, /confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
   assert.match(pages.sl, /<h2 id="featured-upcoming-title">Izpostavljeno v naslednjih dneh<\/h2>/);
   assert.match(pages.en, /<h2 id="featured-upcoming-title">Featured in the coming days<\/h2>/);
   for (const source of Object.values(pages)) {

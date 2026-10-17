@@ -1,0 +1,322 @@
+[
+  {
+    "lang": "sl",
+    "width": 320,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 494.03125,
+        "width": 288,
+        "height": 123.375,
+        "right": 304,
+        "bottom": 617.40625
+      },
+      {
+        "x": 16,
+        "y": 627.40625,
+        "width": 288,
+        "height": 99.875,
+        "right": 304,
+        "bottom": 727.28125
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 737.28125,
+      "width": 288,
+      "height": 302.796875,
+      "right": 304,
+      "bottom": 1040.078125
+    },
+    "problems": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 434.578125,
+        "width": 358,
+        "height": 123.375,
+        "right": 374,
+        "bottom": 557.953125
+      },
+      {
+        "x": 16,
+        "y": 567.953125,
+        "width": 358,
+        "height": 99.875,
+        "right": 374,
+        "bottom": 667.828125
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 677.828125,
+      "width": 358,
+      "height": 220.953125,
+      "right": 374,
+      "bottom": 898.78125
+    },
+    "problems": []
+  },
+  {
+    "lang": "sl",
+    "width": 641,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 456.296875,
+        "width": 326.71875,
+        "height": 129.375,
+        "right": 342.71875,
+        "bottom": 585.671875
+      },
+      {
+        "x": 352.71875,
+        "y": 456.296875,
+        "width": 272.28125,
+        "height": 129.375,
+        "right": 625,
+        "bottom": 585.671875
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 595.671875,
+      "width": 609,
+      "height": 240.125,
+      "right": 625,
+      "bottom": 835.796875
+    },
+    "problems": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 431.078125,
+        "width": 396,
+        "height": 129.375,
+        "right": 412,
+        "bottom": 560.453125
+      },
+      {
+        "x": 422,
+        "y": 431.078125,
+        "width": 330,
+        "height": 129.375,
+        "right": 752,
+        "bottom": 560.453125
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 570.453125,
+      "width": 736,
+      "height": 208.15625,
+      "right": 752,
+      "bottom": 778.609375
+    },
+    "problems": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 160,
+        "y": 470.375,
+        "width": 605.453125,
+        "height": 103.875,
+        "right": 765.453125,
+        "bottom": 574.25
+      },
+      {
+        "x": 775.453125,
+        "y": 470.375,
+        "width": 504.53125,
+        "height": 103.875,
+        "right": 1279.984375,
+        "bottom": 574.25
+      }
+    ],
+    "next": {
+      "x": 160,
+      "y": 584.25,
+      "width": 1120,
+      "height": 158.171875,
+      "right": 1280,
+      "bottom": 742.421875
+    },
+    "problems": []
+  },
+  {
+    "lang": "en",
+    "width": 320,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 494.03125,
+        "width": 288,
+        "height": 123.375,
+        "right": 304,
+        "bottom": 617.40625
+      },
+      {
+        "x": 16,
+        "y": 627.40625,
+        "width": 288,
+        "height": 99.875,
+        "right": 304,
+        "bottom": 727.28125
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 737.28125,
+      "width": 288,
+      "height": 302.796875,
+      "right": 304,
+      "bottom": 1040.078125
+    },
+    "problems": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 469.90625,
+        "width": 358,
+        "height": 123.375,
+        "right": 374,
+        "bottom": 593.28125
+      },
+      {
+        "x": 16,
+        "y": 603.28125,
+        "width": 358,
+        "height": 99.875,
+        "right": 374,
+        "bottom": 703.15625
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 713.15625,
+      "width": 358,
+      "height": 220.953125,
+      "right": 374,
+      "bottom": 934.109375
+    },
+    "problems": []
+  },
+  {
+    "lang": "en",
+    "width": 641,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 400.296875,
+        "width": 326.71875,
+        "height": 129.375,
+        "right": 342.71875,
+        "bottom": 529.671875
+      },
+      {
+        "x": 352.71875,
+        "y": 400.296875,
+        "width": 272.28125,
+        "height": 129.375,
+        "right": 625,
+        "bottom": 529.671875
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 539.671875,
+      "width": 609,
+      "height": 240.125,
+      "right": 625,
+      "bottom": 779.796875
+    },
+    "problems": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 16,
+        "y": 431.078125,
+        "width": 396,
+        "height": 129.375,
+        "right": 412,
+        "bottom": 560.453125
+      },
+      {
+        "x": 422,
+        "y": 431.078125,
+        "width": 330,
+        "height": 129.375,
+        "right": 752,
+        "bottom": 560.453125
+      }
+    ],
+    "next": {
+      "x": 16,
+      "y": 570.453125,
+      "width": 736,
+      "height": 208.15625,
+      "right": 752,
+      "bottom": 778.609375
+    },
+    "problems": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "overflow": false,
+    "cards": [
+      {
+        "x": 160,
+        "y": 470.375,
+        "width": 605.453125,
+        "height": 103.875,
+        "right": 765.453125,
+        "bottom": 574.25
+      },
+      {
+        "x": 775.453125,
+        "y": 470.375,
+        "width": 504.53125,
+        "height": 103.875,
+        "right": 1279.984375,
+        "bottom": 574.25
+      }
+    ],
+    "next": {
+      "x": 160,
+      "y": 584.25,
+      "width": 1120,
+      "height": 158.171875,
+      "right": 1280,
+      "bottom": 742.421875
+    },
+    "problems": []
+  }
+]
