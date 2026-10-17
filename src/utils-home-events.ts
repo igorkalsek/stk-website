@@ -346,5 +346,29 @@ export const hasMultiYearRecentUpdatesContract = (payload: unknown): boolean => 
   const root = homepageAsRecord(payload);
   const block = homepageAsRecord(root?.recent_updates_last_days);
   return root?.ok === true && Array.isArray(block?.years) &&
-    block.years.length === 2 && block.years[0] === '2026' && block.years[1] === '2027';
+    block.years.length === 2 && block.years[0] === '2026' && block.years[1] === '2027' &&
+    Array.isArray(block.events) && block.events.every(item => homepageAsRecord(item) !== null);
+};
+
+/** The opt-in API owns global ordering, including ties. Never re-sort by title. */
+export const selectCanonicalHomepageRecentUpdates = (
+  payload: unknown,
+  limit = 4
+): HomepageRecentUpdateSelection => {
+  if (!hasMultiYearRecentUpdatesContract(payload)) return { canOrderGlobally: false, items: [] };
+  const block = homepageAsRecord(homepageAsRecord(payload)?.recent_updates_last_days)!;
+  const events = block.events as HomepageApiRecord[];
+  if (events.some(item => parseRecentUpdateDateValue(pickPathString(item, ['recent_update_date'])) === null)) {
+    return { canOrderGlobally: false, items: [] };
+  }
+  const identities = new Set<string>();
+  const items: HomepageApiRecord[] = [];
+  for (const [index, item] of events.entries()) {
+    if (items.length >= Math.max(0, limit)) break;
+    const identity = recentUpdateIdentity(item) || `unidentified:${index}`;
+    if (identities.has(identity)) continue;
+    identities.add(identity);
+    items.push(item);
+  }
+  return { canOrderGlobally: true, items };
 };

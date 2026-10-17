@@ -64,7 +64,8 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false) {
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/recent_updates' && withRecentUpdate) {
-      return route.fulfill({ json: { ok: true, recent_updates_last_days: { years: ['2026', '2027'], updated_events: [{ ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' }] } } });
+      const update = { ...events[1], update_type: 'updated', recent_update_date: '2026-09-20' };
+      return route.fulfill({ json: { ok: true, recent_updates_last_days: { years: ['2026', '2027'], updated_events: [update], events: [update] } } });
     }
     if (url.pathname === '/stats') {
       return route.fulfill({ json: { confirmed_public_events_total: 0, family_friendly_total: 0, group_runs_total: 0 } });
@@ -157,6 +158,7 @@ for (const home of homes) {
     });
     await page.route(`${API_HOST}/recent_updates?**`, (route) => route.fulfill({ json: {
       ok: true, recent_updates_last_days: { years: ['2026', '2027'],
+        events: [race('11', 'unknown', '2026-10-07'), race('12', 'new', '2026-10-06'), race('13', 'confirmed', '2026-10-05'), race('14', 'updated', '2026-10-04')],
         updated_events: [race('14', 'updated', '2026-10-04'), race('11', 'unknown', '2026-10-07')],
         new_events: [race('12', 'new', '2026-10-06')],
         confirmed_events: [race('13', 'confirmed', '2026-10-05')]
@@ -224,7 +226,7 @@ for (const home of homes) {
 
 for (const home of homes) {
   for (const width of [390, 1440]) {
-    for (const state of ['success', 'master2027-down', 'recent-down', 'old-api'] as const) {
+    for (const state of ['success', 'master2027-down', 'recent-down', 'old-api', 'missing-events'] as const) {
       test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }) => {
         await page.setViewportSize({ width, height: 1000 });
         await mockHomepageApis(page);
@@ -247,6 +249,11 @@ for (const home of homes) {
           if (state === 'recent-down') return route.abort('failed');
           return route.fulfill({ json: { ok: true, recent_updates_last_days: {
             ...(state === 'old-api' ? {} : { years: ['2026', '2027'] }),
+            events: state === 'missing-events' ? undefined : [...[maribor, maribor, backyard].map(e => ({ ...e, update_type: 'new', recent_update_date: '2026-10-16', public_summary: 'Nov dogodek v koledarju.' })),
+              { ...oldRace, update_type: 'updated', recent_update_date: '2026-10-15' },
+              { row: '37', naziv_prireditve: 'Missing year', update_type: 'confirmed', recent_update_date: '2026-10-14' },
+              { row: '39', naziv_prireditve: 'Fifth card must be omitted', update_type: 'updated', recent_update_date: '2026-10-13' }
+            ],
             new_events: [backyard, maribor].map(e => ({ ...e, update_type: 'new', recent_update_date: '2026-10-16', public_summary: 'Nov dogodek v koledarju.' })),
             updated_events: [{ ...oldRace, update_type: 'updated', recent_update_date: '2026-10-15' }],
             confirmed_events: [{ row: '37', naziv_prireditve: 'Missing year', update_type: 'confirmed', recent_update_date: '2026-10-14' }]
@@ -254,16 +261,16 @@ for (const home of homes) {
         });
         await page.goto(home.path);
         const cards = page.locator('[data-recent-updates] .update-card');
-        if (state === 'recent-down' || state === 'old-api') {
+        if (state === 'recent-down' || state === 'old-api' || state === 'missing-events') {
           await expect(cards).toContainText(home.path === '/' ? 'trenutno niso dosegljive' : 'currently unavailable');
           await expect(cards.locator('a')).toHaveCount(0);
-          await expect(cards.locator('[data-analytics-event-year]')).toHaveCount(0);
+          await expect(page.locator('[data-recent-updates] [data-analytics-event-year]')).toHaveCount(0);
           await expect(cards).not.toContainText('Dodano');
           await expect(cards).not.toContainText('Added');
           return;
         }
         await expect(cards).toHaveCount(4);
-        await expect(cards.locator('h3')).toHaveText(['Backyard Ultra Ljubljana 2027', 'Trail Maribor 2027', 'Same row 2026', 'Missing year']);
+        await expect(cards.locator('h3')).toHaveText(['Trail Maribor 2027', 'Backyard Ultra Ljubljana 2027', 'Same row 2026', 'Missing year']);
         const prefix = home.path === '/' ? '/tek/' : '/en/races/';
         const first = cards.nth(0), second = cards.nth(1), third = cards.nth(2);
         await expect(first).toContainText(home.path === '/' ? 'Dodano' : 'Added');
@@ -276,11 +283,11 @@ for (const home of homes) {
           await expect(second.locator('a')).toHaveCount(0);
           await expect(first).not.toHaveAttribute('data-analytics-event-year');
         } else {
-          await expect(first.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000037-`));
-          await expect(second.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000038-`));
+          await expect(first.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000038-`));
+          await expect(second.locator('a')).toHaveAttribute('href', new RegExp(`^${prefix}2027/r000037-`));
           await expect(first).toHaveAttribute('data-analytics-event-year', '2027');
           const click = page.waitForRequest(request => request.url().includes('script.google.com') && request.postData()?.includes('event_card_clicked') === true);
-          await first.locator('a').click({ modifiers: ['ControlOrMeta'] });
+          await second.locator('a').click({ modifiers: ['ControlOrMeta'] });
           const body = JSON.parse((await click).postData() ?? '{}');
           expect(body).toMatchObject({ event_id: 'r000037', event_year: '2027', event_key: '2027:r000037', placement: 'home_updates' });
           await page.locator('.home-update-section').screenshot({ path: `/private/tmp/dev033-${home.path === '/' ? 'sl' : 'en'}-${width}.png` });

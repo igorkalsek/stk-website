@@ -10,7 +10,7 @@ produkcijske verifikacije in uporabnikove odobritve.** Spremljevalna API veja:
 Oba homepage jezika zahtevata
 `/recent_updates?days=7&limit=4&years=2026,2027` prek obstoječega Workerja.
 Pred prikazom preverita `ok: true` in
-`recent_updates_last_days.years: ["2026", "2027"]`. Stari produkcijski API
+`recent_updates_last_days.years: ["2026", "2027"]` in veljaven seznam `events`. Stari produkcijski API
 neznani parameter prezre; odsotnost te potrditve zato pomeni nevtralni prikaz
 nedosegljivosti, ne tihega prikaza samo 2026.
 
@@ -27,8 +27,9 @@ Ob izpadu Masterja 2027 kartice 2027 ostanejo vidne brez povezav; potrjene
 povezave 2026 ostanejo uporabne. Izpad recent API, neveljaven datum spremembe
 ali nepodprt contract prikaže jasno obvestilo o nedosegljivosti.
 
-Skupni izbor največ štirih kartic še vedno razvršča vse tri skupine po javnem
-datumu spremembe, z determinističnim vrstnim redom ob izenačenju. Oznake
+Skupni izbor največ štirih kartic uporabi kanonični globalni seznam
+`recent_updates_last_days.events` in ohrani njegov vrstni red. Starih treh
+skupin ne združuje ali razvršča na novo. Oznake
 Dodano/Potrjeno/Posodobljeno in Added/Confirmed/Updated ostanejo vezane na
 izrecni `update_type`; neznan tip ne dobi izmišljene oznake.
 
@@ -67,12 +68,12 @@ Build vsebuje točne štiri profile:
 
 ## Preverjanja in P1/P2 pregled
 
-- `npm test`: **579/579 PASS**.
+- `npm test`: **582/582 PASS**.
 - `npm run build`: **PASS**, 661 strani, vključno s kontrolnimi profili 2027.
 - `npx playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts --project=chromium`:
-  **82/82 PASS**. Vključene vse obstoječe home/statistika regresije in 16 novih
+  **86/86 PASS**. Vključene vse obstoječe home/statistika regresije in 20 večletnih
   primerov za SL/EN, 390/1440 px, uspeh, izpad Masterja 2027, izpad recent API
-  in stari API. Zunanji podatkovni/analitični klici so v testih prestreženi.
+  stari API in manjkajoči `events`. Zunanji podatkovni/analitični klici so v testih prestreženi.
 - Unit primeri preverijo `2026!37` proti `2027!37`, manjkajočo/nasprotujočo
   identiteto, dvojnike, omejitev, oba jezika profilov in potrditev contracta.
 - Vizualni pregled izrezov razdelka SL/EN na mobilni in namizni širini;
@@ -80,7 +81,7 @@ Build vsebuje točne štiri profile:
 - `git diff --check`: PASS. P1/P2 regresijski pregled ni odkril dodatnih težav:
   ni povezovanja/analitike v napačno leto, ni sprememb DEV-038 statističnih
   kartic, iskalnika, Moj STK ali drugih blokov. CSS in infrastruktura nista
-  spremenjena. API sklop spremljevalne veje: 68/68 testov in 10/10 pri TZ=UTC.
+  spremenjena. API sklop spremljevalne veje: 84/84 testov in 65/65 recent testov pri TZ=UTC.
 
 Chromium je macOS MachPort znotraj peskovnika zavrnil. Uspešna browser
 preverjanja so bila izvedena lokalno zunaj peskovnika. Za build je bila uporabljena
@@ -95,3 +96,37 @@ odgovore. Šele nato uvesti website. V produkciji preveriti obe letni statistiki
 SL/EN povezave, mobilni/namizni prikaz in analitiko po letu. Varna povrnitev gre
 v obratnem vrstnem redu. Ob delnem izpadu virov ali starem API stran ostane
 brez napačnih povezav in oznak. Nobeno od teh operativnih dejanj ni bilo izvedeno.
+
+
+## Dopolnitev po neodvisnem REVIEW — P2
+
+Pri istem `recent_update_date: 2026-10-16` je kanonični vrstni red
+**Trail Maribor 2027 (2027-06-12) pred Backyard Ultra Ljubljana 2027
+(2027-10-08)**. Stran tega zaporedja ne spremeni po nazivu. Unit in SL/EN
+browser regresije na 390/1440 px pošljejo `new_events` v nasprotnem vrstnem
+redu; prikaz mora slediti `events`. V kanoničnem seznamu je tudi dvojnik in
+peta dodatna kartica: rezultat mora vsebovati štiri kartice brez dvojnika.
+Ohranjeni so oba profila 2027, profil 2026!37 in klik
+`event_key: 2027:r000037` za Backyard, ki je zdaj na drugem mestu.
+
+`hasMultiYearRecentUpdatesContract` poleg `ok` in `years` zahteva seznam
+objektov `events`; selection zahteva veljavne datume sprememb. Manjkajoči ali
+neveljavni seznam povzroči nevtralni prikaz nedosegljivosti in nikoli fallbacka
+na drugačno razvrščanje skupin. Prazni kanonični seznam je veljaven prazen
+odgovor. Letna deduplikacija, omejitev štirih kartic in preverjanje Master
+identitete ostanejo ohranjeni. Stari exported helper za skupine ostane zaradi
+združljivosti, vendar ga domači strani ne uporabljata.
+
+API spremljevalni popravek omeji ohranitev `CHANGE_LOG.timestamp` Date na
+opt-in reader in zavrne navidezni uspeh ob manjkajočem/nedosegljivem obveznem
+Masterju. Njegovi integracijski testi gredo skozi dejanski reader. V objavljenem
+b8d1100 specifična HH:mm pretvorba za `timestamp` ni bila reproducirana;
+globalni normalizator je ostal nespremenjen in opt-in pot zdaj Date izrecno
+ohrani. Ponovni neposredni Sheets GET je tudi v nadaljevanju vrnil HTTP 403;
+nova lokalna kontrola uporablja dokumentirani dokaz ter uporabnikovo
+potrditev neodvisnega živega REVIEW. Ni trditve o novem živem odčitku te seje.
+
+Pregled P1/P2 po popravku: nobenega napačnega vrstnega reda kontrolnih dogodkov,
+povezovanja ali analitike med letoma; regresije statistike DEV-038 ostanejo
+uspešne. PR-ja ostajata #106 in #230, DEV-033 ostaja **REVIEW**. Brez merge,
+deploya, sprememb Cloudflare/Apps Script ali zapisov v Sheets.

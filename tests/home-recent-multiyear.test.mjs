@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, buildHomepageEventDetailPath, buildEnglishHomepageEventDetailPath } from '../.cache/dist-test/utils-home-events.js';
+import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectHomepageRecentUpdates, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, buildHomepageEventDetailPath, buildEnglishHomepageEventDetailPath } from '../.cache/dist-test/utils-home-events.js';
 const race = (year, row, extra={}) => ({year:String(year),row:String(row),datum:`${year}-12-20`,naziv_prireditve:`Race ${year} ${row}`,kraj:'Ljubljana',...extra});
 const helpers={rowKey:e=>e.row,getTitle:e=>e.naziv_prireditve,getDisplayTitle:s=>s};
 
@@ -39,5 +39,40 @@ test('SL and EN canonical profiles preserve the event year',()=>{
 
 test('capability handshake rejects old APIs, errors and malformed years instead of showing partial years',()=>{
  for(const payload of [null,{}, {ok:false,recent_updates_last_days:{years:['2026','2027']}},{ok:true,recent_updates_last_days:{}},{ok:true,recent_updates_last_days:{years:['2026']}},{ok:true,recent_updates_last_days:{years:[2026,2027]}}]) assert.equal(hasMultiYearRecentUpdatesContract(payload),false);
- assert.equal(hasMultiYearRecentUpdatesContract({ok:true,recent_updates_last_days:{years:['2026','2027']}}),true);
+ assert.equal(hasMultiYearRecentUpdatesContract({ok:true,recent_updates_last_days:{years:['2026','2027'],events:[]}}),true);
+});
+
+const canonicalPayload = events => ({ok:true,recent_updates_last_days:{years:['2026','2027'],events}});
+const controlUpdate = (row, title, date) => ({...race(2027,row,{naziv_prireditve:title,datum:date}),
+  update_type:'new',recent_update_date:'2026-10-16'});
+
+test('canonical API order puts Trail Maribor before Backyard on the same change day, preserving links',()=>{
+ const backyard=controlUpdate(37,'Backyard Ultra Ljubljana 2027','2027-10-08');
+ const maribor=controlUpdate(38,'Trail Maribor 2027','2027-06-12');
+ const payload=canonicalPayload([maribor,backyard]);
+ // Contradicting legacy groups must never override the canonical global list.
+ payload.recent_updates_last_days.new_events=[backyard,maribor];
+ const result=selectCanonicalHomepageRecentUpdates(payload);
+ assert.deepEqual(result.items,[maribor,backyard]);
+ const index=buildHomepageMasterEventIndex([backyard,maribor]);
+ for(const [item,row] of [[result.items[0],'38'],[result.items[1],'37']]) {
+  const matched=matchRecentUpdateToMasterEvent(item,index).event;
+  assert.match(buildHomepageEventDetailPath(matched,helpers),new RegExp(`^/tek/2027/r0000${row}-`));
+  assert.match(buildEnglishHomepageEventDetailPath(matched,helpers),new RegExp(`^/en/races/2027/r0000${row}-`));
+ }
+});
+
+test('canonical selection preserves API tie order, removes only same-year duplicates and caps cards at four',()=>{
+ const updates=[38,37,39,40,41].map(row=>controlUpdate(row,`Race ${row}`,'2027-12-20'));
+ const otherYear={...updates[0],year:'2026',datum:'2026-12-20'};
+ const result=selectCanonicalHomepageRecentUpdates(canonicalPayload([updates[0],updates[0],updates[1],otherYear,...updates.slice(2)]));
+ assert.deepEqual(result.items.map(e=>`${e.year}:${e.row}`),['2027:38','2027:37','2026:38','2027:39']);
+ assert.deepEqual(selectCanonicalHomepageRecentUpdates(canonicalPayload(updates),0).items,[]);
+});
+
+test('canonical selection rejects absent or malformed events instead of falling back to category order',()=>{
+ for(const events of [undefined,null,{},[null],[123],[{recent_update_date:'invalid'}]]) {
+  assert.deepEqual(selectCanonicalHomepageRecentUpdates(canonicalPayload(events)),{canOrderGlobally:false,items:[]});
+ }
+ assert.deepEqual(selectCanonicalHomepageRecentUpdates(canonicalPayload([])),{canOrderGlobally:true,items:[]});
 });

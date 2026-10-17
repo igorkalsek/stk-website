@@ -36,8 +36,8 @@ describe('homepage recent updates rendering', () => {
   });
 
   it('keeps the updates block compact by rendering at most four entries', () => {
-    assert.match(slSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
-    assert.match(enSource, /selectHomepageRecentUpdates\(\{ updatedEvents, newEvents, confirmedEvents \}, 4\)/);
+    assert.match(slSource, /selectCanonicalHomepageRecentUpdates\(recentResult\.value, 4\)/);
+    assert.match(enSource, /selectCanonicalHomepageRecentUpdates\(recentResult\.value, 4\)/);
   });
 
   it('fails closed instead of guessing when canonical recency is unavailable', () => {
