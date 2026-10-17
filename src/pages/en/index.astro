@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeScreenInvite from '../../components/HomeScreenInvite.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
+import HomeYearStats from '../../components/HomeYearStats.astro';
 import HomeUpcomingRaces from '../../components/HomeUpcomingRaces.astro';
 import { getPublicYearData } from '../../utils-build-data';
 import { DEFAULT_PUBLIC_YEAR } from '../../utils-public-year';
@@ -43,12 +44,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     </section>
 
     <section class="container home-stats-strip" aria-label="Slovenian Race Calendar statistics">
-      <p>
-        <span class="home-stats-label">STK 2026</span>
-        <span class="home-stats-primary"><strong class="stat-loading" data-stat="confirmed_public_events_total" aria-label="Loading"></strong> confirmed races</span>
-        <span><strong class="stat-loading" data-stat="family_friendly_total" aria-label="Loading"></strong> family-friendly</span>
-        <span><strong class="stat-loading" data-stat="group_runs_total" aria-label="Loading"></strong> group runs</span>
-      </p>
+      <HomeYearStats lang="en" />
     </section>
 
     <section class="section container home-featured-upcoming" aria-labelledby="featured-upcoming-title">
@@ -185,6 +181,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 </BaseLayout>
 
 <script>
+  import { loadPublicYearStats } from '../../utils-home-stats';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../../utils-calendar';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { renderActionIcon } from '../../utils-action-icons';
@@ -1310,6 +1307,16 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     }
   }
 
+  async function loadFutureYearStats() {
+    const block = document.querySelector<HTMLElement>('[data-home-year-stats="2027"]');
+    if (!block) return;
+    const values = await loadPublicYearStats('2027', loadJson);
+    for (const key of ['confirmed', 'family'] as const) {
+      const element = block.querySelector(`[data-year-stat="${key}"]`);
+      if (element) element.textContent = values ? numberFormatter.format(values[key]) : block.dataset.missing ?? '—';
+    }
+  }
+
   async function loadStats() {
     try {
       const [statsResult, groupRunsResult] = await Promise.allSettled([
@@ -1487,6 +1494,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const initialNearestEvents = document.querySelector('[data-nearest-events]');
   if (initialNearestEvents) initSavedRaceButtons(initialNearestEvents);
   loadStats();
+  loadFutureYearStats();
   loadNearestEvents();
   loadRegistrationDeadlines();
   loadTopEvents();

@@ -4150,33 +4150,41 @@ main {
 }
 
 .home-stats-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 10px;
   margin-top: 10px;
-  border: 1px solid rgba(16, 64, 80, 0.12);
-  border-radius: 12px;
-  background: rgba(200, 230, 201, 0.2);
-  padding: 9px 14px;
 }
 
-.home-stats-strip p {
+.home-year-stats {
+  min-width: 0;
+  border: 1px solid rgba(16, 64, 80, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 10px 14px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.home-year-stats-primary {
+  background: rgba(200, 230, 201, 0.3);
+  border-color: rgba(16, 64, 80, 0.28);
+}
+
+.home-year-stats header,
+.home-year-stats p {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 4px 14px;
   margin: 0;
-  color: var(--muted);
-  font-size: 0.84rem;
-  line-height: 1.35;
-}
-
-.home-stats-strip p > span:not(:first-child)::before {
-  margin-right: 14px;
-  color: rgba(16, 64, 80, 0.34);
-  content: "·";
 }
 
 .home-stats-strip .home-stats-label {
+  margin: 0 0 4px;
   color: var(--deep-teal);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
@@ -4190,6 +4198,27 @@ main {
 .home-stats-strip .home-stats-primary strong {
   color: var(--ink);
   font-weight: 900;
+}
+
+.home-year-stats a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: -6px;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.home-year-stats a:focus-visible {
+  outline: 3px solid var(--deep-teal);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+@media (max-width: 640px) {
+  .home-stats-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .home-featured-upcoming {
@@ -4870,17 +4899,13 @@ main {
 }
 
 @media (max-width: 520px) {
-  .home-stats-strip {
-    padding: 7px 10px;
+  .home-year-stats {
+    padding: 8px 10px;
   }
 
   .home-stats-strip p {
     gap: 2px 8px;
     font-size: 0.75rem;
-  }
-
-  .home-stats-strip p > span:not(:first-child)::before {
-    margin-right: 8px;
   }
 
   .home-featured-upcoming {
