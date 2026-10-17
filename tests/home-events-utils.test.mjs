@@ -109,19 +109,19 @@ describe('recent update matching helpers', () => {
   ];
 
   it('matches recent updates by row', () => {
-    const match = matchRecentUpdateToMasterEvent({ row: '175' }, buildHomepageMasterEventIndex(masterEvents));
+    const match = matchRecentUpdateToMasterEvent({ row: '175', year: '2026' }, buildHomepageMasterEventIndex(masterEvents));
     assert.equal(match.reason, 'row');
     assert.equal(match.event?.row, '175');
   });
 
   it('matches recent updates by master_row', () => {
-    const match = matchRecentUpdateToMasterEvent({ master_row: '176' }, buildHomepageMasterEventIndex(masterEvents));
+    const match = matchRecentUpdateToMasterEvent({ master_row: '176', year: '2026' }, buildHomepageMasterEventIndex(masterEvents));
     assert.equal(match.reason, 'row');
     assert.equal(match.event?.row, '176');
   });
 
   it('matches recent updates by stable event ID', () => {
-    const match = matchRecentUpdateToMasterEvent({ event_id: 'r000175' }, buildHomepageMasterEventIndex(masterEvents));
+    const match = matchRecentUpdateToMasterEvent({ event_id: 'r000175', year: '2026' }, buildHomepageMasterEventIndex(masterEvents));
     assert.equal(match.reason, 'event_id');
     assert.equal(match.event?.row, '175');
   });
