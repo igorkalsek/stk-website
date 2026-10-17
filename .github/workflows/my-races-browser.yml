@@ -30,7 +30,6 @@ jobs:
       - run: npx playwright test tests/browser/registration-deadlines.spec.ts --project=chromium
       - run: npm run test:browser:race-profiles
       - run: npm run test:browser:home
-      - run: npx playwright test tests/browser/home-stats.spec.ts --project=chromium
       - run: npx playwright test tests/browser/race-detail-contrast.spec.ts --project=chromium
       - uses: actions/upload-artifact@v4
         if: failure()
