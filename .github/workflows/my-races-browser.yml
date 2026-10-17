@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'tests/browser/my-races-statuses.spec.ts'
       - 'tests/browser/registration-deadlines.spec.ts'
+      - 'tests/browser/race-profile-ux.spec.ts'
       - 'playwright.config.ts'
       - 'package.json'
       - 'package-lock.json'
@@ -24,6 +25,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser:my-races
       - run: npx playwright test tests/browser/registration-deadlines.spec.ts --project=chromium
+      - run: npm run test:browser:race-profiles
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

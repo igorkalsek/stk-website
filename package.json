@@ -14,6 +14,7 @@
     "test:browser:finder:smoke": "playwright test tests/browser/finder.spec.ts --project=chromium --grep @smoke",
     "test:browser:proposal-form": "playwright test tests/browser/proposal-form.spec.ts --project=chromium",
     "test:browser:my-races": "playwright test tests/browser/my-races-statuses.spec.ts --project=chromium",
+    "test:browser:race-profiles": "playwright test tests/browser/race-profile-ux.spec.ts --project=chromium",
     "test:browser:home": "playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts --project=chromium"
   },
   "dependencies": {

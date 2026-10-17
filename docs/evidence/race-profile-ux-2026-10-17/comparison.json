@@ -1,0 +1,782 @@
+[
+  {
+    "path": "/tek/2026/r000256-go4trail/",
+    "language": "sl",
+    "width": 390,
+    "contentBeforeY": 2146.34375,
+    "contentAfterY": 904.078125,
+    "primaryBeforeY": 568.078125,
+    "primaryAfterY": 568.078125,
+    "saveBeforeY": 665.078125,
+    "saveAfterY": 665.078125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000256-go4trail/",
+    "language": "sl",
+    "width": 430,
+    "contentBeforeY": 2094.34375,
+    "contentAfterY": 886.078125,
+    "primaryBeforeY": 568.078125,
+    "primaryAfterY": 568.078125,
+    "saveBeforeY": 665.078125,
+    "saveAfterY": 665.078125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000256-go4trail/",
+    "language": "sl",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000256-go4trail/",
+    "language": "en",
+    "width": 390,
+    "contentBeforeY": 2139.9375,
+    "contentAfterY": 886.078125,
+    "primaryBeforeY": 568.078125,
+    "primaryAfterY": 568.078125,
+    "saveBeforeY": 665.078125,
+    "saveAfterY": 665.078125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000256-go4trail/",
+    "language": "en",
+    "width": 430,
+    "contentBeforeY": 2122.34375,
+    "contentAfterY": 886.078125,
+    "primaryBeforeY": 568.078125,
+    "primaryAfterY": 568.078125,
+    "saveBeforeY": 665.078125,
+    "saveAfterY": 665.078125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000256-go4trail/",
+    "language": "en",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "sl",
+    "width": 390,
+    "contentBeforeY": 1957.171875,
+    "contentAfterY": 993.5,
+    "primaryBeforeY": 657.5,
+    "primaryAfterY": 657.5,
+    "saveBeforeY": 754.5,
+    "saveAfterY": 754.5,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "sl",
+    "width": 430,
+    "contentBeforeY": 1905.171875,
+    "contentAfterY": 975.5,
+    "primaryBeforeY": 657.5,
+    "primaryAfterY": 657.5,
+    "saveBeforeY": 754.5,
+    "saveAfterY": 754.5,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "sl",
+    "width": 1440,
+    "contentBeforeY": 988.171875,
+    "contentAfterY": 988.171875,
+    "primaryBeforeY": 667.421875,
+    "primaryAfterY": 667.421875,
+    "saveBeforeY": 774.40625,
+    "saveAfterY": 774.40625,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "en",
+    "width": 390,
+    "contentBeforeY": 1964.765625,
+    "contentAfterY": 975.5,
+    "primaryBeforeY": 657.5,
+    "primaryAfterY": 657.5,
+    "saveBeforeY": 754.5,
+    "saveAfterY": 754.5,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "en",
+    "width": 430,
+    "contentBeforeY": 1947.171875,
+    "contentAfterY": 975.5,
+    "primaryBeforeY": 657.5,
+    "primaryAfterY": 657.5,
+    "saveBeforeY": 754.5,
+    "saveAfterY": 754.5,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+    "language": "en",
+    "width": 1440,
+    "contentBeforeY": 988.171875,
+    "contentAfterY": 988.171875,
+    "primaryBeforeY": 667.421875,
+    "primaryAfterY": 667.421875,
+    "saveBeforeY": 774.40625,
+    "saveAfterY": 774.40625,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+    "language": "sl",
+    "width": 390,
+    "contentBeforeY": 1946.625,
+    "contentAfterY": 982.953125,
+    "primaryBeforeY": 646.953125,
+    "primaryAfterY": 646.953125,
+    "saveBeforeY": 743.953125,
+    "saveAfterY": 743.953125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+    "language": "sl",
+    "width": 430,
+    "contentBeforeY": 1894.625,
+    "contentAfterY": 964.953125,
+    "primaryBeforeY": 646.953125,
+    "primaryAfterY": 646.953125,
+    "saveBeforeY": 743.953125,
+    "saveAfterY": 743.953125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+    "language": "sl",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+    "language": "en",
+    "width": 390,
+    "contentBeforeY": 1954.21875,
+    "contentAfterY": 964.953125,
+    "primaryBeforeY": 646.953125,
+    "primaryAfterY": 646.953125,
+    "saveBeforeY": 743.953125,
+    "saveAfterY": 743.953125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+    "language": "en",
+    "width": 430,
+    "contentBeforeY": 1936.625,
+    "contentAfterY": 964.953125,
+    "primaryBeforeY": 646.953125,
+    "primaryAfterY": 646.953125,
+    "saveBeforeY": 743.953125,
+    "saveAfterY": 743.953125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+    "language": "en",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000064-23-bistriski-tek/",
+    "language": "sl",
+    "width": 390,
+    "contentBeforeY": 1906,
+    "contentAfterY": 942.328125,
+    "primaryBeforeY": 606.328125,
+    "primaryAfterY": 606.328125,
+    "saveBeforeY": 703.328125,
+    "saveAfterY": 703.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000064-23-bistriski-tek/",
+    "language": "sl",
+    "width": 430,
+    "contentBeforeY": 1836,
+    "contentAfterY": 906.328125,
+    "primaryBeforeY": 588.328125,
+    "primaryAfterY": 588.328125,
+    "saveBeforeY": 685.328125,
+    "saveAfterY": 685.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2026/r000064-23-bistriski-tek/",
+    "language": "sl",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(16, 64, 80)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000064-23-bistriski-tek/",
+    "language": "en",
+    "width": 390,
+    "contentBeforeY": 1913.59375,
+    "contentAfterY": 924.328125,
+    "primaryBeforeY": 606.328125,
+    "primaryAfterY": 606.328125,
+    "saveBeforeY": 703.328125,
+    "saveAfterY": 703.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000064-23-bistriski-tek/",
+    "language": "en",
+    "width": 430,
+    "contentBeforeY": 1878,
+    "contentAfterY": 906.328125,
+    "primaryBeforeY": 588.328125,
+    "primaryAfterY": 588.328125,
+    "saveBeforeY": 685.328125,
+    "saveAfterY": 685.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2026/r000064-23-bistriski-tek/",
+    "language": "en",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(16, 64, 80)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+    "language": "sl",
+    "width": 390,
+    "contentBeforeY": 1796,
+    "contentAfterY": 832.328125,
+    "primaryBeforeY": 496.328125,
+    "primaryAfterY": 496.328125,
+    "saveBeforeY": 593.328125,
+    "saveAfterY": 593.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+    "language": "sl",
+    "width": 430,
+    "contentBeforeY": 1744,
+    "contentAfterY": 814.328125,
+    "primaryBeforeY": 496.328125,
+    "primaryAfterY": 496.328125,
+    "saveBeforeY": 593.328125,
+    "saveAfterY": 593.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+    "language": "sl",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(16, 64, 80)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+    "language": "en",
+    "width": 390,
+    "contentBeforeY": 1803.59375,
+    "contentAfterY": 814.328125,
+    "primaryBeforeY": 496.328125,
+    "primaryAfterY": 496.328125,
+    "saveBeforeY": 593.328125,
+    "saveAfterY": 593.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+    "language": "en",
+    "width": 430,
+    "contentBeforeY": 1786,
+    "contentAfterY": 814.328125,
+    "primaryBeforeY": 496.328125,
+    "primaryAfterY": 496.328125,
+    "saveBeforeY": 593.328125,
+    "saveAfterY": 593.328125,
+    "primaryStyleBefore": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  },
+  {
+    "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+    "language": "en",
+    "width": 1440,
+    "contentBeforeY": 900,
+    "contentAfterY": 900,
+    "primaryBeforeY": 579.25,
+    "primaryAfterY": 579.25,
+    "saveBeforeY": 686.234375,
+    "saveAfterY": 686.234375,
+    "primaryStyleBefore": {
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(16, 64, 80)"
+    },
+    "primaryStyleAfter": {
+      "background": "rgb(240, 160, 48)",
+      "color": "rgb(30, 43, 30)"
+    },
+    "metadataUnchanged": true,
+    "jsonLdUnchanged": true,
+    "linksAndAnalyticsUnchanged": true,
+    "notesUnchanged": true,
+    "badgeUnchanged": true,
+    "noOverflow": true,
+    "noPageErrors": true
+  }
+]
