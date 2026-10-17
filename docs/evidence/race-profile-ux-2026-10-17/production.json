@@ -1,0 +1,645 @@
+{
+  "date": "2026-10-17",
+  "timezone": "Europe/Ljubljana",
+  "source": "Fresh direct Chromium GET, not search-index content",
+  "profiles": [
+    {
+      "path": "/tek/2026/r000256-go4trail/",
+      "language": "sl",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 2146.34375,
+      "toolsStartY": 904.078125,
+      "officialActionsY": 568.078125,
+      "saveY": 665.078125,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000256-go4trail/",
+      "language": "sl",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 2094.34375,
+      "toolsStartY": 886.078125,
+      "officialActionsY": 568.078125,
+      "saveY": 665.078125,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000256-go4trail/",
+      "language": "sl",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000256-go4trail/",
+      "language": "en",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 2139.9375,
+      "toolsStartY": 886.078125,
+      "officialActionsY": 568.078125,
+      "saveY": 665.078125,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000256-go4trail/",
+      "language": "en",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 2122.34375,
+      "toolsStartY": 886.078125,
+      "officialActionsY": 568.078125,
+      "saveY": 665.078125,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000256-go4trail/",
+      "language": "en",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [],
+      "organizerBadge": [
+        {
+          "hidden": false,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "sl",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1957.171875,
+      "toolsStartY": 993.5,
+      "officialActionsY": 657.5,
+      "saveY": 754.5,
+      "notes": [
+        "Družinam prijazno: družinska prijava na 5 km."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "sl",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1905.171875,
+      "toolsStartY": 975.5,
+      "officialActionsY": 657.5,
+      "saveY": 754.5,
+      "notes": [
+        "Družinam prijazno: družinska prijava na 5 km."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "sl",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 988.171875,
+      "toolsStartY": 988.171875,
+      "officialActionsY": 667.421875,
+      "saveY": 774.40625,
+      "notes": [
+        "Družinam prijazno: družinska prijava na 5 km."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "en",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1964.765625,
+      "toolsStartY": 975.5,
+      "officialActionsY": 657.5,
+      "saveY": 754.5,
+      "notes": [
+        "Family activities are available. Check the official race information for details."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "en",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1947.171875,
+      "toolsStartY": 975.5,
+      "officialActionsY": 657.5,
+      "saveY": 754.5,
+      "notes": [
+        "Family activities are available. Check the official race information for details."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2027/r000017-kocevsko-outdoor-festival-2027/",
+      "language": "en",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 988.171875,
+      "toolsStartY": 988.171875,
+      "officialActionsY": 667.421875,
+      "saveY": 774.40625,
+      "notes": [
+        "Family activities are available. Check the official race information for details."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+      "language": "sl",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1946.625,
+      "toolsStartY": 982.953125,
+      "officialActionsY": 646.953125,
+      "saveY": 743.953125,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Družinam prijazno: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+      "language": "sl",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1894.625,
+      "toolsStartY": 964.953125,
+      "officialActionsY": 646.953125,
+      "saveY": 743.953125,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Družinam prijazno: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000053-25-ormoski-polmaraton/",
+      "language": "sl",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Družinam prijazno: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+      "language": "en",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1954.21875,
+      "toolsStartY": 964.953125,
+      "officialActionsY": 646.953125,
+      "saveY": 743.953125,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Family-friendly: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+      "language": "en",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1936.625,
+      "toolsStartY": 964.953125,
+      "officialActionsY": 646.953125,
+      "saveY": 743.953125,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Family-friendly: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000053-25-ormoski-polmaraton/",
+      "language": "en",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [
+        "Dopolnjen opis iz INBOX: Dopolnitev: Razdalje (km): 5, 10, polmaraton; Prijava) | Family-friendly: otroške kategorije.",
+        "ŠKPT; termin iz koledarja."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000064-23-bistriski-tek/",
+      "language": "sl",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1906,
+      "toolsStartY": 942.328125,
+      "officialActionsY": 606.328125,
+      "saveY": 703.328125,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000064-23-bistriski-tek/",
+      "language": "sl",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1836,
+      "toolsStartY": 906.328125,
+      "officialActionsY": 588.328125,
+      "saveY": 685.328125,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/tek/2026/r000064-23-bistriski-tek/",
+      "language": "sl",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Podatke potrdil organizator"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000064-23-bistriski-tek/",
+      "language": "en",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1913.59375,
+      "toolsStartY": 924.328125,
+      "officialActionsY": 606.328125,
+      "saveY": 703.328125,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000064-23-bistriski-tek/",
+      "language": "en",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 1878,
+      "toolsStartY": 906.328125,
+      "officialActionsY": 588.328125,
+      "saveY": 685.328125,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    },
+    {
+      "path": "/en/races/2026/r000064-23-bistriski-tek/",
+      "language": "en",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false,
+      "contentStartY": 900,
+      "toolsStartY": 900,
+      "officialActionsY": 579.25,
+      "saveY": 686.234375,
+      "notes": [
+        "Osnutek koledarja; preveri razpis in morebitne dodatne razdalje."
+      ],
+      "organizerBadge": [
+        {
+          "hidden": true,
+          "text": "✓ Data confirmed by organizer"
+        }
+      ],
+      "colors": {
+        "chip": "rgb(255, 255, 255)",
+        "fact": "rgba(255, 255, 255, 0.9)"
+      },
+      "pageErrors": []
+    }
+  ],
+  "sparseProfile": [
+    {
+      "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+      "language": "sl",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false
+    },
+    {
+      "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+      "language": "sl",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false
+    },
+    {
+      "path": "/tek/2027/r000018-hrastnik-trail-2027/",
+      "language": "sl",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false
+    },
+    {
+      "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+      "language": "en",
+      "width": 390,
+      "status": 200,
+      "horizontalOverflow": false
+    },
+    {
+      "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+      "language": "en",
+      "width": 430,
+      "status": 200,
+      "horizontalOverflow": false
+    },
+    {
+      "path": "/en/races/2027/r000018-hrastnik-trail-2027/",
+      "language": "en",
+      "width": 1440,
+      "status": 200,
+      "horizontalOverflow": false
+    }
+  ]
+}

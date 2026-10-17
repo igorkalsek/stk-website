@@ -2729,7 +2729,6 @@ main {
   }
 
   .event-detail-action-panel {
-    order: -1;
     position: static;
   }
 }
@@ -5716,6 +5715,13 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
+/* Keep official information prominent at every width when registration is absent. */
+.event-detail-official-actions .button-secondary-light:first-child {
+  background: var(--orange);
+  color: #1e2b1e;
+  box-shadow: 0 14px 30px rgba(240, 160, 48, 0.24);
+}
+
 .event-detail-my-race-panel {
   background: rgba(255, 255, 255, 0.62);
   border: 1px solid rgba(16, 64, 80, 0.12);
@@ -5875,13 +5881,6 @@ main {
   .event-detail-official-actions {
     grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
     gap: 8px;
-  }
-
-  /* Official information becomes the primary action when registration is absent. */
-  .event-detail-official-actions .button-secondary-light:first-child {
-    background: var(--orange);
-    color: #1e2b1e;
-    box-shadow: 0 14px 30px rgba(240, 160, 48, 0.24);
   }
 
   .event-detail-official-actions .button:focus-visible {
