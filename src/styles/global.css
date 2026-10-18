@@ -1154,6 +1154,22 @@ main {
 .planning-event-main span, .planning-event-main time { color: var(--muted); font-size: .85rem; }
 .planning-event-main em { margin-top: 3px; color: #46685f; font-size: .72rem; font-style: normal; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .planning-undated { margin-top: 38px; border: 1px solid rgba(16,64,80,.14); border-radius: var(--radius-md); background: white; padding: 18px; }
+.planning-comparison { margin-bottom: 36px; border: 1px solid rgba(16,64,80,.18); border-radius: var(--radius-md); background: white; padding: 22px; }
+.planning-comparison h2 { margin: 0 0 10px; }
+.comparison-note { color: var(--deep-teal); font-size: .9rem; line-height: 1.55; }
+.comparison-controls { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 20px 0; }
+.comparison-controls label { display: grid; min-width: 0; gap: 6px; color: var(--deep-teal); font-weight: 800; }
+.comparison-controls input, .comparison-controls select { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; border: 1px solid rgba(16,64,80,.3); border-radius: 10px; background: white; padding: 10px; color: var(--deep-teal); font: inherit; }
+.comparison-controls :is(input,select):focus-visible, .comparison-links a:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.comparison-groups { display: grid; gap: 20px; }
+.comparison-group { border-top: 2px solid rgba(16,64,80,.18); padding-top: 16px; }
+.comparison-group h4 { margin: 0; font-size: 1rem; color: var(--deep-teal); }
+.comparison-group h4 span { font-weight: 500; white-space: nowrap; }
+.comparison-expected, .comparison-known { border-top-style: dashed; }
+.comparison-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.comparison-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--deep-teal); font-size: .9rem; font-weight: 700; text-underline-offset: 3px; }
+.planning-comparison .planning-event-main em { color: var(--deep-teal); font-size: .8rem; }
+@media (max-width: 520px) { .planning-comparison { padding: 16px; }.comparison-controls { grid-template-columns: 1fr; } }
 @media (max-width: 799px) { .organizer-workflow ol { grid-template-columns: 1fr; }.organizer-workflow-compact ol { display: grid; grid-template-columns: 1fr; }.organizer-workflow-compact li + li { border-top: 1px solid rgba(16,64,80,.12); border-left: 0; }.organizer-workflow-compact .organizer-step { padding: 9px 12px; }.planning-filters { grid-template-columns: 1fr 1fr; }.year-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }.planning-week { grid-template-columns: 1fr 1fr; }.planning-week h3 { grid-column: 1/-1; } }
 @media (max-width: 520px) { .organizer-capabilities, .planning-events { grid-template-columns: 1fr; }.organizer-workflow-compact .organizer-step { padding: 7px 10px; }.organizer-workflow-compact .organizer-step-number { flex-basis: 23px; width: 23px; height: 23px; }.planning-status-guide { display: grid; gap: 3px; }.planning-filters, .year-overview { grid-template-columns: 1fr; }.planning-filters label { grid-template-columns: 90px 1fr; align-items: center; }.planning-week { grid-template-columns: 1fr; }.planning-week h3, .planning-week details:not([open]) { grid-column: auto; }.year-month > div { gap: 7px; }.weekend-count { padding: 7px 3px; } }
 

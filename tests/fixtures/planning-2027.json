@@ -1,0 +1,690 @@
+{
+  "ok": true,
+  "type": "planning_2027",
+  "source": "tekaski-koledar-master",
+  "year": "2027",
+  "generated_at": "2026-10-18T21:27:51.560Z",
+  "row_count": 67,
+  "columns": [
+    "naziv_prireditve",
+    "datum",
+    "predvideno_od",
+    "predvideno_do",
+    "kraj",
+    "regija",
+    "tip_podlage",
+    "status"
+  ],
+  "data": [
+    {
+      "naziv_prireditve": "Knap Trail 2027 – Slovenski zimski trail",
+      "datum": "2027-01-09",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Trbovlje",
+      "regija": "Zasavska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "5. Parenzana Ultra Trail",
+      "datum": "2027-02-13",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Poreč–Livade–Grožnjan–Portorož",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "7 ur Slivnice 2027",
+      "datum": "2027-02-20",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Slivnica (Cerknica)",
+      "regija": "Primorsko-notranjska",
+      "tip_podlage": "gorski",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Punce v jami 2027",
+      "datum": "2027-03-06",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Trbovlje–Hrastnik",
+      "regija": "Zasavska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "4. Trail po kraških klancih 2027",
+      "datum": "2027-03-07",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Križ pri Sežani",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "9. Parenzana Marathon",
+      "datum": "2027-03-14",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Parenzana – Hrvaška–Slovenija",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "cesta/trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Mali kraški maraton 2027",
+      "datum": "2027-03-21",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Sežana",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Kras Trail 2027",
+      "datum": "2027-03-27",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Senožeče",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "AC Frimobil 16. Velikonočni tek okrog Šmartinskega jezera",
+      "datum": "2027-03-28",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Celje – Šmartinsko jezero",
+      "regija": "Savinjska",
+      "tip_podlage": "",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Hop na grad",
+      "datum": "",
+      "predvideno_od": "2027-04-04",
+      "predvideno_do": "2027-04-25",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Ormoški polmaraton 2027",
+      "datum": "2027-04-04",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Ormož",
+      "regija": "Podravska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Luka Koper 13. Istrski maraton",
+      "datum": "2027-04-11",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Izola",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Hrastnik Trail 2027",
+      "datum": "2027-04-17",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Hrastnik",
+      "regija": "Zasavska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "UTVV I Feel Slovenia 2027",
+      "datum": "2027-04-23",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Vipavska dolina",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Biznis run Celje 2027",
+      "datum": "2027-05-07",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Celje",
+      "regija": "Savinjska",
+      "tip_podlage": "",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Tek trojk (Pot ob žici)",
+      "datum": "",
+      "predvideno_od": "2027-05-08",
+      "predvideno_do": "2027-05-08",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Wings for Life World Run Slovenia 2027",
+      "datum": "2027-05-09",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Slovenija",
+      "regija": "",
+      "tip_podlage": "",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "17. KBK TRAIL",
+      "datum": "2027-05-15",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Hotavlje",
+      "regija": "Gorenjska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "18. Nočni tek Celje",
+      "datum": "2027-05-15",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Celje – Savinjsko nabrežje",
+      "regija": "Savinjska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "45. Maraton treh src",
+      "datum": "2027-05-15",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Radenci",
+      "regija": "Pomurska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "8. Trail Celje",
+      "datum": "2027-05-15",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Celje – Savinjsko nabrežje",
+      "regija": "Savinjska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Poslovni tek trojk",
+      "datum": "",
+      "predvideno_od": "2027-05-21",
+      "predvideno_do": "2027-05-28",
+      "kraj": "Bled",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "DM tek za ženske",
+      "datum": "",
+      "predvideno_od": "2027-05-22",
+      "predvideno_do": "2027-05-30",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Kriška gora Trail 2027",
+      "datum": "2027-05-22",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Križe",
+      "regija": "Gorenjska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Kočevsko Outdoor Festival 2027",
+      "datum": "2027-05-28",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Kočevje",
+      "regija": "Jugovzhodna",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Litijski tek",
+      "datum": "",
+      "predvideno_od": "2027-05-29",
+      "predvideno_do": "2027-06-13",
+      "kraj": "Litija",
+      "regija": "Zasavska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Mednarodni tek na Ratitovec",
+      "datum": "",
+      "predvideno_od": "2027-05-29",
+      "predvideno_do": "2027-06-06",
+      "kraj": "Železniki",
+      "regija": "Gorenjska",
+      "tip_podlage": "gorski",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Nočni tek Metlika",
+      "datum": "",
+      "predvideno_od": "2027-05-29",
+      "predvideno_do": "2027-05-29",
+      "kraj": "Metlika",
+      "regija": "Jugovzhodna",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Nočni tek Medvode",
+      "datum": "",
+      "predvideno_od": "2027-06-01",
+      "predvideno_do": "2027-06-15",
+      "kraj": "Medvode",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Hg Trail 2027",
+      "datum": "2027-06-05",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Idrija",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Tek štirih srčnih mož 2027",
+      "datum": "2027-06-06",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Bohinj – Ribčev Laz",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta/trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Biznis Run Maribor 2027",
+      "datum": "2027-06-11",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Maribor",
+      "regija": "Podravska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "9. Nočni tek Maribor",
+      "datum": "2027-06-12",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Maribor – Grajski trg",
+      "regija": "Podravska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Snežnik Trails 2027",
+      "datum": "2027-06-12",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Črne njive nad Ilirsko Bistrico",
+      "regija": "Primorsko-notranjska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Trail Maribor 2027",
+      "datum": "2027-06-12",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Maribor",
+      "regija": "Podravska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Gozdni tek Mislinja in 24. Memorial Jožeta Tisnikarja",
+      "datum": "",
+      "predvideno_od": "2027-06-13",
+      "predvideno_do": "2027-06-20",
+      "kraj": "Mislinja",
+      "regija": "Koroška",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Podbrdo Trail Running Festival 2027",
+      "datum": "2027-06-18",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Podbrdo",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Tek 4 mostov",
+      "datum": "",
+      "predvideno_od": "2027-06-18",
+      "predvideno_do": "2027-06-20",
+      "kraj": "Škofja Loka",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Radolška 10ka",
+      "datum": "",
+      "predvideno_od": "2027-06-21",
+      "predvideno_do": "2027-06-24",
+      "kraj": "Radovljica",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Ormoški nočni ulični tek 2027",
+      "datum": "2027-06-24",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Ormož",
+      "regija": "Podravska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Soča Outdoor Festival",
+      "datum": "",
+      "predvideno_od": "2027-06-24",
+      "predvideno_do": "2027-06-28",
+      "kraj": "Tolmin",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "K24 Ultra Trail",
+      "datum": "2027-08-06",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Črna na Koroškem",
+      "regija": "Koroška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "4. Fara Trail",
+      "datum": "2027-08-14",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Spodnja Idrija",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Kranjskogorska 10ka",
+      "datum": "",
+      "predvideno_od": "2027-08-15",
+      "predvideno_do": "2027-08-15",
+      "kraj": "Kranjska Gora",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Vzpon na Široko",
+      "datum": "",
+      "predvideno_od": "2027-08-15",
+      "predvideno_do": "2027-08-15",
+      "kraj": "Tolminski Lom",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Triglav Trail Run",
+      "datum": "",
+      "predvideno_od": "2027-08-20",
+      "predvideno_do": "2027-08-22",
+      "kraj": "Mojstrana",
+      "regija": "Gorenjska",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "5. Kraljevski vzpon na Kamniško sedlo – Kamniško sedlo Extrem",
+      "datum": "2027-08-22",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Kamniška Bistrica",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "gorski",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Dobrodelni Postojnski tek",
+      "datum": "",
+      "predvideno_od": "2027-08-22",
+      "predvideno_do": "2027-08-22",
+      "kraj": "Postojna",
+      "regija": "Primorsko-notranjska",
+      "tip_podlage": "cesta/trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Haloze trail",
+      "datum": "",
+      "predvideno_od": "2027-08-28",
+      "predvideno_do": "2027-08-28",
+      "kraj": "Majšperk",
+      "regija": "Podravska",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "5. Trail Velika Planina",
+      "datum": "2027-08-29",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Velika planina",
+      "regija": "Gorenjska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Blitz Bovec maraton",
+      "datum": "",
+      "predvideno_od": "2027-09-04",
+      "predvideno_do": "2027-09-04",
+      "kraj": "Bovec",
+      "regija": "Goriška",
+      "tip_podlage": "cesta/trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Ultramaraton Celje – Logarska dolina",
+      "datum": "",
+      "predvideno_od": "2027-09-04",
+      "predvideno_do": "2027-09-04",
+      "kraj": "Celje",
+      "regija": "Savinjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "4. Trail Ljubljana",
+      "datum": "2027-09-10",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "trail",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "18. Nočni tek Ljubljanica",
+      "datum": "2027-09-11",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "Triglav tek",
+      "datum": "",
+      "predvideno_od": "2027-09-11",
+      "predvideno_do": "2027-09-11",
+      "kraj": "Brdo pri Kranju",
+      "regija": "Gorenjska",
+      "tip_podlage": "cesta/trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Julian Alps Trail Run by UTMB (JAT)",
+      "datum": "",
+      "predvideno_od": "2027-09-16",
+      "predvideno_do": "2027-09-20",
+      "kraj": "Kranjska Gora",
+      "regija": "Gorenjska",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Aviratek",
+      "datum": "",
+      "predvideno_od": "2027-09-17",
+      "predvideno_do": "2027-09-19",
+      "kraj": "Šentvid pri Stični",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "oviratlon",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Konjiški maraton",
+      "datum": "",
+      "predvideno_od": "2027-09-25",
+      "predvideno_do": "2027-09-26",
+      "kraj": "Slovenske Konjice",
+      "regija": "Savinjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Medvoški tek",
+      "datum": "",
+      "predvideno_od": "2027-09-25",
+      "predvideno_do": "2027-09-25",
+      "kraj": "Medvode",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Nočni tek Portorož",
+      "datum": "",
+      "predvideno_od": "2027-10-02",
+      "predvideno_do": "2027-10-02",
+      "kraj": "Portorož",
+      "regija": "Obalno-kraška",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Novomeški polmaraton",
+      "datum": "",
+      "predvideno_od": "2027-10-02",
+      "predvideno_do": "2027-10-03",
+      "kraj": "Novo mesto",
+      "regija": "Jugovzhodna",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Backyard Ultra Ljubljana 2027",
+      "datum": "2027-10-08",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Spodnje Gameljne",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "",
+      "status": "potrjeno"
+    },
+    {
+      "naziv_prireditve": "NLB Ljubljanski maraton",
+      "datum": "",
+      "predvideno_od": "2027-10-16",
+      "predvideno_do": "2027-10-17",
+      "kraj": "Ljubljana",
+      "regija": "Osrednjeslovenska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Go4trail",
+      "datum": "",
+      "predvideno_od": "2027-11-05",
+      "predvideno_do": "2027-11-07",
+      "kraj": "Nova Gorica",
+      "regija": "Goriška",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Celjski mali maraton",
+      "datum": "",
+      "predvideno_od": "2027-11-06",
+      "predvideno_do": "2027-11-14",
+      "kraj": "Celje",
+      "regija": "Savinjska",
+      "tip_podlage": "cesta",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Šmarješki tek",
+      "datum": "",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Šmarješke Toplice",
+      "regija": "Jugovzhodna",
+      "tip_podlage": "trail",
+      "status": "pričakovano"
+    },
+    {
+      "naziv_prireditve": "Spartan Trifecta Krvavec",
+      "datum": "",
+      "predvideno_od": "",
+      "predvideno_do": "",
+      "kraj": "Krvavec",
+      "regija": "Gorenjska",
+      "tip_podlage": "oviratlon",
+      "status": "pričakovano"
+    }
+  ]
+}
