@@ -1,0 +1,30 @@
+npm test
+ℹ tests 585
+ℹ suites 56
+ℹ pass 585
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 940.474125
+
+Browser suite
+  ✓  44 [chromium] › tests/browser/race-profile-ux.spec.ts:13:5 › profile content, actions and metadata: en 768px (3.5s)
+  ✓  45 [chromium] › tests/browser/race-profile-ux.spec.ts:13:5 › profile content, actions and metadata: en 1440px (5.4s)
+
+  45 passed (1.8m)
+
+Final focused confirmation
+  ✓  1 [chromium] › tests/browser/proposal-form.spec.ts:88:3 › native proposal form › SL organizer confirmation loads runtime data and posts claim without Google Forms (4.1s)
+  ✓  2 [chromium] › tests/browser/proposal-form.spec.ts:109:3 › native proposal form › EN confirmation handles SNAPSHOT_CHANGED, reloads and preserves correction link (684ms)
+
+  2 passed (5.1s)
+
+Build
+22:50:46   └─ /zasebnost/index.html (+1ms)
+22:50:46 ✓ Completed in 15.76s.
+
+22:50:46 [build] 661 page(s) built in 16.70s
+22:50:46 [build] Complete!
+
+git diff --check: PASS

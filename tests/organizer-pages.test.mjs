@@ -95,7 +95,7 @@ test('organizer confirmation is presented as an active bilingual finder CTA', ()
   assert.match(component, /Poiščite in potrdite svoj tek/);
   assert.match(component, /Confirm your race information/);
   assert.match(component, /Find and confirm your race/);
-  assert.match(component, /brezplačen osnovni pregled zanimanja[^<]+zadnjih 30 dni/);
+  assert.match(component, /brezplačen osnovni pregled zanimanja[^<]+zadnjih 30 dneh/);
   assert.match(component, /free basic overview of interest[^<]+last 30 days/);
   assert.match(component, /const finderHref = en \? '\/en\/find-races\/' : '\/iskalnik-tekov\/'/);
   assert.match(component, /data-organizer-placement="confirmation"/);

@@ -1,0 +1,686 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Preverite termine 2027",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "height": 37,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "height": 37,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.48821376375175
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Nimate spletne strani za svoj tek?",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Potrdite podatke svojega teka",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Vaš tek lahko na STK dobi brezplačno javno predstavitveno stran z datumom, krajem in razdaljami ter informacijami o prijavah, razpisu in trasi. Podatki in povezave so prikazani glede na razpoložljive, preverjene informacije.",
+        "minimum": 11.751416441785553
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Povezavo do profila lahko delite na Facebooku, v vabilih ali na spletni strani društva. Spodaj poiščite svoj tek ali predlagajte nov tek, dopolnitev oziroma popravek podatkov.",
+        "minimum": 11.72242343191802
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Poiščite svoj tek, na profilu izberite »Potrdite pravilnost podatkov« in preglejte aktualne podatke za pravo izvedbo teka. Po uspešno preverjeni potrditvi lahko profil prejme oznako »Podatke potrdil organizator«. Sama potrditev e-poštnega naslova ne zadostuje.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Za upravičene potrjene organizatorje je na voljo tudi brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh, kadar je na voljo dovolj ustreznih podatkov. Priprava in dostava poročila potekata po preveritvi upravičenosti in pogojev dostave; pošiljanje ni samodejno.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Število klikov na povezavo za prijavo ni enako številu dejanskih prijav na tek.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite svoj tek",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Dodajte ali popravite tek",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite in potrdite svoj tek",
+        "minimum": 6.886960701706741
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 430,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Preverite termine 2027",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "height": 72.65625,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "height": 72.65625,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "height": 37,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "height": 37,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.556891417393441
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Nimate spletne strani za svoj tek?",
+        "minimum": 11.827526888936026
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Potrdite podatke svojega teka",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Vaš tek lahko na STK dobi brezplačno javno predstavitveno stran z datumom, krajem in razdaljami ter informacijami o prijavah, razpisu in trasi. Podatki in povezave so prikazani glede na razpoložljive, preverjene informacije.",
+        "minimum": 11.751416441785553
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Povezavo do profila lahko delite na Facebooku, v vabilih ali na spletni strani društva. Spodaj poiščite svoj tek ali predlagajte nov tek, dopolnitev oziroma popravek podatkov.",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Poiščite svoj tek, na profilu izberite »Potrdite pravilnost podatkov« in preglejte aktualne podatke za pravo izvedbo teka. Po uspešno preverjeni potrditvi lahko profil prejme oznako »Podatke potrdil organizator«. Sama potrditev e-poštnega naslova ne zadostuje.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Za upravičene potrjene organizatorje je na voljo tudi brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh, kadar je na voljo dovolj ustreznih podatkov. Priprava in dostava poročila potekata po preveritvi upravičenosti in pogojev dostave; pošiljanje ni samodejno.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Število klikov na povezavo za prijavo ni enako številu dejanskih prijav na tek.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite svoj tek",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Dodajte ali popravite tek",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite in potrdite svoj tek",
+        "minimum": 6.886960701706741
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Preverite termine 2027",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "height": 46,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "height": 46,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "NA VOLJO ZDAJ",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Nimate spletne strani za svoj tek?",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Potrdite podatke svojega teka",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Vaš tek lahko na STK dobi brezplačno javno predstavitveno stran z datumom, krajem in razdaljami ter informacijami o prijavah, razpisu in trasi. Podatki in povezave so prikazani glede na razpoložljive, preverjene informacije.",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Povezavo do profila lahko delite na Facebooku, v vabilih ali na spletni strani društva. Spodaj poiščite svoj tek ali predlagajte nov tek, dopolnitev oziroma popravek podatkov.",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Poiščite svoj tek, na profilu izberite »Potrdite pravilnost podatkov« in preglejte aktualne podatke za pravo izvedbo teka. Po uspešno preverjeni potrditvi lahko profil prejme oznako »Podatke potrdil organizator«. Sama potrditev e-poštnega naslova ne zadostuje.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Za upravičene potrjene organizatorje je na voljo tudi brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh, kadar je na voljo dovolj ustreznih podatkov. Priprava in dostava poročila potekata po preveritvi upravičenosti in pogojev dostave; pošiljanje ni samodejno.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Število klikov na povezavo za prijavo ni enako številu dejanskih prijav na tek.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite svoj tek",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Dodajte ali popravite tek",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Poiščite in potrdite svoj tek",
+        "minimum": 6.886960701706741
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Check 2027 dates",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "height": 72.65625,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "height": 37,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "height": 37,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.556891417393441
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "No website for your race?",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Confirm your race information",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Your race can have a free public profile on STK with its date, location and distances, plus registration links, official race information and course details where verified information is available.",
+        "minimum": 11.751416441785553
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Share the profile link on Facebook, in invitations or on your club’s website. Find your race below, or suggest a new race, an addition or a correction.",
+        "minimum": 11.751416441785553
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Find your race, choose “Confirm race information” on its profile and review the current details for the correct race edition. Once your confirmation has been successfully verified, the profile may display “Data confirmed by organizer”. Verifying your email address alone is not enough.",
+        "minimum": 11.625206903134895
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Eligible confirmed organisers can also receive a free basic overview of interest in their race on STK over the last 30 days, provided enough suitable data is available. Eligibility and delivery are checked before the report is prepared and sent; delivery is not automatic.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Clicks on a registration link do not represent completed race registrations.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find your race",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Add or correct a race",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find and confirm your race",
+        "minimum": 6.886960701706741
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 430,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Check 2027 dates",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "height": 72.65625,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "height": 72.65625,
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "height": 37,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "height": 37,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.556891417393441
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "No website for your race?",
+        "minimum": 11.827526888936026
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Confirm your race information",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Your race can have a free public profile on STK with its date, location and distances, plus registration links, official race information and course details where verified information is available.",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Share the profile link on Facebook, in invitations or on your club’s website. Find your race below, or suggest a new race, an addition or a correction.",
+        "minimum": 11.72242343191802
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Find your race, choose “Confirm race information” on its profile and review the current details for the correct race edition. Once your confirmation has been successfully verified, the profile may display “Data confirmed by organizer”. Verifying your email address alone is not enough.",
+        "minimum": 11.625206903134895
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Eligible confirmed organisers can also receive a free basic overview of interest in their race on STK over the last 30 days, provided enough suitable data is available. Eligibility and delivery are checked before the report is prepared and sent; delivery is not automatic.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Clicks on a registration link do not represent completed race registrations.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find your race",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Add or correct a race",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find and confirm your race",
+        "minimum": 6.886960701706741
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "clipped": [],
+    "touchTargets": [
+      {
+        "text": "Check 2027 dates",
+        "height": 46,
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "height": 91.3125,
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "height": 46,
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "height": 46,
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "height": 46,
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "height": 46,
+        "placement": "workflow"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.470782749561216
+      },
+      {
+        "selector": ".organizer-actions .eyebrow",
+        "text": "AVAILABLE NOW",
+        "minimum": 9.408371038125543
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "No website for your race?",
+        "minimum": 11.744066388019979
+      },
+      {
+        "selector": ".organizer-actions h2",
+        "text": "Confirm your race information",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Your race can have a free public profile on STK with its date, location and distances, plus registration links, official race information and course details where verified information is available.",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Share the profile link on Facebook, in invitations or on your club’s website. Find your race below, or suggest a new race, an addition or a correction.",
+        "minimum": 11.646728037615075
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Find your race, choose “Confirm race information” on its profile and review the current details for the correct race edition. Once your confirmation has been successfully verified, the profile may display “Data confirmed by organizer”. Verifying your email address alone is not enough.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Eligible confirmed organisers can also receive a free basic overview of interest in their race on STK over the last 30 days, provided enough suitable data is available. Eligibility and delivery are checked before the report is prepared and sent; delivery is not automatic.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions p",
+        "text": "Clicks on a registration link do not represent completed race registrations.",
+        "minimum": 11.617898220588005
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find your race",
+        "minimum": 11.222579457969614
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Add or correct a race",
+        "minimum": 6.886960701706741
+      },
+      {
+        "selector": ".organizer-actions .button",
+        "text": "Find and confirm your race",
+        "minimum": 6.886960701706741
+      }
+    ]
+  }
+]

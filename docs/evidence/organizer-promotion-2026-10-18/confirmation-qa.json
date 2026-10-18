@@ -1,0 +1,16 @@
+[
+  {
+    "lang": "sl",
+    "note": "Za upravičene potrjene organizatorje je na voljo brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh, kadar je na voljo dovolj ustreznih podatkov. Priprava in dostava poročila potekata po preveritvi upravičenosti in pogojev dostave; pošiljanje ni samodejno.",
+    "message": "Zahteva je prejeta. Preverite e-pošto za naslednji korak. Sama potrditev e-naslova ne zadostuje za potrditev podatkov. Morebitno poročilo se pripravi in pošlje po preveritvi upravičenosti in pogojev dostave.",
+    "interceptedLocalClaimPosts": 1,
+    "realClaimPosts": 0
+  },
+  {
+    "lang": "en",
+    "note": "Eligible confirmed organisers can receive a free basic overview of interest in their race on STK over the last 30 days, provided enough suitable data is available. Eligibility and delivery are checked before the report is prepared and sent; delivery is not automatic.",
+    "message": "Request received. Check your email for the next step. Verifying your email address alone does not confirm the race information. Any report is prepared and sent only after eligibility and delivery checks.",
+    "interceptedLocalClaimPosts": 1,
+    "realClaimPosts": 0
+  }
+]
