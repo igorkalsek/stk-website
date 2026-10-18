@@ -1,0 +1,563 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "Za organizatorje | Slovenski Tekaški Koledar",
+    "main": "ZA ORGANIZATORJE\nNačrtujte in predstavite svoj tek\n\nOd izbire termina do urejenih informacij za tekače – v treh jasnih korakih.\n\nPreverite termine 2027\nPOT ORGANIZATORJA\nNačrtujte, predstavite, spremljajte\n1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.\n2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.\n3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.\nPoskrbite za urejene podatke o teku\n\nNajprej poiščite obstoječo stran teka ali STK pošljite predlog novega teka oziroma popravka.\n\nPoiščite svoj tek\nDodajte ali popravite tek\nNA VOLJO ZDAJ\nPotrdite podatke svojega teka\n\nPoiščite svoj tek in na njegovi strani izberite »Potrdite pravilnost podatkov«. Po potrditvi e-poštnega naslova boste prejeli brezplačen osnovni pregled zanimanja za vaš tek na STK za zadnjih 30 dni.\n\nPoiščite in potrdite svoj tek\n1\nPREVERITE TERMIN\n2\nOBJAVITE ALI POSODOBITE TEK\n3\nPROMOCIJA IN STATISTIKA\nV PRIPRAVI\nNapredna statistika in promocijska orodja\n\nNaprednejše statistike in dodatna promocijska orodja so še v pripravi in trenutno niso na voljo.",
+    "links": [
+      {
+        "text": "Preverite termine 2027",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 91.3125,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 91.3125,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "href": "/za-organizatorje/#promotion",
+        "height": 91.3125,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 37,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 37,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/za-organizatorje/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 430,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "Za organizatorje | Slovenski Tekaški Koledar",
+    "main": "ZA ORGANIZATORJE\nNačrtujte in predstavite svoj tek\n\nOd izbire termina do urejenih informacij za tekače – v treh jasnih korakih.\n\nPreverite termine 2027\nPOT ORGANIZATORJA\nNačrtujte, predstavite, spremljajte\n1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.\n2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.\n3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.\nPoskrbite za urejene podatke o teku\n\nNajprej poiščite obstoječo stran teka ali STK pošljite predlog novega teka oziroma popravka.\n\nPoiščite svoj tek\nDodajte ali popravite tek\nNA VOLJO ZDAJ\nPotrdite podatke svojega teka\n\nPoiščite svoj tek in na njegovi strani izberite »Potrdite pravilnost podatkov«. Po potrditvi e-poštnega naslova boste prejeli brezplačen osnovni pregled zanimanja za vaš tek na STK za zadnjih 30 dni.\n\nPoiščite in potrdite svoj tek\n1\nPREVERITE TERMIN\n2\nOBJAVITE ALI POSODOBITE TEK\n3\nPROMOCIJA IN STATISTIKA\nV PRIPRAVI\nNapredna statistika in promocijska orodja\n\nNaprednejše statistike in dodatna promocijska orodja so še v pripravi in trenutno niso na voljo.",
+    "links": [
+      {
+        "text": "Preverite termine 2027",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 72.65625,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 72.65625,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "href": "/za-organizatorje/#promotion",
+        "height": 91.3125,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 37,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 37,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/za-organizatorje/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      }
+    ]
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "Za organizatorje | Slovenski Tekaški Koledar",
+    "main": "ZA ORGANIZATORJE\nNačrtujte in predstavite svoj tek\n\nOd izbire termina do urejenih informacij za tekače – v treh jasnih korakih.\n\nPreverite termine 2027\nPOT ORGANIZATORJA\nNačrtujte, predstavite, spremljajte\n1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.\n2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.\n3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.\nPoskrbite za urejene podatke o teku\n\nNajprej poiščite obstoječo stran teka ali STK pošljite predlog novega teka oziroma popravka.\n\nPoiščite svoj tek\nDodajte ali popravite tek\nNA VOLJO ZDAJ\nPotrdite podatke svojega teka\n\nPoiščite svoj tek in na njegovi strani izberite »Potrdite pravilnost podatkov«. Po potrditvi e-poštnega naslova boste prejeli brezplačen osnovni pregled zanimanja za vaš tek na STK za zadnjih 30 dni.\n\nPoiščite in potrdite svoj tek\n1\nPREVERITE TERMIN\n2\nOBJAVITE ALI POSODOBITE TEK\n3\nPROMOCIJA IN STATISTIKA\nV PRIPRAVI\nNapredna statistika in promocijska orodja\n\nNaprednejše statistike in dodatna promocijska orodja so še v pripravi in trenutno niso na voljo.",
+    "links": [
+      {
+        "text": "Preverite termine 2027",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nPreverite termin\nPrimerjajte trenutno znane termine za leto 2027.",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 91.3125,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nObjavite ali posodobite tek\nDodajte tek ali popravite njegove javne podatke.",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 91.3125,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromocija in statistika\nPreverite, katera orodja za organizatorje so v pripravi.",
+        "href": "/za-organizatorje/#promotion",
+        "height": 91.3125,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Poiščite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Dodajte ali popravite tek",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Poiščite in potrdite svoj tek",
+        "href": "/iskalnik-tekov/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nPREVERITE TERMIN",
+        "href": "/za-organizatorje/termini-2027/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nOBJAVITE ALI POSODOBITE TEK",
+        "href": "/dodaj-ali-popravi-tek/",
+        "height": 46,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/za-organizatorje/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "For organisers | Slovenski Tekaški Koledar",
+    "main": "FOR ORGANISERS\nPlan and present your race\n\nFrom choosing a date to keeping race information useful for runners—all in three clear steps.\n\nCheck 2027 dates\nORGANISER WORKFLOW\nPlan, present, monitor\n1\nCheck the date\nCompare what STK currently knows about 2027 dates.\n2\nPublish or update a race\nAdd a race or correct its public information.\n3\nPromotion and statistics\nSee which organiser tools are in development.\nKeep your race information up to date\n\nFind the existing race page first, or send STK a proposal for a new race or a correction.\n\nFind your race\nAdd or correct a race\nAVAILABLE NOW\nConfirm your race information\n\nFind your race and choose “Confirm race information” on its race page. After confirming your email address, you will receive a free basic overview of interest in your race on STK over the last 30 days.\n\nFind and confirm your race\n1\nCHECK THE DATE\n2\nPUBLISH OR UPDATE A RACE\n3\nPROMOTION AND STATISTICS\nIN DEVELOPMENT\nAdvanced statistics and promotion tools\n\nAdvanced statistics and additional promotion tools are still in development and are not currently available.",
+    "links": [
+      {
+        "text": "Check 2027 dates",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 91.3125,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "href": "/en/add-or-correct-race/",
+        "height": 72.65625,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "href": "/en/for-organizers/#promotion",
+        "height": 91.3125,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "href": "/en/add-or-correct-race/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 37,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "href": "/en/add-or-correct-race/",
+        "height": 37,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/en/for-organizers/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 430,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "For organisers | Slovenski Tekaški Koledar",
+    "main": "FOR ORGANISERS\nPlan and present your race\n\nFrom choosing a date to keeping race information useful for runners—all in three clear steps.\n\nCheck 2027 dates\nORGANISER WORKFLOW\nPlan, present, monitor\n1\nCheck the date\nCompare what STK currently knows about 2027 dates.\n2\nPublish or update a race\nAdd a race or correct its public information.\n3\nPromotion and statistics\nSee which organiser tools are in development.\nKeep your race information up to date\n\nFind the existing race page first, or send STK a proposal for a new race or a correction.\n\nFind your race\nAdd or correct a race\nAVAILABLE NOW\nConfirm your race information\n\nFind your race and choose “Confirm race information” on its race page. After confirming your email address, you will receive a free basic overview of interest in your race on STK over the last 30 days.\n\nFind and confirm your race\n1\nCHECK THE DATE\n2\nPUBLISH OR UPDATE A RACE\n3\nPROMOTION AND STATISTICS\nIN DEVELOPMENT\nAdvanced statistics and promotion tools\n\nAdvanced statistics and additional promotion tools are still in development and are not currently available.",
+    "links": [
+      {
+        "text": "Check 2027 dates",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 91.3125,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "href": "/en/add-or-correct-race/",
+        "height": 72.65625,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "href": "/en/for-organizers/#promotion",
+        "height": 72.65625,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "href": "/en/add-or-correct-race/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 37,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "href": "/en/add-or-correct-race/",
+        "height": 37,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/en/for-organizers/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "status": 200,
+    "errors": [],
+    "overflow": false,
+    "title": "For organisers | Slovenski Tekaški Koledar",
+    "main": "FOR ORGANISERS\nPlan and present your race\n\nFrom choosing a date to keeping race information useful for runners—all in three clear steps.\n\nCheck 2027 dates\nORGANISER WORKFLOW\nPlan, present, monitor\n1\nCheck the date\nCompare what STK currently knows about 2027 dates.\n2\nPublish or update a race\nAdd a race or correct its public information.\n3\nPromotion and statistics\nSee which organiser tools are in development.\nKeep your race information up to date\n\nFind the existing race page first, or send STK a proposal for a new race or a correction.\n\nFind your race\nAdd or correct a race\nAVAILABLE NOW\nConfirm your race information\n\nFind your race and choose “Confirm race information” on its race page. After confirming your email address, you will receive a free basic overview of interest in your race on STK over the last 30 days.\n\nFind and confirm your race\n1\nCHECK THE DATE\n2\nPUBLISH OR UPDATE A RACE\n3\nPROMOTION AND STATISTICS\nIN DEVELOPMENT\nAdvanced statistics and promotion tools\n\nAdvanced statistics and additional promotion tools are still in development and are not currently available.",
+    "links": [
+      {
+        "text": "Check 2027 dates",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "hero"
+      },
+      {
+        "text": "1\nCheck the date\nCompare what STK currently knows about 2027 dates.",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 91.3125,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPublish or update a race\nAdd a race or correct its public information.",
+        "href": "/en/add-or-correct-race/",
+        "height": 91.3125,
+        "action": "confirm_race",
+        "placement": "workflow"
+      },
+      {
+        "text": "3\nPromotion and statistics\nSee which organiser tools are in development.",
+        "href": "/en/for-organizers/#promotion",
+        "height": 91.3125,
+        "action": "view_organizer_stats_info",
+        "placement": "workflow"
+      },
+      {
+        "text": "Find your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "main"
+      },
+      {
+        "text": "Add or correct a race",
+        "href": "/en/add-or-correct-race/",
+        "height": 46,
+        "action": "add_race",
+        "placement": "main"
+      },
+      {
+        "text": "Find and confirm your race",
+        "href": "/en/find-races/",
+        "height": 46,
+        "action": "find_race",
+        "placement": "confirmation"
+      },
+      {
+        "text": "1\nCHECK THE DATE",
+        "href": "/en/for-organizers/2027-race-dates/",
+        "height": 46,
+        "action": "check_2027_dates",
+        "placement": "workflow"
+      },
+      {
+        "text": "2\nPUBLISH OR UPDATE A RACE",
+        "href": "/en/add-or-correct-race/",
+        "height": 46,
+        "action": "confirm_race",
+        "placement": "workflow"
+      }
+    ],
+    "canonical": "https://tekaski-koledar.si/en/for-organizers/",
+    "alternates": [
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "en",
+        "href": "https://tekaski-koledar.si/en/for-organizers/"
+      },
+      {
+        "lang": "x-default",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      },
+      {
+        "lang": "sl",
+        "href": "https://tekaski-koledar.si/za-organizatorje/"
+      }
+    ]
+  },
+  {
+    "profileConfirmationHref": "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F&mode=confirm"
+  }
+]
