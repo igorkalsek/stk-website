@@ -1,9 +1,22 @@
 ---
 import OrganizerWorkflow from './OrganizerWorkflow.astro';
+import { getDetailStaticPaths } from '../utils-build-data';
+import { planningLinkKey, type PlanningLink } from '../utils-planning-comparison';
 import { buildPlanningMonthSections, buildPlanningOverview, fetchPlanning2027, formatEventPlanningDate, formatPlanningEventCount, formatPlanningRange, formatPlanningRegion, formatPlanningSurface, formatPlanningUpdated, formatPlanningWeekEventCount, formatPlanningWeekendOccupancy, formatPlanningWeekStatus, hasPlanningMonthSection, planningWeekendsForMonth, planningWeekTargetMatchesEvents, type PlanningEvent } from '../utils-planning-2027';
 interface Props { lang: 'sl' | 'en'; }
 const { lang } = Astro.props; const en = lang === 'en';
 const payload = await fetchPlanning2027(); const events = payload?.data ?? [];
+// Reuse the cached Worker data and the exact paths generated in this build.
+// Link enrichment is optional; its failure must never block the planner.
+let planningLinks: PlanningLink[] = [];
+try {
+  const paths = await getDetailStaticPaths(lang);
+  planningLinks = paths.filter(path => path.params.year === '2027').map(({ params, props: { event } }) => ({
+    key: planningLinkKey({ naziv_prireditve: event.naziv_prireditve, datum: event.date, kraj: event.place, regija: event.region, tip_podlage: event.surface }),
+    officialUrl: event.noticeUrl || event.registrationUrl,
+    profilePath: `${en ? '/en/races' : '/tek'}/2027/${params.slug}/`
+  }));
+} catch { /* A comparison can still use planning data without links. */ }
 const overview = buildPlanningOverview(events); const monthSections = buildPlanningMonthSections(events);
 const regions = [...new Set(events.map(e => e.regija).filter(Boolean))].sort((a,b) => a.localeCompare(b, lang));
 const surfaces = [...new Set(events.map(e => e.tip_podlage).filter(Boolean))].sort((a,b) => a.localeCompare(b, lang));
@@ -33,6 +46,20 @@ const finderHref=en?'/en/find-races/':'/iskalnik-tekov/'; const formHref=en?'/en
         <label><span>{en?'Surface':'Tip podlage'}</span><select name="surface" data-planning-filter><option value="">{en?'All surfaces':'Vsi tipi podlage'}</option>{surfaces.map(v=><option value={v}>{formatPlanningSurface(v,lang)}</option>)}</select></label>
         <button type="button" class="planning-clear" data-planning-clear hidden>{en?'Clear filters':'Počisti filtre'}</button>
       </form>
+      <section class="planning-comparison" aria-labelledby="comparison-title">
+        <h2 id="comparison-title">{en?'Compare dates':'Primerjaj termin'}</h2>
+        <p class="comparison-note">{en?'Compare a day or its Saturday–Sunday weekend. Region and surface apply here; month only filters the overview below.':'Primerjajte dan ali pripadajoči vikend sobota–nedelja. Regija in podlaga veljata tudi tukaj; mesec omejuje samo spodnji pregled.'}</p>
+        <div class="comparison-controls">
+          <label><span>{en?'Date in 2027':'Datum v letu 2027'}</span><input type="date" min="2027-01-01" max="2027-12-31" data-comparison-date /></label>
+          <label><span>{en?'Compare':'Primerjaj'}</span><select data-comparison-mode><option value="day">{en?'Day':'Dan'}</option><option value="weekend">{en?'Weekend':'Vikend'}</option></select></label>
+        </div>
+        <div aria-live="polite" aria-atomic="true">
+          <p class="comparison-note" data-comparison-status>{en?'Checking the latest race dates …':'Preverjamo najnovejše termine …'}</p>
+          <div data-comparison-results></div>
+        </div>
+        <noscript><p>{en?'Enable JavaScript to compare dates. You can still browse the overview below.':'Za primerjavo terminov omogočite JavaScript. Spodnji pregled lahko uporabljate tudi brez njega.'}</p></noscript>
+      </section>
+      <script is:inline type="application/json" data-planning-links set:html={JSON.stringify(planningLinks).replace(/</g,'\\u003c')} />
       <div class="section-heading"><h2 id="overview-title">{en?'Race date overview':'Pregled terminov'}</h2></div>
       <div class="year-overview" data-year-overview>{months.map((month,index)=>{const key=String(index+1).padStart(2,'0');return <section class="year-month" data-month={key}>{hasPlanningMonthSection(monthSections,key)?<a href={`#month-${key}`}><strong>{month}</strong></a>:<strong>{month}</strong>}<div>{planningWeekendsForMonth(key).map(w=>{const occupancyEvents=weekendEvents.get(w.start)??[];const n=occupancyEvents.length; const content=<><span>{new Date(`${w.start}T00:00:00Z`).getUTCDate()}.</span><strong>{formatPlanningWeekendOccupancy(n)}</strong></>; const label=`${formatPlanningRange(w.start,w.end,lang,false)}: ${formatPlanningEventCount(n,lang)}`; return n>0&&planningWeekTargetMatchesEvents(monthSections,w.start,occupancyEvents)?<a href={`#week-${w.start}`} class={`weekend-count count-${Math.min(n,3)}`} aria-label={label}>{content}</a>:<span class={`weekend-count count-${Math.min(n,3)}`} role="img" aria-label={label}>{content}</span>})}</div></section>})}</div>
       <p class="planning-zero-note" data-planning-zero-note role="note">{en?'0 events means STK currently has no known event for that weekend. It does not mean the date is available.':'0 dogodkov pomeni, da STK za ta vikend trenutno nima znanega dogodka. To ne pomeni, da je termin prost.'}</p>
