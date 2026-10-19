@@ -1,0 +1,105 @@
+{
+  "task": "DEV-036 B0 / PR #236: UTC coverage boundaries, failed-year coverage and full invariant audit",
+  "checked_at": "2026-10-19T16:18:58.311251+00:00",
+  "reviewed_head": "587e2e4f8a8e8b2937fd44dc9649be50f00866b1",
+  "scope": "contract-only; test semantic validator, synthetic tests, documentation and test script/workflow paths",
+  "synthetic": true,
+  "targeted_test_first": [
+    {
+      "comment_id": 4314857104,
+      "finding": "Compute coverage boundaries by timestamp",
+      "source_before_either_fix": "unmodified 587e2e4 validator",
+      "command": "node --test --test-name-pattern='B0 P2 timestamps:' tests/race-watch-coverage.test.mjs",
+      "red": {
+        "pass": 1,
+        "fail": 6,
+        "details": "Two negative 100 ms aggregate underclaims were accepted; four equivalent UTC spelling controls were rejected."
+      },
+      "green": {
+        "pass": 7,
+        "fail": 0
+      },
+      "fix": "Date.parse comparator for annual maximum; nullable numeric timestamp equality for aggregate/period.from/period.to/generated_at"
+    },
+    {
+      "comment_id": 4314857114,
+      "finding": "Require unknown completeness for each failed year",
+      "source_before_either_fix": "unmodified 587e2e4 validator",
+      "command": "node --test --test-name-pattern='B0 P2 failed-year:' tests/race-watch-coverage.test.mjs",
+      "red": {
+        "pass": 2,
+        "fail": 7
+      },
+      "green": {
+        "pass": 9,
+        "fail": 0
+      },
+      "fix": "Every unavailable year requires unknown completeness and null history, including unavailable years in partial responses"
+    }
+  ],
+  "related_audit_test_first": {
+    "source_before_related_fixes": "Both targeted fixes present, before additional invariant guards",
+    "command": "node --test --test-name-pattern='B0 (coverage|temporal) audit:' tests/race-watch-coverage.test.mjs",
+    "red": {
+      "pass": 17,
+      "fail": 18,
+      "matrix_mismatches": 141
+    },
+    "findings": [
+      "Complete annual coverage without an available projection or known boundary",
+      "Unsupported year accepted by successful v1 response",
+      "Unresolved identity/alias hidden under complete annual coverage and aggregate partial",
+      "Edition data sourced exclusively from an unavailable requested year in a partial response",
+      "retryable flag inconsistent with all eight documented error-code classes",
+      "Original proof TTL limits only enforced on active revisions, not archived history"
+    ],
+    "fixes": "Local semantic guards, shared identity predicate and original TTL check outside active-only branch; no runtime producer or schema shape change"
+  },
+  "finite_coverage_matrix": {
+    "cases": 5832,
+    "dimensions": "18^2 annual availability/completeness/boundary states x 3 aggregate availability x 3 aggregate completeness x 2 ok values",
+    "oracle": "Independent explicit table of 10 allowed annual states plus documented aggregate/envelope constraints",
+    "final_mismatches": 0
+  },
+  "independent_baseline_replay": {
+    "source": "git archive 587e2e4, copy new coverage test file and symlink unchanged node_modules",
+    "command": "node --test /tmp/dev036-b0-review3/baseline/tests/race-watch-coverage.test.mjs",
+    "pass": 23,
+    "fail": 31
+  },
+  "final_local_validation": {
+    "coverage_and_temporal_audit": {
+      "pass": 54,
+      "fail": 0
+    },
+    "contract": {
+      "command": "npm run test:race-watch-contract",
+      "pass": 129,
+      "fail": 0
+    },
+    "full": {
+      "command": "npm test",
+      "pass": 766,
+      "fail": 0
+    },
+    "diff_check": "PASS"
+  },
+  "audit_document": "docs/DEV-036_B0_COVERAGE_AUDIT.md",
+  "baseline_validator_sha256": "b3af57aada3f3fe27511d72120fbabeb42f225c02d8bb2e57b0ff149e3052e40",
+  "local_log_sha256": {
+    "timestamps-before": "c708b236be8ebe73ba8c7ddd52b443c0a1be417e16c81670c48b35ebc9cd078a",
+    "failed-year-before": "3302067204c75790f40262efd1ed6f5407c686fc2c2e24a3c38cac5a25db05e7",
+    "timestamps-after": "b0c1a3a85d745d1c9fa39272029785643970f61dcd0e910fccbf43797a6ef0b2",
+    "failed-year-after": "a4e73ca545c395eae0bec20e3f19a5032dc8165b4ee130ed1cca5c2a6c445bbe",
+    "audit-before": "ae76371f5f91108d588de2aef0c737ad53a8d1219b1b9eddd68e18f58df8de5f",
+    "audit-after": "0149d117903553616f2aea19b2491500207ceb2c7407ae80cc8181c324d8dd4e",
+    "coverage-final": "a5087137025a321379a73499d58996a6a66f75292df1926d61a7778332d0f86d",
+    "baseline-all": "f914e07334a583210d1003f4ac7b1e39d950a58e17f025beaabefd195fe4407f",
+    "contract-final": "f078e550b28761af3841f9c289e15c3abc5dfb9746d5ecc4ff2c4682b51502ea",
+    "npm-test-final": "4a55825d9686468e6e02ab494ab89d63b5ec511e01c64468e13746da0fc55de7"
+  },
+  "ci_evidence": "Pushed-HEAD GitHub run links/results will be recorded in the review replies and PR update after confirmation; local results above do not assert remote CI success.",
+  "production_writes": 0,
+  "deployments": 0,
+  "merges": 0
+}

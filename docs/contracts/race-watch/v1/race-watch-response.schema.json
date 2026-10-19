@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stk:race-watch:v1:response",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "type": {
+      "const": "race_watch"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "generated_at": {
+      "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+    },
+    "projection_revision": {
+      "type": "string",
+      "pattern": "^pr_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "years": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stk:race-watch:v1:common#/$defs/year"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "anyOf": [
+            {
+              "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "to": {
+          "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+        },
+        "mode": {
+          "const": "full_retained_history"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "mode"
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "urn:stk:race-watch:v1:common#/$defs/availability"
+        },
+        "completeness": {
+          "$ref": "urn:stk:race-watch:v1:common#/$defs/completeness"
+        },
+        "history_complete_since": {
+          "anyOf": [
+            {
+              "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "years": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "year": {
+                "$ref": "urn:stk:race-watch:v1:common#/$defs/year"
+              },
+              "availability": {
+                "$ref": "urn:stk:race-watch:v1:common#/$defs/availability"
+              },
+              "completeness": {
+                "$ref": "urn:stk:race-watch:v1:common#/$defs/completeness"
+              },
+              "history_complete_since": {
+                "anyOf": [
+                  {
+                    "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "year",
+              "availability",
+              "completeness",
+              "history_complete_since"
+            ]
+          },
+          "minItems": 0
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "upstream_timeout",
+              "upstream_invalid",
+              "identity_unresolved",
+              "history_gap",
+              "not_seeded",
+              "payload_limit",
+              "request_rejected",
+              "verification_conflict"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "availability",
+        "completeness",
+        "history_complete_since",
+        "years",
+        "reasons"
+      ]
+    },
+    "editions": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stk:race-watch:v1:edition"
+      }
+    },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stk:race-watch:v1:revision"
+      }
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_REQUEST",
+                "UNSUPPORTED_CONTRACT",
+                "UNSUPPORTED_YEAR",
+                "UPSTREAM_UNAVAILABLE",
+                "INVALID_UPSTREAM",
+                "CONTRACT_CONFLICT",
+                "PAYLOAD_LIMIT",
+                "METHOD_NOT_ALLOWED"
+              ]
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "retryable"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "type",
+    "ok",
+    "generated_at",
+    "projection_revision",
+    "years",
+    "period",
+    "coverage",
+    "editions",
+    "revisions",
+    "error"
+  ]
+}

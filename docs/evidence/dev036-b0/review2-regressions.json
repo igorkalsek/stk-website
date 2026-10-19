@@ -1,0 +1,102 @@
+{
+  "task": "DEV-036 B0 / PR #236: pending reschedule and history completeness",
+  "checked_at": "2026-10-19T13:58:15.850125+00:00",
+  "reviewed_head": "c8886d7eebd2072c84f9e840714a7bc7a11fc17e",
+  "scope": "contract-only; no runtime changes or JSON Schema shape/version change",
+  "synthetic": true,
+  "test_file": "tests/race-watch-contract-review.test.mjs",
+  "test_first": [
+    {
+      "comment_id": 4314575822,
+      "finding": "Enforce postponed status for pending reschedules",
+      "red": {
+        "source": "unmodified c8886d7 validator",
+        "command": "node --test --test-name-pattern='B0 P2 pending:' tests/race-watch-contract-review.test.mjs",
+        "pass": 3,
+        "fail": 4,
+        "failure": "Expected SNAPSHOT; actual errors [] for active null-date reschedule with scheduled/cancelled/completed/unknown canonical status"
+      },
+      "fix": "In the active-revision cross-field check, require canonical_status postponed when rescheduled.after is null",
+      "green": {
+        "pass": 7,
+        "fail": 0
+      },
+      "positive_controls": [
+        "active postponed pending reschedule",
+        "active dated scheduled reschedule",
+        "expired/retracted pending history retained without forcing current postponed status"
+      ]
+    },
+    {
+      "comment_id": 4314575829,
+      "finding": "Compare edition boundaries with advertised coverage",
+      "red": {
+        "source": "unmodified c8886d7 validator; both sets were run before either fix",
+        "command": "node --test --test-name-pattern='B0 P2 history:' tests/race-watch-contract-review.test.mjs",
+        "pass": 5,
+        "fail": 7,
+        "failure": "Expected COVERAGE; actual errors [] for unsupported complete history"
+      },
+      "fix": "For every included edition, compare its known boundary in UTC against each applicable advertised complete boundary: aggregate plus requested edition-year/current-Master/alias years. Aggregate partial does not excuse an unsupported complete year.",
+      "green": {
+        "pass": 12,
+        "fail": 0
+      },
+      "negative_cases": [
+        "aggregate August promise with edition history from October",
+        "edition-year promise stricter than aggregate",
+        "current-Master year promise stricter than aggregate",
+        "alias-only historical year promise stricter than aggregate",
+        "late history on second included edition",
+        "unknown advertised complete boundary",
+        "unsupported complete year under aggregate partial"
+      ],
+      "positive_controls": [
+        "equal and older edition boundaries",
+        "equivalent UTC timestamps with and without milliseconds",
+        "ignore unrelated years",
+        "different applicable annual and aggregate boundaries both covered",
+        "explicit affected-year and aggregate partial retain known revisions and valid current proof"
+      ]
+    }
+  ],
+  "baseline_replay": {
+    "source": "git archive c8886d7 to temporary directory; copied updated regression file; same unchanged node_modules",
+    "command": "node --test /tmp/dev036-b0-review2/baseline/tests/race-watch-contract-review.test.mjs",
+    "pass": 19,
+    "fail": 11,
+    "meaning": "Original 11 regressions and 8 new positive controls pass; all 11 new negative cases fail on c8886d7."
+  },
+  "final_local_validation": {
+    "review_regressions": {
+      "pass": 30,
+      "fail": 0
+    },
+    "contract": {
+      "command": "npm run test:race-watch-contract",
+      "pass": 75,
+      "fail": 0
+    },
+    "full": {
+      "command": "npm test",
+      "pass": 712,
+      "fail": 0
+    },
+    "diff_check": "PASS"
+  },
+  "baseline_validator_sha256": "ee10e85324d313e4dda5584e7116a32eefe5510ccf1b348ec01ff9cf1bdfac66",
+  "local_log_sha256": {
+    "pending-before": "5d826eeb1a7c54a75acbd4a730dbbb62c88ed2b76a3860fc1aafd0ef2324ba8d",
+    "history-before": "dc4ba96550620225560c08fb2de487597c3a77e5eb25be7822e994535f134465",
+    "pending-after": "7e4d1c7b3adc85803fe491795bfd7ff5cd046bea08e873b764b2fc171f9620c5",
+    "history-after": "60940aa09a483cc0a40efbaad228df41ce15988da5a159d3e10c9cedf0823a3b",
+    "all-baseline": "7a63dbcc4a816735975c2675d0d5d437319ffa8c969825be3d4fa74266999188",
+    "regressions-final": "9a4bf719e346dfaebf0213467be5a281b22802591af7a8ad8195f04a66b1859a",
+    "contract-final": "d5e18795eeca5bc06d1cebb06c93fec72de20e58a3dc30a85a9d798aa71bcb6c",
+    "npm-test-final": "2590057323860131f0f5d0f921c73b35e4996317fae53f39a5a2877b6766cf62"
+  },
+  "ci_evidence": "Final pushed-HEAD GitHub CI run link and results are recorded in the PR update and replies, after confirmation. Local results do not assert remote CI success.",
+  "production_writes": 0,
+  "deployments": 0,
+  "merges": 0
+}

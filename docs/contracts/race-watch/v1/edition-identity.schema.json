@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stk:race-watch:v1:edition",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "edition_id": {
+      "$ref": "urn:stk:race-watch:v1:common#/$defs/edition_id"
+    },
+    "race_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^R[0-9]{6}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "edition_year": {
+      "$ref": "urn:stk:race-watch:v1:common#/$defs/year"
+    },
+    "canonical_status": {
+      "enum": [
+        "scheduled",
+        "postponed",
+        "cancelled",
+        "completed",
+        "unknown"
+      ]
+    },
+    "identity_status": {
+      "enum": [
+        "verified",
+        "review",
+        "conflict"
+      ]
+    },
+    "watch_publication": {
+      "enum": [
+        "previously_public",
+        "approved_public"
+      ]
+    },
+    "public_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "urn:stk:race-watch:v1:common#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timezone": {
+          "const": "Europe/Ljubljana"
+        }
+      },
+      "required": [
+        "title",
+        "date",
+        "venue",
+        "start_time",
+        "timezone"
+      ]
+    },
+    "current_master": {
+      "anyOf": [
+        {
+          "$ref": "urn:stk:race-watch:v1:common#/$defs/binding"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "previous_master": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stk:race-watch:v1:common#/$defs/binding"
+      }
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stk:race-watch:v1:common#/$defs/alias"
+      }
+    },
+    "history_complete_since": {
+      "anyOf": [
+        {
+          "$ref": "urn:stk:race-watch:v1:common#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "edition_id",
+    "race_id",
+    "edition_year",
+    "canonical_status",
+    "identity_status",
+    "watch_publication",
+    "public_snapshot",
+    "current_master",
+    "previous_master",
+    "aliases",
+    "history_complete_since"
+  ]
+}

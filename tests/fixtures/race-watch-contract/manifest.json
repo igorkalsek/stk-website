@@ -1,0 +1,258 @@
+{
+  "synthetic": true,
+  "notice": "Vsi dogodki, ID-ji, vrstice in viri v teh fixture so izmišljeni. Nikoli za produkcijski uvoz.",
+  "cases": [
+    {
+      "file": "positive/01-same-row-reschedule.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/02-new-row-reschedule.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/03-cancelled-removed.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/04-same-family-two-editions.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/05-reused-row-ambiguous-v2.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/06-alias-conflict-held.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/07-identical-revision-replay.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/08-expired-proof-return-after-60-days.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/09-upstream-unavailable.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 0
+    },
+    {
+      "file": "positive/10-upstream-partial.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/11-date-pending.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/12-cross-year-same-edition.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/missing-proof.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/expired-marked-active.json",
+      "valid": false,
+      "error": "PROOF_EXPIRED",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/ambiguous-identity-active.json",
+      "valid": false,
+      "error": "IDENTITY_UNVERIFIED",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/ambiguous-alias-active.json",
+      "valid": false,
+      "error": "IDENTITY_UNVERIFIED",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/revision-id-collision.json",
+      "valid": false,
+      "error": "REVISION_COLLISION",
+      "active_count": 0,
+      "revision_count": 2
+    },
+    {
+      "file": "negative/duplicate-confirmed-operation.json",
+      "valid": false,
+      "error": "DUPLICATE_OPERATION",
+      "active_count": 0,
+      "revision_count": 2
+    },
+    {
+      "file": "negative/duplicate-edition-id.json",
+      "valid": false,
+      "error": "EDITION_COLLISION",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/unique-alias-without-proof.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/unsafe-source-url.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/missing-before.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/unknown-change-type.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/alias-missing-binding.json",
+      "valid": false,
+      "error": "ALIAS_BINDING",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/dangling-supersedes.json",
+      "valid": false,
+      "error": "SUPERSEDES",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/invalid-calendar-date.json",
+      "valid": false,
+      "error": "SCHEMA",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/global-alias-collision.json",
+      "valid": false,
+      "error": "LOCATOR_COLLISION",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/false-complete-upstream.json",
+      "valid": false,
+      "error": "COVERAGE",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "negative/no-actual-change.json",
+      "valid": false,
+      "error": "NO_CHANGE",
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/13-event-time-change.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/14-venue-change.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/15-route-time-change.json",
+      "valid": true,
+      "error": null,
+      "active_count": 1,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/16-two-official-sources-conflict.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 2
+    },
+    {
+      "file": "positive/17-retracted-history-retained.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 1
+    },
+    {
+      "file": "positive/18-invalid-request-empty-years.json",
+      "valid": true,
+      "error": null,
+      "active_count": 0,
+      "revision_count": 0
+    },
+    {
+      "file": "negative/active-snapshot-mismatch.json",
+      "valid": false,
+      "error": "SNAPSHOT",
+      "active_count": 0,
+      "revision_count": 1
+    }
+  ]
+}
