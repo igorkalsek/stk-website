@@ -6272,3 +6272,18 @@ main {
   .slovenia-map-outline { fill: none; stroke: var(--deep-teal); stroke-width: 5; stroke-linejoin: round; opacity: .72; }
 .slovenia-map-region > path { transition: none; }
 }
+
+/* Race Watch shares the existing plan; deadline details stay on race cards. */
+.race-watch {
+  margin: 1.25rem 0;
+  padding: 1.1rem;
+  border: 1px solid var(--color-border, #d9e2ec);
+  border-radius: 12px;
+  background: var(--color-surface, #fff);
+}
+.race-watch h2 { margin: 0 0 .5rem; font-size: 1.2rem; }
+.race-watch p { margin: .6rem 0; }
+.race-watch-updates { display: grid; gap: .8rem; padding-left: 1.2rem; }
+.race-watch-updates li { padding-left: .2rem; overflow-wrap: anywhere; }
+.race-watch-updates span { display: block; margin-top: .15rem; font-size: .9rem; }
+.race-watch a { font-weight: 700; text-underline-offset: .15em; }

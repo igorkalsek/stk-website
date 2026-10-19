@@ -53,11 +53,12 @@ export const getInitialMyRacesView = (search: string): MyRacesView => {
   catch { return 'plan'; }
 };
 
-import { buildRegistrationDeadlineViews, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
+import type { RegistrationDeadlineView } from './utils-registration-deadlines.js';
 import type { AdditionalEventData } from './utils-additional.js';
+import { mergeMyRaceDeadlines, type VerifiedWatchDeadline } from './utils-race-watch.js';
 
 export type SavedRaceDeadlineItem = SavedRaceResolution & {
-  event: PublicRaceEvent & { additionalData?: AdditionalEventData | null };
+  event: PublicRaceEvent & { additionalData?: AdditionalEventData | null; verifiedDeadlines?: VerifiedWatchDeadline[] };
   deadline: RegistrationDeadlineView;
 };
 
@@ -75,18 +76,13 @@ export const getUpcomingSavedRaceDeadlines = ({
   windowDays = 30,
   limit = 6
 }: {
-  items: Array<SavedRaceResolution & { event: (PublicRaceEvent & { additionalData?: AdditionalEventData | null }) | null }>;
+  items: Array<SavedRaceResolution & { event: (PublicRaceEvent & { additionalData?: AdditionalEventData | null; verifiedDeadlines?: VerifiedWatchDeadline[] }) | null }>;
   todayIso: string;
   windowDays?: number;
   limit?: number;
 }): SavedRaceDeadlineItem[] => items
-  .filter((item): item is SavedRaceDeadlineItem => Boolean(item.event?.additionalData && ACTIVE_DEADLINE_STATUSES.has(item.savedRace.status)))
-  .flatMap((item) => buildRegistrationDeadlineViews({
-    todayIso,
-    eventDate: item.event.date,
-    registrationDeadline: item.event.additionalData?.registrationDeadline,
-    earlyRegistrationDeadline: item.event.additionalData?.earlyRegistrationDeadline
-  }).map((deadline) => ({ ...item, event: item.event, deadline })))
+  .filter((item): item is SavedRaceDeadlineItem => Boolean(item.event && (item.event.additionalData || item.event.verifiedDeadlines?.length) && ACTIVE_DEADLINE_STATUSES.has(item.savedRace.status)))
+  .flatMap((item) => mergeMyRaceDeadlines(item.event, todayIso).map((deadline) => ({ ...item, event: item.event, deadline })))
   .filter((item) => item.deadline.daysRemaining >= 0 && item.deadline.daysRemaining <= windowDays)
   .sort((a, b) => a.deadline.date.localeCompare(b.deadline.date) || a.event.date.localeCompare(b.event.date) || a.event.title.localeCompare(b.event.title, 'sl-SI'))
   .slice(0, limit);
