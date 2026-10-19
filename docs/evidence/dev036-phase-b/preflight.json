@@ -1,0 +1,462 @@
+{
+  "task": "STK DEV-036 Phase B feasibility",
+  "decision": "REQUIRES DATA CONTRACT",
+  "date": "2026-10-19",
+  "timezone": "Europe/Ljubljana",
+  "scope": "Read-only architecture analysis. No production writes, deployment, notifications, implementation PR or local saved-race mutation.",
+  "repositories": {
+    "igorkalsek/stk-website": {
+      "main": "c5f2a961c18717a53f0893b9f11addc2126e1ab6",
+      "open_prs": [],
+      "agents_md": true,
+      "phase_a_pr": 235,
+      "phase_a_merged_at": "2026-10-19T10:12:12Z"
+    },
+    "igorkalsek/stk-apps-scripts": {
+      "main": "82e9ca7838fdf276beffb2571fa14926674044c6",
+      "open_prs": [
+        {
+          "number": 100,
+          "draft": true,
+          "head": "d76a169e4fb41891076de57a216731e7d1fcff96"
+        },
+        {
+          "number": 103,
+          "draft": true,
+          "head": "306b07419d47f34b6564e6406b44292af8df307a"
+        }
+      ],
+      "agents_md": false,
+      "dev033_merged_pr": 106
+    },
+    "igorkalsek/stk-admin": {
+      "main": "71604e2dd89701c9f8ed12c7b10a4fe0269d7af3",
+      "open_prs": [
+        {
+          "number": 140,
+          "draft": true,
+          "head": "364b57863b6f8aa5703998a91b2553d19b874cc3"
+        },
+        {
+          "number": 141,
+          "draft": true,
+          "head": "493612674aeb83caced4a4ff671ce79ac57267be"
+        }
+      ],
+      "agents_md": true
+    }
+  },
+  "local_checkout": {
+    "head": "0cc0bdff44f4aca2e0feb43dc1a6543a0492d384",
+    "branch": "main",
+    "initial_status": [
+      "?? docs/"
+    ],
+    "analysis_used": "Pinned current GitHub main archives in temporary directory; no checkout reset or update"
+  },
+  "sheet": {
+    "url": "https://docs.google.com/spreadsheets/d/1xmuX8CvUNIW60-TE9i2CzExy7Abo3wVjIMnhHhaX7B0/edit",
+    "metadata_modified_at": "2026-10-19T11:14:01.411Z",
+    "access": "Connected Google Drive/Sheets read-only",
+    "sheets": [
+      {
+        "name": "2026",
+        "sheet_id": 1058687042,
+        "grid_rows": 1039,
+        "grid_columns": 26,
+        "read_ranges": [
+          "A1:Z310",
+          "A311:R1039"
+        ],
+        "nonempty_events": 303,
+        "status_counts": {
+          "potrjeno|DA": 281,
+          "neuradno|NE": 20,
+          "odpovedano|NE": 2
+        },
+        "immutable_id_column": false
+      },
+      {
+        "name": "2027",
+        "sheet_id": 355171432,
+        "grid_rows": 1038,
+        "grid_columns": 18,
+        "read_ranges": [
+          "A1:R38",
+          "A39:R1038"
+        ],
+        "nonempty_events": 36,
+        "status_counts": {
+          "potrjeno|DA": 36
+        },
+        "immutable_id_column": false
+      },
+      {
+        "name": "RACE_REGISTRY",
+        "sheet_id": 1492791259,
+        "read_ranges": [
+          "A1:Z310",
+          "A311:D998"
+        ],
+        "headers": [
+          "race_key",
+          "race_id",
+          "",
+          "novi_race_key"
+        ],
+        "entries": 297,
+        "distinct_race_ids": 285,
+        "multi_key_race_ids": 12
+      },
+      {
+        "name": "CHANGE_LOG",
+        "sheet_id": 247150136,
+        "read_ranges": [
+          "A1:Z6",
+          "A7:L1024"
+        ],
+        "headers": [
+          "timestamp",
+          "list",
+          "celica_ali_obseg",
+          "vrstica",
+          "stolpec",
+          "polje",
+          "staro",
+          "novo",
+          "opis",
+          "naziv_prireditve",
+          "datum",
+          "kraj"
+        ],
+        "last_nonempty_row": 1023,
+        "stable_revision_id_column": false,
+        "immutable_edition_id_column": false
+      },
+      {
+        "name": "PUBLIC_LS",
+        "sheet_id": 1177614555,
+        "read_ranges": [
+          "A1:AC310",
+          "S1:V3 (FORMULA)"
+        ],
+        "events": 281,
+        "edition_id_formula": "race_id + '|' + formatted current event date"
+      },
+      {
+        "name": "ORGANIZER_RACE_ACCESS",
+        "sheet_id": 1831519530,
+        "read_ranges": [
+          "A1:AI2",
+          "A2:AI50"
+        ],
+        "records": 3,
+        "pending_email": 2,
+        "verified": 1,
+        "verified_locator": {
+          "year": "2026",
+          "master_row": 256,
+          "organizer_event_id": "R000256"
+        },
+        "private_values_omitted": true
+      },
+      {
+        "name": "ORGANIZATORJI_OUTREACH",
+        "read_ranges": [
+          "A1:Z2"
+        ],
+        "private_values_omitted": true
+      },
+      {
+        "name": "STK_DODATNI_PODATKI",
+        "read_ranges": [
+          "A1:Z3",
+          "A100:Y125"
+        ],
+        "reviewed_deadline_rows": [
+          109,
+          111,
+          117
+        ]
+      }
+    ],
+    "controls": {
+      "lahinja": {
+        "master": "2026!254",
+        "website_event_id": "r000254",
+        "race_id": "R000217",
+        "registry_row": 218,
+        "public_ls_row": 238,
+        "additional_row": 109,
+        "date": "2026-11-07",
+        "current_first_start": "08:00",
+        "retrospective_change_log_row": 1010,
+        "retrospective_recorded_date": "2026-09-28",
+        "described_change_date": "2026-09-24",
+        "form_submission_is_verified_organizer_confirmation": false
+      },
+      "cancelled": [
+        {
+          "master": "2026!89",
+          "official_cancellation_proof_not_established": true
+        },
+        {
+          "master": "2026!207",
+          "status_change_log_row": 889,
+          "visibility_change_log_row": 890,
+          "needs_specific_official_notice_and_fresh_verification": true
+        }
+      ],
+      "different_events_in_same_logged_row": {
+        "master": "2026!155",
+        "change_log_rows": [
+          5,
+          6
+        ]
+      },
+      "cross_year_families": [
+        {
+          "race_id": "R000124",
+          "years": [
+            "2026",
+            "2027"
+          ]
+        },
+        {
+          "race_id": "R000163",
+          "years": [
+            "2026",
+            "2027"
+          ]
+        }
+      ],
+      "organizer_namespace_collision": {
+        "organizer_event_id": "R000243",
+        "master": "2026!243",
+        "family_race_id_R000243_is_different": true
+      },
+      "refreshed_deadline_evidence_change_log_rows": [
+        1021,
+        1022,
+        1023
+      ]
+    }
+  },
+  "limitations": [
+    "Initial Python HTTP attempts received 403; curl GETs succeeded.",
+    "First recent_updates and organizer-confirmations 2026 curl GETs timed out after 30 seconds; one bounded repeat succeeded.",
+    "No fresh interactive browser regression was run; production HTML and linked JS were read.",
+    "Live Apps Script immutable versions/source hashes and Cloudflare binding configuration were not inspected.",
+    "No original private organizer email/form message was freshly verified; audit records were inspected without publishing private values.",
+    "No complete Drive revision-history reconstruction was performed.",
+    "Source review and live endpoint responses are distinct evidence; merged main is not proof of deployed runtime source."
+  ],
+  "public_api": [
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2026",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T11:50:15.945Z",
+      "raw_sha256": "87197369c142463f14185e3745035e13c497c26334a2c7992e47bedd208d7238",
+      "sheet": "2026",
+      "row_count": 303,
+      "columns": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "regija",
+        "tip_podlage",
+        "razdalje_km",
+        "cas_zacetka",
+        "povezava_razpis",
+        "povezava_prijava",
+        "pokal_serija",
+        "vir",
+        "opombe",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju",
+        "opombe_javne"
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T11:49:54.575Z",
+      "raw_sha256": "03a9b46dd80950777deb7d65086ff4c7e5558de308af6a28130cdefbcbdcaf3b",
+      "sheet": "2027",
+      "row_count": 36,
+      "columns": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "regija",
+        "tip_podlage",
+        "razdalje_km",
+        "cas_zacetka",
+        "povezava_razpis",
+        "povezava_prijava",
+        "pokal_serija",
+        "vir",
+        "opombe",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju",
+        "opombe_javne"
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/recent_updates?years=2026,2027&days=60&limit=100",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T13:51:05+02:00",
+      "raw_sha256": "fba158c056884415f291d0a05b5053e8a5c70cef096af31bb0dd20a7153fc9b0",
+      "period": {
+        "from": "2026-08-21",
+        "to": "2026-10-19",
+        "days": 60
+      },
+      "years": [
+        "2026",
+        "2027"
+      ],
+      "stats": {
+        "updated_events_total": 10,
+        "new_events_total": 14,
+        "confirmed_events_total": 1
+      },
+      "returned_total": 25,
+      "supports_immutable_edition_id": false
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/deadlines?contract=2&year=2026&from=2026-10-19&to=2026-12-31&limit=100",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T13:50:20+02:00",
+      "raw_sha256": "f467527cb4b633a9b0e32d63bb5038752b4f38742cc47471da38d339b72e96f3",
+      "contract_version": 2,
+      "stats": {
+        "eligible_total": 3,
+        "returned_total": 3
+      },
+      "items": [
+        {
+          "edition_id": "R000211|2026-11-07",
+          "race_id": "R000211",
+          "master_sheet": "2026",
+          "master_row": "256",
+          "deadline_date": "2026-11-02",
+          "deadline_type": "combined",
+          "deadline_components": [
+            {
+              "type": "advance",
+              "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+              "verified_at": "2026-10-19",
+              "valid_until": "2026-10-26"
+            },
+            {
+              "type": "cheaper",
+              "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+              "verified_at": "2026-10-19",
+              "valid_until": "2026-10-26"
+            }
+          ]
+        },
+        {
+          "edition_id": "R000217|2026-11-07",
+          "race_id": "R000217",
+          "master_sheet": "2026",
+          "master_row": "254",
+          "deadline_date": "2026-11-04",
+          "deadline_type": "online",
+          "deadline_components": [
+            {
+              "type": "online",
+              "official_source": "https://protime.si/dogodek/lahinja-trail-2026/",
+              "verified_at": "2026-10-19",
+              "valid_until": "2026-10-26"
+            }
+          ]
+        },
+        {
+          "edition_id": "R000218|2026-12-05",
+          "race_id": "R000218",
+          "master_sheet": "2026",
+          "master_row": "265",
+          "deadline_date": "2026-11-20",
+          "deadline_type": "final",
+          "deadline_components": [
+            {
+              "type": "final",
+              "official_source": "https://sd-smartno.si/wp-content/uploads/2026/09/6621_invitation.pdf",
+              "verified_at": "2026-10-19",
+              "valid_until": "2026-10-26"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T13:51:13+02:00",
+      "raw_sha256": "ea428873ec5f24d0e3032c7302f27cd708ff563476969f7333fe9562dc590631",
+      "year": "2026",
+      "events": [
+        {
+          "event_id": "R000256",
+          "data_confirmed": true
+        }
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T13:50:15+02:00",
+      "raw_sha256": "12891c138da7c465978ec488b64d8f19dd65a32d21dac88543cad67e2be34ba4",
+      "year": "2027",
+      "events": []
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/additional?year=2026",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T11:50:15.714Z",
+      "raw_sha256": "aca6fe3cfd7d772cfeb4e7900d23a2414c0e05b7cfd4ad4b91691325a10917a4",
+      "row_count": 168
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/planning-2027",
+      "status": 200,
+      "ok": true,
+      "generated_at": "2026-10-19T11:50:15.562Z",
+      "raw_sha256": "da950306750d3cb33dc3b41759414d92dbaecce150fe28b6b118eca8f022bbc1",
+      "row_count": 67
+    }
+  ],
+  "production_pages": [
+    {
+      "url": "https://tekaski-koledar.si/moji-teki/",
+      "status": 200,
+      "title": "Moji teki | Slovenski Tekaški Koledar"
+    },
+    {
+      "url": "https://tekaski-koledar.si/en/my-races/",
+      "status": 200,
+      "title": "My races | Slovenski Tekaški Koledar"
+    }
+  ],
+  "production_bundle": {
+    "url": "https://tekaski-koledar.si/_astro/my-races-client.DwATYz2j.js",
+    "status": 200,
+    "bytes": 35811,
+    "sha256": "b7e4d25edb16ca6eda412bf7377244bcd010b0a691df26e82095dc87cadbf500",
+    "contains_recent_updates": true,
+    "contains_sl_watch_title": true,
+    "contains_en_watch_title": true,
+    "contains_finally": true
+  }
+}

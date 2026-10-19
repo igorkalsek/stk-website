@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "type": "race_watch",
+  "ok": true,
+  "generated_at": "2026-10-19T12:00:00Z",
+  "projection_revision": "pr_00000000-0000-4000-8000-000000000001",
+  "years": [
+    "2026",
+    "2027"
+  ],
+  "period": {
+    "from": "2026-08-01T00:00:00Z",
+    "to": "2026-10-19T12:00:00Z",
+    "mode": "full_retained_history"
+  },
+  "coverage": {
+    "availability": "available",
+    "completeness": "partial",
+    "history_complete_since": "2026-08-01T00:00:00Z",
+    "years": [
+      {
+        "year": "2026",
+        "availability": "available",
+        "completeness": "partial",
+        "history_complete_since": "2026-08-01T00:00:00Z"
+      },
+      {
+        "year": "2027",
+        "availability": "available",
+        "completeness": "complete",
+        "history_complete_since": "2026-08-01T00:00:00Z"
+      }
+    ],
+    "reasons": [
+      "identity_unresolved"
+    ]
+  },
+  "editions": [
+    {
+      "edition_id": "ed_00000000-0000-4000-8000-000000000001",
+      "race_id": "R999999",
+      "edition_year": "2026",
+      "canonical_status": "scheduled",
+      "identity_status": "conflict",
+      "watch_publication": "previously_public",
+      "public_snapshot": {
+        "title": "SINTETIČNI tek 1",
+        "date": "2026-11-14",
+        "venue": "Izmišljeni kraj",
+        "start_time": "09:00",
+        "timezone": "Europe/Ljubljana"
+      },
+      "current_master": {
+        "binding_id": "bd_00000000-0000-4000-8000-000000000001",
+        "locator": {
+          "sheet": "2026",
+          "row": 800,
+          "generation": 1
+        },
+        "valid_from": "2026-08-01T00:00:00Z",
+        "valid_to": null,
+        "proof": {
+          "method": "reviewed_same_edition",
+          "verified_at": "2026-10-19T12:00:00Z",
+          "public_reference": {
+            "url": "https://organizer.example/notices/synthetic-1",
+            "kind": "organizer_notice",
+            "authority_basis": "SINTETIČNO: uradni kanal izmišljene izvedbe."
+          }
+        }
+      },
+      "previous_master": [],
+      "aliases": [
+        {
+          "namespace": "website_event_id",
+          "year": "2026",
+          "key": "r000800",
+          "saved_date": "2026-11-07",
+          "binding_id": "bd_00000000-0000-4000-8000-000000000001",
+          "resolution": "conflict",
+          "proof": null
+        },
+        {
+          "namespace": "website_event_id",
+          "year": "2026",
+          "key": "r000800",
+          "saved_date": "2026-11-14",
+          "binding_id": "bd_00000000-0000-4000-8000-000000000001",
+          "resolution": "unique",
+          "proof": {
+            "method": "reviewed_same_edition",
+            "verified_at": "2026-10-19T12:00:00Z",
+            "public_reference": {
+              "url": "https://organizer.example/notices/synthetic-1",
+              "kind": "organizer_notice",
+              "authority_basis": "SINTETIČNO: uradni kanal izmišljene izvedbe."
+            }
+          }
+        }
+      ],
+      "history_complete_since": "2026-08-01T00:00:00Z"
+    }
+  ],
+  "revisions": [
+    {
+      "revision_id": "rv_00000000-0000-4000-8000-000000000001",
+      "edition_id": "ed_00000000-0000-4000-8000-000000000001",
+      "sequence": 1,
+      "change_set_id": "cs_00000000-0000-4000-8000-000000000001",
+      "change_type": "rescheduled",
+      "field": "date",
+      "scope": {
+        "kind": "event",
+        "route_id": null
+      },
+      "before": "2026-11-07",
+      "after": "2026-11-14",
+      "official_source": {
+        "url": "https://organizer.example/notices/synthetic-1",
+        "kind": "organizer_notice",
+        "authority_basis": "SINTETIČNO: uradni kanal izmišljene izvedbe."
+      },
+      "source_published_at": null,
+      "effective_at": null,
+      "confirmed_at": "2026-10-19T12:00:00Z",
+      "verified_at": "2026-10-19T12:00:00Z",
+      "recorded_at": "2026-10-19T12:00:00Z",
+      "published_at": "2026-10-19T12:00:00Z",
+      "valid_until": "2026-10-26T12:00:00Z",
+      "evidence_state": "conflict",
+      "supersedes_revision_id": null,
+      "retracted_at": null
+    }
+  ],
+  "error": null
+}

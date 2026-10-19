@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "type": "race_watch",
+  "ok": false,
+  "generated_at": "2026-10-19T12:00:00Z",
+  "projection_revision": "pr_00000000-0000-4000-8000-000000000001",
+  "years": [],
+  "period": {
+    "from": null,
+    "to": "2026-10-19T12:00:00Z",
+    "mode": "full_retained_history"
+  },
+  "coverage": {
+    "availability": "unavailable",
+    "completeness": "unknown",
+    "history_complete_since": null,
+    "years": [],
+    "reasons": [
+      "request_rejected"
+    ]
+  },
+  "editions": [],
+  "revisions": [],
+  "error": {
+    "code": "INVALID_REQUEST",
+    "retryable": false
+  }
+}

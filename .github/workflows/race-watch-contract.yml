@@ -1,0 +1,25 @@
+name: Race Watch data contract
+on:
+  pull_request:
+    paths:
+      - 'docs/contracts/race-watch/**'
+      - 'docs/DEV-036_RACE_WATCH_CONTRACT_V1.md'
+      - 'tests/contracts/race-watch/**'
+      - 'tests/fixtures/race-watch-contract/**'
+      - 'tests/race-watch-contract.test.mjs'
+      - 'tests/race-watch-contract-compatibility.test.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/race-watch-contract.yml'
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: git diff --check

@@ -15,7 +15,8 @@
     "test:browser:proposal-form": "playwright test tests/browser/proposal-form.spec.ts --project=chromium",
     "test:browser:my-races": "playwright test tests/browser/my-races-statuses.spec.ts --project=chromium",
     "test:browser:race-profiles": "playwright test tests/browser/race-profile-ux.spec.ts --project=chromium",
-    "test:browser:home": "playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts --project=chromium"
+    "test:browser:home": "playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts --project=chromium",
+    "test:race-watch-contract": "node --test tests/race-watch-contract.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -23,7 +24,8 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1"
+    "@playwright/test": "^1.61.1",
+    "ajv": "8.20.0"
   },
   "engines": {
     "node": ">=20"

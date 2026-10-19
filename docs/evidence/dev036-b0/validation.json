@@ -1,0 +1,67 @@
+{
+  "task": "DEV-036 B0 Race Watch Data Contract",
+  "status": "PASS",
+  "checked_at": "2026-10-19T12:26:23.648221+00:00",
+  "node": "v26.10.0",
+  "tests": {
+    "contract": {
+      "command": "npm run test:race-watch-contract",
+      "pass": 45,
+      "fail": 0
+    },
+    "full": {
+      "command": "npm test",
+      "pass": 682,
+      "fail": 0,
+      "baseline_tests": 633,
+      "added_contract_and_compatibility": 49
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  },
+  "astro_check": {
+    "status": "PRE_EXISTING_FAILURE",
+    "candidate": {
+      "files": 177,
+      "errors": 3,
+      "warnings": 0,
+      "hints": 7
+    },
+    "baseline_main": {
+      "sha": "c5f2a961c18717a53f0893b9f11addc2126e1ab6",
+      "files": 174,
+      "errors": 3,
+      "warnings": 0,
+      "hints": 7,
+      "method": "git archive origin/main to /tmp; same node_modules symlink; astro check --root baseline"
+    },
+    "same_diagnostics": [
+      "tests/browser/finder.spec.ts:567:93 TS2339 placement missing on {}",
+      "tests/browser/planning-comparison.spec.ts:2:30 TS2307 node:fs types missing",
+      "tests/browser/race-detail-contrast.spec.ts:23:31 TS2339 remove missing on Node"
+    ]
+  },
+  "fixture_manifest": {
+    "synthetic": true,
+    "positive": 18,
+    "negative": 18
+  },
+  "not_run": [
+    "Browser regressions: no UI/runtime change.",
+    "Build: no production runtime change; schema validator is tests-only.",
+    "No live integration with /race-watch: endpoint is specification only."
+  ],
+  "scope_checks": {
+    "runtime_source_diff": "empty vs origin/main",
+    "new_runtime_dependencies": 0,
+    "dev_dependency": "ajv 8.20.0; existing locked transitive package declared explicitly",
+    "input_reports_unchanged": true,
+    "master_writes": 0,
+    "registry_writes": 0,
+    "change_log_writes": 0,
+    "deployments": 0,
+    "merges": 0
+  }
+}

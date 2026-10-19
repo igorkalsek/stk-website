@@ -1,0 +1,180 @@
+{
+  "checked_at": "2026-10-19T12:13:48.369661+00:00",
+  "mode": "read-only; no Sheets access in B0",
+  "repositories": {
+    "stk-website": {
+      "main": "c5f2a961c18717a53f0893b9f11addc2126e1ab6",
+      "open_prs": []
+    },
+    "stk-apps-scripts": {
+      "main": "82e9ca7838fdf276beffb2571fa14926674044c6",
+      "open_prs": [
+        {
+          "headRefOid": "306b07419d47f34b6564e6406b44292af8df307a",
+          "isDraft": true,
+          "number": 103,
+          "title": "[CF-Pages-Skip] STK: zaprtje nadomeščenega incidenta brez povrnitve podatkov",
+          "url": "https://github.com/igorkalsek/stk-apps-scripts/pull/103"
+        },
+        {
+          "headRefOid": "d76a169e4fb41891076de57a216731e7d1fcff96",
+          "isDraft": true,
+          "number": 100,
+          "title": "DEV-031: deadline v2 with a read-only D2 release package",
+          "url": "https://github.com/igorkalsek/stk-apps-scripts/pull/100"
+        }
+      ]
+    },
+    "stk-admin": {
+      "main": "71604e2dd89701c9f8ed12c7b10a4fe0269d7af3",
+      "open_prs": [
+        {
+          "headRefOid": "493612674aeb83caced4a4ff671ce79ac57267be",
+          "isDraft": true,
+          "number": 141,
+          "title": "Handle superseded imports and preserve deadline semantics in previews",
+          "url": "https://github.com/igorkalsek/stk-admin/pull/141"
+        },
+        {
+          "headRefOid": "364b57863b6f8aa5703998a91b2553d19b874cc3",
+          "isDraft": true,
+          "number": 140,
+          "title": "DEV-031: prepare validated deadline contract v2 in Admin",
+          "url": "https://github.com/igorkalsek/stk-admin/pull/140"
+        }
+      ]
+    }
+  },
+  "inputs_sha256": {
+    "docs/DEV-036_PHASE_B_IDENTITY_AND_VERIFIED_CHANGES.md": "bc8dc2515794fc53bf22bfd6206636f83732bb6d4ad318f2b3f37c4b25809d77",
+    "docs/evidence/dev036-phase-b/preflight.json": "983ea44dc674a52aeb9b051bd30652e22ad7ae7d61fbd573d3d164e728c00742"
+  },
+  "production": [
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2026",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "aeaa57de1374cf2b2fa55c935e04279775fb661c6f782c26fa09d14d86c6414a",
+      "ok": true,
+      "generated_at": "2026-10-19T12:13:23.460Z",
+      "row_count": 303,
+      "sheet": "2026",
+      "columns": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "regija",
+        "tip_podlage",
+        "razdalje_km",
+        "cas_zacetka",
+        "povezava_razpis",
+        "povezava_prijava",
+        "pokal_serija",
+        "vir",
+        "opombe",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju",
+        "opombe_javne"
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "1a6d5fa560ef2a20c7631dd9f3fc2aa76d194aabbaf309ea99d0226cd56086f8",
+      "ok": true,
+      "generated_at": "2026-10-19T12:13:21.562Z",
+      "row_count": 36,
+      "sheet": "2027",
+      "columns": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "regija",
+        "tip_podlage",
+        "razdalje_km",
+        "cas_zacetka",
+        "povezava_razpis",
+        "povezava_prijava",
+        "pokal_serija",
+        "vir",
+        "opombe",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju",
+        "opombe_javne"
+      ]
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/recent_updates?years=2026,2027&days=60&limit=100",
+      "http_status": "000",
+      "curl_exit": 28,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/deadlines?contract=2&year=2026&from=2026-10-19&to=2026-12-31&limit=100",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "5b8b31c4f010ac8cf17787be20db4c8775294f9fa1f0f87fba8609946e0ac47f",
+      "ok": true,
+      "type": "deadlines",
+      "generated_at": "2026-10-19T14:13:24+02:00",
+      "contract_version": 2,
+      "stats": {
+        "eligible_total": 3,
+        "returned_total": 3
+      },
+      "item_count": 3,
+      "opaque_edition_ids": false
+    },
+    {
+      "url": "https://tekaski-koledar.si/moji-teki/",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "85044835eaeaf5e00bee72c0c6445674b1f90cca9d4f823d9ef1c9f04df2e512",
+      "title": "Moji teki | Slovenski Tekaški Koledar",
+      "watch_bundle_paths": []
+    },
+    {
+      "url": "https://tekaski-koledar.si/en/my-races/",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "d854564931e32c924d84e51e18d15dc1f2ca0f5132f71524c2fb3ac96edfba54",
+      "title": "My races | Slovenski Tekaški Koledar",
+      "watch_bundle_paths": []
+    },
+    {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/recent_updates?years=2026,2027&days=60&limit=100",
+      "attempt": 2,
+      "checked_at": "2026-10-19T12:17:37.313695+00:00",
+      "http_status": "200",
+      "curl_exit": 0,
+      "sha256": "437f0368d0f0d6d277a84a4f4b5323d0384e99e8174fb16ae49d8fd501efa1db",
+      "ok": true,
+      "type": "recent_updates",
+      "generated_at": "2026-10-19T14:17:32+02:00",
+      "recent": {
+        "period": {
+          "from": "2026-08-21",
+          "to": "2026-10-19",
+          "days": 60
+        },
+        "stats": {
+          "updated_events_total": 10,
+          "new_events_total": 14,
+          "confirmed_events_total": 1
+        },
+        "years": [
+          "2026",
+          "2027"
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "No live Sheets reread: sheet/formula observations are attributed to Phase B preflight, not newly verified.",
+    "No deployed source/version/binding audit; current main is not evidence of deployment.",
+    "No interactive browser test; HTTP responses only."
+  ]
+}
