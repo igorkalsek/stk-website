@@ -31,8 +31,10 @@ async function setup(page: Page, scenario: Scenario = 'ready', saved = defaults,
     }
     if (url.pathname === '/deadlines') {
       expect(url.searchParams.get('contract')).toBe('2');
-      expect(['2026-10-19', '2026-10-22']).toContain(url.searchParams.get('from'));
-      expect(['2026-11-18', '2026-11-21']).toContain(url.searchParams.get('to'));
+      const from = url.searchParams.get('from')!;
+      const to = url.searchParams.get('to')!;
+      expect(from).toMatch(/^2026-10-\d{2}$/);
+      expect(Date.parse(to) - Date.parse(from)).toBe(30 * 86400000);
       const payload = structuredClone(fixture.deadlines);
       if (scenario === 'ambiguous') payload.items[1].deadline_components[0].type = 'registration';
       return route.fulfill({ json: payload });
@@ -141,4 +143,152 @@ test('verified labels expire exactly at Ljubljana midnight without user interact
   await page.clock.runFor(1100);
   await expect(page.locator('[data-deadline-v2-id]')).toHaveCount(0);
   await expect(page.locator('[data-watch-deadlines]')).toHaveCount(0);
+});
+
+async function revisitTab(page: Page) {
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+    document.dispatchEvent(new Event('visibilitychange'));
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+}
+
+for (const failure of ['503', 'timeout'] as const) test(`retries Race Watch after ${failure} on same-day tab return without changing saved races`, async ({ page }) => {
+  const { initial } = await setup(page);
+  const calls = { recent: 0, deadlines: 0 };
+  const release: Array<() => void> = [];
+  await page.route(url => ['/recent_updates', '/deadlines'].includes(url.pathname), async route => {
+    const kind = new URL(route.request().url()).pathname === '/recent_updates' ? 'recent' : 'deadlines';
+    calls[kind]++;
+    if (calls[kind] === 1) {
+      if (failure === '503') return route.fulfill({ status: 503, json: { ok: false } });
+      await new Promise<void>(resolve => release.push(resolve));
+    }
+    await route.fulfill({ json: fixture[kind] }).catch(() => { /* An expired request may already be aborted. */ });
+  });
+  await page.goto('/en/my-races/');
+  await expect(page.locator('[data-race-watch-unavailable]')).toBeVisible({ timeout: 15_000 });
+  expect(calls).toEqual({ recent: 1, deadlines: 1 });
+  await revisitTab(page);
+  await expect(page.locator('[data-deadline-v2-id]')).toHaveCount(2);
+  await expect(page.locator('[data-watch-update]')).toHaveCount(2);
+  expect(calls).toEqual({ recent: 2, deadlines: 2 });
+  expect(await page.evaluate(key => localStorage.getItem(key), KEY)).toBe(initial);
+  release.forEach(resolve => resolve());
+});
+
+test('refreshes both watch sources on day rollover with the new deadline range', async ({ page }) => {
+  await setup(page, 'ready', defaults, '2026-10-19T23:59:58+02:00');
+  await page.clock.pauseAt(new Date('2026-10-19T23:59:59+02:00'));
+  const ranges: string[] = [];
+  let recentCalls = 0;
+  await page.route(url => ['/recent_updates', '/deadlines'].includes(url.pathname), route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/deadlines') {
+      ranges.push(`${url.searchParams.get('from')}/${url.searchParams.get('to')}`);
+      return route.fulfill({ json: fixture.deadlines });
+    }
+    const recent = structuredClone(fixture.recent);
+    recentCalls++;
+    if (recentCalls > 1) {
+      recent.recent_updates_last_days.period.to = '2026-10-20';
+      recent.recent_updates_last_days.period.from = '2026-08-22';
+    }
+    return route.fulfill({ json: recent });
+  });
+  await page.goto('/en/my-races/');
+  await expect(page.locator('[data-watch-update]')).toHaveCount(2);
+  await page.clock.runFor(1100);
+  await expect(page.locator('[data-watch-update]')).toHaveCount(2);
+  await expect.poll(() => ranges).toEqual(['2026-10-19/2026-11-18', '2026-10-20/2026-11-19']);
+  expect(recentCalls).toBe(2);
+  await expect(page.locator('[data-race-watch]')).toContainText('20 October 2026');
+});
+
+// Simulate a transport that ignores AbortSignal: the cache must still reject late results.
+test('hidden midnight waits for a visit, coalesces concurrent visits and rejects older responses', async ({ page }) => {
+  const { initial } = await setup(page, 'ready', defaults, '2026-10-19T23:59:58+02:00');
+  await page.clock.pauseAt(new Date('2026-10-19T23:59:59+02:00'));
+  await page.addInitScript(() => {
+    const originalFetch = window.fetch;
+    window.fetch = (input, init) => {
+      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+      return originalFetch(input, ['/recent_updates', '/deadlines'].includes(url.pathname) ? { ...init, signal: undefined } : init);
+    };
+  });
+  const calls = { recent: 0, deadlines: 0 };
+  let releaseOld!: () => void;
+  let releaseNew!: () => void;
+  const oldGate = new Promise<void>(resolve => { releaseOld = resolve; });
+  const newGate = new Promise<void>(resolve => { releaseNew = resolve; });
+  await page.route(url => ['/recent_updates', '/deadlines'].includes(url.pathname), async route => {
+    const url = new URL(route.request().url());
+    const kind = url.pathname === '/recent_updates' ? 'recent' : 'deadlines';
+    const attempt = ++calls[kind];
+    await (attempt === 1 ? oldGate : newGate);
+    const payload = structuredClone(fixture[kind]);
+    if (attempt > 1 && kind === 'recent') {
+      const recent = payload as typeof fixture.recent;
+      recent.recent_updates_last_days.period.from = '2026-08-22';
+      recent.recent_updates_last_days.period.to = '2026-10-20';
+    }
+    if (attempt > 1 && kind === 'deadlines') {
+      const deadlines = payload as typeof fixture.deadlines;
+      expect(url.searchParams.get('from')).toBe('2026-10-20');
+      expect(url.searchParams.get('to')).toBe('2026-11-19');
+      deadlines.items = [];
+      deadlines.stats = { eligible_total: 0, returned_total: 0 };
+      deadlines.period = { from: '2026-10-20', to: '2026-11-19' };
+    }
+    await route.fulfill({ json: payload });
+  });
+  await page.goto('/en/my-races/');
+  await expect.poll(() => calls).toEqual({ recent: 1, deadlines: 1 });
+  await page.evaluate(() => Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' }));
+  await page.clock.runFor(1100);
+  expect(calls).toEqual({ recent: 1, deadlines: 1 });
+  await revisitTab(page);
+  await expect.poll(() => calls).toEqual({ recent: 2, deadlines: 2 });
+  await page.evaluate(() => {
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+  });
+  releaseNew();
+  await expect(page.locator('[data-watch-update]')).toHaveCount(2);
+  await expect(page.locator('[data-deadline-v2-id]')).toHaveCount(0);
+  const oldResponses = Promise.all([
+    page.waitForResponse(response => new URL(response.url()).pathname === '/recent_updates'),
+    page.waitForResponse(response => new URL(response.url()).searchParams.get('from') === '2026-10-19')
+  ]);
+  releaseOld();
+  await Promise.all((await oldResponses).map(response => response.finished()));
+  await page.clock.runFor(32);
+  await expect(page.locator('[data-watch-update]')).toHaveCount(2);
+  await expect(page.locator('[data-race-watch]')).toContainText('20 October 2026');
+  await expect(page.locator('[data-deadline-v2-id]')).toHaveCount(0);
+  expect(calls).toEqual({ recent: 2, deadlines: 2 });
+  expect(await page.evaluate(key => localStorage.getItem(key), KEY)).toBe(initial);
+});
+
+test('a same-day visit refreshes successful cached data once, with no polling', async ({ page }) => {
+  await setup(page);
+  const calls = { recent: 0, deadlines: 0 };
+  await page.route(url => ['/recent_updates', '/deadlines'].includes(url.pathname), route => {
+    const kind = new URL(route.request().url()).pathname === '/recent_updates' ? 'recent' : 'deadlines';
+    calls[kind]++;
+    const payload = structuredClone(fixture[kind]);
+    if (kind === 'recent' && calls.recent > 1) (payload as typeof fixture.recent).recent_updates_last_days.events[0].update_type = 'confirmed';
+    return route.fulfill({ json: payload });
+  });
+  await page.goto('/en/my-races/');
+  await expect(page.locator('[data-watch-update="UPDATED"]')).toHaveCount(1);
+  await expect(page.locator('[data-deadline-v2-id]')).toHaveCount(2);
+  await page.clock.runFor(60_000);
+  expect(calls).toEqual({ recent: 1, deadlines: 1 });
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+  await expect(page.locator('[data-watch-update="CONFIRMED"]')).toHaveCount(1);
+  expect(calls).toEqual({ recent: 2, deadlines: 2 });
+  await page.clock.runFor(60_000);
+  expect(calls).toEqual({ recent: 2, deadlines: 2 });
 });

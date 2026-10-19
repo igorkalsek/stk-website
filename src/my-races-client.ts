@@ -16,7 +16,9 @@ import { buildRaceWatch, mergeMyRaceDeadlines, type RaceWatchResult, type Verifi
 import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-slovenia-map.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>>; payloads: Record<string, unknown>; additionalRows: Partial<Record<PublicYear, AdditionalEventData[]>>; failedMasterYears: Set<PublicYear>; watch?: { recent?: unknown; deadlines?: unknown; requests: Map<string, Promise<void>> } };
+type WatchKind = 'recent' | 'deadlines';
+type RaceWatchCache = { day: string; recent?: unknown; deadlines?: unknown; requests: Map<WatchKind, Promise<void>>; controller: AbortController };
+type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>>; payloads: Record<string, unknown>; additionalRows: Partial<Record<PublicYear, AdditionalEventData[]>>; failedMasterYears: Set<PublicYear>; watch?: RaceWatchCache };
 const pageDataCache = new WeakMap<HTMLElement, MyRacesRequestCache>();
 const watchExpiryDays = new WeakMap<HTMLElement, string>();
 const pageRenderVersions = new WeakMap<object, number>();
@@ -362,7 +364,7 @@ export const rebuildProgressiveRaceResolutions = (
 };
 
 
-export const initMyRacesPage = async (root = document) => {
+export const initMyRacesPage = async (root = document, refreshWatch = false) => {
   const mount = root.querySelector<HTMLElement>('[data-my-races-app]');
   if (!mount) return;
   const isCurrentRender = beginMyRacesRender(mount);
@@ -394,12 +396,26 @@ export const initMyRacesPage = async (root = document) => {
       window.setTimeout(() => { revalidateDay(); scheduleMidnight(); }, Math.max(1, nextUtc.getTime() - hour * 3600000 - Date.now()));
     };
     scheduleMidnight();
-    document.addEventListener('visibilitychange', revalidateDay);
-    window.addEventListener('pageshow', revalidateDay);
+    const revisit = () => {
+      if (document.visibilityState === 'hidden') return;
+      watchExpiryDays.set(mount, getTodayIsoInLjubljana());
+      void initMyRacesPage(root, true);
+    };
+    document.addEventListener('visibilitychange', revisit);
+    window.addEventListener('pageshow', event => { if (event.persisted) revisit(); });
   }
   const requestCache: MyRacesRequestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map(), payloads: {}, additionalRows: {}, failedMasterYears: new Set() };
   pageDataCache.set(mount, requestCache);
-  const watchCache: NonNullable<MyRacesRequestCache['watch']> = requestCache.watch ??= { requests: new Map() };
+  // Share only active requests. A new day owns a new cache, even if an old
+  // transport ignores cancellation; its late result can never replace this one.
+  if (!requestCache.watch || requestCache.watch.day !== todayIso || (refreshWatch && !requestCache.watch.requests.size)) {
+    requestCache.watch?.controller.abort();
+    requestCache.watch = { day: todayIso, requests: new Map(), controller: new AbortController() };
+  }
+  const watchCache = requestCache.watch;
+  for (const kind of ['recent', 'deadlines'] as const) {
+    if (watchCache[kind] === null) watchCache[kind] = undefined;
+  }
   const payloads = requestCache.payloads;
   const additionalRowsByYear = requestCache.additionalRows;
   const failedMasterYears = requestCache.failedMasterYears;
@@ -532,16 +548,23 @@ export const initMyRacesPage = async (root = document) => {
     reconcileWhenIdle();
   };
 
-  const watchLoads = saved.length ? (['recent', 'deadlines'] as const).map(kind => {
+  const watchLoads = saved.length && (typeof document === 'undefined' || document.visibilityState !== 'hidden') ? (['recent', 'deadlines'] as const).map(kind => {
     const existing = watchCache.requests.get(kind);
     if (existing) return existing.then(rebuildAndReconcile);
     if (watchCache[kind] !== undefined) return Promise.resolve();
     const to = new Date(Date.parse(`${todayIso}T00:00:00Z`) + 30 * 86400000).toISOString().slice(0, 10);
     const path = kind === 'recent' ? '/recent_updates?years=2026,2027&days=60&limit=100' : `/deadlines?contract=2&year=2026&from=${todayIso}&to=${to}&limit=100`;
-    const request = fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: AbortSignal.timeout(12000) })
+    const request = fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: AbortSignal.any([watchCache.controller.signal, AbortSignal.timeout(12000)]) })
       .then(response => { if (!response.ok) throw new Error(String(response.status)); return response.json(); })
-      .then(payload => { watchCache[kind] = payload; }, () => { watchCache[kind] = null; })
-      .finally(rebuildAndReconcile);
+      .then(payload => {
+        if (payload?.ok !== true) throw new Error('Race Watch response unavailable');
+        if (requestCache.watch === watchCache) watchCache[kind] = payload;
+      })
+      .catch(() => { if (requestCache.watch === watchCache) watchCache[kind] = null; })
+      .finally(() => {
+        if (watchCache.requests.get(kind) === request) watchCache.requests.delete(kind);
+        rebuildAndReconcile();
+      });
     watchCache.requests.set(kind, request);
     return request;
   }) : [];

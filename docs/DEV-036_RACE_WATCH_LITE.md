@@ -146,3 +146,37 @@ pošiljanjem. Naročniška hramba in dostava potrebujeta posebno odobritev.
 
 Brez merge, deploy, Apps Script push, Cloudflare sprememb ali zapisov v Master,
 CHANGE_LOG in deadline evidence. Commit uporablja `[CF-Pages-Skip]`.
+
+## Popravek predpomnjenja na PR #235
+
+Pregled `9c5b1b0` je potrdil napako: `watchCache.requests` je ohranil zaključene
+Promise objekte. Tako je tudi neuspeh (`null`) postal trajno stanje obiska;
+menjava dneva je ponovno uporabila ista odgovora. Vidnostni dogodek istega dne
+sploh ni sprožil ponovnega preverjanja.
+
+Pred popravkom sta browser regresiji za vrnitev po 503 in prehod dneva padli:
+namesto obnovljenega preverjenega prikaza sta ostali brez ujemajočih se novosti
+in rokov. Preverjeno na izvornem commitu, ne samo s pregledom kode.
+
+Minimalni popravek v `my-races-client.ts`:
+
+- Mapa hrani samo aktivne zahteve; `finally` odstrani le svoj Promise.
+  Napaka HTTP, JSON, `ok:false` ali timeout ne blokira naslednjega poskusa.
+- Predpomnilnik ima ljubljanski datum. Nov dan ali ponovni obisk vidnega
+  zavihka/BFCache zamenja zaključene podatke; zahteva uporabi novo obdobje
+  `from=today`, `to=today+30`. Med osveževanjem stari Watch signali niso prikazani.
+- Sočasni ponovni obiski istega dne delijo aktivne zahteve. Ob zamenjavi dneva
+  se stare zahteve prekličejo. Tudi transport, ki prezre preklic, ne more prepisati
+  novega predpomnilnika: zapisovanje preverja lastništvo trenutnega objekta.
+- Obstoječi časovnik polnoči ohrani umik dokazil. V skritem zavihku ne začne
+  Watch zahtev; pridobivanje počaka na vrnitev. Ni intervala, samodejnih zank
+  ponovnih poskusov, pollinga ali nove infrastrukture.
+- Validatorji identitete/dokazil, statusi, koledarji in localStorage se ne spreminjajo.
+
+Pet novih browser testov pokriva 503, pravi 12-sekundni timeout, prehod dneva,
+skriti zavihek, sočasne obiske, transport brez učinkovitega preklica in pozne
+odgovore ter uspešen ponovni obisk istega dne brez pollinga. Lokalno:
+`npm test` **633/633 PASS**, relevantni Playwright testi **69/69 PASS**.
+Običajni `npm run build` **PASS, 661 strani, 16,87 s**; `git diff --check` **PASS**.
+Rezultat CI na novem commitu je dokumentiran v PR.
+PR ostaja isti, brez mergea ali deploymenta.
