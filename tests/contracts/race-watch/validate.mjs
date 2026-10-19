@@ -111,6 +111,7 @@ export function validateContract(payload) {
       if (e) {
         const value = r.field === 'status' ? e.canonical_status : e.public_snapshot[r.field];
         if (r.scope.kind === 'event' && value !== r.after) fail('SNAPSHOT', r.revision_id);
+        if (r.change_type === 'rescheduled' && r.after === null && e.canonical_status !== 'postponed') fail('SNAPSHOT', r.revision_id);
         if ([...revisions.values()].some(next => next.edition_id === r.edition_id && next.field === r.field && isDeepStrictEqual(next.scope, r.scope) && next.sequence > r.sequence)) fail('ACTIVE_HEAD', r.revision_id);
       }
     }
@@ -127,6 +128,8 @@ export function validateContract(payload) {
   for (const e of payload.editions) {
     const years = [e.edition_year, ...e.aliases.map(a => a.year), ...(e.current_master ? [e.current_master.locator.sheet] : [])];
     if (!years.some(y => payload.years.includes(y))) fail('YEAR_SELECTION', e.edition_id);
+    const promisedCoverage = [...(c.completeness === 'complete' ? [c] : []), ...ys.filter(y => years.includes(y.year) && y.completeness === 'complete')];
+    if (promisedCoverage.some(coverage => coverage.history_complete_since === null || e.history_complete_since === null || t(e.history_complete_since) > t(coverage.history_complete_since))) fail('COVERAGE', e.edition_id);
     if (e.history_complete_since && t(e.history_complete_since) > now) fail('COVERAGE', e.edition_id);
   }
   return { errors, revisions: [...revisions.values()], active: errors.length ? [] : [...revisions.values()].filter(r => r.evidence_state === 'active') };

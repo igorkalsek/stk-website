@@ -204,6 +204,12 @@ Dve izvedbi iste družine, tudi istega leta, dobita različna ID-ja.
 | `time_changed` | `start_time` | znani HH:mm → drugačen HH:mm istega starta/scope; prvi znani čas ni sprememba. |
 | `venue_changed` | `venue` | znani kraj/prizorišče → drug znani kraj istega scope; kozmetični popravek imena ni selitev. |
 
+Aktivna revizija `rescheduled` z `after:null` zahteva hkrati
+`public_snapshot.date:null` in `canonical_status:postponed`; kombinacija s
+`scheduled` ali drugim statusom je neveljavna. To pravilo velja za aktualno
+aktivno trditev. Pretekla expired/retracted prestavitev sama ne določa današnjega
+statusa in ostane ohranjena v zgodovini.
+
 Popravek podatkovne napake, dopolnitev ali običajen UPDATED se v v1 ne objavi kot
 en izmed teh štirih tipov. Cena, rok prijave, razdalja in poljubno prosto besedilo
 niso dodatni tipi. Za traso je potreben pregledan ključ; poljubni naziv trase ne
@@ -312,7 +318,25 @@ biti unique, tudi če je edition identity_status verified in odgovor nima
 aktivnih revizij. Dvoumen ali konflikten alias zahteva označeno nepopolnost;
 pretekla revizija ostane v zgodovini. Skupna meja popolnosti je
 najpoznejša od deklariranih letnih mej; če katera ni znana, je null. Ne sme biti
-v prihodnosti. Razlogi so `upstream_timeout`, `upstream_invalid`,
+v prihodnosti. Vsaka vključena izvedba mora pokrivati vsako zanjo relevantno
+obljubo `complete`: njen `history_complete_since` mora biti znan in časovno
+**manjši ali enak** skupni meji, kadar je skupna pokritost complete, ter meji
+vsakega ustreznega zahtevanega leta, označenega complete. Ustrezno leto je
+`edition_year`, leto trenutne Master lokacije ali leto katerega koli njenega
+eksplicitnega aliasa; nepovezana leta ji ne nalagajo zgodovinske meje.
+Primerjamo dejanske UTC trenutke, zato enakovredna zapisa z/brez milisekund
+pomenita isto mejo.
+
+Če izvedba zagotavlja zgodovino šele od oktobra, pokritost zanjo ne sme
+obljubljati avgusta. Producer mora bodisi zagotoviti manjkajočo zgodovino,
+pravilno zožiti deklarirano obdobje ali označiti skupno in prizadeto letno
+pokritost kot partial z razlogom `history_gap`. Samo skupni partial ne dovoljuje
+neutemeljene letne trditve complete. Znane revizije ostanejo v odgovoru in
+posamezna aktualna dokazana sprememba lahko ostane veljavna kljub izrecno
+navedeni vrzeli v pretekli zgodovini. Neznana obljubljena meja ne dokazuje
+popolnosti.
+
+Razlogi so `upstream_timeout`, `upstream_invalid`,
 `identity_unresolved`, `history_gap`, `not_seeded`, `payload_limit`,
 `request_rejected`, `verification_conflict`.
 Izpad leta ne sme znižati kakovosti nepovezanega preverjenega zapisa drugega
@@ -406,7 +430,7 @@ operacije na sintetičnih podatkih ter testno razlago exact alias pravila.
 To dokazuje izvedljivost pravila brez spremembe V2; ne simulira uvedenega API-ja.
 
 Rezultati začetnega B0 zagona in omejitve so v [validation.json](evidence/dev036-b0/validation.json);
-poznejši review popravki in dopolnilna validacija so opisani v razdelku 10.
+poznejši review popravki in dopolnilna validacija so opisani v razdelkih 10 in 11.
 B0 se po enem commitu in Draft PR ustavi za pregled; noben merge, deployment,
 pisanje Master/RACE_REGISTRY/CHANGE_LOG ali uporabniška funkcija ni del rezultata.
 
@@ -447,3 +471,26 @@ in končne validacije so v
 [review-regressions.json](evidence/dev036-b0/review-regressions.json).
 B0 contract-only obseg ostaja: spremembe samo v testih, dokumentaciji in
 priključitvi teh testov v obstoječe preverjanje.
+
+## 11. Dodatni P2 pripombi na commitu c8886d7
+
+Obe napaki sta bili najprej dokazani z negativnimi testi na nespremenjenem
+validatorju `c8886d7`, nato odpravljeni z medzapisnima kontrolama samo v testnem
+validatorju:
+
+- [Pending reschedule](https://github.com/igorkalsek/stk-website/pull/236#discussion_r4314575822):
+  aktivni `rescheduled` z neznanim novim datumom zahteva postponed. Štiri
+  negativne kombinacije statusov so prej padle; veljavna aktivna prestavitev
+  ter ohranjena expired/retracted zgodovina so pozitivne kontrole.
+- [Meje zgodovine](https://github.com/igorkalsek/stk-website/pull/236#discussion_r4314575829):
+  meja vsake izvedbe mora podpreti skupno in vse ustrezne letne obljube
+  complete. Sedem negativnih primerov vključuje cross-year, alias, drugo
+  izvedbo, neznano mejo in napačno letno obljubo ob skupnem partial.
+  Pozitivne kontrole preverjajo enake/starejše meje, ekvivalentne UTC čase,
+  nepovezana leta in pravilno označeno delno zgodovino brez brisanja revizij.
+
+Vsi primeri so sintetični in dodani v obstoječi
+[review regresijski sklop](../tests/race-watch-contract-review.test.mjs).
+Dokazilo z rezultati pred popravki in po njih je v
+[review2-regressions.json](evidence/dev036-b0/review2-regressions.json).
+Oblika JSON Schema, verzija 1.0.0 in B0 contract-only obseg ostanejo.
