@@ -4,10 +4,12 @@ on:
     paths:
       - 'docs/contracts/race-watch/**'
       - 'docs/DEV-036_RACE_WATCH_CONTRACT_V1.md'
+      - 'docs/DEV-036_B0_COVERAGE_AUDIT.md'
       - 'tests/contracts/race-watch/**'
       - 'tests/fixtures/race-watch-contract/**'
       - 'tests/race-watch-contract.test.mjs'
       - 'tests/race-watch-contract-review.test.mjs'
+      - 'tests/race-watch-coverage.test.mjs'
       - 'tests/race-watch-contract-compatibility.test.mjs'
       - 'package.json'
       - 'package-lock.json'

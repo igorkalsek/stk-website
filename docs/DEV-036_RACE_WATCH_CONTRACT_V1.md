@@ -267,7 +267,9 @@ Predlagana enotna politika v1 za te štiri tipe, še za odobritev:
 Pri prestavitvi uporabimo bližjega od starega in novega datuma; pri odpovedi
 izvirni prizadeti datum, ne čas odstranitve. Dneve primerjamo v Ljubljani,
 trajanje dokazila pa v UTC urah. Strožji rok vira vedno prevlada.
-`valid_until` ob preveritvi ne sme presegati takratnega maksimuma. Ob branju
+`valid_until` ob preveritvi ne sme presegati takratnega maksimuma, tudi pri
+expired, superseded, retracted in conflict zgodovinskih revizijah. Sprememba
+stanja ne more upravičiti prvotno predolgega deklariranega dokazila. Ob branju
 veljata oba pogoja: `now < valid_until` in
 `now - verified_at < maximum_age_for_current_proximity`. Vstop v krajše okno
 lahko dokazilo izteče prej. Po dogodku se maksimum ne vrne na 14 dni.
@@ -318,7 +320,10 @@ biti unique, tudi če je edition identity_status verified in odgovor nima
 aktivnih revizij. Dvoumen ali konflikten alias zahteva označeno nepopolnost;
 pretekla revizija ostane v zgodovini. Skupna meja popolnosti je
 najpoznejša od deklariranih letnih mej; če katera ni znana, je null. Ne sme biti
-v prihodnosti. Vsaka vključena izvedba mora pokrivati vsako zanjo relevantno
+v prihodnosti. Maksimum in vse enakosti med skupno mejo, `period.from`,
+`period.to` in `generated_at` se primerjajo z dejanskimi UTC vrednostmi
+(`Date.parse`), ne po zapisu niza. `.000Z` in `Z` pomenita isto mejo;
+razlika 1 ms ostane razlika. Vsaka vključena izvedba mora pokrivati vsako zanjo relevantno
 obljubo `complete`: njen `history_complete_since` mora biti znan in časovno
 **manjši ali enak** skupni meji, kadar je skupna pokritost complete, ter meji
 vsakega ustreznega zahtevanega leta, označenega complete. Ustrezno leto je
@@ -331,7 +336,12 @@ pomenita isto mejo.
 obljubljati avgusta. Producer mora bodisi zagotoviti manjkajočo zgodovino,
 pravilno zožiti deklarirano obdobje ali označiti skupno in prizadeto letno
 pokritost kot partial z razlogom `history_gap`. Samo skupni partial ne dovoljuje
-neutemeljene letne trditve complete. Znane revizije ostanejo v odgovoru in
+neutemeljene letne trditve complete. Letni complete poleg meje zahteva available projekcijo in preverjeno identiteto
+z unique aliasi za vse ustrezne vključene izvedbe, tudi ob skupnem partial.
+Izvedba mora imeti vsaj eno uporabno zahtevano letno projekcijo; podatki izključno
+nedostopnega leta se ne smejo vrniti pod uspehom drugega leta. Isti nespremenljivi
+ID z dokazano povezavo do drugega uporabnega zahtevanega leta ostane dovoljen.
+Znane revizije ostanejo v odgovoru in
 posamezna aktualna dokazana sprememba lahko ostane veljavna kljub izrecno
 navedeni vrzeli v pretekli zgodovini. Neznana obljubljena meja ne dokazuje
 popolnosti.
@@ -357,7 +367,13 @@ zadržati vse konfliktne identitete pred serializacijo.
 
 Pri ok:false sta editions/revisions prazna, coverage unavailable/unknown
 (`completeness` mora biti izrecno `unknown`, nikoli `partial` ali `complete`) in
-error obvezen. Če zahtevanih let ni mogoče prebrati, sta obe letni polji [] in
+error obvezen. Vsako nedostopno leto zahteva `completeness:unknown` in
+`history_complete_since:null`, tudi v delnem odgovoru z ok:true. Pri ok:false
+so takšna vsa navedena leta, skupna meja in `period.from` pa sta null.
+Letni complete brez znane meje ali z availability partial/unavailable je
+neveljaven tudi pri praznem seznamu izvedb. `retryable:true` je dovoljen in
+obvezen samo za UPSTREAM_UNAVAILABLE in INVALID_UPSTREAM; druge kode imajo false.
+Če zahtevanih let ni mogoče prebrati, sta obe letni polji [] in
 period.from null; sicer navedemo zahtevana leta tudi pri neuspehu. Apps Script
 ContentService lahko vrne HTTP 200 z ok:false; **Worker mora pregledati envelope
 in preslikati napako**, ne slepo posredovati uspešnega transportnega statusa.
@@ -430,7 +446,7 @@ operacije na sintetičnih podatkih ter testno razlago exact alias pravila.
 To dokazuje izvedljivost pravila brez spremembe V2; ne simulira uvedenega API-ja.
 
 Rezultati začetnega B0 zagona in omejitve so v [validation.json](evidence/dev036-b0/validation.json);
-poznejši review popravki in dopolnilna validacija so opisani v razdelkih 10 in 11.
+poznejši review popravki in dopolnilna validacija so opisani v razdelkih 10–12.
 B0 se po enem commitu in Draft PR ustavi za pregled; noben merge, deployment,
 pisanje Master/RACE_REGISTRY/CHANGE_LOG ali uporabniška funkcija ni del rezultata.
 
@@ -494,3 +510,15 @@ Vsi primeri so sintetični in dodani v obstoječi
 Dokazilo z rezultati pred popravki in po njih je v
 [review2-regressions.json](evidence/dev036-b0/review2-regressions.json).
 Oblika JSON Schema, verzija 1.0.0 in B0 contract-only obseg ostanejo.
+
+## 12. Coverage timestamps, failed-year in celovit pregled invariantov
+
+Dve dodatni P2 pripombi na `587e2e4` sta bili najprej reproducirani na tem
+nespremenjenem commitu. Maksimum letnih mej in enakosti perioda zdaj uporabljajo
+UTC vrednosti; nedostopne letne projekcije zahtevajo unknown/null.
+Pred nadaljnjim pregledom je opravljen še
+[celovit audit pokritosti, časov in statusov](DEV-036_B0_COVERAGE_AUDIT.md),
+vključno z neodvisno matriko 5.832 kombinacij in dodatnimi padajočimi regresijami
+za povezane vrzeli. Rezultati so v
+[review3-regressions.json](evidence/dev036-b0/review3-regressions.json).
+Obseg ostaja contract-only; nobena produkcijska povezava ali podatek se ne spremeni.

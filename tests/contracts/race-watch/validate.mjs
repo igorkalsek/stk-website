@@ -18,9 +18,11 @@ export const validateSchema = (kind, value) => {
   return validate(value) ? [] : validate.errors.map(error => ({ code: 'SCHEMA', detail: `${error.instancePath} ${error.message}` }));
 };
 const t = value => Date.parse(value);
+const sameTime = (a, b) => a === null || b === null ? a === b : t(a) === t(b);
 const stable = value => JSON.stringify(value, Object.keys(value).sort());
 const aliasKey = a => JSON.stringify([a.namespace, a.year, a.key, a.saved_date]);
 const locatorKey = l => `${l.sheet}:${l.row}`;
+const unresolvedIdentity = e => e.identity_status !== 'verified' || e.aliases.some(a => a.resolution !== 'unique');
 const bindingsOverlap = (a, b) => Math.max(t(a.valid_from), t(b.valid_from)) < Math.min(a.valid_to ? t(a.valid_to) : Infinity, b.valid_to ? t(b.valid_to) : Infinity);
 const ljDate = timestamp => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Ljubljana', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(timestamp));
 const civilDays = (date, today) => (t(`${date}T00:00:00Z`) - t(`${today}T00:00:00Z`)) / 86400000;
@@ -90,11 +92,11 @@ export function validateContract(payload) {
     if (isDeepStrictEqual(r.before, r.after)) fail('NO_CHANGE', r.revision_id);
     if (['cancelled', 'rescheduled'].includes(r.change_type) && r.scope.kind !== 'event') fail('SCOPE', r.revision_id);
     if (t(r.confirmed_at) > t(r.recorded_at) || t(r.recorded_at) > t(r.published_at) || t(r.published_at) > now || t(r.verified_at) < t(r.confirmed_at) || t(r.verified_at) > now || t(r.valid_until) <= t(r.verified_at) || r.source_published_at && t(r.source_published_at) > t(r.confirmed_at) || r.retracted_at && (t(r.retracted_at) < t(r.published_at) || t(r.retracted_at) > now)) fail('REVISION_TIME', r.revision_id);
+    const maxAtVerification = proofMaxAgeMs(r, e, r.verified_at);
+    if (t(r.valid_until) - t(r.verified_at) > maxAtVerification) fail('PROOF_TTL', r.revision_id);
     if (r.evidence_state === 'active') {
       if (e.identity_status !== 'verified' || e.aliases.some(a => a.resolution !== 'unique')) fail('IDENTITY_UNVERIFIED', r.revision_id);
       if (now >= t(r.valid_until) || now - t(r.verified_at) >= proofMaxAgeMs(r, e, payload.generated_at)) fail('PROOF_EXPIRED', r.revision_id);
-      const maxAtVerification = proofMaxAgeMs(r, e, r.verified_at);
-      if (t(r.valid_until) - t(r.verified_at) > maxAtVerification) fail('PROOF_TTL', r.revision_id);
       if (r.supersedes_revision_id === r.revision_id) fail('SUPERSEDES', r.revision_id);
     }
     if (r.evidence_state === 'expired' && now < t(r.valid_until) && now - t(r.verified_at) < proofMaxAgeMs(r, e, payload.generated_at)) fail('FALSE_EXPIRY', r.revision_id);
@@ -118,18 +120,23 @@ export function validateContract(payload) {
     if (r.evidence_state === 'superseded' && ![...revisions.values()].some(next => next.supersedes_revision_id === r.revision_id)) fail('SUPERSEDES', r.revision_id);
   }
   const c = payload.coverage, ys = c.years;
+  if (payload.ok && payload.years.some(year => !['2026', '2027'].includes(year))) fail('COVERAGE', 'unsupported successful year');
   if (!isDeepStrictEqual(payload.years, [...payload.years].sort()) || !isDeepStrictEqual(ys.map(y => y.year), payload.years)) fail('COVERAGE', 'requested years must match coverage exactly');
   const fullyAvailable = ys.length > 0 && ys.every(y => y.availability === 'available');
   const fullyComplete = ys.length > 0 && ys.every(y => y.completeness === 'complete');
   const allUnavailable = ys.every(y => y.availability === 'unavailable');
-  const boundary = !ys.length || ys.some(y => y.history_complete_since === null) ? null : ys.map(y => y.history_complete_since).sort().at(-1);
-  if (c.availability !== (fullyAvailable ? 'available' : allUnavailable ? 'unavailable' : 'partial') || c.completeness === 'complete' && (!fullyComplete || !fullyAvailable || c.reasons.length || payload.editions.some(e => e.identity_status !== 'verified' || e.history_complete_since === null || e.aliases.some(a => a.resolution !== 'unique'))) || c.history_complete_since !== boundary || payload.period.from !== boundary || payload.period.to !== payload.generated_at || boundary && t(boundary) > now || ys.some(y => y.history_complete_since && t(y.history_complete_since) > now) || (c.completeness !== 'complete' || c.availability !== 'available') && !c.reasons.length) fail('COVERAGE', 'inconsistent aggregate or history boundary');
+  if (ys.some(y => y.availability === 'unavailable' && (y.completeness !== 'unknown' || y.history_complete_since !== null))) fail('AVAILABILITY', 'unavailable years require unknown completeness and no boundary');
+  if (ys.some(y => y.completeness === 'complete' && (y.availability !== 'available' || y.history_complete_since === null))) fail('COVERAGE', 'complete years require available data and a known boundary');
+  const boundary = !ys.length || ys.some(y => y.history_complete_since === null) ? null : ys.map(y => y.history_complete_since).sort((a, b) => t(a) - t(b)).at(-1);
+  if (c.availability !== (fullyAvailable ? 'available' : allUnavailable ? 'unavailable' : 'partial') || c.completeness === 'complete' && (!fullyComplete || !fullyAvailable || c.reasons.length || payload.editions.some(e => unresolvedIdentity(e) || e.history_complete_since === null)) || !sameTime(c.history_complete_since, boundary) || !sameTime(payload.period.from, boundary) || !sameTime(payload.period.to, payload.generated_at) || boundary && t(boundary) > now || ys.some(y => y.history_complete_since && t(y.history_complete_since) > now) || (c.completeness !== 'complete' || c.availability !== 'available') && !c.reasons.length) fail('COVERAGE', 'inconsistent aggregate or history boundary');
   if (payload.ok === allUnavailable || payload.ok && payload.error !== null || !payload.ok && payload.error === null || !payload.ok && (c.completeness !== 'unknown' || payload.editions.length || payload.revisions.length)) fail('AVAILABILITY', 'invalid error envelope');
+  if (payload.error && payload.error.retryable !== ['UPSTREAM_UNAVAILABLE', 'INVALID_UPSTREAM'].includes(payload.error.code)) fail('AVAILABILITY', 'retryable must match the documented error class');
   for (const e of payload.editions) {
     const years = [e.edition_year, ...e.aliases.map(a => a.year), ...(e.current_master ? [e.current_master.locator.sheet] : [])];
     if (!years.some(y => payload.years.includes(y))) fail('YEAR_SELECTION', e.edition_id);
+    if (!ys.some(y => years.includes(y.year) && y.availability !== 'unavailable')) fail('COVERAGE', 'included edition requires a usable requested year');
     const promisedCoverage = [...(c.completeness === 'complete' ? [c] : []), ...ys.filter(y => years.includes(y.year) && y.completeness === 'complete')];
-    if (promisedCoverage.some(coverage => coverage.history_complete_since === null || e.history_complete_since === null || t(e.history_complete_since) > t(coverage.history_complete_since))) fail('COVERAGE', e.edition_id);
+    if (promisedCoverage.some(coverage => unresolvedIdentity(e) || coverage.history_complete_since === null || e.history_complete_since === null || t(e.history_complete_since) > t(coverage.history_complete_since))) fail('COVERAGE', e.edition_id);
     if (e.history_complete_since && t(e.history_complete_since) > now) fail('COVERAGE', e.edition_id);
   }
   return { errors, revisions: [...revisions.values()], active: errors.length ? [] : [...revisions.values()].filter(r => r.evidence_state === 'active') };
