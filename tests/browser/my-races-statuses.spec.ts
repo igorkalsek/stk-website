@@ -163,6 +163,7 @@ async function mockMyRacesApis(page: Page, options: { additional?: unknown[]; ad
   const requestCounts = { master2026: 0, master2027: 0, additional: 0, additional2026: 0, additional2027: 0 };
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
+    if (url.pathname === '/recent_updates' || url.pathname === '/deadlines') return route.fulfill({ json: { ok: false } });
     if (url.pathname === '/additional') {
       if (options.additionalGate) await options.additionalGate;
       const additionalYear = url.searchParams.get('year') === '2027' ? '2027' : '2026';

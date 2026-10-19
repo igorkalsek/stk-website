@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-19",
+  "base_commit": "38cd3e1d3c4024805acc0a3fa25bc035e9080bcb",
+  "production_saved_races": [
+    {
+      "path": "/moji-teki/",
+      "status": 200,
+      "resolved": true,
+      "statusValue": "planning",
+      "calendarMenu": 1,
+      "localSavedPreserved": true
+    },
+    {
+      "path": "/en/my-races/",
+      "status": 200,
+      "resolved": true,
+      "statusValue": "planning",
+      "calendarMenu": 1,
+      "localSavedPreserved": true
+    }
+  ],
+  "recent": {
+    "path": "/recent_updates?days=60&limit=100&years=2026,2027",
+    "http_status": 200,
+    "generated_at": "2026-10-19T10:58:52+02:00",
+    "period": {
+      "from": "2026-08-21",
+      "to": "2026-10-19",
+      "days": 60
+    },
+    "years": [
+      "2026",
+      "2027"
+    ],
+    "stats": {
+      "updated_events_total": 10,
+      "new_events_total": 14,
+      "confirmed_events_total": 1
+    },
+    "events_count": 25
+  },
+  "deadlines": {
+    "path": "/deadlines?contract=2&year=2026&from=2026-10-19&to=2026-12-31&limit=100",
+    "http_status": 200,
+    "generated_at": "2026-10-19T11:00:55+02:00",
+    "contract_version": 2,
+    "stats": {
+      "eligible_total": 3,
+      "returned_total": 3
+    },
+    "reviewed_items": [
+      {
+        "master_sheet": "2026",
+        "master_row": "256",
+        "race_id": "R000211",
+        "edition_id": "R000211|2026-11-07",
+        "deadline_id": "dl2|R000211|2026-11-07|2026-11-02",
+        "deadline_date": "2026-11-02",
+        "deadline_type": "combined",
+        "deadline_components": [
+          {
+            "type": "advance",
+            "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+            "verified_at": "2026-10-15",
+            "valid_until": "2026-10-22"
+          },
+          {
+            "type": "cheaper",
+            "official_source": "https://protime.si/dogodek/go4trail-tek-treh-vrhov-2026/",
+            "verified_at": "2026-10-15",
+            "valid_until": "2026-10-22"
+          }
+        ]
+      },
+      {
+        "master_sheet": "2026",
+        "master_row": "254",
+        "race_id": "R000217",
+        "edition_id": "R000217|2026-11-07",
+        "deadline_id": "dl2|R000217|2026-11-07|2026-11-04",
+        "deadline_date": "2026-11-04",
+        "deadline_type": "online",
+        "deadline_components": [
+          {
+            "type": "online",
+            "official_source": "https://protime.si/dogodek/lahinja-trail-2026/",
+            "verified_at": "2026-10-15",
+            "valid_until": "2026-10-22"
+          }
+        ]
+      },
+      {
+        "master_sheet": "2026",
+        "master_row": "265",
+        "race_id": "R000218",
+        "edition_id": "R000218|2026-12-05",
+        "deadline_id": "dl2|R000218|2026-12-05|2026-11-20",
+        "deadline_date": "2026-11-20",
+        "deadline_type": "final",
+        "deadline_components": [
+          {
+            "type": "final",
+            "official_source": "https://sd-smartno.si/wp-content/uploads/2026/09/6621_invitation.pdf",
+            "verified_at": "2026-10-15",
+            "valid_until": "2026-10-22"
+          }
+        ]
+      }
+    ]
+  },
+  "master": {
+    "2026": {
+      "http_status": 200,
+      "generated_at": "2026-10-19T08:58:52.563Z",
+      "row_count": 303,
+      "records_have_race_id": false
+    },
+    "2027": {
+      "http_status": 200,
+      "generated_at": "2026-10-19T08:58:52.124Z",
+      "row_count": 36,
+      "records_have_race_id": false
+    }
+  },
+  "limitations": [
+    "First recent request timed out at 40 seconds; retry succeeded.",
+    "Optional top scope=upcoming limit=1000 timed out in live reads/build attempts.",
+    "Read-only observations; no deployment, canonical data writes or evidence renewal."
+  ],
+  "top_retry": {
+    "http_status": 200,
+    "generated_at": "2026-10-19T11:13:50+02:00",
+    "note": "A later retry succeeded; the final ordinary npm run build subsequently passed without the diagnostic preload."
+  }
+}

@@ -9,14 +9,16 @@ import { renderActionIcon } from './utils-action-icons.js';
 import { getTodayIsoInLjubljana, isCompletionAllowed } from './utils-date.js';
 import { backfillCompletedRaceSnapshots, getCompletedRaceSnapshotKey, upsertCompletedRaceSnapshot } from './utils-completed-snapshots.js';
 import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, type AdditionalEventData } from './utils-additional.js';
-import { buildRegistrationDeadlineViews, getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
+import { getRegistrationDeadlineCssState, type RegistrationDeadlineView } from './utils-registration-deadlines.js';
 import { formatSeasonRegionLabel, formatSeasonSurfaceLabel, formatSloveneCount, getNextAchievement, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary, normalizeBasicSurface, type AchievementKey, type BasicSurface } from './utils-my-season.js';
 import { dispatchSavedRacesChanged } from './saved-races-events.js';
+import { buildRaceWatch, mergeMyRaceDeadlines, type RaceWatchResult, type VerifiedWatchDeadline } from './utils-race-watch.js';
 import { getSloveniaMapRegions, renderSloveniaRegionsMap } from './utils-slovenia-map.js';
 
 const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
-type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>>; payloads: Record<string, unknown>; additionalRows: Partial<Record<PublicYear, AdditionalEventData[]>>; failedMasterYears: Set<PublicYear> };
+type MyRacesRequestCache = { master: Map<PublicYear, Promise<unknown>>; additional: Map<PublicYear, Promise<AdditionalEventData[]>>; payloads: Record<string, unknown>; additionalRows: Partial<Record<PublicYear, AdditionalEventData[]>>; failedMasterYears: Set<PublicYear>; watch?: { recent?: unknown; deadlines?: unknown; requests: Map<string, Promise<void>> } };
 const pageDataCache = new WeakMap<HTMLElement, MyRacesRequestCache>();
+const watchExpiryDays = new WeakMap<HTMLElement, string>();
 const pageRenderVersions = new WeakMap<object, number>();
 export const beginMyRacesRender = (mount: object) => {
   const renderVersion = (pageRenderVersions.get(mount) ?? 0) + 1;
@@ -131,14 +133,16 @@ const cardDeadlineLabel = (deadline: RegistrationDeadlineView, language: 'sl' | 
 const conciseRelative = (deadline: RegistrationDeadlineView, labels: Labels, language: 'sl' | 'en') => deadline.state === 'today' ? labels.today : deadline.state === 'tomorrow' ? labels.tomorrow : language === 'en' ? `in ${deadline.daysRemaining} days` : `čez ${deadline.daysRemaining} dni`;
 const cardDeadlineRelative = (deadline: RegistrationDeadlineView, labels: Labels, language: 'sl' | 'en') => deadline.state === 'today' ? labels.today : deadline.state === 'tomorrow' ? labels.tomorrow : language === 'en' ? `${deadline.daysRemaining} days left` : labels.daysLeft.replace('{n}', String(deadline.daysRemaining));
 
-const getActiveCardDeadlines = (event: { date: string; additionalData?: AdditionalEventData | null }, todayIso: string) => buildRegistrationDeadlineViews({ todayIso, eventDate: event.date, registrationDeadline: event.additionalData?.registrationDeadline, earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline })
-  .filter((item) => item.state === 'today' || item.state === 'tomorrow' || item.state === 'future')
-  .sort((a, b) => a.date.localeCompare(b.date) || (a.kind === 'registration' ? -1 : 1));
+const getActiveCardDeadlines = (event: { date: string; additionalData?: AdditionalEventData | null; verifiedDeadlines?: VerifiedWatchDeadline[] }, todayIso: string) => mergeMyRaceDeadlines(event, todayIso)
+  .filter((item) => item.daysRemaining >= 0);
 
-const renderRaceCardDeadlines = (event: { id: string; year: string; title: string; date: string; registrationUrl: string; additionalData?: AdditionalEventData | null }, detailUrl: string, labels: Labels, language: 'sl' | 'en', todayIso: string) => {
+const renderRaceCardDeadlines = (event: { id: string; year: string; title: string; date: string; registrationUrl: string; additionalData?: AdditionalEventData | null; verifiedDeadlines?: VerifiedWatchDeadline[] }, detailUrl: string, labels: Labels, language: 'sl' | 'en', todayIso: string) => {
   const deadlines = getActiveCardDeadlines(event, todayIso);
   if (!deadlines.length) return '';
-  return `<section class="my-race-deadlines" data-my-race-deadlines><h4>${escapeHtml(labels.deadlines)}</h4>${deadlines.map((deadline) => `<div class="my-race-deadline ${getRegistrationDeadlineCssState(deadline)}" data-my-race-deadline data-deadline-kind="${deadline.kind}"><p>${escapeHtml(cardDeadlineLabel(deadline, language))} · ${escapeHtml(formatDeadlineDateAfterUntil(deadline.date, language))} · ${escapeHtml(cardDeadlineRelative(deadline, labels, language))}</p>${renderDeadlineCalendarMenu({ eventId: event.id, eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl, registrationUrl: event.registrationUrl, language }, labels)}</div>`).join('')}</section>`;
+  return `<section class="my-race-deadlines" data-my-race-deadlines><h4>${escapeHtml(labels.deadlines)}</h4>${deadlines.map((deadline) => {
+    const verified = event.verifiedDeadlines?.find(item => item.deadline.date === deadline.date);
+    return `<div class="my-race-deadline ${getRegistrationDeadlineCssState(deadline)}" data-my-race-deadline data-deadline-kind="${deadline.kind}"${verified ? ` data-deadline-v2-id="${escapeHtml(verified.deadlineId)}"` : ''}><p>${escapeHtml(verified?.label ?? cardDeadlineLabel(deadline, language))} · ${escapeHtml(formatDeadlineDateAfterUntil(deadline.date, language))} · ${escapeHtml(cardDeadlineRelative(deadline, labels, language))}</p>${verified ? `<a href="${escapeHtml(verified.source)}" target="_blank" rel="noopener noreferrer" data-deadline-v2-source>${language === 'en' ? 'Official source' : 'Uradno dokazilo'}</a>` : ''}${renderDeadlineCalendarMenu({ eventId: event.id, eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl, registrationUrl: event.registrationUrl, language }, labels)}</div>`;
+  }).join('')}</section>`;
 };
 
 const renderRaceCalendarMenu = (event: { title: string; date: string; noticeUrl?: string; registrationUrl?: string }, location: string, labels: Labels, language: 'sl' | 'en') => {
@@ -161,7 +165,18 @@ const renderNextStepSummary = (items: ReturnType<typeof getUpcomingSavedRaceDead
     return `<section class="next-registration-deadline next-race-step" data-next-race-step><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${language === 'en' ? 'Next race' : 'Naslednji tek'}</p><p class="next-registration-deadline-race"><a href="#${escapeHtml(getRaceCardId(race.key))}">${escapeHtml(race.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(formatDate(race.event.date, language))} · ${days === 0 ? labels.today : language === 'en' ? `${days} days to go` : `še ${days} dni`}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(race.key))}">${escapeHtml(labels.viewRace)}</a></section>`;
   }
   const detailUrl = getSavedRaceDetailPath(item.event, language);
-  return `<section class="next-registration-deadline" data-next-registration-deadline><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.nextDeadline)}</p><p class="next-registration-deadline-race"><a href="${escapeHtml(detailUrl)}">${escapeHtml(item.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(deadlineLabel(item.deadline, labels))} ${escapeHtml(formatDeadlineDateAfterUntil(item.deadline.date, language))} · ${escapeHtml(conciseRelative(item.deadline, labels, language))}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(item.key))}">${escapeHtml(labels.viewRace)}</a></section>`;
+  const verified = item.event.verifiedDeadlines?.find(candidate => candidate.deadline.date === item.deadline.date);
+  return `<section class="next-registration-deadline" data-next-registration-deadline><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.nextDeadline)}</p><p class="next-registration-deadline-race"><a href="${escapeHtml(detailUrl)}">${escapeHtml(item.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(verified?.label ?? deadlineLabel(item.deadline, labels))} ${escapeHtml(formatDeadlineDateAfterUntil(item.deadline.date, language))} · ${escapeHtml(conciseRelative(item.deadline, labels, language))}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(item.key))}">${escapeHtml(labels.viewRace)}</a></section>`;
+};
+
+export const renderRaceWatch = (watch: RaceWatchResult, savedCount: number, language: 'sl' | 'en', loading = false) => {
+  if (!savedCount) return '';
+  const en = language === 'en';
+  const copy = en
+    ? { title: 'Updates to my races', visit: 'Checked when you visit this page; races are not monitored continuously.', loading: 'Checking available updates …', unavailable: 'Some updates cannot currently be verified.', bounded: 'This is a limited calendar summary, not a complete history of changes.', empty: 'No matching updates are shown in the available summary.', deadlines: 'Verified upcoming deadlines in your plan', coverage: 'Verified deadlines currently cover selected 2026 races only. Other deadlines have not been verified here.', new: 'New in the calendar', confirmed: 'Race confirmed in the calendar', updated: 'Race details have been updated' }
+    : { title: 'Novosti pri mojih tekih', visit: 'Podatke preverimo ob obisku strani; tekov ne spremljamo neprekinjeno.', loading: 'Preverjamo razpoložljive novosti …', unavailable: 'Nekaterih novosti trenutno ni mogoče preveriti.', bounded: 'To je omejen povzetek koledarja, ne popolna zgodovina sprememb.', empty: 'V razpoložljivem povzetku ni prikazanih ujemajočih se posodobitev.', deadlines: 'Preverjeni bližajoči se roki v načrtu', coverage: 'Preverjeni roki trenutno pokrivajo le izbrane teke 2026. Drugi roki tukaj niso preverjeni.', new: 'Nov tek v koledarju', confirmed: 'Tek je potrjen v koledarju', updated: 'Podatki teka so bili posodobljeni' };
+  const links = [...new Map(watch.deadlines.map(item => [item.key, item])).values()];
+  return `<section class="race-watch" aria-labelledby="race-watch-title" data-race-watch><h2 id="race-watch-title">${copy.title}</h2><p class="muted-note">${copy.visit}</p>${loading ? `<p role="status">${copy.loading}</p>` : ''}${!loading && (!watch.recentAvailable || !watch.recentComplete || watch.unresolved || !watch.deadlinesAvailable) ? `<p data-race-watch-unavailable>${copy.unavailable}</p>` : ''}${watch.period ? `<p class="muted-note">${en ? 'Calendar summary' : 'Povzetek koledarja'}: ${escapeHtml(formatDate(watch.period.from, language))} – ${escapeHtml(formatDate(watch.period.to, language))}. ${copy.bounded}</p>` : ''}${watch.updates.length ? `<ul class="race-watch-updates">${watch.updates.map(item => `<li data-watch-update="${item.type}"><a href="${escapeHtml(getSavedRaceDetailPath(item.event, language))}">${escapeHtml(item.event.title)}</a><span>${copy[item.type.toLowerCase() as 'new' | 'confirmed' | 'updated']} · <time datetime="${item.date}">${escapeHtml(formatDate(item.date, language))}</time></span></li>`).join('')}</ul>` : !loading && watch.recentAvailable && watch.recentComplete && !watch.unresolved ? `<p>${copy.empty}</p>` : ''}${links.length ? `<p data-watch-deadlines>${copy.deadlines}: ${links.map(item => `<a href="${escapeHtml(getSavedRaceDetailPath(item.event, language))}">${escapeHtml(item.event.title)}</a>`).join(', ')}.</p>` : ''}<p class="muted-note">${copy.coverage}</p></section>`;
 };
 
 const renderExportToolbar = (events: MultiIcsCalendarEventInput[], labels: Labels) => events.length ? `<div class="my-races-toolbar"><div><button class="button button-small" type="button" data-download-upcoming-races-ics><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.downloadAll)}</button><p>${escapeHtml(labels.downloadAllNote)}</p></div><p class="notice warning" data-calendar-export-status aria-live="polite" hidden></p></div>` : '';
@@ -364,8 +379,27 @@ export const initMyRacesPage = async (root = document) => {
   const saved = readSavedRaces(storage).state.races;
   trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races', results_count: saved.length });
   const todayIso = getTodayIsoInLjubljana();
+  if (typeof window !== 'undefined' && typeof document !== 'undefined' && !watchExpiryDays.has(mount)) {
+    const revalidateDay = () => {
+      const now = getTodayIsoInLjubljana();
+      if (watchExpiryDays.get(mount) === now) return;
+      watchExpiryDays.set(mount, now);
+      void initMyRacesPage(root);
+    };
+    watchExpiryDays.set(mount, todayIso);
+    const scheduleMidnight = () => {
+      const day = getTodayIsoInLjubljana();
+      const nextUtc = new Date(Date.parse(`${day}T00:00:00Z`) + 86400000);
+      const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Ljubljana', hour: '2-digit', hourCycle: 'h23' }).format(nextUtc));
+      window.setTimeout(() => { revalidateDay(); scheduleMidnight(); }, Math.max(1, nextUtc.getTime() - hour * 3600000 - Date.now()));
+    };
+    scheduleMidnight();
+    document.addEventListener('visibilitychange', revalidateDay);
+    window.addEventListener('pageshow', revalidateDay);
+  }
   const requestCache: MyRacesRequestCache = pageDataCache.get(mount) ?? { master: new Map(), additional: new Map(), payloads: {}, additionalRows: {}, failedMasterYears: new Set() };
   pageDataCache.set(mount, requestCache);
+  const watchCache: NonNullable<MyRacesRequestCache['watch']> = requestCache.watch ??= { requests: new Map() };
   const payloads = requestCache.payloads;
   const additionalRowsByYear = requestCache.additionalRows;
   const failedMasterYears = requestCache.failedMasterYears;
@@ -429,12 +463,14 @@ export const initMyRacesPage = async (root = document) => {
 
   const render = () => {
     if (!isCurrentRender()) return;
+    const watch = buildRaceWatch({ saved, masters: payloads, recent: watchCache.recent, deadlines: watchCache.deadlines, todayIso, language });
+    const viewItems = resolved.map(item => item.event ? { ...item, event: { ...item.event, verifiedDeadlines: watch.deadlines.filter(deadline => deadline.key === item.key) } } : item);
     const availableRegions = toApiRecords(payloads[DEFAULT_PUBLIC_YEAR]).map((record, index) => mapPublicRaceEvent(record, DEFAULT_PUBLIC_YEAR, index)?.region ?? '').filter(Boolean);
     updateSeasonMount(root, resolved, availableRegions, language);
     bindPastRacePicker();
     const activeFilter = (mount.dataset.activeStatusFilter && (mount.dataset.activeStatusFilter === 'all' || isSavedRaceStatus(mount.dataset.activeStatusFilter))) ? mount.dataset.activeStatusFilter as MyRacesStatusFilter : 'all';
     const counts = countSavedRaceStatuses(resolved);
-    const filtered = filterSavedRaceResolutionsByStatus(resolved, activeFilter);
+    const filtered = filterSavedRaceResolutionsByStatus(viewItems, activeFilter);
     const upcoming = filtered.filter((item) => item.status === 'upcoming');
     const exportableUpcoming = getExportableUpcomingRaceEvents(resolved, language);
     const other = filtered.filter((item) => item.status !== 'upcoming');
@@ -442,7 +478,7 @@ export const initMyRacesPage = async (root = document) => {
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
     if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
     const hasRequiredMasterFailure = requiredYears.some((year) => failedMasterYears.has(year));
-    mount.innerHTML = `${hasRequiredMasterFailure ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    mount.innerHTML = `${hasRequiredMasterFailure ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderRaceWatch(watch, saved.length, language, watchCache.recent === undefined || watchCache.deadlines === undefined)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!emptyFiltered && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
@@ -496,6 +532,20 @@ export const initMyRacesPage = async (root = document) => {
     reconcileWhenIdle();
   };
 
+  const watchLoads = saved.length ? (['recent', 'deadlines'] as const).map(kind => {
+    const existing = watchCache.requests.get(kind);
+    if (existing) return existing.then(rebuildAndReconcile);
+    if (watchCache[kind] !== undefined) return Promise.resolve();
+    const to = new Date(Date.parse(`${todayIso}T00:00:00Z`) + 30 * 86400000).toISOString().slice(0, 10);
+    const path = kind === 'recent' ? '/recent_updates?years=2026,2027&days=60&limit=100' : `/deadlines?contract=2&year=2026&from=${todayIso}&to=${to}&limit=100`;
+    const request = fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: AbortSignal.timeout(12000) })
+      .then(response => { if (!response.ok) throw new Error(String(response.status)); return response.json(); })
+      .then(payload => { watchCache[kind] = payload; }, () => { watchCache[kind] = null; })
+      .finally(rebuildAndReconcile);
+    watchCache.requests.set(kind, request);
+    return request;
+  }) : [];
+
   const masterLoads = requiredYears.flatMap((year) => payloads[year] === undefined ? [masterRequest(year)
     .then(() => { failedMasterYears.delete(year); }, () => { failedMasterYears.add(year); })
     .finally(() => {
@@ -506,7 +556,7 @@ export const initMyRacesPage = async (root = document) => {
     .catch(() => { /* optional enrichment */ })
     .finally(() => pendingRequiredRequests.delete(`additional:${year}`))] : []);
 
-  if (!masterLoads.length && !additionalLoads.length) return;
+  if (!masterLoads.length && !additionalLoads.length && !watchLoads.length) return;
   if (additionalLoads.length) void Promise.allSettled(additionalLoads).then(rebuildAndReconcile);
-  await Promise.allSettled([...masterLoads, ...additionalLoads]);
+  await Promise.allSettled([...masterLoads, ...additionalLoads, ...watchLoads]);
 };
