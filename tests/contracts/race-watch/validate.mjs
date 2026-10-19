@@ -21,6 +21,7 @@ const t = value => Date.parse(value);
 const stable = value => JSON.stringify(value, Object.keys(value).sort());
 const aliasKey = a => JSON.stringify([a.namespace, a.year, a.key, a.saved_date]);
 const locatorKey = l => `${l.sheet}:${l.row}`;
+const bindingsOverlap = (a, b) => Math.max(t(a.valid_from), t(b.valid_from)) < Math.min(a.valid_to ? t(a.valid_to) : Infinity, b.valid_to ? t(b.valid_to) : Infinity);
 const ljDate = timestamp => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Ljubljana', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(timestamp));
 const civilDays = (date, today) => (t(`${date}T00:00:00Z`) - t(`${today}T00:00:00Z`)) / 86400000;
 export function proofMaxAgeMs(revision, edition, now) {
@@ -40,14 +41,15 @@ export function validateContract(payload) {
     if (editions.has(e.edition_id)) fail('EDITION_COLLISION', e.edition_id);
     editions.set(e.edition_id, e);
     const allBindings = [...e.previous_master, ...(e.current_master ? [e.current_master] : [])];
-    for (const b of allBindings) {
+    for (const [index, b] of allBindings.entries()) {
+      if (allBindings.slice(0, index).some(prev => bindingsOverlap(prev, b))) fail('EDITION_BINDING_OVERLAP', e.edition_id);
       if (bindings.has(b.binding_id)) fail('BINDING_COLLISION', b.binding_id);
       bindings.set(b.binding_id, { edition: e, binding: b });
       if (t(b.valid_from) > now || t(b.proof.verified_at) > now || (b.valid_to && (t(b.valid_to) <= t(b.valid_from) || t(b.valid_to) > now))) fail('BINDING_TIME', b.binding_id);
       if (e.previous_master.includes(b) && b.valid_to === null || b === e.current_master && b.valid_to !== null) fail('BINDING_TIME', b.binding_id);
       const key = locatorKey(b.locator), prior = locations.get(key) ?? [];
       for (const prev of prior) {
-        if (Math.max(t(prev.valid_from), t(b.valid_from)) < Math.min(prev.valid_to ? t(prev.valid_to) : Infinity, b.valid_to ? t(b.valid_to) : Infinity) || prev.locator.generation === b.locator.generation) fail('LOCATOR_COLLISION', key);
+        if (bindingsOverlap(prev, b) || prev.locator.generation === b.locator.generation) fail('LOCATOR_COLLISION', key);
         const earlier = t(prev.valid_from) < t(b.valid_from) ? prev : b;
         const later = earlier === b ? prev : b;
         if (earlier.locator.generation >= later.locator.generation) fail('LOCATOR_GENERATION', key);
@@ -120,8 +122,8 @@ export function validateContract(payload) {
   const fullyComplete = ys.length > 0 && ys.every(y => y.completeness === 'complete');
   const allUnavailable = ys.every(y => y.availability === 'unavailable');
   const boundary = !ys.length || ys.some(y => y.history_complete_since === null) ? null : ys.map(y => y.history_complete_since).sort().at(-1);
-  if (c.availability !== (fullyAvailable ? 'available' : allUnavailable ? 'unavailable' : 'partial') || c.completeness === 'complete' && (!fullyComplete || !fullyAvailable || c.reasons.length || payload.editions.some(e => e.identity_status !== 'verified' || e.history_complete_since === null)) || c.history_complete_since !== boundary || payload.period.from !== boundary || payload.period.to !== payload.generated_at || boundary && t(boundary) > now || ys.some(y => y.history_complete_since && t(y.history_complete_since) > now) || (c.completeness !== 'complete' || c.availability !== 'available') && !c.reasons.length) fail('COVERAGE', 'inconsistent aggregate or history boundary');
-  if (payload.ok === allUnavailable || payload.ok && payload.error !== null || !payload.ok && payload.error === null || !payload.ok && (payload.editions.length || payload.revisions.length)) fail('AVAILABILITY', 'invalid error envelope');
+  if (c.availability !== (fullyAvailable ? 'available' : allUnavailable ? 'unavailable' : 'partial') || c.completeness === 'complete' && (!fullyComplete || !fullyAvailable || c.reasons.length || payload.editions.some(e => e.identity_status !== 'verified' || e.history_complete_since === null || e.aliases.some(a => a.resolution !== 'unique'))) || c.history_complete_since !== boundary || payload.period.from !== boundary || payload.period.to !== payload.generated_at || boundary && t(boundary) > now || ys.some(y => y.history_complete_since && t(y.history_complete_since) > now) || (c.completeness !== 'complete' || c.availability !== 'available') && !c.reasons.length) fail('COVERAGE', 'inconsistent aggregate or history boundary');
+  if (payload.ok === allUnavailable || payload.ok && payload.error !== null || !payload.ok && payload.error === null || !payload.ok && (c.completeness !== 'unknown' || payload.editions.length || payload.revisions.length)) fail('AVAILABILITY', 'invalid error envelope');
   for (const e of payload.editions) {
     const years = [e.edition_year, ...e.aliases.map(a => a.year), ...(e.current_master ? [e.current_master.locator.sheet] : [])];
     if (!years.some(y => payload.years.includes(y))) fail('YEAR_SELECTION', e.edition_id);

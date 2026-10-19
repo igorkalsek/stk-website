@@ -144,7 +144,11 @@ Vezava ima opaque `binding_id`, locator `{sheet,row,generation}`, časovno okno
 `[valid_from,valid_to)` in dokaz `reviewed_same_edition` z javnim virom in časom
 pregleda. Trenutna vezava ima `valid_to:null`, prejšnje končni čas. Row je celo
 število >=2, sheet je letni namespace. Ponovna uporaba iste fizične lokacije
-zahteva večjo generacijo; intervali se ne prekrivajo. En `binding_id` in ena
+zahteva večjo generacijo. Intervali vseh vezav iste izvedbe se ne smejo
+prekrivati niti med različnimi vrsticami ali letnimi listi, tudi med dvema
+prejšnjima vezavama. Stik konca ene in začetka druge vezave je dovoljen zaradi
+izključne zgornje meje; dovoljene so tudi vrzeli. Poleg tega ostane obvezna
+globalna kontrola zasedenosti iste fizične lokacije med izvedbami. En `binding_id` in ena
 trenutna lokacija ne smeta pripadati več izvedbam. Časi vezave lahko opisujejo
 pregledano zgodovino pred kasnejšim časom pregleda. Če starega časa ni mogoče
 zanesljivo potrditi, take vezave ne označimo kot unique; primer ostane REVIEW.
@@ -303,7 +307,10 @@ nikoli tihega reza. Pred produkcijo je treba izmeriti največji payload in čas.
 
 Globalna razpoložljivost je available samo če so na voljo vsa leta, unavailable
 če ni nobenega, sicer partial. Complete zahteva vsa leta available/complete,
-znane meje in brez nerešenih identitet ali razlogov. Skupna meja popolnosti je
+znane meje in brez nerešenih identitet ali razlogov. Vsi vključeni aliasi morajo
+biti unique, tudi če je edition identity_status verified in odgovor nima
+aktivnih revizij. Dvoumen ali konflikten alias zahteva označeno nepopolnost;
+pretekla revizija ostane v zgodovini. Skupna meja popolnosti je
 najpoznejša od deklariranih letnih mej; če katera ni znana, je null. Ne sme biti
 v prihodnosti. Razlogi so `upstream_timeout`, `upstream_invalid`,
 `identity_unresolved`, `history_gap`, `not_seeded`, `payload_limit`,
@@ -324,7 +331,8 @@ zadržati vse konfliktne identitete pred serializacijo.
 | prevelik posnetek brez varne delne projekcije | 413 / PAYLOAD_LIMIT / false |
 | varno dokazljiv del ob izpadu drugega leta | 200, ok:true, partial in razlogi |
 
-Pri ok:false sta editions/revisions prazna, coverage unavailable/unknown in
+Pri ok:false sta editions/revisions prazna, coverage unavailable/unknown
+(`completeness` mora biti izrecno `unknown`, nikoli `partial` ali `complete`) in
 error obvezen. Če zahtevanih let ni mogoče prebrati, sta obe letni polji [] in
 period.from null; sicer navedemo zahtevana leta tudi pri neuspehu. Apps Script
 ContentService lahko vrne HTTP 200 z ok:false; **Worker mora pregledati envelope
@@ -397,7 +405,8 @@ Ločeni compatibility testi uporabijo **obstoječe** V2 validatorje in status/re
 operacije na sintetičnih podatkih ter testno razlago exact alias pravila.
 To dokazuje izvedljivost pravila brez spremembe V2; ne simulira uvedenega API-ja.
 
-Rezultati končnega zagona in omejitve so v [validation.json](evidence/dev036-b0/validation.json).
+Rezultati začetnega B0 zagona in omejitve so v [validation.json](evidence/dev036-b0/validation.json);
+poznejši review popravki in dopolnilna validacija so opisani v razdelku 10.
 B0 se po enem commitu in Draft PR ustavi za pregled; noben merge, deployment,
 pisanje Master/RACE_REGISTRY/CHANGE_LOG ali uporabniška funkcija ni del rezultata.
 
@@ -412,3 +421,29 @@ pisanje Master/RACE_REGISTRY/CHANGE_LOG ali uporabniška funkcija ni del rezulta
 - [Website V2](https://github.com/igorkalsek/stk-website/blob/c5f2a961c18717a53f0893b9f11addc2126e1ab6/src/utils-saved-races.ts),
   [Watch Lite](https://github.com/igorkalsek/stk-website/blob/c5f2a961c18717a53f0893b9f11addc2126e1ab6/src/utils-race-watch.ts),
   [navadni resolver](https://github.com/igorkalsek/stk-website/blob/c5f2a961c18717a53f0893b9f11addc2126e1ab6/src/utils-my-races.ts).
+
+## 10. Popravki treh P2 pripomb na PR #236
+
+Za vsako pripombo je bil najprej dodan sintetični regresijski test in potrjen
+neuspeh pred popravkom, nato najmanjši popravek v testnem semantičnem validatorju:
+
+- [Prekrivanje vezav](https://github.com/igorkalsek/stk-website/pull/236#discussion_r4314195163):
+  primerjava vseh intervalov ene izvedbe poleg obstoječe globalne kontrole
+  fizične lokacije. Regresije pokrivajo previous/current, previous/previous in
+  premik med letoma; stikajoče meje in vrzeli ostanejo dovoljene.
+- [Popolnost aliasov](https://github.com/igorkalsek/stk-website/pull/236#discussion_r4314195177):
+  complete zahteva vse vključene aliase unique tudi ob verified izvedbi brez
+  aktivne revizije; ambiguous/conflict z označeno partial pokritostjo ohrani
+  zgodovino brez potrjenega signala.
+- [Neuspešen odgovor](https://github.com/igorkalsek/stk-website/pull/236#discussion_r4314195190):
+  ok:false zahteva completeness unknown pri navedenih letih in praznem years.
+
+Dodani testi so v
+[regresijskem sklopu](../tests/race-watch-contract-review.test.mjs), ki ga
+izvajata `npm run test:race-watch-contract` in `npm test`; CI sproži tudi
+sprememba te datoteke. Gre za uveljavitev in pojasnitev semantičnih invariant,
+ne spremembo oblike JSON Schema ali verzije 1.0.0. Rezultati red/green zagonov
+in končne validacije so v
+[review-regressions.json](evidence/dev036-b0/review-regressions.json).
+B0 contract-only obseg ostaja: spremembe samo v testih, dokumentaciji in
+priključitvi teh testov v obstoječe preverjanje.

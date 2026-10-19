@@ -1,0 +1,116 @@
+{
+  "task": "DEV-036 B0 / PR #236: three P2 review fixes",
+  "checked_at": "2026-10-19T13:34:10.279542+00:00",
+  "reviewed_head": "089ac5db9e3376eadc8412a19d5139a4a9853a55",
+  "scope": "contract-only: tests, documentation, existing test script/workflow paths; no schema shape or runtime change",
+  "synthetic": true,
+  "test_file": "tests/race-watch-contract-review.test.mjs",
+  "test_first_sequence": [
+    {
+      "comment_id": 4314195163,
+      "finding": "Reject overlapping bindings within one edition",
+      "red": {
+        "command": "node --test tests/race-watch-contract-review.test.mjs",
+        "pass": 2,
+        "fail": 3,
+        "validator_state": "original reviewed HEAD; test added before fix",
+        "failure": "Expected EDITION_BINDING_OVERLAP; actual errors [] for three overlapping different-locator scenarios"
+      },
+      "fix": "Compare every binding interval of each edition, independently of sheet/row; reuse exclusive-end overlap predicate in global locator check",
+      "green": {
+        "pass": 5,
+        "fail": 0
+      },
+      "controls": [
+        "previous/current",
+        "cross-year",
+        "previous/previous",
+        "touching endpoints accepted",
+        "non-overlapping gaps accepted"
+      ]
+    },
+    {
+      "comment_id": 4314195177,
+      "finding": "Include unresolved aliases in completeness check",
+      "red": {
+        "command": "node --test --test-name-pattern='B0 P2 aliases:' tests/race-watch-contract-review.test.mjs",
+        "pass": 0,
+        "fail": 4,
+        "validator_state": "interval fix present; alias tests added before alias fix",
+        "failure": "Expected COVERAGE; actual errors [] for ambiguous/conflict aliases with verified identity and empty/expired history"
+      },
+      "fix": "Aggregate complete also requires all included aliases uniquely resolved",
+      "green": {
+        "pass": 4,
+        "fail": 0
+      },
+      "controls": [
+        "explicit partial plus identity_unresolved accepted",
+        "expired revision retained",
+        "no active confirmed signal"
+      ]
+    },
+    {
+      "comment_id": 4314195190,
+      "finding": "Require unknown completeness for failed envelopes",
+      "red": {
+        "command": "node --test --test-name-pattern='B0 P2 failure:' tests/race-watch-contract-review.test.mjs",
+        "pass": 0,
+        "fail": 2,
+        "validator_state": "interval and alias fixes present; failed-envelope tests added before envelope fix",
+        "failure": "Expected AVAILABILITY; actual errors [] for ok:false with aggregate partial"
+      },
+      "fix": "Failed envelopes require aggregate completeness unknown in existing error-envelope gate",
+      "green": {
+        "pass": 2,
+        "fail": 0
+      },
+      "controls": [
+        "requested years retained",
+        "empty years for invalid request",
+        "original unavailable/unknown response accepted"
+      ]
+    }
+  ],
+  "independent_baseline_replay": {
+    "source": "git archive 089ac5d to temporary directory; copy new regression test; symlink unchanged node_modules",
+    "command": "node --test /tmp/dev036-b0-review/baseline/tests/race-watch-contract-review.test.mjs",
+    "pass": 2,
+    "fail": 9,
+    "meaning": "All nine negative regression cases reproduce on the original reviewed code; both positive interval controls pass."
+  },
+  "final_local_validation": {
+    "regressions": {
+      "command": "node --test tests/race-watch-contract-review.test.mjs",
+      "pass": 11,
+      "fail": 0
+    },
+    "contract": {
+      "command": "npm run test:race-watch-contract",
+      "pass": 56,
+      "fail": 0
+    },
+    "full": {
+      "command": "npm test",
+      "pass": 693,
+      "fail": 0
+    },
+    "diff_check": "PASS"
+  },
+  "local_log_sha256": {
+    "p2-intervals-before": "304198e0d85393028f35f30b5f802d5863d2167e9cb54745515b4fac52292b17",
+    "p2-intervals-after": "82518a6665919edd95a8513e47b2b4b6e7ab92c5a18d578c8340ac4813a8c67c",
+    "p2-aliases-before": "1630076d550458a1e12bf7c403db4bc6a94356a4de56435a2e12a5eea04429f6",
+    "p2-aliases-after": "7fb216c8b7c3c4b18f6fd9b272d40547b2ab616ff1772459fc3af64f639469fa",
+    "p2-failure-before": "7211ea814a5a272bfe4ba214edee0d785c2c7ac92c483af0c8eaf263929e03e5",
+    "p2-failure-after": "3322c1390f2030fbeb5b64622362ca819a13b24ba04be5a62197cc94225a5f2b",
+    "all-regressions-baseline": "fe7b0f875f51e9a44b4abd797098096adb60b0098242f46fb4fdb9eb9943929e",
+    "regressions-final": "8f1fedd4a501d4d42e18606b8751536c10f48777026e110a2ae73c50830ee8e0",
+    "contract-final": "6dd8ddd8758903dfe95c95e00a51aa440dc8d81d72af37b23a71dc11b5f62995",
+    "npm-test-final": "9243f4cc4355be8cc78e6c723592180e6ef0ce567aa4d99ac033b3fe5d47b187"
+  },
+  "ci_evidence": "Final pushed-HEAD GitHub check results and run links are recorded in the three review replies / PR update. Local results above do not assert remote CI success.",
+  "production_writes": 0,
+  "deployments": 0,
+  "merges": 0
+}
