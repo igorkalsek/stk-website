@@ -2,7 +2,7 @@ import { trackStkEvent, trackStkPageLoadEventOnce } from './lib/stkAnalytics.js'
 import { getSavedRaceDetailPath, resolveSavedRaces, sortResolvedSavedRaces } from './utils-my-races.js';
 import { formatSloveneCount, getNextSavedRace, getSeasonAchievements, getSeasonRegionProgress, getSeasonSummary } from './utils-my-season.js';
 import { readSavedRaces } from './utils-saved-races.js';
-import { buildMasterApiPath, DEFAULT_PUBLIC_YEAR, isSupportedPublicYear, type PublicYear } from './utils-public-year.js';
+import { DEFAULT_PUBLIC_YEAR, isSupportedPublicYear, type PublicYear } from './utils-public-year.js';
 import { getTodayIsoInLjubljana } from './utils-date.js';
 import { getStableEventId, mapPublicRaceEvent, toApiRecords } from './utils-event-detail.js';
 import { SAVED_RACES_CHANGED_EVENT } from './saved-races-events.js';
@@ -11,8 +11,8 @@ import { attachAdditionalDataByMasterRow, fetchAdditionalEventData } from './uti
 import { buildRegistrationDeadlineViews } from './utils-registration-deadlines.js';
 import { renderActionIcon } from './utils-action-icons.js';
 import { getSloveniaMapRegions, renderSloveniaRegionsMap, renderSloveniaRegionStatusList } from './utils-slovenia-map.js';
+import { fetchPublicMaster } from './utils-public-master.js';
 
-const API_BASE = 'https://stk-master-api.igor-kalsek.workers.dev';
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
 const statusLabel = (status: string, language: 'sl' | 'en') => language === 'en'
   ? ({ following: 'Following', planning: 'Planning', registered: 'Registered' }[status] ?? status)
@@ -76,7 +76,7 @@ export const initMyStk = async (root = document) => {
   const years = [...new Set([DEFAULT_PUBLIC_YEAR, ...saved.map((race) => race.year).filter(isSupportedPublicYear)])] as PublicYear[];
   const payloads: Record<string, unknown> = {};
   const additionalRequests = new Map(years.map((year) => [year, fetchAdditionalEventData(year).catch(() => [])]));
-  await Promise.all(years.map(async (year) => { try { const response = await fetch(`${API_BASE}${buildMasterApiPath(year)}`); if (response.ok) payloads[year] = await response.json(); } catch { /* unresolved references remain safe */ } }));
+  await Promise.all(years.map(async (year) => { try { payloads[year] = await fetchPublicMaster(year); } catch { /* unresolved references remain safe */ } }));
   if (runtime.renderVersion !== renderVersion) return;
   const todayIso = getTodayIsoInLjubljana();
   const resolved = sortResolvedSavedRaces(resolveSavedRaces(saved, payloads, todayIso));

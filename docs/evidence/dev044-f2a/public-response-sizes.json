@@ -1,0 +1,6 @@
+[
+{"path":"/","status":200,"decodedBytes":273798,"contentEncoding":"br","elapsedMs":3266},
+{"path":"/?year=2027","status":200,"decodedBytes":38863,"contentEncoding":"br","elapsedMs":1765},
+{"path":"/additional","status":200,"decodedBytes":183968,"contentEncoding":"br","elapsedMs":3168},
+{"path":"/additional?year=2027","status":200,"decodedBytes":35901,"contentEncoding":"br","elapsedMs":2456}
+]
