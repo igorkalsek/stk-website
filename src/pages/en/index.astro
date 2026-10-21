@@ -979,30 +979,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   };
 
 
-  const normalizeTopUpcomingRace = (event: ApiRecord) => {
-    const votes = getTopEventVotes(event);
-    return votes !== null ? { ...event, votes_total: votes } : { ...event };
-  };
-
-  const getTopUpcomingRaces = async () => {
-    const payload = await loadJson('/top?scope=upcoming&limit=50');
-    const rawEvents = toArray(payload);
-    let events = rawEvents.map(normalizeTopUpcomingRace);
-
-    try {
-      const masterPayload = await loadJson('/');
-      const masterRows = getMasterRows(masterPayload);
-      setDebug('master', 'yes');
-      setDebug('master-count', String(masterRows.length));
-      events = enrichTopEventsFromMaster(events, masterRows).map(normalizeTopUpcomingRace);
-    } catch (error) {
-      setDebug('master', 'no');
-      setDebug('master-count', '0');
-    }
-
-    return { events, rawEvents };
-  };
-
   type DeadlineType = 'early' | 'registration';
   type DeadlineCandidate = {
     event: ApiRecord;
