@@ -832,33 +832,12 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
 
 
-  const normalizeTopUpcomingRace = (event: ApiRecord) => {
-    const votes = getTopEventVotes(event);
-    return votes !== null ? { ...event, votes_total: votes } : { ...event };
-  };
-
   const getMasterRaceRows = async () => {
     const masterPayload = await loadJson('/');
     const masterRows = getMasterRows(masterPayload);
     setDebug('master', 'yes');
     setDebug('master-count', String(masterRows.length));
     return masterRows;
-  };
-
-  const getTopUpcomingRaces = async () => {
-    const payload = await loadJson('/top?scope=upcoming&limit=50');
-    const rawEvents = toArray(payload);
-    let events = rawEvents.map(normalizeTopUpcomingRace);
-
-    try {
-      const masterRows = await getMasterRaceRows();
-      events = enrichTopEventsFromMaster(events, masterRows).map(normalizeTopUpcomingRace);
-    } catch (error) {
-      setDebug('master', 'no');
-      setDebug('master-count', '0');
-    }
-
-    return { events, rawEvents };
   };
 
 
