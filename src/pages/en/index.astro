@@ -191,6 +191,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { getStableEventId } from '../../utils-event-detail';
   import { buildEnglishHomepageEventDetailPath, getCanonicalHomepageEvent, buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, selectFeaturedUpcomingEvents, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, formatHomepageRecentUpdateMeta } from '../../utils-home-events';
   import { initSavedRaceButtons } from '../../saved-races-client';
+  import { fetchPublicMaster } from '../../utils-public-master';
+  import { DEFAULT_PUBLIC_YEAR, buildMasterApiPath } from '../../utils-public-year';
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../../lib/stkAnalytics';
 
   type ApiRecord = Record<string, unknown>;
@@ -1199,10 +1201,13 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
   async function loadJson(path: string): Promise<unknown> {
     if (!apiRequestCache.has(path)) {
-      apiRequestCache.set(path, fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } }).then((response) => {
-        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
-        return response.json();
-      }));
+      const masterYear = path === buildMasterApiPath(DEFAULT_PUBLIC_YEAR) ? DEFAULT_PUBLIC_YEAR : path === buildMasterApiPath('2027') ? '2027' : null;
+      apiRequestCache.set(path, masterYear
+        ? fetchPublicMaster(masterYear).catch((error) => { apiRequestCache.delete(path); throw error; })
+        : fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } }).then((response) => {
+          if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+          return response.json();
+        }));
     }
 
     return apiRequestCache.get(path)!;
