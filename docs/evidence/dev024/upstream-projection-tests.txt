@@ -1,0 +1,14 @@
+public confirmations feature flag is independent and fail closed by default
+VERIFIED matching current snapshot is public with minimal serialized fields
+pending or email-verified-only records never become public confirmations
+public confirmation requires exact current status_dogodka eligibility (nepotrjeno)
+public confirmation requires exact current status_dogodka eligibility (blank)
+public confirmation requires exact current vidno_v_javnem_koledarju eligibility (NE)
+public confirmation requires exact current vidno_v_javnem_koledarju eligibility (blank)
+VERIFIED with changed current snapshot is not public
+PENDING_EMAIL is never a public confirmation
+REVOKED is never a public confirmation
+CONFLICT is never a public confirmation
+EXPIRED is never a public confirmation
+public confirmations are year-scoped for both 2026 and 2027
+organizer access local tests passed: 13/13

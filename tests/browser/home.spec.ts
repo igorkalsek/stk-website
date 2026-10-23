@@ -438,7 +438,11 @@ for (const home of homes) for (const width of [390, 1440]) {
       if (scenario === 'full') {
         await expect(deadlines).toBeVisible();
         expect(await next.evaluate(e => e.nextElementSibling?.hasAttribute('data-registration-deadlines-section'))).toBe(true);
-        const nextRect = (await next.boundingBox())!, deadlineRect = (await deadlines.boundingBox())!;
+        // Read both viewport-relative rectangles in one frame: focus/clicks above
+        // may still be smoothly scrolling the page between separate protocol calls.
+        const [nextRect, deadlineRect] = await current.evaluate(section =>
+          ['.home-primary-section', '[data-registration-deadlines-section]'].map(selector =>
+            section.querySelector(selector)!.getBoundingClientRect().toJSON()));
         if (width === 390) expect(nextRect.y + nextRect.height).toBeLessThanOrEqual(deadlineRect.y);
         else {
           expect(deadlineRect.x + deadlineRect.width).toBeLessThanOrEqual(nextRect.x);

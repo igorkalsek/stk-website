@@ -1,5 +1,6 @@
 ---
 import OrganizerWorkflow from './OrganizerWorkflow.astro';
+import OrganizerConfirmedRaces from './OrganizerConfirmedRaces.astro';
 interface Props { lang: 'sl' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -40,6 +41,8 @@ const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorj
     </div>
     <div class="cta-row"><a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="confirmation">{en ? 'Find and confirm your race' : 'Poiščite in potrdite svoj tek'}</a></div>
   </section>
+
+  <OrganizerConfirmedRaces {lang} />
 
   <section class="section container promotion-section" id="promotion" aria-labelledby="promotion-title"><OrganizerWorkflow {lang} active={3} compact /><div class="organizer-claim-card"><div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="promotion-title">{en ? 'Advanced statistics and promotion tools' : 'Napredna statistika in promocijska orodja'}</h2></div><p>{en ? 'Advanced statistics and additional promotion tools are still in development and are not currently available.' : 'Naprednejše statistike in dodatna promocijska orodja so še v pripravi in trenutno niso na voljo.'}</p></div></section>
 </main>

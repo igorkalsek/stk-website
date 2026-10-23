@@ -15,15 +15,21 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('stkAnalyticsOptOut', 'true'));
 });
 
-async function load(page: Page, lang: string, options: { data?: unknown; links?: unknown; initial?: boolean; fail?: boolean } = {}) {
-  // Replace only embedded planner/link data when needed, keeping the built page and scripts.
-  if (options.initial === false || options.links !== undefined) await page.route(`**${routeFor(lang)}`, async route => {
+async function seedInitialData(page: Page, lang: string, options: { initial?: boolean; links?: unknown } = {}) {
+  // Seed the scenario explicitly: the live build-time API may have returned null.
+  // Keep the built markup and scripts so the application still controls visibility.
+  await page.route(`**${routeFor(lang)}`, async route => {
     const response = await route.fetch();
     let body = await response.text();
-    if (options.initial === false) body = body.replace(/(<script[^>]*id="planning-2027-data-(?:sl|en)"[^>]*>).*?(<\/script>)/s, '$1null$2');
+    const initial = options.initial === false ? null : snapshot;
+    body = body.replace(/(<script[^>]*id="planning-2027-data-(?:sl|en)"[^>]*>).*?(<\/script>)/s, (_, open, close) => `${open}${JSON.stringify(initial).replace(/</g, '\\u003c')}${close}`);
     if (options.links !== undefined) body = body.replace(/(<script[^>]*data-planning-links[^>]*>).*?(<\/script>)/s, (_, open, close) => `${open}${JSON.stringify(options.links).replace(/</g, '\\u003c')}${close}`);
     await route.fulfill({ response, body });
   });
+}
+
+async function load(page: Page, lang: string, options: { data?: unknown; links?: unknown; initial?: boolean; fail?: boolean } = {}) {
+  await seedInitialData(page, lang, options);
   await page.route(endpoint, route => options.fail ? route.fulfill({ status: 503 }) : route.fulfill({ json: options.data ?? snapshot }));
   await page.goto(routeFor(lang));
   if (!options.fail) await expect(page.locator('[data-comparison-status]')).toHaveText(lang === 'sl' ? 'Za primerjavo znanih dogodkov izberite datum v letu 2027.' : 'Choose a date in 2027 to compare known events.');
@@ -153,6 +159,7 @@ for (const lang of ['sl', 'en']) {
   });
 
   test(`${lang}: loading is distinct from a successful empty API response`, async ({ page }) => {
+    await seedInitialData(page, lang);
     let release!: () => void;
     const pending = new Promise<void>(resolve => { release = resolve; });
     await page.route(endpoint, async route => {

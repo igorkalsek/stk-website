@@ -1,0 +1,246 @@
+{
+  "checkedAt": "2026-10-23T19:15:06.474Z",
+  "candidate": "local preview; feature not deployed",
+  "results": [
+    {
+      "lang": "sl",
+      "width": 390,
+      "rows": [
+        {
+          "title": "4. Trail po kraških klancih 2027",
+          "date": "2027-03-07",
+          "place": "Križ pri Sežani",
+          "eventId": "R000019",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/"
+        },
+        {
+          "title": "Kras Trail 2027",
+          "date": "2027-03-27",
+          "place": "Senožeče",
+          "eventId": "R000012",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000012-kras-trail-2027/"
+        },
+        {
+          "title": "45. Maraton treh src",
+          "date": "2027-05-15",
+          "place": "Radenci",
+          "eventId": "R000011",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000011-45-maraton-treh-src/"
+        }
+      ],
+      "profileResponses": [
+        {
+          "href": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/tek/2027/r000012-kras-trail-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/tek/2027/r000011-45-maraton-treh-src/",
+          "local": 200,
+          "production": 200
+        }
+      ],
+      "existingSectionsUnchanged": true,
+      "overflow": false,
+      "errors": [],
+      "publicResponses": [
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+          "status": 200
+        },
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "rows": [
+        {
+          "title": "4. Trail po kraških klancih 2027",
+          "date": "2027-03-07",
+          "place": "Križ pri Sežani",
+          "eventId": "R000019",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/"
+        },
+        {
+          "title": "Kras Trail 2027",
+          "date": "2027-03-27",
+          "place": "Senožeče",
+          "eventId": "R000012",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000012-kras-trail-2027/"
+        },
+        {
+          "title": "45. Maraton treh src",
+          "date": "2027-05-15",
+          "place": "Radenci",
+          "eventId": "R000011",
+          "badgeVisible": true,
+          "href": "/tek/2027/r000011-45-maraton-treh-src/"
+        }
+      ],
+      "profileResponses": [
+        {
+          "href": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/tek/2027/r000012-kras-trail-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/tek/2027/r000011-45-maraton-treh-src/",
+          "local": 200,
+          "production": 200
+        }
+      ],
+      "existingSectionsUnchanged": true,
+      "overflow": false,
+      "errors": [],
+      "publicResponses": [
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+          "status": 200
+        },
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "rows": [
+        {
+          "title": "4. Trail po kraških klancih 2027",
+          "date": "2027-03-07",
+          "place": "Križ pri Sežani",
+          "eventId": "R000019",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/"
+        },
+        {
+          "title": "Kras Trail 2027",
+          "date": "2027-03-27",
+          "place": "Senožeče",
+          "eventId": "R000012",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000012-kras-trail-2027/"
+        },
+        {
+          "title": "45. Maraton treh src",
+          "date": "2027-05-15",
+          "place": "Radenci",
+          "eventId": "R000011",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000011-45-maraton-treh-src/"
+        }
+      ],
+      "profileResponses": [
+        {
+          "href": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/en/races/2027/r000012-kras-trail-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/en/races/2027/r000011-45-maraton-treh-src/",
+          "local": 200,
+          "production": 200
+        }
+      ],
+      "existingSectionsUnchanged": true,
+      "overflow": false,
+      "errors": [],
+      "publicResponses": [
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+          "status": 200
+        },
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "rows": [
+        {
+          "title": "4. Trail po kraških klancih 2027",
+          "date": "2027-03-07",
+          "place": "Križ pri Sežani",
+          "eventId": "R000019",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/"
+        },
+        {
+          "title": "Kras Trail 2027",
+          "date": "2027-03-27",
+          "place": "Senožeče",
+          "eventId": "R000012",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000012-kras-trail-2027/"
+        },
+        {
+          "title": "45. Maraton treh src",
+          "date": "2027-05-15",
+          "place": "Radenci",
+          "eventId": "R000011",
+          "badgeVisible": true,
+          "href": "/en/races/2027/r000011-45-maraton-treh-src/"
+        }
+      ],
+      "profileResponses": [
+        {
+          "href": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/en/races/2027/r000012-kras-trail-2027/",
+          "local": 200,
+          "production": 200
+        },
+        {
+          "href": "/en/races/2027/r000011-45-maraton-treh-src/",
+          "local": 200,
+          "production": 200
+        }
+      ],
+      "existingSectionsUnchanged": true,
+      "overflow": false,
+      "errors": [],
+      "publicResponses": [
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+          "status": 200
+        },
+        {
+          "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+          "status": 200
+        }
+      ]
+    }
+  ]
+}
