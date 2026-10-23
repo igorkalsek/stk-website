@@ -47,3 +47,17 @@ Produkcijski API, obstoječe strani in profilne povezave so dejansko preverjeni.
 3. Preveri success kanoničnega deploymenta in ujemanje serving SHA. Odpri `/za-organizatorje/` in `/en/for-organizers/` pri 390/1440 px. Ponovno preberi javni 2027 Master in organizer-confirmations, preveri aktualni upravičeni nabor, značke, vrstni red in vse profilne povezave. Pri nespremenjenem viru pričakuj R000019, R000012, R000011; R000034 in 2026 R000256 ne sodita na seznam.
 4. Šele po uvedbi in dejanskem produkcijskem preverjanju spremeni status DEV-024 po obstoječem postopku.
 5. Povrnitev: revert enega implementacijskega commita (ali squash merge commita) in običajen deploy reverta. Podatkovna migracija ali čiščenje ni potrebno.
+
+## CI popravek – PR #241
+
+Pregledan [neuspešni run 40010321143](https://github.com/igorkalsek/stk-website/actions/runs/40010321143), HTML report in oba retry trace artefakta (artifact 12525867363). PR je bil še vedno na `86eba6f`, main na `fdef5ff`, brez novih commitov ali review pripomb.
+
+Oba trace odgovora za EN stran vsebujeta `planning-2027-data-en = null` in `<div data-planning-content hidden>`. Test z API napako prejme pričakovani runtime HTTP 503; test nalaganja zadrži runtime odgovor, ki ga obstoječi 4-sekundni timeout pozneje prekine. Kontrole so zato pravilno skrite. `initial:true` v starem helperju ni vstavil začetnega payloada; pustil je rezultat živega build-time GET-a. Tudi test nalaganja je implicitno zahteval uspešen build-time GET. Vsaka jezikovna stran kliče `fetchPlanning2027()` posebej; ta lahko vrne null brez neuspeha celotnega builda. Razlog posamezne build-time odpovedi (HTTP, omrežje, timeout ali neveljaven payload) ni zabeležen; dokazano pa je, da je bil rezultat null. Dodatno čakanje ne odpravi napačne testne predpostavke.
+
+Težava je obstajala že na main. Vse štiri relevantne aplikacijske datoteke in prvotni browser test so med main in izhodiščem PR identični. Nespremenjeni main je bil razširjen v začasen imenik z `git archive`; kontrolirani null začetni payload in runtime loading/503 na njem povzročita isti skriti select kot na PR buildu. [Sanitizirani dokazi in identiteta artefakta](evidence/dev024/ci-root-cause.json).
+
+Spremenjena je samo testna priprava v `planning-comparison.spec.ts`: skupni helper vedno vstavi obstoječi deterministični snapshot, pri `initial:false` pa null. Uporabi ga tudi test nalaganja. HTML kontrol in njihovo vidnost še naprej upravlja dejanska aplikacija; timeouti, pričakovanja in runtime negativni odgovori niso sproščeni. Brez sprememb src, API, potrditev, značk, podatkov ali infrastrukture.
+
+Lokalno preverjanje: **795/795 enotskih testov PASS**, build **677 strani PASS**, `git diff --check` PASS. Celotni radar (20) in DEV-024 (48) sta preverjena tudi na generiranih SL/EN straneh z namensko odstranjenimi začetnimi podatki in skrito vsebino, kar ponovi pogoj iz CI. Izvirna generirana HTML-ja sta nato povrnjena. Rezultat: **68/68 PASS**. Stari neuspešni run ni prepisan s ponovitvijo; majhen popravek sproži nove obvezne kontrole na novem head commitu. Končni rezultat GitHub CI je naveden v opisu PR po dejanskem zaključku kontrol.
+
+PR ostane Draft za ločeno odobritev. Brez mergea ali produkcijskega deploymenta.

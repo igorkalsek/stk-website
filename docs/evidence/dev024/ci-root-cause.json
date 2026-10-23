@@ -1,0 +1,47 @@
+{
+  "failed_run": "https://github.com/igorkalsek/stk-website/actions/runs/40010321143",
+  "artifact_id": 12525867363,
+  "artifact_sha256": "a6a470b7f26f6840ec07408487e00436832343b1f630353e6ce6107a7df2f16d",
+  "artifact_observations": {
+    "both_retry_traces": {
+      "embedded_planning_2027_data_en": null,
+      "initial_content_hidden": true
+    },
+    "runtime_error_test_http_status": 503,
+    "runtime_loading_test": "request held; existing 4-second fetch timeout eventually aborts"
+  },
+  "controlled_reproduction": [
+    {
+      "state": "error",
+      "embedded": "null",
+      "contentVisible": false,
+      "selection": "timeout: control hidden",
+      "comparison": "The comparison is unavailable because the latest dates could not be loaded. Refresh the page to try again.",
+      "source": "PR 86eba6f static preview"
+    },
+    {
+      "state": "loading",
+      "embedded": "null",
+      "contentVisible": false,
+      "selection": "timeout: control hidden",
+      "comparison": "Checking the latest race dates \u2026",
+      "source": "PR 86eba6f static preview"
+    },
+    {
+      "state": "error",
+      "embedded": "null",
+      "contentVisible": false,
+      "selection": "timeout: control hidden",
+      "comparison": "The comparison is unavailable because the latest dates could not be loaded. Refresh the page to try again.",
+      "source": "unchanged main fdef5ff dev server"
+    },
+    {
+      "state": "loading",
+      "embedded": "null",
+      "contentVisible": false,
+      "selection": "timeout: control hidden",
+      "comparison": "Checking the latest race dates \u2026",
+      "source": "unchanged main fdef5ff dev server"
+    }
+  ]
+}
