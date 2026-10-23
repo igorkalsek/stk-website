@@ -61,3 +61,15 @@ Spremenjena je samo testna priprava v `planning-comparison.spec.ts`: skupni help
 Lokalno preverjanje: **795/795 enotskih testov PASS**, build **677 strani PASS**, `git diff --check` PASS. Celotni radar (20) in DEV-024 (48) sta preverjena tudi na generiranih SL/EN straneh z namensko odstranjenimi začetnimi podatki in skrito vsebino, kar ponovi pogoj iz CI. Izvirna generirana HTML-ja sta nato povrnjena. Rezultat: **68/68 PASS**. Stari neuspešni run ni prepisan s ponovitvijo; majhen popravek sproži nove obvezne kontrole na novem head commitu. Končni rezultat GitHub CI je naveden v opisu PR po dejanskem zaključku kontrol.
 
 PR ostane Draft za ločeno odobritev. Brez mergea ali produkcijskega deploymenta.
+
+## P2 review – poti profilov iz trenutnega builda
+
+Pripomba [discussion_r4363698125](https://github.com/igorkalsek/stk-website/pull/241#discussion_r4363698125) na `550f24e` je utemeljena: generiranje sluga iz aktualnega API naziva lahko kaže na še nezgrajeno stran. `OrganizerConfirmedRaces` zdaj po vzoru radarja vgradi samo dejanske jezikovne poti iz `getDetailStaticPaths(lang)`, ki uporablja obstoječe build podatkovne cache. Ne dodaja API branja.
+
+Runtime povezovanje zahteva enolično ujemanje year + Master row + datum + kraj. Naziv ni del ključa, zato se preimenovan tek lahko poveže na svoj stari, dejansko zgrajeni slug. Če ni ujemanja, je kandidat podvojen ali manifest manjka/ni veljaven, ostane naziv navadno besedilo. Sprememba datuma ali kraja konservativno odstrani povezavo do naslednjega builda. Upravičenost dogodka in značke je nespremenjena.
+
+Preverjanje: **799/799 enotskih testov in 114/114 browser testov PASS** (70 DEV-024, 20 radar, 24 obstoječi profilni/kontrastni). Browser matrika SL/EN × 390/1440 preverja tudi preimenovane teke, novo vrstico brez profila, manjkajoče/neveljavne/dvoumne poti in ohranjene značke. Vsak scenarij preveri točno dva runtime Worker GET-a. Dva integracijska testa prebereta dejanski build manifest in preverita HTTP 200 vsake vgrajene lokalne SL/EN profilne poti. Regresijski preverjanji radarja in obstoječih profilnih značk ostaneta vključeni.
+
+`STK_BUILD_TIMING=1 npm run build`: PASS, 677 strani, `master_requests=2`, 280 profilov 2026 + 45 profilov 2027 za vsak jezik; brez dodatnih Master zahtev. `git diff --check`: PASS. Končni browser in CI rezultati so zapisani v odgovoru na P2 pripombo po preverjanju.
+
+Brez sprememb Masterja, API-jev, značk, infrastrukture ali backloga; brez mergea ali deploymenta. PR ostane Draft za ločeno odobritev.

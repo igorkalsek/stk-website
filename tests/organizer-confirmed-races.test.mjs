@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { selectOrganizerConfirmedRaces as select, fetchOrganizerConfirmedRaces as load } from '../.cache/dist-test/organizer-confirmed-races.js';
+import { selectOrganizerConfirmedRaces as select, fetchOrganizerConfirmedRaces as load, resolveOrganizerProfilePath as resolveProfile } from '../.cache/dist-test/organizer-confirmed-races.js';
 import { buildEventDetailPath, buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
 
 const race = (row = 11, extra = {}) => ({ row, datum: '2027-05-15', naziv_prireditve: '45. Maraton treh src', kraj: 'Radenci', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA', ...extra });
@@ -68,3 +68,21 @@ test('stalled public reads abort after the deadline and return no confirmations'
   assert.equal(signals.length, 2);
   assert.ok(signals.every(signal => signal.aborted));
 });
+
+
+for (const lang of ['sl', 'en']) {
+  const event = select(master(), projection())[0];
+  const candidate = { year: event.year, row: event.row, date: event.date, place: event.place,
+    profilePath: `${lang === 'en' ? '/en/races' : '/tek'}/2027/r000011-old-built-title/` };
+  test(`${lang}: renamed race retains the exact built route`, () => {
+    assert.equal(resolveProfile({ ...event, title: 'New live title', naziv_prireditve: 'New live title' }, [candidate], lang), candidate.profilePath);
+  });
+  test(`${lang}: missing, ambiguous, mismatched or unsafe routes remain plain text`, () => {
+    for (const candidates of [null, [], [candidate, candidate], [{ ...candidate, year: '2026' }],
+      [{ ...candidate, row: '12' }], [{ ...candidate, date: '2027-05-16' }], [{ ...candidate, place: 'Other town' }],
+      [{ ...candidate, profilePath: 'https://example.com/' }], [{ ...candidate, profilePath: '/tek/2027/r000012-other/' }]]) {
+      assert.equal(resolveProfile(event, candidates, lang), '');
+    }
+    assert.equal(resolveProfile({ ...event, row: '999999' }, [candidate], lang), '');
+  });
+}

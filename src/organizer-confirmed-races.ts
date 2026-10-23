@@ -55,3 +55,19 @@ export const fetchOrganizerConfirmedRaces = async (fetchImpl: typeof fetch = fet
     clearTimeout(timeout);
   }
 };
+
+export type OrganizerProfileLink = Pick<PublicRaceEvent, 'year' | 'row' | 'date' | 'place'> & { profilePath: string };
+
+/** A title may change after the build. Keep the built route only for one matching
+ * year/row/date/place; missing or ambiguous editions remain plain text. */
+export const resolveOrganizerProfilePath = (event: PublicRaceEvent, candidates: unknown, lang: 'sl' | 'en'): string => {
+  if (!Array.isArray(candidates)) return '';
+  const matches = candidates.filter((candidate) => {
+    const link = asRecord(candidate);
+    return link?.year === event.year && link.row === event.row && link.date === event.date && link.place === event.place;
+  });
+  if (matches.length !== 1) return '';
+  const path = matches[0].profilePath;
+  const prefix = `${lang === 'en' ? '/en/races' : '/tek'}/${event.year}/r${event.row.padStart(6, '0')}-`;
+  return typeof path === 'string' && path.startsWith(prefix) && /^\/[a-z0-9/-]+\/$/.test(path) ? path : '';
+};

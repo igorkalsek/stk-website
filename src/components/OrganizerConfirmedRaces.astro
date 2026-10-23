@@ -1,8 +1,19 @@
 ---
 import OrganizerConfirmationBadge from './OrganizerConfirmationBadge.astro';
+import { getDetailStaticPaths } from '../utils-build-data';
+import type { OrganizerProfileLink } from '../organizer-confirmed-races';
 interface Props { lang: 'sl' | 'en'; }
 const { lang } = Astro.props;
 const en = lang === 'en';
+let profileLinks: OrganizerProfileLink[] = [];
+try {
+  profileLinks = (await getDetailStaticPaths(lang))
+    .filter(({ params }) => params.year === '2027')
+    .map(({ params, props: { event } }) => ({
+      year: event.year, row: event.row, date: event.date, place: event.place,
+      profilePath: `${en ? '/en/races' : '/tek'}/2027/${params.slug}/`
+    }));
+} catch { /* Confirmation badges do not depend on optional profile links. */ }
 ---
 <section class="section container confirmed-races" data-confirmed-races data-lang={lang} aria-labelledby="confirmed-races-title" hidden>
   <div class="section-heading">
@@ -11,6 +22,7 @@ const en = lang === 'en';
   </div>
   <p>{en ? 'An officially confirmed race date and an organizer’s confirmation of race information are separate. These organizers reviewed and confirmed the currently published information for their 2027 race edition. This does not mean STK independently verified every detail.' : 'Uradno potrjen datum teka in organizatorjeva potrditev podatkov sta ločeni oznaki. Ti organizatorji so pregledali in potrdili trenutno objavljene podatke svoje izvedbe za leto 2027. To ne pomeni, da je STK neodvisno preveril vsako podrobnost.'}</p>
   <ul data-confirmed-race-list></ul>
+  <script is:inline type="application/json" data-confirmed-profile-links set:html={JSON.stringify(profileLinks).replace(/</g, '\u003c')} />
   <template data-confirmed-race-template>
     <li>
       <div><h3><a data-race-link></a></h3><p class="race-meta"><time></time><span aria-hidden="true"> · </span><span data-race-place></span></p></div>
@@ -19,14 +31,16 @@ const en = lang === 'en';
   </template>
 </section>
 <script>
-  import { fetchOrganizerConfirmedRaces } from '../organizer-confirmed-races';
-  import { buildEventDetailPath, buildEnglishEventDetailPath } from '../utils-event-detail';
+  import { fetchOrganizerConfirmedRaces, resolveOrganizerProfilePath } from '../organizer-confirmed-races';
 
   for (const section of document.querySelectorAll<HTMLElement>('[data-confirmed-races]')) {
     const list = section.querySelector<HTMLUListElement>('[data-confirmed-race-list]');
     const template = section.querySelector<HTMLTemplateElement>('[data-confirmed-race-template]');
     if (!list || !template) continue;
     const en = section.dataset.lang === 'en';
+    let profileLinks: unknown = [];
+    try { profileLinks = JSON.parse(section.querySelector('[data-confirmed-profile-links]')?.textContent ?? 'null'); }
+    catch { /* Missing link enrichment must not hide valid confirmations. */ }
     void fetchOrganizerConfirmedRaces().then((events) => {
       for (const event of events) {
         const fragment = template.content.cloneNode(true) as DocumentFragment;
@@ -35,7 +49,9 @@ const en = lang === 'en';
         fragment.querySelectorAll('script').forEach((script) => script.remove());
         const link = fragment.querySelector<HTMLAnchorElement>('[data-race-link]')!;
         link.textContent = event.title;
-        link.href = en ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event);
+        const profilePath = resolveOrganizerProfilePath(event, profileLinks, en ? 'en' : 'sl');
+        if (profilePath) link.href = profilePath;
+        else link.replaceWith(document.createTextNode(event.title));
         const time = fragment.querySelector('time')!;
         time.dateTime = event.date;
         time.textContent = new Intl.DateTimeFormat(en ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Ljubljana' }).format(new Date(`${event.date}T12:00:00Z`));
