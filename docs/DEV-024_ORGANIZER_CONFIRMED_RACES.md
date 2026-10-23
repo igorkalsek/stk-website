@@ -72,4 +72,11 @@ Preverjanje: **799/799 enotskih testov in 114/114 browser testov PASS** (70 DEV-
 
 `STK_BUILD_TIMING=1 npm run build`: PASS, 677 strani, `master_requests=2`, 280 profilov 2026 + 45 profilov 2027 za vsak jezik; brez dodatnih Master zahtev. `git diff --check`: PASS. Končni browser in CI rezultati so zapisani v odgovoru na P2 pripombo po preverjanju.
 
-Brez sprememb Masterja, API-jev, značk, infrastrukture ali backloga; brez mergea ali deploymenta. PR ostane Draft za ločeno odobritev.
+Brez sprememb Masterja, API-jev, značk, infrastrukture ali backloga; brez mergea ali deploymenta. Trenutni PR je že v stanju za pregled (ni Draft); njegovega stanja ta popravek ne spreminja.
+
+
+Dodatna CI ugotovitev na `fd9f8dd`: [run 40016991549](https://github.com/igorkalsek/stk-website/actions/runs/40016991549) uspešno opravi vseh 70 DEV-024 testov, nato pade en obstoječi SL desktop home test pri primerjavi y koordinat (2 px, retry 36 px). Retry trace pokaže scrollTop **892 → 928** med dvema ločenima klicema za bounding box; razlika **36 px** je natančno prijavljeni odmik. Obstoječi CSS uporablja smooth scroll, test pa po fokusiranju/klikih primerja viewport koordinati iz različnih trenutkov. Home aplikacijska koda in test na izhodišču sta identična main; P2 komponenta na domači strani ni uporabljena. Prvotni test lokalno prestane 10/10 ponovitev (SL/EN × 5), zato napake ne razglašamo za stalno poravnalno regresijo.
+
+Najmanjši popravek home testa prebere oba pravokotnika v enem sinhronem `evaluate` klicu. Iste zahteve glede namizne poravnave (< 1 px), mobilnega vrstnega reda in širine ostanejo; ni čakanja, višjega praga ali spremembe CSS. To odstrani dokazano dirko meritev med smooth scrollom, brez spremembe aplikacije.
+
+Po popravku meritev: celotna matrika Aktualno SL/EN × 390/1440 × full/missing/empty, trikrat: **36/36 PASS**. Brez spremembe pragov ali aplikacijskega CSS.
