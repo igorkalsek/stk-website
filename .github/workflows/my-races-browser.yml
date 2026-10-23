@@ -10,6 +10,7 @@ on:
       - 'tests/fixtures/race-watch.json'
       - 'tests/browser/registration-deadlines.spec.ts'
       - 'tests/browser/race-profile-ux.spec.ts'
+      - 'tests/browser/organizer-confirmed-races.spec.ts'
       - 'tests/browser/home.spec.ts'
       - 'tests/browser/home-stats.spec.ts'
       - 'tests/browser/planning-comparison.spec.ts'
@@ -38,6 +39,7 @@ jobs:
       - run: npx playwright test tests/browser/race-watch.spec.ts --project=chromium
       - run: npx playwright test tests/browser/registration-deadlines.spec.ts --project=chromium
       - run: npm run test:browser:race-profiles
+      - run: npx playwright test tests/browser/organizer-confirmed-races.spec.ts --project=chromium
       - run: npm run test:browser:home
       - run: npx playwright test tests/browser/race-detail-contrast.spec.ts --project=chromium
       - uses: actions/upload-artifact@v4

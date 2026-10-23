@@ -1,0 +1,61 @@
+---
+import OrganizerConfirmationBadge from './OrganizerConfirmationBadge.astro';
+interface Props { lang: 'sl' | 'en'; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+---
+<section class="section container confirmed-races" data-confirmed-races data-lang={lang} aria-labelledby="confirmed-races-title" hidden>
+  <div class="section-heading">
+    <span class="eyebrow">2027</span>
+    <h2 id="confirmed-races-title">{en ? 'Races with organizer-confirmed information' : 'Teki s podatki, ki so jih potrdili organizatorji'}</h2>
+  </div>
+  <p>{en ? 'An officially confirmed race date and an organizer’s confirmation of race information are separate. These organizers reviewed and confirmed the currently published information for their 2027 race edition. This does not mean STK independently verified every detail.' : 'Uradno potrjen datum teka in organizatorjeva potrditev podatkov sta ločeni oznaki. Ti organizatorji so pregledali in potrdili trenutno objavljene podatke svoje izvedbe za leto 2027. To ne pomeni, da je STK neodvisno preveril vsako podrobnost.'}</p>
+  <ul data-confirmed-race-list></ul>
+  <template data-confirmed-race-template>
+    <li>
+      <div><h3><a data-race-link></a></h3><p class="race-meta"><time></time><span aria-hidden="true"> · </span><span data-race-place></span></p></div>
+      <OrganizerConfirmationBadge year="2027" eventId="" {lang} />
+    </li>
+  </template>
+</section>
+<script>
+  import { fetchOrganizerConfirmedRaces } from '../organizer-confirmed-races';
+  import { buildEventDetailPath, buildEnglishEventDetailPath } from '../utils-event-detail';
+
+  for (const section of document.querySelectorAll<HTMLElement>('[data-confirmed-races]')) {
+    const list = section.querySelector<HTMLUListElement>('[data-confirmed-race-list]');
+    const template = section.querySelector<HTMLTemplateElement>('[data-confirmed-race-template]');
+    if (!list || !template) continue;
+    const en = section.dataset.lang === 'en';
+    void fetchOrganizerConfirmedRaces().then((events) => {
+      for (const event of events) {
+        const fragment = template.content.cloneNode(true) as DocumentFragment;
+        // Reuse badge markup; this list has already checked the shared public projection.
+        // Do not start the profile badge script again for each cloned row.
+        fragment.querySelectorAll('script').forEach((script) => script.remove());
+        const link = fragment.querySelector<HTMLAnchorElement>('[data-race-link]')!;
+        link.textContent = event.title;
+        link.href = en ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event);
+        const time = fragment.querySelector('time')!;
+        time.dateTime = event.date;
+        time.textContent = new Intl.DateTimeFormat(en ? 'en-GB' : 'sl-SI', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Ljubljana' }).format(new Date(`${event.date}T12:00:00Z`));
+        fragment.querySelector('[data-race-place]')!.textContent = event.place;
+        const badge = fragment.querySelector<HTMLElement>('[data-organizer-confirmation-badge]')!;
+        badge.dataset.eventId = `R${event.row.padStart(6, '0')}`;
+        badge.hidden = false;
+        list.append(fragment);
+      }
+      section.hidden = events.length === 0;
+    });
+  }
+</script>
+<style>
+  .confirmed-races > p{max-width:75ch;color:var(--muted)}
+  ul{list-style:none;padding:0;margin:1.25rem 0 0;display:grid;gap:.75rem}
+  li{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--white);min-width:0}
+  li > div{min-width:0}
+  h3{font-size:1.05rem;line-height:1.4;margin:0;overflow-wrap:anywhere}
+  h3 a{display:inline-block;padding:.25rem 0}
+  .race-meta{margin:.25rem 0 0;font-size:.95rem;overflow-wrap:anywhere}
+  @media(max-width:600px){li{align-items:flex-start;flex-direction:column;gap:.65rem}}
+</style>
