@@ -370,3 +370,86 @@ for (const home of homes) for (const width of [390, 430, 768, 1440]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   });
 }
+
+// DEV-044 F3: the visual order and compact actions must remain usable with real-sized text.
+for (const home of homes) for (const width of [390, 1440]) {
+  for (const scenario of ['full', 'missing', 'empty'] as const) {
+    test(`${home.path} current races ${scenario} at ${width}px preserve actions and reading order`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.addInitScript(() => localStorage.setItem('stkAnalyticsOptOut', 'true'));
+      await page.route('**/*', route => ['GET', 'HEAD'].includes(route.request().method()) ? route.continue() : route.abort());
+      await mockHomepageApis(page);
+      const title = 'Mednarodni družinski gorski ultramaraton – International family mountain race along the Slovenian trails';
+      const events = scenario === 'empty' ? [] : [
+        { row: '37', datum: '2026-09-26', naziv_prireditve: title, kraj: scenario === 'missing' ? '' : 'Ljubljana', regija: scenario === 'missing' ? '' : 'Osrednjeslovenska', povezava_prijava: scenario === 'missing' ? '' : 'https://example.com/registration', povezava_razpis: 'https://example.com/notice', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA' },
+        { row: '38', datum: '2026-09-27', naziv_prireditve: 'Second race', kraj: 'Celje', regija: 'Savinjska', status_dogodka: 'potrjeno', vidno_v_javnem_koledarju: 'DA' }
+      ];
+      await page.route(`${API_HOST}/**`, route => {
+        const url = new URL(route.request().url());
+        if (url.pathname === '/') return route.fulfill({ json: { data: url.searchParams.get('year') === '2027' ? [] : events } });
+        if (url.pathname === '/additional') return route.fulfill({ json: { data: scenario === 'full' ? [{ master_row: '37', zanesljivost: 'visoka', rok_prijave: '2026-09-25' }] : [] } });
+        return route.fulfill({ json: { data: [] } });
+      });
+      await page.goto(home.path);
+      const current = page.locator('.home-current-sections');
+      const next = current.locator('.home-primary-section');
+      const deadlines = current.locator('[data-registration-deadlines-section]');
+      const cards = next.locator('[data-analytics-placement="home_this_week"]');
+      await expect(cards).toHaveCount(events.length);
+      if (scenario === 'empty') {
+        await expect(next.locator('.event-card h3')).toHaveText(home.path === '/' ? 'Trenutno ni prikazanih najbližjih tekov' : 'No upcoming races are shown right now');
+      } else {
+        await expect(cards.locator('h3')).toHaveText([title.replace('–', '-'), 'Second race']);
+        await expect(cards.first().locator('time')).toHaveAttribute('datetime', '2026-09-26');
+        await expect(cards.first().locator('h3 a')).toHaveAttribute('href', new RegExp(`${home.path === '/' ? '/tek/' : '/en/races/'}2026/r000037-`));
+        await expect(cards.first().locator('a[data-analytics-link-type="razpis"]')).toHaveAttribute('href', 'https://example.com/notice');
+        await expect(cards.first().locator('a[data-analytics-link-type="razpis"]')).toHaveAccessibleName(home.path === '/' ? 'Razpis' : 'Official info');
+        await expect(cards.first().locator('a[data-analytics-link-type="prijava"]')).toHaveCount(scenario === 'full' ? 1 : 0);
+        if (scenario === 'missing') await expect(cards.first().locator(':scope > p')).toHaveCount(0);
+        for (const card of await cards.all()) {
+          const heading = card.locator('h3');
+          expect(await heading.evaluate(e => e.scrollWidth <= e.clientWidth + 1 && e.scrollHeight <= e.clientHeight + 1)).toBe(true);
+          const controls = card.locator('.event-actions > a, .event-actions > button, .event-actions summary');
+          for (const control of await controls.all()) {
+            const rect = (await control.boundingBox())!;
+            expect(rect.width).toBeGreaterThanOrEqual(44);
+            expect(rect.height).toBeGreaterThanOrEqual(44);
+            await page.keyboard.press('Tab');
+            await control.focus();
+            expect(await control.evaluate(e => getComputedStyle(e).outlineStyle)).not.toBe('none');
+          }
+          const calendar = card.locator('.calendar-menu');
+          await calendar.locator('summary').press('Enter');
+          await expect(calendar).toHaveAttribute('open', '');
+          for (const option of await calendar.locator('a').all()) {
+            const rect = (await option.boundingBox())!;
+            expect(rect.height).toBeGreaterThanOrEqual(44);
+            expect(rect.x).toBeGreaterThanOrEqual(0);
+            expect(rect.x + rect.width).toBeLessThanOrEqual(width);
+            await expect(option).toHaveAttribute('href', /^(https:|data:text\/calendar)/);
+          }
+          await calendar.locator('summary').press('Enter');
+          const save = card.locator('[data-saved-race-button]');
+          await expect(save).toHaveAccessibleName(home.path === '/' ? 'Shrani tek' : 'Save race');
+          await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'true');
+          await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'false');
+        }
+      }
+      if (scenario === 'full') {
+        await expect(deadlines).toBeVisible();
+        expect(await next.evaluate(e => e.nextElementSibling?.hasAttribute('data-registration-deadlines-section'))).toBe(true);
+        const nextRect = (await next.boundingBox())!, deadlineRect = (await deadlines.boundingBox())!;
+        if (width === 390) expect(nextRect.y + nextRect.height).toBeLessThanOrEqual(deadlineRect.y);
+        else {
+          expect(deadlineRect.x + deadlineRect.width).toBeLessThanOrEqual(nextRect.x);
+          expect(Math.abs(deadlineRect.y - nextRect.y)).toBeLessThan(1);
+        }
+      } else {
+        await expect(deadlines).toBeHidden();
+        const nextRect = (await next.boundingBox())!, layoutRect = (await current.locator('.home-current-layout').boundingBox())!;
+        expect(Math.abs(nextRect.width - layoutRect.width)).toBeLessThan(1);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    });
+  }
+}

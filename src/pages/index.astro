@@ -56,19 +56,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         <h2 id="current-title">Aktualno</h2>
       </div>
       <div class="home-current-layout">
-      <section class="registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
-        <article class="registration-deadlines-card">
-          <div class="registration-deadlines-heading">
-            <div>
-              <h2 id="registration-deadlines-title">Prijave se iztekajo</h2>
-              <p>Roki prijav in cenejših prijavnin za prihajajoče teke.</p>
-            </div>
-          </div>
-          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
-          <a class="registration-deadlines-cta" href="/iskalnik-tekov/">Poglej vse roke v iskalniku</a>
-        </article>
-      </section>
-
       <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
@@ -81,6 +68,19 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           <HomeUpcomingRaces events={initialUpcomingEvents} lang="sl" />
         </div>
         <p class="data-note nearest-search-note">Za prijavnine, prijave na dan, trase in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
+      </section>
+
+      <section class="registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+        <article class="registration-deadlines-card">
+          <div class="registration-deadlines-heading">
+            <div>
+              <h2 id="registration-deadlines-title">Prijave se iztekajo</h2>
+              <p>Roki prijav in cenejših prijavnin za prihajajoče teke.</p>
+            </div>
+          </div>
+          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+          <a class="registration-deadlines-cta" href="/iskalnik-tekov/">Poglej vse roke v iskalniku</a>
+        </article>
       </section>
 
       </div>

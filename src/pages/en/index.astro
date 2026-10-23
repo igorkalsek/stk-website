@@ -62,19 +62,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
         <h2 id="current-title">Current races</h2>
       </div>
       <div class="home-current-layout">
-      <section class="registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
-        <article class="registration-deadlines-card">
-          <div class="registration-deadlines-heading">
-            <div>
-              <h2 id="registration-deadlines-title">Registration deadlines</h2>
-              <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
-            </div>
-          </div>
-          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
-          <a class="registration-deadlines-cta" href="/en/find-races/">View all deadlines in race search</a>
-        </article>
-      </section>
-
       <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
@@ -87,6 +74,19 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           <HomeUpcomingRaces events={initialUpcomingEvents} lang="en" />
         </div>
         <p class="data-note nearest-search-note">For entry fees, race-day registration, routes and elevation gain, open the <a href="/en/find-races/">race search</a>.</p>
+      </section>
+
+      <section class="registration-deadlines-section" aria-labelledby="registration-deadlines-title" data-registration-deadlines-section hidden>
+        <article class="registration-deadlines-card">
+          <div class="registration-deadlines-heading">
+            <div>
+              <h2 id="registration-deadlines-title">Registration deadlines</h2>
+              <p>Upcoming registration and cheaper-entry deadlines for races in Slovenia.</p>
+            </div>
+          </div>
+          <ol class="registration-deadlines-list" data-registration-deadlines></ol>
+          <a class="registration-deadlines-cta" href="/en/find-races/">View all deadlines in race search</a>
+        </article>
       </section>
 
       </div>

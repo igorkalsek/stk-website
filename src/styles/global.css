@@ -4715,8 +4715,8 @@ main {
 }
 
 .home-current-heading {
-  gap: 5px;
-  margin-bottom: 18px;
+  gap: 2px;
+  margin-bottom: 12px;
 }
 
 .home-current-heading .eyebrow {
@@ -4726,7 +4726,7 @@ main {
 }
 
 .home-current-heading h2 {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
 }
 
 .home-current-layout {
@@ -4738,7 +4738,7 @@ main {
   margin: 0;
 }
 
-.home-current-layout .registration-deadlines-section[hidden] + .home-primary-section {
+.home-current-layout:has(.registration-deadlines-section[hidden]) .home-primary-section {
   grid-column: 1 / -1;
 }
 
@@ -4799,13 +4799,35 @@ main {
 }
 
 .home-primary-section .event-actions {
+  grid-column: 1 / -1;
   gap: 6px;
   margin-top: 4px;
+  align-items: flex-start;
+}
+
+.home-primary-section .event-actions > .button,
+.home-primary-section .event-actions .calendar-menu summary {
+  width: auto;
+  min-width: 44px;
+}
+
+.home-primary-section .event-card:not([data-analytics-event-id]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.home-primary-section .calendar-menu-options {
+  right: 0;
+}
+
+.home-primary-section .calendar-menu-options a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .home-primary-section .event-actions .button,
 .home-primary-section .event-actions .calendar-menu summary {
-  min-height: 34px;
+  min-height: 44px;
   padding: 6px 10px;
 }
 
@@ -4959,6 +4981,16 @@ main {
     align-items: start;
   }
 
+  .home-current-layout .home-primary-section {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .home-current-layout .registration-deadlines-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
   .home-utility-card + .home-utility-card {
     border-left: 1px solid rgba(16, 64, 80, 0.1);
   }
@@ -5043,16 +5075,57 @@ main {
 
   .home-current-sections {
     border-radius: 0;
-    padding: 20px 16px;
+    padding: 16px;
   }
 
   .home-primary-section .event-card {
-    grid-template-columns: 66px minmax(0, 1fr);
-    padding: 12px;
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 4px 10px;
+    padding: 10px;
   }
 
-  .home-primary-section .event-actions {
-    grid-column: 1 / -1;
+  .home-primary-section .event-card-date {
+    grid-row: 1 / span 2;
+    width: 54px;
+    min-width: 0;
+    padding: 7px 4px;
+  }
+
+  .home-primary-section .event-actions .calendar-menu summary,
+  .home-primary-section .event-actions .saved-race-button,
+  .home-primary-section .event-actions:has(> [data-analytics-link-type="prijava"]) > [data-analytics-link-type="razpis"] {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .home-primary-section .event-actions > a {
+    max-width: calc(100% - 100px);
+  }
+
+  .home-primary-section .event-actions:has(> [data-analytics-link-type="prijava"]) > [data-analytics-link-type="razpis"] > span:last-child,
+  .home-primary-section .calendar-menu summary > span:last-child,
+  .home-primary-section .saved-race-button > [data-saved-race-label] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .home-primary-section .calendar-menu {
+    width: fit-content;
+  }
+
+  .home-primary-section .calendar-menu[open] {
+    flex-basis: 100%;
+  }
+
+  .home-primary-section .calendar-menu-options {
+    position: static;
+    width: 100%;
   }
 
   .home-secondary-section .event-card {
