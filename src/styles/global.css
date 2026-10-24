@@ -2788,6 +2788,11 @@ main {
   width: 100%;
 }
 
+.event-detail-share-panel [data-native-share] {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 .event-detail-copy-description-button {
   justify-content: center;
   width: 100%;

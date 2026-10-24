@@ -362,10 +362,12 @@ const jsonLd = event ? {
                   <div class="event-detail-share-panel">
                     <h3><span class="action-icon" set:html={renderActionIcon('share')}></span> Deli ta tek</h3>
                     <p>Kopirajte pripravljen kratek opis z datumom, krajem in povezavo ter ga prilepite v objavo ali sporočilo.</p>
+                    <button class="button button-secondary-light" type="button" hidden data-native-share data-share-title={event.title} data-share-text={`${event.title} – ${[formatDate(event.date), event.place].filter(Boolean).join(', ')}`} data-share-url={shareUrl} data-analytics-event-type="share_clicked" data-analytics-action-type="share_native_click" data-analytics-target-url={shareUrl}>Deli tek</button>
                     <button class="button button-small button-secondary-light event-detail-copy-description-button" type="button" data-copy-share-text={copyDescription} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_description_click" data-analytics-target-url={shareUrl}>Kopiraj besedilo za objavo</button>
+                    <p>Facebook odpre deljenje povezave. Besedilo za objavo morate prilepiti sami.</p>
                     <div class="event-detail-share-options" aria-label="Možnosti deljenja">
                       <button class="button button-small button-secondary-light event-detail-icon-button" type="button" data-copy-share-url={shareUrl} data-analytics-event-type="copy_clicked" data-analytics-action-type="copy_url_click" data-analytics-target-url={shareUrl} aria-label="Kopiraj povezavo"><span class="action-icon" set:html={renderActionIcon('link')}></span></button>
-                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-facebook-share-button data-copy-share-text={copyDescription} data-facebook-copy-success="Besedilo je kopirano. Prilepite ga v objavo ali sporočilo." data-facebook-copy-failure="Facebook je odprt. Za besedilo uporabite gumb Kopiraj besedilo za objavo." data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" data-analytics-target-url={shareUrl} aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
+                      <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" data-facebook-share-button data-copy-share-text={copyDescription} data-facebook-copy-success="Besedilo je kopirano. Na Facebooku ga ročno prilepite in dokončajte objavo." data-facebook-copy-failure="Besedila ni bilo mogoče kopirati. Na Facebooku lahko delite povezavo; za besedilo poskusite Kopiraj besedilo za objavo." data-analytics-event-type="share_clicked" data-analytics-action-type="share_facebook_click" data-analytics-target-url={shareUrl} aria-label="Deli na Facebooku"><span aria-hidden="true">f</span></a>
                       <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_whatsapp_click" data-analytics-target-url={shareUrl} aria-label="Deli na WhatsApp"><span aria-hidden="true">WA</span></a>
                       <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" data-analytics-event-type="share_clicked" data-analytics-action-type="share_x_click" data-analytics-target-url={shareUrl} aria-label="Deli na X"><span aria-hidden="true">𝕏</span></a>
                       <a class="button button-small button-secondary-light event-detail-icon-button" href={shareLinks.email} data-analytics-event-type="share_clicked" data-analytics-action-type="share_email_click" data-analytics-target-url={shareUrl} aria-label="Pošlji po e-pošti"><span aria-hidden="true">✉</span></a>
@@ -439,7 +441,7 @@ const jsonLd = event ? {
     });
   }
   const copyLinkButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-url]');
-  const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-share-text]');
+  const copyTextButtons = document.querySelectorAll<HTMLButtonElement>('button[data-copy-share-text]');
 
   const facebookShareButtons = document.querySelectorAll<HTMLAnchorElement>('[data-facebook-share-button]');
   const feedback = document.querySelector<HTMLElement>('[data-share-feedback]');
@@ -448,10 +450,38 @@ const jsonLd = event ? {
     if (feedback) feedback.textContent = message;
   };
 
+  document.querySelectorAll<HTMLButtonElement>('[data-native-share]').forEach((button) => {
+    const data = { title: button.dataset.shareTitle, text: button.dataset.shareText, url: button.dataset.shareUrl };
+    try {
+      button.hidden = !(typeof navigator.share === 'function' && (!navigator.canShare || navigator.canShare(data)));
+    } catch {
+      button.hidden = true;
+    }
+    button.addEventListener('click', async () => {
+      setShareFeedback('');
+      button.disabled = true;
+      try {
+        await navigator.share(data);
+        // Resolution can mean only that the OS share sheet opened, not that a post was published.
+        setShareFeedback('Za dokončanje deljenja preverite izbrano aplikacijo.');
+      } catch (error) {
+        setShareFeedback(error instanceof Error && error.name === 'AbortError'
+          ? 'Deljenje je preklicano ali ni na voljo. Uporabite lahko spodnje možnosti.'
+          : 'Deljenje ni uspelo. Uporabite spodnje možnosti.');
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+
   const copyWithFallback = async (text: string) => {
     if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      return true;
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // Some browsers expose Clipboard but deny writes; try the existing fallback.
+      }
     }
 
     const textarea = document.createElement('textarea');
@@ -462,10 +492,11 @@ const jsonLd = event ? {
     document.body.appendChild(textarea);
     textarea.select();
 
-    const copied = document.execCommand('copy');
-    textarea.remove();
-
-    if (!copied) throw new Error('copy failed');
+    try {
+      if (!document.execCommand('copy')) throw new Error('copy failed');
+    } finally {
+      textarea.remove();
+    }
     return true;
   };
 
