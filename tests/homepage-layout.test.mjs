@@ -87,8 +87,8 @@ test('homepages restore a compact stats strip and featured discovery before curr
 });
 
 test('homepages explain recorded interest without overwriting the subtitle', () => {
-  assert.match(pages.sl, /data-top-description>Prihajajoči teki glede na zabeležene interakcije obiskovalcev STK – oglede, klike na razpise, prijave in druge akcije\.<\/p>/);
-  assert.match(pages.en, /data-top-description>Upcoming races ranked by recorded visitor interactions on STK, including race views, official information and registration clicks\.<\/p>/);
+  assert.match(pages.sl, /data-top-description>Aktivno zanimanje pomenijo kliki na razpise in prijavne povezave, shranitve ter koledarske akcije\. Ogledi profilov niso merilo aktivnega zanimanja\.<\/p>/);
+  assert.match(pages.en, /data-top-description>Active interest includes official information and registration link clicks, saves and calendar actions\. Profile views do not count as active interest\.<\/p>/);
   for (const source of Object.values(pages)) {
     const loader = source.slice(source.indexOf('  async function loadTopEvents()'), source.indexOf('  async function loadRecentUpdates()'));
     assert.doesNotMatch(loader, /description\.textContent|getTopUpcomingRaces|formatVoteCount/);
