@@ -34,6 +34,10 @@ describe('registration click writer compatibility contract', () => {
       assert.match(detail, /data-analytics-link-type=\{action\.analyticsType\}/);
       assert.match(detail, /data-analytics-event-id=\{event\.id\}/);
       assert.match(detail, /data-analytics-event-year=\{event\.year\}/);
+      assert.match(detail, /data-stk-event-id=\{event\.row \? 'R' \+ event\.row\.padStart\(6, '0'\) : ''\}/);
+      assert.match(detail, /data-stk-event-name=\{event\.title\}/);
+      assert.match(detail, /data-stk-event-date=\{event\.date\}/);
+      assert.match(detail, /data-stk-event-year=\{event\.year\}/);
     }
   });
 
@@ -101,13 +105,17 @@ describe('registration click writer compatibility contract', () => {
     click('other');
     click('', '2026', 'r000123', 'Details');
     click('prijava', '2027', 'r000123');
+    // A profile hero link has no ancestor event-card context.
+    const hero = new FakeElement({ dataset: { stkEventId: 'R000123', stkEventName: 'Testni tek', stkEventDate: '2026-09-12', stkEventYear: '2026', analyticsPlacement: 'race_detail', analyticsLinkType: 'prijava' }, href: 'https://example.com/hero-registration' });
+    globalThis.window.location.pathname = '/tek/2026/test/';
+    clickHandler({ target: hero });
 
     const payloads = await Promise.all(pending);
-    assert.equal(payloads.length, 10, 'an unmarked non-registration link does not create a classified event');
+    assert.equal(payloads.length, 11, 'an unmarked non-registration link does not create a classified event');
     assert.deepEqual(payloads.map(({ action_type }) => action_type), [
-      'prijava', 'prijava', 'prijava', 'prijava', 'official_notice_click', 'route_click', 'map_click', 'organizer_website', 'other', 'prijava'
+      'prijava', 'prijava', 'prijava', 'prijava', 'official_notice_click', 'route_click', 'map_click', 'organizer_website', 'other', 'prijava', 'prijava'
     ]);
-    assert.equal(payloads.filter(({ action_type }) => action_type === 'prijava').length, 5);
+    assert.equal(payloads.filter(({ action_type }) => action_type === 'prijava').length, 6);
     assert.deepEqual(payloads.slice(0, 4).map(({ action_type, page_path, language, event_id, event_year, event_key, target_url, target_domain, placement }) => (
       { action_type, page_path, language, event_id, event_year, event_key, target_url, target_domain, placement }
     )), [
@@ -124,5 +132,11 @@ describe('registration click writer compatibility contract', () => {
       calendar_type: '', referrer: '', user_agent_group: 'desktop', notes: '', placement: 'finder_results'
     });
     assert.deepEqual(payloads.filter(({ event_id }) => event_id === 'r000123').slice(-2).map(({ event_year }) => event_year), ['2026', '2027']);
+    assert.equal(payloads.at(-1).event_id, 'R000123');
+    assert.equal(payloads.at(-1).event_name, 'Testni tek');
+    assert.equal(payloads.at(-1).event_date, '2026-09-12');
+    assert.equal(payloads.at(-1).event_year, '2026');
+    assert.equal(payloads.at(-1).event_key, '2026:R000123');
+    assert.equal(payloads.at(-1).placement, 'race_detail');
   });
 });
