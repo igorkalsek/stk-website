@@ -7,7 +7,7 @@ const source = readFileSync(new URL('../src/pages/en/index.astro', import.meta.u
 describe('English home interest section', () => {
   it('uses interest-preview copy and keeps only View all races in the section header', () => {
     assert.match(source, /<h2 id="voted-title">Races attracting the most interest<\/h2>/);
-    assert.match(source, /<p data-top-description>Upcoming races ranked by recorded visitor interactions on STK, including race views, official information and registration clicks\.<\/p>/);
+    assert.match(source, /<p data-top-description>Active interest includes official information and registration link clicks, saves and calendar actions\. Profile views do not count as active interest\.<\/p>/);
     assert.match(source, /href="\/en\/find-races\/">View all races<\/a>/);
     assert.doesNotMatch(source, /Most voted upcoming races/);
     assert.doesNotMatch(source, /View full ranking/);
