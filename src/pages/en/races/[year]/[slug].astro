@@ -208,7 +208,7 @@ const jsonLd = event ? {
             <div class="event-detail-primary-actions" aria-label="Main links">
               <div class="event-detail-official-actions event-detail-action-list">
                 {primaryActions.map((action) => (
-                  <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType}><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
+                  <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail"><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
                 ))}
               </div>
               <div class="event-detail-my-race-panel">
@@ -234,7 +234,7 @@ const jsonLd = event ? {
         </section>
 
         <section class="section container event-detail-section" aria-label="Race details">
-          <div class="event-detail-page-grid" data-event-row={event.row} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year} data-analytics-placement="race_detail" data-event-detail-view>
+          <div class="event-detail-page-grid" data-event-row={event.row} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-analytics-event-id={event.id} data-analytics-event-name={event.title} data-analytics-event-date={event.date} data-analytics-event-year={event.year} data-analytics-placement="race_detail" data-event-detail-view>
             <div class="event-detail-main-column">
               {detailItems.length > 0 && (
                 <article class="info-card event-detail-panel">

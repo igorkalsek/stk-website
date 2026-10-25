@@ -53,6 +53,11 @@ for (const language of ['sl', 'en']) {
         for (const link of await official.all()) {
           await expect(link).toHaveAttribute('href', /^https:\/\//);
           await expect(link).toHaveAttribute('target', '_blank');
+          await expect(link).toHaveAttribute('data-stk-event-id', /^R\d{6}$/);
+          await expect(link).toHaveAttribute('data-stk-event-name', /\S/);
+          await expect(link).toHaveAttribute('data-stk-event-date', new RegExp(`^${profile.year}-`));
+          await expect(link).toHaveAttribute('data-stk-event-year', profile.year);
+          await expect(link).toHaveAttribute('data-analytics-placement', 'race_detail');
           const rect = await link.boundingBox();
           expect(rect!.height).toBeGreaterThanOrEqual(44);
         }
