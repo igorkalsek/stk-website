@@ -1,0 +1,1942 @@
+{
+  "checkedAt": "2026-10-27T18:20:27.203Z",
+  "candidate": "Local preview with real public Worker responses; change not deployed",
+  "results": [
+    {
+      "lang": "sl",
+      "width": 390,
+      "year": "2027",
+      "id": "R000011",
+      "path": "/tek/2027/r000011-45-maraton-treh-src/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Prihaja čez 200 dni",
+        "facts": "Ura 09:00 Kraj / regija Radenci · Pomurska Razdalje 5,316 km · 10 km · 21,098 km · 42,195 km Podlaga Cesta",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:23+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Prihaja čez 200 dni",
+        "facts": "Ura 09:00 Kraj / regija Radenci · Pomurska Razdalje 5,316 km · 10 km · 21,098 km · 42,195 km Podlaga Cesta",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:27+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 390,
+      "year": "2027",
+      "id": "R000012",
+      "path": "/tek/2027/r000012-kras-trail-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Prihaja čez 151 dni",
+        "facts": "Ura 07:30 Kraj / regija Senožeče · Obalno-kraška Razdalje 10 km · 29 km · 52 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:31+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Prihaja čez 151 dni",
+        "facts": "Ura 07:30 Kraj / regija Senožeče · Obalno-kraška Razdalje 10 km · 29 km · 52 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:37+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 390,
+      "year": "2027",
+      "id": "R000019",
+      "path": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Prihaja čez 131 dni",
+        "facts": "Ura 10:00 Kraj / regija Križ pri Sežani · Obalno-kraška Razdalje 12,3 km · 19,5 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:41+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Prihaja čez 131 dni",
+        "facts": "Ura 10:00 Kraj / regija Križ pri Sežani · Obalno-kraška Razdalje 12,3 km · 19,5 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:44+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 390,
+      "year": "2027",
+      "id": "R000034",
+      "path": "/tek/2027/r000034-7-ur-slivnice-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Prihaja čez 116 dni",
+        "facts": "Ura 08:00 Kraj / regija Slivnica (Cerknica) · Primorsko-notranjska Razdalje 3,5 km Podlaga Gorski",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:49+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Prihaja čez 116 dni",
+        "facts": "Ura 08:00 Kraj / regija Slivnica (Cerknica) · Primorsko-notranjska Razdalje 3,5 km Podlaga Gorski",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:17:53+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 390,
+      "year": "2026",
+      "id": "R000256",
+      "path": "/tek/2026/r000256-go4trail/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Prihaja čez 11 dni",
+        "facts": "Ura 7:30 Kraj / regija Nova Gorica · Goriška Razdalje 13 km · 28 km · 64 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:18:00+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Prihaja čez 11 dni",
+        "facts": "Ura 7:30 Kraj / regija Nova Gorica · Goriška Razdalje 13 km · 28 km · 64 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:18:04+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000011",
+      "path": "/tek/2027/r000011-45-maraton-treh-src/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Prihaja čez 200 dni",
+        "facts": "Ura 09:00 Kraj / regija Radenci · Pomurska Razdalje 5,316 km · 10 km · 21,098 km · 42,195 km Podlaga Cesta",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:13+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Cesta&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Prihaja čez 200 dni",
+        "facts": "Ura 09:00 Kraj / regija Radenci · Pomurska Razdalje 5,316 km · 10 km · 21,098 km · 42,195 km Podlaga Cesta",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:16+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000012",
+      "path": "/tek/2027/r000012-kras-trail-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Prihaja čez 151 dni",
+        "facts": "Ura 07:30 Kraj / regija Senožeče · Obalno-kraška Razdalje 10 km · 29 km · 52 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:20+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Prihaja čez 151 dni",
+        "facts": "Ura 07:30 Kraj / regija Senožeče · Obalno-kraška Razdalje 10 km · 29 km · 52 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:24+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000019",
+      "path": "/tek/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Prihaja čez 131 dni",
+        "facts": "Ura 10:00 Kraj / regija Križ pri Sežani · Obalno-kraška Razdalje 12,3 km · 19,5 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:28+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Prihaja čez 131 dni",
+        "facts": "Ura 10:00 Kraj / regija Križ pri Sežani · Obalno-kraška Razdalje 12,3 km · 19,5 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:30+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000034",
+      "path": "/tek/2027/r000034-7-ur-slivnice-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Prihaja čez 116 dni",
+        "facts": "Ura 08:00 Kraj / regija Slivnica (Cerknica) · Primorsko-notranjska Razdalje 3,5 km Podlaga Gorski",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:36+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Gorski&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=sl&returnUrl=%2Ftek%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Prihaja čez 116 dni",
+        "facts": "Ura 08:00 Kraj / regija Slivnica (Cerknica) · Primorsko-notranjska Razdalje 3,5 km Podlaga Gorski",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:40+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "year": "2026",
+      "id": "R000256",
+      "path": "/tek/2026/r000256-go4trail/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Prihaja čez 11 dni",
+        "facts": "Ura 7:30 Kraj / regija Nova Gorica · Goriška Razdalje 13 km · 28 km · 64 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:18:44+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/dodaj-ali-popravi-tek/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=sl&returnUrl=%2Ftek%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Prihaja čez 11 dni",
+        "facts": "Ura 7:30 Kraj / regija Nova Gorica · Goriška Razdalje 13 km · 28 km · 64 km Podlaga Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:18:51+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "year": "2027",
+      "id": "R000011",
+      "path": "/en/races/2027/r000011-45-maraton-treh-src/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Coming in 200 days",
+        "facts": "Time 09:00 Location / region Radenci · Pomurska Distances 5,316 km · 10 km · 21,098 km · 42,195 km Surface Road",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:18:56+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Coming in 200 days",
+        "facts": "Time 09:00 Location / region Radenci · Pomurska Distances 5,316 km · 10 km · 21,098 km · 42,195 km Surface Road",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:00+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "year": "2027",
+      "id": "R000012",
+      "path": "/en/races/2027/r000012-kras-trail-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Coming in 151 days",
+        "facts": "Time 07:30 Location / region Senožeče · Obalno-kraška Distances 10 km · 29 km · 52 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:03+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Coming in 151 days",
+        "facts": "Time 07:30 Location / region Senožeče · Obalno-kraška Distances 10 km · 29 km · 52 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:08+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "year": "2027",
+      "id": "R000019",
+      "path": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Coming in 131 days",
+        "facts": "Time 10:00 Location / region Križ pri Sežani · Obalno-kraška Distances 12,3 km · 19,5 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:11+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Coming in 131 days",
+        "facts": "Time 10:00 Location / region Križ pri Sežani · Obalno-kraška Distances 12,3 km · 19,5 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:15+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "year": "2027",
+      "id": "R000034",
+      "path": "/en/races/2027/r000034-7-ur-slivnice-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Coming in 116 days",
+        "facts": "Time 08:00 Location / region Slivnica (Cerknica) · Primorsko-notranjska Distances 3,5 km Surface Mountain",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:19+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Coming in 116 days",
+        "facts": "Time 08:00 Location / region Slivnica (Cerknica) · Primorsko-notranjska Distances 3,5 km Surface Mountain",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:22+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "year": "2026",
+      "id": "R000256",
+      "path": "/en/races/2026/r000256-go4trail/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Coming in 11 days",
+        "facts": "Time 7:30 Location / region Nova Gorica · Goriška Distances 13 km · 28 km · 64 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:19:29+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Coming in 11 days",
+        "facts": "Time 7:30 Location / region Nova Gorica · Goriška Distances 13 km · 28 km · 64 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:19:35+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000011",
+      "path": "/en/races/2027/r000011-45-maraton-treh-src/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Coming in 200 days",
+        "facts": "Time 09:00 Location / region Radenci · Pomurska Distances 5,316 km · 10 km · 21,098 km · 42,195 km Surface Road",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:43+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "45. Maraton treh src",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=45.+Maraton+treh+src&year=2027&date=2027-05-15&place=Radenci&context=detail&eventKey=r000011&region=Pomurska&startTime=09%3A00&distances=5%2C316+km+%C2%B7+10+km+%C2%B7+21%2C098+km+%C2%B7+42%2C195+km&surface=Road&officialSource=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&noticeUrl=https%3A%2F%2Fwww.maraton-radenci.si%2Fo-maratonu&otherDetails=Dru%C5%BEinam+prijazno%3A+otro%C5%A1ki+teki+in+brezpla%C4%8Dno+otro%C5%A1ko+varstvo.&organizator_naziv=%C5%A0portno+dru%C5%A1tvo+Tri+srca&organizator_url=https%3A%2F%2Fwww.maraton-radenci.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000011-45-maraton-treh-src%2F"
+        ],
+        "status": "Coming in 200 days",
+        "facts": "Time 09:00 Location / region Radenci · Pomurska Distances 5,316 km · 10 km · 21,098 km · 42,195 km Surface Road",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:47+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000012",
+      "path": "/en/races/2027/r000012-kras-trail-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Coming in 151 days",
+        "facts": "Time 07:30 Location / region Senožeče · Obalno-kraška Distances 10 km · 29 km · 52 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:51+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Kras Trail 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Kras+Trail+2027&year=2027&date=2027-03-27&place=Seno%C5%BEe%C4%8De&context=detail&eventKey=r000012&region=Obalno-kra%C5%A1ka&startTime=07%3A30&distances=10+km+%C2%B7+29+km+%C2%B7+52+km&surface=Trail&officialSource=https%3A%2F%2Fkrastrail.si%2F&noticeUrl=https%3A%2F%2Fkrastrail.si%2F&registrationUrl=https%3A%2F%2Fkrastrail.si%2Fprijava%2F&registrationFee=34%E2%80%9395&registrationMinEur=34&registrationMaxEur=95&registrationDescription=10+km+34%E2%80%9350+%E2%82%AC%3B+29+km+49%E2%80%9375+%E2%82%AC%3B+52+km+70%E2%80%9395+%E2%82%AC%3B+7%2B+teka%C4%8Dev%3A+10+%25+popust.&registrationDeadline=2027-03-12&earlyRegistrationDeadline=2026-08-31&dayOfRegistration=NE&elevationGain=2000&organizator_naziv=Idila+Trail+Adventures+d.o.o.&organizator_url=https%3A%2F%2Fkrastrail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000012-kras-trail-2027%2F"
+        ],
+        "status": "Coming in 151 days",
+        "facts": "Time 07:30 Location / region Senožeče · Obalno-kraška Distances 10 km · 29 km · 52 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:55+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000019",
+      "path": "/en/races/2027/r000019-4-trail-po-kraskih-klancih-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Coming in 131 days",
+        "facts": "Time 10:00 Location / region Križ pri Sežani · Obalno-kraška Distances 12,3 km · 19,5 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:19:58+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "4. Trail po kraških klancih 2027",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=4.+Trail+po+kra%C5%A1kih+klancih+2027&year=2027&date=2027-03-07&place=Kri%C5%BE+pri+Se%C5%BEani&context=detail&eventKey=r000019&region=Obalno-kra%C5%A1ka&startTime=10%3A00&distances=12%2C3+km+%C2%B7+19%2C5+km&surface=Trail&officialSource=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&noticeUrl=https%3A%2F%2Fwww.srd-kras.si%2Ftrail-2027&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2F4-trail-po-kraskih-klancih-2027%2F&cup=Primorski+gorski+teki+2027+%28PGT%29&registrationFee=20%E2%80%9350&registrationMinEur=20&registrationMaxEur=50&registrationDescription=Individualno%3A+25+EUR+do+30.+11.+2026%2C+30+EUR+do+31.+12.+2026%2C+35+EUR+do+31.+1.+2027%3B+na+dan+teka+50+EUR.+Skupine+10%2B%3A+20%2F25%2F30+EUR+po+istih+spletnih+obdobjih.&earlyRegistrationDeadline=2026-11-30&dayOfRegistration=DA&elevationGain=390&otherDetails=Dve+razdalji%3A+12%2C3+km+%28start+10%3A30%29+in+19%2C5+km+%28start+10%3A00%29.+%7C+Dru%C5%BEinam+prijazno%3A+brezpla%C4%8Den+otro%C5%A1ki+tek+400+m+ob+9%3A30.&organizator_naziv=%C5%A0RD+Kras&organizator_url=https%3A%2F%2Fwww.srd-kras.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000019-4-trail-po-kraskih-klancih-2027%2F"
+        ],
+        "status": "Coming in 131 days",
+        "facts": "Time 10:00 Location / region Križ pri Sežani · Obalno-kraška Distances 12,3 km · 19,5 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:20:02+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "year": "2027",
+      "id": "R000034",
+      "path": "/en/races/2027/r000034-7-ur-slivnice-2027/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Coming in 116 days",
+        "facts": "Time 08:00 Location / region Slivnica (Cerknica) · Primorsko-notranjska Distances 3,5 km Surface Mountain",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:20:05+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "7 ur Slivnice 2027",
+        "count": 1,
+        "visible": false,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": false,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=7+ur+Slivnice+2027&year=2027&date=2027-02-20&place=Slivnica+%28Cerknica%29&context=detail&eventKey=r000034&region=Primorsko-notranjska&startTime=08%3A00&distances=3%2C5+km&surface=Mountain&officialSource=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&noticeUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationUrl=https%3A%2F%2Fprijavim.se%2Fcalendar%2Fcheckings%2F6639%2F7-ur-slivnice-2027%2F&registrationFee=40%E2%80%9345&registrationMinEur=40&registrationMaxEur=45&registrationDescription=40+EUR+do+31.+12.+2026%3B+45+EUR+od+1.+1.+2027.+Prijave+se+zaklju%C4%8Dijo+10.+2.+2027.&registrationDeadline=2027-02-10&earlyRegistrationDeadline=2026-12-31&dayOfRegistration=NE&elevationGain=500&otherDetails=Sedemurni+vzpon+na+Slivnico%3B+posamezen+vzpon+3%2C5+km+in+pribli%C5%BEno+500+m+vi%C5%A1inske+razlike.+Start+ob+08%3A00.&organizator_naziv=Teka%C5%A1ko+dru%C5%A1tvo+Slivnica&lang=en&returnUrl=%2Fen%2Fraces%2F2027%2Fr000034-7-ur-slivnice-2027%2F"
+        ],
+        "status": "Coming in 116 days",
+        "facts": "Time 08:00 Location / region Slivnica (Cerknica) · Primorsko-notranjska Distances 3,5 km Surface Mountain",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2027",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2027",
+              "generated_at": "2026-10-27T19:20:09+01:00",
+              "events": [
+                {
+                  "event_id": "R000011",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000012",
+                  "data_confirmed": true
+                },
+                {
+                  "event_id": "R000019",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "year": "2026",
+      "id": "R000256",
+      "path": "/en/races/2026/r000256-go4trail/",
+      "passed": true,
+      "production": {
+        "base": "https://tekaski-koledar.si",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": false,
+        "beforeFacts": false,
+        "oldLocation": true,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Coming in 11 days",
+        "facts": "Time 7:30 Location / region Nova Gorica · Goriška Distances 13 km · 28 km · 64 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:20:14+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "candidate": {
+        "base": "http://127.0.0.1:4321",
+        "http": 200,
+        "title": "Go4trail",
+        "count": 1,
+        "visible": true,
+        "underTitle": true,
+        "beforeFacts": true,
+        "oldLocation": false,
+        "ctaHidden": true,
+        "correctionVisible": true,
+        "organizerLinks": [
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F&mode=confirm",
+          "/en/add-or-correct-race/?event=Go4trail&year=2026&date=2026-11-07&place=Nova+Gorica&context=detail&eventKey=r000256&region=Gori%C5%A1ka&startTime=7%3A30&distances=13+km+%C2%B7+28+km+%C2%B7+64+km&surface=Trail&officialSource=https%3A%2F%2Fgo4trail.si%2Fsl&noticeUrl=https%3A%2F%2Fgo4trail.si%2Fsl&registrationUrl=https%3A%2F%2Fprotime.si%2Fdogodek%2Fgo4trail-tek-treh-vrhov-2026%2F&registrationFee=40%E2%80%93100&registrationMinEur=40&registrationMaxEur=100&registrationDescription=13km+40%2F50+EUR%3B+28+km+60%2F70+EUR%3B+64+km+90%2F100+EUR+glede+na+rok+oziroma+prijavo+na+dan.&registrationDeadline=2026-11-02&earlyRegistrationDeadline=2026-11-02&dayOfRegistration=DA&elevationGain=2900&routeUrl=https%3A%2F%2Fgo4trail.si%2Fsl%2Fproge&organizator_naziv=Javni+zavod+za+%C5%A1port+Nova+Gorica&organizator_url=https%3A%2F%2Fgo4trail.si%2F&lang=en&returnUrl=%2Fen%2Fraces%2F2026%2Fr000256-go4trail%2F"
+        ],
+        "status": "Coming in 11 days",
+        "facts": "Time 7:30 Location / region Nova Gorica · Goriška Distances 13 km · 28 km · 64 km Surface Trail",
+        "overflow": false,
+        "errors": [],
+        "projections": [
+          {
+            "url": "https://stk-master-api.igor-kalsek.workers.dev/organizer-confirmations?year=2026",
+            "status": 200,
+            "payload": {
+              "ok": true,
+              "type": "organizer_confirmations",
+              "year": "2026",
+              "generated_at": "2026-10-27T19:20:20+01:00",
+              "events": [
+                {
+                  "event_id": "R000256",
+                  "data_confirmed": true
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -94,3 +94,100 @@ for (const width of [390, 430, 768, 1440]) {
     }
   }
 }
+
+// DEV-024: the profile badge sits under the title; only the matching edition's
+// confirmation action is hidden after the existing projection validates it.
+const confirmationProfiles = [
+  { year: '2027', id: 'R000011', slug: 'r000011-45-maraton-treh-src' },
+  { year: '2027', id: 'R000012', slug: 'r000012-kras-trail-2027' },
+  { year: '2027', id: 'R000019', slug: 'r000019-4-trail-po-kraskih-klancih-2027' },
+  { year: '2026', id: 'R000256', slug: 'r000256-go4trail' },
+];
+for (const lang of ['sl', 'en']) for (const width of [390, 1440]) {
+  for (const mode of ['confirmed', 'pending-email', 'pending-confirmation', 'email-only', 'empty', 'false', 'wrong-year', 'wrong-event', 'http', 'network', 'json'] as const) {
+    test(`profile confirmation placement ${lang} ${width}px ${mode}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1000 });
+      const errors: string[] = [];
+      page.on('pageerror', error => errors.push(error.message));
+      let calls = 0;
+      let active = confirmationProfiles[0];
+      await page.route('**/*', route => {
+        const request = route.request();
+        const url = new URL(request.url());
+        if (!['GET', 'HEAD'].includes(request.method())) return route.abort();
+        if (url.hostname === '127.0.0.1') return route.continue();
+        if (url.pathname !== '/organizer-confirmations') return route.abort();
+        calls++;
+        expect(url.searchParams.get('year')).toBe(active.year);
+        if (mode === 'network') return route.abort();
+        if (mode === 'http') return route.fulfill({ status: 503 });
+        if (mode === 'json') return route.fulfill({ body: '{', contentType: 'application/json' });
+        return route.fulfill({ json: {
+          ok: true, type: 'organizer_confirmations', year: mode === 'wrong-year' ? '2026' : active.year,
+          events: mode === 'empty' ? [] : [{ event_id: mode === 'wrong-event' ? 'R000034' : active.id,
+            ...(mode === 'confirmed' || mode.startsWith('wrong-') ? { data_confirmed: true } :
+              mode === 'false' ? { data_confirmed: false } : { ...(mode === 'email-only' ? {} : { status: mode === 'pending-email' ? 'PENDING_EMAIL' : 'PENDING_CONFIRMATION' }), email_verified: true }) }]
+        } });
+      });
+      const profiles = mode === 'confirmed' ? confirmationProfiles : [confirmationProfiles[0]];
+      for (const profile of profiles) {
+        active = profile;
+        calls = 0;
+        await page.goto(`${lang === 'sl' ? '/tek' : '/en/races'}/${profile.year}/${profile.slug}/`);
+        await page.waitForLoadState('networkidle');
+        const badge = page.locator('[data-organizer-confirmation-badge]');
+        await expect(badge).toHaveCount(1);
+        await expect(badge).toHaveText(lang === 'sl' ? '✓ Podatke potrdil organizator' : '✓ Data confirmed by organizer');
+        expect(await badge.evaluate(e => e.previousElementSibling?.id)).toBe('event-detail-title');
+        expect(await badge.evaluate(e => e.nextElementSibling?.classList.contains('event-detail-hero-facts'))).toBe(true);
+        await expect(page.locator('.event-detail-organizer-panel [data-organizer-confirmation-badge]')).toHaveCount(0);
+        const cta = page.locator('[data-organizer-confirmation-cta]');
+        if (mode === 'confirmed') {
+          await expect(badge).toBeVisible();
+          await expect(cta).toBeHidden();
+          const positions = await page.evaluate(() => {
+            const title = document.querySelector('#event-detail-title')!.getBoundingClientRect();
+            const badge = document.querySelector('[data-organizer-confirmation-badge]')!.getBoundingClientRect();
+            const facts = document.querySelector('.event-detail-hero-facts')!.getBoundingClientRect();
+            return { titleBottom: title.bottom, badgeTop: badge.top, badgeBottom: badge.bottom, factsTop: facts.top };
+          });
+          expect(positions.badgeTop).toBeGreaterThanOrEqual(positions.titleBottom);
+          expect(positions.factsTop).toBeGreaterThan(positions.badgeBottom);
+        } else {
+          await expect(badge).toBeHidden();
+          await expect(cta).toBeVisible();
+        }
+        const confirmationUrl = new URL((await cta.getAttribute('href'))!, 'http://127.0.0.1:4321');
+        expect(confirmationUrl.searchParams.get('year')).toBe(profile.year);
+        expect(confirmationUrl.searchParams.get('eventKey')).toBe(profile.id.toLowerCase());
+        const correction = page.locator('.event-detail-organizer-actions a').last();
+        await expect(correction).toBeVisible();
+        await expect(correction).toHaveText(lang === 'sl' ? 'Predlagajte popravek ali dopolnitev' : 'Suggest an update or correction');
+        await expect(correction).toHaveAttribute('href', /\S/);
+        await expect(page.locator('.event-detail-status-pill')).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+        expect(calls).toBe(1);
+      }
+      expect(errors).toEqual([]);
+    });
+  }
+}
+
+for (const mismatch of ['year', 'event-id']) {
+  test(`verified badge leaves a ${mismatch}-mismatched confirmation action available`, async ({ page }) => {
+    await page.route('**/tek/2026/r000256-go4trail/', async route => {
+      const response = await route.fetch();
+      const body = (await response.text()).replace(/data-organizer-confirmation-cta[^>]+/, attributes =>
+        attributes.replace(mismatch === 'year' ? 'data-year="2026"' : 'data-event-id="R000256"',
+          mismatch === 'year' ? 'data-year="2027"' : 'data-event-id="R000011"'));
+      await route.fulfill({ response, body });
+    });
+    await page.route('**/organizer-confirmations?year=2026', route => route.fulfill({ json: {
+      ok: true, type: 'organizer_confirmations', year: '2026', events: [{ event_id: 'R000256', data_confirmed: true }]
+    } }));
+    await page.goto('/tek/2026/r000256-go4trail/');
+    await expect(page.locator('[data-organizer-confirmation-badge]')).toBeVisible();
+    await expect(page.locator('[data-organizer-confirmation-cta]')).toBeVisible();
+    await expect(page.locator('.event-detail-organizer-actions a').last()).toBeVisible();
+  });
+}
