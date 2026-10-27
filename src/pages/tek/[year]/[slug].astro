@@ -185,6 +185,7 @@ const jsonLd = event ? {
               )}
               <div class="event-detail-hero-copy">
                 <h1 id="event-detail-title">{event.title}</h1>
+                <OrganizerConfirmationBadge year={event.year} eventId={getStableEventId(event)} lang="sl" />
                 <dl class="event-detail-hero-facts" aria-label="Najpomembnejši podatki">
                   {heroFacts.map((fact) => (
                     <div class="event-detail-hero-fact">
@@ -396,10 +397,9 @@ const jsonLd = event ? {
 
               <div class="event-detail-organizer-panel">
                 <h2>Ste organizator tega teka?</h2>
-                <OrganizerConfirmationBadge year={event.year} eventId={getStableEventId(event)} lang="sl" />
                 <p>Pomagajte tekačem najti točne podatke. Sporočite popravek razpisa, prijave, trase, startnine, otroških tekov ali drugih informacij.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-primary" href={confirmationUrl} data-organizer-confirmation-cta>Potrdite pravilnost podatkov</a>
+                  <a class="button button-small button-primary" href={confirmationUrl} data-organizer-confirmation-cta data-year={event.year} data-event-id={getStableEventId(event).toUpperCase()}>Potrdite pravilnost podatkov</a>
                   <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Predlagajte popravek ali dopolnitev</a>
                 </div>
               </div>

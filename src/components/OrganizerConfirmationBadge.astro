@@ -14,10 +14,13 @@ const en = lang === 'en';
       .then((payload) => {
         if (!hasConfirmedOrganizerData(payload, year, eventId)) return;
         badge.hidden = false;
-        badge.closest('.event-detail-organizer-panel')?.querySelector<HTMLElement>('[data-organizer-confirmation-cta]')?.setAttribute('hidden', '');
+        for (const cta of badge.closest('main')?.querySelectorAll<HTMLElement>('[data-organizer-confirmation-cta]') ?? []) {
+          if (cta.dataset.year === year && cta.dataset.eventId === eventId) cta.hidden = true;
+        }
       }).catch(() => undefined);
   }
 </script>
 <style>
   .organizer-confirmation-badge{width:fit-content;margin:0;padding:7px 10px;border:1px solid rgba(50,121,61,.35);border-radius:999px;background:rgba(200,230,201,.55);color:var(--green-dark);font-size:.9rem;font-weight:800;line-height:1.25}
+  :global(.event-detail-hero-copy) .organizer-confirmation-badge{max-width:100%;background:#e4f1e4;color:#1e3a32}
 </style>

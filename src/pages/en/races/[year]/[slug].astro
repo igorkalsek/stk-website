@@ -185,6 +185,7 @@ const jsonLd = event ? {
               )}
               <div class="event-detail-hero-copy">
                 <h1 id="event-detail-title">{event.title}</h1>
+                <OrganizerConfirmationBadge year={event.year} eventId={getStableEventId(event)} lang="en" />
                 <dl class="event-detail-hero-facts" aria-label="Key race facts">
                   {heroFacts.map((fact) => (
                     <div class="event-detail-hero-fact">
@@ -396,10 +397,9 @@ const jsonLd = event ? {
 
               <div class="event-detail-organizer-panel">
                 <h2>Are you the organizer of this race?</h2>
-                <OrganizerConfirmationBadge year={event.year} eventId={getStableEventId(event)} lang="en" />
                 <p>Help runners find accurate information. Send an update for the official notice, registration, course, entry fees, children’s races or other race details.</p>
                 <div class="event-detail-organizer-actions">
-                  <a class="button button-small button-primary" href={confirmationUrl} data-organizer-confirmation-cta>Confirm that the information is correct</a>
+                  <a class="button button-small button-primary" href={confirmationUrl} data-organizer-confirmation-cta data-year={event.year} data-event-id={getStableEventId(event).toUpperCase()}>Confirm that the information is correct</a>
                   <a class="button button-small button-secondary-light" href={correctionUrl} data-analytics-event-type="correction_clicked" data-analytics-action-type="correction_cta_click">Suggest an update or correction</a>
                 </div>
               </div>
