@@ -18,7 +18,7 @@ async function setup(page: Page, years: string[]) {
   });
   // No analytics or external writes, including when the existing save controls are exercised.
   await page.route('**/*', route => route.request().method() === 'GET' ? route.continue() : route.fulfill({ status: 204 }));
-  await page.route('**/api/interest-preview', route => route.fulfill({ json: { ok: true, type: 'interest_preview', items: [] } }));
+  await page.route('**/api/interest-preview*', route => route.fulfill({ json: { ok: true, type: 'interest_preview', items: [] } }));
   await page.route(`${API}/**`, async route => {
     const url = new URL(route.request().url());
     const year = url.searchParams.get('year') ?? '2026';

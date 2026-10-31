@@ -24,7 +24,7 @@ for (const lang of ['sl', 'en']) {
         if (url.pathname === '/group-runs') { groupRequests++; return route.fulfill({ json: { row_count: 22 } }); }
         return route.fulfill({ json: { data: [] } });
       });
-      await page.route('**/api/interest-preview', (route) => route.fulfill({ json: { ok: true, type: 'interest_preview', items: [] } }));
+      await page.route('**/api/interest-preview*', (route) => route.fulfill({ json: { ok: true, type: 'interest_preview', items: [] } }));
       await page.goto(lang === 'sl' ? '/' : '/en/');
       const strip = page.locator('.home-stats-strip');
       const current = strip.getByRole('article', { name: 'STK 2026' });

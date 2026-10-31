@@ -1,3 +1,4 @@
+import { interestContract } from '../fixtures/interest-contract.mjs';
 import { expect, test, type Page } from '@playwright/test';
 
 const API_HOST = 'https://stk-master-api.igor-kalsek.workers.dev';
@@ -44,8 +45,44 @@ const homes = [
   }
 ];
 
-async function mockHomepageApis(page: Page, withRecentUpdate = false, longTitle = false) {
-  await page.clock.setFixedTime(new Date('2026-09-13T12:00:00Z'));
+for (const home of homes) for (const width of [390, 1440]) {
+  test(`${home.path} DEV-047 switches 2026/2027 safely at ${width}px and expires old results`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const events = await mockHomepageApis(page, false, false, true);
+    const next = { ...events[1], datum: '2027-03-07', naziv_prireditve: '2027 canonical race' };
+    await page.route(`${API_HOST}/?year=2027`, route => route.fulfill({ json: { data: [next] } }));
+    await page.route('**/api/interest-preview*', route => {
+      const year = new URL(route.request().url()).searchParams.get('year') || '2026';
+      const event = year === '2027' ? next : events[1];
+      return route.fulfill({ json: interestContract([{ event_id: 'R000002', event_name: event.naziv_prireditve, event_date: event.datum }],
+        { year, now: new Date('2026-09-13T12:00:00Z') }) });
+    });
+    await page.goto(home.path);
+    const section = page.locator('section[aria-labelledby="voted-title"]');
+    const cards = section.locator('[data-top-events] .event-card');
+    await expect(cards.locator('h3')).toHaveText(['Ranked race two']);
+    await section.locator('[data-interest-year]').selectOption('2027');
+    await expect(cards.locator('h3')).toHaveText(['2027 canonical race']);
+    await expect(cards.locator('h3 a')).toHaveAttribute('href', new RegExp(`${home.path === '/' ? '/tek/' : '/en/races/'}2027/r000002-`));
+    await expect(cards).toHaveAttribute('data-analytics-event-year', '2027');
+    // Returning to a year must read fresh Master rows, not a lifetime-page promise.
+    events[1].naziv_prireditve = 'Updated 2026 canonical race';
+    events[1].datum = '2026-09-28';
+    await section.locator('[data-interest-year]').selectOption('2026');
+    await expect(cards.locator('h3')).toHaveText(['Updated 2026 canonical race']);
+    await expect(cards.locator('time')).toHaveAttribute('datetime', '2026-09-28');
+    await section.locator('[data-interest-year]').selectOption('2027');
+    await expect(cards.locator('h3')).toHaveText(['2027 canonical race']);
+    await page.clock.fastForward(301000);
+    await expect(cards).toHaveCount(0);
+    await expect(section.locator('[data-status="top"]')).toHaveText(home.interestError);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  });
+}
+
+async function mockHomepageApis(page: Page, withRecentUpdate = false, longTitle = false, advanceClock = false) {
+  if (advanceClock) await page.clock.install({ time: new Date('2026-09-13T12:00:00Z') });
+  else await page.clock.setFixedTime(new Date('2026-09-13T12:00:00Z'));
   const events = [
     ['1', '2026-09-13', 'Fallback race', 'Kranj'],
     ['2', '2026-09-26', 'Ranked race two', 'Velenje'],
@@ -57,11 +94,10 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false, longTitle 
     votes_total: row === '2' ? 999 : 1,
     vidno_v_javnem_koledarju: 'DA', povezava_prijava: `https://example.com/register/${row}?private=drop`
   }));
-  await page.route('**/api/interest-preview', (route) => route.fulfill({ json: {
-    ok: true,
-    type: 'interest_preview',
-    items: [{ event_id: 'R000002', rank: 1 }, { event_id: 'R000003', rank: 2 }]
-  } }));
+  await page.route('**/api/interest-preview*', (route) => route.fulfill({ json: interestContract(
+    [events[1], events[2]].map(e => ({ event_id: 'R' + e.row.padStart(6, '0'), event_name: e.naziv_prireditve, event_date: e.datum })),
+    { now: new Date('2026-09-13T12:00:00Z') }
+  ) }));
   await page.route(`${API_HOST}/**`, async (route) => {
     const url = new URL(route.request().url());
     if (url.pathname === '/recent_updates' && withRecentUpdate) {
@@ -76,6 +112,7 @@ async function mockHomepageApis(page: Page, withRecentUpdate = false, longTitle 
     return route.fulfill({ json: { data: [] } });
   });
   await page.route(`${ANALYTICS_HOST}/**`, (route) => route.fulfill({ status: 204, body: '' }));
+  return events;
 }
 
 for (const home of homes) {
@@ -83,20 +120,19 @@ for (const home of homes) {
     for (const state of ['success', 'http-error', 'network-error', 'invalid-json', 'invalid-payload', 'invalid-items', 'empty', 'unmatched'] as const) {
       test(`${home.path} interest ${state} at ${width}px keeps analytic order and truthful states`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
-        await mockHomepageApis(page);
+        const events = await mockHomepageApis(page);
         const errors: string[] = [];
         page.on('pageerror', (error) => errors.push(error.message));
-        await page.route('**/api/interest-preview', (route) => {
+        await page.route('**/api/interest-preview*', (route) => {
           if (state === 'http-error') return route.fulfill({ status: 503, json: { ok: false } });
           if (state === 'network-error') return route.abort('failed');
           if (state === 'invalid-json') return route.fulfill({ contentType: 'application/json', body: '{' });
           if (state === 'invalid-payload') return route.fulfill({ json: { ok: true, type: 'wrong', items: [] } });
           if (state === 'invalid-items') return route.fulfill({ json: { ok: true, type: 'interest_preview', items: 'bad' } });
-          const items = state === 'empty' ? [] : state === 'unmatched' ? [{ event_id: 'R999999', rank: 1 }] : [
-            { event_id: 'R000003', rank: 1, total_interest_actions_30d: 8, total_interest_actions_all: 10 },
-            { event_id: 'R000002', rank: 2, total_interest_actions_30d: 4, total_interest_actions_all: 20 }
-          ];
-          return route.fulfill({ json: { ok: true, type: 'interest_preview', items } });
+          const selected = state === 'empty' ? [] : state === 'unmatched' ? [
+            { event_id: 'R999999', event_name: 'Unknown race', event_date: '2026-12-01' }
+          ] : [events[2], events[1]].map(e => ({ event_id: 'R' + e.row.padStart(6, '0'), event_name: e.naziv_prireditve, event_date: e.datum }));
+          return route.fulfill({ json: interestContract(selected, { now: new Date('2026-09-13T12:00:00Z') }) });
         });
         // A viable voted response must never appear as a substitute interest ranking.
         await page.route(`${API_HOST}/top?**`, (route) => route.fulfill({ json: { events: [{
@@ -115,7 +151,7 @@ for (const home of homes) {
           await expect(cards.first().locator('[data-saved-race-button]')).toBeVisible();
           await expect(section.locator('[data-status="top"]')).toBeEmpty();
         } else {
-          await expect(section.locator('[data-status="top"]')).toHaveText(state === 'empty' || state === 'unmatched' ? home.interestEmpty : home.interestError);
+          await expect(section.locator('[data-status="top"]')).toHaveText(state === 'empty' ? home.interestEmpty : home.interestError);
           await expect(section.locator('[data-top-events]')).toBeEmpty();
         }
         await expect(section.locator('[data-top-description]')).toHaveText(home.interestDescription);
@@ -231,7 +267,7 @@ for (const home of homes) {
     for (const state of ['success', 'master2027-down', 'recent-down', 'old-api', 'missing-events'] as const) {
       test(`${home.path} DEV-033 ${state} at ${width}px keeps year-safe links and analytics`, async ({ page }, testInfo) => {
         await page.setViewportSize({ width, height: 1000 });
-        await mockHomepageApis(page);
+        const events = await mockHomepageApis(page);
         await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
         const race = (year: string, row: string, title: string, date: string) => ({
           year, row, datum: date, naziv_prireditve: title, kraj: 'Ljubljana',

@@ -1,0 +1,31 @@
+name: Recent interest and complete profiles
+on:
+  pull_request:
+    paths:
+      - 'src/utils-interest-preview.ts'
+      - 'src/pages/index.astro'
+      - 'src/pages/en/index.astro'
+      - 'functions/api/interest-preview.ts'
+      - 'scripts/build-verified.mjs'
+      - 'astro.config.mjs'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/recent-interest.yml'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      TZ: Europe/Ljubljana
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts tests/browser/public-get-dedup.spec.ts tests/browser/race-profile-ux.spec.ts --project=chromium
