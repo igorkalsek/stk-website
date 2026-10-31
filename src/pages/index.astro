@@ -96,6 +96,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
           <a class="button button-secondary-light" href="/iskalnik-tekov/">Poglejte vse teke</a>
         </div>
       </div>
+      <label class="interest-year-control">Leto <select data-interest-year aria-label="Leto lestvice zanimanja"><option value="2026">2026</option><option value="2027">2027</option></select></label>
       <div class="card-grid" data-top-events>
         <article class="event-card">
           <h3>Podatke še nalagamo</h3>
@@ -184,6 +185,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { initSavedRaceButtons } from '../saved-races-client';
   import { fetchPublicMaster } from '../utils-public-master';
   import { DEFAULT_PUBLIC_YEAR, buildMasterApiPath } from '../utils-public-year';
+  import { parseInterestPreview, matchInterestMasters, type InterestYear } from '../utils-interest-preview';
   import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
@@ -832,8 +834,8 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
 
 
-  const getMasterRaceRows = async () => {
-    const masterPayload = await loadJson('/');
+  const getMasterRaceRows = async (year: InterestYear = '2026') => {
+    const masterPayload = await loadJson(buildMasterApiPath(year));
     const masterRows = getMasterRows(masterPayload);
     setDebug('master', 'yes');
     setDebug('master-count', String(masterRows.length));
@@ -868,81 +870,31 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     return '';
   };
 
-  const buildUniqueEventIdIndex = (events: ApiRecord[]) => {
-    const candidates = new Map<string, ApiRecord[]>();
-    for (const event of events) {
-      const id = eventIdValue(event);
-      if (!id) continue;
-      const bucket = candidates.get(id) ?? [];
-      bucket.push(event);
-      candidates.set(id, bucket);
-    }
-
-    const unique = new Map<string, ApiRecord>();
-    for (const [id, matches] of candidates.entries()) {
-      if (matches.length === 1) unique.set(id, matches[0]);
-    }
-    return unique;
+  const interestRequests = new Map<InterestYear, Promise<ApiRecord>>();
+  const interestExpires = new Map<InterestYear, number>();
+  const loadInterestPreviewPayload = (year: InterestYear) => {
+    const existing = interestRequests.get(year);
+    if (existing) return existing;
+    const request = (async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      try {
+        const response = await fetch(INTEREST_PREVIEW_URL + '?year=' + year, { headers: { accept: 'application/json' }, signal: controller.signal, cache: 'no-store' });
+        if (!response.ok) throw new Error('Interest data is unavailable.');
+        const payload = await response.json();
+        parseInterestPreview(payload, year);
+        interestExpires.set(year, Date.parse(payload.expires_at));
+        return payload as ApiRecord;
+      } finally { clearTimeout(timeout); }
+    })();
+    interestRequests.set(year, request);
+    request.then(() => interestRequests.delete(year), () => interestRequests.delete(year));
+    return request;
   };
 
-
-  const loadInterestPreviewPayload = async () => {
-    const response = await fetch(INTEREST_PREVIEW_URL, { headers: { accept: 'application/json' } });
-    const payload = await response.json().catch(() => null);
-    if (!response.ok) {
-      const errorRecord = asRecord(payload);
-      const reason = errorRecord?.error ? `: ${String(errorRecord.error)}` : '';
-      throw new Error(`Interest preview request failed: ${response.status}${reason}`);
-    }
-    const record = asRecord(payload);
-    if (!record || record.ok !== true || record.type !== 'interest_preview' || !Array.isArray(record.items)) {
-      throw new Error('Interest preview response was not valid.');
-    }
-    return record;
-  };
-
-  const isValidInterestPreviewMasterEvent = (event: ApiRecord, todayValue: number) => {
-    if (!isConfirmedPublicUpcomingEvent(event, todayValue)) return false;
-    if (getEventYear(event) !== '2026') return false;
-    if (!getDisplayEventTitle(getEventTitle(event, '')).trim()) return false;
-    if (!getEventField(event, 'datum', ['date', 'event_date', 'Datum'])) return false;
-    return Boolean(eventDetailPath(event));
-  };
-
-  const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5) => {
-    const payload = await loadInterestPreviewPayload();
-    const interestItems = getRecordArray(payload, 'items');
-    if (!interestItems.length) return [];
-
-    const todayValue = todayStartValue();
-    const masterEventsById = buildUniqueEventIdIndex(
-      masterRows.filter((event) => isValidInterestPreviewMasterEvent(event, todayValue))
-    );
-    const selectedIds = new Set<string>();
-    const rankedEvents: ApiRecord[] = [];
-
-    for (const item of interestItems) {
-      const id = eventIdValue(item);
-      if (!id || selectedIds.has(id)) continue;
-      const match = masterEventsById.get(id);
-      if (!match) continue;
-      selectedIds.add(id);
-      rankedEvents.push({ ...match, __interest_preview_ranked: true });
-      if (rankedEvents.length >= displayLimit) break;
-    }
-
-    if (debugEnabled) {
-      const interestIds = interestItems.map(eventIdValue).filter(Boolean);
-      console.warn('STK interest preview match summary', {
-        interestItemCount: interestItems.length,
-        interestIds,
-        uniqueMasterIdCount: masterEventsById.size,
-        matchedIds: rankedEvents.map(eventIdValue),
-        skippedIds: interestIds.filter((id) => !selectedIds.has(id))
-      });
-    }
-
-    return rankedEvents;
+  const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5, year: InterestYear = '2026') => {
+    const payload = await loadInterestPreviewPayload(year);
+    return matchInterestMasters(parseInterestPreview(payload, year), masterRows, year).slice(0, displayLimit);
   };
 
   const renderFeaturedUpcoming = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[]) => {
@@ -1317,9 +1269,16 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     }
   }
 
+  let interestLoadSerial = 0;
+  let interestRefreshTimer: ReturnType<typeof setTimeout> | undefined;
   async function loadTopEvents() {
+    const serial = ++interestLoadSerial;
+    clearTimeout(interestRefreshTimer);
+    const year: InterestYear = document.querySelector<HTMLSelectElement>('[data-interest-year]')?.value === '2027' ? '2027' : '2026';
     const container = document.querySelector('[data-top-events]');
     if (!container) return;
+    container.replaceChildren();
+    setStatus('top', 'Nalagamo podatke o zanimanju …');
 
     const renderEvents = (events: ApiRecord[]) => {
       container.innerHTML = events.map((event) => {
@@ -1345,8 +1304,13 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     };
 
     try {
-      const masterRows = await getMasterRaceRows();
-      const interestEvents = await getInterestPreviewRaces(masterRows, 5);
+      const masterRows = await getMasterRaceRows(year);
+      const interestEvents = await getInterestPreviewRaces(masterRows, 5, year);
+      if (serial !== interestLoadSerial) return;
+      interestRefreshTimer = setTimeout(() => {
+        container.replaceChildren();
+        void loadTopEvents();
+      }, Math.max(1, (interestExpires.get(year) ?? Date.now()) - Date.now()));
       setDebug('top', 'yes');
       setDebugTopDetails(interestEvents, interestEvents);
       if (!interestEvents.length) {
@@ -1359,6 +1323,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
       initSavedRaceButtons(container);
       setStatus('top', '');
     } catch (error) {
+      if (serial !== interestLoadSerial) return;
       if (import.meta.env.DEV) console.warn('STK interest preview unavailable.', error);
       setDebug('top', 'no');
       container.replaceChildren();
@@ -1460,6 +1425,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   loadFutureYearStats();
   loadNearestEvents();
   loadRegistrationDeadlines();
+  document.querySelector('[data-interest-year]')?.addEventListener('change', () => { void loadTopEvents(); });
   loadTopEvents();
   loadRecentUpdates();
 </script>

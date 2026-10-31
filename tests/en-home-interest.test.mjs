@@ -17,7 +17,7 @@ describe('English home interest section', () => {
   it('loads the interest preview without a voted fallback', () => {
     assert.match(source, /const INTEREST_PREVIEW_URL = '\/api\/interest-preview';/);
     assert.match(source, /fetch\(INTEREST_PREVIEW_URL/);
-    assert.match(source, /getInterestPreviewRaces\(masterRows, 5\)/);
+    assert.match(source, /getInterestPreviewRaces\(masterRows, 5, year\)/);
   });
 
   it('keeps interest cards free of vote badges and leaves the subtitle unchanged', () => {

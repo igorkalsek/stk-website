@@ -4,8 +4,7 @@ import test from 'node:test';
 import ts from 'typescript';
 
 const source = readFileSync(new URL('../functions/api/interest-preview.ts', import.meta.url), 'utf8');
-const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ES2022 } });
-const { onRequestGet } = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
+const { onRequestGet } = await import('../.cache/dist-test/interest/functions/api/interest-preview.js');
 
 test('safety hold returns an explicit uncacheable unavailable response, without upstream reads or writes', async () => {
   const originalFetch = globalThis.fetch;
