@@ -65,6 +65,14 @@ for (const home of homes) for (const width of [390, 1440]) {
     await expect(cards.locator('h3')).toHaveText(['2027 canonical race']);
     await expect(cards.locator('h3 a')).toHaveAttribute('href', new RegExp(`${home.path === '/' ? '/tek/' : '/en/races/'}2027/r000002-`));
     await expect(cards).toHaveAttribute('data-analytics-event-year', '2027');
+    // Returning to a year must read fresh Master rows, not a lifetime-page promise.
+    events[1].naziv_prireditve = 'Updated 2026 canonical race';
+    events[1].datum = '2026-09-28';
+    await section.locator('[data-interest-year]').selectOption('2026');
+    await expect(cards.locator('h3')).toHaveText(['Updated 2026 canonical race']);
+    await expect(cards.locator('time')).toHaveAttribute('datetime', '2026-09-28');
+    await section.locator('[data-interest-year]').selectOption('2027');
+    await expect(cards.locator('h3')).toHaveText(['2027 canonical race']);
     await page.clock.fastForward(301000);
     await expect(cards).toHaveCount(0);
     await expect(section.locator('[data-status="top"]')).toHaveText(home.interestError);

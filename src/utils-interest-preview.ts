@@ -25,7 +25,7 @@ export function parseInterestPreview(value: unknown, year: InterestYear, now = n
   const generated = finiteTime(p.generated_at), expires = finiteTime(p.expires_at), current = now.getTime();
   if ([captured, master, generated, expires].some(t => !Number.isFinite(t)) ||
       captured > generated || master > generated || generated > current || current >= expires ||
-      current - captured >= 300000 || current - master >= 300000 || expires > captured + 300000) return invalid();
+      current - captured >= 300000 || current - master >= 300000 || expires > Math.min(captured, master) + 300000) return invalid();
   const candidates = quality.candidates, valid = quality.valid, excluded = quality.excluded;
   if (![candidates, valid, excluded].every(n => Number.isInteger(n) && Number(n) >= 0) ||
       Number(valid) + Number(excluded) !== candidates ||

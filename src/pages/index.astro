@@ -835,7 +835,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
 
   const getMasterRaceRows = async (year: InterestYear = '2026') => {
-    const masterPayload = await loadJson(buildMasterApiPath(year));
+    const masterPayload = await fetchPublicMaster(year);
     const masterRows = getMasterRows(masterPayload);
     setDebug('master', 'yes');
     setDebug('master-count', String(masterRows.length));

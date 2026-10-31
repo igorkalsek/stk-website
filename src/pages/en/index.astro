@@ -1138,7 +1138,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const apiRequestCache = new Map<string, Promise<unknown>>();
 
   async function getMasterRaceRows(year: InterestYear = '2026') {
-    const payload = await loadJson(buildMasterApiPath(year));
+    const payload = await fetchPublicMaster(year);
     const rows = getMasterRows(payload);
     setDebug('master', 'yes');
     setDebug('master-count', String(rows.length));

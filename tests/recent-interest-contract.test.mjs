@@ -35,6 +35,12 @@ test('missing/ambiguous/moved/hidden Master identities fail instead of silently 
     assert.throws(() => matchInterestMasters(items, masters, '2026'));
   assert.deepEqual(parseInterestPreview(interestContract([], { now }), '2026', now), []);
 });
+test('a fresh analytics capture cannot extend expiry past the older Master freshness deadline', () => {
+  const p = payload(); p.master_captured_at = new Date(now.getTime() - 299000).toISOString();
+  assert.throws(() => parseInterestPreview(p, '2026', now));
+  p.expires_at = new Date(now.getTime() + 1000).toISOString();
+  assert.equal(parseInterestPreview(p, '2026', now).length, 1);
+});
 test('Pages relay is gated, sends only fixed Worker read parameters and fails closed on API errors', async t => {
   const enabled = { request: new Request('https://site.test/api/interest-preview?year=2027&scope=legacy&upstream=https://secret.invalid'), env: { STK_INTEREST_PREVIEW_ENABLED: 'true' } };
   const p = interestContract([], { year: '2027' }); let calls = 0;
