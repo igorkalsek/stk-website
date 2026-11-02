@@ -66,7 +66,7 @@ test('Pages relay is gated, sends only fixed Worker read parameters and fails cl
   const p = interestContract([], { year: '2027' }); let calls = 0;
   t.mock.method(globalThis, 'fetch', async (url, init) => {
     calls++; assert.equal(url, 'https://stk-master-api.igor-kalsek.workers.dev/site-analytics?scope=recent-interest&year=2027&limit=20');
-    assert.equal(init.redirect, 'error'); assert.equal(init.cache, 'no-store');
+    assert.equal(init.redirect, 'manual'); assert.equal(init.cache, 'no-store');
     return new Response(JSON.stringify(p), { headers: { 'content-type': 'application/json' } });
   });
   assert.equal((await onRequestGet(enabled)).status, 200); assert.equal(calls, 1);
