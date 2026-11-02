@@ -41,6 +41,26 @@ test('a fresh analytics capture cannot extend expiry past the older Master fresh
   p.expires_at = new Date(now.getTime() + 1000).toISOString();
   assert.equal(parseInterestPreview(p, '2026', now).length, 1);
 });
+for (const year of ['2026', '2027']) {
+  test(`${year} quality accepts exactly 90% and rejects below 90% regardless of reported percent`, () => {
+    const p = interestContract([{ ...item, event_date: `${year}-11-08` }], { year, now, candidates: 10000 });
+    p.quality = { candidates: 10000, valid: 9000, excluded: 1000, verified_percent: 90 };
+    assert.equal(parseInterestPreview(p, year, now).length, 1);
+    p.quality = { candidates: 10000, valid: 8999, excluded: 1001, verified_percent: 90 };
+    assert.throws(() => parseInterestPreview(p, year, now));
+  });
+  test(`${year} empty data stays empty and invalid data fails closed`, () => {
+    assert.deepEqual(parseInterestPreview(interestContract([], { year, now }), year, now), []);
+    for (const value of [null, {}, [], { ok: true, items: [] }]) {
+      assert.throws(() => parseInterestPreview(value, year, now));
+    }
+    for (const quality of [null, { candidates: 10, valid: 9, excluded: 0 },
+      { candidates: 10, valid: '9', excluded: 1 }, { candidates: -1, valid: 0, excluded: -1 }]) {
+      const p = interestContract([], { year, now }); p.quality = quality;
+      assert.throws(() => parseInterestPreview(p, year, now));
+    }
+  });
+}
 test('Pages relay is gated, sends only fixed Worker read parameters and fails closed on API errors', async t => {
   const enabled = { request: new Request('https://site.test/api/interest-preview?year=2027&scope=legacy&upstream=https://secret.invalid'), env: { STK_INTEREST_PREVIEW_ENABLED: 'true' } };
   const p = interestContract([], { year: '2027' }); let calls = 0;

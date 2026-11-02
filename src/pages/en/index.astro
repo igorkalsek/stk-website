@@ -883,7 +883,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     if (existing) return existing;
     const request = (async () => {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 20000);
+      const timeout = setTimeout(() => controller.abort(), 60000);
       try {
         const response = await fetch(INTEREST_PREVIEW_URL + '?year=' + year, { headers: { accept: 'application/json' }, signal: controller.signal, cache: 'no-store' });
         if (!response.ok) throw new Error('Interest data is unavailable.');

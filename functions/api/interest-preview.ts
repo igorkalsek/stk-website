@@ -15,7 +15,7 @@ export async function onRequestGet(context?: Context) {
   if (context?.env?.STK_INTEREST_PREVIEW_ENABLED !== 'true') return unavailable();
   const year = new URL(context.request.url).searchParams.get('year') || '2026';
   if (!['2026', '2027'].includes(year)) return unavailable();
-  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 20000);
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 55000);
   try {
     // Fixed existing Worker only. Caller cannot supply an upstream, scope or time window.
     const response = await fetch(`https://stk-master-api.igor-kalsek.workers.dev/site-analytics?scope=recent-interest&year=${year}&limit=20`, {
