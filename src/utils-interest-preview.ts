@@ -29,7 +29,7 @@ export function parseInterestPreview(value: unknown, year: InterestYear, now = n
   const candidates = quality.candidates, valid = quality.valid, excluded = quality.excluded;
   if (![candidates, valid, excluded].every(n => Number.isInteger(n) && Number(n) >= 0) ||
       Number(valid) + Number(excluded) !== candidates ||
-      (Number(candidates) > 0 && Number(valid) / Number(candidates) < 0.95)) return invalid();
+      (Number(candidates) > 0 && Number(valid) / Number(candidates) < 0.90)) return invalid();
   const seen = new Set<string>(); let previous: InterestItem | null = null;
   const items = p.items.map((v, i) => {
     const a = record(v);
