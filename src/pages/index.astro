@@ -4,11 +4,20 @@ import HomeScreenInvite from '../components/HomeScreenInvite.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import HomeYearStats from '../components/HomeYearStats.astro';
 import HomeUpcomingRaces from '../components/HomeUpcomingRaces.astro';
+import HomeSpotlightRace from '../components/HomeSpotlightRace.astro';
 import { getPublicYearData } from '../utils-build-data';
 import { DEFAULT_PUBLIC_YEAR } from '../utils-public-year';
-import { selectUpcomingHomepageEvents } from '../utils-home-events';
+import { getTodayIsoInLjubljana } from '../utils-date';
+import { selectUpcomingHomepageEvents, selectHomepageSpotlightRace } from '../utils-home-events';
 
-const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearData(DEFAULT_PUBLIC_YEAR)).upcomingEvents);
+const currentYearData = await getPublicYearData(DEFAULT_PUBLIC_YEAR);
+const nextYearData = await getPublicYearData('2027').catch(() => null);
+const initialUpcomingEvents = selectUpcomingHomepageEvents(currentYearData.upcomingEvents);
+const initialSpotlightRace = selectHomepageSpotlightRace(
+  [...currentYearData.upcomingEvents, ...(nextYearData?.upcomingEvents ?? [])],
+  initialUpcomingEvents,
+  getTodayIsoInLjubljana()
+);
 ---
 
 <BaseLayout
@@ -22,7 +31,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 >
   <main class="home-page">
     <section class="hero container" aria-labelledby="hero-title">
-      <div class="home-hero-card hero-card">
+      <div class:list={["home-hero-card", "hero-card", { "home-hero-with-featured": Boolean(initialSpotlightRace) }]}>
         <div class="home-hero-main">
           <div class="home-hero-copy hero-content">
             <h1 id="hero-title">Tek se začne tukaj</h1>
@@ -33,6 +42,7 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
             </div>
           </div>
         </div>
+        <HomeSpotlightRace lang="sl" initialRace={initialSpotlightRace} />
       </div>
     </section>
 

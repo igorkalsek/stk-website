@@ -6237,3 +6237,142 @@ main {
 #race-share {
   scroll-margin-top: 7rem;
 }
+
+/* DEV-037 P2 – single editorial race spotlight inside the home hero. */
+.home-page .home-hero-with-featured.hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+.home-hero-with-featured .home-hero-main {
+  min-width: 0;
+  display: grid;
+  align-items: center;
+}
+.home-hero-with-featured .home-hero-copy.hero-content {
+  max-width: 100%;
+  min-width: 0;
+}
+.home-spotlight-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  margin: 0 16px 16px;
+  padding: clamp(20px, 2.5vw, 30px);
+  color: #103b42;
+  background: linear-gradient(150deg, #f7f8ee 0%, #edf6e8 66%, #d9eddb 100%);
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 20px;
+  box-shadow: 0 16px 34px rgba(4,33,40,.2);
+  overflow: hidden;
+}
+.home-spotlight-card[hidden] { display: none !important; }
+.home-spotlight-card::before {
+  position: absolute;
+  z-index: -1;
+  right: -55px;
+  top: -75px;
+  width: 205px;
+  height: 205px;
+  border: 26px solid rgba(240,160,48,.17);
+  border-radius: 50%;
+  content: "";
+}
+.home-spotlight-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  color: #183c39;
+  background: #f5c468;
+  font-size: .72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .075em;
+}
+.home-spotlight-kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #104050;
+}
+.home-spotlight-card h2 {
+  margin: 0;
+  color: #497269;
+  font-size: .98rem;
+  line-height: 1.25;
+  font-weight: 800;
+}
+.home-spotlight-card h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.9vw, 2.15rem);
+  line-height: 1.17;
+  letter-spacing: -.04em;
+  overflow-wrap: anywhere;
+}
+.home-spotlight-card h3 a {
+  color: #123d47;
+  text-decoration: none;
+}
+.home-spotlight-card h3 a:hover,
+.home-spotlight-card h3 a:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+.home-spotlight-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  color: #315e59;
+  font-size: .93rem;
+  font-weight: 650;
+}
+.home-spotlight-meta time { font-weight: 850; }
+.home-spotlight-surface {
+  align-self: flex-start;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: rgba(16,64,80,.09);
+  color: #315851;
+  font-size: .79rem;
+  font-weight: 750;
+}
+.home-spotlight-cta {
+  margin-top: auto;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 15px;
+  border-radius: 11px;
+  background: #104050;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 850;
+}
+.home-spotlight-cta:hover,
+.home-spotlight-cta:focus-visible { background: #23636b; color: #fff; }
+.home-spotlight-card a:focus-visible { outline: 3px solid #bb6900; outline-offset: 3px; }
+@media (min-width: 960px) {
+  .home-page .home-hero-with-featured.hero-card {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+    min-height: 335px;
+  }
+  .home-hero-with-featured .home-hero-copy.hero-content {
+    padding-right: clamp(18px, 3vw, 42px);
+  }
+  .home-spotlight-card { margin: 22px 22px 22px 0; }
+}
+@media (max-width: 959px) {
+  .home-spotlight-card { margin-top: 0; }
+}
+@media (max-width: 520px) {
+  .home-spotlight-card { gap: 11px; margin: 0 14px 14px; padding: 19px; }
+  .home-spotlight-card h3 { font-size: 1.55rem; }
+}
