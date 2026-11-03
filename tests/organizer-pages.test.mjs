@@ -88,24 +88,28 @@ test('organizer journey keeps existing routes and honestly dated promotional met
   assert.doesNotMatch(component, /V pilotu še ni javnega cenika|There is no public price list/);
 });
 
-test('promotion retains two bilingual opt-in mailto CTAs with an explicit sponsored label', () => {
+test('free race listing uses the existing form and only sponsored interest uses mailto', () => {
   assert.match(component, /Naj vaš tek odkrije več tekačev/);
   assert.match(component, /Help more runners discover your race/);
-  assert.match(component, /Brezplačna promocija/);
-  assert.match(component, /Free editorial promotion/);
+  assert.match(component, /Brezplačna predstavitev teka/);
+  assert.match(component, /Free race listing/);
+  assert.match(component, /rubrike »V ospredju«/);
+  assert.match(component, /planned “Featured” section/);
+  assert.match(component, /Po uvedbi načrtovane rubrike/);
+  assert.match(component, /Once the planned/);
   assert.match(component, /Featured Race · Sponzorirano/);
   assert.match(component, /Featured Race · Sponsored/);
-  assert.match(component, /Predlagajte tek za brezplačno promocijo/);
-  assert.match(component, /Suggest a race for free promotion/);
+  assert.match(component, /Dodajte ali popravite tek/);
+  assert.match(component, /Add or correct a race/);
+  assert.match(component, /href=\{formHref\} data-organizer-action="add_race" data-organizer-placement="promotion"/);
   assert.match(component, /Zanima me Featured Race/);
   assert.match(component, /I’m interested in Featured Race/);
   assert.match(component, /mailto:\$\{promoEmail\}/);
-  assert.match(component, /encodeURIComponent\(promoFreeSubject\)/);
   assert.match(component, /encodeURIComponent\(promoPaidSubject\)/);
-  assert.match(component, /href=\{promoFreeHref\}/);
   assert.match(component, /href=\{promoPaidHref\}/);
   assert.match(component, /tekaski\.koledar@gmail\.com/);
-  assert.match(component, /Izbrane manjše ali nove teke lahko predstavimo/);
+  assert.doesNotMatch(component, /promoFreeHref|promoFreeSubject|encodeURIComponent\(promoFreeSubject\)/);
+  assert.doesNotMatch(component, /Selected smaller or new races may be featured|Izbrane manjše ali nove teke lahko predstavimo/);
   assert.doesNotMatch(component, /<button|<form|claim_race/);
 });
 

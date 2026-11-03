@@ -8,12 +8,10 @@ const finderHref = en ? '/en/find-races/' : '/iskalnik-tekov/';
 const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
 const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
 const promoEmail = 'tekaski.koledar@gmail.com';
-const promoFreeSubject = en ? 'STK – free race promotion enquiry' : 'STK – predlog za brezplačno promocijo';
 const promoPaidSubject = en ? 'STK – Featured Race enquiry' : 'STK – zanimanje za Featured Race';
 const promoMailBody = en
   ? 'Race name:\nYear:\nLink to race:\nWhat would you like the promotion to achieve:\n\nThank you,'
   : 'Naziv teka:\nLeto izvedbe:\nPovezava do teka:\nKaj želite doseči s promocijo:\n\nLep pozdrav,';
-const promoFreeHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoFreeSubject)}&body=${encodeURIComponent(promoMailBody)}`;
 const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPaidSubject)}&body=${encodeURIComponent(promoMailBody)}`;
 ---
 <main class="organizer-page">
@@ -55,8 +53,8 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
         <h2 id="promotion-title">{en ? 'Help more runners discover your race' : 'Naj vaš tek odkrije več tekačev'}</h2>
       </div>
       <p>{en
-        ? 'Introduce your race to more runners. Suggest a free feature or enquire about sponsored promotion.'
-        : 'Predstavite svoj tek več tekačem. Predlagajte ga za brezplačno objavo ali povprašajte o sponzorirani promociji.'}</p>
+        ? 'Present your race for free in STK or register your interest in a future sponsored homepage feature.'
+        : 'Predstavite svoj tek brezplačno v STK ali izrazite zanimanje za prihodnjo sponzorirano izpostavitev na naslovnici.'}</p>
 
       <div class="organizer-promo-proof" aria-labelledby="promotion-proof-title">
         <h3 id="promotion-proof-title">{en ? 'STK at a glance' : 'STK v številkah'}</h3>
@@ -72,17 +70,17 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
 
       <div class="organizer-promo-options">
         <div class="organizer-promo-option">
-          <h3>{en ? 'Free editorial promotion' : 'Brezplačna promocija'}</h3>
+          <h3>{en ? 'Free race listing' : 'Brezplačna predstavitev teka'}</h3>
           <p>{en
-            ? 'Selected smaller or new races may be featured on STK’s Facebook or Instagram. Send us your suggestion.'
-            : 'Izbrane manjše ali nove teke lahko predstavimo na Facebooku ali Instagramu STK. Pošljite nam predlog.'}</p>
-          <a class="button button-primary" href={promoFreeHref}>{en ? 'Suggest a race for free promotion' : 'Predlagajte tek za brezplačno promocijo'}</a>
+            ? 'Present your race for free in STK. Once the planned “Featured” section launches, selected confirmed races may also appear automatically on the homepage.'
+            : 'Predstavite svoj tek brezplačno v koledarju STK. Po uvedbi načrtovane rubrike »V ospredju« bodo izbrani potrjeni teki lahko samodejno izpostavljeni tudi na naslovnici.'}</p>
+          <a class="button button-primary" href={formHref} data-organizer-action="add_race" data-organizer-placement="promotion">{en ? 'Add or correct a race' : 'Dodajte ali popravite tek'}</a>
         </div>
         <div class="organizer-promo-option">
           <h3>{en ? 'Featured Race · Sponsored' : 'Featured Race · Sponzorirano'}</h3>
           <p>{en
-            ? 'Want extra visibility for your race? Ask about paid promotion with a clear sponsored label.'
-            : 'Želite svoj tek dodatno izpostaviti? Pošljite neobvezujoče povpraševanje za jasno označeno sponzorirano promocijo.'}</p>
+            ? 'Want a prominent spot on the STK homepage? Register your interest in a future, time-limited sponsored feature.'
+            : 'Želite vidnejše mesto na naslovnici STK? Zbiramo neobvezujoče zanimanje za prihodnjo, časovno omejeno sponzorirano izpostavitev.'}</p>
           <a class="button button-secondary" href={promoPaidHref}>{en ? 'I’m interested in Featured Race' : 'Zanima me Featured Race'}</a>
         </div>
       </div>
