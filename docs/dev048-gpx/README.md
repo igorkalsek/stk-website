@@ -1,5 +1,9 @@
 # DEV-048 — P0: izvor, letnice in identitete GPX
 
+**Dopolnitev P0E, 3. 11. 2026:** [rezultati in razširjeni katalog](p0e/REPORT.md):
+50 P0D + 41 novih = 91 različnih bajtnih GPX pri 26 družinah prireditev.
+Celoten P0D ostaja nespremenjen; P0E vsebuje ločena dokazila, Excel/CSV in REVIEW.
+
 **Dopolnitev P0D, 3. 11. 2026:** [dejanski rezultati in zbirka](p0d/REPORT.md)
 vsebujejo 40 na novo validiranih GPX, skupaj 50 različnih bajtnih datotek pri
 14 prireditvah, in izid vseh 15 prednostnih prenosov. Izvirni P0 tehnični in

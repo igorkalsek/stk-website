@@ -1,0 +1,1417 @@
+[
+  {
+    "source_url": "https://go4trail.si/sl/proge/go-v3",
+    "http": {
+      "url": "https://go4trail.si/sl/proge/go-v3",
+      "checked_at": "2026-11-03T08:50:17.276222+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sl/proge/go-v3",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 154527,
+      "sha256": "60b03d3d1c03a8bdde88246cf19dc2f0b94467503d66863e3c3705ae9b9068e6"
+    },
+    "download_links": [
+      "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2008",
+      "2019",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+    "http": {
+      "url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+      "checked_at": "2026-11-03T08:50:28.440488+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 150087,
+      "sha256": "99707532491329bbee483700726b96202890ee7952b4e30638f52c93635d04d0"
+    },
+    "download_links": [
+      "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2006",
+      "2007",
+      "2010",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://velenjetrail.si/trase/",
+    "http": {
+      "url": "https://velenjetrail.si/trase/",
+      "checked_at": "2026-11-03T08:50:38.620937+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://velenjetrail.si/trase/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 177008,
+      "sha256": "f31e1bdc82a0f3ff581fa1a90af7ae8517fc467aaaa91c5ce5e129407745f9c3"
+    },
+    "download_links": [
+      "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+      "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+      "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://kbk.sdmh.si/proga/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kbk.sdmh.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:39.854842+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kbk.sdmh.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 112,
+        "sha256": "0cfb6cf19405f2b78bfaec692b1278eeba84229710d0a833379f738de2a221b6"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://kbk.sdmh.si/proga/",
+      "checked_at": "2026-11-03T08:50:40.267783+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kbk.sdmh.si/proga/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 172647,
+      "sha256": "b73afbfd69803dd1fa4e163d200f3fac55823108210cfc0cd1b0613f489caaa3"
+    },
+    "download_links": [
+      "https://drive.google.com/file/d/1-qd_Qh0EWDg4VBmFsqkbBz-8cWpi9gZd/view?usp=sharing"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://fatburn.si/velikonocni-tek/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://fatburn.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:41.705772+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://fatburn.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 313,
+        "sha256": "521a7066923c0c91714bfb4433f1e51eddab366272dbf28a95c7f6a30bde4d91"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://fatburn.si/velikonocni-tek/",
+      "checked_at": "2026-11-03T08:50:42.088823+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://fatburn.si/velikonocni-tek/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 288701,
+      "sha256": "988274766fca3bbac6cd61d432a2b5fcab6f5622dcdcd0e6acb318596f250e86"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://www.plotaroute.com/route/2412473",
+      "https://www.plotaroute.com/route/2447117"
+    ],
+    "visible_year_tokens": [
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://trailmaribor.eu/trase/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailmaribor.eu/robots.txt",
+        "checked_at": "2026-11-03T08:50:43.353471+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailmaribor.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "5fd36fdcb58846f2c00b6033f69b4a7e5575fa525c45f797fac17e838cc58d3c"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailmaribor.eu/trase/",
+      "checked_at": "2026-11-03T08:50:43.518077+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailmaribor.eu/trase/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 139755,
+      "sha256": "2a541f0f39521522a7834fd8974e6cbac7fb7549890ebdda682e8684bf85f993"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://www.plotaroute.com/map/3301962",
+      "https://www.plotaroute.com/map/3236126",
+      "https://www.plotaroute.com/map/3270725",
+      "https://www.plotaroute.com/map/3265603"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://dogodek.zelenedoline.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:44.902317+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://dogodek.zelenedoline.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 429,
+        "sha256": "c857b0b5208c0831e63651c06233a52a7fac01714e8000b710975b8c5bc4b5e9"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/",
+      "checked_at": "2026-11-03T08:50:45.979543+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 366950,
+      "sha256": "250573dcad8c7cd5eaf5669a89f52259a9db601f23afcd5fb143df4140068902"
+    },
+    "download_links": [
+      "https://drive.google.com/file/d/1L0ZdIrIxTiF924Pi__GHtEOk5FU34Lak/view?usp=sharing",
+      "https://drive.google.com/file/d/1mNxGK8ulJrI7W5DeZmxJh8Gsise5jhTn/view?usp=sharing"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.srd-kras.si/trail2026",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.srd-kras.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:47.704589+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.srd-kras.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 159,
+        "sha256": "ca38fce866a3e3aa4a96ebbb198014cb1ccf886c736c07ce713b75475dbb5da7"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.srd-kras.si/trail2026",
+      "checked_at": "2026-11-03T08:50:47.839898+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.srd-kras.si/trail2026",
+      "content_type": "text/html;charset=utf-8",
+      "content_disposition": null,
+      "bytes": 263425,
+      "sha256": "0830228601fdd08290131c6c3c5cc1bea7e4f584fb55b54fa6d36ab09e01e5f8"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://www.viewgpx.com/route/dG9nJZrm",
+      "https://www.viewgpx.com/route/aTFxjY78"
+    ],
+    "visible_year_tokens": [
+      "2006",
+      "2007",
+      "2010",
+      "2018",
+      "2019",
+      "2020",
+      "2022",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://hrastnik-trail.si/",
+    "http": {
+      "url": "https://hrastnik-trail.si/",
+      "checked_at": "2026-11-03T08:51:38.626559+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hrastnik-trail.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 210649,
+      "sha256": "83fb5efe523a3625220d938529203d44c6d4fe1a2c44acefac8bba4952388025"
+    },
+    "download_links": [
+      "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+      "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.triglavtrailrun.com/sl/tekmovanje/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.triglavtrailrun.com/robots.txt",
+        "checked_at": "2026-11-03T08:51:38.959511+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.triglavtrailrun.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 181,
+        "sha256": "611a9cb2be11921e6ce4862f2ffb1a5536705bd875b82f3f8125100496754f6d"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.triglavtrailrun.com/sl/tekmovanje/",
+      "checked_at": "2026-11-03T08:51:39.047731+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.triglavtrailrun.com/sl/tekmovanje/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 126141,
+      "sha256": "0dd52f6dee144512dd1297dd228c4b16049765b2abb30a8ef5d8efa1ae4ea4e5"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://svinjskihe7trail.com/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://svinjskihe7trail.com/robots.txt",
+        "checked_at": "2026-11-03T08:51:40.151555+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://svinjskihe7trail.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 121,
+        "sha256": "66056293a24e07ef5faf827beba60c9ae7b1f0ae28bd69620418231bcc67d005"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://svinjskihe7trail.com/",
+      "checked_at": "2026-11-03T08:51:40.865841+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://svinjskihe7trail.com/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 76007,
+      "sha256": "a328a2710526196e215f211742468dfb58d509d14eba38b27fd6d6ac0af942e5"
+    },
+    "download_links": [
+      "https://drive.google.com/file/d/1evOp6gEdAh35eqNiPmUojOVb-U1HJZwe/view?usp=drive_link"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.majsperk.si/objava/1122708",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.majsperk.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:41.404831+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.majsperk.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 3083,
+        "sha256": "a4eaef0d0c8f0f9cef0a9e183435bf572f1ca43eebc78e190b1a48c0d0c848e1"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.majsperk.si/objava/1122708",
+      "checked_at": "2026-11-03T08:51:41.503328+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.majsperk.si/objava/1122708",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 144825,
+      "sha256": "e8edf0ea6acd2e62d532fd9a8d6c146910fadb309c47f1b1deb97d3175057afc"
+    },
+    "download_links": [
+      "https://www.majsperk.si/DownloadFile?id=814211",
+      "https://www.majsperk.si/DownloadFile?id=814212"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2018",
+      "2020",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://scgace.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://scgace.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:42.848133+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://scgace.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 24,
+        "sha256": "e5c4b84484ee4216e9373be99380320c25dd94805f99f0a805846f087636553f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://scgace.si/",
+      "checked_at": "2026-11-03T08:51:42.968981+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://scgace.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 66308,
+      "sha256": "24f5b4a183d239dbf97b3778566f5833734bca77f327cc22cdf27ebc4f580a60"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": []
+  },
+  {
+    "source_url": "https://katurn.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://katurn.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:44.300891+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://katurn.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 115,
+        "sha256": "da27d413d7556aabe55147c7e6500874f808ff3887a334dc0339b1dbd9e8cade"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://katurn.si/",
+      "checked_at": "2026-11-03T08:51:44.373499+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://katurn.si/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 33558,
+      "sha256": "35ccd3f68ee27cf912b9af4e1e3289602a80d945cdda74ef877edfd2f51b0928"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2020"
+    ]
+  },
+  {
+    "source_url": "https://protime.si/dogodek/lahinja-trail-2026/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://protime.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:45.460327+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://protime.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 111,
+        "sha256": "89c41096118391ceb78a81898191b56490e92a516defb1e0596ab6a90d63ab0e"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://protime.si/dogodek/lahinja-trail-2026/",
+      "checked_at": "2026-11-03T08:51:45.520437+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://protime.si/dogodek/lahinja-trail-2026/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 134442,
+      "sha256": "c9c9d8187b6e773a5f8860c88ed8379826fac7b6ea46e04799ca493a2481b661"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.kinmet.si/zaplana-trail/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.kinmet.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:46.621537+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kinmet.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "868b7c37429ca1b40b0a7882569a4ac3a33dac3fa4d15a36e6d79ea2b1f3af46"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.kinmet.si/zaplana-trail/",
+      "checked_at": "2026-11-03T08:51:46.704031+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kinmet.si/zaplana-trail/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 228310,
+      "sha256": "7d7b69d3280c7d13e67209f3411e2c1b0b998803330c5f15b58f82b5c361d08a"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://connect.garmin.com/modern/course/142798487",
+      "https://connect.garmin.com/modern/course/151872005",
+      "https://connect.garmin.com/modern/activity/17519395636?share_unique_id=5&fbclid=IwZXh0bgNhZW0CMTAAAR1lTdrwcEQeU0CZ4RzsDd5hItmZuK1QrPbd3naR_OSAqBtXzxjHGpxRH5g_aem_WpGu-ZxmSikqGa2ms10ONA"
+    ],
+    "visible_year_tokens": [
+      "2012",
+      "2014",
+      "2015",
+      "2017",
+      "2018",
+      "2020",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://tsf.bohinj.si/tekme/zimski-trail-tek-bohinj/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://tsf.bohinj.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:47.839902+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tsf.bohinj.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 68,
+        "sha256": "746883ecbd811f5a9661efbc34611220d3df7b66b2fc8a25540461079850a140"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://tsf.bohinj.si/tekme/zimski-trail-tek-bohinj/",
+      "checked_at": "2026-11-03T08:51:47.914438+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://tsf.bohinj.si/tekme/zimski-trail-tek-bohinj/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 27950,
+      "sha256": "f772a5c770cfa3494f4a41b50a18502736f6fc40fc1621ff0ccc8b4bc81419c2"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://gorskiteknalisco.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://gorskiteknalisco.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:49.026773+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://gorskiteknalisco.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 67,
+        "sha256": "9311bab30d8b5d05f5fa5563a251b8c96b8470873bb77c62d3d17c146d7acab7"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://gorskiteknalisco.si/",
+      "checked_at": "2026-11-03T08:51:49.094664+00:00",
+      "redirects": [],
+      "status": 500,
+      "final_url": "https://gorskiteknalisco.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 2767,
+      "sha256": "dbe7bf76ccbd2a63bc10c0fc9305a3a2d1aa2e71c851d0f2a1accd0d1bb64e7b"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": []
+  },
+  {
+    "source_url": "https://stopicetrailtek.webflow.io/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://stopicetrailtek.webflow.io/robots.txt",
+        "checked_at": "2026-11-03T08:51:50.358438+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://stopicetrailtek.webflow.io/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "http": {
+      "url": "https://stopicetrailtek.webflow.io/",
+      "checked_at": "2026-11-03T08:51:50.596312+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://stopicetrailtek.webflow.io/",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 12624,
+      "sha256": "1092bc24d735da494c400372c51b37b3736d7b6d75659814be630c0473cdf43e"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2010",
+      "2014",
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2020",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://trailvelikaplanina.eu/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailvelikaplanina.eu/robots.txt",
+        "checked_at": "2026-11-03T08:51:51.829664+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailvelikaplanina.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 122,
+        "sha256": "1ae96d1c918c73362d0e814dc72d20079d0d5463acefaf23c871b69bf64f5921"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailvelikaplanina.eu/",
+      "checked_at": "2026-11-03T08:51:52.559855+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailvelikaplanina.eu/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 161608,
+      "sha256": "a902d1b8ab99309ed2347878e41446a7a3cb6d518d6ead1a7c90ac57c61fb974"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://www.plotaroute.com/route/2394907",
+      "https://www.plotaroute.com/route/2440876",
+      "https://www.plotaroute.com/route/2313945",
+      "https://www.plotaroute.com/route/2313959"
+    ],
+    "visible_year_tokens": [
+      "2023",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "http": {
+      "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+      "checked_at": "2026-11-03T08:53:20.823827+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 87723,
+      "sha256": "91f7e4cdc46ae4bd93028f7dba21c8c63d97c233f427b7000501f90617c7aee0"
+    },
+    "download_links": [
+      "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+      "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+      "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2022",
+      "2023",
+      "2024",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://scgace.si/dogodki",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://scgace.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:42.848133+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://scgace.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 24,
+        "sha256": "e5c4b84484ee4216e9373be99380320c25dd94805f99f0a805846f087636553f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://scgace.si/dogodki",
+      "checked_at": "2026-11-03T08:53:22.786661+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://scgace.si/dogodki",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 51182,
+      "sha256": "7e18196b55a76d45a787174e32d3c918c978b4f6c1bcd1461693c78277e0f354"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://svinjskihe7trail.com/491-2/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://svinjskihe7trail.com/robots.txt",
+        "checked_at": "2026-11-03T08:51:40.151555+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://svinjskihe7trail.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 121,
+        "sha256": "66056293a24e07ef5faf827beba60c9ae7b1f0ae28bd69620418231bcc67d005"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://svinjskihe7trail.com/491-2/",
+      "checked_at": "2026-11-03T08:53:23.099346+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://svinjskihe7trail.com/491-2/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 66565,
+      "sha256": "cf5ba4caa649866c526e9944d3d0e483d28ab5d0dafb0deda5afa9cbba81ad02"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.offroadrunning2026.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:11.545451+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 183,
+        "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.offroadrunning2026.si/",
+      "checked_at": "2026-11-03T08:53:23.688629+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 69073,
+      "sha256": "e173da9ff18011015a87b7e7d9d58028c07594639221266b5d3708ec90cb9193"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://trailvelikaplanina.eu/trase/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailvelikaplanina.eu/robots.txt",
+        "checked_at": "2026-11-03T08:51:51.829664+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailvelikaplanina.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 122,
+        "sha256": "1ae96d1c918c73362d0e814dc72d20079d0d5463acefaf23c871b69bf64f5921"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailvelikaplanina.eu/trase/",
+      "checked_at": "2026-11-03T08:53:23.988433+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailvelikaplanina.eu/trase/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 133240,
+      "sha256": "ac035d437b82715e64a70b80ac94432d7be566c81343db2fd2f412afd0d08dfd"
+    },
+    "download_links": [],
+    "map_links": [
+      "https://www.plotaroute.com/route/2394907",
+      "https://www.plotaroute.com/route/2440876",
+      "https://www.plotaroute.com/route/2313945",
+      "https://www.plotaroute.com/route/2313959"
+    ],
+    "visible_year_tokens": [
+      "2023",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+    "http": {
+      "url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+      "checked_at": "2026-11-03T08:53:59.441765+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 55533,
+      "sha256": "aa4771edcd82541837867fcf5a77e254f8bb29f388c4c384dcdec3e02451b3c7"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+      "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/courses/trail-race/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.offroadrunning2026.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:11.545451+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 183,
+        "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://www.offroadrunning2026.si/courses/trail-race/",
+      "checked_at": "2026-11-03T08:53:59.762199+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/courses/trail-race/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 50882,
+      "sha256": "9a6ccd08d1c19950425eb81884f133efd70672db1c08216852a0fcdec83d4c10"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2026/05/ECh2026-Trail-52km_nov.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+    "http": {
+      "url": "https://www.sktd-lom.si/vzponsiroko/",
+      "checked_at": "2026-11-03T08:56:58.350943+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.sktd-lom.si/vzponsiroko/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 169053,
+      "sha256": "facb922d642f690a2fb445e4db2a8a3e84b2cb825f6dbc52a37d1adf21661134"
+    },
+    "download_links": [
+      "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ cestna dirka 26km.gpx",
+      "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+      "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2021",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+    "http": {
+      "url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+      "checked_at": "2026-11-03T08:57:00.165895+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 188770,
+      "sha256": "7ddc7886e4969dac18d861287668da3cc5e6a8219c1acc99923624c350f7e429"
+    },
+    "download_links": [
+      "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.sddolsko.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.sddolsko.si/robots.txt",
+        "checked_at": "2026-11-03T08:57:01.535854+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sddolsko.si/robots.txt",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 24656,
+        "sha256": "69fd8a9ff0d56c71c1b95ab8cdb6d83ac36eeff30466d02cd4eb176fe13aef74"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_HTML_REVIEW"
+    },
+    "http": {
+      "url": "https://www.sddolsko.si/",
+      "checked_at": "2026-11-03T08:57:01.773246+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.sddolsko.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 24656,
+      "sha256": "5dedb32eab0c6549fff115980ca383a7f5ad5c1927abfebaefe3daac27f92503"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.viewgpx.com/route/dG9nJZrm",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.viewgpx.com/robots.txt",
+        "checked_at": "2026-11-03T08:55:22.178303+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://www.viewgpx.com/robots.txt",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": "inline; filename=\"404\"",
+        "bytes": 17942,
+        "sha256": "c39a50e7fc2d580c85ead678dc59ab2b76d48b18584eac9d4372c6c1b67043e6"
+      },
+      "allowed": true
+    },
+    "http": {
+      "url": "https://www.viewgpx.com/route/dG9nJZrm",
+      "checked_at": "2026-11-03T08:55:22.433862+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.viewgpx.com/route/dG9nJZrm",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 323446,
+      "sha256": "698ccd91565e8ba33946f217504e3dc12ea3dca9480e08f0fcc2016ceb5d51d9"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.viewgpx.com/route/aTFxjY78",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.viewgpx.com/robots.txt",
+        "checked_at": "2026-11-03T08:55:22.178303+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://www.viewgpx.com/robots.txt",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": "inline; filename=\"404\"",
+        "bytes": 17942,
+        "sha256": "c39a50e7fc2d580c85ead678dc59ab2b76d48b18584eac9d4372c6c1b67043e6"
+      },
+      "allowed": true
+    },
+    "http": {
+      "url": "https://www.viewgpx.com/route/aTFxjY78",
+      "checked_at": "2026-11-03T08:55:24.015252+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.viewgpx.com/route/aTFxjY78",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 503772,
+      "sha256": "e69d9899f06fb034888cb955391aeb05229eacb9deaffcb32cfd47499e913676"
+    },
+    "download_links": [],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/120k",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/120k",
+      "checked_at": "2026-11-03T08:50:03.492662+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/120k",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 643654,
+      "sha256": "d1d79c92f7dfbdbf74b6668488d560378f831c5cfc7aa2db690b188a9680a6bf"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/80K",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/80K",
+      "checked_at": "2026-11-03T08:50:05.404878+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/80K",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 638594,
+      "sha256": "673045bd786dbf905b641c0dd5e0128838e2c8380b4f6a94c3dbfb607256c821"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/50K",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/50K",
+      "checked_at": "2026-11-03T08:50:06.790923+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/50K",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 634912,
+      "sha256": "f173048ba7515a619221e651eb99a2d2fe2b16c589cabb25bb138dd281824ee4"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/25k",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/25k",
+      "checked_at": "2026-11-03T08:50:07.616773+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/25k",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 629617,
+      "sha256": "1c15d716ab9487a6d6e3d33dc202cccac7e4b3d4c0d1dc260ff2447fab51a94d"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/15K",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/15K",
+      "checked_at": "2026-11-03T08:50:08.749058+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/15K",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 628114,
+      "sha256": "51ec0597d47f1310e5499863dc00d5347a5ef927ca6bfb8f096cfa4869c5cc2b"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/10K",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/10K",
+      "checked_at": "2026-11-03T08:50:09.842640+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/10K",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 621305,
+      "sha256": "a5f413301c806e5fea5e9e101d076c69333fb968a778f8d0735a12147603dbdd"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://julianalps.utmb.world/sl/races/10K-NEXTGEN",
+    "http": {
+      "url": "https://julianalps.utmb.world/sl/races/10K-NEXTGEN",
+      "checked_at": "2026-11-03T08:50:10.997932+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://julianalps.utmb.world/sl/races/10K-NEXTGEN",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 592100,
+      "sha256": "42032091b234d040b84195d47249e641566a28bc7c7ac6db420b79b16f0ce22f"
+    },
+    "download_links": [
+      "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/",
+    "http": {
+      "url": "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/",
+      "checked_at": "2026-11-03T08:50:12.573650+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 64174,
+      "sha256": "5a692590b208c465ed74c2b9116be3bbe97d5389b54ffc93ef9bf8ce1acc6f2d"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Uphill-sen-89km.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2006",
+      "2007",
+      "2008",
+      "2010",
+      "2017",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/courses/uphill-race/",
+    "http": {
+      "url": "https://www.offroadrunning2026.si/courses/uphill-race/",
+      "checked_at": "2026-11-03T08:50:13.772831+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/courses/uphill-race/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 55373,
+      "sha256": "2782ac861d3a63a528a91fba708341e413ff055b9897743a5666118a694f3659"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Uphill-sen-89km.gpx",
+      "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Uphill-jun-38km.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/trail-25-km/",
+    "http": {
+      "url": "https://www.offroadrunning2026.si/sl/open-races/trail-25-km/",
+      "checked_at": "2026-11-03T08:50:15.864265+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/sl/open-races/trail-25-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 63413,
+      "sha256": "bf1671f03bd9f162141aa104d6cf455b834569c095c14dc0ef50023115c0ce1a"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2026/04/ECh-2026-Trail-25km.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2006",
+      "2007",
+      "2008",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/trail-52-km/",
+    "http": {
+      "url": "https://www.offroadrunning2026.si/sl/open-races/trail-52-km/",
+      "checked_at": "2026-11-03T08:50:18.016928+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/sl/open-races/trail-52-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 64632,
+      "sha256": "ca26a9bb9c764157d550b275302495001f13ad474a8efb9c7e5a4f77f29a21c9"
+    },
+    "download_links": [
+      "https://www.offroadrunning2026.si/wp-content/uploads/2026/05/ECh2026-Trail-52km_nov.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2006",
+      "2007",
+      "2008",
+      "2025",
+      "2026"
+    ]
+  },
+  {
+    "source_url": "https://go4trail.si/sl/proge/go-ultra",
+    "http": {
+      "url": "https://go4trail.si/sl/proge/go-ultra",
+      "checked_at": "2026-11-03T08:50:20.150631+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sl/proge/go-ultra",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 146166,
+      "sha256": "dc361a437d22b7943b02540f78aba2bb8dfd9a4203d4164edce11f8afd7bb894"
+    },
+    "download_links": [
+      "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2008",
+      "2019",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ]
+  },
+  {
+    "source_url": "https://go4trail.si/sl/proge/go-trim",
+    "http": {
+      "url": "https://go4trail.si/sl/proge/go-trim",
+      "checked_at": "2026-11-03T08:50:30.369028+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sl/proge/go-trim",
+      "content_type": "text/html; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 142576,
+      "sha256": "2c5a74d8f1e6c4a40809cf5f018f2e46a606540e81eacb6ce3b76760d54baaf2"
+    },
+    "download_links": [
+      "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx"
+    ],
+    "map_links": [],
+    "visible_year_tokens": [
+      "2008",
+      "2009",
+      "2019",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ]
+  }
+]

@@ -1,0 +1,316 @@
+{
+  "2026": {
+    "http": {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2026",
+      "checked_at": "2026-11-03T08:50:01.922415+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2026",
+      "content_type": "application/json; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 281096,
+      "sha256": "f1707151f241d98b9acd5b969a852b17cf855ff992472194662e5aeacd27c598"
+    },
+    "row_count": 309,
+    "data": [
+      {
+        "row": 36,
+        "datum": "2026-03-01",
+        "naziv_prireditve": "3. Trail po kraških klancih 2026",
+        "kraj": "Križ pri Sežani",
+        "razdalje_km": "12.3;19.5",
+        "povezava_razpis": "https://protime.si/dogodek/3-trail-po-kraskih-klancih-2026/"
+      },
+      {
+        "row": 41,
+        "datum": "2026-03-07",
+        "naziv_prireditve": "Zimski trail tek Bohinj",
+        "kraj": "Bohinj",
+        "razdalje_km": "6;12;18",
+        "povezava_razpis": "https://tsf.bohinj.si/tekme/zimski-trail-tek-bohinj/"
+      },
+      {
+        "row": 52,
+        "datum": "2026-03-29",
+        "naziv_prireditve": "AC FRIMOBIL 15. Velikonočni tek okrog Šmartinskega jezera",
+        "kraj": "Celje – Šmartinsko jezero",
+        "razdalje_km": "0.5;1;4.5;11",
+        "povezava_razpis": "https://fatburn.si/velikonocni-tek/"
+      },
+      {
+        "row": 54,
+        "datum": "2026-04-04",
+        "naziv_prireditve": "Zaplana trail",
+        "kraj": "Zaplana",
+        "razdalje_km": "4;13;27",
+        "povezava_razpis": ""
+      },
+      {
+        "row": 68,
+        "datum": "2026-04-18",
+        "naziv_prireditve": "Hrastnik trail",
+        "kraj": "Hrastnik",
+        "razdalje_km": "1.3;6;12",
+        "povezava_razpis": "https://hrastnik-trail.si/"
+      },
+      {
+        "row": 84,
+        "datum": "2026-05-02",
+        "naziv_prireditve": "35. Gorski tek na Lisco",
+        "kraj": "Sevnica",
+        "razdalje_km": "8",
+        "povezava_razpis": "https://gorskiteknalisco.si/"
+      },
+      {
+        "row": 94,
+        "datum": "2026-05-16",
+        "naziv_prireditve": "16. KBK trail",
+        "kraj": "Hotavlje",
+        "razdalje_km": "21.5",
+        "povezava_razpis": "http://kbk.sdmh.si/razpis/"
+      },
+      {
+        "row": 125,
+        "datum": "2026-06-05",
+        "naziv_prireditve": "Evropsko prvenstvo v gorskih in trail tekih 2026 – Kamnik",
+        "kraj": "Kamnik, Velika planina",
+        "razdalje_km": "8.9;3.8;52;13.1;5.7",
+        "povezava_razpis": "https://www.offroadrunning2026.si/"
+      },
+      {
+        "row": 126,
+        "datum": "2026-06-05",
+        "naziv_prireditve": "EAORCH2026 - Tek na Veliko planino",
+        "kraj": "Kamnik, Velika planina",
+        "razdalje_km": "9",
+        "povezava_razpis": "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/"
+      },
+      {
+        "row": 127,
+        "datum": "2026-06-06",
+        "naziv_prireditve": "EAORCH2026 - Trail čez Veliko planino",
+        "kraj": "Kamnik, Velika planina",
+        "razdalje_km": "25;52",
+        "povezava_razpis": "https://www.offroadrunning2026.si/sl/open-races/"
+      },
+      {
+        "row": 150,
+        "datum": "2026-06-13",
+        "naziv_prireditve": "Trail Maribor 2026",
+        "kraj": "Maribor",
+        "razdalje_km": "8;15;30;50",
+        "povezava_razpis": "https://trailmaribor.eu"
+      },
+      {
+        "row": 153,
+        "datum": "2026-06-13",
+        "naziv_prireditve": "15. gozdni tek in pohod okoli Ajdovščine nad Dolom pri Ljubljani",
+        "kraj": "Dol pri Ljubljani",
+        "razdalje_km": "2.5;6;11",
+        "povezava_razpis": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026"
+      },
+      {
+        "row": 170,
+        "datum": "2026-07-04",
+        "naziv_prireditve": "Gas na Gače trail 2026",
+        "kraj": "Smučišče Gače",
+        "razdalje_km": "15",
+        "povezava_razpis": "https://prijavim.se/uploads/razpisi/6496_invitation.pdf"
+      },
+      {
+        "row": 179,
+        "datum": "2026-08-15",
+        "naziv_prireditve": "Fara trail",
+        "kraj": "Spodnja Idrija",
+        "razdalje_km": "0.1;1.5;10",
+        "povezava_razpis": "https://katurn.si/files/razpis_trail_2026--003-.pdf"
+      },
+      {
+        "row": 181,
+        "datum": "2026-08-15",
+        "naziv_prireditve": "25. Vzpon na Široko",
+        "kraj": "Tolminski Lom",
+        "razdalje_km": "0.25;0.73;11.7",
+        "povezava_razpis": "https://www.sktd-lom.si/vzponsiroko/"
+      },
+      {
+        "row": 185,
+        "datum": "2026-08-22",
+        "naziv_prireditve": "Haloze trail",
+        "kraj": "Majšperk",
+        "razdalje_km": "5;16;27",
+        "povezava_razpis": "https://protime.si/wp-content/uploads/2025/12/Razpis-Haloze-Trail-2026.pdf"
+      },
+      {
+        "row": 187,
+        "datum": "2026-08-22",
+        "naziv_prireditve": "Triglav Trail Run",
+        "kraj": "Mojstrana",
+        "razdalje_km": "14;26;44;101",
+        "povezava_razpis": "https://www.triglavtrailrun.com/sl/tekmovanje/"
+      },
+      {
+        "row": 194,
+        "datum": "2026-08-29",
+        "naziv_prireditve": "3. Trail tek Zelene doline",
+        "kraj": "Golte",
+        "razdalje_km": "13;22",
+        "povezava_razpis": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/"
+      },
+      {
+        "row": 196,
+        "datum": "2026-08-30",
+        "naziv_prireditve": "4. Trail Velika Planina",
+        "kraj": "Velika Planina",
+        "razdalje_km": "6.7;13.5;29.3",
+        "povezava_razpis": "https://trailvelikaplanina.eu/"
+      },
+      {
+        "row": 199,
+        "datum": "2026-09-05",
+        "naziv_prireditve": "Svinjskih E7 – Trail 2026",
+        "kraj": "Podčetrtek",
+        "razdalje_km": "3",
+        "povezava_razpis": "https://svinjskihe7trail.com/"
+      },
+      {
+        "row": 203,
+        "datum": "2026-09-05",
+        "naziv_prireditve": "4. Sršenji Trail tek",
+        "kraj": "Novo mesto",
+        "razdalje_km": "5;10",
+        "povezava_razpis": "https://stopicetrailtek.webflow.io/"
+      },
+      {
+        "row": 217,
+        "datum": "2026-09-18",
+        "naziv_prireditve": "Julian Alps Trail Run by UTMB",
+        "kraj": "Kranjska Gora",
+        "razdalje_km": "10;15;25;50;80;124",
+        "povezava_razpis": "https://julianalps.utmb.world/races-runners/runners/event-schedule"
+      },
+      {
+        "row": 248,
+        "datum": "2026-10-17",
+        "naziv_prireditve": "4. Sabotin Trail Evening",
+        "kraj": "Šmaver",
+        "razdalje_km": "13.3",
+        "povezava_razpis": "https://go4trail.si/sl/sabotin-trail-evening-17102026"
+      },
+      {
+        "row": 254,
+        "datum": "2026-11-07",
+        "naziv_prireditve": "4. Lahinja Trail",
+        "kraj": "Dragatuš",
+        "razdalje_km": "10;18;30",
+        "povezava_razpis": "https://protime.si/dogodek/lahinja-trail-2026/"
+      },
+      {
+        "row": 256,
+        "datum": "2026-11-07",
+        "naziv_prireditve": "Go4trail",
+        "kraj": "Nova Gorica",
+        "razdalje_km": "13;28;64",
+        "povezava_razpis": "https://go4trail.si/sl"
+      },
+      {
+        "row": 267,
+        "datum": "2026-12-05",
+        "naziv_prireditve": "Velenje Trail 2026",
+        "kraj": "Velenje",
+        "razdalje_km": "10;18;36",
+        "povezava_razpis": "https://velenjetrail.si/razpis/"
+      }
+    ],
+    "scope": "Selected actual API rows; response hash refers to complete cached response. Research reference, not canonical identity."
+  },
+  "2027": {
+    "http": {
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+      "checked_at": "2026-11-03T08:50:06.956632+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027",
+      "content_type": "application/json; charset=utf-8",
+      "content_disposition": null,
+      "bytes": 48408,
+      "sha256": "26899e4db9463d70b1b96c3a5c214c9d75dfacbaaae789ade96d8533487568f9"
+    },
+    "row_count": 48,
+    "data": [
+      {
+        "row": 6,
+        "datum": "2027-03-28",
+        "naziv_prireditve": "AC Frimobil 16. Velikonočni tek okrog Šmartinskega jezera",
+        "kraj": "Celje – Šmartinsko jezero",
+        "razdalje_km": "0.5;1;4.5;11",
+        "povezava_razpis": "https://fatburn.si/velikonocni-tek/"
+      },
+      {
+        "row": 18,
+        "datum": "2027-04-17",
+        "naziv_prireditve": "Hrastnik Trail 2027",
+        "kraj": "Hrastnik",
+        "razdalje_km": "",
+        "povezava_razpis": "https://www.hrastnik.si/obvestila/aktualno/6-hrastnik-trail-sportni-praznik-na-kalu-v-znamenju-sonca-in-odlicne-energije-2615.html"
+      },
+      {
+        "row": 19,
+        "datum": "2027-03-07",
+        "naziv_prireditve": "4. Trail po kraških klancih 2027",
+        "kraj": "Križ pri Sežani",
+        "razdalje_km": "12.3;19.5",
+        "povezava_razpis": "https://www.srd-kras.si/trail-2027"
+      },
+      {
+        "row": 25,
+        "datum": "2027-08-14",
+        "naziv_prireditve": "4. Fara Trail",
+        "kraj": "Spodnja Idrija",
+        "razdalje_km": "0.1;1.5;10",
+        "povezava_razpis": ""
+      },
+      {
+        "row": 27,
+        "datum": "2027-05-15",
+        "naziv_prireditve": "17. KBK TRAIL",
+        "kraj": "Hotavlje",
+        "razdalje_km": "",
+        "povezava_razpis": ""
+      },
+      {
+        "row": 31,
+        "datum": "2027-08-29",
+        "naziv_prireditve": "5. Trail Velika Planina",
+        "kraj": "Velika planina",
+        "razdalje_km": "6.7;13.5;29.3",
+        "povezava_razpis": "https://fatburn.si/trail/"
+      },
+      {
+        "row": 38,
+        "datum": "2027-06-12",
+        "naziv_prireditve": "Trail Maribor 2027",
+        "kraj": "Maribor",
+        "razdalje_km": "8;15;30;50;100",
+        "povezava_razpis": "https://trailmaribor.eu/program/"
+      },
+      {
+        "row": 42,
+        "datum": "2027-08-21",
+        "naziv_prireditve": "Triglav Trail Run",
+        "kraj": "Mojstrana",
+        "razdalje_km": "14;26;44.5;101",
+        "povezava_razpis": "https://www.triglavtrailrun.com/sl/"
+      },
+      {
+        "row": 50,
+        "datum": "2027-07-03",
+        "naziv_prireditve": "Gas na Gače trail 2027",
+        "kraj": "Smučišče Gače",
+        "razdalje_km": "15",
+        "povezava_razpis": ""
+      }
+    ],
+    "scope": "Selected actual API rows; response hash refers to complete cached response. Research reference, not canonical identity."
+  }
+}

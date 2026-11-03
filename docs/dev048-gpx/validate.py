@@ -30,6 +30,15 @@ HOSTS |= frozenset({"ponikva4trail.si", "ribncatrail.si", "gozdarski-trail.si",
 HOSTS |= frozenset({"k24trail.si", "hgtrail-idrija.si", "trailcelje.eu", "soca-outdoor.com",
                     "www.soca-outdoor.com", "k6trail.eu", "tdbistrc.org", "www.sportoroz.eu"})
 HOSTS |= frozenset({"obalaultratrail.si", "www.caven.run", "trail-ljubljana.eu", "krastrail.si"})
+HOSTS |= frozenset({"julianalps.utmb.world", "res.cloudinary.com", "www.offroadrunning2026.si",
+                    "go4trail.si", "velenjetrail.si", "kbk.sdmh.si", "dogodek.zelenedoline.si",
+                    "fatburn.si", "trailmaribor.eu"})
+HOSTS |= frozenset({"hrastnik-trail.si", "www.triglavtrailrun.com", "svinjskihe7trail.com",
+                    "www.majsperk.si", "scgace.si", "katurn.si", "protime.si", "www.kinmet.si",
+                    "tsf.bohinj.si", "gorskiteknalisco.si", "stopicetrailtek.webflow.io", "trailvelikaplanina.eu"})
+HOSTS |= frozenset({"dogodki.mch.si", "www.belakrajina.si"})
+HOSTS |= frozenset({"pdf.utmb.world"})
+HOSTS |= frozenset({"www.sktd-lom.si", "prijavim.se", "www.sddolsko.si"})
 MAX_ZIP_MEMBERS = 100
 MAX_EXPANDED_BYTES = 32 * 1024 * 1024
 MAX_COMPRESSION_RATIO = 200
@@ -75,7 +84,10 @@ def fetch(url):
         check_url(url)
         throttle(url)
         opener = urllib.request.build_opener(Redirects(evidence["redirects"]))
-        req = urllib.request.Request(url, headers={"User-Agent": "STK-DEV048-P0/1.0", "Accept-Encoding": "identity"})
+        request_url = urllib.parse.quote(url, safe=":/?&=;%+,$@!~*'()[]-")
+        if request_url != url:
+            evidence['request_url'] = request_url
+        req = urllib.request.Request(request_url, headers={"User-Agent": "STK-DEV048-P0/1.0", "Accept-Encoding": "identity"})
         try:
             response = opener.open(req, timeout=15)
         except urllib.error.HTTPError as error:

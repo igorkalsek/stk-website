@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-11-03",
+  "plotaroute": {
+    "terms_url": "https://www.plotaroute.com/TermsOfUse.html",
+    "download_help_url": "https://www.plotaroute.com/tip/1/how-to-download-a-route-to-a-garmin-edge",
+    "assessment": "The public help documents manual download. Terms restrict copying/reproduction/distribution except personal non-commercial use without express permission. Applicability to this project's automated research/export is not established; no export was attempted.",
+    "status": "PAGE_ONLY_EXPORT_RIGHTS_REVIEW",
+    "account_created": false
+  },
+  "viewgpx": {
+    "documentation_url": "https://www.viewgpx.com/",
+    "assessment": "The product explicitly describes public shared-file downloads without an account. Both organizer-linked pages returned HTML. A clean temporary Chrome session exposed only the page footer and no usable download control or explicit download URL. No embedded XML was counted as a downloaded GPX.",
+    "pages": ["https://www.viewgpx.com/route/dG9nJZrm", "https://www.viewgpx.com/route/aTFxjY78"],
+    "browser_page_inspected": "https://www.viewgpx.com/route/dG9nJZrm",
+    "browser_method": "Fresh temporary profile, no login; initial sandbox launch failed, approved unsandboxed launch worked. Domain-limited browser resource loading may have affected client rendering; this is not evidence that the website's export is broken.",
+    "status": "PAGE_ONLY_EXPORT_NOT_COMPLETED",
+    "account_created": false
+  },
+  "google_drive": {
+    "assessment": "Four exact file links were found on organizer pages. Raw bytes were retrieved through the connected Drive service and materialized within the 12 MiB cap. Origin HTTP/DNS/redirect details are not exposed by the connector; anonymous access was not independently verified.",
+    "status": "CONNECTOR_BYTES_VALID_PUBLIC_ACCESS_REVIEW"
+  }
+}

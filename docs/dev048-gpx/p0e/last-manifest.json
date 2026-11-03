@@ -1,0 +1,32 @@
+[
+  {
+    "id": "P0E-040",
+    "event": "Vzpon na Široko",
+    "route": "Trail gor-dol 12 km",
+    "expected_km": 11.7,
+    "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+    "target_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 181
+  },
+  {
+    "id": "P0E-041",
+    "event": "Vzpon na Široko",
+    "route": "OŠ tek 750 m",
+    "expected_km": 0.75,
+    "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+    "target_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx",
+    "kind": "GPX",
+    "master_2026_row": 181
+  },
+  {
+    "id": "P0E-042",
+    "event": "Gozdni tek okoli Ajdovščine nad Dolom",
+    "route": "11 km",
+    "expected_km": 11,
+    "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+    "target_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+    "kind": "ZIP",
+    "master_2026_row": 153
+  }
+]

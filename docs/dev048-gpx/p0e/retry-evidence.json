@@ -1,0 +1,9 @@
+[
+  {
+    "id": "P0E-016",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+    "original_status": "NOT_AVAILABLE_FROM_ENVIRONMENT",
+    "original_error": "'ascii' codec can't encode character '\\u017e' in position 31: ordinal not in range(128)",
+    "retry_reason": "Fix local URL UTF-8 percent-encoding; no HTTP response occurred"
+  }
+]
