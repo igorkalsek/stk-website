@@ -74,20 +74,27 @@ test('planner uses one responsive month and week information architecture', () =
   assert.match(styles, /\.planning-week/);
 });
 
-test('organizer journey retains proposal and finder routes while showing dated promotional snapshots', () => {
+test('organizer journey keeps existing routes and honestly dated promotional metrics', () => {
   assert.match(component, /\/dodaj-ali-popravi-tek\//);
   assert.match(component, /\/en\/add-or-correct-race\//);
   assert.doesNotMatch(component, /PRIMER PRIKAZA · PROTOTIP/);
-  for (const metric of ['2.318', '20.645', '1.662']) assert.ok(component.includes(metric));
-  assert.match(component, /Google Search Console in Buffer/);
-  assert.match(component, /interna analitika STK/);
-  assert.match(component, /3\. 11\. 2026/);
-  assert.match(component, /kliki niso prijave/);
+  for (const metric of ['120.000+', '20.000+', '6.000+', '120,000+', '20,000+', '6,000+']) assert.ok(component.includes(metric));
+  assert.match(component, /Google Search Console, Buffer/);
+  assert.match(component, /90 dni/);
+  assert.match(component, /28 dni/);
+  assert.match(component, /Google: 5\. 8\.–2\. 11\. 2026/);
+  assert.match(component, /Facebook: 6\. 10\.–2\. 11\. 2026/);
+  assert.doesNotMatch(component, /2\.318|1\.662|Prikazi niso unikatne osebe|kliki niso prijave/);
+  assert.doesNotMatch(component, /V pilotu še ni javnega cenika|There is no public price list/);
 });
 
-test('promotion uses two bilingual opt-in mailto CTAs with no new form or false paid ranking', () => {
+test('promotion retains two bilingual opt-in mailto CTAs with an explicit sponsored label', () => {
   assert.match(component, /Naj vaš tek odkrije več tekačev/);
   assert.match(component, /Help more runners discover your race/);
+  assert.match(component, /Brezplačna promocija/);
+  assert.match(component, /Free editorial promotion/);
+  assert.match(component, /Featured Race · Sponzorirano/);
+  assert.match(component, /Featured Race · Sponsored/);
   assert.match(component, /Predlagajte tek za brezplačno promocijo/);
   assert.match(component, /Suggest a race for free promotion/);
   assert.match(component, /Zanima me Featured Race/);
@@ -98,17 +105,17 @@ test('promotion uses two bilingual opt-in mailto CTAs with no new form or false 
   assert.match(component, /href=\{promoFreeHref\}/);
   assert.match(component, /href=\{promoPaidHref\}/);
   assert.match(component, /tekaski\.koledar@gmail\.com/);
-  assert.match(component, /ne bo vplivala na organsko razvrščanje/);
-  assert.match(component, /not guaranteed/);
+  assert.match(component, /Izbrane manjše ali nove teke lahko predstavimo/);
   assert.doesNotMatch(component, /<button|<form|claim_race/);
 });
 
-test('promotion is compact and stacks option cards and metrics on small screens', () => {
+test('promotion keeps metrics readable and stacks options on small screens', () => {
   assert.match(component, /organizer-promo-options/);
   assert.match(component, /organizer-promo-metrics/);
   assert.match(styles, /\.organizer-promo-options\s*\{\s*display:\s*grid;/);
   assert.match(styles, /@media \(max-width: 700px\)\s*\{[\s\S]*?\.organizer-promo-options\s*\{\s*grid-template-columns:\s*1fr;/);
   assert.match(styles, /@media \(max-width: 520px\)\s*\{[\s\S]*?\.organizer-promo-metrics\s*\{\s*grid-template-columns:\s*1fr;/);
+  assert.match(styles, /\.organizer-promo-metrics strong\s*\{[^}]*font-size:\s*clamp\(1\.75rem,3vw,2\.45rem\)/);
   assert.match(styles, /\.organizer-promo-option \.button\s*\{[^}]*min-height:\s*44px;/);
 });
 
@@ -135,10 +142,10 @@ test('shared workflow provides equivalent SL and EN links and the planner marks 
   assert.match(workflow, /!compact && <small>/);
 });
 
-test('shared compact workflow marks each destination current without tab semantics', () => {
+test('compact workflow stays on step-one and step-two pages, not duplicated above promotion', () => {
   assert.match(datesComponent, /<OrganizerWorkflow \{lang\} active=\{1\} compact/);
   assert.match(proposalForm, /<OrganizerWorkflow \{lang\} active=\{2\} compact/);
-  assert.match(component, /<OrganizerWorkflow \{lang\} active=\{3\} compact/);
+  assert.doesNotMatch(component, /<OrganizerWorkflow \{lang\} active=\{3\} compact/);
   assert.match(component, /<OrganizerWorkflow \{lang\} \/>/);
   assert.match(workflow, /<nav[^>]+aria-label=/);
   assert.match(workflow, /<span class="organizer-step" aria-current="step">/);
@@ -166,8 +173,20 @@ test('proposal routes render the bilingual step-two workflow and retain language
   }
 });
 
-test('promotion anchor starts with step-three navigation and workflow analytics stay stable', () => {
-  assert.match(component, /id="promotion"[^>]*>\s*<OrganizerWorkflow \{lang\} active=\{3\} compact \/>\s*<div class="organizer-claim-card">/);
+test('promotion follows confirmation and precedes confirmed-race list', () => {
+  const introIndex = component.indexOf('id="steps-title"');
+  const profileIndex = component.indexOf('id="race-title"');
+  const confirmationIndex = component.indexOf('id="organizer-confirmation-title"');
+  const promotionIndex = component.indexOf('id="promotion"');
+  const confirmedRacesIndex = component.indexOf('<OrganizerConfirmedRaces {lang} />');
+  assert.ok(introIndex < profileIndex && profileIndex < confirmationIndex);
+  assert.ok(confirmationIndex < promotionIndex && promotionIndex < confirmedRacesIndex);
+  assert.match(component, /href="#promotion" data-organizer-action="view_organizer_stats_info" data-organizer-placement="hero"/);
+  assert.match(component, /Promovirajte svoj tek/);
+  assert.match(component, /Promote your race/);
+  assert.equal((component.match(/<OrganizerWorkflow \{lang\}/g) ?? []).length, 1);
+  assert.match(workflow, /Preverite možnosti promocije in doseg STK/);
+  assert.match(workflow, /Explore race promotion options and STK reach/);
   assert.match(workflow, /data-organizer-placement="workflow"/);
   for (const action of ['check_2027_dates', 'confirm_race', 'view_organizer_stats_info']) assert.match(workflow, new RegExp(action));
 });

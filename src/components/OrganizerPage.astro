@@ -21,7 +21,7 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
     <span class="eyebrow">{en ? 'FOR ORGANISERS' : 'ZA ORGANIZATORJE'}</span>
     <h1 id="organizer-title">{en ? 'Plan and present your race' : 'Načrtujte in predstavite svoj tek'}</h1>
     <p>{en ? 'From choosing a date to keeping race information useful for runners—all in three clear steps.' : 'Od izbire termina do urejenih informacij za tekače – v treh jasnih korakih.'}</p>
-    <div class="cta-row"><a class="button button-primary" href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="hero">{en ? 'Check 2027 dates' : 'Preverite termine 2027'}</a></div>
+    <div class="cta-row"><a class="button button-primary" href={datesHref} data-organizer-action="check_2027_dates" data-organizer-placement="hero">{en ? 'Check 2027 dates' : 'Preverite termine 2027'}</a><a class="button button-secondary-muted" href="#promotion" data-organizer-action="view_organizer_stats_info" data-organizer-placement="hero">{en ? 'Promote your race' : 'Promovirajte svoj tek'}</a></div>
   </section>
 
   <section class="section container" aria-labelledby="steps-title">
@@ -33,8 +33,7 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
     <div>
       <span class="eyebrow">{en ? 'AVAILABLE NOW' : 'NA VOLJO ZDAJ'}</span>
       <h2 id="race-title">{en ? 'No website for your race?' : 'Nimate spletne strani za svoj tek?'}</h2>
-      <p>{en ? 'Your race can have a free public profile on STK with its date, location and distances, plus registration links, official race information and course details where verified information is available.' : 'Vaš tek lahko na STK dobi brezplačno javno predstavitveno stran z datumom, krajem in razdaljami ter informacijami o prijavah, razpisu in trasi. Podatki in povezave so prikazani glede na razpoložljive, preverjene informacije.'}</p>
-      <p>{en ? 'Share the profile link on Facebook, in invitations or on your club’s website. Find your race below, or suggest a new race, an addition or a correction.' : 'Povezavo do profila lahko delite na Facebooku, v vabilih ali na spletni strani društva. Spodaj poiščite svoj tek ali predlagajte nov tek, dopolnitev oziroma popravek podatkov.'}</p>
+      <p>{en ? 'Get a free public race profile with verified date, location, distances and useful links. Share it with runners or suggest a correction.' : 'Vaš tek lahko dobi brezplačen javni profil s preverjenimi podatki o terminu, kraju, razdaljah in povezavah. Profil lahko delite ali predlagate popravek.'}</p>
     </div>
     <div class="cta-row"><a class="button organizer-dark-button" href={finderHref} data-organizer-action="find_race" data-organizer-placement="main">{en ? 'Find your race' : 'Poiščite svoj tek'}</a><a class="button button-primary" href={formHref} data-organizer-action="add_race" data-organizer-placement="main">{en ? 'Add or correct a race' : 'Dodajte ali popravite tek'}</a></div>
   </section>
@@ -43,57 +42,52 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
     <div>
       <span class="eyebrow">{en ? 'AVAILABLE NOW' : 'NA VOLJO ZDAJ'}</span>
       <h2 id="organizer-confirmation-title">{en ? 'Confirm your race information' : 'Potrdite podatke svojega teka'}</h2>
-      <p>{en ? 'Find your race, choose “Confirm race information” on its profile and review the current details for the correct race edition. Once your confirmation has been successfully verified, the profile may display “Data confirmed by organizer”. Verifying your email address alone is not enough.' : 'Poiščite svoj tek, na profilu izberite »Potrdite pravilnost podatkov« in preglejte aktualne podatke za pravo izvedbo teka. Po uspešno preverjeni potrditvi lahko profil prejme oznako »Podatke potrdil organizator«. Sama potrditev e-poštnega naslova ne zadostuje.'}</p>
-      <p>{en ? 'Eligible confirmed organisers can also receive a free basic overview of interest in their race on STK over the last 30 days, provided enough suitable data is available. Eligibility and delivery are checked before the report is prepared and sent; delivery is not automatic.' : 'Za upravičene potrjene organizatorje je na voljo tudi brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh, kadar je na voljo dovolj ustreznih podatkov. Priprava in dostava poročila potekata po preveritvi upravičenosti in pogojev dostave; pošiljanje ni samodejno.'}</p>
-      <p>{en ? 'Clicks on a registration link do not represent completed race registrations.' : 'Število klikov na povezavo za prijavo ni enako številu dejanskih prijav na tek.'}</p>
+      <p>{en ? 'On your race profile, choose “Confirm race information”. Once the correct edition and your confirmation are verified, the profile may display “Data confirmed by organizer”. Email verification alone does not count.' : 'Na profilu izberite »Potrdite pravilnost podatkov«. Po preverjeni potrditvi prave izvedbe lahko tek prejme oznako »Podatke potrdil organizator«. Samo potrjen e-naslov ne zadostuje.'}</p>
+      <p>{en ? 'Verified organisers may request a free basic overview of interest in their race on STK over the last 30 days, where sufficient data is available.' : 'Potrjeni organizatorji lahko ob zadostnih podatkih prejmejo brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh.'}</p>
     </div>
     <div class="cta-row"><a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="confirmation">{en ? 'Find and confirm your race' : 'Poiščite in potrdite svoj tek'}</a></div>
   </section>
 
-  <OrganizerConfirmedRaces {lang} />
-
   <section class="section container promotion-section" id="promotion" aria-labelledby="promotion-title">
-    <OrganizerWorkflow {lang} active={3} compact />
     <div class="organizer-claim-card">
       <div>
-        <span class="organizer-status">{en ? 'GATHERING INTEREST' : 'ZBIRAMO ZANIMANJE'}</span>
+        <span class="organizer-status">{en ? 'RACE PROMOTION' : 'PROMOCIJA TEKOV'}</span>
         <h2 id="promotion-title">{en ? 'Help more runners discover your race' : 'Naj vaš tek odkrije več tekačev'}</h2>
       </div>
       <p>{en
-        ? 'Organising a smaller, new or lesser-known race? STK helps runners discover races throughout Slovenia. We are gathering interest in additional free editorial promotion and clearly labelled sponsored features.'
-        : 'Organizirate manjši, nov ali manj poznan tek? STK pomaga tekačem odkrivati prireditve po vsej Sloveniji. Zbiramo predloge za dodatno brezplačno uredniško promocijo in zanimanje za jasno označene sponzorirane predstavitve.'}</p>
+        ? 'Introduce your race to more runners. Suggest a free feature or enquire about sponsored promotion.'
+        : 'Predstavite svoj tek več tekačem. Predlagajte ga za brezplačno objavo ali povprašajte o sponzorirani promociji.'}</p>
 
       <div class="organizer-promo-proof" aria-labelledby="promotion-proof-title">
         <h3 id="promotion-proof-title">{en ? 'STK at a glance' : 'STK v številkah'}</h3>
         <ul class="organizer-promo-metrics">
-          <li><strong>{en ? '2,318' : '2.318'}</strong><span>{en ? 'clicks from Google Search' : 'klikov iz iskanja Google'}</span></li>
-          <li><strong>{en ? '20,645' : '20.645'}</strong><span>{en ? 'Facebook post impressions' : 'prikazov objav na Facebooku'}</span></li>
-          <li><strong>{en ? '1,662' : '1.662'}</strong><span>{en ? 'clicks on race-related links' : 'klikov na povezave dogodkov'}</span></li>
+          <li><strong>{en ? '120,000+' : '120.000+'}</strong><span>{en ? 'Google Search impressions' : 'prikazov v Googlu'}</span></li>
+          <li><strong>{en ? '20,000+' : '20.000+'}</strong><span>{en ? 'Facebook post impressions' : 'prikazov na Facebooku'}</span></li>
+          <li><strong>{en ? '6,000+' : '6.000+'}</strong><span>{en ? 'clicks from Google Search' : 'klikov iz Googla'}</span></li>
         </ul>
         <p class="organizer-promo-source">{en
-          ? 'Sources: Google Search Console and Buffer (6 Oct–2 Nov 2026); STK internal analytics (5 Oct–1 Nov 2026). Historical 28-day snapshots, checked 3 Nov 2026. Impressions are not unique people; clicks are not registrations.'
-          : 'Viri: Google Search Console in Buffer (6. 10.–2. 11. 2026); interna analitika STK (5. 10.–1. 11. 2026). Zgodovinski 28-dnevni posnetki, preverjeni 3. 11. 2026. Prikazi niso unikatne osebe, kliki niso prijave.'}</p>
+          ? 'Google: 5 Aug–2 Nov 2026 (90 days) · Facebook: 6 Oct–2 Nov 2026 (28 days). Sources: Google Search Console, Buffer.'
+          : 'Google: 5. 8.–2. 11. 2026 (90 dni) · Facebook: 6. 10.–2. 11. 2026 (28 dni). Vira: Google Search Console, Buffer.'}</p>
       </div>
 
       <div class="organizer-promo-options">
         <div class="organizer-promo-option">
-          <h3>{en ? 'Free editorial promotion' : 'Brezplačna uredniška promocija'}</h3>
+          <h3>{en ? 'Free editorial promotion' : 'Brezplačna promocija'}</h3>
           <p>{en
-            ? 'We may feature selected smaller, local or new races on STK’s Facebook and Instagram channels. Tell us about your race and your goals. Editorial selection is free, but not guaranteed.'
-            : 'Izbrane manjše, lokalne ali nove teke lahko dodatno predstavimo na STK Facebooku in Instagramu. Sporočite nam, kateri tek pripravljate in kaj želite doseči. Uredniški izbor je brezplačen, ni pa zagotovljen.'}</p>
+            ? 'Selected smaller or new races may be featured on STK’s Facebook or Instagram. Send us your suggestion.'
+            : 'Izbrane manjše ali nove teke lahko predstavimo na Facebooku ali Instagramu STK. Pošljite nam predlog.'}</p>
           <a class="button button-primary" href={promoFreeHref}>{en ? 'Suggest a race for free promotion' : 'Predlagajte tek za brezplačno promocijo'}</a>
         </div>
         <div class="organizer-promo-option">
-          <h3>{en ? 'Featured Race – sponsored promotion' : 'Featured Race – sponzorirana promocija'}</h3>
+          <h3>{en ? 'Featured Race · Sponsored' : 'Featured Race · Sponzorirano'}</h3>
           <p>{en
-            ? 'Interested in additional visibility? Let us know if you would consider a limited paid promotional feature. Any paid content will be clearly labelled as sponsored and will not change organic search results or rankings.'
-            : 'Želite dodatno izpostaviti svoj tek? Sporočite nam neobvezujoče zanimanje za omejeno plačljivo promocijo. Plačana vsebina bo jasno označena kot sponzorirana in ne bo vplivala na organsko razvrščanje ali lestvice.'}</p>
+            ? 'Want extra visibility for your race? Ask about paid promotion with a clear sponsored label.'
+            : 'Želite svoj tek dodatno izpostaviti? Pošljite neobvezujoče povpraševanje za jasno označeno sponzorirano promocijo.'}</p>
           <a class="button button-secondary" href={promoPaidHref}>{en ? 'I’m interested in Featured Race' : 'Zanima me Featured Race'}</a>
         </div>
       </div>
-      <p class="organizer-promo-fineprint">{en
-        ? 'There is no public price list or guaranteed reach during this pilot. Each promotion requires a separate agreement. Contact: tekaski.koledar@gmail.com.'
-        : 'V pilotu še ni javnega cenika ali zagotovljenega dosega. Vsaka promocija zahteva ločen dogovor. Kontakt: tekaski.koledar@gmail.com.'}</p>
     </div>
   </section>
+
+  <OrganizerConfirmedRaces {lang} />
 </main>
