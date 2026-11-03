@@ -37,7 +37,8 @@ export function getGpxLinks(event: EventIdentity, manifest: readonly GpxEvent[] 
   return [...links.values()].map(({ link, routes }) => ({ ...link, route: [...routes].join(' / ') }));
 }
 
-export const gpxYearLabel = (year: number | null, language: 'sl' | 'en') => {
-  if (year === null) return language === 'en' ? 'Track year is unconfirmed' : 'Letnica sledi ni potrjena';
-  return language === 'en' ? `GPX labelled ${year}` : `GPX z oznako ${year}`;
+export const gpxYearLabel = (year: number | null, eventYear: string, language: 'sl' | 'en') => {
+  if (year === null) return language === 'en' ? 'GPX track · year unconfirmed' : 'GPX-sled · letnica ni potrjena';
+  if (year < Number(eventYear)) return language === 'en' ? `Archived GPX track ${year}` : `Arhivska GPX-sled ${year}`;
+  return language === 'en' ? `GPX track labelled ${year}` : `GPX-sled z oznako ${year}`;
 };

@@ -28,7 +28,7 @@ for (const language of ['sl', 'en'] as const) for (const width of [390, 1440]) {
         await expect(button).toHaveAttribute('rel', 'noopener noreferrer');
         await expect(button).toHaveAttribute('data-stk-event-year', e.year);
         const metadata = section.locator('.gpx-meta').nth(i);
-        await expect(metadata).toContainText(link.year === null ? (language === 'sl' ? 'Letnica sledi ni potrjena' : 'Track year is unconfirmed') : String(link.year));
+        await expect(metadata).toContainText(link.year === null ? (language === 'sl' ? 'GPX-sled · letnica ni potrjena' : 'GPX track · year unconfirmed') : link.year < Number(e.year) ? (language === 'sl' ? `Arhivska GPX-sled ${link.year}` : `Archived GPX track ${link.year}`) : (language === 'sl' ? `GPX-sled z oznako ${link.year}` : `GPX track labelled ${link.year}`));
         const bounds = await button.boundingBox();
         expect(bounds!.height).toBeGreaterThanOrEqual(44);
       }

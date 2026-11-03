@@ -39,13 +39,16 @@ test('exact year, row and full fingerprint required; no cross-year, family, rena
   assert.deepEqual(getGpxLinks({ year: '2027', row: '17', date: '2027-05-28', naziv_prireditve: 'Kočevsko Outdoor Festival 2027', place: 'Kočevje' }), []);
 });
 
-test('known, unknown and 2027 year labels never certify the current course in either language', () => {
-  assert.equal(gpxYearLabel(null, 'sl'), 'Letnica sledi ni potrjena');
-  assert.equal(gpxYearLabel(null, 'en'), 'Track year is unconfirmed');
-  for (const language of ['sl', 'en']) for (const year of [2022, 2026, 2027]) {
-    const label = gpxYearLabel(year, language);
-    assert.ok(label.includes(String(year)));
-    assert.doesNotMatch(label, /potrjena|confirmed/i);
+test('year labels distinguish older, same, newer and unknown tracks in both languages', () => {
+  const cases = [
+    [2025, 'Arhivska GPX-sled 2025', 'Archived GPX track 2025'],
+    [2027, 'GPX-sled z oznako 2027', 'GPX track labelled 2027'],
+    [2028, 'GPX-sled z oznako 2028', 'GPX track labelled 2028'],
+    [null, 'GPX-sled · letnica ni potrjena', 'GPX track · year unconfirmed']
+  ];
+  for (const [year, sl, en] of cases) {
+    assert.equal(gpxYearLabel(year, '2027', 'sl'), sl);
+    assert.equal(gpxYearLabel(year, '2027', 'en'), en);
   }
 });
 

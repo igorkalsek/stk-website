@@ -15,7 +15,7 @@ const en = language === 'en';
       {links.map(link => (
         <li>
           <h3>{link.route}</h3>
-          <p class="gpx-meta">{en ? 'Archive track' : 'Arhivska sled'} · {gpxYearLabel(link.year, language)} · <a href={link.sourceUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="uradna_stran">{en ? 'Organizer source' : 'Vir organizatorja'}</a></p>
+          <p class="gpx-meta">{gpxYearLabel(link.year, event.year, language)} · <a href={link.sourceUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="uradna_stran">{en ? 'Organizer source' : 'Vir organizatorja'}</a></p>
           <a class="button button-small button-secondary-light" href={link.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type="gpx" data-stk-event-id={getStableEventId(event).toUpperCase()} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail">{link.kind === 'ZIP' ? (en ? 'Open ZIP with GPX' : 'Odpri ZIP z GPX') : (en ? 'Open GPX' : 'Odpri GPX')}</a>
         </li>
       ))}
