@@ -1,0 +1,1619 @@
+{
+  "checked_at": "2026-11-03T09:37:38.735202+00:00",
+  "research_head": "92e7994fa66b154b415b36153e12722ad2acef16",
+  "base_main": "624bc3d",
+  "method": "Anonymous GET, organizer-page href verification, SHA-256 against P0F, GPX XML coordinate checks; ZIP members validated in memory. No files rehosted.",
+  "entries": [
+    {
+      "file_id": "P0D-F013",
+      "event": "RIBN’CA Trail",
+      "source_url": "https://ribncatrail.si/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/",
+        "sha256": "46b12efde384e1862b717240b78cb0810ff5d1f4051cdeeaf9e747d0fa022c6c",
+        "bytes": 197821
+      },
+      "source_links_target": true,
+      "target_url": "https://ribncatrail.si/downloads/KUHAVNCA.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/downloads/KUHAVNCA.gpx",
+        "sha256": "4c0be80161add17fda244c07f50a4688c7856534154ab5bc8104b488f402bd8e",
+        "bytes": 53955
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "4c0be80161add17fda244c07f50a4688c7856534154ab5bc8104b488f402bd8e",
+          "points": 625,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Kuhavn’ca",
+      "research_gpx_file_year": 2022,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F014",
+      "event": "RIBN’CA Trail",
+      "source_url": "https://ribncatrail.si/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/",
+        "sha256": "46b12efde384e1862b717240b78cb0810ff5d1f4051cdeeaf9e747d0fa022c6c",
+        "bytes": 197821
+      },
+      "source_links_target": true,
+      "target_url": "https://ribncatrail.si/downloads/CEBULARCA.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/downloads/CEBULARCA.gpx",
+        "sha256": "7bc7217bc0d53c9da2dc59b53385e7ec90aa4128dea722111cea87cf69c7f40f",
+        "bytes": 133172
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "7bc7217bc0d53c9da2dc59b53385e7ec90aa4128dea722111cea87cf69c7f40f",
+          "points": 1558,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Čebular’ca",
+      "research_gpx_file_year": 2022,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F015",
+      "event": "RIBN’CA Trail",
+      "source_url": "https://ribncatrail.si/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/",
+        "sha256": "46b12efde384e1862b717240b78cb0810ff5d1f4051cdeeaf9e747d0fa022c6c",
+        "bytes": 197821
+      },
+      "source_links_target": true,
+      "target_url": "https://ribncatrail.si/downloads/RIBEZN.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://ribncatrail.si/downloads/RIBEZN.gpx",
+        "sha256": "c8fbd41d21002abefebb69377a58d6633d03a1c60c32c2ec3a77730d3f20e5cb",
+        "bytes": 95230
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "c8fbd41d21002abefebb69377a58d6633d03a1c60c32c2ec3a77730d3f20e5cb",
+          "points": 1108,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Ribežn",
+      "research_gpx_file_year": 2022,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F019",
+      "event": "Kriška gora Trail",
+      "source_url": "https://www.kriskagora-trail.si/kosuta/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/kosuta/",
+        "sha256": "4bf0326b9623a99181cd6f0bd44e23423d7533cd67bbcb8a61d27393e05c7b1e",
+        "bytes": 262946
+      },
+      "source_links_target": true,
+      "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Kosuta2025.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Kosuta2025.gpx",
+        "sha256": "efcc3d912da14d495940b80cbba58c26fc4ed9aad3a592413cd064da778e81b4",
+        "bytes": 152375
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "efcc3d912da14d495940b80cbba58c26fc4ed9aad3a592413cd064da778e81b4",
+          "points": 1696,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Košuta 50 km",
+      "research_gpx_file_year": 2025,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F020",
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "source_url": "https://ultratrail.si/sl/emperor/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/emperor/",
+        "sha256": "ca1b0fe23bcd35aa176a42cc292c22c703d31643f90bf6a684a53e0b63994084",
+        "bytes": 335140
+      },
+      "source_links_target": true,
+      "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-emperor-160-km_100420206.zip",
+      "target": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-emperor-160-km_100420206.zip",
+        "sha256": "2f240ac61dc05775c69c79dbf8f16cc41ce37d2bd50ef9e1de4f292256613748",
+        "bytes": 198859
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-emperor-160-km_100420206.gpx",
+          "sha256": "73ac8d705a0f1627418b0802353c4f576f75171c5b45471843b423566527e075",
+          "points": 22376,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Emperor",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0D-F022",
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "source_url": "https://ultratrail.si/sl/gladiator/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/gladiator/",
+        "sha256": "6ef448be4ef43fded63bf07ed4f8c6de20eda312e59163b50b38d5d89d31a3c9",
+        "bytes": 332655
+      },
+      "source_links_target": true,
+      "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-gladiator-60-km_10042026.zip",
+      "target": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-gladiator-60-km_10042026.zip",
+        "sha256": "358c915cd010fefda7511a19255bd6345dafd4699bb5898cb78865eea3cf5efd",
+        "bytes": 88718
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-gladiator-60-km_10042026.gpx",
+          "sha256": "92da04c888eb287697dd8a22c29fbbbdf7e72112251e0a11f020983d4994af42",
+          "points": 9818,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Gladiator",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0D-F031",
+      "event": "Kriška gora Trail",
+      "source_url": "https://www.kriskagora-trail.si/muflon/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/muflon/",
+        "sha256": "0ae4ea557facb5e757c5a922994284f0aea1d2c2c0aa514e7856ad54d992f504",
+        "bytes": 262659
+      },
+      "source_links_target": true,
+      "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx",
+        "sha256": "f551a114ccb3ef5b7ddcf1bbfe940dfa528a73e3a6bd2293c79fae4c6918c7d6",
+        "bytes": 240055
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "f551a114ccb3ef5b7ddcf1bbfe940dfa528a73e3a6bd2293c79fae4c6918c7d6",
+          "points": 2558,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Muflon 20 km",
+      "research_gpx_file_year": 2025,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F032",
+      "event": "Kriška gora Trail",
+      "source_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+        "sha256": "127cd12bbf0aa2c2609bfd53b1218982df7ecd9779055cc8c2b781043e393c00",
+        "bytes": 257593
+      },
+      "source_links_target": true,
+      "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx",
+        "sha256": "1a73b3c2f3206715c4c38c39f85f6136c12582c4f017b4fd4bea16080be1fcb6",
+        "bytes": 11438
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "1a73b3c2f3206715c4c38c39f85f6136c12582c4f017b4fd4bea16080be1fcb6",
+          "points": 117,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Vertikala 4 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F034",
+      "event": "K24 Ultra Trail",
+      "source_url": "https://k24trail.si/proge/k24-trail-50km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-50km/",
+        "sha256": "d223232d7b0a73bdbeda5bd94edc809eb09abef6e50e3d7aca86a2aa1498c461",
+        "bytes": 206476
+      },
+      "source_links_target": true,
+      "target_url": "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx",
+        "sha256": "80f4c21957e9bc188de4417cd71b120f105a4edb4ea7ebeef8b679193bbcf7c0",
+        "bytes": 1455287
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "80f4c21957e9bc188de4417cd71b120f105a4edb4ea7ebeef8b679193bbcf7c0",
+          "points": 17809,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "50 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F036",
+      "event": "K24 Ultra Trail",
+      "source_url": "https://k24trail.si/proge/k24-trail-10km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-10km/",
+        "sha256": "181f775688f29039a47106718bf690ca9a8a1fd483a9493fd778f1c20bc6c2f1",
+        "bytes": 193328
+      },
+      "source_links_target": true,
+      "target_url": "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx",
+        "sha256": "edda3be6ae9f8f580c1973d0bbaed4074530b310f63675148ff2e4b8b5ea9808",
+        "bytes": 591424
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "edda3be6ae9f8f580c1973d0bbaed4074530b310f63675148ff2e4b8b5ea9808",
+          "points": 7563,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "10 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F037",
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "source_url": "https://ultratrail.si/sl/legionar",
+      "source": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/legionar/",
+        "sha256": "762ef23119a15f9e80780840b5bbf5ae0b86214499908271dee8cf97a3179264",
+        "bytes": 328226
+      },
+      "source_links_target": true,
+      "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+      "target": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+        "sha256": "8d3a6c0862c3eea7724a82fe02d22a59af23df60c91bfd2dc3d3c320ab157243",
+        "bytes": 60459
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.gpx",
+          "sha256": "e4f0fdae8d5d840fcf1c3efb324239cd94d5f34b46b14aae95c323c6558e24e3",
+          "points": 7129,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "OUT_OF_SCOPE",
+      "selection_note": "Sufficient UTVV coverage in P1; scope limit.",
+      "research_route": "Legionar",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0D-F038",
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "source_url": "https://ultratrail.si/sl/asterix",
+      "source": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/asterix/",
+        "sha256": "137c06b1826c577894cbca2b12fa65749479641dd11895c898c1c92712e414f3",
+        "bytes": 328978
+      },
+      "source_links_target": true,
+      "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+      "target": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+        "sha256": "1b58e24d334ffc2e81af45b6553b258be760133c49c8811f67c894bfc9b8c936",
+        "bytes": 12254
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.gpx",
+          "sha256": "1ba6bfd7d6055ec785e14ef5551a5b8fdccf2f140d1bc2b932671fa424f30a0e",
+          "points": 1285,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "OUT_OF_SCOPE",
+      "selection_note": "Sufficient UTVV coverage in P1; scope limit.",
+      "research_route": "Asterix",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0D-F039",
+      "event": "Hg Trail",
+      "source_url": "https://hgtrail-idrija.si/laufar/",
+      "source": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/laufar/",
+        "sha256": "2e9a71949ae5c043fb6e9a3a0404a7c8542127688c4ee8a6e2a5940b9a5b3d8e",
+        "bytes": 137299
+      },
+      "source_links_target": true,
+      "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx",
+        "sha256": "47f238e1d25cbfe650b30aad16f29f88b983e0f50d5a0594cff94683401c5ad1",
+        "bytes": 264286
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "47f238e1d25cbfe650b30aad16f29f88b983e0f50d5a0594cff94683401c5ad1",
+          "points": 1925,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Laufar",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F040",
+      "event": "Hg Trail",
+      "source_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+      "source": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+        "sha256": "920ec7d6df8c45935deeefda819aa3b787d1077d1bfe43a7f981018af3c7c175",
+        "bytes": 137462
+      },
+      "source_links_target": true,
+      "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx",
+        "sha256": "a6f00d9f80cae3fd7c087226633cb55cb4c8ec61e0575e37d8bc39594e645050",
+        "bytes": 138250
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "a6f00d9f80cae3fd7c087226633cb55cb4c8ec61e0575e37d8bc39594e645050",
+          "points": 1625,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Berkmandlc",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F041",
+      "event": "Hg Trail",
+      "source_url": "https://hgtrail-idrija.si/cipka-trail/",
+      "source": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/cipka-trail/",
+        "sha256": "74cdad317c855c462251c03d1521d6608ab370b62287563798f17358378fcbb2",
+        "bytes": 137103
+      },
+      "source_links_target": true,
+      "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx",
+        "sha256": "ccd2cad92c3fcf397a6c1d4a42caabee3b8fbabc664340694a5796482af418d8",
+        "bytes": 69340
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "ccd2cad92c3fcf397a6c1d4a42caabee3b8fbabc664340694a5796482af418d8",
+          "points": 811,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Čipka",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F042",
+      "event": "OBALA Ultra Trail",
+      "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+        "sha256": "d5b62bd34c0d1bd603de074794d510bfa966552507d5545db31806c5cfbe1782",
+        "bytes": 234370
+      },
+      "source_links_target": true,
+      "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+        "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5",
+        "bytes": 564525
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5",
+          "points": 4383,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "108 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F045",
+      "event": "Slovenski gozdarski trail",
+      "source_url": "https://gozdarski-trail.si/bukev/",
+      "source": {
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/bukev/",
+        "sha256": "d81a516ec37977e676be4c932222bf1475918293a4a0c8fcd8cc551a96ce7714",
+        "bytes": 103507
+      },
+      "source_links_target": true,
+      "target_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx",
+        "sha256": "ee07f9ee943b389b4c0fe6714a4ab64eca312b65007c7a26923b01bdcd219ba0",
+        "bytes": 260977
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "ee07f9ee943b389b4c0fe6714a4ab64eca312b65007c7a26923b01bdcd219ba0",
+          "points": 1887,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Bukev 34 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F046",
+      "event": "Slovenski gozdarski trail",
+      "source_url": "https://gozdarski-trail.si/jelka/",
+      "source": {
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/jelka/",
+        "sha256": "b73c0b6f690c8353e59edd794abea6001963e6a8c722d6952d6081aabfe490a7",
+        "bytes": 103687
+      },
+      "source_links_target": true,
+      "target_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx",
+        "sha256": "3391aa2a3f51959ec36312aa906407cdadd36f8d9d65409cd35a69d09e03f04c",
+        "bytes": 86959
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "3391aa2a3f51959ec36312aa906407cdadd36f8d9d65409cd35a69d09e03f04c",
+          "points": 626,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "REVIEW",
+      "selection_note": "REVIEW: possible geometry duplicate P0D-F017 remains unresolved.",
+      "research_route": "Jelka 14 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F047",
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "source_url": "https://ultratrail.si/sl/centurion/",
+      "source": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/centurion/",
+        "sha256": "b8896321fc7be57ad3f6f825f542432a31901547d201351791c89da872e2308d",
+        "bytes": 334693
+      },
+      "source_links_target": true,
+      "target_url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
+      "target": {
+        "status": 200,
+        "final_url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
+        "sha256": "0ba1d0c0e517b6cbfd29d017abdd97cff5e9152bd2c5ae61765c45c77e973c52",
+        "bytes": 100163
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.gpx",
+          "sha256": "3926f6aa2efaddc4d6c2a15e2e3f02b8f6a25c7f9fdc91c50fe6750936b21e28",
+          "points": 9176,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Centurion",
+      "research_gpx_file_year": 2027,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0D-F048",
+      "event": "OBALA Ultra Trail",
+      "source_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+        "sha256": "9ba5cc704d741e6f12139409e22d7a7944bb88ecc4544bc19c64d1ee17ddbcad",
+        "bytes": 230753
+      },
+      "source_links_target": true,
+      "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+        "sha256": "440aad612e997ef74333eaed39d6cd4328f162f9a2fc8329aa0c2758ec5da765",
+        "bytes": 51797
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "440aad612e997ef74333eaed39d6cd4328f162f9a2fc8329aa0c2758ec5da765",
+          "points": 400,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "OUT_OF_SCOPE",
+      "selection_note": "Sufficient OBALA coverage in P1; scope limit.",
+      "research_route": "11 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F049",
+      "event": "OBALA Ultra Trail",
+      "source_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+        "sha256": "a67b044672243a70e62f6a14495c4be438788045b938f73cbfd3def6c0bca36c",
+        "bytes": 231547
+      },
+      "source_links_target": true,
+      "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+        "sha256": "b0b5a9c618c7605c427c6df326b6a11ef71e4d2c5aad2f1f5194a718c503bd64",
+        "bytes": 79628
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "b0b5a9c618c7605c427c6df326b6a11ef71e4d2c5aad2f1f5194a718c503bd64",
+          "points": 615,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "17 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F050",
+      "event": "OBALA Ultra Trail",
+      "source_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+        "sha256": "f906e47e05f60c884c66a5ab7b8814fd23e7fa838d137deadaff0bd5903df304",
+        "bytes": 235170
+      },
+      "source_links_target": true,
+      "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+        "sha256": "9fc9d0489e9d7163a431a01bf4753bb3d1b57481448a31d60aed55d004ffc2ac",
+        "bytes": 172216
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "9fc9d0489e9d7163a431a01bf4753bb3d1b57481448a31d60aed55d004ffc2ac",
+          "points": 1339,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "35 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0D-F051",
+      "event": "OBALA Ultra Trail",
+      "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+      "source": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+        "sha256": "b8f65b210e9bfeb46f7bcc72ca6c929b9410ced1d3f0d8610bf9179b66407580",
+        "bytes": 232674
+      },
+      "source_links_target": true,
+      "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+        "sha256": "0142703f14688bd7c8fb021c0dae894a9c13746ecf56c5ecb5480d0a3e5eadd4",
+        "bytes": 338691
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "0142703f14688bd7c8fb021c0dae894a9c13746ecf56c5ecb5480d0a3e5eadd4",
+          "points": 2629,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "OUT_OF_SCOPE",
+      "selection_note": "Sufficient OBALA coverage in P1; scope limit.",
+      "research_route": "64 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F013",
+      "event": "Go4Trail",
+      "source_url": "https://go4trail.si/sl/proge/go-v3",
+      "source": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-v3",
+        "sha256": "9da22ef666bf91c5c2991437a2f959fb2600ea21e3c10d4160be46d5089b6b4a",
+        "bytes": 154527
+      },
+      "source_links_target": true,
+      "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+        "sha256": "93cecea1e43e1a98ff24f0b8da1c9532664ba4a71056055b9bfd11650aecb040",
+        "bytes": 210814
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "93cecea1e43e1a98ff24f0b8da1c9532664ba4a71056055b9bfd11650aecb040",
+          "points": 1634,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "GO 3V",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F014",
+      "event": "Sabotin Trail Evening",
+      "source_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+      "source": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+        "sha256": "b8428ff5042d64d5e688c0fc3fbf31befe330631ccd1b5f3ad259c3894388469",
+        "bytes": 150087
+      },
+      "source_links_target": true,
+      "target_url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+        "sha256": "8e8dd5f7622fe8dd1f8cb436e8e22cd55d53f9635d5291e4ac729f9563d94937",
+        "bytes": 308886
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "8e8dd5f7622fe8dd1f8cb436e8e22cd55d53f9635d5291e4ac729f9563d94937",
+          "points": 1158,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "13,3 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F015",
+      "event": "Velenje Trail",
+      "source_url": "https://velenjetrail.si/trase/",
+      "source": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "sha256": "804e38e11580a2b64014fd979e9862659ade186c0d921d0c8cc9fd38bd890e4f",
+        "bytes": 177010
+      },
+      "source_links_target": true,
+      "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Dru%C5%BEinski%20trail%202024.gpx",
+        "sha256": "b10f8128c46864e88ab8649059d39aa5d34195f4f925f91ed7aa6ec875bebf02",
+        "bytes": 59334
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "b10f8128c46864e88ab8649059d39aa5d34195f4f925f91ed7aa6ec875bebf02",
+          "points": 455,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Družinski",
+      "research_gpx_file_year": 2024,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F016",
+      "event": "Velenje Trail",
+      "source_url": "https://velenjetrail.si/trase/",
+      "source": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "sha256": "804e38e11580a2b64014fd979e9862659ade186c0d921d0c8cc9fd38bd890e4f",
+        "bytes": 177010
+      },
+      "source_links_target": true,
+      "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+        "sha256": "b6a43c4981b4a9d8ceb3a49eb4f55831ebe06f90718ced09c58cae201cb804ca",
+        "bytes": 64576
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "b6a43c4981b4a9d8ceb3a49eb4f55831ebe06f90718ced09c58cae201cb804ca",
+          "points": 681,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Pozoj",
+      "research_gpx_file_year": 2025,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F017",
+      "event": "Velenje Trail",
+      "source_url": "https://velenjetrail.si/trase/",
+      "source": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "sha256": "804e38e11580a2b64014fd979e9862659ade186c0d921d0c8cc9fd38bd890e4f",
+        "bytes": 177010
+      },
+      "source_links_target": true,
+      "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+        "sha256": "caa70b969ae6c566068eb88a10edac2e4039d1edaf1561387dc83d58187850c9",
+        "bytes": 132189
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "caa70b969ae6c566068eb88a10edac2e4039d1edaf1561387dc83d58187850c9",
+          "points": 1417,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Mastodont",
+      "research_gpx_file_year": 2025,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F021",
+      "event": "Hrastnik Trail",
+      "source_url": "https://hrastnik-trail.si/",
+      "source": {
+        "status": 200,
+        "final_url": "https://hrastnik-trail.si/",
+        "sha256": "83fb5efe523a3625220d938529203d44c6d4fe1a2c44acefac8bba4952388025",
+        "bytes": 210649
+      },
+      "source_links_target": true,
+      "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+        "sha256": "9022db1c15e7f725330dfc767b64f0ac979233827f3be82f250732f7fe37f1fa",
+        "bytes": 43593
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "9022db1c15e7f725330dfc767b64f0ac979233827f3be82f250732f7fe37f1fa",
+          "points": 465,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Razglednih 12",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F022",
+      "event": "Hrastnik Trail",
+      "source_url": "https://hrastnik-trail.si/",
+      "source": {
+        "status": 200,
+        "final_url": "https://hrastnik-trail.si/",
+        "sha256": "83fb5efe523a3625220d938529203d44c6d4fe1a2c44acefac8bba4952388025",
+        "bytes": 210649
+      },
+      "source_links_target": true,
+      "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+        "sha256": "20553e5ef609ba6a3cc7321a6ab90c14b2464aabf5e896ad7eea1163de5bc512",
+        "bytes": 103326
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "20553e5ef609ba6a3cc7321a6ab90c14b2464aabf5e896ad7eea1163de5bc512",
+          "points": 2105,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Turističnih 6",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F023",
+      "event": "Lahinja Trail",
+      "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "sha256": "07cc8b157b9aff60cf888cd3b24a883e0d8c875e6abd4de671a4f770314d1f62",
+        "bytes": 87723
+      },
+      "source_links_target": true,
+      "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+        "sha256": "bbfe8b74c04d72e8a3d785fe6d68edd6490c073ac8446b6e074a7d3672643ea7",
+        "bytes": 52973
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "bbfe8b74c04d72e8a3d785fe6d68edd6490c073ac8446b6e074a7d3672643ea7",
+          "points": 347,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Duma",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F024",
+      "event": "Lahinja Trail",
+      "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "sha256": "07cc8b157b9aff60cf888cd3b24a883e0d8c875e6abd4de671a4f770314d1f62",
+        "bytes": 87723
+      },
+      "source_links_target": true,
+      "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+        "sha256": "a847db1beb05d8f87ccf6964a47c1d88d7f50204ddceca47a8e84e2e855704a4",
+        "bytes": 120124
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "a847db1beb05d8f87ccf6964a47c1d88d7f50204ddceca47a8e84e2e855704a4",
+          "points": 796,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Velikobukovska",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F025",
+      "event": "Lahinja Trail",
+      "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "sha256": "07cc8b157b9aff60cf888cd3b24a883e0d8c875e6abd4de671a4f770314d1f62",
+        "bytes": 87723
+      },
+      "source_links_target": true,
+      "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+        "sha256": "6664948482dc74f9478243ce775e1f40205c2dd02a8ebc0ef5115cd8cbd9dbc9",
+        "bytes": 126880
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "6664948482dc74f9478243ce775e1f40205c2dd02a8ebc0ef5115cd8cbd9dbc9",
+          "points": 1243,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Republikanka",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F032",
+      "event": "Go4Trail",
+      "source_url": "https://go4trail.si/sl/proge/go-ultra",
+      "source": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-ultra",
+        "sha256": "ec7a9073bb34e046c26e1b5fded451f67d05222355d10acf3078019cbf53d292",
+        "bytes": 146166
+      },
+      "source_links_target": true,
+      "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+        "sha256": "ef79f4f44dda241aedf2fded53696836064a10002a17f6af30b8fcfd7afcfb42",
+        "bytes": 466493
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "ef79f4f44dda241aedf2fded53696836064a10002a17f6af30b8fcfd7afcfb42",
+          "points": 3619,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "GO Ultra 64 km",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F033",
+      "event": "Go4Trail",
+      "source_url": "https://go4trail.si/sl/proge/go-trim",
+      "source": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-trim",
+        "sha256": "2468519a3f422f9d508bbdb05482fcc503d793693cc96758f1d41f1f03eee9ca",
+        "bytes": 142576
+      },
+      "source_links_target": true,
+      "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+        "sha256": "cd8eacf12242fef275f8c823e7418e0e396d95f593036f567ff53c19351a3bbb",
+        "bytes": 143669
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "cd8eacf12242fef275f8c823e7418e0e396d95f593036f567ff53c19351a3bbb",
+          "points": 1112,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "GO Trim 13 km (aktualna)",
+      "research_gpx_file_year": 2026,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F037",
+      "event": "Vzpon na Široko",
+      "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+      "source": {
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/vzponsiroko/",
+        "sha256": "7ed7a07bf41cc8ef334956ff46071cd1e7d23081f86ec2eef229502203c79709",
+        "bytes": 169023
+      },
+      "source_links_target": true,
+      "target_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+      "target": {
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VN%C5%A0%20trail%20tek%2012km.gpx",
+        "sha256": "f79aa5bdc3c7e29f9b46129b28ffd4c6ed713ef1bdd58ee72af5176c9142cfba",
+        "bytes": 583306
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": null,
+          "sha256": "f79aa5bdc3c7e29f9b46129b28ffd4c6ed713ef1bdd58ee72af5176c9142cfba",
+          "points": 1426,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "SELECTED_EXTERNAL_ARCHIVE_LINK",
+      "selection_note": "Exact public Worker edition fingerprint checked; organizer-linked file unchanged from P0F. Archive use only, no current-course certification or rehosting rights inferred.",
+      "research_route": "Trail gor-dol 12 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "GPX"
+    },
+    {
+      "file_id": "P0E-F039",
+      "event": "Gozdni tek okoli Ajdovščine nad Dolom",
+      "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+      "source": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "sha256": "dd2e3720a11d0b1ba74ec227f9cda52f275f76c9f4ee98931973e64b6024c719",
+        "bytes": 188770
+      },
+      "source_links_target": true,
+      "target_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+      "target": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+        "sha256": "77bfd64dba548aafd19a859f43533b3aa3e5045a94f6c2010319868f41647cdd",
+        "bytes": 18741
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 11 km_6494_17767858600.gpx",
+          "sha256": "d805ebc09ca836c387ec32dc9dc05ece6212179aadc1705cccf660ec5818e221",
+          "points": 923,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 6 km_6494_17767858601.gpx",
+          "sha256": "6e05c01b8478817bd3c2dc2b4651f44e9a5cb21761ddb768ed1bcdeba45bf6e3",
+          "points": 515,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 2.5 km_6494_17767858602.gpx",
+          "sha256": "ef7076fcad38e95acf3d2373ec8b8bc241b2133e374691a3b1320847956d8622",
+          "points": 204,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "REVIEW",
+      "selection_note": "REVIEW: organizer-to-registration-platform provenance needs an additional explicit source check.",
+      "research_route": "11 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0E-F040",
+      "event": "Gozdni tek okoli Ajdovščine nad Dolom",
+      "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+      "source": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "sha256": "dd2e3720a11d0b1ba74ec227f9cda52f275f76c9f4ee98931973e64b6024c719",
+        "bytes": 188770
+      },
+      "source_links_target": true,
+      "target_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+      "target": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+        "sha256": "77bfd64dba548aafd19a859f43533b3aa3e5045a94f6c2010319868f41647cdd",
+        "bytes": 18741
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 11 km_6494_17767858600.gpx",
+          "sha256": "d805ebc09ca836c387ec32dc9dc05ece6212179aadc1705cccf660ec5818e221",
+          "points": 923,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 6 km_6494_17767858601.gpx",
+          "sha256": "6e05c01b8478817bd3c2dc2b4651f44e9a5cb21761ddb768ed1bcdeba45bf6e3",
+          "points": 515,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 2.5 km_6494_17767858602.gpx",
+          "sha256": "ef7076fcad38e95acf3d2373ec8b8bc241b2133e374691a3b1320847956d8622",
+          "points": 204,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "REVIEW",
+      "selection_note": "REVIEW: same ZIP/provenance as P0E-F039.",
+      "research_route": "2.5 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "ZIP_WITH_GPX"
+    },
+    {
+      "file_id": "P0E-F041",
+      "event": "Gozdni tek okoli Ajdovščine nad Dolom",
+      "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+      "source": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "sha256": "dd2e3720a11d0b1ba74ec227f9cda52f275f76c9f4ee98931973e64b6024c719",
+        "bytes": 188770
+      },
+      "source_links_target": true,
+      "target_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+      "target": {
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+        "sha256": "77bfd64dba548aafd19a859f43533b3aa3e5045a94f6c2010319868f41647cdd",
+        "bytes": 18741
+      },
+      "hash_matches_p0f": true,
+      "members": [
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 11 km_6494_17767858600.gpx",
+          "sha256": "d805ebc09ca836c387ec32dc9dc05ece6212179aadc1705cccf660ec5818e221",
+          "points": 923,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 6 km_6494_17767858601.gpx",
+          "sha256": "6e05c01b8478817bd3c2dc2b4651f44e9a5cb21761ddb768ed1bcdeba45bf6e3",
+          "points": 515,
+          "valid": true
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 2.5 km_6494_17767858602.gpx",
+          "sha256": "ef7076fcad38e95acf3d2373ec8b8bc241b2133e374691a3b1320847956d8622",
+          "points": 204,
+          "valid": true
+        }
+      ],
+      "technical_result": "APPROVED_EXTERNAL_LINK",
+      "publication_decision": "REVIEW",
+      "selection_note": "REVIEW: same ZIP/provenance as P0E-F039.",
+      "research_route": "6 km",
+      "research_gpx_file_year": null,
+      "research_target_kind": "ZIP_WITH_GPX"
+    }
+  ],
+  "bindings": [
+    {
+      "event": "RIBN’CA Trail",
+      "edition": {
+        "year": "2027",
+        "row": "40",
+        "date": "2027-09-04",
+        "name": "RIBN’CA Trail",
+        "place": "Ribnica"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Kriška gora Trail",
+      "edition": {
+        "year": "2027",
+        "row": "35",
+        "date": "2027-05-22",
+        "name": "Kriška gora Trail 2027",
+        "place": "Križe"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Ultra Trail Vipava Valley (UTVV)",
+      "edition": {
+        "year": "2027",
+        "row": "8",
+        "date": "2027-04-23",
+        "name": "UTVV I Feel Slovenia 2027",
+        "place": "Vipavska dolina"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "K24 Ultra Trail",
+      "edition": {
+        "year": "2027",
+        "row": "20",
+        "date": "2027-08-06",
+        "name": "K24 Ultra Trail",
+        "place": "Črna na Koroškem"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Hg Trail",
+      "edition": {
+        "year": "2027",
+        "row": "33",
+        "date": "2027-06-05",
+        "name": "Hg Trail 2027",
+        "place": "Idrija"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "OBALA Ultra Trail",
+      "edition": {
+        "year": "2026",
+        "row": "255",
+        "date": "2026-11-07",
+        "name": "OBALA Ultra-Trail powered by I FEEL SLOVENIA",
+        "place": "Izola"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Slovenski gozdarski trail",
+      "edition": {
+        "year": "2027",
+        "row": "41",
+        "date": "2027-08-28",
+        "name": "3. Slovenski gozdarski trail",
+        "place": "Rogla"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Go4Trail",
+      "edition": {
+        "year": "2026",
+        "row": "256",
+        "date": "2026-11-07",
+        "name": "Go4trail",
+        "place": "Nova Gorica"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Sabotin Trail Evening",
+      "edition": {
+        "year": "2026",
+        "row": "248",
+        "date": "2026-10-17",
+        "name": "4. Sabotin Trail Evening",
+        "place": "Šmaver"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Velenje Trail",
+      "edition": {
+        "year": "2026",
+        "row": "267",
+        "date": "2026-12-05",
+        "name": "Velenje Trail 2026",
+        "place": "Velenje"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Hrastnik Trail",
+      "edition": {
+        "year": "2027",
+        "row": "18",
+        "date": "2027-04-17",
+        "name": "Hrastnik Trail 2027",
+        "place": "Hrastnik"
+      },
+      "worker_generated_at": "2026-11-03T09:38:06.110Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Lahinja Trail",
+      "edition": {
+        "year": "2026",
+        "row": "254",
+        "date": "2026-11-07",
+        "name": "4. Lahinja Trail",
+        "place": "Dragatuš"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    },
+    {
+      "event": "Vzpon na Široko",
+      "edition": {
+        "year": "2026",
+        "row": "181",
+        "date": "2026-08-15",
+        "name": "25. Vzpon na Široko",
+        "place": "Tolminski Lom"
+      },
+      "worker_generated_at": "2026-11-03T09:38:02.803Z",
+      "matched_fields": [
+        "row",
+        "datum",
+        "naziv_prireditve",
+        "kraj",
+        "status_dogodka",
+        "vidno_v_javnem_koledarju"
+      ]
+    }
+  ]
+}

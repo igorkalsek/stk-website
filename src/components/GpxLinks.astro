@@ -1,0 +1,36 @@
+---
+import { getGpxLinks, gpxYearLabel } from '../utils-gpx';
+import { getStableEventId, type PublicRaceEvent } from '../utils-event-detail';
+
+interface Props { event: PublicRaceEvent; language: 'sl' | 'en' }
+const { event, language } = Astro.props;
+const links = getGpxLinks(event);
+const en = language === 'en';
+---
+
+{links.length > 0 && (
+  <section class="info-card event-detail-panel gpx-panel" aria-labelledby="gpx-heading" data-gpx-section>
+    <h2 id="gpx-heading">{en ? 'GPX tracks and routes' : 'GPX-sledi in trase'}</h2>
+    <ul>
+      {links.map(link => (
+        <li>
+          <h3>{link.route}</h3>
+          <p class="gpx-meta">{gpxYearLabel(link.year, event.year, language)} · <a href={link.sourceUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="uradna_stran">{en ? 'Organizer source' : 'Vir organizatorja'}</a></p>
+          <a class="button button-small button-secondary-light" href={link.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type="gpx" data-stk-event-id={getStableEventId(event).toUpperCase()} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail">{link.kind === 'ZIP' ? (en ? 'Open ZIP with GPX' : 'Odpri ZIP z GPX') : (en ? 'Open GPX' : 'Odpri GPX')}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="gpx-warning">{en
+      ? 'These tracks may be from past editions. Their validity for the current event is unconfirmed. Check the organizer’s information before use.'
+      : 'Prikazane sledi so lahko iz preteklih izvedb. Njihova veljavnost za aktualno prireditev ni potrjena. Pred uporabo preverite informacije organizatorja.'}</p>
+  </section>
+)}
+
+<style>
+  .gpx-panel ul { list-style: none; padding: 0; margin: 0; }
+  .gpx-panel li + li { border-top: 1px solid var(--border, #ddd); margin-top: 1rem; padding-top: 1rem; }
+  .gpx-panel h3 { font-size: 1.05rem; margin: 0 0 .35rem; overflow-wrap: anywhere; }
+  .gpx-meta { margin: 0 0 .6rem; font-size: .9rem; overflow-wrap: anywhere; }
+  .gpx-panel .button { min-height: 44px; white-space: normal; }
+  .gpx-warning { margin: 1rem 0 0; font-size: .9rem; }
+</style>
