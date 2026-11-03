@@ -1,4 +1,5 @@
 ---
+import GpxLinks from '../../../components/GpxLinks.astro';
 import RelatedRaceCards from '../../../components/RelatedRaceCards.astro';
 import OrganizerConfirmationBadge from '../../../components/OrganizerConfirmationBadge.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
@@ -320,6 +321,8 @@ const jsonLd = event ? {
                   )}
                 </div>
               )}
+
+              <GpxLinks event={event} language="sl" />
 
               {familyInfo.length > 0 && (
                 <article class="info-card event-detail-panel event-detail-family-callout">
