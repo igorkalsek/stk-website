@@ -7,6 +7,14 @@ const en = lang === 'en';
 const finderHref = en ? '/en/find-races/' : '/iskalnik-tekov/';
 const formHref = en ? '/en/add-or-correct-race/' : '/dodaj-ali-popravi-tek/';
 const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorje/termini-2027/';
+const promoEmail = 'tekaski.koledar@gmail.com';
+const promoFreeSubject = en ? 'STK – free race promotion enquiry' : 'STK – predlog za brezplačno promocijo';
+const promoPaidSubject = en ? 'STK – Featured Race enquiry' : 'STK – zanimanje za Featured Race';
+const promoMailBody = en
+  ? 'Race name:\nYear:\nLink to race:\nWhat would you like the promotion to achieve:\n\nThank you,'
+  : 'Naziv teka:\nLeto izvedbe:\nPovezava do teka:\nKaj želite doseči s promocijo:\n\nLep pozdrav,';
+const promoFreeHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoFreeSubject)}&body=${encodeURIComponent(promoMailBody)}`;
+const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPaidSubject)}&body=${encodeURIComponent(promoMailBody)}`;
 ---
 <main class="organizer-page">
   <section class="page-hero container" aria-labelledby="organizer-title">
@@ -44,5 +52,48 @@ const datesHref = en ? '/en/for-organizers/2027-race-dates/' : '/za-organizatorj
 
   <OrganizerConfirmedRaces {lang} />
 
-  <section class="section container promotion-section" id="promotion" aria-labelledby="promotion-title"><OrganizerWorkflow {lang} active={3} compact /><div class="organizer-claim-card"><div><span class="organizer-status">{en ? 'IN DEVELOPMENT' : 'V PRIPRAVI'}</span><h2 id="promotion-title">{en ? 'Advanced statistics and promotion tools' : 'Napredna statistika in promocijska orodja'}</h2></div><p>{en ? 'Advanced statistics and additional promotion tools are still in development and are not currently available.' : 'Naprednejše statistike in dodatna promocijska orodja so še v pripravi in trenutno niso na voljo.'}</p></div></section>
+  <section class="section container promotion-section" id="promotion" aria-labelledby="promotion-title">
+    <OrganizerWorkflow {lang} active={3} compact />
+    <div class="organizer-claim-card">
+      <div>
+        <span class="organizer-status">{en ? 'GATHERING INTEREST' : 'ZBIRAMO ZANIMANJE'}</span>
+        <h2 id="promotion-title">{en ? 'Help more runners discover your race' : 'Naj vaš tek odkrije več tekačev'}</h2>
+      </div>
+      <p>{en
+        ? 'Organising a smaller, new or lesser-known race? STK helps runners discover races throughout Slovenia. We are gathering interest in additional free editorial promotion and clearly labelled sponsored features.'
+        : 'Organizirate manjši, nov ali manj poznan tek? STK pomaga tekačem odkrivati prireditve po vsej Sloveniji. Zbiramo predloge za dodatno brezplačno uredniško promocijo in zanimanje za jasno označene sponzorirane predstavitve.'}</p>
+
+      <div class="organizer-promo-proof" aria-labelledby="promotion-proof-title">
+        <h3 id="promotion-proof-title">{en ? 'STK at a glance' : 'STK v številkah'}</h3>
+        <ul class="organizer-promo-metrics">
+          <li><strong>{en ? '2,318' : '2.318'}</strong><span>{en ? 'clicks from Google Search' : 'klikov iz iskanja Google'}</span></li>
+          <li><strong>{en ? '20,645' : '20.645'}</strong><span>{en ? 'Facebook post impressions' : 'prikazov objav na Facebooku'}</span></li>
+          <li><strong>{en ? '1,662' : '1.662'}</strong><span>{en ? 'clicks on race-related links' : 'klikov na povezave dogodkov'}</span></li>
+        </ul>
+        <p class="organizer-promo-source">{en
+          ? 'Sources: Google Search Console and Buffer (6 Oct–2 Nov 2026); STK internal analytics (5 Oct–1 Nov 2026). Historical 28-day snapshots, checked 3 Nov 2026. Impressions are not unique people; clicks are not registrations.'
+          : 'Viri: Google Search Console in Buffer (6. 10.–2. 11. 2026); interna analitika STK (5. 10.–1. 11. 2026). Zgodovinski 28-dnevni posnetki, preverjeni 3. 11. 2026. Prikazi niso unikatne osebe, kliki niso prijave.'}</p>
+      </div>
+
+      <div class="organizer-promo-options">
+        <div class="organizer-promo-option">
+          <h3>{en ? 'Free editorial promotion' : 'Brezplačna uredniška promocija'}</h3>
+          <p>{en
+            ? 'We may feature selected smaller, local or new races on STK’s Facebook and Instagram channels. Tell us about your race and your goals. Editorial selection is free, but not guaranteed.'
+            : 'Izbrane manjše, lokalne ali nove teke lahko dodatno predstavimo na STK Facebooku in Instagramu. Sporočite nam, kateri tek pripravljate in kaj želite doseči. Uredniški izbor je brezplačen, ni pa zagotovljen.'}</p>
+          <a class="button button-primary" href={promoFreeHref}>{en ? 'Suggest a race for free promotion' : 'Predlagajte tek za brezplačno promocijo'}</a>
+        </div>
+        <div class="organizer-promo-option">
+          <h3>{en ? 'Featured Race – sponsored promotion' : 'Featured Race – sponzorirana promocija'}</h3>
+          <p>{en
+            ? 'Interested in additional visibility? Let us know if you would consider a limited paid promotional feature. Any paid content will be clearly labelled as sponsored and will not change organic search results or rankings.'
+            : 'Želite dodatno izpostaviti svoj tek? Sporočite nam neobvezujoče zanimanje za omejeno plačljivo promocijo. Plačana vsebina bo jasno označena kot sponzorirana in ne bo vplivala na organsko razvrščanje ali lestvice.'}</p>
+          <a class="button button-secondary" href={promoPaidHref}>{en ? 'I’m interested in Featured Race' : 'Zanima me Featured Race'}</a>
+        </div>
+      </div>
+      <p class="organizer-promo-fineprint">{en
+        ? 'There is no public price list or guaranteed reach during this pilot. Each promotion requires a separate agreement. Contact: tekaski.koledar@gmail.com.'
+        : 'V pilotu še ni javnega cenika ali zagotovljenega dosega. Vsaka promocija zahteva ločen dogovor. Kontakt: tekaski.koledar@gmail.com.'}</p>
+    </div>
+  </section>
 </main>

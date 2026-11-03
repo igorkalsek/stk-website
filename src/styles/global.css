@@ -1118,6 +1118,27 @@ main {
 .organizer-claim-card h2 { margin: 10px 0 0; color: var(--white); }
 .organizer-claim-card p { margin: 0; max-width: 850px; color: #d7e8e2; line-height: 1.7; }
 .organizer-status { display: inline-flex; border-radius: 999px; background: var(--orange); color: #1e2b1e; font-size: .78rem; font-weight: 900; letter-spacing: .08em; padding: 7px 10px; }
+
+/* DEV-037: one compact promotion card, no extra homepage surface. */
+.organizer-promo-proof { display: grid; gap: 12px; padding: clamp(14px,2vw,22px); border-radius: var(--radius-md); background: rgba(255,255,255,.09); }
+.organizer-promo-proof h3, .organizer-promo-option h3 { margin: 0; color: var(--white); font-size: 1.06rem; }
+.organizer-promo-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding: 0; margin: 0; list-style: none; }
+.organizer-promo-metrics li { display: grid; gap: 3px; min-width: 0; }
+.organizer-promo-metrics strong { color: var(--white); font-size: clamp(1.32rem,3vw,1.95rem); font-variant-numeric: tabular-nums; }
+.organizer-promo-metrics span { color: #d7e8e2; font-size: .87rem; line-height: 1.45; }
+.organizer-claim-card .organizer-promo-source, .organizer-claim-card .organizer-promo-fineprint { color: #d7e8e2; font-size: .8rem; line-height: 1.55; }
+.organizer-promo-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.organizer-promo-option { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-width: 0; padding: clamp(14px,2.3vw,22px); border: 1px solid rgba(255,255,255,.24); border-radius: var(--radius-md); }
+.organizer-promo-option p { flex: 1; font-size: .92rem; }
+.organizer-promo-option .button { min-height: 44px; max-width: 100%; white-space: normal; text-align: center; justify-content: center; }
+@media (max-width: 700px) {
+  .organizer-promo-options { grid-template-columns: 1fr; }
+  .organizer-promo-option { align-items: stretch; }
+  .organizer-promo-option .button { width: 100%; }
+}
+@media (max-width: 520px) {
+  .organizer-promo-metrics { grid-template-columns: 1fr; gap: 10px; }
+}
 .organizer-capabilities { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px 24px; margin: 0; padding-left: 1.2rem; color: white; }
 .organizer-final-cta { display: grid; gap: 18px; padding-bottom: 12px; }
 .race-dates-page .planning-intro { gap: 8px; padding-top: 18px; }
