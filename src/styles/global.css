@@ -1132,15 +1132,17 @@ main {
 .organizer-promo-option p { flex: 1; font-size: 1rem; line-height: 1.55; }
 .organizer-promo-option .button { min-height: 44px; max-width: 100%; white-space: normal; text-align: center; justify-content: center; }
 @media (max-width: 700px) {
-  .organizer-promo-options { grid-template-columns: 1fr; }
-  .organizer-promo-option { align-items: stretch; }
-  .organizer-promo-option .button { width: 100%; }
-}
-@media (max-width: 520px) {
-  .organizer-promo-metrics { grid-template-columns: 1fr; gap: 14px; }
+  .organizer-promo-options, .organizer-promo-metrics { grid-template-columns: 1fr; }
+  .organizer-promo-metrics { gap: 14px; }
   .organizer-promo-metrics li { grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); align-items: center; gap: 10px; }
   .organizer-promo-metrics strong { font-size: clamp(1.55rem,6vw,2.1rem); }
   .organizer-promo-metrics span { font-size: .88rem; }
+  .organizer-promo-option { align-items: stretch; }
+  .organizer-promo-option .button { width: 100%; }
+}
+@media (max-width: 380px) {
+  .organizer-promo-metrics li { grid-template-columns: 1fr; gap: 3px; }
+  .organizer-promo-metrics strong { font-size: clamp(1.75rem,8vw,2rem); }
 }
 .organizer-capabilities { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px 24px; margin: 0; padding-left: 1.2rem; color: white; }
 .organizer-final-cta { display: grid; gap: 18px; padding-bottom: 12px; }

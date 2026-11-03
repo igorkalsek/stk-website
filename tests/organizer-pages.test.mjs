@@ -113,8 +113,8 @@ test('promotion keeps metrics readable and stacks options on small screens', () 
   assert.match(component, /organizer-promo-options/);
   assert.match(component, /organizer-promo-metrics/);
   assert.match(styles, /\.organizer-promo-options\s*\{\s*display:\s*grid;/);
-  assert.match(styles, /@media \(max-width: 700px\)\s*\{[\s\S]*?\.organizer-promo-options\s*\{\s*grid-template-columns:\s*1fr;/);
-  assert.match(styles, /@media \(max-width: 520px\)\s*\{[\s\S]*?\.organizer-promo-metrics\s*\{\s*grid-template-columns:\s*1fr;/);
+  assert.match(styles, /@media \(max-width: 700px\)\s*\{[\s\S]*?\.organizer-promo-options, \.organizer-promo-metrics\s*\{\s*grid-template-columns:\s*1fr;/);
+  assert.match(styles, /@media \(max-width: 380px\)\s*\{[\s\S]*?\.organizer-promo-metrics li\s*\{\s*grid-template-columns:\s*1fr;/);
   assert.match(styles, /\.organizer-promo-metrics strong\s*\{[^}]*font-size:\s*clamp\(1\.75rem,3vw,2\.45rem\)/);
   assert.match(styles, /\.organizer-promo-option \.button\s*\{[^}]*min-height:\s*44px;/);
 });
