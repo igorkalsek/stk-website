@@ -44,7 +44,7 @@ for (const home of homes) for (const width of [390, 1440]) {
     await expect(card).toBeVisible();
     await expect(page.locator('.home-hero-card')).toHaveClass(/home-hero-with-featured/);
     await expect(card.locator('h2')).toHaveText(home.label);
-    await expect(card.locator('[data-spotlight-title]')).toHaveText(featured.naziv_prireditve);
+    await expect(card.locator('[data-spotlight-title]')).toHaveText(featured.naziv_prireditve.replace(/[‐‑‒–—―]/g, '-'));
     await expect(card.locator('[data-spotlight-title]')).toHaveAttribute('href', new RegExp(home.yearPath + '2026/r000005-'));
     await expect(card).toHaveAttribute('data-analytics-event-id', 'r000005');
     await expect(card).toHaveAttribute('data-analytics-event-year', '2026');
