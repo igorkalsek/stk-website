@@ -1,4 +1,4 @@
-import { buildEnglishEventDetailPath, buildEventDetailPath } from './utils-event-detail.js';
+import { buildEnglishEventDetailPath, buildEventDetailPath, getStableEventId } from './utils-event-detail.js';
 import type { PublicRaceEvent } from './utils-event-detail.js';
 
 export const selectUpcomingHomepageEvents = (events: PublicRaceEvent[], limit = 4) => [...events]
@@ -8,6 +8,40 @@ export const selectUpcomingHomepageEvents = (events: PublicRaceEvent[], limit = 
     a.title.localeCompare(b.title, 'sl-SI')
   )
   .slice(0, limit);
+
+/** One editorial hero race, selected deterministically each calendar week.
+ * Receives only confirmed, public, future races from mapPublicRaceEvent.
+ * No sponsor flag, vote/interest ranking, or paid placement influences selection. */
+export const selectHomepageSpotlightRace = (
+  events: PublicRaceEvent[],
+  nearest: PublicRaceEvent[],
+  todayIso: string
+): PublicRaceEvent | null => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(todayIso)) return null;
+  const todayUtc = Date.parse(todayIso + 'T00:00:00Z');
+  if (!Number.isFinite(todayUtc)) return null;
+  const dayMs = 86_400_000;
+  const identity = (event: PublicRaceEvent) => event.year + ':' + getStableEventId(event);
+  const excluded = new Set(nearest.map(identity));
+  const unique = new Set<string>();
+  const candidates = events.filter((event) => {
+    const key = identity(event);
+    const eventUtc = Date.parse(event.date + 'T00:00:00Z');
+    const daysUntil = (eventUtc - todayUtc) / dayMs;
+    if (!Number.isFinite(daysUntil) || daysUntil < 14 || daysUntil > 56 || excluded.has(key) || unique.has(key)) return false;
+    unique.add(key);
+    return true;
+  }).sort((a, b) =>
+    a.date.localeCompare(b.date) ||
+    a.place.localeCompare(b.place, 'sl-SI') ||
+    a.title.localeCompare(b.title, 'sl-SI') ||
+    identity(a).localeCompare(identity(b))
+  );
+  if (!candidates.length) return null;
+  // Week starts Monday; same input and same week always yield the same race.
+  const week = Math.floor((todayUtc - Date.UTC(1970, 0, 5)) / (7 * dayMs));
+  return candidates[((week % candidates.length) + candidates.length) % candidates.length];
+};
 
 type FeaturedSelectionOptions<T> = {
   todayValue: number;
