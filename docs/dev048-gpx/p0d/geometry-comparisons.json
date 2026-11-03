@@ -1,0 +1,46 @@
+[
+  {
+    "left": "P0D-F016",
+    "right": "P0D-F045",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "byte_equal": false,
+    "rounded_geometry_hash_equal": false,
+    "samples": 256,
+    "p95_separation_m": 106.6,
+    "max_separation_m": 482.6,
+    "method": "Normalized cumulative within-segment length, linear interpolation; choose forward/reverse, no cyclic alignment. Screening only, not full geometry equivalence."
+  },
+  {
+    "left": "P0D-F017",
+    "right": "P0D-F046",
+    "status": "POSSIBLE_GEOMETRY_DUPLICATE",
+    "byte_equal": false,
+    "rounded_geometry_hash_equal": false,
+    "samples": 256,
+    "p95_separation_m": 3.5,
+    "max_separation_m": 66.4,
+    "method": "Normalized cumulative within-segment length, linear interpolation; choose forward/reverse, no cyclic alignment. Screening only, not full geometry equivalence."
+  },
+  {
+    "left": "P0D-F005",
+    "right": "P0D-F012",
+    "status": "POSSIBLE_GEOMETRY_DUPLICATE",
+    "byte_equal": false,
+    "rounded_geometry_hash_equal": false,
+    "samples": 256,
+    "p95_separation_m": 12.4,
+    "max_separation_m": 56.7,
+    "method": "Normalized cumulative within-segment length, linear interpolation; choose forward/reverse, no cyclic alignment. Screening only, not full geometry equivalence."
+  },
+  {
+    "left": "P0D-F021",
+    "right": "P0D-F047",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "byte_equal": false,
+    "rounded_geometry_hash_equal": false,
+    "samples": 256,
+    "p95_separation_m": 5215.0,
+    "max_separation_m": 6290.7,
+    "method": "Normalized cumulative within-segment length, linear interpolation; choose forward/reverse, no cyclic alignment. Screening only, not full geometry equivalence."
+  }
+]

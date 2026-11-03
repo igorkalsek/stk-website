@@ -4,14 +4,18 @@ import argparse
 import copy
 import hashlib
 import ipaddress
+import io
 import json
 import math
 import re
 import socket
+import stat
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+import zipfile
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -20,6 +24,17 @@ HOSTS = frozenset({"www.knaptrail.si", "www.bagus.si", "www.ptrf.si",
                    "www.srd-kras.si", "www.viewgpx.com", "tracedetrail.fr",
                    "www.topografix.com", "stk-master-api.igor-kalsek.workers.dev"})
 MAX_BYTES = 12 * 1024 * 1024
+HOSTS |= frozenset({"ponikva4trail.si", "ribncatrail.si", "gozdarski-trail.si",
+                    "www.atdsavinjcan.eu", "www.kriskagora-trail.si", "ultratrail.si",
+                    "kocevsko-outdoor.si"})
+HOSTS |= frozenset({"k24trail.si", "hgtrail-idrija.si", "trailcelje.eu", "soca-outdoor.com",
+                    "www.soca-outdoor.com", "k6trail.eu", "tdbistrc.org", "www.sportoroz.eu"})
+HOSTS |= frozenset({"obalaultratrail.si", "www.caven.run", "trail-ljubljana.eu", "krastrail.si"})
+MAX_ZIP_MEMBERS = 100
+MAX_EXPANDED_BYTES = 32 * 1024 * 1024
+MAX_COMPRESSION_RATIO = 200
+_LAST_REQUEST = {}
+_REQUEST_DELAY = {}
 NS = {"1.0": "http://www.topografix.com/GPX/1/0", "1.1": "http://www.topografix.com/GPX/1/1"}
 
 
@@ -44,17 +59,25 @@ class Redirects(urllib.request.HTTPRedirectHandler):
         if len(self.chain) >= 5:
             raise ValueError("Too many redirects")
         self.chain.append({"from": req.full_url, "status": code, "to": newurl})
+        throttle(newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def throttle(url):
+    host = urllib.parse.urlsplit(url).hostname
+    time.sleep(max(0, _REQUEST_DELAY.get(host, 1.05) - (time.monotonic() - _LAST_REQUEST.get(host, 0))))
+    _LAST_REQUEST[host] = time.monotonic()
 
 
 def fetch(url):
     evidence = {"url": url, "checked_at": datetime.now(timezone.utc).isoformat(), "redirects": []}
     try:
         check_url(url)
+        throttle(url)
         opener = urllib.request.build_opener(Redirects(evidence["redirects"]))
         req = urllib.request.Request(url, headers={"User-Agent": "STK-DEV048-P0/1.0", "Accept-Encoding": "identity"})
         try:
-            response = opener.open(req, timeout=25)
+            response = opener.open(req, timeout=15)
         except urllib.error.HTTPError as error:
             response = error
         with response as r:
@@ -147,6 +170,9 @@ def validate_gpx(body, expected_km=None):
     if tracks and routes:
         warnings.append("TRACK_AND_ROUTE_PRESENT_DISTANCE_USES_TRACKS")
     copyrights = [ET.tostring(e, encoding="unicode")[:1000] for e in root.iter() if e.tag == q("copyright")]
+    geometry = [[(round(coords[id(p)][0], 6), round(coords[id(p)][1], 6)) for p in seg] for seg in paths]
+    forward = json.dumps(geometry, separators=(",", ":"))
+    reverse = json.dumps([list(reversed(seg)) for seg in reversed(geometry)], separators=(",", ":"))
     return {"structural_check": "PASS", "xsd_validation": "NOT_PERFORMED", "version": version,
             "creator": root.get("creator"), "track_points": sum(map(len, tracks)),
             "route_points": sum(map(len, routes)), "segments": len(paths),
@@ -155,7 +181,64 @@ def validate_gpx(body, expected_km=None):
                      max(x[0] for x in selected), max(x[1] for x in selected)],
             "names_and_descriptions": names[:20], "first_time": times[0] if times else None,
             "last_time": times[-1] if times else None, "copyright_metadata": copyrights,
+            "geometry_sha256_6dp": hashlib.sha256(min(forward, reverse).encode()).hexdigest(),
             "warnings": warnings}
+
+
+def validate_zip(body, expected_km=None):
+    """Inspect in memory; never extract paths or publish payloads. Preflight all members."""
+    if len(body) > MAX_BYTES:
+        raise ValueError("ZIP exceeds download limit")
+    with zipfile.ZipFile(io.BytesIO(body)) as archive:
+        members = archive.infolist()
+        if not members or len(members) > MAX_ZIP_MEMBERS:
+            raise ValueError("ZIP member count limit")
+        total, seen = 0, set()
+        for member in members:
+            name = member.filename
+            parts = name.replace("\\", "/").split("/")
+            if (name.startswith(("/", "\\")) or ".." in parts or "\x00" in member.orig_filename
+                    or any(":" in p for p in parts) or "\\" in name):
+                raise ValueError("Unsafe ZIP path")
+            if name.casefold() in seen:
+                raise ValueError("Duplicate ZIP member name")
+            seen.add(name.casefold())
+            mode = member.external_attr >> 16
+            if stat.S_ISLNK(mode) or stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR):
+                raise ValueError("ZIP symlink or special file")
+            if member.flag_bits & 1:
+                raise ValueError("Encrypted ZIP")
+            if name.lower().endswith((".zip", ".gz", ".7z", ".rar", ".tar")):
+                raise ValueError("Nested archive")
+            total += member.file_size
+            if (member.file_size > MAX_BYTES or total > MAX_EXPANDED_BYTES
+                    or member.file_size / max(1, member.compress_size) > MAX_COMPRESSION_RATIO):
+                raise ValueError("ZIP expansion or compression ratio limit")
+        results = []
+        for member in sorted(members, key=lambda m: m.filename):
+            if member.is_dir():
+                continue
+            with archive.open(member) as stream:
+                prefix = stream.read(4)
+                if prefix in (b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08"):
+                    raise ValueError("Nested archive signature")
+                if not member.filename.lower().endswith(".gpx"):
+                    continue
+                payload = prefix + stream.read(MAX_BYTES + 1 - len(prefix))
+            if len(payload) != member.file_size or len(payload) > MAX_BYTES:
+                raise ValueError("ZIP expanded member size mismatch")
+            result = {"member": member.filename, "bytes": len(payload),
+                      "sha256": hashlib.sha256(payload).hexdigest()}
+            try:
+                result["gpx"] = validate_gpx(payload, expected_km)
+                result["file_status"] = "FILE_VALID"
+            except (ValueError, ET.ParseError) as error:
+                result.update(file_status="INVALID", error=str(error))
+            results.append(result)
+        if not results:
+            raise ValueError("ZIP has no GPX members")
+        return {"archive_sha256": hashlib.sha256(body).hexdigest(), "archive_bytes": len(body),
+                "member_count": len(members), "expanded_bytes": total, "files": results}
 
 
 CLASSIFICATIONS = frozenset({"OFFICIAL_HISTORICAL", "OFFICIAL_2027_CONFIRMED",

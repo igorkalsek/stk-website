@@ -1,5 +1,10 @@
 # DEV-048 — P0: izvor, letnice in identitete GPX
 
+**Dopolnitev P0D, 3. 11. 2026:** [dejanski rezultati in zbirka](p0d/REPORT.md)
+vsebujejo 40 na novo validiranih GPX, skupaj 50 različnih bajtnih datotek pri
+14 prireditvah, in izid vseh 15 prednostnih prenosov. Izvirni P0 tehnični in
+provenienčni posnetki spodaj ostajajo nespremenjeni; razširjen je validator.
+
 **P0 raziskava je zaključena. P1 za uradne trase 2027: NO-GO.**
 Zajem 1. 11. 2026: sedem datotek `OFFICIAL_HISTORICAL`, dve `REVIEW`, ena
 `NOT_AVAILABLE`, nič `OFFICIAL_2027_CONFIRMED` in nič `UNOFFICIAL`.
