@@ -8,7 +8,6 @@ export interface NavItem {
 export const slovenianNavItems: NavItem[] = [
   { href: '/iskalnik-tekov/', label: 'Najdi tek', variant: 'primary' },
   { href: '/moji-teki/', label: 'Moji teki' },
-  { href: '/stk-tekobot/', label: 'Tekobot' },
   { href: '/za-organizatorje/', label: 'Za organizatorje', variant: 'organizer' },
   {
     href: '#vec',
@@ -26,7 +25,6 @@ export const slovenianNavItems: NavItem[] = [
 export const englishNavItems: NavItem[] = [
   { href: '/en/find-races/', label: 'Find races', variant: 'primary' },
   { href: '/en/my-races/', label: 'My races' },
-  { href: '/en/stk-tekobot/', label: 'STK Tekobot' },
   { href: '/en/for-organizers/', label: 'For organisers', variant: 'organizer' },
   {
     href: '#more',

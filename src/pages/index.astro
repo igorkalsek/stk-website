@@ -30,7 +30,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
             <div class="home-hero-actions hero-actions" aria-label="Glavne povezave">
               <a class="button button-primary hero-primary-cta" href="/iskalnik-tekov/">Najdi tek</a>
               <a class="button button-secondary hero-secondary-cta" href="/moji-teki/">Moji teki</a>
-              <a class="home-hero-text-link" href="/stk-tekobot/">Vprašajte Tekobota</a>
             </div>
           </div>
         </div>
@@ -39,15 +38,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
     <section class="container home-stats-strip" aria-label="Statistika Slovenskega Tekaškega Koledarja">
       <HomeYearStats lang="sl" />
-    </section>
-
-    <section class="section container home-featured-upcoming" aria-labelledby="featured-upcoming-title">
-      <div class="section-heading home-featured-heading">
-        <h2 id="featured-upcoming-title">Izpostavljeno v naslednjih dneh</h2>
-      </div>
-      <ol class="home-featured-list" data-featured-upcoming>
-        <li class="home-featured-loading" role="status">Izbiramo bližnje prihodnje teke.</li>
-      </ol>
     </section>
 
     <section class="section container home-current-sections" aria-labelledby="current-title">
@@ -186,10 +176,10 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   import { fetchPublicMaster } from '../utils-public-master';
   import { DEFAULT_PUBLIC_YEAR, buildMasterApiPath } from '../utils-public-year';
   import { parseInterestPreview, matchInterestMasters, type InterestYear } from '../utils-interest-preview';
-  import { initializeFeaturedRaceImpressionTracking, initializeRaceCardImpressionTracking } from '../lib/stkAnalytics';
+  import { initializeRaceCardImpressionTracking } from '../lib/stkAnalytics';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneVoteCount } from '../utils-slovenian';
-  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectFeaturedUpcomingEvents, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, formatHomepageRecentUpdateMeta } from '../utils-home-events';
+  import { buildHomepageMasterEventIndex, matchRecentUpdateToMasterEvent, buildHomepageEventDetailPath, selectCanonicalHomepageRecentUpdates, hasMultiYearRecentUpdatesContract, formatHomepageRecentUpdateMeta } from '../utils-home-events';
 
   type ApiRecord = Record<string, unknown>;
 
@@ -794,11 +784,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     return Number.isFinite(dateValue) ? dateValue : null;
   };
 
-  const compareEventDateThenTitle = (a: ApiRecord, b: ApiRecord) => {
-    const dateDifference = (eventDateValue(a) ?? Number.POSITIVE_INFINITY) - (eventDateValue(b) ?? Number.POSITIVE_INFINITY);
-    return dateDifference || getDisplayEventTitle(getEventTitle(a)).localeCompare(getDisplayEventTitle(getEventTitle(b)), 'sl-SI');
-  };
-
   const eventRowKey = (event: ApiRecord) => {
     const matchedMasterRow = pick(event, ['__matched_master_row']);
     if (matchedMasterRow) return matchedMasterRow;
@@ -830,9 +815,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
   const canonicalDetailEvent = (event: ApiRecord) => asRecord(event.__canonical_master_event) ?? event;
 
   const eventDetailPath = (event: ApiRecord) => buildEventDetailPath(detailEventData(canonicalDetailEvent(event)));
-
-  const eventIdentity = (event: ApiRecord) => eventNaturalKey(canonicalDetailEvent(event)) || eventNaturalKey(event) || `row:${eventRowKey(event)}`;
-
 
   const getMasterRaceRows = async (year: InterestYear = '2026') => {
     const masterPayload = await fetchPublicMaster(year);
@@ -890,56 +872,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     interestRequests.set(year, request);
     request.then(() => interestRequests.delete(year), () => interestRequests.delete(year));
     return request;
-  };
-
-  const getInterestPreviewRaces = async (masterRows: ApiRecord[], displayLimit = 5, year: InterestYear = '2026') => {
-    const payload = await loadInterestPreviewPayload(year);
-    return matchInterestMasters(parseInterestPreview(payload, year), masterRows, year).slice(0, displayLimit);
-  };
-
-  const renderFeaturedUpcoming = (interestEvents: ApiRecord[], fallbackCandidates: ApiRecord[]) => {
-    const list = document.querySelector('[data-featured-upcoming]');
-    if (!list) return;
-
-    const featuredEvents = selectFeaturedUpcomingEvents(interestEvents, fallbackCandidates, {
-      todayValue: todayStartValue(),
-      cutoffValue: daysFromToday(14),
-      limit: 3,
-      getDateValue: eventDateValue,
-      getIdentity: eventIdentity,
-      compareFallback: compareEventDateThenTitle
-    });
-
-    if (!featuredEvents.length) {
-      list.innerHTML = '<li class="home-featured-loading">Trenutno ni bližnjih potrjenih tekov.</li>';
-      return;
-    }
-
-    list.innerHTML = featuredEvents.map((event) => {
-      const title = getDisplayEventTitle(getEventTitle(event));
-      const dateValue = getEventField(event, 'datum', ['date', 'event_date', 'Datum']);
-      const date = formatDate(dateValue);
-      const location = getEventField(event, 'kraj', ['place', 'city', 'location']);
-      const region = getEventField(event, 'regija', ['region']);
-      const analyticsEventId = eventIdValue(canonicalDetailEvent(event)) || eventIdValue(event);
-      const explicitAnalyticsYear = getEventField(canonicalDetailEvent(event), 'year', ['leto']);
-      const analyticsEventYear = /^202[67]$/.test(explicitAnalyticsYear)
-        ? explicitAnalyticsYear
-        : (dateValue.match(/^(202[67])-/)?.[1] ?? '');
-      const noticeUrl = safeUrl(getEventField(event, 'povezava_razpis', ['notice_url', 'razpis_url']));
-      const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
-      const primaryAction = buildPrimaryActions({ registrationUrl, noticeUrl }, 'sl')[0];
-      const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl }, true);
-      const actions = [
-        primaryAction ? renderPrimaryActionLink(primaryAction, true) : '',
-        calendarOptions,
-        renderSavedRaceButton(event, title, dateValue, location, true)
-      ].filter(Boolean).join('');
-
-      return `<li><article class="home-featured-race" data-analytics-featured-impression="true" data-analytics-placement="home_featured" data-analytics-event-id="${escapeHtml(analyticsEventId)}" data-analytics-event-name="${escapeHtml(title)}" data-analytics-event-date="${escapeHtml(dateValue)}" data-analytics-event-year="${escapeHtml(analyticsEventYear)}"><time datetime="${escapeHtml(dateValue)}" aria-label="${escapeHtml(date)}">${escapeHtml(formatDateBadge(dateValue))}</time><div class="home-featured-race-copy"><h3><a href="${escapeHtml(eventDetailPath(event))}">${escapeHtml(title)}</a></h3><p>${escapeHtml(joinParts([location, region && region !== location ? region : '']))}</p></div>${actions ? `<div class="home-featured-actions">${actions}</div>` : ''}</article></li>`;
-    }).join('');
-    initSavedRaceButtons(list);
-    initializeFeaturedRaceImpressionTracking(list);
   };
 
   type DeadlineType = 'early' | 'registration';
@@ -1162,8 +1094,6 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
 
           return getEventTitle(a).localeCompare(getEventTitle(b), 'sl-SI');
         });
-      const interestPreviewEvents = await getInterestPreviewRaces(events, 20).catch(() => []);
-      renderFeaturedUpcoming(interestPreviewEvents, events);
       const visibleEvents = events.slice(0, 4);
 
       if (!events.length) {
@@ -1304,8 +1234,12 @@ const initialUpcomingEvents = selectUpcomingHomepageEvents((await getPublicYearD
     };
 
     try {
-      const masterRows = await getMasterRaceRows(year);
-      const interestEvents = await getInterestPreviewRaces(masterRows, 5, year);
+      // Start independent reads together; validate both before displaying a ranking.
+      const [masterRows, payload] = await Promise.all([
+        getMasterRaceRows(year),
+        loadInterestPreviewPayload(year)
+      ]);
+      const interestEvents = matchInterestMasters(parseInterestPreview(payload, year), masterRows, year).slice(0, 5);
       if (serial !== interestLoadSerial) return;
       interestRefreshTimer = setTimeout(() => {
         container.replaceChildren();

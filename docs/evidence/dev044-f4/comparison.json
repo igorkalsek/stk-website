@@ -1,0 +1,86 @@
+[
+  {
+    "language": "sl",
+    "width": 390,
+    "upcomingRefreshMs": {
+      "before": 4444,
+      "after": 220.7
+    },
+    "interestRenderMs": {
+      "before": 4441,
+      "after": 4066.7
+    },
+    "currentSectionTopPx": {
+      "before": 943.359375,
+      "after": 604.796875
+    },
+    "sameUpcoming": true,
+    "sameInterest": true,
+    "removedFeaturedDuplicates": 3,
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "language": "sl",
+    "width": 1440,
+    "upcomingRefreshMs": {
+      "before": 4413.3,
+      "after": 227.5
+    },
+    "interestRenderMs": {
+      "before": 4411.3,
+      "after": 4071.5
+    },
+    "currentSectionTopPx": {
+      "before": 767.75,
+      "after": 611.5625
+    },
+    "sameUpcoming": true,
+    "sameInterest": true,
+    "removedFeaturedDuplicates": 3,
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "language": "en",
+    "width": 390,
+    "upcomingRefreshMs": {
+      "before": 4454.1,
+      "after": 225.4
+    },
+    "interestRenderMs": {
+      "before": 4451.1,
+      "after": 4069.4
+    },
+    "currentSectionTopPx": {
+      "before": 943.359375,
+      "after": 604.796875
+    },
+    "sameUpcoming": true,
+    "sameInterest": true,
+    "removedFeaturedDuplicates": 3,
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "language": "en",
+    "width": 1440,
+    "upcomingRefreshMs": {
+      "before": 4359,
+      "after": 243.1
+    },
+    "interestRenderMs": {
+      "before": 4357,
+      "after": 4086.1
+    },
+    "currentSectionTopPx": {
+      "before": 814.75,
+      "after": 611.5625
+    },
+    "sameUpcoming": true,
+    "sameInterest": true,
+    "removedFeaturedDuplicates": 3,
+    "errors": [],
+    "overflow": false
+  }
+]

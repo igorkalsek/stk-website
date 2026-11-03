@@ -301,14 +301,6 @@ describe('frontend analytics v3 contract', () => {
     ]);
   });
 
-  it('wires featured visibility tracking to both localized homepages', () => {
-    for (const source of [slHome, enHome]) {
-      assert.match(source, /data-analytics-featured-impression="true"/);
-      assert.match(source, /initializeFeaturedRaceImpressionTracking\(list\)/);
-      assert.match(source, /eventIdValue\(canonicalDetailEvent\(event\)\) \|\| eventIdValue\(event\)/);
-    }
-  });
-
   it('wires race-card visibility only to stable home updates and related races', () => {
     for (const source of [slHome, enHome]) {
       assert.match(source, /data-analytics-race-card-impression="true"/);

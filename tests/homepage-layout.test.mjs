@@ -39,8 +39,8 @@ test('homepages include final utility cards and expected links', () => {
 
 
 test('hero keeps the primary paths and removes the duplicate promotional trio', () => {
-  assert.match(pages.sl, /href="\/iskalnik-tekov\/">Najdi tek<\/a>[\s\S]*href="\/moji-teki\/">Moji teki<\/a>[\s\S]*href="\/stk-tekobot\/">Vprašajte Tekobota<\/a>/);
-  assert.match(pages.en, /href="\/en\/find-races\/">Find a race<\/a>[\s\S]*href="\/en\/my-races\/">My races<\/a>[\s\S]*href="\/en\/stk-tekobot\/">Ask STK Tekobot<\/a>/);
+  assert.match(pages.sl, /href="\/iskalnik-tekov\/">Najdi tek<\/a>[\s\S]*href="\/moji-teki\/">Moji teki<\/a>/);
+  assert.match(pages.en, /href="\/en\/find-races\/">Find a race<\/a>[\s\S]*href="\/en\/my-races\/">My races<\/a>/);
   for (const [lang, source] of Object.entries(pages)) {
     assert.doesNotMatch(source, /home-entry-grid|home-entry-card|hero-preview/, `${lang} should not render repeated promotional or race-preview blocks`);
   }
@@ -54,7 +54,6 @@ test('homepages preserve race sections and follow the compact editorial order', 
   for (const [lang, source] of Object.entries(pages)) {
     const orderedSections = [
       'home-stats-strip',
-      'home-featured-upcoming',
       'home-current-sections',
       'home-secondary-section',
       'home-update-section',
@@ -71,18 +70,12 @@ test('homepages preserve race sections and follow the compact editorial order', 
   }
 });
 
-test('homepages restore a compact stats strip and featured discovery before current races', () => {
-  assert.match(pages.sl, /home-stats-strip[\s\S]*<HomeYearStats lang="sl"/);
-  assert.match(pages.en, /home-stats-strip[\s\S]*<HomeYearStats lang="en"/);
+test('homepages keep stats and one chronological calendar before independent interest', () => {
+  assert.match(pages.sl, /<HomeYearStats lang="sl"/);
+  assert.match(pages.en, /<HomeYearStats lang="en"/);
   assert.match(yearStats, /confirmed_public_events_total[\s\S]*family_friendly_total[\s\S]*group_runs_total/);
-  assert.match(pages.sl, /<h2 id="featured-upcoming-title">Izpostavljeno v naslednjih dneh<\/h2>/);
-  assert.match(pages.en, /<h2 id="featured-upcoming-title">Featured in the coming days<\/h2>/);
   for (const source of Object.values(pages)) {
-    assert.match(source, /selectFeaturedUpcomingEvents\(interestEvents, fallbackCandidates/);
-    assert.match(source, /limit: 3/);
-    assert.match(source, /cutoffValue: daysFromToday\(14\)/);
-    assert.match(source, /data-analytics-placement="home_featured"/);
-    assert.doesNotMatch(source, /home_featured_upcoming/);
+    assert.doesNotMatch(source, /home-featured-upcoming|renderFeaturedUpcoming|home-hero-text-link/);
   }
 });
 

@@ -1,0 +1,72 @@
+[
+  {
+    "key": "/group-runs",
+    "ms": 2171,
+    "status": 200
+  },
+  {
+    "key": "/?year=2027",
+    "ms": 2325,
+    "status": 200
+  },
+  {
+    "key": "/",
+    "ms": 3055,
+    "status": 200
+  },
+  {
+    "key": "/additional",
+    "ms": 3105,
+    "status": 200
+  },
+  {
+    "key": "/stats",
+    "ms": 4803,
+    "status": 200
+  },
+  {
+    "key": "/recent_updates?days=7&limit=4&years=2026,2027",
+    "ms": 5542,
+    "status": 200
+  },
+  {
+    "key": "/api/interest-preview?year=2026",
+    "ms": 35945,
+    "status": 200
+  },
+  {
+    "key": "/group-runs",
+    "ms": 2379,
+    "status": 200
+  },
+  {
+    "key": "/?year=2027",
+    "ms": 2386,
+    "status": 200
+  },
+  {
+    "key": "/additional",
+    "ms": 3439,
+    "status": 200
+  },
+  {
+    "key": "/",
+    "ms": 3453,
+    "status": 200
+  },
+  {
+    "key": "/stats",
+    "ms": 5554,
+    "status": 200
+  },
+  {
+    "key": "/recent_updates?days=7&limit=4&years=2026,2027",
+    "ms": 6306,
+    "status": 200
+  },
+  {
+    "key": "/api/interest-preview?year=2026",
+    "ms": 4342,
+    "status": 200
+  }
+]

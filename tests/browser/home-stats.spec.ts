@@ -57,7 +57,7 @@ for (const lang of ['sl', 'en']) {
             if (rect.left < bounds.left || rect.right > bounds.right || rect.top < bounds.top || rect.bottom > bounds.bottom) problems.push('outside card');
             for (const other of parts.slice(index + 1)) if (intersects(rect, other.getBoundingClientRect())) problems.push('inner overlap');
           }
-          const next = document.querySelector('.home-featured-upcoming')!;
+          const next = document.querySelector('.home-current-sections')!;
           if (intersects(bounds, next.getBoundingClientRect())) problems.push('next section overlap');
         }
         return problems;

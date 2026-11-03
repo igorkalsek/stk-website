@@ -38,6 +38,12 @@ for (const language of ['sl', 'en']) for (const width of [390, 1440]) {
 
     test('native payload, pending, resolution, cancellation and errors', async ({ page }) => {
       await page.goto(path);
+      const entry = page.locator('.event-detail-my-race-heading a');
+      await expect(entry).toHaveText(sl ? 'Deli tek' : 'Share race');
+      await expect(entry).toHaveAttribute('href', '#race-share');
+      expect((await entry.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      await entry.click();
+      await expect(page.locator('#race-share')).toBeFocused();
       const button = page.getByRole('button', { name: sl ? 'Deli tek' : 'Share race', exact: true });
       const feedback = page.locator('[data-share-feedback]');
       await expect(button).toBeVisible();

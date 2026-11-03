@@ -1,0 +1,322 @@
+[
+  {
+    "path": "/",
+    "width": 390,
+    "run": 0,
+    "live": false,
+    "httpStatus": 200,
+    "errors": [],
+    "timing": {
+      "nearest": 4444,
+      "interest": 4441
+    },
+    "nearest": [
+      "4. Lahinja Trail",
+      "OBALA Ultra-Trail powered by I FEEL SLOVENIA",
+      "Tekaški pozdrav jeseni",
+      "Go4trail"
+    ],
+    "featured": [
+      "Celjski mali maraton",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton"
+    ],
+    "interest": [
+      "Celjski mali maraton",
+      "Movember tek",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton",
+      "Tek na Limbarsko goro"
+    ],
+    "status": "",
+    "sections": [
+      {
+        "class": "hero container",
+        "top": 79,
+        "height": 273.578125
+      },
+      {
+        "class": "container home-stats-strip",
+        "top": 362.578125,
+        "height": 226.21875
+      },
+      {
+        "class": "section container home-featured-upcoming",
+        "top": 598.796875,
+        "height": 328.5625
+      },
+      {
+        "class": "section container home-current-sections",
+        "top": 943.359375,
+        "height": 1308.09375
+      },
+      {
+        "class": "section container home-secondary-section",
+        "top": 2285.453125,
+        "height": 687.609375
+      },
+      {
+        "class": "section container home-update-section",
+        "top": 2983.0625,
+        "height": 661.46875
+      },
+      {
+        "class": "container home-calendar-stats my-stk",
+        "top": 3668.53125,
+        "height": 299.78125
+      },
+      {
+        "class": "section container home-trust-section",
+        "top": 3968.3125,
+        "height": 329.09375
+      },
+      {
+        "class": "section container home-utility-section",
+        "top": 4321.40625,
+        "height": 583.609375
+      }
+    ],
+    "overflow": false,
+    "resources": []
+  },
+  {
+    "path": "/",
+    "width": 1440,
+    "run": 0,
+    "live": false,
+    "httpStatus": 200,
+    "errors": [],
+    "timing": {
+      "nearest": 4413.300000011921,
+      "interest": 4411.300000011921
+    },
+    "nearest": [
+      "4. Lahinja Trail",
+      "OBALA Ultra-Trail powered by I FEEL SLOVENIA",
+      "Tekaški pozdrav jeseni",
+      "Go4trail"
+    ],
+    "featured": [
+      "Celjski mali maraton",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton"
+    ],
+    "interest": [
+      "Celjski mali maraton",
+      "Movember tek",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton",
+      "Tek na Limbarsko goro"
+    ],
+    "status": "",
+    "sections": [
+      {
+        "class": "hero container",
+        "top": 99,
+        "height": 361.375
+      },
+      {
+        "class": "container home-stats-strip",
+        "top": 470.375,
+        "height": 109.1875
+      },
+      {
+        "class": "section container home-featured-upcoming",
+        "top": 589.5625,
+        "height": 146.1875
+      },
+      {
+        "class": "section container home-current-sections",
+        "top": 767.75,
+        "height": 645.28125
+      },
+      {
+        "class": "section container home-secondary-section",
+        "top": 1477.03125,
+        "height": 443.53125
+      },
+      {
+        "class": "section container home-update-section",
+        "top": 1930.5625,
+        "height": 430.09375
+      },
+      {
+        "class": "container home-calendar-stats my-stk",
+        "top": 2408.65625,
+        "height": 270.78125
+      },
+      {
+        "class": "section container home-trust-section",
+        "top": 2679.4375,
+        "height": 199.1875
+      },
+      {
+        "class": "section container home-utility-section",
+        "top": 2902.625,
+        "height": 320.796875
+      }
+    ],
+    "overflow": false,
+    "resources": []
+  },
+  {
+    "path": "/en/",
+    "width": 390,
+    "run": 0,
+    "live": false,
+    "httpStatus": 200,
+    "errors": [],
+    "timing": {
+      "nearest": 4454.099999964237,
+      "interest": 4451.099999964237
+    },
+    "nearest": [
+      "4. Lahinja Trail",
+      "OBALA Ultra-Trail powered by I FEEL SLOVENIA",
+      "Tekaški pozdrav jeseni",
+      "Go4trail"
+    ],
+    "featured": [
+      "Celjski mali maraton",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton"
+    ],
+    "interest": [
+      "Celjski mali maraton",
+      "Movember tek",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton",
+      "Tek na Limbarsko goro"
+    ],
+    "status": "",
+    "sections": [
+      {
+        "class": "hero container",
+        "top": 79,
+        "height": 273.578125
+      },
+      {
+        "class": "container home-stats-strip",
+        "top": 362.578125,
+        "height": 226.21875
+      },
+      {
+        "class": "section container home-featured-upcoming",
+        "top": 598.796875,
+        "height": 328.5625
+      },
+      {
+        "class": "section container home-current-sections",
+        "top": 943.359375,
+        "height": 1258.046875
+      },
+      {
+        "class": "section container home-secondary-section",
+        "top": 2235.40625,
+        "height": 719.609375
+      },
+      {
+        "class": "section container home-update-section",
+        "top": 2965.015625,
+        "height": 661.46875
+      },
+      {
+        "class": "container home-calendar-stats my-stk",
+        "top": 3650.484375,
+        "height": 299.78125
+      },
+      {
+        "class": "section container home-trust-section",
+        "top": 3950.265625,
+        "height": 353.9375
+      },
+      {
+        "class": "section container home-utility-section",
+        "top": 4328.203125,
+        "height": 558.015625
+      }
+    ],
+    "overflow": false,
+    "resources": []
+  },
+  {
+    "path": "/en/",
+    "width": 1440,
+    "run": 0,
+    "live": false,
+    "httpStatus": 200,
+    "errors": [],
+    "timing": {
+      "nearest": 4359,
+      "interest": 4357
+    },
+    "nearest": [
+      "4. Lahinja Trail",
+      "OBALA Ultra-Trail powered by I FEEL SLOVENIA",
+      "Tekaški pozdrav jeseni",
+      "Go4trail"
+    ],
+    "featured": [
+      "Celjski mali maraton",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton"
+    ],
+    "interest": [
+      "Celjski mali maraton",
+      "Movember tek",
+      "11. Tek občine Mengeš 2026",
+      "Novomeški polmaraton",
+      "Tek na Limbarsko goro"
+    ],
+    "status": "",
+    "sections": [
+      {
+        "class": "hero container",
+        "top": 99,
+        "height": 361.375
+      },
+      {
+        "class": "container home-stats-strip",
+        "top": 470.375,
+        "height": 109.1875
+      },
+      {
+        "class": "section container home-featured-upcoming",
+        "top": 589.5625,
+        "height": 193.1875
+      },
+      {
+        "class": "section container home-current-sections",
+        "top": 814.75,
+        "height": 645.28125
+      },
+      {
+        "class": "section container home-secondary-section",
+        "top": 1524.03125,
+        "height": 408.34375
+      },
+      {
+        "class": "section container home-update-section",
+        "top": 1942.375,
+        "height": 430.09375
+      },
+      {
+        "class": "container home-calendar-stats my-stk",
+        "top": 2420.46875,
+        "height": 288.78125
+      },
+      {
+        "class": "section container home-trust-section",
+        "top": 2709.25,
+        "height": 216.15625
+      },
+      {
+        "class": "section container home-utility-section",
+        "top": 2949.40625,
+        "height": 320.796875
+      }
+    ],
+    "overflow": false,
+    "resources": []
+  }
+]

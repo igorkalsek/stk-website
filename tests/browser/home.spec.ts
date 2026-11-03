@@ -11,7 +11,6 @@ const homes = [
     finderHref: '/iskalnik-tekov/',
     myRaces: 'Moji teki',
     myRacesHref: '/moji-teki/',
-    tekobot: 'Vprašajte Tekobota',
     tekobotHref: '/stk-tekobot/',
     current: 'Aktualno',
     upcoming: 'Naslednji teki',
@@ -19,7 +18,6 @@ const homes = [
     interestDescription: 'Aktivno zanimanje pomenijo kliki na razpise in prijavne povezave, shranitve ter koledarske akcije. Ogledi profilov niso merilo aktivnega zanimanja.',
     interestEmpty: 'Trenutno še ni dovolj podatkov o zanimanju.',
     interestError: 'Podatki o zanimanju trenutno niso na voljo.',
-    featured: 'Izpostavljeno v naslednjih dneh',
     updates: 'Sveže spremembe v koledarju',
     calendar: 'Navodila za osebni koledar',
     organisers: 'Več za organizatorje'
@@ -30,7 +28,6 @@ const homes = [
     finderHref: '/en/find-races/',
     myRaces: 'My races',
     myRacesHref: '/en/my-races/',
-    tekobot: 'Ask STK Tekobot',
     tekobotHref: '/en/stk-tekobot/',
     current: 'Current races',
     upcoming: 'Upcoming races',
@@ -38,7 +35,6 @@ const homes = [
     interestDescription: 'Active interest includes official information and registration link clicks, saves and calendar actions. Profile views do not count as active interest.',
     interestEmpty: 'There is not enough interest data yet.',
     interestError: 'Interest data is currently unavailable.',
-    featured: 'Featured in the coming days',
     updates: 'Fresh calendar changes',
     calendar: 'Personal calendar instructions',
     organisers: 'More for organisers'
@@ -225,25 +221,21 @@ for (const home of homes) {
     const heroActions = page.locator('.home-hero-actions');
     await expect(heroActions.getByRole('link', { name: home.finder, exact: true })).toHaveAttribute('href', home.finderHref);
     await expect(heroActions.getByRole('link', { name: home.myRaces, exact: true })).toHaveAttribute('href', home.myRacesHref);
-    await expect(heroActions.getByRole('link', { name: home.tekobot, exact: true })).toHaveAttribute('href', home.tekobotHref);
+    await expect(heroActions.locator(`a[href="${home.tekobotHref}"]`)).toHaveCount(0);
+    await expect(page.locator(`.site-nav a[href="${home.tekobotHref}"]`)).toHaveCount(0);
+    await expect(page.locator(`footer a[href="${home.tekobotHref}"]`)).toBeVisible();
     await expect(page.locator('.home-entry-grid')).toHaveCount(0);
     await expect(page.locator('.hero-preview')).toHaveCount(0);
 
-    for (const heading of [home.featured, home.current, home.upcoming, home.interest, home.updates]) {
+    for (const heading of [home.current, home.upcoming, home.interest, home.updates]) {
       await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
     }
     await expect(page.locator('.home-stats-strip [data-stat="confirmed_public_events_total"]')).toHaveText('0');
-    await expect(page.locator('[data-featured-upcoming] > li')).toHaveCount(3);
-    expect(await page.locator('[data-featured-upcoming] .home-featured-race').evaluateAll((cards) =>
-      cards.map((card) => card.getAttribute('data-analytics-placement'))
-    )).toEqual(['home_featured', 'home_featured', 'home_featured']);
-    expect(await page.locator('[data-featured-upcoming] a, [data-featured-upcoming] button').evaluateAll((controls) =>
-      controls.map((control) => control.closest('[data-analytics-placement]')?.getAttribute('data-analytics-placement'))
-    )).not.toContain(undefined);
+    await expect(page.locator('[data-featured-upcoming]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: home.calendar, exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: home.organisers, exact: true })).toBeVisible();
 
-    const tops = await page.locator('#featured-upcoming-title, #current-title, #voted-title, #updates-title, #my-stk-title, #trust-title, #utility-title')
+    const tops = await page.locator('#current-title, #voted-title, #updates-title, #my-stk-title, #trust-title, #utility-title')
       .evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().top + window.scrollY)));
     expect(tops).toEqual([...tops].sort((a, b) => a - b));
   });
@@ -342,42 +334,8 @@ for (const home of homes) for (const width of [390, 430, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await mockHomepageApis(page, true, true);
     await page.goto(home.path);
-    const featured = page.locator('.home-featured-race');
     const interest = page.locator('[data-top-events] .event-card');
-    await expect(featured).toHaveCount(3);
     await expect(interest).toHaveCount(2);
-    if (width >= 768) {
-      const actionRows = await featured.locator('.home-featured-actions').evaluateAll(elements => elements.map(e => Math.round(e.getBoundingClientRect().top)));
-      expect(new Set(actionRows).size).toBe(1);
-    }
-    for (const card of await featured.all()) {
-      const controls = card.locator('.home-featured-actions > a, summary, [data-saved-race-button]');
-      for (const control of await controls.all()) {
-        const rect = (await control.boundingBox())!;
-        expect(rect.width).toBeGreaterThanOrEqual(44);
-        expect(rect.height).toBeGreaterThanOrEqual(44);
-        await page.keyboard.press('Tab');
-        await control.focus();
-        expect(await control.evaluate(e => getComputedStyle(e).outlineStyle)).not.toBe('none');
-      }
-      const title = (await card.locator('h3').boundingBox())!;
-      if (width <= 520) expect(title.width).toBeGreaterThan(240);
-      const menu = card.locator('details');
-      await menu.locator('summary').focus();
-      await page.keyboard.press('Enter');
-      await expect(menu).toHaveAttribute('open', '');
-      for (const link of await menu.locator('a').all()) {
-        const rect = (await link.boundingBox())!;
-        expect(rect.x).toBeGreaterThanOrEqual(0);
-        expect(rect.x + rect.width).toBeLessThanOrEqual(width);
-        expect(rect.height).toBeGreaterThanOrEqual(44);
-        await expect(link).toHaveAttribute('href', /^(https:|data:text\/calendar)/);
-      }
-      await menu.locator('summary').press('Enter');
-      const save = card.locator('[data-saved-race-button]');
-      await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'true');
-      await save.click(); await expect(save).toHaveAttribute('aria-pressed', 'false');
-    }
     for (const card of await interest.all()) {
       const r = (await card.boundingBox())!;
       const title = (await card.locator('h3').boundingBox())!;
@@ -492,4 +450,48 @@ for (const home of homes) for (const width of [390, 1440]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     });
   }
+}
+
+// A pending or failed optional ranking must not hold the live calendar hostage.
+for (const home of homes) for (const width of [390, 1440]) {
+  test(`${home.path} F4 renders fresh upcoming races before a pending interest API at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await mockHomepageApis(page, true);
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    let requests = 0;
+    await page.route('**/api/interest-preview*', async route => {
+      requests++;
+      await pending;
+      await route.fulfill({ status: 503, json: { ok: false, items: [] } });
+    });
+    await page.goto(home.path);
+    try {
+      // Names are absent from the static build: these are freshly rendered Master rows.
+      await expect(page.locator('[data-nearest-events] h3')).toHaveText([
+        'Fallback race', 'Second fallback race', 'Ranked race two', 'Ranked race three'
+      ]);
+      await expect(page.locator('[data-top-events]')).toBeEmpty();
+      await expect(page.locator('[data-status="top"]')).toContainText(home.path === '/' ? 'Nalagamo' : 'Loading');
+      await expect(page.locator('[data-recent-updates] h3')).toHaveText('Ranked race two');
+      await expect(page.locator('[data-nearest-events] [data-saved-race-button]').first()).toBeVisible();
+      expect(requests).toBe(1);
+    } finally { release(); }
+    await expect(page.locator('[data-status="top"]')).toHaveText(home.interestError);
+    await expect(page.locator('[data-top-events]')).toBeEmpty();
+    await expect(page.locator('[data-nearest-events] h3')).toHaveCount(4);
+  });
+
+  test(`${home.path} F4 starts interest while Master is pending at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await mockHomepageApis(page);
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    await page.route(`${API_HOST}/`, async route => { await pending; await route.fallback(); });
+    const interest = page.waitForRequest(request => request.url().includes('/api/interest-preview'));
+    await page.goto(home.path);
+    try { await interest; await expect(page.locator('[data-top-events]')).toBeEmpty(); }
+    finally { release(); }
+    await expect(page.locator('[data-top-events] .event-card')).toHaveCount(2);
+  });
 }
