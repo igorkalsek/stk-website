@@ -49,6 +49,7 @@ for (const home of homes) for (const width of [390, 1440]) {
     await expect(card).toHaveAttribute('data-analytics-event-id', 'r000005');
     await expect(card).toHaveAttribute('data-analytics-event-year', '2026');
     await expect(card).not.toContainText('Sponsored');
+    await expect(card.locator('[data-spotlight-surface]')).toHaveText(home.path === '/en/' ? 'Road' : 'cesta');
     const bounds = await page.evaluate(() => {
       const left = document.querySelector('.home-hero-copy')?.getBoundingClientRect();
       const right = document.querySelector('[data-home-spotlight]')?.getBoundingClientRect();

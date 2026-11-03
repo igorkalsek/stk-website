@@ -56,6 +56,8 @@ test('SL/EN hero share one editorial component and no paid or sponsored state', 
   assert.match(component, /data-analytics-featured-impression="true"/);
   assert.match(component, /initializeFeaturedRaceImpressionTracking/);
   assert.match(component, /buildEnglishEventDetailPath/);
+  assert.match(component, /en \? formatEnglishSurface\(initialRace\?\.surface \?\? ''\)/);
+  assert.match(component, /surface\.textContent = en \? formatEnglishSurface\(race\.surface\) : race\.surface/);
   assert.match(component, /buildEventDetailPath/);
   assert.match(component, /Promise\.allSettled\(SUPPORTED_PUBLIC_YEARS/);
   assert.doesNotMatch(component, /SPONZORIRANO|Sponsored|Sponzorirano|mailto:/);
