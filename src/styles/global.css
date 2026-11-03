@@ -4266,131 +4266,9 @@ main {
   }
 }
 
-.home-featured-upcoming {
-  margin-top: 10px;
-  padding-top: 10px;
-}
-
-.home-featured-heading {
-  margin-bottom: 8px;
-}
-
-.home-featured-heading h2 {
-  font-size: clamp(1.12rem, 2.5vw, 1.4rem);
-}
-
-.home-featured-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.home-featured-list > li {
-  display: grid;
-}
-
-.home-featured-race {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 5px 10px;
-  min-width: 0;
-  min-height: 66px;
-  align-items: center;
-  border: 1px solid rgba(16, 64, 80, 0.12);
-  border-radius: 11px;
-  background: rgba(255, 255, 255, 0.76);
-  padding: 8px;
-}
-
-.home-featured-race > time {
-  grid-row: 1;
-  color: #704406;
-  font-size: 0.72rem;
-  font-weight: 900;
-  line-height: 1.15;
-  text-align: center;
-}
-
-.home-featured-race-copy {
-  min-width: 0;
-}
-
-.home-featured-race-copy h3,
-.home-featured-race-copy p {
-  margin: 0;
-}
-
-.home-featured-race-copy h3 {
-  font-size: 0.9rem;
-  line-height: 1.18;
-}
-
-.home-featured-race-copy p {
-  margin-top: 3px;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.74rem;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.home-featured-actions {
-  display: flex;
-  grid-column: 1 / -1;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 3px;
-}
-
-.home-featured-actions .calendar-menu {
-  width: auto;
-  flex: 0 0 auto;
-}
-
-.home-featured-actions .calendar-menu-options {
-  position: absolute;
-  right: 0;
-  width: max-content;
-}
-
-.home-featured-actions .calendar-menu-options a {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-}
-
-.home-featured-actions .button:focus-visible,
-.home-featured-actions summary:focus-visible,
 .home-secondary-section .saved-race-button:focus-visible {
   outline: 3px solid var(--deep-teal);
   outline-offset: 3px;
-}
-
-.home-featured-actions .button,
-.home-featured-actions .calendar-menu summary {
-  min-height: 44px;
-  padding: 5px 8px;
-  font-size: 0.76rem;
-}
-
-.home-featured-actions .saved-race-icon-button {
-  width: 44px;
-  min-width: 44px;
-  padding: 0;
-}
-
-.home-featured-loading {
-  grid-column: 1 / -1;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.68);
-  color: var(--muted);
-  padding: 12px;
-  font-size: 0.86rem;
 }
 
 .home-stats-band.stats-strip {
@@ -5025,57 +4903,6 @@ main {
   .home-stats-strip p {
     gap: 2px 8px;
     font-size: 0.75rem;
-  }
-
-  .home-featured-upcoming {
-    padding-top: 7px;
-  }
-
-  .home-featured-list {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-
-  .home-featured-race {
-    grid-template-columns: 54px minmax(0, 1fr);
-    min-height: 54px;
-    gap: 4px 8px;
-    padding: 5px 7px;
-  }
-
-  .home-featured-race > time {
-    grid-row: 1;
-  }
-
-  .home-featured-race-copy p {
-    white-space: normal;
-  }
-
-  .home-featured-actions {
-    grid-column: 2;
-    grid-row: 2;
-    justify-content: flex-end;
-    flex-wrap: nowrap;
-  }
-
-  .home-featured-actions .button,
-  .home-featured-actions .calendar-menu summary {
-    width: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .home-featured-actions .button:not(.saved-race-icon-button) > span:last-child,
-  .home-featured-actions .calendar-menu summary > span:last-child {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
   }
 
   .home-current-sections {
@@ -6365,3 +6192,22 @@ main {
 .race-watch-updates li { padding-left: .2rem; overflow-wrap: anywhere; }
 .race-watch-updates span { display: block; margin-top: .15rem; font-size: .9rem; }
 .race-watch a { font-weight: 700; text-underline-offset: .15em; }
+
+/* A short path to the existing sharing controls from the profile hero. */
+.event-detail-my-race-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.event-detail-my-race-heading a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+}
+
+#race-share {
+  scroll-margin-top: 7rem;
+}

@@ -52,9 +52,7 @@ describe('saved race button surfaces', () => {
 
 
 
-  it('uses compact save controls only in featured rows and full controls in other homepage collections', () => {
-    assert.match(files.homeSl, /renderFeaturedUpcoming[\s\S]*renderSavedRaceButton\(event, title, dateValue, location, true\)/);
-    assert.match(files.homeEn, /renderFeaturedUpcoming[\s\S]*renderSavedRaceButton\(event, title, dateValue, location, true\)/);
+  it('keeps save controls in the remaining homepage collections', () => {
     assert.match(files.homeSl, /iconOnly \? '' : '<span data-saved-race-label>Shrani tek<\/span>'/);
     assert.match(files.homeEn, /iconOnly \? '' : '<span data-saved-race-label>Save race<\/span>'/);
     [files.familySl, files.familyEn, files.votedSl, files.votedEn, files.related].forEach((source) => {

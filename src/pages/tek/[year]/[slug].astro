@@ -214,7 +214,10 @@ const jsonLd = event ? {
                 ))}
               </div>
               <div class="event-detail-my-race-panel">
-                <h2>Moj tek</h2>
+                <div class="event-detail-my-race-heading">
+                  <h2>Moj tek</h2>
+                  {shareLinks && <a href="#race-share">Deli tek</a>}
+                </div>
                 <div class="event-detail-my-race-actions">
                   <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="sl" aria-pressed="false" aria-label="Shrani tek"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Shrani tek</span></button>
 
@@ -363,7 +366,7 @@ const jsonLd = event ? {
                 )}
 
                 {shareLinks && (
-                  <div class="event-detail-share-panel">
+                  <div class="event-detail-share-panel" id="race-share" tabindex="-1">
                     <h3><span class="action-icon" set:html={renderActionIcon('share')}></span> Deli ta tek</h3>
                     <p>Kopirajte pripravljen kratek opis z datumom, krajem in povezavo ter ga prilepite v objavo ali sporočilo.</p>
                     <button class="button button-secondary-light" type="button" hidden data-native-share data-share-title={event.title} data-share-text={`${event.title} – ${[formatDate(event.date), event.place].filter(Boolean).join(', ')}`} data-share-url={shareUrl} data-analytics-event-type="share_clicked" data-analytics-action-type="share_native_click" data-analytics-target-url={shareUrl}>Deli tek</button>

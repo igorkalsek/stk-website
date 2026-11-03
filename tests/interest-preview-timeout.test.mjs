@@ -12,12 +12,12 @@ const now = new Date('2026-11-02T12:00:00Z');
 function browserLoader(locale, fetch) {
   const source = readFileSync(new URL(`../src/pages/${locale === 'en' ? 'en/' : ''}index.astro`, import.meta.url), 'utf8');
   const start = source.indexOf('  const interestRequests =');
-  const end = source.indexOf('  const renderFeaturedUpcoming =', start);
+  const end = source.indexOf('  type DeadlineType', start);
   assert.ok(start >= 0 && end > start);
   const { outputText } = ts.transpileModule(source.slice(start, end), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 }
   });
-  return runInNewContext(outputText + '\ngetInterestPreviewRaces;', {
+  return runInNewContext(outputText + '\nasync (rows, limit, year) => matchInterestMasters(parseInterestPreview(await loadInterestPreviewPayload(year), year), rows, year).slice(0, limit);', {
     INTEREST_PREVIEW_URL: '/api/interest-preview', fetch, AbortController, Date,
     setTimeout, clearTimeout, parseInterestPreview, matchInterestMasters
   });

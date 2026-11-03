@@ -214,7 +214,10 @@ const jsonLd = event ? {
                 ))}
               </div>
               <div class="event-detail-my-race-panel">
-                <h2>My race</h2>
+                <div class="event-detail-my-race-heading">
+                  <h2>My race</h2>
+                  {shareLinks && <a href="#race-share">Share race</a>}
+                </div>
                 <div class="event-detail-my-race-actions">
                   <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
 
@@ -363,7 +366,7 @@ const jsonLd = event ? {
                 )}
 
                 {shareLinks && (
-                  <div class="event-detail-share-panel">
+                  <div class="event-detail-share-panel" id="race-share" tabindex="-1">
                     <h3><span class="action-icon" set:html={renderActionIcon('share')}></span> Share this race</h3>
                     <p>Copy a ready-made short description with the date, location and link, then paste it into a post or message.</p>
                     <button class="button button-secondary-light" type="button" hidden data-native-share data-share-title={event.title} data-share-text={`${event.title} – ${[formatDate(event.date), event.place].filter(Boolean).join(', ')}`} data-share-url={shareUrl} data-analytics-event-type="share_clicked" data-analytics-action-type="share_native_click" data-analytics-target-url={shareUrl}>Share race</button>
