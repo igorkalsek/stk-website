@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Družinam prijazni teki" description="Pregled tekaških prireditev, ki so v javnem viru označene kot družinam prijazne.">
+<BaseLayout languageSwitchHref="/en/family-friendly-races/" title="Družinam prijazni teki" description="Pregled tekaških prireditev, ki so v javnem viru označene kot družinam prijazne.">
   <main>
     <section class="page-hero container" aria-labelledby="family-title">
       <span class="eyebrow">Za družine</span>
@@ -12,6 +12,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         Pregled vključuje samo prireditve, pri katerih vir jasno omenja otroške teke, družinske kategorije,
         otroške aktivnosti ali druge informacije za družine. Kratka razdalja sama po sebi še ne pomeni, da je tek družinam prijazen.
       </p>
+      <nav class="year-switcher" aria-label="Izbira leta koledarja">
+        <a class="year-switcher-link" href="/druzinam-prijazni-teki/?year=2026" data-year-link="2026">Koledar 2026</a>
+        <a class="year-switcher-link" href="/druzinam-prijazni-teki/?year=2027" data-year-link="2027">Koledar 2027</a>
+      </nav>
       <a class="hero-secondary-link" href="/iskalnik-tekov/">Iščete vse teke? Odprite iskalnik tekov.</a>
     </section>
 
@@ -99,6 +103,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls } from '../utils-vote';
+  import { buildMasterApiPath, isSupportedPublicYear } from '../utils-public-year';
+  import { getTodayIsoInLjubljana } from '../utils-date';
+
+  // This rollover applies only to the family pages; global public defaults stay unchanged.
+  const requestedYear = new URLSearchParams(window.location.search).get('year');
+  const selectedYear = isSupportedPublicYear(requestedYear)
+    ? requestedYear : getTodayIsoInLjubljana() >= '2027-01-01' ? '2027' : '2026';
+  document.querySelectorAll<HTMLAnchorElement>('[data-year-link]').forEach((link) => {
+    const active = link.dataset.yearLink === selectedYear;
+    link.classList.toggle('is-active', active);
+    if (active) link.setAttribute('aria-current', 'page');
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-language-switch], footer a').forEach((link) => {
+    const url = new URL(link.href);
+    if (['/druzinam-prijazni-teki/', '/en/family-friendly-races/'].includes(url.pathname)) {
+      url.searchParams.set('year', selectedYear);
+      link.href = url.pathname + url.search;
+    }
+  });
 
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
@@ -122,7 +145,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     additionalData?: AdditionalEventData | null;
   };
 
-  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
+  const API_URL = `https://stk-master-api.igor-kalsek.workers.dev${buildMasterApiPath(selectedYear)}`;
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
@@ -181,7 +204,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const parseDateValue = (value: string) => {
-    if (!value) return Number.NaN;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return Number.NaN;
+    const utcDate = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(utcDate.getTime()) || utcDate.toISOString().slice(0, 10) !== value) return Number.NaN;
     const date = new Date(`${value}T00:00:00`);
     return date.getTime();
   };
@@ -429,7 +454,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const publicNotes = pick(item, 'opombe_javne');
 
     return (
-      date.startsWith('2026-') &&
+      date.startsWith(`${selectedYear}-`) &&
       normalize(pick(item, 'status_dogodka')) === 'potrjeno' &&
       pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
       hasExplicitFamilyOffer(publicNotes)
@@ -632,17 +657,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   const renderResults = () => {
     if (!state.apiAvailable) {
-      setStatus('Podatki trenutno niso dosegljivi. Poskusite znova čez nekaj minut.');
+      setStatus(`Podatki za leto ${selectedYear} trenutno niso dosegljivi. Poskusite znova čez nekaj minut.`);
       setCount('Podatki niso dosegljivi');
-      renderEmptyState('Podatki trenutno niso dosegljivi', 'Dogodkov trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.', 'Koledar');
+      renderEmptyState('Podatki trenutno niso dosegljivi', `Dogodkov za leto ${selectedYear} trenutno ne moremo prikazati. Poskusite znova čez nekaj minut.`, selectedYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
 
     if (!state.events.length) {
-      setStatus('Ni družinam prijaznih dogodkov za prikaz. Dogodek se prikaže samo, če javna opomba vsebuje oznako “družinam prijazno”.');
+      setStatus(`Za leto ${selectedYear} ni potrjenih javnih dogodkov z izrecno otroško ali družinsko ponudbo.`);
       setCount('0 dogodkov');
-      renderEmptyState('Ni dogodkov za prikaz', 'Trenutno ni potrjenih dogodkov, pri katerih vir jasno omenja družinam prijazno ponudbo.', '2026');
+      renderEmptyState('Ni dogodkov za prikaz', `Za leto ${selectedYear} ni potrjenih javnih dogodkov z izrecno otroško ali družinsko ponudbo.`, selectedYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -665,12 +690,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(
       state.usedPastFallback
-        ? 'Prikazani so potrjeni javni dogodki za leto 2026 z otroškimi ali družinskimi ponudbami; prihodnjih dogodkov s takšno ponudbo trenutno ni.'
-        : 'Prikazani so potrjeni javni dogodki od danes naprej z otroškimi ali družinskimi ponudbami, privzeto urejeni po datumu.'
+        ? `Prikazani so potrjeni javni dogodki za leto ${selectedYear} z otroškimi ali družinskimi ponudbami; prihodnjih dogodkov s takšno ponudbo trenutno ni.`
+        : `Prikazani so potrjeni javni dogodki za leto ${selectedYear} od danes naprej z otroškimi ali družinskimi ponudbami, privzeto urejeni po datumu.`
     );
 
     if (!count) {
-      renderEmptyState('Ni najdenih tekov za izbrane filtre.', 'Počistite filtre ali vpišite širši iskalni izraz.', 'Filtri', true);
+      renderEmptyState('Ni najdenih tekov za izbrane filtre.', `Počistite filtre ali vpišite širši iskalni izraz za leto ${selectedYear}.`, 'Filtri', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -683,7 +708,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   };
 
   const loadEvents = async () => {
-    setStatus('Nalagamo družinam prijazne dogodke …');
+    setStatus(`Nalagamo družinam prijazne dogodke za leto ${selectedYear} …`);
 
     try {
       const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });
@@ -693,7 +718,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       let events = getFamilyEvents(toArray(payload));
 
       try {
-        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData('2026'), '2026');
+        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData(selectedYear), selectedYear);
       } catch (error) {
         console.warn('Družinam prijazni teki additional data skipped', error);
       }
