@@ -7,6 +7,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   title="Family-Friendly Races in Slovenia | Run Slovenia Race Calendar"
   description="Family-friendly running races in Slovenia with children’s runs, family categories or similar family-friendly information."
   lang="en"
+  languageSwitchHref="/druzinam-prijazni-teki/"
   canonicalPath="/en/family-friendly-races/"
   alternateLinks={[
     { lang: 'sl', href: '/druzinam-prijazni-teki/' },
@@ -25,6 +26,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p>
         Races with children’s runs, family categories or other family-friendly information. A short distance alone does not make a race family-friendly.
       </p>
+      <nav class="year-switcher" aria-label="Calendar year">
+        <a class="year-switcher-link" href="/en/family-friendly-races/?year=2026" data-year-link="2026">Calendar 2026</a>
+        <a class="year-switcher-link" href="/en/family-friendly-races/?year=2027" data-year-link="2027">Calendar 2027</a>
+      </nav>
       <a class="hero-secondary-link" href="/en/find-races/">Looking for all races? Open Find races.</a>
     </section>
 
@@ -113,6 +118,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls } from '../../utils-vote';
+  import { buildMasterApiPath, isSupportedPublicYear } from '../../utils-public-year';
+  import { getTodayIsoInLjubljana } from '../../utils-date';
+
+  // This rollover applies only to the family pages; global public defaults stay unchanged.
+  const requestedYear = new URLSearchParams(window.location.search).get('year');
+  const selectedYear = isSupportedPublicYear(requestedYear)
+    ? requestedYear : getTodayIsoInLjubljana() >= '2027-01-01' ? '2027' : '2026';
+  document.querySelectorAll<HTMLAnchorElement>('[data-year-link]').forEach((link) => {
+    const active = link.dataset.yearLink === selectedYear;
+    link.classList.toggle('is-active', active);
+    if (active) link.setAttribute('aria-current', 'page');
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-language-switch], footer a').forEach((link) => {
+    const url = new URL(link.href);
+    if (['/druzinam-prijazni-teki/', '/en/family-friendly-races/'].includes(url.pathname)) {
+      url.searchParams.set('year', selectedYear);
+      link.href = url.pathname + url.search;
+    }
+  });
 
   type ApiRecord = Record<string, unknown>;
   type FamilyEvent = {
@@ -136,7 +160,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     additionalData?: AdditionalEventData | null;
   };
 
-  const API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/';
+  const API_URL = `https://stk-master-api.igor-kalsek.workers.dev${buildMasterApiPath(selectedYear)}`;
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
@@ -194,7 +218,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   };
 
   const parseDateValue = (value: string) => {
-    if (!value) return Number.NaN;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return Number.NaN;
+    const utcDate = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(utcDate.getTime()) || utcDate.toISOString().slice(0, 10) !== value) return Number.NaN;
     const date = new Date(`${value}T00:00:00`);
     return date.getTime();
   };
@@ -418,7 +444,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const publicNotes = pick(item, 'opombe_javne');
 
     return (
-      date.startsWith('2026-') &&
+      date.startsWith(`${selectedYear}-`) &&
       normalize(pick(item, 'status_dogodka')) === 'potrjeno' &&
       pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
       hasExplicitFamilyOffer(publicNotes)
@@ -611,17 +637,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   const renderResults = () => {
     if (!state.apiAvailable) {
-      setStatus('Race data is currently unavailable. Please try again in a few minutes.');
+      setStatus(`Race data for ${selectedYear} is currently unavailable. Please try again in a few minutes.`);
       setCount('Data unavailable');
-      renderEmptyState('Race data is currently unavailable', 'We cannot show races right now. Please try again in a few minutes.', 'Calendar');
+      renderEmptyState('Race data is currently unavailable', `We cannot show races for ${selectedYear} right now. Please try again in a few minutes.`, selectedYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
 
     if (!state.events.length) {
-      setStatus('There are no family-friendly races to show. A race appears only when the source explicitly mentions children’s races, family categories, family runs, children’s discounts, free children’s participation, childcare, animation or similar information.');
+      setStatus(`No confirmed public races with explicit children’s or family activities are available for ${selectedYear}.`);
       setCount('0 races');
-      renderEmptyState('No races to show', 'There are currently no confirmed races where the source clearly mentions family-friendly information.', '2026');
+      renderEmptyState('No races to show', `No confirmed public races with explicit children’s or family activities are available for ${selectedYear}.`, selectedYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -644,12 +670,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(
       state.usedPastFallback
-        ? 'Confirmed public 2026 races with family-friendly information are shown; there are currently no upcoming races with that marker.'
-        : 'Confirmed public races from today onward with family-friendly information are shown, sorted by date by default.'
+        ? `Confirmed public ${selectedYear} races with children’s or family activities are shown; there are currently no upcoming races with such activities.`
+        : `Confirmed public ${selectedYear} races from today onward with children’s or family activities are shown, sorted by date by default.`
     );
 
     if (!count) {
-      renderEmptyState('No races match the selected filters.', 'Clear filters or use a broader search term.', 'Filters', true);
+      renderEmptyState('No races match the selected filters.', `Clear filters or use a broader search term for ${selectedYear}.`, 'Filters', true);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -662,7 +688,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   };
 
   const loadEvents = async () => {
-    setStatus('Loading family-friendly races …');
+    setStatus(`Loading family-friendly races for ${selectedYear} …`);
 
     try {
       const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });
@@ -672,7 +698,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       let events = getFamilyEvents(toArray(payload));
 
       try {
-        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData('2026'), '2026');
+        events = attachAdditionalDataByMasterRow(events, await fetchAdditionalEventData(selectedYear), selectedYear);
       } catch (error) {
         console.warn('Family-friendly races additional data skipped', error);
       }
