@@ -95,6 +95,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { buildEventDetailPath, getStableEventId } from '../utils-event-detail';
   import { initSavedRaceButtons } from '../saved-races-client';
+  import { hasExplicitFamilyOffer } from '../utils-home-stats';
   import { getDisplayEventTitle } from '../utils-events';
   import { formatSloveneDateBadge, formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls } from '../utils-vote';
@@ -126,7 +127,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
   const FAMILY_NOTE_MAX_LENGTH = 160;
-  const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
   const dateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormatter = new Intl.DateTimeFormat('sl-SI', { month: 'long' });
 
@@ -432,7 +432,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       date.startsWith('2026-') &&
       normalize(pick(item, 'status_dogodka')) === 'potrjeno' &&
       pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
-      normalize(publicNotes).includes(FAMILY_FRIENDLY_MARKER)
+      hasExplicitFamilyOffer(publicNotes)
     );
   };
 
@@ -665,8 +665,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(
       state.usedPastFallback
-        ? 'Prikazani so potrjeni javni dogodki za leto 2026 z oznako “družinam prijazno”; prihodnjih dogodkov s to oznako trenutno ni.'
-        : 'Prikazani so potrjeni javni dogodki od danes naprej z oznako “družinam prijazno”, privzeto urejeni po datumu.'
+        ? 'Prikazani so potrjeni javni dogodki za leto 2026 z otroškimi ali družinskimi ponudbami; prihodnjih dogodkov s takšno ponudbo trenutno ni.'
+        : 'Prikazani so potrjeni javni dogodki od danes naprej z otroškimi ali družinskimi ponudbami, privzeto urejeni po datumu.'
     );
 
     if (!count) {

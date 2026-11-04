@@ -109,6 +109,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
   import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
   import { initSavedRaceButtons } from '../../saved-races-client';
+  import { hasExplicitFamilyOffer } from '../../utils-home-stats';
   import { getDisplayEventTitle } from '../../utils-events';
   import { formatSloveneDistances } from '../../utils-slovenian';
   import { enrichEventsWithVoteUrls } from '../../utils-vote';
@@ -140,7 +141,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
   const FAMILY_NOTE_MAX_LENGTH = 160;
-  const FAMILY_FRIENDLY_MARKER = 'družinam prijazno';
   const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   const state: { events: FamilyEvent[]; filtered: FamilyEvent[]; apiAvailable: boolean; visibleCount: number; usedPastFallback: boolean; userInteracted: boolean; lastLoggedSearchSignature: string } = {
@@ -421,7 +421,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       date.startsWith('2026-') &&
       normalize(pick(item, 'status_dogodka')) === 'potrjeno' &&
       pick(item, 'vidno_v_javnem_koledarju').toLocaleUpperCase('sl-SI') === 'DA' &&
-      normalize(publicNotes).includes(FAMILY_FRIENDLY_MARKER)
+      hasExplicitFamilyOffer(publicNotes)
     );
   };
 
