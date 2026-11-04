@@ -1,0 +1,47 @@
+[
+  {
+    "row": 102,
+    "datum": "2026-05-17",
+    "naziv_prireditve": "Tek na Friderikov stolp 2026",
+    "kraj": "Celje",
+    "regija": "Savinjska",
+    "tip_podlage": "trail",
+    "razdalje_km": "1.005",
+    "cas_zacetka": "10:00",
+    "povezava_razpis": "http://www.drustvo-maratoncev-celje.si/FRIDERIK/friderikov%20tek.htm",
+    "povezava_prijava": "https://protime.si/dogodek/tek-na-friderikov-stolp-2026/",
+    "status_dogodka": "potrjeno",
+    "vidno_v_javnem_koledarju": "DA",
+    "opombe_javne": "trail; vertikalni tek; Start teka: parkirišče pod Celjskim gradom oziroma parkirišče pri sotočju Savinje in Voglajne; cilj: vrh Friderikovega stolpa na Celjskem gradu. Tek z merjenim časom, 187 m višinske razlike, starti posameznih tekmovalcev na vsakih 10 s. Podlaga: gramoz, kamenje, zemlja, trava, korenine, v dežju tudi blato, stopnice in neraven teren z izrazitim naklonom. Obvezna brezplačna prijava prek Protime; startnine ni. Tek je samo za polnoletne osebe (18+), primeren za tekače s predhodnimi izkušnjami s trail teki; kategoriji sta absolutno M in Ž. Uporaba palic dovoljena, priporočena trail obutev. Prisotni bodo zdravstvena ekipa, reševalno vozilo in gorska reševalna ekipa. Vsak tekač prejme medaljo, prvi trije v posamezni kategoriji pokale. Po prijavi udeleženci prejmejo dodatna navodila."
+  },
+  {
+    "row": 267,
+    "datum": "2026-12-05",
+    "naziv_prireditve": "Velenje Trail 2026",
+    "kraj": "Velenje",
+    "regija": "Savinjska",
+    "tip_podlage": "trail",
+    "razdalje_km": "10;18;36",
+    "cas_zacetka": "07:30",
+    "povezava_razpis": "https://velenjetrail.si/razpis/",
+    "povezava_prijava": "https://protime.si/dogodek/velenje-trail-2026/",
+    "status_dogodka": "potrjeno",
+    "vidno_v_javnem_koledarju": "DA",
+    "opombe_javne": "Družinski trail 10 km ob 09:00; Pozoj 18 km ob 09:30; Mastodont 36 km ob 07:30. Prijave do 20. 11. 2026."
+  },
+  {
+    "row": 303,
+    "datum": "2026-11-14",
+    "naziv_prireditve": "11. Tek občine Mengeš 2026",
+    "kraj": "Mengeš",
+    "regija": "Osrednjeslovenska",
+    "tip_podlage": "",
+    "razdalje_km": "0.6;5;10",
+    "cas_zacetka": "10:30",
+    "povezava_razpis": "https://prijavim.se/uploads/razpisi/6632_invitation.pdf",
+    "povezava_prijava": "https://prijavim.se/calendar/checkings/6632/11--tek-obcine-menges-2026",
+    "status_dogodka": "potrjeno",
+    "vidno_v_javnem_koledarju": "DA",
+    "opombe_javne": "Otroški tek 600 m ob 10:30; teka na 5 km in 10 km ob 11:00. Predprijave do 12. 11. 2026; prijave tudi na dan dogodka."
+  }
+]

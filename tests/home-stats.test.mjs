@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { countPublicYearStats, hasExplicitFamilyOffer, loadPublicYearStats } from '../.cache/dist-test/utils-home-stats.js';
@@ -56,4 +57,14 @@ test('adult-only races, free entry, short distances and absent children offers d
     'Otroški tek samo za odrasle.', 'Družinskih popustov ni.'
   ]) assert.equal(hasExplicitFamilyOffer(note), false, note);
   assert.deepEqual(countPublicYearStats({ data: [race({ naziv_prireditve: 'Družinski otroški tek', opombe: 'Otroški teki' })] }, '2027'), { confirmed: 1, family: 0 });
+});
+
+
+test('public 2026 family regression snapshot excludes Friderik and includes Velenje and Mengeš', () => {
+  const races = JSON.parse(readFileSync(new URL('./fixtures/family-offers/public-events.json', import.meta.url), 'utf8'));
+  assert.deepEqual(races.map((race) => [race.naziv_prireditve, hasExplicitFamilyOffer(race.opombe_javne)]), [
+    ['Tek na Friderikov stolp 2026', false],
+    ['Velenje Trail 2026', true],
+    ['11. Tek občine Mengeš 2026', true]
+  ]);
 });
