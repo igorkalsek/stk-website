@@ -33,3 +33,22 @@ export const getEventDatePhase = (eventDate: string, todayIso = getTodayIsoInLju
   if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) return 'invalid';
   return eventDate < todayIso ? 'past' : eventDate === todayIso ? 'today' : 'future';
 };
+
+/** Relative race label computed from date-only calendar days, never from elapsed milliseconds
+ * in the viewer's time zone or at static-build time. */
+export const formatRaceDateStatus = (eventDate: string, language: 'sl' | 'en', todayIso = getTodayIsoInLjubljana()): string => {
+  const asUtcDay = (value: string): number | null => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+    const time = Date.parse(`${value}T00:00:00Z`);
+    return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === value ? time : null;
+  };
+  const race = asUtcDay(eventDate);
+  const today = asUtcDay(todayIso);
+  if (race === null || today === null) return '';
+  const days = (race - today) / 86_400_000;
+  if (days < 0) return language === 'sl' ? 'Dogodek je že mimo' : 'This race has already passed';
+  if (days === 0) return language === 'sl' ? 'Danes' : 'Today';
+  return language === 'sl'
+    ? `Prihaja čez ${days} ${days === 1 ? 'dan' : 'dni'}`
+    : `Coming in ${days} ${days === 1 ? 'day' : 'days'}`;
+};

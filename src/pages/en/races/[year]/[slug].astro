@@ -81,19 +81,8 @@ const correctionUrl = event ? buildRaceCorrectionContextUrl(event, 'en', canonic
 const confirmationUrl = event ? buildRaceConfirmationContextUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/?mode=confirm';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
-const getDateStatus = (value: string) => {
-  const eventTime = new Date(`${value}T00:00:00`).getTime();
-  const now = new Date();
-  const todayTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  if (!Number.isFinite(eventTime)) return '';
-  const days = Math.round((eventTime - todayTime) / 86_400_000);
-  if (days === 0) return 'Today';
-  if (days > 0) return `Coming in ${days} ${days === 1 ? 'day' : 'days'}`;
-  return 'This race has already passed';
-};
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
-const eventStatus = event ? getDateStatus(event.date) : '';
 const parseRegistrationAmount = (value: string) => {
   if (!value) return null;
   const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
@@ -205,7 +194,7 @@ const jsonLd = event ? {
               </div>
             )}
             <div class="event-detail-status-row">
-              {eventStatus && <span class="pill event-detail-status-pill">{eventStatus}</span>}
+              <span class="pill event-detail-status-pill" data-race-date-status data-event-date={event.date} data-language="en" hidden></span>
             </div>
             <div class="event-detail-primary-actions" aria-label="Main links">
               <div class="event-detail-official-actions event-detail-action-list">
@@ -546,5 +535,7 @@ const jsonLd = event ? {
 
 <script>
   import { initRegistrationDeadlineCountdowns } from '../../../../registration-deadlines-client';
+  import { initRaceDateStatuses } from '../../../../race-date-status-client';
   initRegistrationDeadlineCountdowns();
+  initRaceDateStatuses();
 </script>
