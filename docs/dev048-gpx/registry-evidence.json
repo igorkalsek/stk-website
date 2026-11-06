@@ -1,0 +1,111 @@
+{
+  "checked_at": "2026-11-01 22:44:24 UTC",
+  "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1xmuX8CvUNIW60-TE9i2CzExy7Abo3wVjIMnhHhaX7B0/edit",
+  "read_only": true,
+  "registry": {
+    "sheet_id": 1492791259,
+    "headers": [
+      "race_key",
+      "race_id",
+      "",
+      "novi_race_key"
+    ],
+    "grid_rows": 998,
+    "grid_columns": 26,
+    "searches": [
+      {
+        "query": "knap",
+        "markdown": "| Row | race_key | race_id | Column C | novi_race_key |\n| --- | --- | --- | --- | --- |\n|  | race_key | race_id |  | novi_race_key |\n| 71 | knap trail 2026 (slovenski zimski trail)\\|trbovlje | R000070 |  |  |",
+        "scanned_range": "A1:D998",
+        "scanned_row_count": 998,
+        "scanned_column_count": 4,
+        "matched_row_count": 1,
+        "returned_matching_row_count": 1,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      },
+      {
+        "query": "kraških",
+        "markdown": "| Row | race_key | race_id | Column C | novi_race_key |\n| --- | --- | --- | --- | --- |\n|  | race_key | race_id |  | novi_race_key |\n| 33 | 3. trail po kraških klancih 2026\\|križ pri sežani | R000032 |  |  |",
+        "scanned_range": "A1:D998",
+        "scanned_row_count": 998,
+        "scanned_column_count": 4,
+        "matched_row_count": 1,
+        "returned_matching_row_count": 1,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      },
+      {
+        "query": "podbrdo",
+        "markdown": "| Row | race_key | race_id | Column C | novi_race_key |\n| --- | --- | --- | --- | --- |\n|  | race_key | race_id |  | novi_race_key |\n| 10 | mini gm4o 2026\\|podbrdo | R000009 |  |  |\n| 39 | 33. gorski tek ivana anderleta na črno prst\\|podbrdo | R000038 |  |  |\n| 90 | podbrdo trail running festival 2026\\|podbrdo | R000089 |  |  |",
+        "scanned_range": "A1:D998",
+        "scanned_row_count": 998,
+        "scanned_column_count": 4,
+        "matched_row_count": 3,
+        "returned_matching_row_count": 3,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      }
+    ]
+  },
+  "public_ls": {
+    "sheet_id": 1177614555,
+    "grid_rows": 987,
+    "grid_columns": 29,
+    "searches": [
+      {
+        "query": "R000070",
+        "markdown": "| Row | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n|  | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| 7 | 1/10/2026 | Knap trail 2026 (Slovenski zimski trail) | Trbovlje | Zasavska | trail | 16;30;50 | 07:00 | https://www.knaptrail.si/razpis-tekmovanja-2026/ | https://protime.si/dogodek/knap-trail-2026/ |  | knaptrail.si – razpis 2026 + Protime.si | T’ KRATKA 16 km (start 10:30), T’ SREDNA 30 km (start 9:00), T’ DOUGA 50 km (start 7:00); v ceniku je dolga razdalja navedena kot 51 km – pred dogodkom preveri, če bo uradna dolžina 50 ali 51 km. | potrjeno | 🔗 | 01 - January | 01 - januar |  |  | knap trail 2026 (slovenski zimski trail)\\|trbovlje | R000070 | 2026 | R000070\\|2026-01-10 |",
+        "scanned_range": "A1:V987",
+        "scanned_row_count": 987,
+        "scanned_column_count": 22,
+        "matched_row_count": 1,
+        "returned_matching_row_count": 1,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      },
+      {
+        "query": "R000032",
+        "markdown": "| Row | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n|  | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| 36 | 3/1/2026 | 3. Trail po kraških klancih 2026 | Križ pri Sežani | Obalno-kraška | trail | 12.3;19.5 | 10:00 | https://protime.si/dogodek/3-trail-po-kraskih-klancih-2026/ | https://protime.si/dogodek/3-trail-po-kraskih-klancih-2026/ | PGT Pokal TREJL | Protime.si dogodek + srd-kras.si | Dve razdalji: 12,3 km (start 10:30) in 19,5 km (start 10:00); glej razpis. \\| Družinam prijazno: otroški tek. | potrjeno | 🔗 | 03 - March | 03 - marec | DA | otroški tek. | 3. trail po kraških klancih 2026\\|križ pri sežani | R000032 | 2026 | R000032\\|2026-03-01 |",
+        "scanned_range": "A1:V987",
+        "scanned_row_count": 987,
+        "scanned_column_count": 22,
+        "matched_row_count": 1,
+        "returned_matching_row_count": 1,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      },
+      {
+        "query": "R000089",
+        "markdown": "| Row | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n|  | Datum | Prireditev | Kraj | Regija | Podlaga | Razdalje (km) | Ura štarta | Razpis | Prijava | Pokal / Serija | Vir | Opombe (javne) | Status | Razpis_btn | Mesec | Mesec_SI | druzina_prijazno | druzina_detajli | race_key | race_id | edition_year | edition_id |\n| 148 | 6/19/2026 | Podbrdo Trail Running Festival 2026 | Podbrdo | Goriška | trail | 10;20;42;70;103.8 | 23:00 | https://www.ptrf.si/ | https://www.ptrf.si/en/distances/utp-100-km/ |  | ptrf.si | Festival trail tekov (UTP/GM4O). Prvi štart: petek 23:00 (UTP100+). | potrjeno | 🔗 | 06 - June | 06 - junij |  |  | podbrdo trail running festival 2026\\|podbrdo | R000089 | 2026 | R000089\\|2026-06-19 |",
+        "scanned_range": "A1:V987",
+        "scanned_row_count": 987,
+        "scanned_column_count": 22,
+        "matched_row_count": 1,
+        "returned_matching_row_count": 1,
+        "truncated": false,
+        "truncated_rows": false,
+        "truncated_columns": false,
+        "truncated_row_count": 0,
+        "truncated_column_count": 0
+      }
+    ]
+  },
+  "conclusion": "Existing 2026 identities verified. Registry keys contain 2026; no explicit 2027 aliases found in the three name searches. The 2027 tab has 18 columns; no race_id/edition_id supplied by its public Worker response. No IDs generated or assigned.",
+  "no_writes": true
+}

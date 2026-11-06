@@ -1,0 +1,185 @@
+[
+  {
+    "id": "P0E-019",
+    "event": "KBK Trail",
+    "route": "23,12 km",
+    "source_url": "https://kbk.sdmh.si/proga/",
+    "target_url": "https://drive.google.com/file/d/1-qd_Qh0EWDg4VBmFsqkbBz-8cWpi9gZd/view?usp=sharing",
+    "expected_km": 23.12,
+    "target_http": {
+      "url": "https://drive.google.com/file/d/1-qd_Qh0EWDg4VBmFsqkbBz-8cWpi9gZd/view?usp=sharing",
+      "status": null,
+      "checked_at": "2026-11-03T08:53:01.759245+00:00",
+      "bytes": 4148636,
+      "sha256": "55f5162243835f944178fa0aa471e9ea2bcdc43e96725a56f69e8482f6150015",
+      "content_type": "application/gpx+xml",
+      "method": "Authenticated Google Drive connector raw-file materialization; origin HTTP not exposed"
+    },
+    "metadata": {
+      "id": "1-qd_Qh0EWDg4VBmFsqkbBz-8cWpi9gZd",
+      "title": "KBK2026-nova.gpx",
+      "mime_type": "application/gpx+xml",
+      "size": "4148636",
+      "source_visibility_status": "access_not_verified"
+    },
+    "linked_from_live_source": true,
+    "public_access": "NOT_INDEPENDENTLY_VERIFIED",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "status": "VALID",
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "bytes": 4148636,
+        "sha256": "55f5162243835f944178fa0aa471e9ea2bcdc43e96725a56f69e8482f6150015",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 11261,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 23.471,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.09743478707969,
+            14.057641765102744,
+            46.13100020214915,
+            14.117272300645709
+          ],
+          "first_time": "2026-05-13T15:45:51.000Z",
+          "last_time": "2026-05-13T18:53:41.000Z",
+          "geometry_sha256_6dp": "0f05bbffd89cb851fc84855231fb8889e9434040fab67f1fb09b80891237ab80",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "88df70564eac5160eede4dc4c0a91fb292687fa1436a2ef85a3ab1614aa225da",
+          "route_label": "Gorenja vas-Poljane Trail Running",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-027",
+    "event": "Trail tek Zelene doline",
+    "route": "HRIBAR 22 km",
+    "source_url": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/",
+    "target_url": "https://drive.google.com/file/d/1L0ZdIrIxTiF924Pi__GHtEOk5FU34Lak/view?usp=sharing",
+    "expected_km": 22,
+    "target_http": {
+      "url": "https://drive.google.com/file/d/1L0ZdIrIxTiF924Pi__GHtEOk5FU34Lak/view?usp=sharing",
+      "status": null,
+      "checked_at": "2026-11-03T08:53:02.086633+00:00",
+      "bytes": 83479,
+      "sha256": "86758c87be8241a6dd2768472fabaf1984a2b628839eff1a5bc0021e4b063035",
+      "content_type": "application/gpx+xml",
+      "method": "Authenticated Google Drive connector raw-file materialization; origin HTTP not exposed"
+    },
+    "metadata": {
+      "id": "1L0ZdIrIxTiF924Pi__GHtEOk5FU34Lak",
+      "title": "Hribar.gpx",
+      "mime_type": "application/gpx+xml",
+      "size": "83479",
+      "source_visibility_status": "access_not_verified"
+    },
+    "linked_from_live_source": true,
+    "public_access": "NOT_INDEPENDENTLY_VERIFIED",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "status": "VALID",
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "bytes": 83479,
+        "sha256": "86758c87be8241a6dd2768472fabaf1984a2b628839eff1a5bc0021e4b063035",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 904,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 22.034,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.36493,
+            14.86639,
+            46.41809000000001,
+            14.905880000000002
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "9b2a15acf29dbd3667c8109edd5186be3e10187fcd1478f9713ea423c3989c1c",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "daljša popravljena s strani zrsvn varianta_1",
+          "copyright_metadata_present": true
+        }
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-026",
+    "event": "Trail tek Zelene doline",
+    "route": "DOLINAR 13 km",
+    "source_url": "https://dogodek.zelenedoline.si/3-trail-tek-zelene-doline/",
+    "target_url": "https://drive.google.com/file/d/1mNxGK8ulJrI7W5DeZmxJh8Gsise5jhTn/view?usp=sharing",
+    "expected_km": 13,
+    "target_http": {
+      "url": "https://drive.google.com/file/d/1mNxGK8ulJrI7W5DeZmxJh8Gsise5jhTn/view?usp=sharing",
+      "status": null,
+      "checked_at": "2026-11-03T08:53:02.206838+00:00",
+      "bytes": 43812,
+      "sha256": "de70b2f015555ac7d70735b791284e4b16a9ccdf697d67d320fc01cb0fb187b4",
+      "content_type": "application/gpx+xml",
+      "method": "Authenticated Google Drive connector raw-file materialization; origin HTTP not exposed"
+    },
+    "metadata": {
+      "id": "1mNxGK8ulJrI7W5DeZmxJh8Gsise5jhTn",
+      "title": "Dolinar.gpx",
+      "mime_type": "application/gpx+xml",
+      "size": "43812",
+      "source_visibility_status": "access_not_verified"
+    },
+    "linked_from_live_source": true,
+    "public_access": "NOT_INDEPENDENTLY_VERIFIED",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "status": "VALID",
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "bytes": 43812,
+        "sha256": "de70b2f015555ac7d70735b791284e4b16a9ccdf697d67d320fc01cb0fb187b4",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 472,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.174,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.36493,
+            14.887,
+            46.4037,
+            14.90496
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "a4d0a312d46ffe021385ba0f2903b563dd21ae0ae89152b8014fee8b68d72f94",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "krajša popravlejna s strani  zrsvn",
+          "copyright_metadata_present": true
+        }
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

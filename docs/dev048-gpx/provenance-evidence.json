@@ -1,0 +1,450 @@
+{
+  "reviewed_at": "2026-11-01T22:46:10.170877+00:00",
+  "method": "Reuse prior seven successful HTTP/GPX checks. Fetch source and edition pages only; investigate missing candidates and parse embedded public HTML locally. No accounts, access bypass, rehosting or external writes.",
+  "source_reviews": [
+    {
+      "id": "knap-t-kratka",
+      "http": {
+        "url": "https://www.knaptrail.si/razdalje/t-kratka/",
+        "checked_at": "2026-11-01T22:42:25.019457+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-kratka/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 105896,
+        "sha256": "42482f50b71e7edef24b31c6d023252dda0732674571a01f3926366a80d14b16"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 16,
+      "links": [
+        "https://www.knaptrail.si/razpis-tekmovanja-2027/",
+        "https://tracedetrail.fr/en/trace/trace/221821",
+        "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx"
+      ]
+    },
+    {
+      "id": "knap-t-sredna",
+      "http": {
+        "url": "https://www.knaptrail.si/razdalje/t-sredna/",
+        "checked_at": "2026-11-01T22:42:25.019634+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-sredna/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103586,
+        "sha256": "430db1248963d011e8a8ac57f8921f2c203cdcb0d6856be853d95ebb61aea0d3"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 30,
+      "links": [
+        "https://www.knaptrail.si/razpis-tekmovanja-2027/",
+        "https://tracedetrail.fr/en/trace/trace/222517",
+        "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx"
+      ]
+    },
+    {
+      "id": "knap-t-douga",
+      "http": {
+        "url": "https://www.knaptrail.si/razdalje/t-douga/",
+        "checked_at": "2026-11-01T22:42:25.019761+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-douga/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103656,
+        "sha256": "bc7bcab8cd3f367677b029be194745bd7f467651d3305811744ea3c7af4578fe"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 51,
+      "links": [
+        "https://www.knaptrail.si/razpis-tekmovanja-2027/",
+        "https://tracedetrail.fr/en/trace/trace/222629",
+        "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx"
+      ]
+    },
+    {
+      "id": "ptrf-utp-100-km",
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/utp-100-km/",
+        "checked_at": "2026-11-01T22:42:25.019815+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/utp-100-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 82799,
+        "sha256": "4079fa57eabb174a74998a12ca1aecc418d557a274b1a7496acae0717687a922"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 107.1,
+      "links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx"
+      ]
+    },
+    {
+      "id": "ptrf-utp-70-km",
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/utp-70-km/",
+        "checked_at": "2026-11-01T22:42:25.019871+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/utp-70-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 82593,
+        "sha256": "09643b9bb00af45d90429cbc5f7dc9aeb41ed972b2e87e3a935632ac025ed13b"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 70.1,
+      "links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx"
+      ]
+    },
+    {
+      "id": "ptrf-gm4o-40-km",
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "checked_at": "2026-11-01T22:42:25.138279+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 84187,
+        "sha256": "b703281522d07ba4138f8c567ed9dc1bec63fcb6940679790cf8f6810804e24f"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 40.6,
+      "links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx"
+      ]
+    },
+    {
+      "id": "ptrf-gt-20-km",
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/gt-20-km/",
+        "checked_at": "2026-11-01T22:42:25.141785+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/gt-20-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 83075,
+        "sha256": "b73f014f36815ea6e15fad5123bfa3b8876f11fb766c7b717eaebea7a5ce379a"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 23,
+      "links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx"
+      ]
+    },
+    {
+      "id": "ptrf-rt-10-km",
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/rt-10-km/",
+        "checked_at": "2026-11-01T22:42:25.145225+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/rt-10-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 81991,
+        "sha256": "b77f957a875bce3270af7508154f0baac406926ea1f3bc37415b93fa62653345"
+      },
+      "organizer_links_target": true,
+      "current_source_edition": 2027,
+      "current_source_declared_km": 10,
+      "links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx"
+      ]
+    }
+  ],
+  "historical_edition_reviews": [
+    {
+      "candidate_id": "knap-t-sredna",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/222517",
+        "checked_at": "2026-11-01T22:42:51.264214+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/222517",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 471625,
+        "sha256": "17dd934bca0f18c0541adf913b7dd65f718d8e5b41cd40318ff34bfc8e02b557"
+      },
+      "declared_year": 2024,
+      "declared_event_date": "2024-01-06",
+      "declared_distance_km": 30.6,
+      "creator_account": "KnapTRAIL",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "knap-t-douga",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/222629",
+        "checked_at": "2026-11-01T22:42:51.264377+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/222629",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 576290,
+        "sha256": "efbe5de18c77e6de7ad86c2d75df69e15ff567c3b01d4cd8cc58c94d549cbd4f"
+      },
+      "declared_year": 2024,
+      "declared_event_date": "2024-01-06",
+      "declared_distance_km": 51.4,
+      "creator_account": "KnapTRAIL",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "ptrf-utp-100-km",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/344370",
+        "checked_at": "2026-11-01T22:44:23.688809+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/344370",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 1625438,
+        "sha256": "665c811fbb18200d3cca1a4335466ac60b1f244267499a971101a7dbe8f05bd9"
+      },
+      "declared_year": 2026,
+      "declared_event_date": "2026-06-19",
+      "declared_distance_km": 107.1,
+      "creator_account": "Podbrdo-Slovenija",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "ptrf-utp-70-km",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/324639",
+        "checked_at": "2026-11-01T22:44:23.688970+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/324639",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 509501,
+        "sha256": "f1ffdd3308b67102ba44832aa35e9e4bb0aeb1ee15d94756971b899e80584561"
+      },
+      "declared_year": 2026,
+      "declared_event_date": "2026-06-20",
+      "declared_distance_km": 70.86,
+      "creator_account": "Podbrdo-Slovenija",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "ptrf-gm4o-40-km",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/324637",
+        "checked_at": "2026-11-01T22:44:23.689102+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/324637",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 809868,
+        "sha256": "d953bfaae8fb52e35ce2d7b79cdbd38ba56724861adac74a837ba0b61724cb4a"
+      },
+      "declared_year": 2026,
+      "declared_event_date": "2026-06-20",
+      "declared_distance_km": 40.56,
+      "creator_account": "Podbrdo-Slovenija",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "ptrf-gt-20-km",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/324636",
+        "checked_at": "2026-11-01T22:44:23.689155+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/324636",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 304771,
+        "sha256": "c1b70e7d1c890c52d009b9cb6801e117cc9fa33e4c544fa82b3ee25b3ed5d4d4"
+      },
+      "declared_year": 2026,
+      "declared_event_date": "2026-06-20",
+      "declared_distance_km": 22.94,
+      "creator_account": "Podbrdo-Slovenija",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    },
+    {
+      "candidate_id": "ptrf-rt-10-km",
+      "http": {
+        "url": "https://tracedetrail.fr/en/trace/192055",
+        "checked_at": "2026-11-01T22:42:51.264496+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://tracedetrail.fr/en/trace/192055",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 185659,
+        "sha256": "faaaa741c9f6c95816d49f59f7398b3c53bd6d8dfeee9d1336cf9c0d4abe1fc3"
+      },
+      "declared_year": 2023,
+      "declared_event_date": "2023-06-18",
+      "declared_distance_km": 10.3,
+      "creator_account": "Podbrdo-Slovenija",
+      "byte_equality_with_download": "NOT_TESTED_AND_NOT_ASSUMED",
+      "note": "Different reported distances do not override the original GPX measurement."
+    }
+  ],
+  "remaining_candidates": {
+    "knap_short": [
+      {
+        "http": {
+          "url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+          "checked_at": "2026-11-01T22:45:16.915862+00:00",
+          "redirects": [],
+          "status": 404,
+          "final_url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+          "content_type": "text/html; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 162,
+          "sha256": "7b61a0032297d2b400d3dd5e69556a8ca31adb717464c247aaf997f4b4de26f6"
+        },
+        "assessment": "Expected direct GPX responds 404; historical Trace de Trail map is not a replacement GPX download"
+      },
+      {
+        "http": {
+          "url": "https://tracedetrail.fr/en/trace/221821",
+          "checked_at": "2026-11-01T22:45:17.027771+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://tracedetrail.fr/en/trace/221821",
+          "content_type": "text/html; charset=UTF-8",
+          "content_disposition": null,
+          "bytes": 347125,
+          "sha256": "0247ca37ec935c726d624ae58f26c4a60cfc65f8cd322c18ef69e4baa568bc16"
+        },
+        "assessment": "Organizer-linked alternative map belongs to Knap Trail 2024, 2024-01-06; platform reports 15.93 km. No GPX file fetched from it."
+      }
+    ],
+    "kras": [
+      {
+        "page_url": "https://www.viewgpx.com/route/dG9nJZrm",
+        "html_sha256": "7892e159f32a1685e97bee108d007078f95304c0e5329d7ede1d8adfdbecdfa4",
+        "html_captured_at": "2026-11-01T22:25:03.685810+00:00",
+        "payload_sha256": "c4165c1b67de16d120e96c67f9dd2c792ba4adf88fd0f22646c41fd5fc743646",
+        "payload_bytes": 184652,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Wikiloc - http://www.wikiloc.com",
+          "track_points": 1883,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.024,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.721517,
+            13.822657,
+            45.742073,
+            13.866037
+          ],
+          "names_and_descriptions": [
+            "Križ- Trail po kraških klancih 12km",
+            "Križ- Trail po kraških klancih 12km"
+          ],
+          "first_time": "2025-09-30T13:50:45Z",
+          "last_time": "2025-09-30T15:21:55Z",
+          "copyright_metadata": [],
+          "warnings": []
+        },
+        "standalone_download_url": null,
+        "classification": "REVIEW",
+        "reason": "XML embedded in public HTML application data, not a fetched GPX response. Names have no edition year; 2025 point times are recordings, not event dates. UI export was not verified: local browser is disabled in Work settings."
+      },
+      {
+        "page_url": "https://www.viewgpx.com/route/aTFxjY78",
+        "html_sha256": "1ed572f53630308a0b4c84f2b95fa1f1bd4289baf391f81917823dca9cfed968",
+        "html_captured_at": "2026-11-01T22:25:04.428487+00:00",
+        "payload_sha256": "aaf535585cb74c79bd826612eab7d24883999a83e848df039c0ca64f10ea4676",
+        "payload_bytes": 293655,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Wikiloc - http://www.wikiloc.com",
+          "track_points": 2998,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 19.155,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.710794,
+            13.822598,
+            45.742065,
+            13.871568
+          ],
+          "names_and_descriptions": [
+            "Trail po kraških klancih 19km",
+            "Križ- Trail po kraških klancih 19km"
+          ],
+          "first_time": "2025-09-28T06:53:38Z",
+          "last_time": "2025-09-28T09:27:24Z",
+          "copyright_metadata": [],
+          "warnings": []
+        },
+        "standalone_download_url": null,
+        "classification": "REVIEW",
+        "reason": "XML embedded in public HTML application data, not a fetched GPX response. Names have no edition year; 2025 point times are recordings, not event dates. UI export was not verified: local browser is disabled in Work settings."
+      }
+    ],
+    "kras_extraction_method": "Read public HTML capture; JSON-decode self.__next_f.push([1, STRING]) literals without executing JavaScript; extract XML declaration through closing gpx tag; pass bytes to existing GPX parser. No standalone GPX download is inferred."
+  },
+  "ptrf_embed_warning": {
+    "utp_100_embedded_trace": "https://tracedetrail.fr/en/trace/247250",
+    "utp_70_embedded_trace": "https://tracedetrail.fr/en/trace/247252",
+    "edition": 2024,
+    "conclusion": "These embedded maps are older than the separately linked GPX files labelled 2026. Their geometry is not assumed interchangeable."
+  },
+  "link_assessment": {
+    "verdict": "FEASIBLE_CONDITIONAL",
+    "preferred_target": "Organizer course page with explicit historical year in STK label",
+    "conditions": [
+      "Seven historical files only; no 2027 claim",
+      "No hosting, proxy, extraction download, iframe or bypass of access controls",
+      "Use organizer-linked publicly available source; withdraw on rights complaint or changed target",
+      "No assertion of race-day accuracy or current trail accessibility"
+    ],
+    "rights_to_rehost": "NOT_ESTABLISHED",
+    "legal_basis": [
+      {
+        "url": "https://curia.europa.eu/site/upload/docs/application/pdf/2014-02/cp140020en.pdf",
+        "case": "C-466/12 Svensson",
+        "assessment": "Ordinary hyperlinks to works freely published with rightholder consent can avoid a new-public issue; access restrictions must not be circumvented."
+      },
+      {
+        "url": "https://curia.europa.eu/site/upload/docs/application/pdf/2016-09/cp160092en.pdf",
+        "case": "C-160/15 GS Media",
+        "assessment": "An official-looking source is evidence, not a blanket guarantee of rights; known unlawful publication and profit-related diligence remain relevant."
+      }
+    ]
+  },
+  "registry_evidence": "registry-evidence.json",
+  "original_successful_xml_tests": "test-results.txt (10/10 reused; not rerun)"
+}

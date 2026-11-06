@@ -1,0 +1,57 @@
+[
+  {
+    "id": "GPX-0047",
+    "event": "OBALA Ultra Trail",
+    "route": "11 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+    "kind": "GPX",
+    "expected_km": 11,
+    "master_year": 2026,
+    "master_row": 255
+  },
+  {
+    "id": "GPX-0046",
+    "event": "OBALA Ultra Trail",
+    "route": "17 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+    "kind": "GPX",
+    "expected_km": 17,
+    "master_year": 2026,
+    "master_row": 255
+  },
+  {
+    "id": "GPX-0045",
+    "event": "OBALA Ultra Trail",
+    "route": "35 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+    "kind": "GPX",
+    "expected_km": 35,
+    "master_year": 2026,
+    "master_row": 255
+  },
+  {
+    "id": "GPX-0044",
+    "event": "OBALA Ultra Trail",
+    "route": "64 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+    "kind": "GPX",
+    "expected_km": 64,
+    "master_year": 2026,
+    "master_row": 255
+  },
+  {
+    "id": "GPX-0043",
+    "event": "OBALA Ultra Trail",
+    "route": "108 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+    "kind": "GPX",
+    "expected_km": 108,
+    "master_year": 2026,
+    "master_row": 255
+  }
+]

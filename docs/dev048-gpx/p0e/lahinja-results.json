@@ -1,0 +1,347 @@
+[
+  {
+    "id": "P0E-034",
+    "event": "Lahinja Trail",
+    "route": "Duma",
+    "expected_km": 10,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.belakrajina.si/robots.txt",
+        "checked_at": "2026-11-03T08:53:20.705862+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/robots.txt",
+        "content_type": "text/plain; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 26,
+        "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "checked_at": "2026-11-03T08:53:20.823827+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 87723,
+        "sha256": "91f7e4cdc46ae4bd93028f7dba21c8c63d97c233f427b7000501f90617c7aee0"
+      },
+      "download_links": [
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+      "checked_at": "2026-11-03T08:53:58.279150+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 52973,
+      "sha256": "bbfe8b74c04d72e8a3d785fe6d68edd6490c073ac8446b6e074a7d3672643ea7"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "bbfe8b74c04d72e8a3d785fe6d68edd6490c073ac8446b6e074a7d3672643ea7",
+        "bytes": 52973,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 347,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 10.102,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.49762487411499,
+            15.177818,
+            45.523009384050965,
+            15.214154720306396
+          ],
+          "first_time": "2024-08-12T12:37:44.000Z",
+          "last_time": "2024-08-12T12:46:42.936Z",
+          "geometry_sha256_6dp": "4f7b22dae2e735a9dc7e5f7e78bd7982a1c41ba3052d6916653e4257551876bc",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "88df70564eac5160eede4dc4c0a91fb292687fa1436a2ef85a3ab1614aa225da",
+          "route_label": "Lahinja trail SHORT",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "robots_http": {
+          "url": "https://www.belakrajina.si/robots.txt",
+          "checked_at": "2026-11-03T08:53:20.705862+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.belakrajina.si/robots.txt",
+          "content_type": "text/plain; charset=UTF-8",
+          "content_disposition": null,
+          "bytes": 26,
+          "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-035",
+    "event": "Lahinja Trail",
+    "route": "Velikobukovska",
+    "expected_km": 18,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.belakrajina.si/robots.txt",
+        "checked_at": "2026-11-03T08:53:20.705862+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/robots.txt",
+        "content_type": "text/plain; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 26,
+        "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "checked_at": "2026-11-03T08:53:20.823827+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 87723,
+        "sha256": "91f7e4cdc46ae4bd93028f7dba21c8c63d97c233f427b7000501f90617c7aee0"
+      },
+      "download_links": [
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+      "checked_at": "2026-11-03T08:53:58.430863+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 120124,
+      "sha256": "a847db1beb05d8f87ccf6964a47c1d88d7f50204ddceca47a8e84e2e855704a4"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "a847db1beb05d8f87ccf6964a47c1d88d7f50204ddceca47a8e84e2e855704a4",
+        "bytes": 120124,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 796,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 18.385,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.48015992157161,
+            15.177785,
+            45.52301,
+            15.232249991968274
+          ],
+          "first_time": "2024-07-23T11:27:27.000Z",
+          "last_time": "2024-07-23T12:05:00.403Z",
+          "geometry_sha256_6dp": "7a9c8174907015f8abbd4aafd4800c6b947fed4a81168cf5fde0f627b603d9fc",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "88df70564eac5160eede4dc4c0a91fb292687fa1436a2ef85a3ab1614aa225da",
+          "route_label": "LT_LONG",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "robots_http": {
+          "url": "https://www.belakrajina.si/robots.txt",
+          "checked_at": "2026-11-03T08:53:20.705862+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.belakrajina.si/robots.txt",
+          "content_type": "text/plain; charset=UTF-8",
+          "content_disposition": null,
+          "bytes": 26,
+          "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-036",
+    "event": "Lahinja Trail",
+    "route": "Republikanka",
+    "expected_km": 30,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.belakrajina.si/robots.txt",
+        "checked_at": "2026-11-03T08:53:20.705862+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/robots.txt",
+        "content_type": "text/plain; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 26,
+        "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "checked_at": "2026-11-03T08:53:20.823827+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 87723,
+        "sha256": "91f7e4cdc46ae4bd93028f7dba21c8c63d97c233f427b7000501f90617c7aee0"
+      },
+      "download_links": [
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+        "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+      "checked_at": "2026-11-03T08:53:59.488701+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 126880,
+      "sha256": "6664948482dc74f9478243ce775e1f40205c2dd02a8ebc0ef5115cd8cbd9dbc9"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "6664948482dc74f9478243ce775e1f40205c2dd02a8ebc0ef5115cd8cbd9dbc9",
+        "bytes": 126880,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1243,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 31.955,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.466730000000005,
+            15.177811,
+            45.523010000000006,
+            15.28719
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "4f83c7b6b6914ecb4bf18dbde52b95b50107fe06641b4cb115e08accbff1fc45",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "Lahinja trail 30km",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+        "robots_http": {
+          "url": "https://www.belakrajina.si/robots.txt",
+          "checked_at": "2026-11-03T08:53:20.705862+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.belakrajina.si/robots.txt",
+          "content_type": "text/plain; charset=UTF-8",
+          "content_disposition": null,
+          "bytes": 26,
+          "sha256": "a3053268239ed46bea459cc4a49058cf6069a8ba7d2436d22a78032aa2427305"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

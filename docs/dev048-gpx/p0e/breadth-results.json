@@ -1,0 +1,334 @@
+[
+  {
+    "id": "P0E-030",
+    "event": "Hrastnik Trail",
+    "route": "Razglednih 12",
+    "source_url": "https://hrastnik-trail.si/",
+    "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+    "kind": "GPX",
+    "expected_km": 12,
+    "master_2026_row": 68,
+    "master_2027_row": 18,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://dogodki.mch.si/robots.txt",
+        "checked_at": "2026-11-03T08:53:38.821056+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://dogodki.mch.si/robots.txt",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 5609,
+        "sha256": "b2e02b4269d0215f15b9549baf603e712a28a67b5a3bca12d7b221f8db009356"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://hrastnik-trail.si/",
+        "checked_at": "2026-11-03T08:51:38.626559+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hrastnik-trail.si/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 210649,
+        "sha256": "83fb5efe523a3625220d938529203d44c6d4fe1a2c44acefac8bba4952388025"
+      },
+      "download_links": [
+        "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+        "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+      "checked_at": "2026-11-03T08:53:41.199334+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 43593,
+      "sha256": "9022db1c15e7f725330dfc767b64f0ac979233827f3be82f250732f7fe37f1fa"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "9022db1c15e7f725330dfc767b64f0ac979233827f3be82f250732f7fe37f1fa",
+        "bytes": 43593,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 465,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.597,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.16221,
+            15.10021,
+            46.18986,
+            15.116150000000001
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "8eb8d05207eaa70765e8c30d79fa1c534438182bd14252e7fa9b7be6655fa5e8",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "Kalskih 13",
+          "copyright_metadata_present": true
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://hrastnik-trail.si/",
+        "robots_http": {
+          "url": "https://hrastnik-trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:51:37.313687+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://hrastnik-trail.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 167,
+          "sha256": "eda60103e191182b0eb16a1f56b3a709171d362cedda083f524c97082524e35d"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-031",
+    "event": "Hrastnik Trail",
+    "route": "Turističnih 6",
+    "source_url": "https://hrastnik-trail.si/",
+    "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+    "kind": "GPX",
+    "expected_km": 6,
+    "master_2026_row": 68,
+    "master_2027_row": 18,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://dogodki.mch.si/robots.txt",
+        "checked_at": "2026-11-03T08:53:38.821056+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://dogodki.mch.si/robots.txt",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 5609,
+        "sha256": "b2e02b4269d0215f15b9549baf603e712a28a67b5a3bca12d7b221f8db009356"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://hrastnik-trail.si/",
+        "checked_at": "2026-11-03T08:51:38.626559+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hrastnik-trail.si/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 210649,
+        "sha256": "83fb5efe523a3625220d938529203d44c6d4fe1a2c44acefac8bba4952388025"
+      },
+      "download_links": [
+        "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+        "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+      "checked_at": "2026-11-03T08:53:41.307989+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 103326,
+      "sha256": "20553e5ef609ba6a3cc7321a6ab90c14b2464aabf5e896ad7eea1163de5bc512"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "20553e5ef609ba6a3cc7321a6ab90c14b2464aabf5e896ad7eea1163de5bc512",
+        "bytes": 103326,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 0,
+          "route_points": 2105,
+          "segments": 1,
+          "distance_km": 6.04,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.162141,
+            15.106321,
+            46.181152,
+            15.115168
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "1b7b7d9540deb10493e403f7c9c5023f1823e0dcabb166fc9c3dc40fc833638d",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "330157cbb0b42075a964871777ffa0fc2a73f1953650151d600cbd689769cda6",
+          "route_label": "Kalskih 6",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://hrastnik-trail.si/",
+        "robots_http": {
+          "url": "https://hrastnik-trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:51:37.313687+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://hrastnik-trail.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 167,
+          "sha256": "eda60103e191182b0eb16a1f56b3a709171d362cedda083f524c97082524e35d"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-032",
+    "event": "Haloze Trail",
+    "route": "Dolga 2025",
+    "source_url": "https://www.majsperk.si/objava/1122708",
+    "target_url": "https://www.majsperk.si/DownloadFile?id=814211",
+    "kind": "GPX",
+    "expected_km": 22,
+    "master_2026_row": 185,
+    "historical_year": 2025,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.majsperk.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:41.404831+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.majsperk.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 3083,
+        "sha256": "a4eaef0d0c8f0f9cef0a9e183435bf572f1ca43eebc78e190b1a48c0d0c848e1"
+      },
+      "allowed": false,
+      "crawl_delay": null
+    },
+    "status": "SOURCE_RESTRICTED",
+    "reason": "ROBOTS_DISALLOW",
+    "source_policies": [
+      {
+        "url": "https://www.majsperk.si/objava/1122708",
+        "robots_http": {
+          "url": "https://www.majsperk.si/robots.txt",
+          "checked_at": "2026-11-03T08:51:41.404831+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.majsperk.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 3083,
+          "sha256": "a4eaef0d0c8f0f9cef0a9e183435bf572f1ca43eebc78e190b1a48c0d0c848e1"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-033",
+    "event": "Haloze Trail",
+    "route": "Kratka 2025",
+    "source_url": "https://www.majsperk.si/objava/1122708",
+    "target_url": "https://www.majsperk.si/DownloadFile?id=814212",
+    "kind": "GPX",
+    "expected_km": 14,
+    "master_2026_row": 185,
+    "historical_year": 2025,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.majsperk.si/robots.txt",
+        "checked_at": "2026-11-03T08:51:41.404831+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.majsperk.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 3083,
+        "sha256": "a4eaef0d0c8f0f9cef0a9e183435bf572f1ca43eebc78e190b1a48c0d0c848e1"
+      },
+      "allowed": false,
+      "crawl_delay": null
+    },
+    "status": "SOURCE_RESTRICTED",
+    "reason": "ROBOTS_DISALLOW",
+    "source_policies": [
+      {
+        "url": "https://www.majsperk.si/objava/1122708",
+        "robots_http": {
+          "url": "https://www.majsperk.si/robots.txt",
+          "checked_at": "2026-11-03T08:51:41.404831+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.majsperk.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 3083,
+          "sha256": "a4eaef0d0c8f0f9cef0a9e183435bf572f1ca43eebc78e190b1a48c0d0c848e1"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

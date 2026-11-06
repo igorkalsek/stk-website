@@ -1,0 +1,18 @@
+Verified 2026-11-03, local research branch docs/dev048-gpx-p0.
+
+python3 -m unittest discover -s docs/dev048-gpx -p 'test_*.py' -v
+32 tests, all PASS (17 existing + 15 ZIP/geometry tests).
+
+Independent OOXML and CSV readback:
+XLSX: all 12 original sheets preserve every nonblank value and formula.
+CSV: all 134 source rows and all 47 original columns preserved; five new IDs.
+Evidence: 15/15 HTTP+XML PASS; 40 new + 10 previous = 50 unique GPX hashes.
+14 event families; no raw GPX/ZIP in the package.
+XLSX formula caches reconcile: 50 valid / 40 new valid / 1 invalid.
+Artifact Tool formula error scan: zero matches.
+Visual inspection: P0D_POVZETEK, P0D_KATALOG, P0D_DATOTEKE PASS.
+
+All cached ZIP checks reproduced offline after nested-signature hardening.
+P0 technical-evidence.json and provenance-evidence.json preserved.
+git diff --check: PASS.
+No application build: no application code or production configuration changes.

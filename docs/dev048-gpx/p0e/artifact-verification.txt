@@ -1,0 +1,6 @@
+Artifact Tool workbook authoring and recalculation completed 2026-11-03.
+Summary C6 (SUMIF new FILE_VALID): 41; C7 (COUNTIF all FILE_VALID): 91.
+Formula error scan: zero matches.
+Visual review: P0E_POVZETEK, P0E_KATALOG, P0E_DATOTEKE, P0E_VHOD29 passed.
+Original P0D tables and frozen panes independently checked in verify.py.
+No GPX/ZIP payload is embedded in the workbook.

@@ -1,0 +1,220 @@
+[
+  {
+    "id": "P0E-001",
+    "input_ids": [
+      "P0E-001"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 120 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/120k",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/120k"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191449/julianalps/2026%20GPX%20FILES/JA_125k_6000_581c090f9f.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "Uradna GPX povezava; katalog P0D ima prireditev brez bajtne validacije; natančno identiteto preveriti"
+  },
+  {
+    "id": "P0E-002",
+    "input_ids": [
+      "P0E-002"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 80 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/80K",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/80K"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191446/julianalps/2026%20GPX%20FILES/JA_79k_3900_40399a0777.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "Uradna povezava do datoteke 2026; zgodovinsko, ne 2027"
+  },
+  {
+    "id": "P0E-003",
+    "input_ids": [
+      "P0E-003"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 50 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/50K",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/50K"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_52k_2600_fa9166e549.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "Uradna povezava, preveriti vsebino in dolžino"
+  },
+  {
+    "id": "P0E-004",
+    "input_ids": [
+      "P0E-004"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 25 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/25k",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/25k"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1758086072/julianalps/GPX%20FILES%202025%20%2817.9.%29/JAT_25_km_2025_e7cc8ea06a.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2025",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "OPOZORILO: aktualna stran kaže na datoteko 2025; samo arhivsko; ne 2026/2027"
+  },
+  {
+    "id": "P0E-005",
+    "input_ids": [
+      "P0E-005"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 15 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/15K",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/15K"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_17k_600_5bc4622285.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "Ime datoteke 17k namesto oglaševanih 15 km; ne ugibati dejanske dolžine"
+  },
+  {
+    "id": "P0E-006",
+    "input_ids": [
+      "P0E-006",
+      "P0E-007"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT Funny 10 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/10K",
+    "source_pages": [
+      "https://julianalps.utmb.world/sl/races/10K",
+      "https://julianalps.utmb.world/sl/races/10K-NEXTGEN"
+    ],
+    "target_url": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191444/julianalps/2026%20GPX%20FILES/JA_11k_300_64741ae914.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "217",
+    "master_2027_row": null,
+    "prior_note": "SAME_TARGET_WITH_P0E-007 (NextGen); ista datoteka ni dve različni GPX"
+  },
+  {
+    "id": "P0E-008",
+    "input_ids": [
+      "P0E-008"
+    ],
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Tek na Veliko planino 8,9 km",
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/",
+    "source_pages": [
+      "https://www.offroadrunning2026.si/sl/open-races/tek-na-veliko-planino/"
+    ],
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Uphill-sen-89km.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "126",
+    "master_2027_row": null,
+    "prior_note": "Uradni GPX za open in elite na isti progi; ne podvajati zaradi dveh tekmovanj"
+  },
+  {
+    "id": "P0E-009",
+    "input_ids": [
+      "P0E-009"
+    ],
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "U20 Uphill 3,8 km",
+    "source_url": "https://www.offroadrunning2026.si/courses/uphill-race/",
+    "source_pages": [
+      "https://www.offroadrunning2026.si/courses/uphill-race/"
+    ],
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Uphill-jun-38km.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "125",
+    "master_2027_row": null,
+    "prior_note": "Uradna mladinska trasa; 2025 v URL pomeni mapo naloženih datotek, ne letnice tekme"
+  },
+  {
+    "id": "P0E-010",
+    "input_ids": [
+      "P0E-010"
+    ],
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Trail 25 km",
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/trail-25-km/",
+    "source_pages": [
+      "https://www.offroadrunning2026.si/sl/open-races/trail-25-km/"
+    ],
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2026/04/ECh-2026-Trail-25km.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "127",
+    "master_2027_row": null,
+    "prior_note": "Uradni GPX za odprto prireditev 2026"
+  },
+  {
+    "id": "P0E-011",
+    "input_ids": [
+      "P0E-011"
+    ],
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Trail 52 km",
+    "source_url": "https://www.offroadrunning2026.si/sl/open-races/trail-52-km/",
+    "source_pages": [
+      "https://www.offroadrunning2026.si/sl/open-races/trail-52-km/"
+    ],
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2026/05/ECh2026-Trail-52km_nov.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2026",
+    "master_2026_row": "127",
+    "master_2027_row": null,
+    "prior_note": "Ime vsebuje nov; preveriti morebitno starejšo različico, ne podvajati brez dokazila"
+  },
+  {
+    "id": "P0E-012",
+    "input_ids": [
+      "P0E-012"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Ultra 64 km",
+    "source_url": "https://go4trail.si/sl/proge/go-ultra",
+    "source_pages": [
+      "https://go4trail.si/sl/proge/go-ultra"
+    ],
+    "target_url": "https://go4trail.si/sites/default/files/go4trail_ultra_november_6_2025.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2025",
+    "master_2026_row": "256",
+    "master_2027_row": null,
+    "prior_note": "Uradni portal 2026 kaže na ime 2025; samo arhivska, dokler ni dokaz drugače"
+  },
+  {
+    "id": "P0E-013",
+    "input_ids": [
+      "P0E-013"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Trim 10 km",
+    "source_url": "https://go4trail.si/sl/proge/go-trim",
+    "source_pages": [
+      "https://go4trail.si/sl/proge/go-trim"
+    ],
+    "target_url": "https://go4trail.si/sites/default/files/go4trailgosabotin2023.gpx",
+    "kind": "GPX",
+    "source_year_hint": "2023",
+    "master_2026_row": "256",
+    "master_2027_row": null,
+    "prior_note": "Uradni vir, ime označuje 2023; razdalja se razlikuje od Master 2026 13/28/64, REVIEW"
+  }
+]

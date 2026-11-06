@@ -1,0 +1,12 @@
+[
+  {
+    "id": "GPX-0005",
+    "event": "Podbrdo Trail Running Festival",
+    "route": "GM4O 40+",
+    "source_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+    "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+    "expected_km": 40.6,
+    "kind": "GPX",
+    "reason_for_refetch": "Compare geometry with newly validated 2025 GM4O; old technical snapshot preserved"
+  }
+]
