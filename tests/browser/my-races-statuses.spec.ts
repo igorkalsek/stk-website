@@ -1075,3 +1075,73 @@ test('backfills a resolved legacy completion when the user opens only the homepa
   expect(snapshots).toHaveLength(1);
   expect(snapshots[0]).toMatchObject({ eventId: 'r000104', title: 'Past Test Run', place: 'Kranj', region: 'Gorenjska', surface: 'cesta' });
 });
+
+
+// DEV-050 regression: an empty upcoming agenda must not mean an empty saved list.
+const dev050OtherSaved = [
+  v2Race('r000104', 'completed'),
+  { version: 2, eventId: 'r999999', year: '2025', date: '2025-02-01', title: 'Unresolved saved race', status: 'following' as const }
+];
+
+for (const locale of [
+  { path: '/moji-teki/', empty: 'Nimate še shranjenih tekov.', filtered: 'V tem statusu ni shranjenih tekov.', apiError: 'API trenutno ni dosegljiv. Prikazane so osnovne shranjene reference.' },
+  { path: '/en/my-races/', empty: 'You have not saved any races yet.', filtered: 'There are no saved races with this status.', apiError: 'The API is currently unavailable. Basic saved references are shown below.' }
+]) {
+  test('DEV-050 regression: preserves past and unresolved saved races without upcoming (' + locale.path + ')', async ({ page }) => {
+    await page.setViewportSize({ width: locale.path.startsWith('/en/') ? 390 : 1280, height: 844 });
+    await mockMyRacesApis(page);
+    await seedV2SavedRaces(page, dev050OtherSaved);
+    await openMyRaces(page, locale.path, '2026-11-06');
+
+    await expect(filter(page, 'all')).toContainText('2');
+    await expect(page.locator('.my-races-secondary .my-race-card')).toHaveCount(2);
+    await expect(card(page, '2026:r000104')).toBeVisible();
+    await expect(card(page, '2025:r999999')).toBeVisible();
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toHaveCount(0);
+
+    const before = await page.evaluate((key) => localStorage.getItem(key), V2_KEY);
+    await filter(page, 'registered').click();
+    await expect(page.locator('[data-my-races-app]').getByText(locale.filtered)).toBeVisible();
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toHaveCount(0);
+    await filter(page, 'all').click();
+    await expect(page.locator('.my-races-secondary .my-race-card')).toHaveCount(2);
+    expect(await page.evaluate((key) => localStorage.getItem(key), V2_KEY)).toBe(before);
+    if (locale.path.startsWith('/en/')) {
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    }
+  });
+
+  test('DEV-050 regression: genuinely empty saved list shows global empty copy (' + locale.path + ')', async ({ page }) => {
+    await mockMyRacesApis(page);
+    await seedV2SavedRaces(page, []);
+    await openMyRaces(page, locale.path, '2026-11-06');
+    await expect(filter(page, 'all')).toContainText('0');
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toBeVisible();
+    await expect(page.locator('.my-race-card')).toHaveCount(0);
+  });
+
+  test('DEV-050 regression: unresolved and past races persist during slow Master (' + locale.path + ')', async ({ page }) => {
+    let releaseMaster!: () => void;
+    const masterGate = new Promise<void>((resolve) => { releaseMaster = resolve; });
+    await mockMyRacesApis(page, { masterGate });
+    await seedV2SavedRaces(page, dev050OtherSaved);
+    await openMyRaces(page, locale.path, '2026-11-06');
+    await expect(page.locator('.my-races-secondary .my-race-card')).toHaveCount(2);
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toHaveCount(0);
+    await expect(page.locator('[data-my-races-update-status]')).toBeVisible();
+    releaseMaster();
+    await expect(page.locator('[data-my-races-update-status]')).toHaveCount(0);
+    await expect(page.locator('.my-races-secondary .my-race-card')).toHaveCount(2);
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toHaveCount(0);
+  });
+
+  test('DEV-050 regression: Master failure retains saved references (' + locale.path + ')', async ({ page }) => {
+    await mockMyRacesApis(page, { masterStatus: 503 });
+    await seedV2SavedRaces(page, dev050OtherSaved);
+    await openMyRaces(page, locale.path, '2026-11-06');
+    await expect(page.locator('[data-my-races-app]').getByText(locale.apiError)).toBeVisible();
+    await expect(page.locator('.my-races-secondary .my-race-card')).toHaveCount(2);
+    await expect(filter(page, 'all')).toContainText('2');
+    await expect(page.locator('[data-my-races-app]').getByText(locale.empty)).toHaveCount(0);
+  });
+}
