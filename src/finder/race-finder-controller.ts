@@ -4,6 +4,7 @@
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
   import { getStableEventId, mapPublicRaceEvent, normalizeFinderSearchText, normalizeSloveneText, parsePublicDateValue, toApiRecords, type PublicRaceEvent } from '../utils-event-detail';
   import { getMaxRaceDistanceKm, matchesRaceDistanceFilter } from '../utils-distance-filter';
+  import { hasExplicitFamilyOffer } from '../utils-home-stats';
   import { formatSloveneDistances } from '../utils-slovenian';
   import { enrichEventsWithVoteUrls, isVoteUrlSafeForEvent } from '../utils-vote';
   import { getRaceFinderResultDescription, getRacePreferencePanelState, getRacePreferenceReasonLabels, isRacePreferenceActivation, rankRacesForPreferences, readRacePreferences, resetRacePreferences, summarizeRacePreferences, validateRacePreferences, writeRacePreferences, type RacePreferenceMatch, type RacePreferencePanelState, type RacePreferencesV1 } from '../utils-race-preferences';
@@ -659,7 +660,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (!deferAdditionalSelection && filters.registrationFee && !matchesRegistrationFeeFilter(event, filters.registrationFee)) return false;
     if (!deferAdditionalSelection && filters.deadlineFilter && !matchesDeadlineFilter(event, filters.deadlineFilter)) return false;
     if (!deferAdditionalSelection && filters.elevation && !matchesElevationFilter(event, filters.elevation)) return false;
-    if (filters.family && !event.familyFriendly) return false;
+    if (filters.family && !hasExplicitFamilyOffer(event.publicNotes)) return false;
     if (!deferAdditionalSelection && filters.dayOfRegistration && !hasDayOfRegistration(event)) return false;
     if (!deferAdditionalSelection && filters.route && !hasRouteData(event)) return false;
     if (!deferAdditionalSelection && filters.quickPick.split(',').includes('trail') && !matchesTrailChallengeQuickPick(event)) return false;

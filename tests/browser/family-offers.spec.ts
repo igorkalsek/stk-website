@@ -241,3 +241,51 @@ for (const lang of ['sl', 'en']) {
     });
   }
 }
+
+for (const lang of ['sl', 'en']) {
+  const familyPath = lang === 'sl' ? '/druzinam-prijazni-teki/' : '/en/family-friendly-races/';
+  const finderPath = lang === 'sl' ? '/iskalnik-tekov/' : '/en/find-races/';
+
+  for (const year of ['2026', '2027']) {
+    test(`${lang} ${year} With kids matches the upcoming family page by event identity on mobile`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.clock.setFixedTime(new Date('2026-11-06T12:00:00+01:00'));
+      const fixture = year === '2026' ? races : races2027;
+      const ineligible = [
+        ...exclusions.filter(race => race.row !== 903 && race.row !== 907)
+          .map(race => ({ ...race, datum: `${year}-12-05` })),
+        extra(913, { datum: '2026-11-05' }),
+        extra(914, { datum: `${year}-13-05` })
+      ];
+      await page.route(`${api}/**`, route => route.fulfill({
+        json: { data: new URL(route.request().url()).pathname === '/' ? [...fixture, ...ineligible] : [] }
+      }));
+
+      const expectedRows = year === '2026' ? [267, 303] : familyRows2027;
+      const cards = page.locator('.search-event-card');
+      const readIdentities = () => cards.evaluateAll(elements => elements.map(card => {
+        const { eventRow, analyticsEventYear, analyticsEventDate } = (card as HTMLElement).dataset;
+        return `${analyticsEventYear}/${eventRow}/${analyticsEventDate}`;
+      }).sort());
+      const expected = fixture.filter(race => expectedRows.includes(race.row))
+        .map(race => `${year}/${race.row}/${race.datum}`).sort();
+
+      await page.goto(`${familyPath}?year=${year}`);
+      await expect.poll(readIdentities).toEqual(expected);
+      await page.goto(`${finderPath}?year=${year}`);
+      await expect(cards.first()).toBeVisible();
+      await page.locator('[data-mobile-filter-panel] > summary').click();
+      const quickPick = page.locator('[data-quick-pick="kids"]');
+      await quickPick.click();
+      await expect(quickPick).toHaveAttribute('aria-pressed', 'true');
+      await expect.poll(readIdentities).toEqual(expected);
+      await expect(cards.first().locator('h3 a')).toHaveAttribute('href',
+        new RegExp(`^${lang === 'sl' ? '/tek' : '/en/races'}/${year}/`));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+
+      // A restored direct family filter uses the same classification.
+      await page.goto(`${finderPath}?year=${year}&family=1`);
+      await expect.poll(readIdentities).toEqual(expected);
+    });
+  }
+}
