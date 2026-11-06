@@ -4,7 +4,7 @@ import { buildMasterApiPath, type PublicYear } from './utils-public-year.js';
 export type PublicYearStats = { confirmed: number; family: number };
 
 /** Explicit public family offers only; price or short distances alone are insufficient.
- * Shared by homepage stats and family pages; the existing finder contract is unchanged.
+ * Shared by homepage stats, family pages and the finder family filter.
  */
 export const hasExplicitFamilyOffer = (publicNotes: string): boolean => {
   const text = normalizeSloveneText(publicNotes).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
