@@ -93,10 +93,11 @@ test('free race listing uses the existing form and only sponsored interest uses 
   assert.match(component, /Help more runners discover your race/);
   assert.match(component, /Brezplačna predstavitev teka/);
   assert.match(component, /Free race listing/);
-  assert.match(component, /rubrike »V ospredju«/);
-  assert.match(component, /planned “Featured” section/);
-  assert.match(component, /Po uvedbi načrtovane rubrike/);
-  assert.match(component, /Once the planned/);
+  assert.match(component, /rubrika »V ospredju« na naslovnici že deluje/);
+  assert.match(component, /editorial “Featured” section is already live/);
+  assert.match(component, /Brezplačna vključitev ne zagotavlja izpostavitve/);
+  assert.match(component, /A free listing does not guarantee a feature/);
+  assert.doesNotMatch(component, /Po uvedbi načrtovane rubrike|Once the planned/);
   assert.match(component, /Featured Race · Sponzorirano/);
   assert.match(component, /Featured Race · Sponsored/);
   assert.match(component, /Dodajte ali popravite tek/);
