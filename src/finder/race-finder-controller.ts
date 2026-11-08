@@ -1,3 +1,4 @@
+import { getRegistrationFeeBounds } from '../utils-registration-fees.js';
 
   import { filtersToAnalyticsJson, trackStkEvent } from '../lib/stkAnalytics';
   import { attachAdditionalDataByMasterRow, fetchAdditionalEventData, hasRenderableAdditionalData, renderAdditionalDataChips, type AdditionalEventData } from '../utils-additional';
@@ -169,22 +170,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   };
 
 
-  const parseMoney = (value: string) => {
-    if (!value) return null;
-    const normalized = value.replace(',', '.').replace(/[^\d.-]/g, '');
-    if (!normalized) return null;
-    const amount = Number(normalized);
-    return Number.isFinite(amount) ? amount : null;
-  };
-
   const hasReliableAdditionalData = (additionalData?: AdditionalEventData | null): additionalData is AdditionalEventData =>
     additionalData?.reliability === 'visoka';
 
-  const getRegistrationMinEur = (event: RaceEvent) =>
-    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMinEur) : null;
-
-  const getRegistrationMaxEur = (event: RaceEvent) =>
-    hasReliableAdditionalData(event.additionalData) ? parseMoney(event.additionalData.registrationMaxEur) : null;
+  const getReliableRegistrationFeeBounds = (event: RaceEvent) => {
+    const data = event.additionalData;
+    return hasReliableAdditionalData(data)
+      ? getRegistrationFeeBounds(data.registrationMinEur, data.registrationMaxEur, data.registrationDescription)
+      : { min: null, max: null };
+  };
 
   const parseElevationGain = (value: string) => {
     if (!value) return null;
@@ -207,7 +201,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const matchesRegistrationFeeFilter = (event: RaceEvent, filter: string) => {
     if (!filter) return true;
 
-    const min = getRegistrationMinEur(event);
+    const min = getReliableRegistrationFeeBounds(event).min;
     if (min === null) return false;
     if (filter === 'free-option') return min === 0;
 
@@ -344,11 +338,11 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const sortEvents = (events: RaceEvent[], sort: string) =>
     [...events].sort((a, b) => {
       if (sort === 'registration-min') {
-        return compareNullableNumber(getRegistrationMinEur(a), getRegistrationMinEur(b), 'asc') || compareByDate(a, b);
+        return compareNullableNumber(getReliableRegistrationFeeBounds(a).min, getReliableRegistrationFeeBounds(b).min, 'asc') || compareByDate(a, b);
       }
 
       if (sort === 'registration-max') {
-        return compareNullableNumber(getRegistrationMaxEur(a), getRegistrationMaxEur(b), 'desc') || compareByDate(a, b);
+        return compareNullableNumber(getReliableRegistrationFeeBounds(a).max, getReliableRegistrationFeeBounds(b).max, 'desc') || compareByDate(a, b);
       }
 
       if (sort === 'registration-deadline') {

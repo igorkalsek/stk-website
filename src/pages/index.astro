@@ -176,6 +176,7 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
 </BaseLayout>
 
 <script>
+  import { getRegistrationFeeBounds } from '../utils-registration-fees';
   import { loadPublicYearStats } from '../utils-home-stats';
   import { getTodayIsoInLjubljana } from '../utils-date';
   import { buildGoogleCalendarEventUrl, buildIcsDataUrl, buildIcsFilename, buildOutlookCalendarEventUrl } from '../utils-calendar';
@@ -955,17 +956,12 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
     return null;
   };
 
-  const parseMoneyAmount = (value: unknown) => {
-    const rawValue = String(value ?? '').trim();
-    const normalizedValue = rawValue.replace(',', '.').replace(/[^\d.-]/g, '');
-    if (!normalizedValue) return null;
-    const amount = Number(normalizedValue);
-    return Number.isFinite(amount) ? amount : null;
-  };
-
   const formatDeadlinePrice = (additional: ApiRecord) => {
-    const min = parseMoneyAmount(getAdditionalField(additional, 'prijavnina_min_eur'));
-    const max = parseMoneyAmount(getAdditionalField(additional, 'prijavnina_max_eur'));
+    const { min, max } = getRegistrationFeeBounds(
+      getAdditionalField(additional, 'prijavnina_min_eur'),
+      getAdditionalField(additional, 'prijavnina_max_eur'),
+      getAdditionalField(additional, 'prijavnina_opis')
+    );
     if (min === null || max === null) return '';
     const formatAmount = (amount: number) => new Intl.NumberFormat('sl-SI', { maximumFractionDigits: 2 }).format(amount);
     return min === max ? `${formatAmount(min)} €` : `${formatAmount(min)}–${formatAmount(max)} €`;

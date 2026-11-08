@@ -18,7 +18,7 @@ import {
   formatHighlightDistanceWithUnit
 } from '../.cache/dist-test/utils-race-detail-view.js';
 import { buildEnglishEventDetailPath } from '../.cache/dist-test/utils-event-detail.js';
-import { mapAdditionalRow } from '../.cache/dist-test/utils-additional.js';
+import { mapAdditionalRow, renderAdditionalDataChips } from '../.cache/dist-test/utils-additional.js';
 
 const baseEvent = {
   id: 'r1', row: '1', year: '2026', date: '2026-05-10', dateValue: 0,
@@ -75,16 +75,60 @@ describe('race detail view model', () => {
   it('formats money ranges without inferring zero from blank or malformed values', () => {
     assert.equal(formatDetailMoneyRange('', ''), '');
     assert.equal(formatDetailMoneyRange('   ', '   '), '');
-    assert.equal(formatDetailMoneyRange('0', ''), '0 €');
-    assert.equal(formatDetailMoneyRange('0,00', ''), '0 €');
-    assert.equal(formatDetailMoneyRange('', '0.00'), '0 €');
-    assert.equal(formatDetailMoneyRange('', '20'), '20 €');
-    assert.equal(formatDetailMoneyRange('10', ''), '10 €');
+    assert.equal(formatDetailMoneyRange('0', ''), 'Od 0 €');
+    assert.equal(formatDetailMoneyRange('0,00', ''), 'Od 0 €');
+    assert.equal(formatDetailMoneyRange('', '0.00'), 'Do 0 €');
+    assert.equal(formatDetailMoneyRange('', '20'), 'Do 20 €');
+    assert.equal(formatDetailMoneyRange('10', ''), 'Od 10 €');
+    assert.equal(formatDetailMoneyRange('10', '', 'en'), 'From 10 €');
+    assert.equal(formatDetailMoneyRange('0', '0'), '0 €');
+    assert.equal(formatDetailMoneyRange('20', '10'), '');
     assert.equal(formatDetailMoneyRange('10', '10'), '10 €');
     assert.equal(formatDetailMoneyRange('10', '20'), '10–20 €');
     assert.equal(formatDetailMoneyRange('free', 'unknown'), '');
-    assert.equal(formatDetailMoneyRange('free', '20', 'en'), '20 €');
+    assert.equal(formatDetailMoneyRange('free', '20', 'en'), 'Up to 20 €');
     assert.equal(formatDetailMoneyRange('10.5', '20.75', 'en'), '10.50–20.75 €');
+  });
+
+  it('keeps the source explanation with a single known fee bound in SL and EN', () => {
+    const cases = [
+      ['T180', '0', '', 'Otroški teki so brezplačni; cena za odrasle ni znana.', 'Od 0 €', 'From 0 €'],
+      ['T122', '', '20', 'Odrasli 20 €, otroci brezplačno.', 'Do 20 €', 'Up to 20 €'],
+      ['T123', '', '35', 'Daljša proga 35 €, krajša 15 €, otroški tek brezplačno.', 'Do 35 €', 'Up to 35 €']
+    ];
+    for (const [id, min, max, description, sl, en] of cases) {
+      const additionalData = mapAdditionalRow({
+        prijavnina_min_eur: min, prijavnina_max_eur: max, prijavnina_opis: description
+      });
+      const event = { ...baseEvent, additionalData };
+      assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), [
+        { label: 'Startnina', value: `${sl} · ${description}` }
+      ], id);
+      assert.deepEqual(buildRegistrationRows(event, 'en', fmt), [
+        { label: 'Entry fee', value: `${en} · ${description}` }
+      ], id);
+    }
+  });
+
+  it('uses the contribution description without advertising a fee or free option', () => {
+    for (const [min, max, description] of [
+      ['0', '0', 'Štartnine ni; zbirajo se prostovoljni prispevki.'],
+      ['', '20', 'Juriš in policija: prostovoljni prispevek 20 EUR.'],
+      ['50', '', 'Ni klasične prijavnine; minimalna skupna donacija na ekipo 50 EUR.'],
+      ['', '', 'Prijavnina ni določena; priporočena je donacija 15 EUR.']
+    ]) {
+      const additionalData = mapAdditionalRow({
+        prijavnina_min_eur: min, prijavnina_max_eur: max, prijavnina_opis: description
+      });
+      const event = { ...baseEvent, additionalData };
+      for (const lang of ['sl', 'en']) {
+        assert.deepEqual(buildRegistrationRows(event, lang, fmt), [
+          { label: lang === 'sl' ? 'Startnina' : 'Entry fee', value: description }
+        ]);
+        assert.equal(renderAdditionalDataChips(additionalData, String, { language: lang }), '');
+        assert.equal(buildRaceHighlightCards(event, lang).some(({ key }) => key === 'free-fee'), false);
+      }
+    }
   });
 
   it('omits blank fee rows and full registration sections when no registration fields are usable', () => {
