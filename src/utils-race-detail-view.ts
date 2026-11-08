@@ -1,4 +1,4 @@
-import { getRegistrationFeeBounds, hasContributionDescription } from './utils-registration-fees.js';
+import { getRegistrationFeeBounds } from './utils-registration-fees.js';
 import type { RaceActionIcon } from './utils-action-icons';
 import type { PublicRaceEvent } from './utils-event-detail';
 import { parseRaceDistancesKm } from './utils-distance-filter.js';
@@ -236,9 +236,12 @@ export const buildRegistrationRows = (event: DetailEvent, language: DetailLangua
   const fmtDate = (value: string) => isIsoDate(value) ? formatDate(value) : value.trim();
   const day = formatYesNo(data.dayOfRegistration, language);
   const feeDescription = data.registrationDescription?.trim() ?? '';
-  const fee = hasContributionDescription(feeDescription)
-    ? feeDescription
-    : formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language) || feeDescription;
+  const { min, max } = getRegistrationFeeBounds(data.registrationMinEur, data.registrationMaxEur, feeDescription);
+  const hasSingleBound = (min === null) !== (max === null);
+  const feeAmount = min !== null || max !== null
+    ? formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language)
+    : '';
+  const fee = hasSingleBound && feeDescription ? `${feeAmount} · ${feeDescription}` : feeAmount || feeDescription;
   return [
     { label: labels.fee, value: fee },
     { label: labels.deadline, value: data.registrationDeadline && !isIsoDate(data.registrationDeadline) ? fmtDate(data.registrationDeadline) : '' },

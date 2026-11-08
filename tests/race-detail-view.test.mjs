@@ -90,6 +90,26 @@ describe('race detail view model', () => {
     assert.equal(formatDetailMoneyRange('10.5', '20.75', 'en'), '10.50–20.75 €');
   });
 
+  it('keeps the source explanation with a single known fee bound in SL and EN', () => {
+    const cases = [
+      ['T180', '0', '', 'Otroški teki so brezplačni; cena za odrasle ni znana.', 'Od 0 €', 'From 0 €'],
+      ['T122', '', '20', 'Odrasli 20 €, otroci brezplačno.', 'Do 20 €', 'Up to 20 €'],
+      ['T123', '', '35', 'Daljša proga 35 €, krajša 15 €, otroški tek brezplačno.', 'Do 35 €', 'Up to 35 €']
+    ];
+    for (const [id, min, max, description, sl, en] of cases) {
+      const additionalData = mapAdditionalRow({
+        prijavnina_min_eur: min, prijavnina_max_eur: max, prijavnina_opis: description
+      });
+      const event = { ...baseEvent, additionalData };
+      assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), [
+        { label: 'Startnina', value: `${sl} · ${description}` }
+      ], id);
+      assert.deepEqual(buildRegistrationRows(event, 'en', fmt), [
+        { label: 'Entry fee', value: `${en} · ${description}` }
+      ], id);
+    }
+  });
+
   it('uses the contribution description without advertising a fee or free option', () => {
     for (const [min, max, description] of [
       ['0', '0', 'Štartnine ni; zbirajo se prostovoljni prispevki.'],
