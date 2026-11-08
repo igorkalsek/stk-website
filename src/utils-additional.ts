@@ -1,3 +1,4 @@
+import { getRegistrationFeeBounds } from './utils-registration-fees.js';
 import { DEFAULT_PUBLIC_YEAR, type PublicYear } from './utils-public-year.js';
 
 export type ApiRecord = Record<string, unknown>;
@@ -249,14 +250,6 @@ export const attachAdditionalDataByMasterRow = <TEvent extends EventWithAddition
   });
 };
 
-const parseMoney = (value: string) => {
-  if (!value) return null;
-  const normalized = value.replace(',', '.').replace(/[^\d.-]/g, '');
-  if (!normalized) return null;
-  const amount = Number(normalized);
-  return Number.isFinite(amount) ? amount : null;
-};
-
 const formatMoney = (value: number, language: 'sl' | 'en' = 'sl') =>
   new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 2 }).format(value);
 
@@ -264,8 +257,8 @@ const formatEuro = (value: number, language: 'sl' | 'en' = 'sl') =>
   language === 'en' ? `€${formatMoney(value, language)}` : `${formatMoney(value, language)} €`;
 
 const formatRegistrationFeeValue = (additionalData: AdditionalEventData, language: 'sl' | 'en' = 'sl') => {
-  const min = parseMoney(additionalData.registrationMinEur);
-  const max = parseMoney(additionalData.registrationMaxEur);
+  const { registrationMinEur, registrationMaxEur, registrationDescription } = additionalData;
+  const { min, max } = getRegistrationFeeBounds(registrationMinEur, registrationMaxEur, registrationDescription);
 
   if (min !== null && max !== null) {
     if (min === max) return formatEuro(min, language);

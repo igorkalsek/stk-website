@@ -1,3 +1,4 @@
+import { getRegistrationFeeBounds, hasContributionDescription } from './utils-registration-fees.js';
 import type { RaceActionIcon } from './utils-action-icons';
 import type { PublicRaceEvent } from './utils-event-detail';
 import { parseRaceDistancesKm } from './utils-distance-filter.js';
@@ -40,6 +41,7 @@ export type DetailLanguage = 'sl' | 'en';
 export type DetailAdditionalData = {
   registrationMinEur: string;
   registrationMaxEur: string;
+  registrationDescription?: string;
   registrationDeadline: string;
   earlyRegistrationDeadline: string;
   dayOfRegistration: string;
@@ -112,20 +114,14 @@ export const formatDetailSurface = (value: string, language: DetailLanguage) =>
   language === 'en' ? formatEnglishSurface(value) : value.trim().toLocaleLowerCase('sl-SI').replace(/^./, (letter) => letter.toLocaleUpperCase('sl-SI'));
 
 export const formatDetailMoneyRange = (minValue = '', maxValue = '', language: DetailLanguage = 'sl') => {
-  const normalizeAmount = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
-    const normalized = trimmed.replace(',', '.').replace(/\s*(€|eur)\s*$/iu, '').trim();
-    if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
-    const amount = Number(normalized);
-    return Number.isFinite(amount) ? amount : null;
-  };
   const formatAmount = (amount: number) => amount.toLocaleString(language === 'en' ? 'en-GB' : 'sl-SI', { maximumFractionDigits: 2, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
-  const min = normalizeAmount(minValue);
-  const max = normalizeAmount(maxValue);
-  if (min === null && max === null) return '';
-  if (min !== null && max !== null && min !== max) return `${formatAmount(min)}–${formatAmount(max)} €`;
-  return `${formatAmount(min ?? max ?? 0)} €`;
+  const { min, max } = getRegistrationFeeBounds(minValue, maxValue);
+  if (min !== null && max !== null) {
+    return min === max ? `${formatAmount(min)} €` : `${formatAmount(min)}–${formatAmount(max)} €`;
+  }
+  if (min !== null) return `${language === 'en' ? 'From' : 'Od'} ${formatAmount(min)} €`;
+  if (max !== null) return `${language === 'en' ? 'Up to' : 'Do'} ${formatAmount(max)} €`;
+  return '';
 };
 
 const formatYesNo = (value: string, language: DetailLanguage) => {
@@ -143,14 +139,6 @@ const parseElevationGain = (value: string | undefined | null) => {
   if (!/^\d+$/.test(trimmed)) return null;
   const elevation = Number(trimmed);
   return Number.isFinite(elevation) && elevation > 0 ? elevation : null;
-};
-const parseRegistrationFeeAmount = (value: string | undefined | null) => {
-  const trimmed = value?.trim() ?? '';
-  if (!trimmed) return null;
-  const normalized = trimmed.replace(',', '.').replace(/\s*(€|eur)\s*$/iu, '').trim();
-  if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
-  const amount = Number(normalized);
-  return Number.isFinite(amount) ? amount : null;
 };
 const isExplicitYes = (value: string | undefined | null) => ['da', 'yes', 'true'].includes((value ?? '').trim().toLocaleLowerCase('sl-SI'));
 const hasTrailOrMountainSurface = (value: string) => /trail|gorsk|hrib|planin|mountain/iu.test(value.trim());
@@ -247,8 +235,12 @@ export const buildRegistrationRows = (event: DetailEvent, language: DetailLangua
   const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
   const fmtDate = (value: string) => isIsoDate(value) ? formatDate(value) : value.trim();
   const day = formatYesNo(data.dayOfRegistration, language);
+  const feeDescription = data.registrationDescription?.trim() ?? '';
+  const fee = hasContributionDescription(feeDescription)
+    ? feeDescription
+    : formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language) || feeDescription;
   return [
-    { label: labels.fee, value: formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language) },
+    { label: labels.fee, value: fee },
     { label: labels.deadline, value: data.registrationDeadline && !isIsoDate(data.registrationDeadline) ? fmtDate(data.registrationDeadline) : '' },
     { label: labels.early, value: data.earlyRegistrationDeadline && !isIsoDate(data.earlyRegistrationDeadline) ? fmtDate(data.earlyRegistrationDeadline) : '' },
     { label: labels.raceDay, value: day }
@@ -308,7 +300,8 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
   const hasShortSteep = longestDistance !== null && longestDistance <= 12 && elevation !== null && elevation >= 800 && hasTrailOrMountainSurface(event.surface);
   const hasChildren = event.kidsRaces;
   const hasFamily = event.familyFriendly;
-  const hasFreeFee = [event.additionalData?.registrationMinEur, event.additionalData?.registrationMaxEur].some((value) => parseRegistrationFeeAmount(value) === 0);
+  const { registrationMinEur, registrationMaxEur, registrationDescription } = event.additionalData ?? {};
+  const hasFreeFee = getRegistrationFeeBounds(registrationMinEur, registrationMaxEur, registrationDescription).min === 0;
   const hasRaceDayRegistration = isExplicitYes(event.additionalData?.dayOfRegistration);
   const labels = language === 'en'
     ? {

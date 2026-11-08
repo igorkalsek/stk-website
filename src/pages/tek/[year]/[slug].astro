@@ -1,4 +1,5 @@
 ---
+import { getRegistrationFeeBounds } from '../../../utils-registration-fees';
 import GpxLinks from '../../../components/GpxLinks.astro';
 import RelatedRaceCards from '../../../components/RelatedRaceCards.astro';
 import OrganizerConfirmationBadge from '../../../components/OrganizerConfirmationBadge.astro';
@@ -83,12 +84,6 @@ const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027
 
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
-const parseRegistrationAmount = (value: string) => {
-  if (!value) return null;
-  const amount = Number(value.replace(',', '.').replace(/[^\d.-]/g, ''));
-  return Number.isFinite(amount) ? amount : null;
-};
-
 const primaryActions = event ? buildPrimaryActions(event, 'sl') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
 const heroDateParts = event ? formatDateParts(event.date) : null;
@@ -118,7 +113,9 @@ const courseHeading = event ? buildCourseHeading(event, 'sl') : '';
 const familyInfo = event ? buildFamilyInfo(event, 'sl') : [];
 const publicNotes = event ? buildPublicNotes(event, 'sl', familyInfo) : '';
 const organizer = event ? buildOrganizerView(event) : null;
-const offerPrice = event?.additionalData ? parseRegistrationAmount(event.additionalData.registrationMinEur || event.additionalData.registrationMaxEur) : null;
+const { registrationMinEur, registrationMaxEur, registrationDescription } = event?.additionalData ?? {};
+const feeBounds = getRegistrationFeeBounds(registrationMinEur, registrationMaxEur, registrationDescription);
+const offerPrice = feeBounds.min === feeBounds.max ? feeBounds.min : null;
 const jsonLd = event ? {
   '@context': 'https://schema.org',
   '@type': 'Event',
