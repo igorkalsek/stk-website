@@ -11,6 +11,7 @@ export interface FinderUrlState {
   fee: string;
   deadline: string;
   sort: FinderSort | 'date';
+  past: boolean;
   family: boolean;
   raceDay: boolean;
   route: boolean;
@@ -28,7 +29,7 @@ const ELEVATIONS = new Set(['max-300', 'max-800', 'max-1500', 'over-1500']);
 export const FINDER_QUICK_ORDER = ['deadlines-soon', 'budget', 'first-race', 'trail', 'kids', 'route'] as const;
 export const FINDER_RETURN_PARAM = 'from';
 const QUICK = new Set<string>(FINDER_QUICK_ORDER);
-const PARAM_ORDER = ['year', 'q', 'month', 'region', 'surface', 'distance', 'fee', 'deadline', 'sort', 'family', 'raceDay', 'route', 'elevation', 'quick'] as const;
+const PARAM_ORDER = ['year', 'q', 'month', 'region', 'surface', 'distance', 'fee', 'deadline', 'sort', 'past', 'family', 'raceDay', 'route', 'elevation', 'quick'] as const;
 const FINDER_PATHS = { sl: '/iskalnik-tekov/', en: '/en/find-races/' } as const;
 
 export const defaultFinderUrlState = (): FinderUrlState => ({
@@ -41,6 +42,7 @@ export const defaultFinderUrlState = (): FinderUrlState => ({
   fee: '',
   deadline: '',
   sort: 'date',
+  past: false,
   family: false,
   raceDay: false,
   route: false,
@@ -69,6 +71,7 @@ export const parseFinderUrlState = (params: URLSearchParams): FinderUrlState => 
   fee: oneOf(first(params, 'fee'), FEES),
   deadline: oneOf(first(params, 'deadline'), DEADLINES),
   sort: oneOf(first(params, 'sort'), SORTS, 'date') as FinderSort,
+  past: boolParam(params, 'past'),
   family: boolParam(params, 'family'),
   raceDay: boolParam(params, 'raceDay'),
   route: boolParam(params, 'route'),
@@ -88,6 +91,7 @@ export const sanitizeFinderUrlState = (state: Partial<FinderUrlState>): FinderUr
     fee: oneOf(base.fee ?? '', FEES),
     deadline: oneOf(base.deadline ?? '', DEADLINES),
     sort: oneOf(base.sort ?? 'date', SORTS, 'date') as FinderSort,
+    past: Boolean(base.past),
     family: Boolean(base.family),
     raceDay: Boolean(base.raceDay),
     route: Boolean(base.route),
@@ -114,6 +118,7 @@ export const serializeFinderUrlState = (input: Partial<FinderUrlState>): URLSear
   if (state.fee) values.fee = state.fee;
   if (state.deadline) values.deadline = state.deadline;
   if (state.sort && state.sort !== 'date') values.sort = state.sort;
+  if (state.past) values.past = '1';
   if (state.family) values.family = '1';
   if (state.raceDay) values.raceDay = '1';
   if (state.route) values.route = '1';

@@ -5299,6 +5299,11 @@ main {
   font-size: 0.92rem;
 }
 
+.finder-sidebar .finder-past-toggle {
+  min-height: 44px;
+  font-weight: 600;
+}
+
 .finder-sidebar .race-preferences-compact {
   gap: 6px;
 }

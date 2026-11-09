@@ -30,7 +30,7 @@ describe('race search distance filter UI wiring', () => {
   it('keeps English search year-aware for 2026 and 2027', () => {
     assert.match(finderController, /getPublicYearFromSearchParams/);
     assert.match(finderController, /buildMasterApiPath\(activeYear\)/);
-    assert.match(finderController, /mapPublicRaceEvent\(item, activeYear, today\)/);
+    assert.match(finderController, /mapPublicRaceEvent\(item, activeYear\)/);
     assert.match(englishPage, /The 2027 calendar is being updated\./);
   });
 });

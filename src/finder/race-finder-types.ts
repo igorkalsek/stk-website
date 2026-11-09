@@ -29,6 +29,8 @@ export type RaceFinderLocale = {
   emptyDefaultPill: string;
   clearFiltersLabel: string;
   resetLabel: string;
+  pastLabel: string;
+  archiveResultsLabel: string;
   saveRaceLabel: string;
   detailLabel: string;
   voteLabel: string;

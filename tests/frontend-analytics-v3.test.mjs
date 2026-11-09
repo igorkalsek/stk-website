@@ -391,7 +391,7 @@ describe('frontend analytics v3 contract', () => {
   it('tracks bulk ICS export count and omits free search text from personalized-results payloads', () => {
     assert.match(myRacesClient, /results_count: events.length/);
     assert.match(myRacesClient, /calendar_type: 'ics'/);
-    assert.match(slFinder, /const \{ search, \.\.\.safePersonalizedFilters \} = filters/);
+    assert.match(slFinder, /const \{ search, past, \.\.\.safePersonalizedFilters \} = filters/);
     assert.doesNotMatch(slFinder, /personalized_results_used[\s\S]{0,240}search_query/);
     assert.doesNotMatch(enFinder, /personalized_results_used[\s\S]{0,240}search_query/);
   });
