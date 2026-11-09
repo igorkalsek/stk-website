@@ -1,12 +1,15 @@
-import { formatRaceDateStatus } from './utils-date.js';
+import { formatRaceDateStatus, getEventDatePhase, getTodayIsoInLjubljana } from './utils-date.js';
 
-/** Client-only relative status: static HTML retains the authoritative absolute date. */
+/** Keep the profile display in sync with the Ljubljana calendar day. */
 export const initRaceDateStatuses = (root: ParentNode = document): void => {
   const elements = [...root.querySelectorAll<HTMLElement>('[data-race-date-status]')];
   if (!elements.length) return;
   const render = () => {
+    const today = getTodayIsoInLjubljana();
     for (const element of elements) {
-      const label = formatRaceDateStatus(element.dataset.eventDate || '', element.dataset.language === 'en' ? 'en' : 'sl');
+      const eventDate = element.dataset.eventDate || '';
+      const label = formatRaceDateStatus(eventDate, element.dataset.language === 'en' ? 'en' : 'sl', today);
+      element.closest('[data-race-profile]')?.toggleAttribute('data-past-profile', getEventDatePhase(eventDate, today) === 'past');
       element.textContent = label;
       element.hidden = !label;
     }
