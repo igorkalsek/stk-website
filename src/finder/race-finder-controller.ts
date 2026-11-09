@@ -23,6 +23,7 @@ import type { RaceFinderLocale } from './race-finder-types';
     month: string;
     datum: string;
     searchText: string;
+    isPast: boolean;
     additionalData?: AdditionalEventData | null;
   };
 
@@ -62,6 +63,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const registrationFeeSelect = document.querySelector<HTMLSelectElement>('[data-filter="registration-fee"]');
   const deadlineSelect = document.querySelector<HTMLSelectElement>('[data-filter="deadline"]');
   const sortSelect = document.querySelector<HTMLSelectElement>('[data-filter="sort"]');
+  const pastInput = document.querySelector<HTMLInputElement>('[data-filter="past"]');
   const familyInput = document.querySelector<HTMLInputElement>('[data-filter="family"]');
   const dayOfRegistrationInput = document.querySelector<HTMLInputElement>('[data-filter="day-of-registration"]');
   const routeInput = document.querySelector<HTMLInputElement>('[data-filter="route"]');
@@ -313,8 +315,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     return Date.UTC(Number(year), Number(month) - 1, Number(day));
   };
 
-  const getNearestRegistrationDeadlineValue = (event: RaceEvent, todayIsoDate = todayIsoDateInLjubljana()) => {
-    if (!hasReliableAdditionalData(event.additionalData)) return null;
+  const getNearestRegistrationDeadlineValue = (event: RaceEvent, todayIsoDate: string) => {
+    if (event.isPast || !hasReliableAdditionalData(event.additionalData)) return null;
 
     const deadlineValues = [
       event.additionalData.earlyRegistrationDeadline,
@@ -327,16 +329,16 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     return deadlineValues.length ? Math.min(...deadlineValues) : null;
   };
 
-  const compareByRegistrationDeadline = (a: RaceEvent, b: RaceEvent) => {
-    const todayIsoDate = todayIsoDateInLjubljana();
+  const compareByRegistrationDeadline = (a: RaceEvent, b: RaceEvent, todayIsoDate: string) => {
     const aDeadline = getNearestRegistrationDeadlineValue(a, todayIsoDate);
     const bDeadline = getNearestRegistrationDeadlineValue(b, todayIsoDate);
 
     return compareNullableNumber(aDeadline, bDeadline, 'asc') || compareByDate(a, b);
   };
 
-  const sortEvents = (events: RaceEvent[], sort: string) =>
-    [...events].sort((a, b) => {
+  const sortEvents = (events: RaceEvent[], sort: string) => {
+    const todayIsoDate = sort === 'registration-deadline' ? todayIsoDateInLjubljana() : '';
+    return [...events].sort((a, b) => {
       if (sort === 'registration-min') {
         return compareNullableNumber(getReliableRegistrationFeeBounds(a).min, getReliableRegistrationFeeBounds(b).min, 'asc') || compareByDate(a, b);
       }
@@ -346,11 +348,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       }
 
       if (sort === 'registration-deadline') {
-        return compareByRegistrationDeadline(a, b);
+        return compareByRegistrationDeadline(a, b, todayIsoDate);
       }
 
       return compareByDate(a, b);
     });
+  };
 
   const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
     `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
@@ -401,6 +404,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     deadlineFilter: deadlineSelect?.value ?? '',
     sort: sortSelect?.value ?? 'date',
     elevation: elevationSelect?.value ?? '',
+    past: Boolean(pastInput?.checked),
     family: Boolean(familyInput?.checked),
     dayOfRegistration: Boolean(dayOfRegistrationInput?.checked),
     route: Boolean(routeInput?.checked),
@@ -440,9 +444,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const canonicalPathForState = (finderState = getFinderUrlStateForUrl()) => buildFinderUrl(locale.finderPath, finderState, window.location.origin);
 
-  const syncUrlFromControls = (finderState = getFinderUrlStateForUrl()) => {
+  const syncUrlFromControls = (finderState = getFinderUrlStateForUrl(), push = false) => {
     const nextPath = canonicalPathForState(finderState);
-    if (`${window.location.pathname}${window.location.search}` !== nextPath) history.replaceState(null, '', nextPath);
+    if (`${window.location.pathname}${window.location.search}` !== nextPath) {
+      if (push) history.pushState(null, '', nextPath);
+      else history.replaceState(null, '', nextPath);
+    }
     updateDerivedFinderLinks(finderState);
     renderActiveFilters(finderState);
   };
@@ -524,14 +531,17 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     if (registrationFeeSelect) registrationFeeSelect.value = finderState.fee;
     if (deadlineSelect) deadlineSelect.value = finderState.deadline;
     applyPublicSortState(finderState);
+    if (pastInput) pastInput.checked = finderState.past;
     if (familyInput) familyInput.checked = finderState.family;
     if (dayOfRegistrationInput) dayOfRegistrationInput.checked = finderState.raceDay;
     if (routeInput) routeInput.checked = finderState.route;
     if (elevationSelect) elevationSelect.value = finderState.elevation;
   };
 
-  function pickFirstAvailableSurface(preferredSurfaces: string[]) {
-    const availableSurfaces = new Map([...new Set(state.events.map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
+  const getEventsInScope = (includePast: boolean) => includePast ? state.events : state.events.filter((event) => !event.isPast);
+
+  function pickFirstAvailableSurface(preferredSurfaces: string[], includePast: boolean) {
+    const availableSurfaces = new Map([...new Set(getEventsInScope(includePast).map((event) => event.surface).filter(Boolean))].map((surface) => [normalize(surface), surface]));
     return preferredSurfaces.map((surface) => availableSurfaces.get(surface)).find(Boolean) ?? '';
   }
 
@@ -544,7 +554,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       } else if (quickPick === 'budget') {
         resolved.fee = '20';
       } else if (quickPick === 'first-race') {
-        const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail']);
+        const beginnerSurface = pickFirstAvailableSurface(['cesta', 'cesta/trail'], resolved.past);
         if (beginnerSurface) resolved.surface = beginnerSurface;
       } else if (quickPick === 'kids') {
         resolved.family = true;
@@ -557,7 +567,9 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const rebuildControlsFromFinderState = (finderState: FinderUrlState) => {
     const normalizedState = stateForYear(finderState, activeYear);
+    const scopeChanged = normalizedState.past !== directFinderState.past;
     directFinderState = { ...normalizedState, quick: [] };
+    if (scopeChanged) populateFilters();
     applyDirectFinderStateToControls(resolveFinderStateWithQuickPicks(normalizedState));
     selectedQuickPicks.clear();
     normalizedState.quick.forEach((quickPick) => selectedQuickPicks.add(quickPick));
@@ -638,6 +650,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       deadlineFilter: resolved.deadline,
       sort: resolved.sort,
       elevation: resolved.elevation,
+      past: resolved.past,
       family: resolved.family,
       dayOfRegistration: resolved.raceDay,
       route: resolved.route,
@@ -646,6 +659,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   };
 
   const matchesFinderEvent = (event: RaceEvent, filters: ReturnType<typeof getFilters>, deferAdditionalSelection: boolean) => {
+    if (event.isPast && (!filters.past || filters.deadlineFilter || filters.dayOfRegistration)) return false;
     if (filters.search && !event.searchText.includes(normalizeFinderSearchText(filters.search))) return false;
     if (filters.month && event.month !== filters.month) return false;
     if (filters.region && event.region !== filters.region) return false;
@@ -723,16 +737,17 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     advancedFiltersSummary.textContent = activeCount ? `${locale.advancedFiltersLabel} (${activeCount})` : locale.advancedFiltersLabel;
   };
 
-  const getPublicUpcomingEvents = (items: ApiRecord[]) => {
+  const getPublicFinderEvents = (items: ApiRecord[]) => {
     const today = todayStart();
 
     return items
       .map((item): RaceEvent | null => {
-        const event = mapPublicRaceEvent(item, activeYear, today);
+        const event = mapPublicRaceEvent(item, activeYear);
         if (!event) return null;
 
         return {
           ...event,
+          isPast: event.dateValue < today,
           month: event.date.slice(5, 7),
           datum: event.date,
           searchText: normalizeFinderSearchText(`${event.naziv_prireditve} ${event.place}`)
@@ -828,20 +843,20 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   };
   const populatePreferenceRegions = () => {
     if (!preferenceRegionList) return;
-    const regions = [...new Set([...state.events.map((event) => event.region).filter(Boolean), ...racePreferences.regions])].sort((a,b)=>a.localeCompare(b,'sl-SI'));
+    const regions = [...new Set([...getEventsInScope(false).map((event) => event.region).filter(Boolean), ...racePreferences.regions])].sort((a,b)=>a.localeCompare(b,'sl-SI'));
     preferenceRegionList.innerHTML = regions.map((region, index) => `<label><input id="${buildPreferenceRegionInputId(locale.language, index)}" type="checkbox" value="${escapeHtml(region)}" data-preference-region /> <span>${escapeHtml(region)} </span></label>`).join('');
     syncPreferenceControls();
     refreshPreferencePanel();
   };
   const populateFilters = () => {
-    const months = [...new Set(state.events.map((event) => event.month))].sort();
-    const regions = [...new Set(state.events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
-    const surfaces = [...new Set(state.events.map((event) => event.surface).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+    const events = getEventsInScope(directFinderState.past);
+    const months = [...new Set(events.map((event) => event.month))].sort();
+    const regions = [...new Set(events.map((event) => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
+    const surfaces = [...new Set(events.map((event) => event.surface).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sl-SI'));
 
     renderOptions(monthSelect, months, locale.allMonthsLabel, monthLabel);
     renderOptions(regionSelect, regions, locale.allRegionsLabel);
     renderOptions(surfaceSelect, surfaces, locale.allSurfacesLabel, formatSurfaceOption);
-    populatePreferenceRegions();
   };
 
   const renderEmptyState = (title: string, message: string, pill = locale.emptyDefaultPill, showClearAction = false) => {
@@ -849,7 +864,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     resultsElement.innerHTML = `
       <article class="event-card search-empty-card">
         <h3>${escapeHtml(title)}</h3>
-        <p>${escapeHtml(message)}</p>
+        ${message ? `<p>${escapeHtml(message)}</p>` : ''}
         <div class="event-meta">
           <span class="pill">${escapeHtml(pill)}</span>
         </div>
@@ -911,7 +926,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
     const preferenceReasonLabels = preferenceMatch ? getRacePreferenceReasonLabels(preferenceMatch.reasonKeys, locale.language) : [];
     const preferenceReasons = preferenceReasonLabels.length ? `<div class="preference-reasons" aria-label="${locale.preferenceReasonsAriaLabel}">${preferenceReasonLabels.map((reason) => `<span class="pill preference-reason-pill">${escapeHtml(reason)}</span>`).join('')}</div>` : '';
-    const calendarOptions = renderCalendarOptions({
+    const calendarOptions = event.isPast ? [] : renderCalendarOptions({
       title: event.title,
       date: event.date,
       location: event.place,
@@ -924,14 +939,14 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       getFinderUrlStateForUrl(),
       window.location.origin
     );
-    const renderableVoteUrl = getRenderableVoteUrl(event);
-    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false });
+    const renderableVoteUrl = event.isPast ? '' : getRenderableVoteUrl(event);
+    const additionalDataChips = renderAdditionalDataChips(event.additionalData, escapeHtml, { eventDate: event.date, eventId: event.id, eventName: event.title, language: locale.language, kidsRaces: event.kidsRaces, includeRoute: false, includeRegistrationTiming: !event.isPast });
     const routeAction = event.additionalData?.routeUrl
       ? { url: event.additionalData.routeUrl, priority: 3, html: `<a href="${escapeHtml(event.additionalData.routeUrl)}" target="_blank" rel="noopener noreferrer" data-stk-track="external-link" data-stk-action="trasa" data-stk-event-id="${escapeHtml(event.id)}" data-stk-event-name="${escapeHtml(event.title)}" data-stk-event-date="${escapeHtml(event.date)}" data-analytics-link-type="trasa">${locale.routeLabel}</a>` }
       : null;
     // buildPrimaryActions(event, locale.language).map(renderPrimaryActionLink) remains the shared organizer-action renderer.
     const organizerActions = buildPrimaryActions(event, locale.language);
-    const registrationActions = organizerActions.filter((action) => action.kind === 'registration');
+    const registrationActions = event.isPast ? [] : organizerActions.filter((action) => action.kind === 'registration');
     const noticeActions = organizerActions.filter((action) => action.kind !== 'registration');
     const primaryLinks = [
       `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}">${locale.detailLabel}</a>`,
@@ -964,6 +979,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       <article class="event-card search-event-card search-event-row" data-analytics-placement="${analyticsPlacement}" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
         <div class="search-event-date search-event-row-date">
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
+          ${event.isPast ? `<span class="pill" data-past-race>${locale.pastLabel}</span>` : ''}
           ${event.familyFriendly ? `<span class="pill pill-family">${locale.familyFriendlyLabel}</span>` : ''}
         </div>
         <div class="search-event-row-main">
@@ -995,10 +1011,10 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       return;
     }
 
-    if (!state.events.length) {
-      setStatus(String(locale.messages.noEventsStatus));
+    if (!state.events.some((event) => filters.past || !event.isPast)) {
+      setStatus(String(filters.past ? locale.messages.noEventsTitle : locale.messages.noEventsStatus));
       setCount(String(locale.messages.zeroCount));
-      renderEmptyState(String(locale.messages.noEventsTitle), String((locale.messages.noEventsMessage as (year: string | number) => string)(activeYear)), activeYear);
+      renderEmptyState(String(locale.messages.noEventsTitle), filters.past ? '' : String((locale.messages.noEventsMessage as (year: string | number) => string)(activeYear)), activeYear);
       if (moreElement) moreElement.hidden = true;
       return;
     }
@@ -1025,7 +1041,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       ? locale.messages.quickPickStatus
       : filters.deadlineFilter
         ? locale.messages.deadlineStatus
-        : getRaceFinderResultDescription(filters.sort, preferenceLanguage);
+        : filters.past ? locale.archiveResultsLabel : getRaceFinderResultDescription(filters.sort, preferenceLanguage);
     setStatus(String(
       state.additionalStatus === 'loading'
         ? locale.messages.additionalLoading
@@ -1033,11 +1049,11 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
           ? locale.messages.additionalUnavailable
           : statusMessage
     ));
-    if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => hasRenderableAdditionalData(event.additionalData));
+    if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => (filters.past || !event.isPast) && hasRenderableAdditionalData(event.additionalData));
     if (!deferAdditionalSelection) trackSearchResult(filters, count);
     if (!deferAdditionalSelection && personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
       personalizedResultsLastSignature = personalizedResultsSignature;
-      const { search, ...safePersonalizedFilters } = filters;
+      const { search, past, ...safePersonalizedFilters } = filters;
       trackStkEvent({
         event_type: 'personalized_results_used',
         filters_json: filtersToAnalyticsJson({ ...safePersonalizedFilters, sortBy: 'my-races' }),
@@ -1118,10 +1134,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
       const payload = await response.json();
       if (generation !== loadGeneration) return;
-      state.events = getPublicUpcomingEvents(toArray(payload));
+      state.events = getPublicFinderEvents(toArray(payload));
       state.apiAvailable = true;
       populateFilters();
       applyFinderUrlStateToControls(stateForYear(initialUrlState, activeYear));
+      populatePreferenceRegions();
+      if (pastInput) pastInput.disabled = false;
       renderResults();
       syncUrlFromControls();
 
@@ -1144,9 +1162,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const clearFilters = () => {
     formElement?.reset();
-    directFinderState = clearFinderUrlState(activeYear);
-    selectedQuickPicks.clear();
-    updateQuickPickStates();
+    rebuildControlsFromFinderState(clearFinderUrlState(activeYear));
     syncUrlFromControls(clearFinderUrlState(activeYear));
     resetVisibleResults();
   };
@@ -1211,13 +1227,24 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       syncUrlFromControls();
     }, 250);
   });
+  pastInput?.addEventListener('change', () => {
+    if (searchUrlTimer) window.clearTimeout(searchUrlTimer);
+    rebuildControlsFromFinderState({ ...getFinderUrlStateForUrl(), past: pastInput.checked });
+    state.userInteracted = true;
+    state.visibleCount = PAGE_SIZE;
+    renderResults();
+    syncUrlFromControls(getFinderUrlStateForUrl(), true);
+  });
+
   formElement?.addEventListener('input', (event) => {
     if (event.target === searchInput) return;
+    if (event.target === pastInput) return;
     updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('change', (event) => {
     if (event.target === searchInput) return;
+    if (event.target === pastInput) return;
     updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });

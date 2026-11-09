@@ -21,6 +21,17 @@ describe('finder URL state utility', () => {
     assert.equal(parseFinderUrlState(new URLSearchParams('family=true&raceDay=0&route=1')).family, false);
     assert.equal(parseFinderUrlState(new URLSearchParams('family=true&raceDay=0&route=1')).route, true);
   });
+  it('preserves an explicit past-races opt-in through sharing, year, language and profile return', () => {
+    const state = parseFinderUrlState(new URLSearchParams('q=So%C4%8Da&past=1'));
+    assert.equal(state.past, true);
+    assert.equal(buildFinderUrlForYear('/iskalnik-tekov/', state, '2027'), '/iskalnik-tekov/?year=2027&q=So%C4%8Da&past=1');
+    const finder = buildFinderUrlForLanguage(state, 'en');
+    assert.equal(finder, '/en/find-races/?q=So%C4%8Da&past=1');
+    const detail = buildDetailUrlWithFinderReturn('/en/races/2026/soca/', '/en/find-races/', state);
+    assert.equal(resolveFinderReturnUrl(new URL(detail, 'https://tekaski-koledar.si').searchParams, 'en', '2026').href, finder);
+    assert.equal(parseFinderUrlState(new URLSearchParams('past=true')).past, false);
+    assert.equal(clearFinderUrlState('2026').past, false);
+  });
   it('deduplicates and stably orders quick picks', () => assert.equal(qs({ quick: ['kids', 'trail', 'kids', 'budget'] }), 'quick=budget%2Ctrail%2Ckids'));
   it('does not serialize sort=my-races', () => assert.equal(qs({ sort: 'my-races' }), ''));
   it('preserves additional-data filters and quick picks for 2027', () => {

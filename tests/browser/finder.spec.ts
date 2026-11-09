@@ -988,3 +988,106 @@ for (const language of ['sl', 'en'] as const) {
     });
   }
 }
+
+for (const { path, label, badge, width } of [
+  { path: '/iskalnik-tekov/', label: 'Prikaži tudi pretekle teke', badge: 'Preteklo', width: 390 },
+  { path: '/en/find-races/', label: 'Include past races', badge: 'Past', width: 1440 }
+]) {
+  test(`includes past public races on request and preserves finder behavior at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.clock.setFixedTime(new Date('2026-10-15T12:00:00+02:00'));
+    const excluded = [
+      { ...races2026[0], row: '505', vidno_v_javnem_koledarju: 'NE' },
+      { ...races2026[0], row: '506', status_dogodka: 'nepotrjeno' },
+      { ...races2026[0], row: '507', datum: '2025-08-15' }
+    ];
+    const archiveRaces = races2026.map((race) => race.row === '101' ? { ...race, povezava_razpis: race.povezava_prijava } : race);
+    await mockFinderApis(page, { '2026': [...archiveRaces, ...excluded], '2027': races2027 });
+    let masterRequests = 0;
+    page.on('request', (request) => {
+      const url = new URL(request.url());
+      if (url.origin === API_HOST && url.pathname === '/') masterRequests++;
+    });
+    await page.goto(path);
+    const toggle = page.getByRole('checkbox', { name: label });
+    const cards = page.locator('.search-event-card');
+    const past = cards.filter({ has: page.locator('[data-past-race]') });
+    const search = page.locator('[data-filter="search"]');
+    const panel = page.locator('[data-mobile-filter-panel]');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).not.toBeChecked();
+    await expect(cards).toHaveCount(1);
+    await expect(cards).toContainText('Celje City Run');
+    await expect(page.locator('[data-filter="month"] option[value="08"]')).toHaveCount(0);
+
+    await toggle.check();
+    await expect(page).toHaveURL(/\?past=1$/);
+    await expect(cards).toHaveCount(4);
+    await expect(cards.locator('h3')).toHaveText(races2026.map((race) => race.naziv_prireditve));
+    await expect(past.locator('[data-past-race]')).toHaveText([badge, badge, badge]);
+    await expect(past.locator('[data-analytics-link-type="prijava"], [data-analytics-calendar-type], a[href="https://example.com/register"]')).toHaveCount(0);
+    await expect(past.locator('.search-detail-cta')).toHaveCount(3);
+    await expect(past.locator('a[href="https://example.com/notice"]')).toHaveCount(2);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+
+    await page.goBack();
+    await expect(toggle).not.toBeChecked();
+    await expect(cards).toHaveCount(1);
+    await page.goForward();
+    await expect(toggle).toBeChecked();
+    await expect(cards).toHaveCount(4);
+
+    if (width === 390) await panel.locator('summary').first().click();
+    await page.locator('[data-filter="month"]').selectOption('10');
+    await page.locator('[data-filter="region"]').selectOption('Goriška');
+    await page.locator('[data-filter="distance"]').selectOption('ultra');
+    await search.fill('Soca');
+    await expect(cards).toHaveCount(1);
+    await expect(past).toContainText('Soča Mountain Ultra');
+    await expect(page.locator('[data-result-count]')).toContainText('1');
+    await page.locator('[data-copy-link]').click();
+    await expect.poll(() => page.evaluate(() => (window as any).__copiedText)).toContain('past=1');
+    const detailHref = await past.locator('.search-detail-cta').getAttribute('href');
+    expect(new URL(new URL(detailHref!, page.url()).searchParams.get('from')!, page.url()).searchParams.get('past')).toBe('1');
+
+    await page.locator('form .clear-filters-button').click();
+    await expect(toggle).not.toBeChecked();
+    await expect(page).not.toHaveURL(/past=/);
+    await expect(cards).toHaveCount(1);
+
+    await toggle.check();
+    await page.locator('[data-quick-pick="deadlines-soon"]').click();
+    await expect(cards).toHaveCount(1);
+    await expect(cards).toContainText('Celje City Run');
+    await expect(past).toHaveCount(0);
+    await expect(page.locator('[data-quick-pick="deadlines-soon"]')).toHaveAttribute('aria-pressed', 'true');
+    await toggle.uncheck();
+    await toggle.check();
+    await expect(page.locator('[data-quick-pick="deadlines-soon"]')).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('[data-quick-pick="deadlines-soon"]').click();
+    await expect(cards).toHaveCount(4);
+    const advanced = page.locator('[data-filter="day-of-registration"]');
+    const advancedPanel = advanced.locator('xpath=ancestor::details[1]');
+    await advancedPanel.locator('summary').click();
+    await expect(past.getByText(/Tudi na dan tekme|Also on race day/)).toHaveCount(0);
+    await advanced.check();
+    await expect(cards).toHaveCount(0);
+    await advanced.uncheck();
+    await expect(cards).toHaveCount(4);
+    expect(masterRequests).toBe(1);
+
+    const languageLink = page.locator('a[data-language-switch]').first();
+    const languageHref = await languageLink.getAttribute('href');
+    await page.goto(languageHref!);
+    await expect(page.locator('[data-filter="past"]')).toBeChecked();
+    await expect(cards).toHaveCount(4);
+    await page.locator('[data-year-link="2027"]').click();
+    await expect(page).toHaveURL(/year=2027&past=1$/);
+    await expect(page.locator('[data-filter="past"]')).toBeChecked();
+    await expect(cards).toHaveCount(3);
+    await expect(past).toHaveCount(0);
+    await page.goBack();
+    await expect(page.locator('[data-filter="past"]')).toBeChecked();
+    await expect(cards).toHaveCount(4);
+  });
+}

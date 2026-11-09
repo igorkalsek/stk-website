@@ -417,6 +417,7 @@ type AdditionalDataRenderOptions = {
   eventId?: string;
   eventName?: string;
   includeRoute?: boolean;
+  includeRegistrationTiming?: boolean;
 };
 
 export const renderAdditionalDataChips = (
@@ -432,7 +433,7 @@ export const renderAdditionalDataChips = (
     `<span class="event-chip event-chip-additional event-chip-additional-${variant}">${escapeHtml(label)}</span>`;
 
   const deadlineLabel = (value: string, todayLabel: string, futurePrefix: string) => {
-    if (!isTodayOrFutureIsoDate(value)) return '';
+    if (options.includeRegistrationTiming === false || !isTodayOrFutureIsoDate(value)) return '';
     if (value === todayIsoDate) return todayLabel;
 
     const formattedDate = formatCompactIsoDate(value, language);
@@ -480,7 +481,7 @@ export const renderAdditionalDataChips = (
       chips.push(chip(registrationDeadline, 'price'));
     }
 
-    if (hasRaceDayRegistration) {
+    if (hasRaceDayRegistration && options.includeRegistrationTiming !== false) {
       chips.push(chip(language === 'en' ? 'Also on race day' : 'Tudi na dan tekme', 'price'));
     }
 

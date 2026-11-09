@@ -28,6 +28,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <input type="search" name="search" placeholder="Ime teka ali kraj" autocomplete="off" data-filter="search" />
         </label>
 
+        <label class="checkbox-field finder-past-toggle"><input type="checkbox" name="past" data-filter="past" disabled /><span>Prikaži tudi pretekle teke</span></label>
+
         <details class="finder-filter-panel" data-mobile-filter-panel open>
           <summary><span>Filtri</span><span data-mobile-filter-count hidden></span></summary>
           <div class="finder-filter-panel-content">

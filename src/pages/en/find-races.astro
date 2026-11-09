@@ -41,6 +41,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <input type="search" name="search" placeholder="Search races, towns or regions" autocomplete="off" data-filter="search" />
         </label>
 
+        <label class="checkbox-field finder-past-toggle"><input type="checkbox" name="past" data-filter="past" disabled /><span>Include past races</span></label>
+
         <details class="finder-filter-panel" data-mobile-filter-panel open>
           <summary><span>Filters</span><span data-mobile-filter-count hidden></span></summary>
           <div class="finder-filter-panel-content">
