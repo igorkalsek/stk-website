@@ -46,7 +46,7 @@ export const formatRaceDateStatus = (eventDate: string, language: 'sl' | 'en', t
   const today = asUtcDay(todayIso);
   if (race === null || today === null) return '';
   const days = (race - today) / 86_400_000;
-  if (days < 0) return language === 'sl' ? 'Dogodek je že mimo' : 'This race has already passed';
+  if (getEventDatePhase(eventDate, todayIso) === 'past') return language === 'sl' ? 'Pretekli tek' : 'Past race';
   if (days === 0) return language === 'sl' ? 'Danes' : 'Today';
   return language === 'sl'
     ? `Prihaja čez ${days} ${days === 1 ? 'dan' : 'dni'}`

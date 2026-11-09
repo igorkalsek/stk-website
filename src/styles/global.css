@@ -5754,6 +5754,12 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
+[data-race-profile]:not([data-past-profile]) [data-race-archive-only],
+[data-past-profile] :is([data-race-upcoming-only], [data-deadline-v2-source]),
+[data-past-profile] .event-detail-highlights:not(:has(.event-detail-highlight-card:not([data-race-upcoming-only]))) {
+  display: none;
+}
+
 /* Keep official information prominent at every width when registration is absent. */
 .event-detail-official-actions .button-secondary-light:first-child {
   background: var(--orange);

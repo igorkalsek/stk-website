@@ -17,8 +17,8 @@ describe('race-profile relative date: Europe/Ljubljana calendar days', () => {
   it('distinguishes future, today, past and invalid dates in both languages', () => {
     assert.equal(formatRaceDateStatus('2026-11-08', 'en', '2026-11-06'), 'Coming in 2 days');
     assert.equal(formatRaceDateStatus('2026-11-07', 'sl', '2026-11-06'), 'Prihaja čez 1 dan');
-    assert.equal(formatRaceDateStatus('2026-11-05', 'en', '2026-11-06'), 'This race has already passed');
-    assert.equal(formatRaceDateStatus('2026-11-05', 'sl', '2026-11-06'), 'Dogodek je že mimo');
+    assert.equal(formatRaceDateStatus('2026-11-05', 'en', '2026-11-06'), 'Past race');
+    assert.equal(formatRaceDateStatus('2026-11-05', 'sl', '2026-11-06'), 'Pretekli tek');
     assert.equal(formatRaceDateStatus('2026-02-31', 'sl', '2026-02-01'), '');
     assert.equal(formatRaceDateStatus('invalid', 'en', '2026-11-06'), '');
   });

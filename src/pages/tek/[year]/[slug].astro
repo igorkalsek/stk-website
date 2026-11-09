@@ -1,4 +1,5 @@
 ---
+import { formatRaceDateStatus, getEventDatePhase } from '../../../utils-date';
 import { getRegistrationFeeBounds } from '../../../utils-registration-fees';
 import GpxLinks from '../../../components/GpxLinks.astro';
 import RelatedRaceCards from '../../../components/RelatedRaceCards.astro';
@@ -84,6 +85,7 @@ const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027
 
 const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
 const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
+const isPastRace = event && getEventDatePhase(event.date) === 'past';
 const primaryActions = event ? buildPrimaryActions(event, 'sl') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
 const heroDateParts = event ? formatDateParts(event.date) : null;
@@ -151,7 +153,7 @@ const jsonLd = event ? {
 
 <BaseLayout title={title} description={description} canonicalPath={canonicalPath} canonicalUrl={event ? shareUrl : undefined} alternateLinks={event ? [{ lang: 'sl', href: buildEventDetailPath(event) }, { lang: 'en', href: englishPath }] : []} languageSwitchHref={englishPath}>
   {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-  <main data-finder-return-root data-finder-return-language="sl" data-finder-return-year={year} data-finder-language-detail-path={englishPath}>
+  <main data-race-profile data-past-profile={isPastRace ? true : undefined} data-finder-return-root data-finder-return-language="sl" data-finder-return-year={year} data-finder-language-detail-path={englishPath}>
     {event ? (
       <>
         <section class="section container event-detail-top-section" aria-labelledby="event-detail-title">
@@ -191,12 +193,17 @@ const jsonLd = event ? {
               </div>
             )}
             <div class="event-detail-status-row">
-              <span class="pill event-detail-status-pill" data-race-date-status data-event-date={event.date} data-language="sl" hidden></span>
+              <span class="pill event-detail-status-pill" data-race-date-status data-event-date={event.date} data-language="sl" hidden={!isPastRace}>{isPastRace ? formatRaceDateStatus(event.date, 'sl') : ''}</span>
             </div>
             <div class="event-detail-primary-actions" aria-label="Glavne povezave">
               <div class="event-detail-official-actions event-detail-action-list">
                 {primaryActions.map((action) => (
-                  <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail"><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
+                  <Fragment>
+                    <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} data-race-upcoming-only={action.kind === 'registration' ? true : undefined} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail"><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
+                    {action.kind === 'registration' && (
+                      <a class="button button-secondary-light event-detail-top-action" data-race-archive-only href={action.url} target="_blank" rel="noopener noreferrer">{action.label} (arhiv)</a>
+                    )}
+                  </Fragment>
                 ))}
               </div>
               <div class="event-detail-my-race-panel">
@@ -247,7 +254,7 @@ const jsonLd = event ? {
                   <h2 id="race-highlights-title">Kaj izstopa pri tem teku?</h2>
                   <div class="event-detail-highlight-grid">
                     {raceHighlights.map((highlight) => (
-                      <div class="event-detail-highlight-card">
+                      <div class="event-detail-highlight-card" data-race-upcoming-only={highlight.key === 'free' || highlight.key === 'race-day-registration' ? true : undefined}>
                         <span class="event-detail-highlight-icon" set:html={renderActionIcon(highlight.iconKey)}></span>
                         <span class="event-detail-highlight-text">
                           <strong>{highlight.label}</strong>
@@ -264,7 +271,7 @@ const jsonLd = event ? {
                 <div class="event-detail-info-card-grid">
               {registrationItems.length > 0 && (
                     <article class="info-card event-detail-panel">
-                      <h2><span class="action-icon" set:html={renderActionIcon('ticket')}></span> Prijava in udeležba</h2>
+                      <h2><span class="action-icon" set:html={renderActionIcon('ticket')}></span> <span data-race-upcoming-only>Prijava in udeležba</span><span data-race-archive-only>Arhiv prijav</span></h2>
                       <dl class="event-detail-list">
                         {registrationItems.map((item) => (
                           <div>
@@ -277,12 +284,12 @@ const jsonLd = event ? {
                             <dt>{deadlineKindLabels[deadline.kind]}</dt>
                             <dd>
                               <span class="registration-deadline-absolute">{formatDate(deadline.date)}</span>
-                              <span class="registration-deadline-relative" data-registration-deadline data-deadline-edition={getProfileDeadlineEdition(event)} data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
+                              <span class="registration-deadline-relative" data-race-upcoming-only data-registration-deadline data-deadline-edition={getProfileDeadlineEdition(event)} data-deadline-kind={deadline.kind} data-deadline-date={deadline.date} data-event-date={event.date} data-language="sl">{formatRegistrationDeadlineRelative(deadline, 'sl')}</span>
                               {deadline.kind === 'registration' && (event.registrationUrl || event.noticeUrl) && (
-                                <a href={event.registrationUrl || event.noticeUrl} target="_blank" rel="noopener noreferrer">Preverite pogoje prijave pri organizatorju</a>
+                                <a data-race-upcoming-only href={event.registrationUrl || event.noticeUrl} target="_blank" rel="noopener noreferrer">Preverite pogoje prijave pri organizatorju</a>
                               )}
                               {deadline.state !== 'past' && (
-                                <details class="deadline-calendar-menu"><summary>{deadlineCalendarLabels.add}</summary><div class="deadline-calendar-actions">
+                                <details class="deadline-calendar-menu" data-race-upcoming-only><summary>{deadlineCalendarLabels.add}</summary><div class="deadline-calendar-actions">
                                   {googleUrl && <a href={googleUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.google}</a>}
                                   {icsUrl && <a href={icsUrl} download={icsFilename}>{deadlineCalendarLabels.apple}</a>}
                                   {outlookUrl && <a href={outlookUrl} target="_blank" rel="noopener">{deadlineCalendarLabels.outlook}</a>}
@@ -322,12 +329,12 @@ const jsonLd = event ? {
 
               {publicNotes && (
                 <article class="info-card event-detail-panel">
-                  <h2><span class="action-icon" set:html={renderActionIcon('notes')}></span> Opombe</h2>
+                  <h2><span class="action-icon" set:html={renderActionIcon('notes')}></span> <span data-race-upcoming-only>Opombe</span><span data-race-archive-only>Arhivske opombe</span></h2>
                   <p>{publicNotes}</p>
                 </article>
               )}
 
-              <p class="data-note event-detail-disclaimer">Podatki so informativni. Pred prijavo preverite uradni razpis ali stran organizatorja.</p>
+              <p class="data-note event-detail-disclaimer"><span data-race-upcoming-only>Podatki so informativni. Pred prijavo preverite uradni razpis ali stran organizatorja.</span><span data-race-archive-only>Podatki se nanašajo na to izvedbo teka.</span></p>
             </div>
 
             <aside class="info-card event-detail-action-panel" aria-label="Glavne povezave">
