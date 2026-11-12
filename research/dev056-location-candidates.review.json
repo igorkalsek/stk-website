@@ -1,0 +1,699 @@
+{
+  "project": "STK DEV-056",
+  "status": "REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION",
+  "data_checked_at": "2026-11-12T22:38:43.931Z",
+  "canonical_dataset": "GURS RPE OGC API Features, NASELJA",
+  "license": "GURS RPE, CC BY 4.0; attribution required, verify conditions before public reuse",
+  "record_change_date_is_not_snapshot_date": true,
+  "algorithm": "polygon centroid projected in EPSG:3794; if outside polygon use representative_point; validate inside official polygon",
+  "number_of_entries": 16,
+  "runtime_index_allowed": false,
+  "entries": [
+    {
+      "edition_key": "2027!51",
+      "year": 2027,
+      "master_row": 51,
+      "event_name": "SZTL 2026/2027 – 5. etapa: Plevno",
+      "master_place": "Žalec",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.2490358,
+        "longitude": 15.164716
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101473100",
+        "eid_obcina": "110200000214281243",
+        "name": "Žalec",
+        "municipality": "Žalec",
+        "datum_sys_last_record_change": "2025-01-20T08:49:58Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101473100?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:18:41.104Z"
+      },
+      "qa": {
+        "archive_center_offset_km": 0.225,
+        "furs_refpoint_offset_km": 0.0,
+        "furs_reference_inside_gurs_polygon": true,
+        "polygon_area_km2": 2.973
+      },
+      "reason_review": "Odrasli startajo pri nadvozu Mavrica, otroci na atletskem stadionu: naseljska točka ne predstavlja nobenega od štartov.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!19",
+      "year": 2027,
+      "master_row": 19,
+      "event_name": "4. Trail po kraških klancih 2027",
+      "master_place": "Križ pri Sežani",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.7373449,
+        "longitude": 13.8576759
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101312191",
+        "eid_obcina": "110200000110273773",
+        "name": "Križ",
+        "municipality": "Sežana",
+        "datum_sys_last_record_change": "2022-10-27T09:33:46Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101312191?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:18:41.104Z"
+      },
+      "qa": {
+        "archive_center_offset_km": 1.188,
+        "furs_refpoint_offset_km": 0.0,
+        "furs_reference_inside_gurs_polygon": true,
+        "polygon_area_km2": 3.823
+      },
+      "reason_review": "Križ je večkratno ime naselja; uradno prizorišče Križ 2 ne dokazuje identične štartne točke.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!266",
+      "year": 2026,
+      "master_row": 266,
+      "event_name": "25. Štanjelski tek",
+      "master_place": "Štanjel",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.8251198,
+        "longitude": 13.8374456
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101320020",
+        "eid_obcina": "110200000110277683",
+        "name": "Štanjel",
+        "municipality": "Komen",
+        "datum_sys_last_record_change": "2023-06-06T23:00:20Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101320020?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:18:41.104Z"
+      },
+      "qa": {
+        "archive_center_offset_km": 0.548,
+        "furs_refpoint_offset_km": 0.0,
+        "furs_reference_inside_gurs_polygon": true,
+        "polygon_area_km2": 3.757
+      },
+      "reason_review": "Organizator poda ločen GPS štarta pri Lovski koči; naseljsko referenčno točko NE uporabljaj za ta štart.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false,
+      "official_start_candidate": {
+        "latitude": 45.81833333,
+        "longitude": 13.82511667,
+        "precision": "start",
+        "review_status": "REVIEW",
+        "format_from_organizer": "N 45 49.100; E 13 49.507 (degrees and decimal minutes)",
+        "official_2026_url": "https://skd-hrusevica.si/25-stanjelski-tek/",
+        "distance_from_gurs_settlement_reference_km": 1.217,
+        "location_description": "Lovska koča Štanjel; start and finish",
+        "not_public": true
+      }
+    },
+    {
+      "edition_key": "2026!260",
+      "year": 2026,
+      "master_row": 260,
+      "event_name": "Novomeški polmaraton",
+      "master_place": "Novo mesto",
+      "master_date": "2026-11-14",
+      "master_region": "Jugovzhodna",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.8074183,
+        "longitude": 15.166418
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101204380",
+        "eid_obcina": "110200000110279622",
+        "na_mid": 10120438,
+        "name": "Novo mesto",
+        "municipality": "Novo mesto",
+        "datum_sys_last_record_change": "2025-02-05T13:57:03Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101204380?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 33.286,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!294",
+      "year": 2026,
+      "master_row": 294,
+      "event_name": "Martinov tek Sečovlje 2026",
+      "master_place": "Sečovlje",
+      "master_date": "2026-11-14",
+      "master_region": "Obalno-kraška",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.4696671,
+        "longitude": 13.6309536
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101230468",
+        "eid_obcina": "110200000110279978",
+        "na_mid": 10123046,
+        "name": "Sečovlje",
+        "municipality": "Piran",
+        "datum_sys_last_record_change": "2025-07-09T21:22:03Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101230468?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 4.66,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!303",
+      "year": 2026,
+      "master_row": 303,
+      "event_name": "11. Tek občine Mengeš 2026",
+      "master_place": "Mengeš",
+      "master_date": "2026-11-14",
+      "master_region": "Osrednjeslovenska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.1649909,
+        "longitude": 14.5636875
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000100911951",
+        "eid_obcina": "110200000110270910",
+        "na_mid": 10091195,
+        "name": "Mengeš",
+        "municipality": "Mengeš",
+        "datum_sys_last_record_change": "2025-01-31T12:29:16Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000100911951?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 13.335,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!268",
+      "year": 2026,
+      "master_row": 268,
+      "event_name": "14. Goricatlon",
+      "master_place": "Nova Gorica",
+      "master_date": "2026-12-05",
+      "master_region": "Goriška",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.9557059,
+        "longitude": 13.6477126
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101178014",
+        "eid_obcina": "110200000110271561",
+        "na_mid": 10117801,
+        "name": "Nova Gorica",
+        "municipality": "Nova Gorica",
+        "datum_sys_last_record_change": "2024-09-27T11:04:31Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101178014?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 3.491,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!264",
+      "year": 2026,
+      "master_row": 264,
+      "event_name": "Tek na Kalanov hrib",
+      "master_place": "Izlake",
+      "master_date": "2026-12-06",
+      "master_region": "Zasavska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.1559516,
+        "longitude": 14.9384886
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101455545",
+        "eid_obcina": "110200000110276792",
+        "na_mid": 10145554,
+        "name": "Izlake",
+        "municipality": "Zagorje ob Savi",
+        "datum_sys_last_record_change": "2024-04-03T16:39:22Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101455545?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 3.609,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2026!267",
+      "year": 2026,
+      "master_row": 267,
+      "event_name": "Velenje Trail 2026",
+      "master_place": "Velenje",
+      "master_date": "2026-12-05",
+      "master_region": "Savinjska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.3640347,
+        "longitude": 15.1094199
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101449654",
+        "eid_obcina": "110200000110276107",
+        "na_mid": 10144965,
+        "name": "Velenje",
+        "municipality": "Velenje",
+        "datum_sys_last_record_change": "2025-02-04T10:48:22Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101449654?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 12.6,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!22",
+      "year": 2027,
+      "master_row": 22,
+      "event_name": "Mali kraški maraton 2027",
+      "master_place": "Sežana",
+      "master_date": "2027-03-21",
+      "master_region": "Obalno-kraška",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.7051655,
+        "longitude": 13.860493
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101318552",
+        "eid_obcina": "110200000110273773",
+        "na_mid": 10131855,
+        "name": "Sežana",
+        "municipality": "Sežana",
+        "datum_sys_last_record_change": "2024-05-03T10:52:00Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101318552?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 15.327,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!11",
+      "year": 2027,
+      "master_row": 11,
+      "event_name": "45. Maraton treh src",
+      "master_place": "Radenci",
+      "master_date": "2027-05-15",
+      "master_region": "Pomurska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.6378544,
+        "longitude": 16.0413581
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000100933179",
+        "eid_obcina": "110200000110272536",
+        "na_mid": 10093317,
+        "name": "Radenci",
+        "municipality": "Radenci",
+        "datum_sys_last_record_change": "2025-01-16T08:06:47Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000100933179?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 3.01,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!23",
+      "year": 2027,
+      "master_row": 23,
+      "event_name": "Ormoški polmaraton 2027",
+      "master_place": "Ormož",
+      "master_date": "2027-04-04",
+      "master_region": "Podravska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.4048843,
+        "longitude": 16.1566639
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101224909",
+        "eid_obcina": "110200000110271728",
+        "na_mid": 10122490,
+        "name": "Ormož",
+        "municipality": "Ormož",
+        "datum_sys_last_record_change": "2025-07-30T13:58:00Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101224909?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 3.878,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!43",
+      "year": 2027,
+      "master_row": 43,
+      "event_name": "Markoton Backyard Ultra 2027",
+      "master_place": "Bukovci (Markovci)",
+      "master_date": "2027-03-19",
+      "master_region": "Podravska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.3791118,
+        "longitude": 15.9578654
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101239683",
+        "eid_obcina": "110200000214280195",
+        "na_mid": 10123968,
+        "name": "Bukovci",
+        "municipality": "Markovci",
+        "datum_sys_last_record_change": "2024-09-26T07:15:49Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101239683?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 7.031,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!17",
+      "year": 2027,
+      "master_row": 17,
+      "event_name": "Kočevsko Outdoor Festival 2027",
+      "master_place": "Kočevje",
+      "master_date": "2027-05-28",
+      "master_region": "Jugovzhodna",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.6338287,
+        "longitude": 14.851633
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000100999436",
+        "eid_obcina": "110200000110269664",
+        "na_mid": 10099943,
+        "name": "Kočevje",
+        "municipality": "Kočevje",
+        "datum_sys_last_record_change": "2025-04-18T12:29:44Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000100999436?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 14.133,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!57",
+      "year": 2027,
+      "master_row": 57,
+      "event_name": "SLO 24",
+      "master_place": "Koper",
+      "master_date": "2027-04-03",
+      "master_region": "Obalno-kraška",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 45.5392603,
+        "longitude": 13.7248341
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000101017436",
+        "eid_obcina": "110200000110277766",
+        "na_mid": 10101743,
+        "name": "Koper",
+        "municipality": "Koper",
+        "datum_sys_last_record_change": "2025-01-29T16:20:41Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101017436?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 12.97,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    },
+    {
+      "edition_key": "2027!14",
+      "year": 2027,
+      "master_row": 14,
+      "event_name": "18. Nočni tek Celje",
+      "master_place": "Celje – Savinjsko nabrežje",
+      "master_date": "2027-05-15",
+      "master_region": "Savinjska",
+      "review_status": "REVIEW",
+      "point_role": "SETTLEMENT_INTERIOR_APPROXIMATION_NOT_RACE_START",
+      "precision": "settlement-approximate",
+      "candidate_wgs84": {
+        "latitude": 46.2337276,
+        "longitude": 15.2585801
+      },
+      "point_method": "GURS_POLYGON_CENTROID_IN_EPSG3794",
+      "canonical_gurs": {
+        "eid_naselje": "110300000100859424",
+        "eid_obcina": "110200000110266215",
+        "na_mid": 10085942,
+        "name": "Celje",
+        "municipality": "Celje",
+        "datum_sys_last_record_change": "2025-01-15T14:29:44Z",
+        "official_feature_url": "https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000100859424?f=json",
+        "geometry_type": "Polygon",
+        "source_crs": "EPSG:4326",
+        "polygon_valid": true,
+        "interior_point_verified": true,
+        "source_checked_at": "2026-11-12T22:38:43.931Z"
+      },
+      "qa": {
+        "polygon_area_km2": 22.719,
+        "centroid_inside_polygon": true,
+        "point_inside_polygon": true,
+        "polygon_valid": true
+      },
+      "reason_review": "Uradna geometrija naselja ni dokaz štarta ali prizorišča teka; razdalja je le približek. Datum stanja zbirke ni izkazan.",
+      "source_snapshot_date_verified": false,
+      "start_pin_verified": false,
+      "approved_for_runtime": false
+    }
+  ],
+  "explicit_rejections": [
+    {
+      "edition_key": "2027!8",
+      "reason": "REGION_NOT_SINGLE_SETTLEMENT"
+    },
+    {
+      "edition_key": "2027!12",
+      "reason": "MULTIPLE_STARTS"
+    }
+  ],
+  "research_phase": "P0k_FINDER_COVERAGE_BENCHMARK",
+  "source_snapshot_date_verified": false,
+  "coverage_audit": {
+    "master_period_start": "2026-11-12",
+    "master_period_end": "2027-12-31",
+    "master_ranges_examined": [
+      "2026!A2:N420",
+      "2027!A2:N220"
+    ],
+    "confirmed_public_events_in_ranges": 93,
+    "2026_confirmed_public": 26,
+    "2027_confirmed_public": 67,
+    "candidate_editions_with_verified_settlement_identity": 16,
+    "candidate_share_of_examined_public_events_percent": 17.2,
+    "verified_actual_race_starts_in_runtime_index": 0,
+    "public_index_approved": false,
+    "caveat": "This is settlement identity coverage in examined Master rows, NOT race-start coverage nor proof of geographic filter completeness."
+  }
+}
