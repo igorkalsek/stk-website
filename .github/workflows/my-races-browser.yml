@@ -14,6 +14,7 @@ on:
       - 'tests/browser/organizer-confirmed-races.spec.ts'
       - 'tests/browser/home.spec.ts'
       - 'tests/browser/home-stats.spec.ts'
+      - 'tests/browser/home-spotlight.spec.ts'
       - 'tests/browser/planning-comparison.spec.ts'
       - 'tests/planning-comparison.test.mjs'
       - 'tests/fixtures/planning-2027.json'

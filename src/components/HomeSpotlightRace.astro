@@ -17,16 +17,17 @@ const dateLabel = initialRace
   class="home-spotlight-card"
   data-home-spotlight
   data-language={lang}
-  data-analytics-featured-impression="true"
+  data-selection-mode="pending"
+  data-analytics-featured-impression="false"
   data-analytics-placement="home_featured"
   data-analytics-event-id={initialRace ? getStableEventId(initialRace) : undefined}
   data-analytics-event-name={initialRace?.displayTitle}
   data-analytics-event-date={initialRace?.date}
   data-analytics-event-year={initialRace?.year}
-  aria-label={en ? 'STK editorial race spotlight' : 'Uredniški izbor teka STK'}
-  hidden={!initialRace}
+  aria-label={en ? 'STK race spotlight' : 'Tek v ospredju STK'}
+  hidden
 >
-  <span class="home-spotlight-kicker">{en ? 'STK EDITORIAL PICK' : 'UREDNIŠKI IZBOR STK'}</span>
+  <span class="home-spotlight-kicker" data-spotlight-label>{en ? 'STK EDITORIAL PICK' : 'UREDNIŠKI IZBOR STK'}</span>
   <h2>{en ? 'In the spotlight' : 'V ospredju'}</h2>
   <div class="home-spotlight-meta">
     <time data-spotlight-date datetime={initialRace?.date ?? ''}>{dateLabel}</time>
@@ -42,10 +43,10 @@ const dateLabel = initialRace
 <script>
   import { fetchPublicMaster } from '../utils-public-master';
   import { SUPPORTED_PUBLIC_YEARS } from '../utils-public-year';
-  import { toApiRecords, mapPublicRaceEvent, getStableEventId, buildEventDetailPath, buildEnglishEventDetailPath } from '../utils-event-detail';
-  import type { PublicRaceEvent } from '../utils-event-detail';
+  import { getStableEventId, buildEventDetailPath, buildEnglishEventDetailPath } from '../utils-event-detail';
   import { getTodayIsoInLjubljana } from '../utils-date';
-  import { selectUpcomingHomepageEvents, selectHomepageSpotlightRace } from '../utils-home-events';
+  import { fetchSpotlightControl, resolveHomepageSpotlight, spotlightLabel, spotlightRead, millisecondsToNextLjubljanaDay } from '../utils-home-spotlight';
+  import type { SpotlightSelection } from '../utils-home-spotlight';
   import { initializeFeaturedRaceImpressionTracking } from '../lib/stkAnalytics';
   import { formatEnglishSurface } from '../utils-english';
 
@@ -55,9 +56,14 @@ const dateLabel = initialRace
     const en = slot.dataset.language === 'en';
     const close = () => {
       slot.hidden = true;
+      slot.dataset.analyticsFeaturedImpression = 'false';
+      slot.dataset.selectionMode = 'pending';
       hero?.classList.remove('home-hero-with-featured');
     };
-    const show = (race: PublicRaceEvent) => {
+    const show = ({ race, mode }: SpotlightSelection) => {
+      const label = slot.querySelector<HTMLElement>('[data-spotlight-label]');
+      if (label) label.textContent = spotlightLabel(mode, en);
+      slot.dataset.selectionMode = mode;
       const href = en ? buildEnglishEventDetailPath(race) : buildEventDetailPath(race);
       const name = slot.querySelector<HTMLAnchorElement>('[data-spotlight-title]');
       const cta = slot.querySelector<HTMLAnchorElement>('[data-spotlight-cta]');
@@ -80,27 +86,45 @@ const dateLabel = initialRace
       slot.dataset.analyticsEventName = race.displayTitle;
       slot.dataset.analyticsEventDate = race.date;
       slot.dataset.analyticsEventYear = race.year;
+      slot.dataset.analyticsFeaturedImpression = 'true';
       slot.hidden = false;
       hero?.classList.add('home-hero-with-featured');
       initializeFeaturedRaceImpressionTracking(hero ?? document);
     };
 
-    void (async () => {
-      const todayIso = getTodayIsoInLjubljana();
-      const todayValue = new Date(todayIso + 'T00:00:00').getTime();
-      const result = await Promise.allSettled(SUPPORTED_PUBLIC_YEARS.map((year) => fetchPublicMaster(year)));
-      const byYear: PublicRaceEvent[][] = result.map((entry, i) =>
-        entry.status === 'fulfilled'
-          ? toApiRecords(entry.value).map((item) => mapPublicRaceEvent(item, SUPPORTED_PUBLIC_YEARS[i], todayValue))
-            .filter((event): event is PublicRaceEvent => Boolean(event))
-          : []
-      );
-      // Fail closed if source data cannot be checked; never keep a stale promotion.
-      if (result.every((entry) => entry.status === 'rejected')) return close();
-      const nearest = selectUpcomingHomepageEvents(byYear[0] ?? []);
-      const featured = selectHomepageSpotlightRace(byYear.flat(), nearest, todayIso);
-      if (!featured) return close();
-      show(featured);
-    })().catch(close);
+    // Static Astro markup stays hidden until BOTH live reads settle. Never flash or
+    // track the build-time automatic choice while a manual choice is being checked.
+    let pending = false;
+    let revision = 0;
+    let dayTimer: ReturnType<typeof setTimeout>;
+    const refresh = async () => {
+      if (pending) return;
+      pending = true;
+      const current = ++revision;
+      close();
+      clearTimeout(dayTimer);
+      // Hide/recheck at midnight even if a request is slow across the boundary.
+      dayTimer = setTimeout(() => { revision++; pending = false; close(); void refresh(); }, millisecondsToNextLjubljanaDay());
+      try {
+        const [masters, control] = await Promise.all([
+          Promise.allSettled(SUPPORTED_PUBLIC_YEARS.map(year => spotlightRead(fetchPublicMaster(year)))),
+          spotlightRead(fetchSpotlightControl()).catch(() => null)
+        ]);
+        if (current !== revision || document.hidden) return;
+        const sources = masters.flatMap((entry, index) => entry.status === 'fulfilled'
+          ? [{ year: SUPPORTED_PUBLIC_YEARS[index], payload: entry.value }] : []);
+        const selected = resolveHomepageSpotlight(sources, control, getTodayIsoInLjubljana());
+        if (selected) show(selected);
+      } catch { close(); }
+      finally { if (current === revision) pending = false; }
+    };
+    window.addEventListener('focus', () => { void refresh(); });
+    window.addEventListener('pageshow', event => { if (event.persisted) void refresh(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { revision++; pending = false; close(); }
+      else void refresh();
+    });
+    window.addEventListener('pagehide', () => { revision++; pending = false; close(); clearTimeout(dayTimer); });
+    void refresh();
   }
 </script>
