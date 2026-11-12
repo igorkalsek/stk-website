@@ -53,7 +53,7 @@ test('SL/EN hero share one editorial component and no paid or sponsored state', 
   assert.match(component, /STK EDITORIAL PICK/);
   assert.match(component, /UREDNIŠKI IZBOR STK/);
   assert.match(component, /data-analytics-placement="home_featured"/);
-  assert.match(component, /data-analytics-featured-impression="true"/);
+  assert.match(component, /data-analytics-featured-impression="false"/);
   assert.match(component, /initializeFeaturedRaceImpressionTracking/);
   assert.match(component, /buildEnglishEventDetailPath/);
   assert.match(component, /en \? formatEnglishSurface\(initialRace\?\.surface \?\? ''\)/);
