@@ -1,0 +1,256 @@
+name: DEV-056 GeoHub read-only validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'scripts/dev056-geohub-verify.mjs'
+      - 'tests/dev056-geohub-verify.test.mjs'
+      - 'scripts/dev056-furs-geometry-verify.mjs'
+      - 'tests/dev056-furs-geometry-verify.test.mjs'
+      - 'scripts/dev056-expand-coverage-qa.mjs'
+      - 'tests/dev056-expand-coverage-qa.test.mjs'
+      - '.github/workflows/dev056-geohub-readonly.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  geohub-readonly:
+    if: github.head_ref == 'work/dev056-geohub-readonly-qa'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Unit tests (mocked, no network)
+        run: node --test tests/dev056-geohub-verify.test.mjs
+      - name: Read official GeoHub settlement identities (GET only)
+        run: node scripts/dev056-geohub-verify.mjs > dev056-geohub-results.json
+      - name: Diagnose missing geometry (2 bounded GET-only variants)
+        if: failure()
+        run: |
+          node --input-type=module > dev056-geohub-geometry-diagnostic.json <<'NODE'
+          const base = 'https://geohub.gov.si/ags/rest/services/MDP_DGO_APPS/eUprava_GH_prostorske_enote/MapServer/20207/query';
+          const variants = [
+            { label: 'json-default-crs', parameters: { where: 'NA_MID=10147310', outFields: 'NA_MID,NAZIV,OBCINA_NAZIV', returnGeometry: 'true', f: 'json' } },
+            { label: 'geojson-wgs84', parameters: { where: 'NA_MID=10147310', outFields: 'NA_MID,NAZIV,OBCINA_NAZIV', returnGeometry: 'true', outSR: '4326', f: 'geojson' } },
+            { label: 'furs-gurs-derived-json', source: 'https://gisportal.furs.gov.si/arcgis/rest/services/KRSITVE/prijava_krsitev_gis_sloji/MapServer/4/query', parameters: { where: 'na_mid=10147310', outFields: 'na_mid,na,ob', returnGeometry: 'true', outSR: '3794', f: 'json' } },
+            { label: 'furs-gurs-derived-geojson', source: 'https://gisportal.furs.gov.si/arcgis/rest/services/KRSITVE/prijava_krsitev_gis_sloji/MapServer/4/query', parameters: { where: 'na_mid=10147310', outFields: 'na_mid,na,ob', returnGeometry: 'true', outSR: '4326', f: 'geojson' } },
+          ];
+          const out = [];
+          for (const variant of variants) {
+            const url = new URL(variant.source ?? base);
+            for (const [key, value] of Object.entries(variant.parameters)) url.searchParams.set(key, value);
+            try {
+              const response = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(10000) });
+              const value = await response.json();
+              const feature = value.features?.[0];
+              out.push({ label: variant.label, source_host: url.host, http_status: response.status, features: value.features?.length ?? null,
+                first_feature_keys: Object.keys(feature ?? {}), geometry_keys: Object.keys(feature?.geometry ?? {}),
+                geometry_type: feature?.geometry?.type ?? null, error: value.error?.message ?? null });
+            } catch (error) { out.push({ label: variant.label, error: String(error) }); }
+          }
+          process.stdout.write(JSON.stringify({ verified_at: new Date().toISOString(), read_only: true, source: base, diagnostics: out }, null, 2));
+          NODE
+      - name: Preserve read-only evidence on success or failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-geohub-live-readonly
+          path: |
+            dev056-geohub-results.json
+            dev056-geohub-geometry-diagnostic.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  furs-gurs-readonly:
+    if: github.head_ref == 'work/dev056-geohub-readonly-qa'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Unit tests for cross-source identity and geometry
+        run: node --test tests/dev056-furs-geometry-verify.test.mjs
+      - name: Read GeoHub identity and FURS polygons (GET-only)
+        run: node scripts/dev056-furs-geometry-verify.mjs > dev056-furs-results.json
+      - name: Preserve provenance report on success or failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-furs-crosscheck-readonly
+          path: dev056-furs-results.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  canonical-gurs-advisory:
+    if: github.head_ref == 'work/dev056-geohub-readonly-qa'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Probe canonical GURS RPE OGC Features (bounded GET, advisory only)
+        shell: bash
+        run: |
+          node --input-type=module > dev056-gurs-canonical-probe.json <<'NODE'
+          const url = 'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items?f=json&limit=1';
+          const out = { source: 'GURS RPE, official OGC API Features', source_url: url,
+            checked_at: new Date().toISOString(), read_only: true, record_limit: 1,
+            result: 'NOT_AVAILABLE_OR_UNSUPPORTED_FORMAT' };
+          try {
+            const response = await fetch(url, { method: 'GET', headers: { Accept: 'application/json, application/geo+json' },
+              signal: AbortSignal.timeout(15000) });
+            const contentType = response.headers.get('content-type') || '';
+            out.http_status = response.status;
+            out.content_type = contentType;
+            if (!response.ok) { out.error = 'HTTP ' + response.status; }
+            else if (!/json/i.test(contentType)) { out.error = 'Response is not JSON'; }
+            else {
+              const json = await response.json();
+              const items = Array.isArray(json.features) ? json.features : (Array.isArray(json.items) ? json.items : []);
+              const feature = items[0] || {};
+              const properties = feature.properties || {};
+              out.feature_count = items.length;
+              out.feature_keys = Object.keys(feature).sort();
+              out.property_keys = Object.keys(properties).sort();
+              out.has_datum_sys = Object.keys(properties).some(k => k.toUpperCase() === 'DATUM_SYS');
+              out.has_geometry = !!feature.geometry;
+              out.geometry_type = feature.geometry?.type ?? null;
+              out.result = items.length === 1 ? 'ONE_RECORD_SCHEMA_INSPECTED_NOT_SNAPSHOT_VALIDATION' : 'NO_FEATURES_RETURNED';
+            }
+          } catch (error) { out.error = String(error); }
+          process.stdout.write(JSON.stringify(out, null, 2));
+          NODE
+      - name: Probe canonical GURS by official feature identifier (strict read-only)
+        shell: bash
+        run: |
+          node --input-type=module > dev056-gurs-by-id.json <<'NODE'
+          const { writeFileSync } = await import('node:fs');
+          const base = 'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items';
+          const gh = 'https://geohub.gov.si/ags/rest/services/MDP_DGO_APPS/eUprava_GH_prostorske_enote/MapServer/20207/query';
+          const cases = [
+            {race:'2027!51',mid:10147310,name:'Žalec',municipality:'Žalec'},
+            {race:'2027!19',mid:10131219,name:'Križ',municipality:'Sežana'},
+            {race:'2026!266',mid:10132002,name:'Štanjel',municipality:'Komen'}
+          ];
+          const specimens=[];
+          const out={checked_at:new Date().toISOString(),read_only:true,source:'Official GURS RPE OGC Features',
+            method:'OGC /items/{featureId} with validated GeoHub EID_NASELJE',records:[],result:'NOT_VERIFIED'};
+          const get = async url => {
+            const r=await fetch(url,{method:'GET',headers:{Accept:'application/json'},signal:AbortSignal.timeout(14000)});
+            const http_status=r.status;
+            const body=await r.text();
+            if(!r.ok)return {http_status,error:'HTTP '+http_status};
+            try{return {http_status,data:JSON.parse(body)};}
+            catch{return {http_status,error:'Invalid JSON'};}
+          };
+          const seed=await get(base+'?f=json&limit=1');
+          const first=seed.data?.features?.[0];
+          out.seed={http_status:seed.http_status,has_id:typeof first?.id==='string'||typeof first?.id==='number',
+            identifier_present:!!first?.properties?.EID_NASELJE,error:seed.error??null};
+          if(first?.id!==undefined) {
+            const byId=await get(base+'/'+encodeURIComponent(String(first.id))+'?f=json');
+            const feature=byId.data?.type==='Feature' ? byId.data :
+              (Array.isArray(byId.data?.features)&&byId.data.features.length===1?byId.data.features[0]:null);
+            out.seed.standard_item_url={http_status:byId.http_status,
+              response_type:byId.data?.type??null,
+              response_keys:Object.keys(byId.data??{}).sort(),
+              returned_features:byId.data?.features?.length??null,
+              id_matches:String(feature?.id)===String(first.id),
+              has_geometry:!!feature?.geometry,error:byId.error??null};
+          }
+          for(const sample of cases){
+            const entry={race:sample.race,expected_name:sample.name,expected_municipality:sample.municipality};
+            const url=new URL(gh);
+            for(const [k,v] of Object.entries({where:'NA_MID='+sample.mid,
+              outFields:'NA_MID,NAZIV,OBCINA_NAZIV,EID_NASELJE,EID_OBCINA',
+              returnGeometry:'false',resultRecordCount:'2',f:'json'}))url.searchParams.set(k,v);
+            const res=await get(url);
+            const items=res.data?.features??[];
+            const attr=items[0]?.attributes??{};
+            entry.geohub_http=res.http_status;
+            entry.geohub_identity_ok=items.length===1&&attr.NA_MID===sample.mid
+              &&attr.NAZIV===sample.name&&attr.OBCINA_NAZIV===sample.municipality
+              &&typeof attr.EID_NASELJE==='string'&&!!attr.EID_NASELJE;
+            if(entry.geohub_identity_ok){
+              entry.eid_naselje=attr.EID_NASELJE;
+              const canonical=await get(base+'/'+encodeURIComponent(attr.EID_NASELJE)+'?f=json');
+              const feature=canonical.data?.type==='Feature'?canonical.data:
+                (Array.isArray(canonical.data?.features)&&canonical.data.features.length===1?
+                  canonical.data.features[0]:null);
+              const prop=feature?.properties??{};
+              entry.gurs_http=canonical.http_status;
+              entry.gurs_response_type=canonical.data?.type??null;
+              entry.gurs_response_keys=Object.keys(canonical.data??{}).sort();
+              entry.gurs_features_count=canonical.data?.features?.length??null;
+              entry.gurs_name=prop.NAZIV??null;
+              entry.gurs_datum_sys=prop.DATUM_SYS??null;
+              entry.gurs_eid_matches=prop.EID_NASELJE===attr.EID_NASELJE&&
+                 prop.EID_OBCINA===attr.EID_OBCINA&&prop.NAZIV===sample.name;
+              entry.gurs_has_geometry=!!feature?.geometry;
+              entry.gurs_response_crs=canonical.data?.crs??null;
+              entry.gurs_error=canonical.error??null;
+              if(entry.gurs_eid_matches&&entry.gurs_has_geometry){
+                specimens.push({race:sample.race,source_url:base+'/'+encodeURIComponent(attr.EID_NASELJE),
+                  eid_naselje:attr.EID_NASELJE,crs:canonical.data?.crs??null,
+                  checked_at:out.checked_at,feature:{type:feature.type,id:feature.id,
+                    properties:{EID_NASELJE:prop.EID_NASELJE,EID_OBCINA:prop.EID_OBCINA,
+                      NAZIV:prop.NAZIV,DATUM_SYS:prop.DATUM_SYS},geometry:feature.geometry}});
+              }
+            }else entry.error='GeoHub identity not verified';
+            out.records.push(entry);
+          }
+          out.result=out.records.length===3&&out.records.every(x=>x.gurs_eid_matches&&x.gurs_has_geometry)
+            ?'THREE_CANONICAL_FEATURES_VERIFIED_NOT_RACE_STARTS'
+            :'CANONICAL_ID_QUERY_INCOMPLETE_NO_PUBLIC_APPROVAL';
+          writeFileSync('dev056-gurs-specimens.json',JSON.stringify({purpose:'READ_ONLY_QA_NOT_FOR_PUBLICATION',
+            checked_at:out.checked_at,source:base,features:specimens},null,2));
+          process.stdout.write(JSON.stringify(out,null,2));
+          if(out.result!=='THREE_CANONICAL_FEATURES_VERIFIED_NOT_RACE_STARTS')process.exitCode=1;
+          NODE
+      - name: Preserve advisory GURS direct source probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-gurs-canonical-by-eid
+          path: |
+            dev056-gurs-canonical-probe.json
+            dev056-gurs-by-id.json
+            dev056-gurs-specimens.json
+          retention-days: 7
+
+  representative-coverage-readonly:
+    if: github.head_ref == 'work/dev056-geohub-readonly-qa'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate fail-closed edition and provenance handling (mocked)
+        run: node --test tests/dev056-expand-coverage-qa.test.mjs
+      - name: Inspect 13 representative Master editions (GeoHub to canonical GURS, GET only)
+        run: node scripts/dev056-expand-coverage-qa.mjs > dev056-expanded-coverage-summary.json
+      - name: Save bounded research evidence (NOT an approved runtime index)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-representative-coverage-review
+          path: |
+            dev056-expanded-coverage-summary.json
+            dev056-expanded-coverage-geometries.json
+          if-no-files-found: warn
+          retention-days: 7
