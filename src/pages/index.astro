@@ -116,12 +116,14 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
           <h2 id="updates-title">Sveže spremembe v koledarju</h2>
           <p>Najnovejše spremembe pomagajo hitro preveriti, kaj je bilo dodano ali popravljeno.</p>
         </div>
-        <div class="card-grid" data-recent-updates>
+        <div id="recent-updates" class="card-grid" data-recent-updates>
           <article class="update-card">
             <h3>Podatke še nalagamo</h3>
             <p>Zadnje spremembe se bodo prikazale tukaj.</p>
           </article>
         </div>
+        <p data-updates-status role="status" aria-live="polite" aria-atomic="true"></p>
+        <button type="button" class="button updates-toggle" data-updates-toggle aria-expanded="false" aria-controls="recent-updates" hidden>Poglejte več sprememb</button>
       </article>
     </section>
 
@@ -1067,12 +1069,12 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
 
   const apiRequestCache = new Map<string, Promise<unknown>>();
 
-  async function loadJson(path: string): Promise<unknown> {
+  async function loadJson(path: string, signal?: AbortSignal): Promise<unknown> {
     if (!apiRequestCache.has(path)) {
       const masterYear = path === buildMasterApiPath(DEFAULT_PUBLIC_YEAR) ? DEFAULT_PUBLIC_YEAR : path === buildMasterApiPath('2027') ? '2027' : null;
       apiRequestCache.set(path, masterYear
         ? fetchPublicMaster(masterYear).catch((error) => { apiRequestCache.delete(path); throw error; })
-        : fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' } }).then((response) => {
+        : fetch(`${API_BASE}${path}`, { headers: { accept: 'application/json' }, signal }).then((response) => {
           if (!response.ok) throw new Error(`API request failed: ${response.status}`);
           return response.json();
         }));
@@ -1271,13 +1273,21 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
     }
   }
 
-  async function loadRecentUpdates() {
+  // API dates are calendar days; keep them stable in every visitor time zone.
+  const recentDateFormatter = new Intl.DateTimeFormat('sl-SI', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  const formatRecentDate = (value: string) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+    const date = new Date(`${value}T00:00:00Z`);
+    return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? recentDateFormatter.format(date) : '';
+  };
+
+  async function loadRecentUpdates(expanded = false) {
     const container = document.querySelector('[data-recent-updates]');
     if (!container) return;
 
     try {
       const [recentResult, masterResult, master2027Result] = await Promise.allSettled([
-        loadJson('/recent_updates?days=7&limit=4&years=2026,2027'),
+        loadJson(expanded ? '/recent_updates?days=30&limit=20&years=2026,2027' : '/recent_updates?days=7&limit=4&years=2026,2027', expanded ? AbortSignal.timeout(12000) : undefined),
         loadJson('/'),
         loadJson('/?year=2027')
       ]);
@@ -1288,20 +1298,34 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
         ...(master2027Result.status === 'fulfilled' ? getMasterRows(master2027Result.value) : [])
       ]);
       if (masterResult.status === 'rejected') setDebug('master', 'no');
-      const recentSelection = selectCanonicalHomepageRecentUpdates(recentResult.value, 4);
+      const recentSelection = selectCanonicalHomepageRecentUpdates(recentResult.value, expanded ? 20 : 4);
       if (!recentSelection.canOrderGlobally) throw new Error('RECENT_UPDATES_GLOBAL_ORDER = NOT_AVAILABLE_FROM_CONTRACT');
       const updates = recentSelection.items;
+      if (expanded) {
+        const period = (recentResult.value as { recent_updates_last_days: { period?: { from?: string; to?: string; days?: number } } }).recent_updates_last_days.period;
+        if (period?.days !== 30 || !/^\d{4}-\d{2}-\d{2}$/.test(period.from ?? '') || !/^\d{4}-\d{2}-\d{2}$/.test(period.to ?? '')) throw new Error('RECENT_UPDATES_PERIOD_UNAVAILABLE');
+        const from = new Date(`${period.from}T00:00:00Z`);
+        const to = new Date(`${period.to}T00:00:00Z`);
+        if (!Number.isFinite(from.getTime()) || !Number.isFinite(to.getTime()) ||
+            from.toISOString().slice(0, 10) !== period.from || to.toISOString().slice(0, 10) !== period.to ||
+            to.getTime() - from.getTime() !== 29 * 86400000 ||
+            updates.some(update => {
+              const date = pickPath(update, ['recent_update_date', 'event.recent_update_date']);
+              return date < period.from! || date > period.to!;
+            })) throw new Error('RECENT_UPDATES_PERIOD_INVALID');
+        expandedUpdatesPeriod = `Spremembe: ${formatRecentDate(period.from!)} – ${formatRecentDate(period.to!)} · ${updates.length} prikazanih`;
+      }
       setDebug('recent', 'yes');
       setDebugRecentDetails(updates);
 
       if (!updates.length) {
         container.innerHTML = `
           <article class="update-card">
-            <p>V zadnjih 7 dneh ni bilo novih javnih sprememb v koledarju.</p>
+            <p>${expanded ? 'V zadnjih 30 dneh' : 'V zadnjih 7 dneh'} ni bilo novih javnih sprememb v koledarju.</p>
           </article>
         `;
         setStatus('updates', '');
-        return;
+        return true;
       }
 
       container.innerHTML = updates.map((update) => {
@@ -1314,8 +1338,8 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
           'name'
         ], 'Posodobitev koledarja');
         const eventDateValue = pickPath(update, ['datum', 'event.datum', 'date', 'event_date', 'Datum']);
-        const eventDate = formatDate(eventDateValue);
-        const recentUpdateDate = formatDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
+        const eventDate = formatRecentDate(eventDateValue);
+        const recentUpdateDate = formatRecentDate(pickPath(update, ['recent_update_date', 'event.recent_update_date']));
         const updateDateMeta = formatHomepageRecentUpdateMeta(update.update_type, recentUpdateDate, 'sl');
         const changed = formatDate(pickPath(update, ['public_summary', 'event.public_summary', 'zadnja_sprememba', 'event.zadnja_sprememba', 'updated_at', 'updated', 'modified_at', 'changed_at', 'last_updated']));
         const location = pickPath(update, ['kraj', 'event.kraj', 'place', 'city', 'location'], '');
@@ -1342,16 +1366,22 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
 
         return `
           <article class="update-card"${analyticsAttributes}>
-            ${updateDateMeta ? `<p class="update-meta">${escapeHtml(updateDateMeta)}</p>` : ''}
+            <p class="update-event-meta"><span>Datum teka</span> ${eventDate ? `<time datetime="${escapeHtml(eventDateValue)}">${escapeHtml(eventDate)}</time>` : 'Datum še ni znan'}</p>
             <h3>${detailPath ? `<a href="${escapeHtml(detailPath)}">${escapeHtml(title)}</a>` : escapeHtml(title)}</h3>
-            <p class="update-event-meta">${eventDate ? `<time datetime="${escapeHtml(eventDateValue)}">${escapeHtml(eventDate)}</time>` : ''}${eventDate && place ? ' · ' : ''}${escapeHtml(place)}</p>
+            ${place ? `<p>${escapeHtml(place)}</p>` : ''}
+            ${updateDateMeta ? `<p class="update-meta">${escapeHtml(updateDateMeta)}</p>` : ''}
             ${changed ? `<p class="update-description">${escapeHtml(changed)}</p>` : ''}
           </article>
         `;
       }).join('');
       initializeRaceCardImpressionTracking(container);
       setStatus('updates', '');
+      return true;
     } catch (error) {
+      if (expanded) {
+        apiRequestCache.delete('/recent_updates?days=30&limit=20&years=2026,2027');
+        return false;
+      }
       setDebug('recent', 'no');
       container.innerHTML = '<article class="update-card"><p>Sveže spremembe trenutno niso dosegljive. Poskusite znova pozneje.</p></article>';
       setStatus('updates', 'Zadnje posodobitve trenutno niso dosegljive, zato ostaja nadomestni prikaz.');
@@ -1367,7 +1397,39 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
   loadRegistrationDeadlines();
   document.querySelector('[data-interest-year]')?.addEventListener('change', () => { void loadTopEvents(); });
   loadTopEvents();
-  loadRecentUpdates();
+  let expandedUpdatesPeriod = '';
+  const updatesToggle = document.querySelector<HTMLButtonElement>('[data-updates-toggle]');
+  const updatesStatus = document.querySelector<HTMLElement>('[data-updates-status]');
+  const updatesContainer = document.getElementById('recent-updates');
+  void loadRecentUpdates().then((initialLoaded) => {
+    if (!updatesToggle || !updatesStatus || !updatesContainer) return;
+    const initialHtml = updatesContainer.innerHTML;
+    let expandedHtml: string | null = null;
+    updatesToggle.hidden = false;
+    updatesToggle.addEventListener('click', async () => {
+      if (updatesToggle.getAttribute('aria-disabled') === 'true') return;
+      const expanding = updatesToggle.getAttribute('aria-expanded') !== 'true';
+      if (expanding && expandedHtml === null) {
+        updatesToggle.setAttribute('aria-disabled', 'true');
+        updatesContainer.setAttribute('aria-busy', 'true');
+        updatesStatus.textContent = 'Nalagamo spremembe …';
+        const success = await loadRecentUpdates(true);
+        updatesToggle.removeAttribute('aria-disabled');
+        updatesContainer.removeAttribute('aria-busy');
+        if (!success) {
+          updatesStatus.textContent = 'Več sprememb trenutno ni mogoče naložiti. Poskusite znova.';
+          return;
+        }
+        expandedHtml = updatesContainer.innerHTML;
+      } else {
+        updatesContainer.innerHTML = expanding ? expandedHtml! : initialHtml;
+        initializeRaceCardImpressionTracking(updatesContainer);
+      }
+      updatesToggle.setAttribute('aria-expanded', String(expanding));
+      updatesToggle.textContent = expanding ? 'Pokažite manj' : 'Poglejte več sprememb';
+      updatesStatus.textContent = expanding ? expandedUpdatesPeriod : initialLoaded ? 'Prikazane so zadnje spremembe iz 7 dni.' : '';
+    });
+  });
 </script>
 
 <script>

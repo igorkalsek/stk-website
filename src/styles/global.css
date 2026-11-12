@@ -4849,7 +4849,33 @@ main {
   line-height: 1.4;
 }
 
-.home-update-panel .update-meta {
+.home-update-panel .update-card .update-event-meta {
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.home-update-panel .update-card .update-event-meta span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.updates-toggle {
+  justify-self: start;
+  color: var(--deep-teal);
+  background: #e8efeb;
+  box-shadow: inset 0 0 0 1px rgba(16, 64, 80, 0.2);
+  margin-top: 8px;
+  min-height: 44px;
+}
+
+.updates-toggle[hidden] { display: none; }
+.updates-toggle[aria-disabled="true"] { cursor: wait; }
+
+.home-update-panel .update-card .update-meta {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 600;
