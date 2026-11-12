@@ -1,0 +1,673 @@
+{
+  "checked_at": "2026-11-01T22:27:04.919217+00:00",
+  "task": "DEV-048",
+  "candidates": [
+    {
+      "id": "knap-t-kratka",
+      "year": 2027,
+      "master_row": 2,
+      "course": "T’ KRATKA",
+      "expected_km": 16,
+      "source_url": "https://www.knaptrail.si/razdalje/t-kratka/",
+      "target_url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+      "gpx_url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "UNCONFIRMED_2027",
+      "file_status": "HTTP_ERROR",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "",
+      "source_http": {
+        "url": "https://www.knaptrail.si/razdalje/t-kratka/",
+        "checked_at": "2026-11-01T22:26:59.068269+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-kratka/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 105896,
+        "sha256": "42482f50b71e7edef24b31c6d023252dda0732674571a01f3926366a80d14b16"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+        "checked_at": "2026-11-01T22:26:59.166147+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://www.bagus.si/download.php?file=Knap_Trail_TKratka_16km_GPX.gpx",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 162,
+        "sha256": "7b61a0032297d2b400d3dd5e69556a8ca31adb717464c247aaf997f4b4de26f6"
+      },
+      "url_years": [],
+      "metadata_name_years": [],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "knap-t-sredna",
+      "year": 2027,
+      "master_row": 2,
+      "course": "T’ SREDNA",
+      "expected_km": 30,
+      "source_url": "https://www.knaptrail.si/razdalje/t-sredna/",
+      "target_url": "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx",
+      "gpx_url": "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "",
+      "source_http": {
+        "url": "https://www.knaptrail.si/razdalje/t-sredna/",
+        "checked_at": "2026-11-01T22:26:59.273778+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-sredna/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103586,
+        "sha256": "430db1248963d011e8a8ac57f8921f2c203cdcb0d6856be853d95ebb61aea0d3"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx",
+        "checked_at": "2026-11-01T22:26:59.377204+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/gpx/download.php?file=T_SREDNA_2024.gpx",
+        "content_type": "application/force-download",
+        "content_disposition": "attachment; filename=T_SREDNA_2024.gpx",
+        "bytes": 387250,
+        "sha256": "dcbcb3a5bc935a0e780386ba4c14d57b857206375ac3e831c4efa44c2eb14a67"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "TraceDeTrail http://www.tracedetrail.fr",
+        "track_points": 4523,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 30.433,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.16056,
+          15.00939,
+          46.19312,
+          15.11155
+        ],
+        "names_and_descriptions": [
+          "Knap Trail TSredna 2024",
+          "Knap Trail TSredna 2024 sur TraceDeTrail.fr"
+        ],
+        "first_time": "2000-01-01T02:29:04.000Z",
+        "last_time": "2000-01-01T15:02:44.000Z",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2024"
+      ],
+      "metadata_name_years": [
+        "2024"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "knap-t-douga",
+      "year": 2027,
+      "master_row": 2,
+      "course": "T’ DOUGA",
+      "expected_km": 51,
+      "source_url": "https://www.knaptrail.si/razdalje/t-douga/",
+      "target_url": "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx",
+      "gpx_url": "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "Razpis 50 km in stran trase 51 km ostaneta ločena; ne spreminjaj Masterja.",
+      "source_http": {
+        "url": "https://www.knaptrail.si/razdalje/t-douga/",
+        "checked_at": "2026-11-01T22:26:59.566606+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/razdalje/t-douga/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103656,
+        "sha256": "bc7bcab8cd3f367677b029be194745bd7f467651d3305811744ea3c7af4578fe"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx",
+        "checked_at": "2026-11-01T22:26:59.668703+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.knaptrail.si/gpx/download.php?file=T_DOUGA_2024.gpx",
+        "content_type": "application/force-download",
+        "content_disposition": "attachment; filename=T_DOUGA_2024.gpx",
+        "bytes": 509088,
+        "sha256": "2c5424156761e0c0d797317ae7cbc9ff8e196e16588bab8a0786c004c9b9ea53"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "TraceDeTrail http://www.tracedetrail.fr",
+        "track_points": 5961,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 50.895,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.16054,
+          14.95234,
+          46.20491,
+          15.11152
+        ],
+        "names_and_descriptions": [
+          "TDouga 2024",
+          "TDouga 2024 sur TraceDeTrail.fr"
+        ],
+        "first_time": "2000-01-01T00:01:06.000Z",
+        "last_time": "2000-01-01T16:34:26.000Z",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2024"
+      ],
+      "metadata_name_years": [
+        "2024"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "kras-12.3",
+      "year": 2027,
+      "master_row": 19,
+      "course": "Trasa 12.3 km",
+      "expected_km": 12.3,
+      "source_url": "https://www.srd-kras.si/trail-2027",
+      "target_url": "https://www.viewgpx.com/route/dG9nJZrm",
+      "gpx_url": null,
+      "target_kind": "map_page",
+      "edition_status": "UNCONFIRMED_2027",
+      "file_status": "MAP_PAGE_ONLY",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "Povezava potrjena prek web branja uradne strani; ne gre za neposreden GPX URL.",
+      "source_http": {
+        "url": "https://www.srd-kras.si/trail-2027",
+        "checked_at": "2026-11-01T22:26:59.854793+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.srd-kras.si/trail-2027",
+        "content_type": "text/html;charset=utf-8",
+        "content_disposition": null,
+        "bytes": 328329,
+        "sha256": "8ae7e2102db6622d882fb34bc9d601b55431286a2c30bf2fd03fbacc1583a167"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.viewgpx.com/route/dG9nJZrm",
+        "checked_at": "2026-11-01T22:27:00.103852+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.viewgpx.com/route/dG9nJZrm",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 323446,
+        "sha256": "ecd1fe7010a399460699b68ecc8c29bede67c5baeeaf14aaf5e69d585649ed29"
+      },
+      "gpx_error": "DTD is forbidden",
+      "url_years": [],
+      "metadata_name_years": [],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "kras-19.5",
+      "year": 2027,
+      "master_row": 19,
+      "course": "Trasa 19.5 km",
+      "expected_km": 19.5,
+      "source_url": "https://www.srd-kras.si/trail-2027",
+      "target_url": "https://www.viewgpx.com/route/aTFxjY78",
+      "gpx_url": null,
+      "target_kind": "map_page",
+      "edition_status": "UNCONFIRMED_2027",
+      "file_status": "MAP_PAGE_ONLY",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "Povezava potrjena prek web branja uradne strani; ne gre za neposreden GPX URL.",
+      "source_http": {
+        "url": "https://www.srd-kras.si/trail-2027",
+        "checked_at": "2026-11-01T22:26:59.854793+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.srd-kras.si/trail-2027",
+        "content_type": "text/html;charset=utf-8",
+        "content_disposition": null,
+        "bytes": 328329,
+        "sha256": "8ae7e2102db6622d882fb34bc9d601b55431286a2c30bf2fd03fbacc1583a167"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.viewgpx.com/route/aTFxjY78",
+        "checked_at": "2026-11-01T22:27:01.237365+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.viewgpx.com/route/aTFxjY78",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 503772,
+        "sha256": "dd11dbcc3dfbdbe544acc152cc449c565ea9a6c4a2813f53743b24e1d96fd570"
+      },
+      "gpx_error": "DTD is forbidden",
+      "url_years": [],
+      "metadata_name_years": [],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "ptrf-utp-100-km",
+      "year": 2027,
+      "master_row": 21,
+      "course": "UTP 100+",
+      "expected_km": 100,
+      "source_url": "https://www.ptrf.si/razdalje/utp-100-km/",
+      "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx",
+      "gpx_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "expected_km je orientacija iz uradne strani za grobo primerjavo, ni sprememba podatkov STK.",
+      "source_http": {
+        "url": "https://www.ptrf.si/razdalje/utp-100-km/",
+        "checked_at": "2026-11-01T22:27:01.985356+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/utp-100-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 82799,
+        "sha256": "4079fa57eabb174a74998a12ca1aecc418d557a274b1a7496acae0717687a922"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx",
+        "checked_at": "2026-11-01T22:27:02.435961+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-100-km.gpx",
+        "content_type": "application/octet-stream",
+        "content_disposition": null,
+        "bytes": 1476185,
+        "sha256": "62d73ecf2ed47ed487e0630afe3f321f8208913e1ee34e38c9e04a43e5630062"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "Trace de Trail; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+        "track_points": 12366,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 105.791,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.1309,
+          13.90606,
+          46.24541,
+          14.18635
+        ],
+        "names_and_descriptions": [
+          "Podbrdo Trail Running Festival 2026 - UTP 100+ km sur TraceDeTrail.fr",
+          "1 track segments, original data of track points"
+        ],
+        "first_time": "2026-06-05T09:37:51+00:00",
+        "last_time": "2026-06-05T19:56:06+00:00",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2026"
+      ],
+      "metadata_name_years": [
+        "2026"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "ptrf-utp-70-km",
+      "year": 2027,
+      "master_row": 21,
+      "course": "UTP 70+",
+      "expected_km": 70.1,
+      "source_url": "https://www.ptrf.si/razdalje/utp-70-km/",
+      "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx",
+      "gpx_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "expected_km je orientacija iz uradne strani za grobo primerjavo, ni sprememba podatkov STK.",
+      "source_http": {
+        "url": "https://www.ptrf.si/razdalje/utp-70-km/",
+        "checked_at": "2026-11-01T22:27:02.758918+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/utp-70-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 82593,
+        "sha256": "09643b9bb00af45d90429cbc5f7dc9aeb41ed972b2e87e3a935632ac025ed13b"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx",
+        "checked_at": "2026-11-01T22:27:03.253994+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-utp-70-km.gpx",
+        "content_type": "application/octet-stream",
+        "content_disposition": null,
+        "bytes": 353132,
+        "sha256": "7db5980dcf6bb86b7cc09278ce2e9bee95db978a2d378bc6e2e5082340444997"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "Trace de Trail; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+        "track_points": 2954,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 70.022,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.16076,
+          13.96914,
+          46.24549,
+          14.18659
+        ],
+        "names_and_descriptions": [
+          "Podbrdo Trail Running Festival 2026 - UTP 70+ km sur TraceDeTrail.fr",
+          "1 track segments, original data of track points"
+        ],
+        "first_time": "2026-06-05T09:38:16+00:00",
+        "last_time": "2026-06-05T12:05:55+00:00",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2026"
+      ],
+      "metadata_name_years": [
+        "2026"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "ptrf-gm4o-40-km",
+      "year": 2027,
+      "master_row": 21,
+      "course": "GM4O 40+",
+      "expected_km": 42,
+      "source_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+      "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+      "gpx_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "expected_km je orientacija iz uradne strani za grobo primerjavo, ni sprememba podatkov STK.",
+      "source_http": {
+        "url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "checked_at": "2026-11-01T22:27:03.408730+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 84187,
+        "sha256": "b703281522d07ba4138f8c567ed9dc1bec63fcb6940679790cf8f6810804e24f"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+        "checked_at": "2026-11-01T22:27:03.767215+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+        "content_type": "application/octet-stream",
+        "content_disposition": null,
+        "bytes": 823398,
+        "sha256": "26e3b805cfc7db0c15ca329564284402576a4af3710fc4a784458401af997866"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "Trace de Trail; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+        "track_points": 6900,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 39.804,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.1715,
+          13.90622,
+          46.23815,
+          14.0006
+        ],
+        "names_and_descriptions": [
+          "Podbrdo Trail Running Festival 2026 - GM4O 40+ km sur TraceDeTrail.fr",
+          "1 track segments, original data of track points"
+        ],
+        "first_time": "2026-06-05T09:38:28+00:00",
+        "last_time": "2026-06-05T15:23:25+00:00",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2026"
+      ],
+      "metadata_name_years": [
+        "2026"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "ptrf-gt-20-km",
+      "year": 2027,
+      "master_row": 21,
+      "course": "GT 20+",
+      "expected_km": 23,
+      "source_url": "https://www.ptrf.si/razdalje/gt-20-km/",
+      "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx",
+      "gpx_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "expected_km je orientacija iz uradne strani za grobo primerjavo, ni sprememba podatkov STK.",
+      "source_http": {
+        "url": "https://www.ptrf.si/razdalje/gt-20-km/",
+        "checked_at": "2026-11-01T22:27:03.987657+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/gt-20-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 83075,
+        "sha256": "b73f014f36815ea6e15fad5123bfa3b8876f11fb766c7b717eaebea7a5ce379a"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx",
+        "checked_at": "2026-11-01T22:27:04.381734+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gt-20-km.gpx",
+        "content_type": "application/octet-stream",
+        "content_disposition": null,
+        "bytes": 161391,
+        "sha256": "badfaa625ee8a8fe271257759e3db4f66699858fe903636a7703260312bc75ea"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "Trace de Trail; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+        "track_points": 1347,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 22.568,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.21095,
+          13.93489,
+          46.23825,
+          14.0008
+        ],
+        "names_and_descriptions": [
+          "Podbrdo Trail Running Festival 2026 - GT 20+ km sur TraceDeTrail.fr",
+          "1 track segments, original data of track points"
+        ],
+        "first_time": "2026-06-05T09:38:38+00:00",
+        "last_time": "2026-06-05T10:45:56+00:00",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [
+        "2026"
+      ],
+      "metadata_name_years": [
+        "2026"
+      ],
+      "eligible_for_2027_ui": false
+    },
+    {
+      "id": "ptrf-rt-10-km",
+      "year": 2027,
+      "master_row": 21,
+      "course": "RT 10+",
+      "expected_km": 10,
+      "source_url": "https://www.ptrf.si/razdalje/rt-10-km/",
+      "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx",
+      "gpx_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx",
+      "target_kind": "direct_gpx",
+      "edition_status": "HISTORICAL_REFERENCE_REVIEW",
+      "file_status": "VALID",
+      "licensing": "NO_REHOST_PERMISSION_ESTABLISHED",
+      "registry_identity_status": "NOT_VERIFIED",
+      "notes": "expected_km je orientacija iz uradne strani za grobo primerjavo, ni sprememba podatkov STK.",
+      "source_http": {
+        "url": "https://www.ptrf.si/razdalje/rt-10-km/",
+        "checked_at": "2026-11-01T22:27:04.509530+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/rt-10-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 81991,
+        "sha256": "b77f957a875bce3270af7508154f0baac406926ea1f3bc37415b93fa62653345"
+      },
+      "linked_from_live_source": true,
+      "discovered_gpx_hrefs": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx"
+      ],
+      "source_mentions_2027": true,
+      "target_http": {
+        "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx",
+        "checked_at": "2026-11-01T22:27:04.827778+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/RT10_tracedetrail_192055.gpx",
+        "content_type": "application/octet-stream",
+        "content_disposition": null,
+        "bytes": 44861,
+        "sha256": "094df4138ef8b01439870891eb7569d415f1e4cca1bd6311721e2c0a389610b7"
+      },
+      "gpx": {
+        "structural_check": "PASS",
+        "xsd_validation": "NOT_PERFORMED",
+        "version": "1.1",
+        "creator": "TraceDeTrail http://www.tracedetrail.fr",
+        "track_points": 488,
+        "route_points": 0,
+        "segments": 1,
+        "distance_km": 10.207,
+        "jumps_over_1km": 0,
+        "bbox": [
+          46.20317,
+          13.96905,
+          46.22282,
+          14.00093
+        ],
+        "names_and_descriptions": [
+          "Rapallo Trail 10  km 2023",
+          "Rapallo Trail 10  km 2023 sur TraceDeTrail.fr"
+        ],
+        "first_time": "2022-08-09T00:00:00.000Z",
+        "last_time": "2022-08-09T01:16:16.000Z",
+        "copyright_metadata": [],
+        "warnings": []
+      },
+      "url_years": [],
+      "metadata_name_years": [
+        "2023"
+      ],
+      "eligible_for_2027_ui": false
+    }
+  ],
+  "summary": {
+    "candidate_count": 10,
+    "unique_structurally_valid_files": 7,
+    "edition_2027_confirmed": 0,
+    "registry_identity": "NOT_VERIFIED",
+    "p0_gate": "NO_GO",
+    "reason": "2027 edition and RACE_REGISTRY evidence remain required"
+  }
+}

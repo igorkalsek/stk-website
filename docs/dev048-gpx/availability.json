@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-11-01T22:27:04.919217+00:00",
+  "local_search": {
+    "roots": [
+      "stk-website",
+      "stk-apps-scripts",
+      "stk-admin"
+    ],
+    "terms": [
+      "DEV-048",
+      "DEV048",
+      "dev048",
+      "gpx filenames"
+    ],
+    "result": "No prior DEV-048 package found before creation of this directory"
+  },
+  "github": {
+    "code_search_DEV048": "No results in connected GitHub search",
+    "website_main_tree": "No GPX/DEV048/pilot paths found",
+    "open_website_prs": [
+      {
+        "number": 237,
+        "title": "docs: STK Simplification & Complexity Audit (2026-10-20)"
+      }
+    ],
+    "local_head": "0cc0bdf",
+    "remote_head": "53e06a575bf88752feb41d6c1a049fd132197c3a",
+    "note": "Local checkout is behind remote main; no application source edited."
+  },
+  "drive": {
+    "account": "Igor Kalsek",
+    "backlog_found": true,
+    "name_filter": "name contains DEV-048, gpx, GPX, manifest or validator",
+    "name_filter_results": 0,
+    "scope_limit": "Searchable connected files, not all previous conversation execution environments"
+  },
+  "production": {
+    "source": "Existing STK public Worker only",
+    "result": "Three confirmed public 2027 event rows matched; see api-evidence.json"
+  },
+  "original_artifacts": "Mentioned in DEV-048 without attachment links; not located; recreated locally with explicit provenance",
+  "followup_preflight": {
+    "base_sha": "53e06a575bf88752feb41d6c1a049fd132197c3a",
+    "branch": "docs/dev048-gpx-p0",
+    "base": "current origin/main",
+    "open_website_prs": [
+      237
+    ],
+    "scope": "docs/dev048-gpx only",
+    "registry": "Read-only RACE_REGISTRY/PUBLIC_LS inspection explicitly requested in follow-up",
+    "no_repeat": "Original seven GPX downloads and original ten tests reused; sources re-read only for missing provenance and failed candidate investigation"
+  }
+}

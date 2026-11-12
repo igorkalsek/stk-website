@@ -1,0 +1,96 @@
+[
+  {
+    "id": "GPX-0005",
+    "event": "Podbrdo Trail Running Festival",
+    "route": "GM4O 40+",
+    "source_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+    "target_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+    "expected_km": 40.6,
+    "kind": "GPX",
+    "reason_for_refetch": "Compare geometry with newly validated 2025 GM4O; old technical snapshot preserved",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.ptrf.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:18.957706+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 30,
+        "sha256": "2cab8bf44662a27a49e35c520f3e54e00cf392e7a159a44367685af9cdf0a58b"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "checked_at": "2026-11-03T07:59:20.631934+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 84187,
+        "sha256": "bb3da5b5c7fcd9e28f5760bad3b285de361bbab95f730821536a88ad0f87d57d"
+      },
+      "file_links": [
+        "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2009",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+      "checked_at": "2026-11-03T07:59:22.249936+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": null,
+      "bytes": 823398,
+      "sha256": "26e3b805cfc7db0c15ca329564284402576a4af3710fc4a784458401af997866"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "26e3b805cfc7db0c15ca329564284402576a4af3710fc4a784458401af997866",
+        "bytes": 823398,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+          "track_points": 6900,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 39.804,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.1715,
+            13.90622,
+            46.23815,
+            14.0006
+          ],
+          "names_and_descriptions": [
+            "Podbrdo Trail Running Festival 2026 - GM4O 40+ km sur TraceDeTrail.fr",
+            "1 track segments, original data of track points"
+          ],
+          "first_time": "2026-06-05T09:38:28+00:00",
+          "last_time": "2026-06-05T15:23:25+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "cf8e044a6da7b56bf982de3d2df67cfec2aaccf51d867b8e4e847df56e6235f2",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  }
+]

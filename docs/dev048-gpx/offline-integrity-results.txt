@@ -1,0 +1,7 @@
+PASS: offline review reproduces evidence.json exactly
+PASS: category counts 7 historical / 2 review / 1 unavailable / 0 official 2027 / 0 unofficial
+PASS: seven distinct original GPX SHA-256 values
+PASS: every provenance binding matches original HTTP evidence
+PASS: original HTTP and GPX results preserved
+PASS: no 2027 UI eligibility or generated edition ID
+Original 10 XML/network-safety tests were not rerun. New 7 provenance tests passed; see review-test-results.txt.

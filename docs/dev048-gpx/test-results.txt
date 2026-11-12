@@ -1,0 +1,15 @@
+test_coordinate_bounds_and_nan (test_validate.GPXTests.test_coordinate_bounds_and_nan) ... ok
+test_distance_and_jump_review (test_validate.GPXTests.test_distance_and_jump_review) ... ok
+test_empty_waypoints_and_wrong_namespace (test_validate.GPXTests.test_empty_waypoints_and_wrong_namespace) ... ok
+test_private_dns (test_validate.GPXTests.test_private_dns) ... ok
+test_redirect_boundary (test_validate.GPXTests.test_redirect_boundary) ... ok
+test_route (test_validate.GPXTests.test_route) ... ok
+test_segments_not_joined (test_validate.GPXTests.test_segments_not_joined) ... ok
+test_unsafe_xml_including_utf16 (test_validate.GPXTests.test_unsafe_xml_including_utf16) ... ok
+test_url_boundary (test_validate.GPXTests.test_url_boundary) ... ok
+test_versions (test_validate.GPXTests.test_versions) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.001s
+
+OK

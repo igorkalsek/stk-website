@@ -1,0 +1,510 @@
+[
+  {
+    "id": "P0E-040",
+    "event": "Vzpon na Široko",
+    "route": "Trail gor-dol 12 km",
+    "expected_km": 11.7,
+    "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+    "target_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 181,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.sktd-lom.si/robots.txt",
+        "checked_at": "2026-11-03T08:56:57.562402+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "2e54e54f91be91ff2bd4547a521c51cad5ea9eff8d6cb6965481577af9c332ac"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.sktd-lom.si/vzponsiroko/",
+        "checked_at": "2026-11-03T08:56:58.350943+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/vzponsiroko/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 169053,
+        "sha256": "facb922d642f690a2fb445e4db2a8a3e84b2cb825f6dbc52a37d1adf21661134"
+      },
+      "download_links": [
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ cestna dirka 26km.gpx",
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2021",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+      "checked_at": "2026-11-03T08:57:55.097424+00:00",
+      "redirects": [],
+      "request_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VN%C5%A0%20trail%20tek%2012km.gpx",
+      "status": 200,
+      "final_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VN%C5%A0%20trail%20tek%2012km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 583306,
+      "sha256": "f79aa5bdc3c7e29f9b46129b28ffd4c6ed713ef1bdd58ee72af5176c9142cfba"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "f79aa5bdc3c7e29f9b46129b28ffd4c6ed713ef1bdd58ee72af5176c9142cfba",
+        "bytes": 583306,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1426,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 11.744,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.10629663802683,
+            13.755364352837205,
+            46.13144628703594,
+            13.788209091871977
+          ],
+          "first_time": "2021-05-02T08:17:18.000Z",
+          "last_time": "2021-05-02T09:19:13.000Z",
+          "geometry_sha256_6dp": "7a666ed3c96ee1a6d63bb683d32e075f71096e8798d6b62d109c4e77a75abfe7",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "88df70564eac5160eede4dc4c0a91fb292687fa1436a2ef85a3ab1614aa225da",
+          "route_label": "Tolmin Trail Running",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.sktd-lom.si/vzponsiroko/",
+        "robots_http": {
+          "url": "https://www.sktd-lom.si/robots.txt",
+          "checked_at": "2026-11-03T08:56:57.562402+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.sktd-lom.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 116,
+          "sha256": "2e54e54f91be91ff2bd4547a521c51cad5ea9eff8d6cb6965481577af9c332ac"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-041",
+    "event": "Vzpon na Široko",
+    "route": "OŠ tek 750 m",
+    "expected_km": 0.75,
+    "source_url": "https://www.sktd-lom.si/vzponsiroko/",
+    "target_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx",
+    "kind": "GPX",
+    "master_2026_row": 181,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.sktd-lom.si/robots.txt",
+        "checked_at": "2026-11-03T08:56:57.562402+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "2e54e54f91be91ff2bd4547a521c51cad5ea9eff8d6cb6965481577af9c332ac"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.sktd-lom.si/vzponsiroko/",
+        "checked_at": "2026-11-03T08:56:58.350943+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sktd-lom.si/vzponsiroko/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 169053,
+        "sha256": "facb922d642f690a2fb445e4db2a8a3e84b2cb825f6dbc52a37d1adf21661134"
+      },
+      "download_links": [
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ cestna dirka 26km.gpx",
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ trail tek 12km.gpx",
+        "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2021",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VNŠ tek OŠ 750m.gpx",
+      "checked_at": "2026-11-03T08:57:55.251411+00:00",
+      "redirects": [],
+      "request_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VN%C5%A0%20tek%20O%C5%A0%20750m.gpx",
+      "status": 200,
+      "final_url": "https://www.sktd-lom.si/wp-content/uploads/2021/07/VN%C5%A0%20tek%20O%C5%A0%20750m.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 38713,
+      "sha256": "0730f54f9c791630bb13c9d7601d04667f5265b05a12861e66ab163373f0ff02"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "0730f54f9c791630bb13c9d7601d04667f5265b05a12861e66ab163373f0ff02",
+        "bytes": 38713,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 106,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 0.691,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.127208,
+            13.755399,
+            46.131376,
+            13.759315
+          ],
+          "first_time": "2021-05-02T09:14:17.000Z",
+          "last_time": "2021-05-02T09:19:13.000Z",
+          "geometry_sha256_6dp": "3a365f5b737a003cba8fc290ef6210a59329b02d9fc03e7c671b440ae4f0a95d",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "7cdeb76f2e1189c4bc0d21a634e99256cec913f816f66f9615d183f576f8cb18",
+          "route_label": "VNŠ trail tek 12km",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.sktd-lom.si/vzponsiroko/",
+        "robots_http": {
+          "url": "https://www.sktd-lom.si/robots.txt",
+          "checked_at": "2026-11-03T08:56:57.562402+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.sktd-lom.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 116,
+          "sha256": "2e54e54f91be91ff2bd4547a521c51cad5ea9eff8d6cb6965481577af9c332ac"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-042",
+    "event": "Gozdni tek okoli Ajdovščine nad Dolom",
+    "route": "11 km",
+    "expected_km": 11,
+    "source_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+    "target_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+    "kind": "ZIP",
+    "master_2026_row": 153,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://prijavim.se/robots.txt",
+        "checked_at": "2026-11-03T08:57:00.028723+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://prijavim.se/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 2789,
+        "sha256": "c6211770de4364da770357b65165eb968ae0c7ddb5cc7fc61e8c743485776eb3"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "checked_at": "2026-11-03T08:57:00.165895+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 188770,
+        "sha256": "7ddc7886e4969dac18d861287668da3cc5e6a8219c1acc99923624c350f7e429"
+      },
+      "download_links": [
+        "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+      "checked_at": "2026-11-03T08:57:56.232832+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://prijavim.se/calendar/export_gpx_files_for_a_match/6494",
+      "content_type": "application/zip",
+      "content_disposition": "attachment; filename=\"15. gozdni tek in pohod okoli AjdovÅ¡Äine nad Dolom pri Ljubljani 2026_gpx_files.zip\"",
+      "bytes": 18741,
+      "sha256": "77bfd64dba548aafd19a859f43533b3aa3e5045a94f6c2010319868f41647cdd"
+    },
+    "zip": {
+      "archive_sha256": "77bfd64dba548aafd19a859f43533b3aa3e5045a94f6c2010319868f41647cdd",
+      "archive_bytes": 18741,
+      "member_count": 3,
+      "expanded_bytes": 136705,
+      "files": [
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 11 km_6494_17767858600.gpx",
+          "bytes": 76269,
+          "sha256": "d805ebc09ca836c387ec32dc9dc05ece6212179aadc1705cccf660ec5818e221",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "GPS Visualizer https://www.gpsvisualizer.com/",
+            "track_points": 923,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 10.798,
+            "jumps_over_1km": 0,
+            "bbox": [
+              46.0920435,
+              14.6293311,
+              46.1098868,
+              14.6591209
+            ],
+            "names_and_descriptions": [
+              "Gozdni tek okoli Ajdovščine - 11 km"
+            ],
+            "first_time": null,
+            "last_time": null,
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "7bcce5467edc533f258200dadb2aea26025b8a6deb92ef68856d7420f6548208",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 2.5 km_6494_17767858602.gpx",
+          "bytes": 17528,
+          "sha256": "ef7076fcad38e95acf3d2373ec8b8bc241b2133e374691a3b1320847956d8622",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "GPS Visualizer https://www.gpsvisualizer.com/",
+            "track_points": 204,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 2.526,
+            "jumps_over_1km": 0,
+            "bbox": [
+              46.095167,
+              14.632080708,
+              46.100136244,
+              14.6420204
+            ],
+            "names_and_descriptions": [
+              "Gozdni tek okoli Ajdovščine - 2.5 km"
+            ],
+            "first_time": null,
+            "last_time": null,
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "e59c3c6784a333683ed31820167ea5a9d12aece1001f7b2d9440d38ef4dc9c5a",
+            "warnings": [
+              "DISTANCE_MISMATCH"
+            ]
+          },
+          "file_status": "FILE_VALID"
+        },
+        {
+          "member": "Gozdni tek okoli Ajdovščine - 6 km_6494_17767858601.gpx",
+          "bytes": 42908,
+          "sha256": "6e05c01b8478817bd3c2dc2b4651f44e9a5cb21761ddb768ed1bcdeba45bf6e3",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "GPS Visualizer https://www.gpsvisualizer.com/",
+            "track_points": 515,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 6.186,
+            "jumps_over_1km": 0,
+            "bbox": [
+              46.095167,
+              14.632080708,
+              46.1046787,
+              14.657022683
+            ],
+            "names_and_descriptions": [
+              "Gozdni tek okoli Ajdovščine - 6 km"
+            ],
+            "first_time": null,
+            "last_time": null,
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "1bfcddaed1b3c4198ef96387daeae17fc2ed975269f0618c03f4383d5fd17a1b",
+            "warnings": [
+              "DISTANCE_MISMATCH"
+            ]
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "Gozdni tek okoli Ajdovščine - 11 km_6494_17767858600.gpx",
+        "bytes": 76269,
+        "sha256": "d805ebc09ca836c387ec32dc9dc05ece6212179aadc1705cccf660ec5818e221",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 923,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 10.798,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.0920435,
+            14.6293311,
+            46.1098868,
+            14.6591209
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "7bcce5467edc533f258200dadb2aea26025b8a6deb92ef68856d7420f6548208",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "0c3685fcb74bc4a0f48bb0d9bf9311905dc6f0dfb7968fa4f1312f0669947f42",
+          "route_label": "Gozdni tek okoli Ajdovščine - 11 km",
+          "copyright_metadata_present": false
+        },
+        "file_status": "FILE_VALID"
+      },
+      {
+        "member": "Gozdni tek okoli Ajdovščine - 2.5 km_6494_17767858602.gpx",
+        "bytes": 17528,
+        "sha256": "ef7076fcad38e95acf3d2373ec8b8bc241b2133e374691a3b1320847956d8622",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 204,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 2.526,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.095167,
+            14.632080708,
+            46.100136244,
+            14.6420204
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "e59c3c6784a333683ed31820167ea5a9d12aece1001f7b2d9440d38ef4dc9c5a",
+          "warnings": [
+            "DISTANCE_MISMATCH"
+          ],
+          "creator_present": true,
+          "creator_sha256": "0c3685fcb74bc4a0f48bb0d9bf9311905dc6f0dfb7968fa4f1312f0669947f42",
+          "route_label": "Gozdni tek okoli Ajdovščine - 2.5 km",
+          "copyright_metadata_present": false
+        },
+        "file_status": "FILE_VALID"
+      },
+      {
+        "member": "Gozdni tek okoli Ajdovščine - 6 km_6494_17767858601.gpx",
+        "bytes": 42908,
+        "sha256": "6e05c01b8478817bd3c2dc2b4651f44e9a5cb21761ddb768ed1bcdeba45bf6e3",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 515,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 6.186,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.095167,
+            14.632080708,
+            46.1046787,
+            14.657022683
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "1bfcddaed1b3c4198ef96387daeae17fc2ed975269f0618c03f4383d5fd17a1b",
+          "warnings": [
+            "DISTANCE_MISMATCH"
+          ],
+          "creator_present": true,
+          "creator_sha256": "0c3685fcb74bc4a0f48bb0d9bf9311905dc6f0dfb7968fa4f1312f0669947f42",
+          "route_label": "Gozdni tek okoli Ajdovščine - 6 km",
+          "copyright_metadata_present": false
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://prijavim.se/calendar/checkings/6494/15--gozdni-tek-in-pohod-okoli-ajdovscine-nad-dolom-pri-ljubljani-2026/",
+        "robots_http": {
+          "url": "https://prijavim.se/robots.txt",
+          "checked_at": "2026-11-03T08:57:00.028723+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://prijavim.se/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 2789,
+          "sha256": "c6211770de4364da770357b65165eb968ae0c7ddb5cc7fc61e8c743485776eb3"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

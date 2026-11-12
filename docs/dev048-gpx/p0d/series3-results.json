@@ -1,0 +1,484 @@
+[
+  {
+    "id": "GPX-0047",
+    "event": "OBALA Ultra Trail",
+    "route": "11 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+    "kind": "GPX",
+    "expected_km": 11,
+    "master_year": 2026,
+    "master_row": 255,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+        "checked_at": "2026-11-03T07:57:44.192819+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 230753,
+        "sha256": "9ba5cc704d741e6f12139409e22d7a7944bb88ecc4544bc19c64d1ee17ddbcad"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+      "checked_at": "2026-11-03T07:58:43.033949+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 51797,
+      "sha256": "440aad612e997ef74333eaed39d6cd4328f162f9a2fc8329aa0c2758ec5da765"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "440aad612e997ef74333eaed39d6cd4328f162f9a2fc8329aa0c2758ec5da765",
+        "bytes": 51797,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 400,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 10.815,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.52509,
+            13.60167,
+            45.53745,
+            13.64592
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 11 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 11 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:34:04+00:00",
+          "last_time": "2026-08-20T10:54:01+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "217a98b6633745e186af5820867ad1822dbdec7d4432cf8e6bd45ef49701dffa",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0046",
+    "event": "OBALA Ultra Trail",
+    "route": "17 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+    "kind": "GPX",
+    "expected_km": 17,
+    "master_year": 2026,
+    "master_row": 255,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+        "checked_at": "2026-11-03T07:57:44.321745+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 231547,
+        "sha256": "a67b044672243a70e62f6a14495c4be438788045b938f73cbfd3def6c0bca36c"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+      "checked_at": "2026-11-03T07:58:43.133618+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 79628,
+      "sha256": "b0b5a9c618c7605c427c6df326b6a11ef71e4d2c5aad2f1f5194a718c503bd64"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "b0b5a9c618c7605c427c6df326b6a11ef71e4d2c5aad2f1f5194a718c503bd64",
+        "bytes": 79628,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 615,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 16.567,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.48842,
+            13.60167,
+            45.53745,
+            13.65879
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 17 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 17 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:33:46+00:00",
+          "last_time": "2026-08-20T11:04:28+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "ff2e1a33bcb4d4b35c894c29a3dc9a63e47ba856ad5751dbb2886a21a770d939",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0045",
+    "event": "OBALA Ultra Trail",
+    "route": "35 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+    "kind": "GPX",
+    "expected_km": 35,
+    "master_year": 2026,
+    "master_row": 255,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+        "checked_at": "2026-11-03T07:57:45.391778+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 235170,
+        "sha256": "f906e47e05f60c884c66a5ab7b8814fd23e7fa838d137deadaff0bd5903df304"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+      "checked_at": "2026-11-03T07:58:44.195800+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 172216,
+      "sha256": "9fc9d0489e9d7163a431a01bf4753bb3d1b57481448a31d60aed55d004ffc2ac"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "9fc9d0489e9d7163a431a01bf4753bb3d1b57481448a31d60aed55d004ffc2ac",
+        "bytes": 172216,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 1339,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 36.041,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.489,
+            13.60167,
+            45.5426,
+            13.68989
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 35 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 35 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:33:24+00:00",
+          "last_time": "2026-08-20T11:40:18+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "409881a745181b1732533861cf0f10b926cada48535d0b983352b78623ea02f5",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0044",
+    "event": "OBALA Ultra Trail",
+    "route": "64 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+    "kind": "GPX",
+    "expected_km": 64,
+    "master_year": 2026,
+    "master_row": 255,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+        "checked_at": "2026-11-03T07:57:46.458514+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 232674,
+        "sha256": "b8f65b210e9bfeb46f7bcc72ca6c929b9410ced1d3f0d8610bf9179b66407580"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2000",
+        "2025",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+      "checked_at": "2026-11-03T07:58:45.294986+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 338691,
+      "sha256": "0142703f14688bd7c8fb021c0dae894a9c13746ecf56c5ecb5480d0a3e5eadd4"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "0142703f14688bd7c8fb021c0dae894a9c13746ecf56c5ecb5480d0a3e5eadd4",
+        "bytes": 338691,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 2629,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 64.058,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.46697,
+            13.60172,
+            45.53745,
+            13.90168
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 64 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - 64 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:33:03+00:00",
+          "last_time": "2026-08-20T12:44:27+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "90353c19c695e569ad56fecb4983d5cec2226e3cac8074b01cca6fa8e908be27",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0043",
+    "event": "OBALA Ultra Trail",
+    "route": "108 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+    "kind": "GPX",
+    "expected_km": 108,
+    "master_year": 2026,
+    "master_row": 255,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+        "checked_at": "2026-11-03T07:56:34.654095+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 234370,
+        "sha256": "d5b62bd34c0d1bd603de074794d510bfa966552507d5545db31806c5cfbe1782"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2094"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+      "checked_at": "2026-11-03T07:57:39.464473+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 564525,
+      "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5",
+        "bytes": 564525,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 4383,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 107.511,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.46697,
+            13.60172,
+            45.58958,
+            13.98223
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - OBALA Ultra Trail 108 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - OBALA Ultra Trail 108 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:32:33+00:00",
+          "last_time": "2026-08-20T14:11:39+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "33c682e86064e4c4dbf88d11084165231cfd27e4b7b547da45683909fe8dc428",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  }
+]

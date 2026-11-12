@@ -1,0 +1,36 @@
+{
+  "source_url": "https://katurn.si/files/razpis_trail_2026--003-.pdf",
+  "policy": {
+    "robots_http": {
+      "url": "https://katurn.si/robots.txt",
+      "checked_at": "2026-11-03T08:51:44.300891+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://katurn.si/robots.txt",
+      "content_type": "text/plain",
+      "content_disposition": null,
+      "bytes": 115,
+      "sha256": "da27d413d7556aabe55147c7e6500874f808ff3887a334dc0339b1dbd9e8cade"
+    },
+    "allowed": true,
+    "crawl_delay": null
+  },
+  "http": {
+    "url": "https://katurn.si/files/razpis_trail_2026--003-.pdf",
+    "checked_at": "2026-11-03T08:55:03.250795+00:00",
+    "redirects": [],
+    "status": 200,
+    "final_url": "https://katurn.si/files/razpis_trail_2026--003-.pdf",
+    "content_type": "application/pdf",
+    "content_disposition": null,
+    "bytes": 751055,
+    "sha256": "70268b5718cf518621593d02e58edbafc6d21c48907ae9130a44d79fa2e6cad7"
+  },
+  "links": [],
+  "excerpts": [],
+  "map_links_found_by_web_pdf_extraction": [
+    "https://connect.garmin.com/modern/course/438127650",
+    "https://connect.garmin.com/app/course/438128441"
+  ],
+  "assessment": "Official 2026 PDF provides Garmin map links; no direct GPX download was established. Local pypdf text extraction yielded no usable text; web PDF text extraction identified the map references."
+}
