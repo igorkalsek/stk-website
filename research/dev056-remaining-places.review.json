@@ -15,11 +15,12 @@
   "coverage": {
     "eligible_total": 59,
     "previous_candidate_editions": 36,
-    "added_candidates": 14,
-    "offline_candidate_total": 50,
-    "offline_potential_coverage_percent": 84.7,
-    "unlocated_editions": 9,
-    "approved_runtime": 0
+    "added_candidates": 17,
+    "offline_candidate_total": 53,
+    "offline_potential_coverage_percent": 89.8,
+    "unlocated_editions": 6,
+    "approved_runtime": 0,
+    "provenance_vetted_venue_or_place_links": 17
   },
   "warnings": [
     "Every new coordinate refers to a named place/town/venue, never necessarily to the actual start of the relevant race.",
@@ -31,7 +32,10 @@
     "Mapcarta and GeoNames and historical-photo coordinates entail separate provenance/licensing review before public distribution.",
     "One named lake feature point is where the geographical name is drawn (GURS register), not the water boundary or event start.",
     "Original snapshot is frozen to 2026-11-13; fresh Master and event lifecycle required before future public use.",
-    "Nine remaining cross-border, multistart, place-unspecified or ambiguous events need individual review; avoid filling them by unreliable guesses."
+    "Six remaining cross-border, multistart, place-unspecified or ambiguous events need individual review; avoid filling them by unreliable guesses.",
+    "2027 Slivnica venue is in Cerknica at Cesta 4. maja 16; the geographic source references the same-address heritage house rather than a verified bowling-alley timing line.",
+    "2027 NajNaj21 venue is Rupar in Sv. Andrej nad Zmincem; OSM building data source remains licence-review required.",
+    "2027 Biznis Run Celje venue Špica is organizer-confirmed through STK form (not public detailed 2027 programme). Kettejeva business coordinate is an area reference only."
   ],
   "entries": [
     {
@@ -114,32 +118,6 @@
     },
     {
       "year": "2026",
-      "masterRow": 308,
-      "latitude": 46.375,
-      "longitude": 15.10582,
-      "precision": "place-approximate",
-      "sourceKind": "documented-place-reference",
-      "reviewStatus": "review",
-      "approved_for_runtime": false,
-      "sourceUrl": "https://javnipodatki.si/jezera/skalsko-jezero",
-      "sourceCheckedOn": "2026-11-13",
-      "referenceLocationVerified": true,
-      "sourceEditionYear": 2026,
-      "editionEvidenceUrl": "https://protime.si/dogodek/20-stafetni-tek-sv-barbare/",
-      "qaIdentity": {
-        "edition_key": "2026!308",
-        "datum": "2026-11-29",
-        "naziv_prireditve": "20. Štafetni tek Sv. Barbare",
-        "master_place": "Velenje"
-      },
-      "referencePlaceName": "Škalsko jezero, Velenje",
-      "referenceType": "GEOGRAPHICAL_NAME_LABEL_REFERENCE",
-      "confidenceFor10Km": "MEDIUM",
-      "note": "GURS register of geographical names supplies approximate water-body label point; start is by/around the lake, not its centre.",
-      "sourceLicenseReviewRequired": true
-    },
-    {
-      "year": "2026",
       "masterRow": 265,
       "latitude": 46.22681859606191,
       "longitude": 14.704781770706179,
@@ -218,6 +196,32 @@
     },
     {
       "year": "2026",
+      "masterRow": 275,
+      "latitude": 45.7144025,
+      "longitude": 14.4719421,
+      "precision": "place-approximate",
+      "sourceKind": "documented-place-reference",
+      "reviewStatus": "review",
+      "approved_for_runtime": false,
+      "sourceUrl": "https://www.hribi.net/tocka/vas/stari_trg_pri_lozu/1398",
+      "sourceCheckedOn": "2026-11-13",
+      "referenceLocationVerified": true,
+      "sourceEditionYear": 2026,
+      "editionEvidenceUrl": "https://www.loskadolina.info/dogodki/dobrodelni-novoletni-tek-in-hoja/",
+      "qaIdentity": {
+        "edition_key": "2026!275",
+        "datum": "2026-12-26",
+        "naziv_prireditve": "Dobrodelni novoletni tek in hoja",
+        "master_place": "Stari trg pri Ložu"
+      },
+      "referencePlaceName": "Stari trg pri Ložu",
+      "referenceType": "SETTLEMENT_PLACE_REFERENCE",
+      "confidenceFor10Km": "MEDIUM",
+      "note": "Organiser calendar specifies OŠ Stari trg but village reference is not checked against school entrance.",
+      "sourceLicenseReviewRequired": true
+    },
+    {
+      "year": "2026",
       "masterRow": 305,
       "latitude": 46.02424,
       "longitude": 14.41794,
@@ -244,28 +248,28 @@
     },
     {
       "year": "2026",
-      "masterRow": 275,
-      "latitude": 45.7144025,
-      "longitude": 14.4719421,
+      "masterRow": 308,
+      "latitude": 46.375,
+      "longitude": 15.10582,
       "precision": "place-approximate",
       "sourceKind": "documented-place-reference",
       "reviewStatus": "review",
       "approved_for_runtime": false,
-      "sourceUrl": "https://www.hribi.net/tocka/vas/stari_trg_pri_lozu/1398",
+      "sourceUrl": "https://javnipodatki.si/jezera/skalsko-jezero",
       "sourceCheckedOn": "2026-11-13",
       "referenceLocationVerified": true,
       "sourceEditionYear": 2026,
-      "editionEvidenceUrl": "https://www.loskadolina.info/dogodki/dobrodelni-novoletni-tek-in-hoja/",
+      "editionEvidenceUrl": "https://protime.si/dogodek/20-stafetni-tek-sv-barbare/",
       "qaIdentity": {
-        "edition_key": "2026!275",
-        "datum": "2026-12-26",
-        "naziv_prireditve": "Dobrodelni novoletni tek in hoja",
-        "master_place": "Stari trg pri Ložu"
+        "edition_key": "2026!308",
+        "datum": "2026-11-29",
+        "naziv_prireditve": "20. Štafetni tek Sv. Barbare",
+        "master_place": "Velenje"
       },
-      "referencePlaceName": "Stari trg pri Ložu",
-      "referenceType": "SETTLEMENT_PLACE_REFERENCE",
+      "referencePlaceName": "Škalsko jezero, Velenje",
+      "referenceType": "GEOGRAPHICAL_NAME_LABEL_REFERENCE",
       "confidenceFor10Km": "MEDIUM",
-      "note": "Organiser calendar specifies OŠ Stari trg but village reference is not checked against school entrance.",
+      "note": "GURS register of geographical names supplies approximate water-body label point; start is by/around the lake, not its centre.",
       "sourceLicenseReviewRequired": true
     },
     {
@@ -374,6 +378,84 @@
     },
     {
       "year": "2027",
+      "masterRow": 32,
+      "latitude": 46.23398,
+      "longitude": 15.245165,
+      "precision": "place-approximate",
+      "sourceKind": "documented-place-reference",
+      "reviewStatus": "review",
+      "approved_for_runtime": false,
+      "sourceUrl": "https://www.yoys.si/phone-386-70253001-picerija-Celje-SI33108.html",
+      "sourceCheckedOn": "2026-11-13",
+      "referenceLocationVerified": true,
+      "sourceEditionYear": 2027,
+      "editionEvidenceUrl": "https://fatburn.si/prijave/",
+      "qaIdentity": {
+        "edition_key": "2027!32",
+        "datum": "2027-05-07",
+        "naziv_prireditve": "Biznis run Celje 2027",
+        "master_place": "Celje"
+      },
+      "referencePlaceName": "Celje, Špica (Kettejeva ulica)",
+      "referenceType": "VENUE_AREA_REFERENCE",
+      "confidenceFor10Km": "MEDIUM",
+      "note": "2027 date and Špica venue are explicitly organizer-submitted to STK (INBOX_predlogi!2, 2026-09-23); Fatburn's 2027 listing confirms date, while public detailed race page still advertises 2026. Coordinates are business listing for Kettejeva ulica 13 near Celjska Špica, not a 2027 timed start line or proof of course.",
+      "sourceLicenseReviewRequired": true
+    },
+    {
+      "year": "2027",
+      "masterRow": 34,
+      "latitude": 45.79257,
+      "longitude": 14.36667,
+      "precision": "place-approximate",
+      "sourceKind": "documented-place-reference",
+      "reviewStatus": "review",
+      "approved_for_runtime": false,
+      "sourceUrl": "https://javnipodatki.si/kulturna-dediscina/enota/cerknica-hisa-cesta-4-maja-16",
+      "sourceCheckedOn": "2026-11-13",
+      "referenceLocationVerified": true,
+      "sourceEditionYear": 2027,
+      "editionEvidenceUrl": "https://prijavim.se/calendar/checkings/6639/7-ur-slivnice-2027/",
+      "qaIdentity": {
+        "edition_key": "2027!34",
+        "datum": "2027-02-20",
+        "naziv_prireditve": "7 ur Slivnice 2027",
+        "master_place": "Slivnica (Cerknica)"
+      },
+      "referencePlaceName": "Cerknica, Cesta 4. maja 16",
+      "referenceType": "VENUE_ADDRESS_REFERENCE",
+      "confidenceFor10Km": "HIGH_FOR_DISCOVERY",
+      "note": "2027 official event specifies bowling-alley meeting area and parking at Cesta 4. maja 16. Cultural heritage register entry is the HOUSE at street 16, not verified race timing mat or parking entry.",
+      "sourceLicenseReviewRequired": true
+    },
+    {
+      "year": "2027",
+      "masterRow": 44,
+      "latitude": 46.13678,
+      "longitude": 14.30301,
+      "precision": "place-approximate",
+      "sourceKind": "documented-place-reference",
+      "reviewStatus": "review",
+      "approved_for_runtime": false,
+      "sourceUrl": "https://mapcarta.com/W399465587",
+      "sourceCheckedOn": "2026-11-13",
+      "referenceLocationVerified": true,
+      "sourceEditionYear": 2027,
+      "editionEvidenceUrl": "https://www.najnaj21.si/o-teku-2/",
+      "qaIdentity": {
+        "edition_key": "2027!44",
+        "datum": "2027-03-27",
+        "naziv_prireditve": "Najnaj21 2027",
+        "master_place": "Sv. Andrej"
+      },
+      "referencePlaceName": "Sv. Andrej nad Zmincem, Gostilna/Gostišče Rupar",
+      "referenceType": "VENUE_BUILDING_REFERENCE",
+      "confidenceFor10Km": "HIGH_FOR_DISCOVERY",
+      "note": "2027 organizer page establishes traditional course, 2027 date; organizer start instruction places start in front of Gostišče Rupar. Mapcarta/OSM identifies venue building, not race-timing start line; check ODbL attribution before runtime.",
+      "sourceLicenseReviewRequired": true
+    },
+    {
+      "year": "2027",
       "masterRow": 45,
       "latitude": 46.3953,
       "longitude": 15.9312,
@@ -407,12 +489,6 @@
       "reason": "REQUIRES_SITUATED_GEO_REVIEW"
     },
     {
-      "edition_key": "2027!34",
-      "name": "7 ur Slivnice 2027",
-      "master_place": "Slivnica (Cerknica)",
-      "reason": "REQUIRES_SITUATED_GEO_REVIEW"
-    },
-    {
       "edition_key": "2027!4",
       "name": "Punce v jami 2027",
       "master_place": "Trbovlje–Hrastnik",
@@ -431,21 +507,9 @@
       "reason": "REQUIRES_SITUATED_GEO_REVIEW"
     },
     {
-      "edition_key": "2027!44",
-      "name": "Najnaj21 2027",
-      "master_place": "Sv. Andrej",
-      "reason": "REQUIRES_SITUATED_GEO_REVIEW"
-    },
-    {
       "edition_key": "2027!8",
       "name": "UTVV I Feel Slovenia 2027",
       "master_place": "Vipavska dolina",
-      "reason": "REQUIRES_SITUATED_GEO_REVIEW"
-    },
-    {
-      "edition_key": "2027!32",
-      "name": "Biznis run Celje 2027",
-      "master_place": "Celje",
       "reason": "REQUIRES_SITUATED_GEO_REVIEW"
     },
     {

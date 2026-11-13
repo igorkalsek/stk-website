@@ -506,7 +506,7 @@ test('multistart event can be discovered by one documented approximate place, ne
   assert.equal(near.matches[0].matchedRole,undefined);
 });
 
-test('offline remaining 14 place references build 50 of 59 without enabling public coordinates', () => {
+test('offline remaining 17 place references build 53 of 59 without enabling public coordinates', () => {
   const now=JSON.parse(readFileSync(new URL('../research/dev056-remaining-places.review.json',import.meta.url),'utf8'));
   const prior=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
   const kztl=JSON.parse(readFileSync(new URL('../research/dev056-kztl-place-pilot.review.json',import.meta.url),'utf8'));
@@ -515,15 +515,15 @@ test('offline remaining 14 place references build 50 of 59 without enabling publ
   assert.equal(now.runtime_activation,false);
   assert.equal(now.public_index_approved,false);
   assert.equal(now.not_for_import_or_publication,true);
-  assert.equal(now.entries.length,14);
-  assert.equal(now.unlocated_review.length,9);
+  assert.equal(now.entries.length,17);
+  assert.equal(now.unlocated_review.length,6);
   const every=[...prior.entries,...kztl.entries,...now.entries];
   const ids=every.map(x=>editionKey({year:x.year,row:String(x.masterRow)}));
-  assert.equal(new Set(ids).size,50);
+  assert.equal(new Set(ids).size,53);
   const eligible=new Set(snapshot.eligible_editions.map(x=>x.edition_key));
   assert.ok(ids.every(x=>eligible.has(x)));
-  assert.equal(now.coverage.offline_candidate_total,50);
-  assert.equal(now.coverage.offline_potential_coverage_percent,84.7);
+  assert.equal(now.coverage.offline_candidate_total,53);
+  assert.equal(now.coverage.offline_potential_coverage_percent,89.8);
   assert.ok(now.entries.every(x=>
     x.approved_for_runtime===false && x.reviewStatus==='review' &&
     x.precision==='place-approximate' && x.sourceKind==='documented-place-reference' &&
@@ -540,8 +540,8 @@ test('offline remaining 14 place references build 50 of 59 without enabling publ
   const trial=summarizeNearbyCoverage(full,temporary);
   assert.deepEqual([trial.totalEditions,trial.locatedEditions,trial.exactStartEditions,trial.approximateSettlementEditions,
      trial.approximatePlaceEditions,trial.coveragePercent],
-     [59,50,1,20,29,84.7]);
-  assert.equal(trial.unlocatedEditionKeys.length,9);
+     [59,53,1,20,32,89.8]);
+  assert.equal(trial.unlocatedEditionKeys.length,6);
   assert.deepEqual(new Set(now.unlocated_review.map(x=>x.edition_key)),new Set(trial.unlocatedEditionKeys));
 });
 
@@ -558,4 +558,22 @@ test('same place reference across different 2026/27 races never confuses edition
   assert.equal(offline.status,'ready');
   assert.equal(offline.matches.length,2);
   assert.ok(offline.matches.every(x=>x.approximate && x.matchedRole===undefined));
+});
+
+test('review-only 2027 Slivnica / Najnaj21 / Celje venue references retain source and year constraints', () => {
+  const d=JSON.parse(readFileSync(new URL('../research/dev056-remaining-places.review.json',import.meta.url),'utf8'));
+  const byKey=new Map(d.entries.map(x=>[x.qaIdentity.edition_key,x]));
+  const slivnica=byKey.get('2027!34'),najnaj=byKey.get('2027!44'),celje=byKey.get('2027!32');
+  assert.ok(slivnica.sourceUrl.includes('cerknica-hisa-cesta-4-maja-16'));
+  assert.ok(slivnica.editionEvidenceUrl.includes('7-ur-slivnice-2027'));
+  assert.ok(najnaj.sourceUrl.includes('mapcarta.com/W399465587'));
+  assert.ok(najnaj.editionEvidenceUrl.includes('najnaj21.si'));
+  assert.ok(celje.sourceUrl.includes('yoys.si'));
+  assert.ok(celje.editionEvidenceUrl.includes('fatburn.si/prijave'));
+  assert.ok([slivnica,najnaj,celje].every(x=>x.reviewStatus==='review'&&x.approved_for_runtime===false&&x.precision==='place-approximate'));
+  const origin={latitude:46.13678,longitude:14.30301};
+  assert.equal(filterNearbyRaces([event('2027',44)],[najnaj],origin,10).matches.length,0);
+  assert.equal(filterNearbyRaces([event('2027',44)],[{...najnaj,reviewStatus:'approved',approved_for_runtime:undefined,sourceEditionYear:2026}],origin,10).matches.length,0);
+  const unlocated=new Set(d.unlocated_review.map(x=>x.edition_key));
+  assert.deepEqual(unlocated,new Set(['2027!3','2027!4','2027!5','2027!12','2027!8','2027!9']));
 });
