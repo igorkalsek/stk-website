@@ -12,7 +12,7 @@ export const NEARBY_RADII_KM = [10, 25, 50, 100] as const;
 export type NearbyRadiusKm = typeof NEARBY_RADII_KM[number];
 export type NearbyPoint = { latitude: number; longitude: number };
 export type NearbyEvent = { year: string; row: string; /** Required for distinct start lines. */ startRoles?: readonly string[] };
-export type NearbyPrecision = 'start' | 'settlement-approximate';
+export type NearbyPrecision = 'start' | 'settlement-approximate' | 'place-approximate';
 
 export type NearbyEditionLocation = NearbyPoint & {
   year: string;
@@ -26,13 +26,17 @@ export type NearbyEditionLocation = NearbyPoint & {
   approved_for_runtime?: boolean;
   sourceUrl: string;
   sourceCheckedOn: string;   // ISO date, date of verification
-  sourceKind: 'official-edition-start' | 'official-settlement';
+  sourceKind: 'official-edition-start' | 'official-settlement' | 'documented-place-reference';
   /** An organizer's 2026 start is not automatically valid for the 2027 edition. */
   sourceEditionYear?: number;
   /** For official SETTLEMENT data only; record DATUM_SYS is not a dataset snapshot. */
   sourceSnapshotOn?: string;
   /** Manually checked matching GURS settlement feature, when dataset snapshot date is not supplied. */
   sourceFeatureVerified?: boolean;
+  /** Manual review only confirms a reference place, not a race start. */
+  referenceLocationVerified?: boolean;
+  /** Season/edition official organizer evidence for non-GURS reference places. */
+  editionEvidenceUrl?: string;
 };
 
 export type NearbyMatch<T> = {
@@ -92,7 +96,7 @@ export const editionKey = (event: NearbyEvent): string | null => {
 const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
   const key = editionKey({ year: location.year, row: String(location.masterRow) });
   if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime === false) return false;
-  if (location.precision !== 'start' && location.precision !== 'settlement-approximate') return false;
+  if (location.precision !== 'start' && location.precision !== 'settlement-approximate' && location.precision !== 'place-approximate') return false;
   if (!/^https:\/\//i.test(location.sourceUrl)) return false;
   if (!isRealIsoDate(location.sourceCheckedOn)) return false;
   if (location.precision === 'start') {
@@ -100,6 +104,17 @@ const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
     return location.sourceKind === 'official-edition-start' &&
       location.sourceEditionYear === Number(location.year) &&
       location.sourceSnapshotOn === undefined;
+  }
+  // A documented landmark/hiking-route reference is suitable ONLY for coarse
+  // race discovery, never as a start pin or as a GURS settlement centroid.
+  // Official organizer evidence for this edition remains mandatory.
+  if (location.precision === 'place-approximate') {
+    return location.sourceKind === 'documented-place-reference' &&
+      location.referenceLocationVerified === true &&
+      location.sourceEditionYear === Number(location.year) &&
+      location.sourceSnapshotOn === undefined &&
+      typeof location.editionEvidenceUrl === 'string' &&
+      /^https:\/\//i.test(location.editionEvidenceUrl);
   }
   // Settlement approximation: prefer a dated dataset snapshot when known.
   // GURS serves individual official settlement features without a published
@@ -129,6 +144,7 @@ export type NearbyCoverageSummary = {
   locatedEditions: number;
   exactStartEditions: number;
   approximateSettlementEditions: number;
+  approximatePlaceEditions: number;
   coveragePercent: number | null;
   unlocatedEditionKeys: string[];
   reason?: 'invalid-or-duplicate-index';
@@ -177,7 +193,7 @@ const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocatio
   // Discovery fallback applies to the whole edition, not a specific course.
   // It remains approximate even if several disciplines have distinct starts.
   if (locations.length === 1 && locations[0].startRole === undefined &&
-      locations[0].precision === 'settlement-approximate' &&
+      (locations[0].precision === 'settlement-approximate' || locations[0].precision === 'place-approximate') &&
       isApprovedLocation(locations[0])) return locations;
   if (locations.length !== event.startRoles.length) return null;
   if (locations.some(x => !x.startRole || !event.startRoles!.includes(x.startRole) ||
@@ -191,7 +207,7 @@ export function summarizeNearbyCoverage<T extends NearbyEvent>(
 ): NearbyCoverageSummary {
   const unavailable = (): NearbyCoverageSummary => ({
     status: 'unavailable', totalEditions: 0, locatedEditions: 0,
-    exactStartEditions: 0, approximateSettlementEditions: 0,
+    exactStartEditions: 0, approximateSettlementEditions: 0, approximatePlaceEditions: 0,
     coveragePercent: null, unlocatedEditionKeys: [],
     reason: 'invalid-or-duplicate-index'
   });
@@ -202,6 +218,7 @@ export function summarizeNearbyCoverage<T extends NearbyEvent>(
   const missing: string[] = [];
   let exact = 0;
   let approximate = 0;
+  let approximatePlace = 0;
   for (const event of events) {
     const key = editionKey(event);
     if (!key || seen.has(key) || !hasValidStartRoles(event)) return unavailable();
@@ -211,18 +228,21 @@ export function summarizeNearbyCoverage<T extends NearbyEvent>(
       missing.push(key);
     } else if (locations.every(x => x.precision === 'start')) {
       exact++;
+    } else if (locations.some(x => x.precision === 'place-approximate')) {
+      approximatePlace++;
     } else {
       approximate++;
     }
   }
   const total = events.length;
-  const located = exact + approximate;
+  const located = exact + approximate + approximatePlace;
   return {
     status: total === 0 ? 'empty' : missing.length ? 'partial' : 'complete',
     totalEditions: total,
     locatedEditions: located,
     exactStartEditions: exact,
     approximateSettlementEditions: approximate,
+    approximatePlaceEditions: approximatePlace,
     coveragePercent: total === 0 ? null : Math.round(1000 * located / total) / 10,
     unlocatedEditionKeys: missing
   };

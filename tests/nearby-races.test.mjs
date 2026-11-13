@@ -415,3 +415,93 @@ test('OFFLINE approximate pilot demonstrates 21 of 59 eligible editions, without
   assert.equal(new Set(closeToZalec.matches.map(x=>editionKey(x.event))).size,closeToZalec.matches.length);
   assert.equal(closeToZalec.status,'partial');
 });
+
+test('documented place reference matches only when manually validated and edition-bound', () => {
+  const race=event('2027',60);
+  const place={
+    year:'2027',masterRow:60,latitude:46.28490,longitude:14.49680,
+    precision:'place-approximate',reviewStatus:'approved',
+    sourceKind:'documented-place-reference',referenceLocationVerified:true,
+    sourceEditionYear:2027,sourceUrl:'https://www.hribi.net/izhodisce/spodnja_postaja_zicnice_na_krvavec/46.2849/14.4968',
+    sourceCheckedOn:'2026-11-13',
+    editionEvidenceUrl:'https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view'
+  };
+  const origin={latitude:46.28490,longitude:14.49680};
+  const match=filterNearbyRaces([race],[place],origin,10);
+  assert.equal(match.status,'ready');
+  assert.equal(match.matches[0].approximate,true);
+  assert.equal(match.matches[0].distanceKm,0);
+  const summary=summarizeNearbyCoverage([race],[place]);
+  assert.deepEqual([summary.locatedEditions,summary.approximateSettlementEditions,summary.approximatePlaceEditions],[1,0,1]);
+  for(const bad of [
+    {...place,referenceLocationVerified:false},
+    {...place,referenceLocationVerified:undefined},
+    {...place,sourceEditionYear:2026},
+    {...place,editionEvidenceUrl:undefined},
+    {...place,editionEvidenceUrl:'http://untrusted.example/old-pdf'},
+    {...place,sourceKind:'official-settlement'},
+    {...place,reviewStatus:'review'},
+    {...place,approved_for_runtime:false},
+    {...place,precision:'start'}
+  ]){
+    assert.equal(filterNearbyRaces([race],[bad],origin,10).matches.length,0);
+    assert.equal(summarizeNearbyCoverage([race],[bad]).locatedEditions,0);
+  }
+});
+
+test('KZTL four place references cover 15 editions but remain review-only', () => {
+  const kztl=JSON.parse(readFileSync(new URL('../research/dev056-kztl-place-pilot.review.json',import.meta.url),'utf8'));
+  const prior=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
+  const pop=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(kztl.kind,'OFFLINE_PLACE_REFERENCE_PILOT_KZTL_2026_27');
+  assert.equal(kztl.status,'REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION');
+  assert.equal(kztl.runtime_activation,false);
+  assert.equal(kztl.public_index_approved,false);
+  assert.equal(kztl.entries.length,15);
+  assert.equal(kztl.venue_profiles.length,4);
+  assert.deepEqual(kztl.venue_profiles.map(x=>x.edition_keys.length),[3,6,3,3]);
+  assert.equal(kztl.coverage.extended_offline_candidates,36);
+  assert.equal(kztl.coverage.remaining_without_reference,23);
+  const keys=new Set(pop.eligible_editions.map(x=>x.edition_key));
+  const seen=new Set(prior.entries.map(x=>editionKey({year:x.year,row:String(x.masterRow)})));
+  for(const x of kztl.entries){
+    const key=editionKey({year:x.year,row:String(x.masterRow)});
+    assert.ok(keys.has(key));
+    assert.equal(seen.has(key),false);
+    seen.add(key);
+    assert.equal(x.approved_for_runtime,false);
+    assert.equal(x.reviewStatus,'review');
+    assert.equal(x.precision,'place-approximate');
+    assert.ok(x.sourceUrl.startsWith('https://'));
+    assert.ok(x.editionEvidenceUrl.includes('1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD'));
+  }
+  assert.equal(seen.size,36);
+  const allEvents=pop.eligible_editions.map(x=>event(String(x.year),x.master_row));
+  const allReview=[...prior.entries,...kztl.entries];
+  assert.equal(summarizeNearbyCoverage(allEvents,allReview).locatedEditions,0);
+  const testCopy=allReview.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const preview=summarizeNearbyCoverage(allEvents,testCopy);
+  assert.deepEqual([preview.totalEditions,preview.locatedEditions,preview.exactStartEditions,
+    preview.approximateSettlementEditions,preview.approximatePlaceEditions,preview.coveragePercent],
+    [59,36,1,20,15,61]);
+  assert.equal(preview.unlocatedEditionKeys.length,23);
+  assert.equal(new Set(filterNearbyRaces(allEvents,testCopy,{latitude:46.28490,longitude:14.49680},25)
+    .matches.map(x=>editionKey(x.event))).size,
+    filterNearbyRaces(allEvents,testCopy,{latitude:46.28490,longitude:14.49680},25).matches.length);
+});
+
+test('multistart event can be discovered by one documented approximate place, never as exact start', () => {
+  const race={...event('2027',61),startRoles:['adult_start','youth_start']};
+  const place={
+    year:'2027',masterRow:61,latitude:46.2348,longitude:14.3309,
+    precision:'place-approximate',sourceKind:'documented-place-reference',
+    reviewStatus:'approved',referenceLocationVerified:true,sourceEditionYear:2027,
+    sourceUrl:'https://www.hribi.net/izlet/ticnica_sveti_jost_nad_kranjem_pot_prijateljev_sv_josta_na_klopca/21/186/6742',
+    editionEvidenceUrl:'https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view',
+    sourceCheckedOn:'2026-11-13'
+  };
+  const near=filterNearbyRaces([race],[place],{latitude:46.2348,longitude:14.3309},25);
+  assert.equal(near.matches.length,1);
+  assert.equal(near.matches[0].approximate,true);
+  assert.equal(near.matches[0].matchedRole,undefined);
+});
