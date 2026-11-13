@@ -19,15 +19,17 @@
     "HOLD_MULTI_P625_COORDINATES": 4,
     "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
     "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING": 9,
-    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 26,
+    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 25,
     "HOLD_COARSE_P625_PRECISION": 2,
     "HOLD_OFFICIAL_2026_MIKLAVZ_DISTINCT_CHILD_ADULT_STARTS_GPS_MISSING": 1,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
     "HOLD_NO_DISAMBIGUATED_CC0_POINT": 1,
-    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 10,
+    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 9,
     "HOLD_MULTISTART_CROSSBORDER_OFFICIAL_2027_VENUE_TEXT": 1,
     "REVIEW_VENUE_SPECIFIC_SUBPLACE": 1,
+    "HOLD_OFFICIAL_2027_KRAS_TRAIL_THREE_SEPARATE_START_SITES": 1,
     "REVIEW_OFFICIAL_2027_LAKESIDE_START_GEOCODE_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_AJDOVSCINA_LAVRICEV_TRG_START_COORDS_MISSING": 1,
     "HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT": 1,
     "REVIEW_OFFICIAL_2027_RIVERBANK_START_GEOCODE_MISSING": 2,
     "HOLD_OFFICIAL_2027_MULTISTART_AND_DISTANCE_CONTENT_CONFLICT": 1,
@@ -1698,14 +1700,42 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://krastrail.si/pogosta-vprasanja/",
+        "type": "MULTISTART_BY_DISTANCE_2027",
+        "text": "2027 official: 52km OŠ Senožeče start, 29km Idila pod Nanosom (Laže) start, 10km Škocjanske jame start; Master place Senožeče cannot represent all three starts. No published independently reusable numeric start points verified."
+      },
+      "status": "HOLD_OFFICIAL_2027_KRAS_TRAIL_THREE_SEPARATE_START_SITES",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "OŠ Senožeče",
+          "role": "52 km start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Idila pod Nanosom, Laže",
+          "role": "29 km start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Škocjanske jame",
+          "role": "10 km start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!44",
@@ -1895,14 +1925,28 @@
       "master_notice_url": "https://ultratrail.si/",
       "audit_route": "COMPOUND_OR_MULTISTART_SITE_REVIEW",
       "geographic_candidate": null,
-      "source2026_27": null,
-      "status": "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT",
+      "source2026_27": {
+        "url": "https://ultratrail.si/sl/faq/",
+        "type": "CURRENT_YEAR_SHARED_START_SITE_NO_COORD",
+        "text": "Organizer FAQ says 2027 all race distances and children starts at Lavričev trg, Ajdovščina; venue for collection is sports centre elsewhere, not start. Source 2027 contains some stale 2026 statements on other questions so recheck closer to edition."
+      },
+      "status": "REVIEW_OFFICIAL_2027_AJDOVSCINA_LAVRICEV_TRG_START_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": false,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Lavričev trg, Ajdovščina",
+          "role": "160/100/60/30/15/10km + children 2027 start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!45",
@@ -3190,5 +3234,14 @@
     "scope": "2026 Nov/Dec named start areas and 2027 named/multi starts validated against exact-year organizer pages",
     "new_numeric_approvals": 0,
     "note": "Adult/child and route-distance starts kept separate; P625 settlement/city point is not exact start."
+  },
+  "official_more_2027_site_review": {
+    "checked_on": "2026-11-13",
+    "keys": [
+      "2027!8",
+      "2027!12"
+    ],
+    "publishable_exact_new": 0,
+    "caveat": "2027!8 source contains stale copy elsewhere; do not infer new date or costs; only explicit 2027 start-site claim."
   }
 }

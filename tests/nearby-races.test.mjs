@@ -1297,3 +1297,23 @@ test('DEV-056 additional official 2026/27 venue checks keep roles distinct and n
  assert.equal(j.records.length,93);
  assert.equal(j.records.filter(r=>r.approved_for_runtime).length,3);
 });
+
+
+test('DEV-056 current-year UTVV and Kras Trail launch locations are not one same pin', () => {
+ const data=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ assert.deepEqual(data.official_more_2027_site_review.keys,['2027!8','2027!12']);
+ const u=data.records.find(x=>x.edition_key==='2027!8');
+ const k=data.records.find(x=>x.edition_key==='2027!12');
+ assert.equal(u.start_sites_checked.length,1);
+ assert.match(u.start_sites_checked[0].name,/Lavričev trg/);
+ assert.equal(k.start_sites_checked.length,3);
+ assert.match(k.start_sites_checked[0].name,/Senožeče/);
+ for(const r of [u,k]){
+  assert.equal(r.approved_for_runtime,false);
+  assert.equal(r.public_enabled,false);
+  assert.ok(r.start_sites_checked.every(x=>x.latitude===null&&x.longitude===null&&x.approved_for_runtime===false));
+  assert.equal(r.numeric_location_status,'NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES');
+ }
+ assert.equal(data.records.length,93);
+ assert.equal(data.records.filter(x=>x.approved_for_runtime).length,3);
+});
