@@ -91,6 +91,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <p data-nearby-origin-summary class="muted-note" aria-live="polite"></p>
           <p class="muted-note">Location is used only in this tab and is not stored.</p>
           <p data-nearby-status role="status" aria-live="polite"></p>
+          <details class="finder-nearby-unlocated" data-nearby-unlocated hidden>
+            <summary>Show races without a verified location <span data-nearby-unlocated-count></span></summary>
+            <p class="muted-note">These races do not yet have a sufficiently precise location, so they are excluded from radius searches.</p>
+            <ul data-nearby-unlocated-list></ul>
+          </details>
         </section>
 
         <div class="quick-picks" aria-label="Quick picks">

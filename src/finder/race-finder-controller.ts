@@ -930,7 +930,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const formattedSurface = formatSurface(event.surface);
     const nearby = nearbyDistances.get(editionKey(event) ?? '');
     const nearbyFact = nearby
-      ? `<span data-nearby-distance>${nearby.approximate ? '≈ ' : ''}${escapeHtml(new Intl.NumberFormat(locale.dateLocale, { maximumFractionDigits: 1 }).format(nearby.distanceKm))} km ${locale.language === 'en' ? 'straight-line' : 'zračno'}${nearby.approximate ? (locale.language === 'en' ? ' to approximate event location' : ' do približne lokacije prireditve') : ''}${nearby.referenceLabel ? ` (${escapeHtml(nearby.referenceLabel)})` : ''}</span>`
+      ? `<span data-nearby-distance>${nearby.approximate ? '≈ ' : ''}${escapeHtml(new Intl.NumberFormat(locale.dateLocale, { maximumFractionDigits: 1 }).format(nearby.distanceKm))} km ${locale.language === 'en' ? 'straight-line' : 'zračno'} · <span data-nearby-precision>${nearby.approximate ? (locale.language === 'en' ? 'Approximate location' : 'Približna lokacija') : (locale.language === 'en' ? 'Verified start' : 'Potrjen štart')}</span></span>`
       : '';
     const metaItems = [
       formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
@@ -1015,6 +1015,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const renderResults = () => {
     const filters = getFilters();
+    if (!nearbySelection || !state.apiAvailable || !getEventsInScope(filters.past).length) nearbyUi?.updateUnlocated([]);
     const deferAdditionalSelection = additionalDataEnabled && state.additionalStatus !== 'ready' && usesAdditionalData(filters);
     updateAdvancedFiltersSummary(filters);
 
@@ -1055,10 +1056,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         nearbySelection.origin, nearbySelection.radiusKm, locale.language
       );
       if (view.status === 'unavailable') {
+        nearbyUi?.updateUnlocated([]);
         state.filtered = [];
         nearbyUi?.updateNotice(locale.language === 'en'
           ? 'Nearby search is unavailable.' : 'Iskanje tekov v bližini ni na voljo.');
       } else {
+        const missing = new Set(view.coverage.unlocatedEditionKeys);
+        nearbyUi?.updateUnlocated(state.filtered.filter(event => missing.has(editionKey(event) ?? '')).map(event => ({
+          date: event.date, title: event.title, place: event.place, href: locale.buildDetailPath(event)
+        })));
         for (const match of view.matches) {
           const key = editionKey(match.event);
           if (key) nearbyDistances.set(key, { distanceKm: match.distanceKm, approximate: match.approximate, referenceLabel: match.referenceLabel });

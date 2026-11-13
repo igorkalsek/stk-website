@@ -1,4 +1,4 @@
-import { isApprovedLocation, type NearbyEditionLocation, type NearbyPoint, type NearbyPrecision } from './utils-nearby-races.js';
+import { isApprovedLocation, resolveNearbyEditionLocation, type NearbyEvent, type NearbyEditionLocation, type NearbyPoint, type NearbyPrecision } from './utils-nearby-races.js';
 
 /** One CC0 reference per place; editions never duplicate its coordinates. */
 export type NearbyPlace = NearbyPoint & {
@@ -53,4 +53,22 @@ export function buildNearbyLocationIndex(
     result.push(location);
   }
   return result;
+}
+
+/** Maps searches stay HTTPS and never turn a place reference into arrival directions. */
+export function buildNearbyMapLink(
+  event: NearbyEvent, index: readonly NearbyEditionLocation[], locale: 'sl' | 'en'
+): { url: string; label: string; notice: string | null } {
+  const location = resolveNearbyEditionLocation(event, index);
+  const query = location ? `${location.latitude},${location.longitude}`
+    : [event.place, event.region].filter(Boolean).join(', ');
+  const en = locale === 'en';
+  const approximate = location && location.precision !== 'start';
+  return {
+    url: query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '',
+    label: location ? (approximate ? (en ? 'Approximate location' : 'Približna lokacija')
+      : (en ? 'Verified start' : 'Potrjen štart')) : (en ? 'Search for place' : 'Iskanje kraja'),
+    notice: approximate ? (en ? 'Place reference, not a verified start or arrival point.'
+      : 'Krajevna referenca, ne potrjen štart ali točka prihoda.') : null
+  };
 }

@@ -78,6 +78,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p data-nearby-origin-summary class="muted-note" aria-live="polite"></p>
           <p class="muted-note">Lokacija se uporablja samo v tem zavihku in se ne shranjuje.</p>
           <p data-nearby-status role="status" aria-live="polite"></p>
+          <details class="finder-nearby-unlocated" data-nearby-unlocated hidden>
+            <summary>Prikaži teke brez določene lokacije <span data-nearby-unlocated-count></span></summary>
+            <p class="muted-note">Za te teke še ni dovolj natančne lokacije, zato niso vključeni v iskanje po radiju.</p>
+            <ul data-nearby-unlocated-list></ul>
+          </details>
         </section>
 
         <div class="quick-picks" aria-label="Hitri izbori">

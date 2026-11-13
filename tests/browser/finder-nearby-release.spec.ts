@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { getDisplayEventTitle } from '../../src/utils-events';
 import { readFileSync } from 'node:fs';
 import { NEARBY_EDITION_LOCATIONS, NEARBY_ORIGINS } from '../../src/finder/nearby-production-index';
-import { filterNearbyRaces } from '../../src/utils-nearby-races';
+import { buildEventDetailPath, buildEnglishEventDetailPath } from '../../src/utils-event-detail';
+import { buildNearbyMapLink } from '../../src/utils-nearby-index';
+import { filterNearbyRaces, summarizeNearbyCoverage } from '../../src/utils-nearby-races';
 
 // Production build and production catalog, with the captured Worker population.
 // No synthetic approval or geography transform is used by this suite.
@@ -68,14 +71,58 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
         : `Za ${year === '2026' ? 2 : 5} od ${full.length}`);
       if (matched.length) {
         await expect(cards.first().locator('[data-nearby-distance]')).toContainText('≈');
-        await expect(cards.first().locator('[data-nearby-distance]')).toContainText(lang === 'en' ? 'approximate event location' : 'približne lokacije prireditve');
+        await expect(cards.first().locator('[data-nearby-distance]')).toContainText(lang === 'en' ? 'Approximate location' : 'Približna lokacija');
       }
     }
+    if (year === '2026') {
+      await origin.selectOption('Q392333'); // Štanjel: edition-specific organizer start
+      const exact = cards.filter({hasText:'25. Štanjelski tek'}).locator('[data-nearby-distance]');
+      await expect(exact).toContainText(lang === 'en' ? 'Verified start' : 'Potrjen štart');
+      await expect(exact).not.toContainText('≈');
+      await origin.selectOption('Q15930');
+    }
+    const missingKeys = new Set(summarizeNearbyCoverage(full, NEARBY_EDITION_LOCATIONS).unlocatedEditionKeys);
+    const missing = full.filter((event:any) => missingKeys.has(`${event.year}!${event.row}`))
+      .sort((a:any,b:any) => a.date.localeCompare(b.date));
+    const disclosure = panel.locator('[data-nearby-unlocated]');
+    const summary = disclosure.locator('summary');
+    const unlocatedLinks = disclosure.locator('li a');
+    await expect(summary).toContainText(lang === 'en' ? 'Show races without a verified location' : 'Prikaži teke brez določene lokacije');
+    await expect(summary).toContainText(`(${missing.length})`);
+    await expect(disclosure).not.toHaveAttribute('open', '');
+    await expect(unlocatedLinks.first()).not.toBeVisible();
+    const radiusCount = await cards.count();
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(disclosure).toHaveAttribute('open', '');
+    await expect(unlocatedLinks).toHaveCount(missing.length);
+    expect(await unlocatedLinks.allTextContents()).toEqual(missing.map((e:any) => getDisplayEventTitle(e.naziv_prireditve)));
+    const buildPath = lang === 'en' ? buildEnglishEventDetailPath : buildEventDetailPath;
+    expect(await unlocatedLinks.evaluateAll(links => links.map(a => a.getAttribute('href'))))
+      .toEqual(missing.map((e:any) => buildPath(e)));
+    await expect(cards).toHaveCount(radiusCount);
+    await page.keyboard.press('Tab');
+    await expect(unlocatedLinks.first()).toBeFocused();
+    await summary.focus();
+    await page.keyboard.press('Space');
+    await expect(unlocatedLinks.first()).not.toBeVisible();
+    await summary.press('Enter');
+    await page.screenshot({path:testInfo.outputPath(`unlocated-${year}-${lang}-${width}.png`),fullPage:true});
+    await summary.press('Enter');
+    // List follows current non-geographic filters without changing radius results.
+    await page.locator('[data-filter="search"]').fill(missing[0].naziv_prireditve);
+    await expect(unlocatedLinks).toHaveCount(1);
+    await expect(cards).toHaveCount(0);
+    await page.locator('[data-filter="search"]').fill('no-such-event-dev058');
+    await expect(disclosure).toBeHidden();
+    await page.locator('[data-filter="search"]').fill('');
+    await expect(summary).toContainText(`(${missing.length})`);
     // Region and text filters still intersect the nearby set and retain URL state.
     await page.locator('[data-filter="region"]').selectOption('Savinjska');
     await expect(page).toHaveURL(/region=Savinjska/);
     expect(await cards.count()).toBeGreaterThan(0);
     await expect(cards.first()).toContainText('Savinjska');
+    await expect(disclosure.locator('li')).toHaveCount(missing.filter((e:any) => e.region === 'Savinjska').length);
     await page.locator('[data-filter="search"]').fill('SZTL');
     await expect(cards.first()).toContainText('SZTL');
     await page.locator('[data-filter="search"]').fill('');
@@ -119,13 +166,83 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     await panel.locator('[data-nearby-manual] > summary').click();
     await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
     await page.screenshot({path:testInfo.outputPath(`nearby-${year}-${lang}-${width}.png`),fullPage:true});
+    await page.locator('[data-search-results]').screenshot({path:testInfo.outputPath(`cards-${year}-${lang}-${width}.png`)});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     // Global reset must clear nearby memory as well as the visible form.
     await page.locator('[data-clear-filters]').first().click();
     await expect(panel.locator('[data-nearby-origin-summary]')).toBeEmpty();
     await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
+    await expect(disclosure).toBeHidden();
     await expect(latitude).toHaveValue('');
     await expect(cards.first()).toBeVisible();
+    // Switching public year starts with no stale location or omitted-edition list.
+    const otherYear = year === '2026' ? '2027' : '2026';
+    await page.locator(`[data-year-link="${otherYear}"]`).click();
+    await expect(cards.first()).toBeVisible();
+    await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
+    if (width < 600) await page.locator('[data-mobile-filter-panel] > summary').click();
+    await origin.selectOption('Q15930');
+    const otherFull = snapshot.events.filter((e:any) => e.year === otherYear);
+    const otherMissing = summarizeNearbyCoverage(otherFull, NEARBY_EDITION_LOCATIONS).unlocatedEditionKeys.length;
+    await expect(summary).toContainText(`(${otherMissing})`);
     expect(errors).toEqual([]);
+  });
+}
+
+for (const lang of ['sl', 'en'] as const) for (const width of [390, 1280]) {
+  test(`profile maps ${lang}/${width}: verified start, approximation and text fallback`, async ({page}, testInfo) => {
+    await page.setViewportSize({width, height:844});
+    for (const [row, precision] of [['266', 'start'], ['260', 'approximate'], ['263', 'missing']]) {
+      const event = snapshot.events.find((e:any) => e.year === '2026' && e.row === row);
+      const path = lang === 'en' ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event);
+      await page.goto(path);
+      const map = page.locator('[data-analytics-link-type="map_click"]');
+      const expected = buildNearbyMapLink(event, NEARBY_EDITION_LOCATIONS, lang);
+      await expect(map).toHaveAttribute('href', expected.url);
+      await expect(map).toHaveAttribute('target', '_blank');
+      await expect(map).toHaveAttribute('rel', 'noopener noreferrer');
+      await expect(page.locator('[data-map-precision]')).toContainText(expected.label);
+      if (precision === 'approximate') await expect(page.locator('[data-map-precision]')).toContainText(expected.notice!);
+      await map.scrollIntoViewIfNeeded();
+      await page.screenshot({path:testInfo.outputPath(`map-${precision}-${lang}-${width}.png`)});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+  });
+}
+
+for (const lang of ['sl','en']) {
+  test(`live unlocated data ${lang}: changed identity, new race, safe text and empty year`, async ({page}) => {
+    await page.clock.setFixedTime(new Date('2026-11-13T09:00:00Z'));
+    let empty = false;
+    const original = snapshot.events.find((e:any) => e.year === '2027' && e.row === '51');
+    const unsafeTitle = '<img src=x onerror=alert(1)> New race';
+    const full = snapshot.events.filter((e:any) => e.year === '2027').map((e:any) => e.row === '51'
+      ? {...e, date:'2027-01-10'} : e).concat({...original, row:'999', naziv_prireditve:unsafeTitle});
+    await page.route(`${API}/**`, async route => {
+      const url = new URL(route.request().url());
+      const data = empty || ['/additional','/top'].includes(url.pathname) ? [] : full.map((e:any) => ({
+        row:e.row, datum:e.date, naziv_prireditve:e.naziv_prireditve, kraj:e.place, regija:e.region,
+        status_dogodka:'potrjeno', vidno_v_javnem_koledarju:'DA'
+      }));
+      await route.fulfill({json:{data}});
+    });
+    await page.goto(`${lang === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}?year=2027`);
+    await expect(page.locator('[data-search-results] .search-event-card').first()).toBeVisible();
+    await page.locator('[data-nearby-origin-place]').selectOption('Q631387');
+    const details = page.locator('[data-nearby-unlocated]');
+    const count = summarizeNearbyCoverage(full, NEARBY_EDITION_LOCATIONS).unlocatedEditionKeys.length;
+    await expect(details.locator('summary')).toContainText(`(${count})`);
+    await details.locator('summary').click();
+    await expect(details.locator('li a').filter({hasText:unsafeTitle})).toHaveCount(1);
+    await expect(details.locator('img')).toHaveCount(0);
+    await expect(details.locator('li a').filter({hasText:getDisplayEventTitle(original.naziv_prireditve)})).toHaveCount(1);
+    expect(await details.locator('li a').evaluateAll(links => links.every(a => a.getAttribute('href')?.startsWith('/')))).toBe(true);
+    await expect(page.locator('[data-search-results]')).not.toContainText(unsafeTitle);
+    await expect(page.locator('[data-search-results]')).not.toContainText(getDisplayEventTitle(original.naziv_prireditve));
+    empty = true;
+    await page.reload();
+    await expect(page.locator('[data-search-results] .search-event-card')).toHaveCount(0);
+    await page.locator('[data-nearby-origin-place]').selectOption('Q631387');
+    await expect(details).toBeHidden();
   });
 }

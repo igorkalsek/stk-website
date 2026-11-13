@@ -5113,7 +5113,7 @@ main {
   font-weight: 800;
 }
 
-.search-event-facts span:not(:last-child)::after {
+.search-event-facts > span:not(:last-child)::after {
   content: "·";
   color: var(--muted);
   margin: 0 0.45rem;
@@ -6436,3 +6436,11 @@ main {
 .finder-nearby-panel [data-nearby-status]:empty,
 .finder-nearby-panel [data-nearby-origin-summary]:empty { display: none; }
 [data-nearby-distance] { overflow-wrap: anywhere; }
+
+/* Secondary geographic context; no additional card row or attention badge. */
+.search-event-facts > [data-nearby-distance] { font-size: 0.875rem; font-weight: 500; color: var(--muted); }
+.finder-nearby-unlocated { font-size: 0.875rem; color: var(--muted); }
+.finder-nearby-unlocated summary { cursor: pointer; text-decoration: underline; text-underline-offset: 0.2em; }
+.finder-nearby-unlocated ul { padding-left: 1.2rem; margin-block: 0.5rem; }
+.finder-nearby-unlocated li { margin-block: 0.5rem; overflow-wrap: anywhere; }
+.event-detail-map-note { margin-block: 0.5rem 0; }
