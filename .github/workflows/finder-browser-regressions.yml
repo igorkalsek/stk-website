@@ -9,6 +9,13 @@ on:
       - 'src/utils-finder-active-filters.ts'
       - 'src/styles/global.css'
       - 'tests/browser/finder.spec.ts'
+      - 'tests/browser/finder-nearby-pilot.spec.ts'
+      - 'tests/browser/finder-nearby-integration.spec.ts'
+      - 'tests/dev056-private-astro.config.mjs'
+      - 'playwright.dev056.config.ts'
+      - 'src/finder/race-finder-controller.ts'
+      - 'src/finder/race-finder-nearby-ui.ts'
+      - 'src/utils-nearby-races.ts'
       - 'playwright.config.ts'
       - 'package.json'
       - 'package-lock.json'
@@ -35,6 +42,9 @@ jobs:
 
       - name: Run finder browser regressions
         run: npm run test:browser:finder
+
+      - name: Run DEV-056 private card integration (never deploy)
+        run: npm run test:browser:nearby-private
 
       - name: Upload Playwright report
         if: failure()
