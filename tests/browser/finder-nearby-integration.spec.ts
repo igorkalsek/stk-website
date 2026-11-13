@@ -61,6 +61,9 @@ for(const scenario of scenarios) {
     await expect(panel.locator('[data-nearby-origin-place-group]')).toBeVisible();
     await expect(town.locator('option')).toHaveCount(2);
     await town.selectOption('synthetic-test-origin');
+    await expect(panel.locator('[data-nearby-origin-summary]')).toHaveText(
+      scenario.lang === 'en' ? 'Active origin: Synthetic test origin' : 'Aktivno izhodišče: Testno izhodišče'
+    );
     await expect(cards).toHaveCount(1);
     await expect(cards.first()).toContainText('Synthetic Zalec Race');
     await expect(panel.locator('[data-nearby-status]')).toContainText(scenario.missing);
@@ -69,9 +72,16 @@ for(const scenario of scenarios) {
     const lng=panel.locator('[data-nearby-longitude]');
     const radius=panel.locator('[data-nearby-radius]');
     await lat.fill(scenario.lat);
+    await expect(cards).toHaveCount(2); // editing a selected origin immediately invalidates old matches
+    await expect(panel.locator('[data-nearby-origin-summary]')).toContainText(
+      scenario.lang === 'en' ? 'apply the search' : 'za posodobitev'
+    );
     await expect(town).toHaveValue(''); // manual origin overrides selected place
     await lng.fill(scenario.lng);
     await panel.locator('[data-nearby-apply]').click();
+    await expect(panel.locator('[data-nearby-origin-summary]')).toHaveText(
+      scenario.lang === 'en' ? 'Active origin: Custom coordinates' : 'Aktivno izhodišče: Ročne koordinate'
+    );
     await expect(cards).toHaveCount(1);
     await expect(cards.first()).toContainText('Synthetic Zalec Race');
     await expect(cards.first().locator('[data-nearby-distance]')).toContainText(scenario.km);
@@ -126,6 +136,7 @@ for(const scenario of scenarios) {
     await expect(lng).toHaveValue('');
     await expect(radius).toHaveValue('25');
     await expect(town).toHaveValue('');
+    await expect(panel.locator('[data-nearby-origin-summary]')).toBeEmpty();
     expect(page.url()).not.toContain('lat=');
     expect(page.url()).not.toContain('lng=');
   });

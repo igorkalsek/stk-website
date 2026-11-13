@@ -86,6 +86,9 @@ for (const scenario of fixtures) {
     await panel.locator('[data-nearby-latitude]').fill(scenario.latitude);
     await panel.locator('[data-nearby-longitude]').fill(scenario.longitude);
     await panel.locator('[data-nearby-apply]').click();
+    await expect(panel.locator('[data-nearby-origin-summary]')).toHaveText(
+      scenario.locale === 'en' ? 'Active origin: Custom coordinates' : 'Aktivno izhodišče: Ročne koordinate'
+    );
     for (const [radius, count] of [['10', 0], ['25', 1], ['50', 1], ['100', 1]] as const) {
       await panel.locator('[data-nearby-radius]').selectOption(radius);
       const state = await page.evaluate(() => (window as any).__dev056Pilot);
@@ -133,11 +136,15 @@ for (const scenario of fixtures) {
     await panel.locator('[data-nearby-geolocate]').click();
     await expect.poll(() => page.evaluate(() => (window as any).__dev056Pilot.transitions)).toBe(beforeGps + 1);
     const selected = await page.evaluate(() => (window as any).__dev056Pilot);
+    await expect(panel.locator('[data-nearby-origin-summary]')).toHaveText(
+      scenario.locale === 'en' ? 'Active origin: Device location' : 'Aktivno izhodišče: Lokacija naprave'
+    );
     expect(selected.selection.origin.latitude).toBe(46.2490358);
     expect(selected.selection.origin.longitude).toBe(15.164716);
     expect(selected.view.matches).toHaveLength(1);
 
     await panel.locator('[data-nearby-clear]').click();
+    await expect(panel.locator('[data-nearby-origin-summary]')).toBeEmpty();
     await expect(panel.locator('[data-nearby-latitude]')).toHaveValue('');
     await expect(panel.locator('[data-nearby-longitude]')).toHaveValue('');
     await expect(panel.locator('[data-nearby-radius]')).toHaveValue('25');

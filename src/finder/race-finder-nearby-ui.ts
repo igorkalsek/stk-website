@@ -73,11 +73,16 @@ export function mountNearbyFinderUi(options: {
   const apply = panel?.querySelector<HTMLButtonElement>('[data-nearby-apply]');
   const clear = panel?.querySelector<HTMLButtonElement>('[data-nearby-clear]');
   const status = panel?.querySelector<HTMLElement>('[data-nearby-status]');
-  if (!panel || !fields || !latitude || !longitude || !radius || !useLocation || !apply || !clear || !status) return null;
+  const originSummary = panel?.querySelector<HTMLElement>('[data-nearby-origin-summary]');
+  if (!panel || !fields || !latitude || !longitude || !radius || !useLocation || !apply || !clear || !status || !originSummary) return null;
 
   const en = options.locale === 'en';
   let pendingGeolocation = 0;
+  let activeOrigin: 'manual' | 'place' | 'device' = 'manual';
+  let selectedOriginLabel = '';
+  let hasAppliedSelection = false;
   const setStatus = (message: string) => { status.textContent = message; };
+  const showOrigin = (text: string) => { originSummary.textContent = text; };
   const candidates = options.originPlaces ?? [];
   const origins = candidates.length && candidates.every(isApprovedNearbyOrigin) &&
       new Set(candidates.map(place => place.id)).size === candidates.length ? candidates : [];
@@ -96,6 +101,10 @@ export function mountNearbyFinderUi(options: {
     longitude.value = '';
     if (originPlace) originPlace.value = '';
     radius.value = '25';
+    activeOrigin = 'manual';
+    selectedOriginLabel = '';
+    hasAppliedSelection = false;
+    showOrigin('');
     setStatus('');
     options.onChange(null);
   };
@@ -106,10 +115,19 @@ export function mountNearbyFinderUi(options: {
     if (!origin || radiusKm === null) {
       // A failed new origin must never leave matches from a previous valid origin.
       // Keep the text fields intact so the user can correct the input.
+      hasAppliedSelection = false;
+      showOrigin('');
       options.onChange(null);
       setStatus(en ? 'Enter valid latitude and longitude.' : 'Vnesite veljavno zemljepisno širino in dolžino.');
       return;
     }
+    hasAppliedSelection = true;
+    const label = activeOrigin === 'place'
+      ? selectedOriginLabel
+      : activeOrigin === 'device'
+        ? (en ? 'Device location' : 'Lokacija naprave')
+        : (en ? 'Custom coordinates' : 'Ročne koordinate');
+    showOrigin((en ? 'Active origin: ' : 'Aktivno izhodišče: ') + label);
     setStatus('');
     options.onChange({ origin, radiusKm });
   };
@@ -123,23 +141,34 @@ export function mountNearbyFinderUi(options: {
       pendingGeolocation++;
       const selected = origins.find(place => place.id === originPlace.value);
       if (!selected) {
-        latitude.value = ''; longitude.value = ''; setStatus(''); options.onChange(null);
+        latitude.value = ''; longitude.value = '';
+        activeOrigin = 'manual'; selectedOriginLabel = ''; hasAppliedSelection = false;
+        showOrigin(''); setStatus(''); options.onChange(null);
         return;
       }
+      activeOrigin = 'place';
+      selectedOriginLabel = en ? selected.labelEn : selected.labelSl;
       latitude.value = String(selected.latitude);
       longitude.value = String(selected.longitude);
       applySelection(); // no geolocation permission or external service
     });
   }
   // Manual typing takes precedence over the catalog and any pending GPS request.
-  latitude.addEventListener('input', () => {
+  const onManualEdit = () => {
     pendingGeolocation++;
+    activeOrigin = 'manual';
+    selectedOriginLabel = '';
     if (originPlace) originPlace.value = '';
-  });
-  longitude.addEventListener('input', () => {
-    pendingGeolocation++;
-    if (originPlace) originPlace.value = '';
-  });
+    // Previous radius results must not remain active after an origin is edited.
+    if (hasAppliedSelection) {
+      hasAppliedSelection = false;
+      options.onChange(null);
+    }
+    showOrigin(en ? 'Custom coordinates: apply the search to update results.'
+      : 'Ročne koordinate: za posodobitev izberite Prikažite teke.');
+  };
+  latitude.addEventListener('input', onManualEdit);
+  longitude.addEventListener('input', onManualEdit);
   apply.addEventListener('click', applySelection);
   clear.addEventListener('click', clearSelection);
   // Changing the radius with invalid coordinates must also clear stale matches.
@@ -162,6 +191,8 @@ export function mountNearbyFinderUi(options: {
           return;
         }
         if (originPlace) originPlace.value = '';
+        activeOrigin = 'device';
+        selectedOriginLabel = '';
         latitude.value = String(point.latitude);
         longitude.value = String(point.longitude);
         applySelection();

@@ -797,7 +797,8 @@ test('geolocation callback cannot override manually edited coordinates or a clea
     '[data-nearby-geolocate]':listeners(),
     '[data-nearby-apply]':listeners(),
     '[data-nearby-clear]':listeners(),
-    '[data-nearby-status]':listeners()
+    '[data-nearby-status]':listeners(),
+    '[data-nearby-origin-summary]':listeners()
   };
   const panel={hidden:true,querySelector:(selector)=>controls[selector]||null};
   const requested=[];
@@ -832,6 +833,7 @@ test('geolocation callback cannot override manually edited coordinates or a clea
   assert.equal(lat.value,'46,1314');
   assert.equal(changes.length,0);
   controls['[data-nearby-apply]'].fire('click');
+  assert.match(controls['[data-nearby-origin-summary]'].textContent,/Aktivno izhodišče: Ročne koordinate/);
   assert.deepEqual(changes.at(-1),{origin:{latitude:46.1314,longitude:14.9965},radiusKm:25});
   radius.value='10';
   radius.fire('change');
@@ -839,6 +841,8 @@ test('geolocation callback cannot override manually edited coordinates or a clea
   // Editing coordinates, then applying an invalid origin, must clear OLD results.
   lat.value='not-valid';
   lat.fire('input');
+  assert.equal(changes.at(-1),null); // clear stale valid-origin results immediately
+  assert.match(controls['[data-nearby-origin-summary]'].textContent,/za posodobitev/);
   controls['[data-nearby-apply]'].fire('click');
   assert.equal(changes.at(-1),null);
   assert.equal(lat.value,'not-valid');
@@ -866,6 +870,7 @@ test('geolocation callback cannot override manually edited coordinates or a clea
   // Fresh permission request is honored only on the live sequence.
   geo.fire('click');
   requested[2].success({coords:{latitude:46.25,longitude:14.55}});
+  assert.match(controls['[data-nearby-origin-summary]'].textContent,/Aktivno izhodišče: Lokacija naprave/);
   assert.deepEqual(changes.at(-1),{origin:{latitude:46.25,longitude:14.55},radiusKm:25});
   assert.equal(requested.length,3);
 });
