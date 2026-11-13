@@ -835,3 +835,61 @@ test('geolocation callback cannot override manually edited coordinates or a clea
   assert.deepEqual(changes.at(-1),{origin:{latitude:46.25,longitude:14.55},radiusKm:25});
   assert.equal(requested.length,3);
 });
+
+test('offline GURS-only 20-edition smoke test on 12 unique official features', () => {
+  const doc=JSON.parse(readFileSync(new URL('../research/dev056-geodata-license.review.json',import.meta.url),'utf8'));
+  const existing=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
+  const original=JSON.parse(readFileSync(new URL('../research/dev056-location-candidates.review.json',import.meta.url),'utf8'));
+  const population=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  const pilot=doc.offline_gurs_only_pilot;
+  assert.equal(pilot.status,'FIXED_ORIGIN_REVIEW_ONLY_TEST_NO_PUBLIC_APPROVAL');
+  assert.equal(doc.activation_forbidden,true);
+  assert.equal(doc.public_index_approved,false);
+  assert.equal(pilot.population.eligible_editions,59);
+  assert.equal(pilot.population.official_gurs_candidate_editions,20);
+  assert.equal(pilot.population.distinct_gurs_naselja_feature_ids,12);
+  assert.equal(pilot.population.unlocated_or_not_included_in_gurs_only_pilot,39);
+  assert.equal(pilot.population.approved_public_editions,0);
+  const gurs=existing.entries.filter(e=>e.sourceKind==='official-settlement');
+  assert.equal(gurs.length,20);
+  assert.ok(gurs.every(e=>e.precision==='settlement-approximate' &&
+    e.reviewStatus==='review' && e.approved_for_runtime===false &&
+    e.sourceFeatureVerified===true && e.sourceSnapshotOn===undefined));
+  const featureIds=new Set(gurs.map(e=>e.sourceUrl.match(/\/items\/(\d+)\?f=json$/)?.[1]));
+  assert.equal(featureIds.has(undefined),false);
+  assert.equal(featureIds.size,12);
+  for(const item of gurs){
+    assert.ok(original.entries.some(e=>e.canonical_gurs.official_feature_url===item.sourceUrl));
+  }
+  assert.equal(gurs.filter(e=>e.sourceUrl.includes('/110300000101473100?')).length,9);
+  const full=population.eligible_editions.map(e=>event(String(e.year),e.master_row));
+  assert.deepEqual([summarizeNearbyCoverage(full,gurs).status,summarizeNearbyCoverage(full,gurs).locatedEditions],['partial',0]);
+  // Only in this synchronous test: never ship these ephemeral test approvals as an index.
+  const approvedForPrivateSimulation=gurs.map(e=>({...e,reviewStatus:'approved',approved_for_runtime:true}));
+  const coverage=summarizeNearbyCoverage(full,approvedForPrivateSimulation);
+  assert.deepEqual([coverage.status,coverage.totalEditions,coverage.locatedEditions,coverage.exactStartEditions,
+    coverage.approximateSettlementEditions,coverage.approximatePlaceEditions,
+    coverage.unlocatedEditionKeys.length,coverage.coveragePercent],
+    ['partial',59,20,0,20,0,39,33.9]);
+  const expected=[[1,10,13,17],[9,11,13,15],[0,1,2,17]];
+  assert.equal(pilot.origins.length,3);
+  pilot.origins.forEach((origin,i)=>{
+    assert.deepEqual(origin.radius_results.map(x=>x.matched_candidate_editions),expected[i]);
+    [10,25,50,100].forEach((rad,j)=>{
+      const result=filterNearbyRaces(full,approvedForPrivateSimulation,origin.origin,rad);
+      assert.equal(result.status,'partial');
+      assert.equal(result.unlocatedEditionKeys.length,39);
+      assert.equal(result.matches.length,expected[i][j]);
+      assert.ok(result.matches.every(x=>x.approximate===true&&x.matchedRole===undefined));
+      assert.ok(result.matches.every(x=>x.distanceKm<=rad));
+      const distances=result.matches.map(x=>x.distanceKm);
+      assert.deepEqual(distances,[...distances].sort((a,b)=>a-b));
+    });
+  });
+  const atKranj=filterNearbyRaces(full,approvedForPrivateSimulation,pilot.origins[2].origin,10);
+  assert.equal(atKranj.matches.length,0);
+  assert.equal(atKranj.status,'partial'); // Never claim there are no nearby races.
+  const note=nearbyDiscoveryCopy('sl',coverage,10);
+  assert.match(note.coverageNotice,/39 od 59/);
+  assert.match(note.radiusNotice,/radiju 10 km/);
+});
