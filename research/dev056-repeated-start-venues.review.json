@@ -46,7 +46,23 @@
       "review_status": "REVIEW",
       "approved_for_runtime": false,
       "coordinates": null,
-      "note": "Same season start for adults across nine remaining stages. Event page also includes a distinct children's start. Do not assume municipal centroid."
+      "note": "Same season start for adults across nine remaining stages. Event page also includes a distinct children's start. Do not assume municipal centroid.",
+      "reconstruction_review": {
+        "identity": "NADHOD_MAVRICA_ZALEC_ADULT_START",
+        "official_current_season_start_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+        "official_reconstruction_publication": "https://www.mojaobcina.si/zalec/novice/rekonstrukcija-nadhoda-mavrica.html",
+        "state_road_authority_source": "https://www.gov.si/novice/2025-10-17-popolna-zapora-regionalne-ceste-pri-zalcu/",
+        "opening_2026_source": "https://www.mojaobcina.si/zalec/novice/video-novica-zalski-nadhod-mavrica-tudi-formalno-odprt.html",
+        "actual_opening_date": "2026-02-02",
+        "reconstruction_notes": "2025 road authority works at R2-447/0367 Žalec–Šempeter km 0.545–0.605; old pedestrian bridge demolished, new structure formally opened on 2 Feb 2026. The current-season organizer's 'Mavrica' start designation is valid venue text, but old pre-2025 bridge mapping/design render cannot be accepted as start geometry. Event could begin near an approach to the replacement bridge, rather than at the structure midpoint.",
+        "historic_design_not_as_built_url": "https://www.ponting.si/si/projekti/nadhod-mavrica-v-zalcu-93.html",
+        "official_numeric_start_available": false,
+        "reusable_wgs84_source_confirmed": false,
+        "coordinate": null,
+        "review_status": "HOLD_REBUILT_BRIDGE_START_APPROACH_UNVERIFIED",
+        "approved_for_runtime": false,
+        "public_enabled": false
+      }
     },
     {
       "venue_id": "sztl-2026-27-zalec-stadium-youth",
@@ -69,7 +85,36 @@
       "review_status": "REVIEW",
       "approved_for_runtime": false,
       "coordinates": null,
-      "note": "Children run a distinct stadium course; never conflate with adult Mavrica reference point."
+      "note": "Children run a distinct stadium course; never conflate with adult Mavrica reference point.",
+      "numeric_venue_candidate": {
+        "name": "Športni park Žalec / Športni center Žalec (complex, not athletics start)",
+        "type": "OSM_WAY_1416346175_SPORTS_CENTRE_REFERENCE",
+        "numeric_source_url": "https://mapcarta.com/W1416346175",
+        "source_osm_object_url": "https://www.openstreetmap.org/way/1416346175",
+        "observed_source_page_points": [
+          {
+            "context": "live opened map page observed 2026-11-13",
+            "latitude": 46.25526,
+            "longitude": 15.16313
+          },
+          {
+            "context": "indexed search result snippet observed 2026-11-13",
+            "latitude": 46.25526,
+            "longitude": 15.16327
+          }
+        ],
+        "coordinate_for_runtime": null,
+        "official_2026_27_organizer_start_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+        "official_stadium_identity_source_url": "https://www.atletski-klub-zalec.si/",
+        "assessment": "Mapped OSM recreation-ground/sports-centre polygon is the SPORT COMPLEX, not an identified athletics track or youth start line. Two cached views of the same source disagree by about 11 metres in longitude; do not choose one silently or increase approved coverage. Current 2026/27 organizer says children run on the athletics stadium. This is not the adult Mavrica start.",
+        "legal_reuse_status": "OSM_ODBL_ATTRIBUTION_AND_DERIVED_DATABASE_OBLIGATIONS_NOT_EVALUATED_FOR_PUBLIC_INDEX",
+        "source_checked_on": "2026-11-13",
+        "review_status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false,
+        "verified_athletics_track_coordinate": false,
+        "verified_exact_child_start_line": false
+      }
     },
     {
       "venue_id": "kztl-2026-27-kalisce",
@@ -193,5 +238,38 @@
     "new_exact_start_approval_count": 0,
     "status": "REVIEW_ONLY",
     "source_provenance_note": "The official 2026/27 KZTL document identifies lower gondola station; the numeric point is from independent Hribi.net hiking trailhead, not organiser GPS; legal reuse unresolved."
+  },
+  "sztl_2026_27_followup": {
+    "checked_on": "2026-11-13",
+    "current_season": "2026/27",
+    "master_edition_keys": [
+      "2026!307",
+      "2026!309",
+      "2026!310",
+      "2027!51",
+      "2027!52",
+      "2027!53",
+      "2027!54",
+      "2027!55",
+      "2027!56"
+    ],
+    "actual_future_edition_count": 9,
+    "adult_start_venue": "rebuilt pedestrian overpass Mavrica, approach/start line not geocoded",
+    "child_start_venue": "athletics stadium Žalec, not the sports complex centroid",
+    "coordinate_reuse_blockers": [
+      "new bridge physical approach / start line not geocoded",
+      "sports complex OSM centroid not stadium racing line",
+      "ODbL public reuse compliance unresolved"
+    ],
+    "numeric_venue_candidates_observed": 1,
+    "exact_start_coordinate_approvals_added": 0,
+    "runtime_public_approvals_added": 0,
+    "master_modified": false,
+    "warning": "Two separate starts for each of 9 editions; do not map both roles to an arbitrary Žalec point. Never rely on unbuilt Ponting competition design render as a 2026 bridge map.",
+    "source_links": [
+      "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "https://www.gov.si/novice/2025-10-17-popolna-zapora-regionalne-ceste-pri-zalcu/",
+      "https://mapcarta.com/W1416346175"
+    ]
   }
 }

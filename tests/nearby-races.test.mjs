@@ -1435,3 +1435,37 @@ test('DEV-056 Krvavec 2026/27 reference is a lower-station REVIEW, never mountai
  assert.equal(j.venue_profiles.length,6);
  assert.equal(j.venue_profiles.filter(x=>x.coordinates!==null).length,0);
 });
+
+
+test('DEV-056 SZTL 2026/27 new Mavrica bridge and distinct stadium candidate stay unapproved', () => {
+ const j=JSON.parse(readFileSync(new URL('../research/dev056-repeated-start-venues.review.json',import.meta.url),'utf8'));
+ const keys=['2026!307','2026!309','2026!310','2027!51','2027!52','2027!53','2027!54','2027!55','2027!56'];
+ const a=j.venue_profiles.find(r=>r.venue_id==='sztl-2026-27-mavrica-adult');
+ const b=j.venue_profiles.find(r=>r.venue_id==='sztl-2026-27-zalec-stadium-youth');
+ assert.deepEqual(a.edition_keys,keys);
+ assert.deepEqual(b.edition_keys,keys);
+ assert.deepEqual(j.sztl_2026_27_followup.master_edition_keys,keys);
+ assert.equal(j.sztl_2026_27_followup.actual_future_edition_count,9);
+ assert.equal(a.reconstruction_review.actual_opening_date,'2026-02-02');
+ assert.equal(a.reconstruction_review.official_numeric_start_available,false);
+ assert.equal(a.reconstruction_review.reusable_wgs84_source_confirmed,false);
+ assert.equal(a.reconstruction_review.coordinate,null);
+ assert.match(a.reconstruction_review.review_status,/^HOLD_/);
+ assert.match(a.reconstruction_review.historic_design_not_as_built_url,/ponting/);
+ assert.deepEqual(b.numeric_venue_candidate.observed_source_page_points.map(p=>[p.latitude,p.longitude]),
+   [[46.25526,15.16313],[46.25526,15.16327]]);
+ assert.equal(b.numeric_venue_candidate.coordinate_for_runtime,null);
+ assert.match(b.numeric_venue_candidate.type,/SPORTS_CENTRE_REFERENCE/);
+ assert.match(b.numeric_venue_candidate.legal_reuse_status,/ODBL/);
+ assert.equal(b.numeric_venue_candidate.verified_athletics_track_coordinate,false);
+ assert.equal(b.numeric_venue_candidate.verified_exact_child_start_line,false);
+ for (const v of [a,b]) {
+   assert.equal(v.coordinates,null);
+   assert.equal(v.approved_for_runtime,false);
+   if(v.numeric_venue_candidate) assert.equal(v.numeric_venue_candidate.approved_for_runtime,false);
+   if(v.reconstruction_review) assert.equal(v.reconstruction_review.approved_for_runtime,false);
+ }
+ assert.equal(j.venue_profiles.filter(v=>v.coordinates!==null||v.approved_for_runtime).length,0);
+ assert.equal(j.coverage.edition_with_approved_numeric_gps,0);
+ assert.equal(j.sztl_2026_27_followup.runtime_public_approvals_added,0);
+});
