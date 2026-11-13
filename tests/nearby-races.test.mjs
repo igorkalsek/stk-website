@@ -1154,3 +1154,56 @@ test('DEV-056 future full Master audit queue stays publication-inert and edition
   }
   for(const entry of historical.eligible_editions)assert.ok(ids.has(entry.edition_key));
 });
+
+
+test('DEV-056 enriched full-year per-edition geocoding review prevents false positives', () => {
+  const full=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+  assert.equal(full.kind,'DEV056_93_EDITION_FULL_GEOGRAPHIC_CANDIDATE_REVIEW_ONLY');
+  assert.equal(full.total_editions,93);
+  assert.equal(full.records.length,93);
+  assert.equal(full.new_runtime_approvals,0);
+  assert.equal(full.existing_staged_count,3);
+  assert.equal(full.public_runtime_enabled,0);
+  assert.ok(full.records.every(x=>x.outcome==='NO_NEW_APPROVAL_FROM_BULK_PROBE'));
+  assert.ok(full.records.every(x=>x.public_enabled===false));
+  assert.equal(full.records.filter(x=>x.approved_for_runtime).length,3);
+  const seen=new Set();
+  for(const row of full.records) {
+    assert.equal(row.edition_key, String(row.year)+'!'+String(row.master_row));
+    assert.ok(!seen.has(row.edition_key));
+    seen.add(row.edition_key);
+    assert.ok(row.expectedDate>='2026-11-13'&&row.expectedDate<='2027-12-31');
+    assert.ok(row.expectedTitle.trim() && row.masterPlace.trim());
+    if(row.geographic_candidate) {
+      const p=row.geographic_candidate;
+      assert.ok(/^Q[0-9]+$/.test(p.qid));
+      assert.equal(p.wikidata_url,'https://www.wikidata.org/wiki/'+p.qid);
+      assert.equal(p.license,'CC0');
+      assert.ok(isValidWgs84(p));
+      assert.equal(p.precision,'place-approximate');
+    }
+    if(row.source2026_27) {
+      assert.ok(/^https:\/\//.test(row.source2026_27.url));
+      assert.ok(row.source2026_27.type && row.source2026_27.text);
+    }
+    assert.ok(/^(REVIEW_|HOLD_|STAGED_)/.test(row.status));
+  }
+  assert.equal(seen.size,93);
+  const markovci=full.records.find(x=>x.edition_key==='2027!45');
+  assert.equal(markovci.masterPlace,'Markovci');
+  assert.equal(markovci.geographic_candidate.qid,'Q8009642');
+  assert.equal(markovci.status,'HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT');
+  assert.ok(markovci.geographic_candidate.coordinate_disambiguation.includes('Q749792'));
+  assert.notEqual(markovci.geographic_candidate.qid,'Q749792');
+  assert.equal(full.records.filter(x=>x.status==='HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC').length,15);
+  assert.equal(full.records.filter(x=>x.status==='HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC').length,9);
+  const lokavec=full.records.find(x=>x.edition_key==='2026!251');
+  assert.equal(lokavec.geographic_candidate.qid,'Q2736866');
+  assert.equal(lokavec.source2026_27.type,'START_VENUE_2026');
+  const sztl=full.records.find(x=>x.edition_key==='2027!56');
+  assert.match(sztl.source2026_27.text,/adult|Adult/);
+  const karst=full.records.find(x=>x.edition_key==='2027!19');
+  assert.equal(karst.geographic_candidate.qid,'Q554106');
+  assert.equal(karst.approved_for_runtime,true);
+  assert.equal(karst.public_enabled,false);
+});
