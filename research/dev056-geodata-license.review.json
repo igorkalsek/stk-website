@@ -1,0 +1,203 @@
+{
+  "project": "STK DEV-056",
+  "kind": "NON_RUNTIME_PROVENANCE_AND_LICENSE_AUDIT",
+  "checked_on": "2026-11-13",
+  "period": {
+    "from_inclusive": "2026-11-13",
+    "to_exclusive": "2027-05-12",
+    "days": 180
+  },
+  "review_only": true,
+  "public_index_approved": false,
+  "activation_forbidden": true,
+  "source_files": [
+    "research/dev056-approximate-pilot.review.json",
+    "research/dev056-kztl-place-pilot.review.json",
+    "research/dev056-remaining-places.review.json"
+  ],
+  "counts": {
+    "sample_eligible_editions": 59,
+    "offline_candidate_editions": 53,
+    "without_candidate": 6,
+    "source_domains": 10,
+    "gurs_cc_by_4_0_source_editions": 20,
+    "geonames_cc_attribution_source_editions": 2,
+    "rights_unknown_or_secondary_source_editions": 31,
+    "rights_fully_cleared_for_runtime": 0,
+    "approved_runtime": 0
+  },
+  "verified_license_notes": [
+    {
+      "publisher": "GURS",
+      "scheme": "CC BY 4.0",
+      "link": "https://www.e-prostor.gov.si/en/access-to-geodetic-data/",
+      "conclusion": "Commercial and noncommercial reuse permitted with explicit source and dataset type and date/state attribution. Original record DATUM_SYS and the OPSI metadata update are not proven to be dataset snapshot dates."
+    },
+    {
+      "publisher": "GeoNames",
+      "scheme": "Creative Commons Attribution",
+      "link": "https://www.geonames.org/about.html",
+      "conclusion": "GeoNames states its geographical database is reusable under a Creative Commons attribution license. The 2 source entries are generic search pages rather than unique feature IDs; geographic identity has not been independently vetted."
+    },
+    {
+      "publisher": "Mapcarta and OSM data",
+      "scheme": "MIXED_UNRESOLVED",
+      "link": "https://mapcarta.com/About_Mapcarta",
+      "conclusion": "Mapcarta credits open data from OSM and other sources; its reuse instructions concern map images and underlying OSM/map tiles. No blanket coordinate-copy right asserted for STK. Confirm original source/ODbL attribution or replace with GURS."
+    }
+  ],
+  "rules": [
+    "Edition counts are not unique physical point counts: nine SZTL race editions share a single Žalec GURS feature, and KZTL reuses four documented place references across 15 races.",
+    "License identified does NOT imply that a reviewed coordinate is suitable as an exact start, correctly disambiguated, current or approved for public use.",
+    "All 53 source fixtures have reviewStatus=review and approved_for_runtime=false; do not flip flags in batch.",
+    "Require provenance, legal attribution/permission, dataset state/date where GURS requires it, start-vs-venue distinction and Master edition identity before any public activation.",
+    "Official organizer pages prove event/season information, not necessarily permission to redistribute third-party cartographic data.",
+    "Research-only flags and source status remain immutable; public 2027 Wings city correction in Master does not itself approve location coordinates.",
+    "Do not assert complete radius coverage for 53/59 candidates: six unlocated and 31 unresolved source-rights editions remain."
+  ],
+  "domains": [
+    {
+      "source_domain": "ipi.eprostor.gov.si",
+      "edition_count": 20,
+      "edition_keys": [
+        "2026!260",
+        "2026!264",
+        "2026!267",
+        "2026!268",
+        "2026!294",
+        "2026!303",
+        "2026!307",
+        "2026!309",
+        "2026!310",
+        "2027!19",
+        "2027!22",
+        "2027!23",
+        "2027!43",
+        "2027!51",
+        "2027!52",
+        "2027!53",
+        "2027!54",
+        "2027!55",
+        "2027!56",
+        "2027!57"
+      ],
+      "rights_status": "OPEN_LICENSE_IDENTIFIED_GURS",
+      "rights_evidence": "https://www.e-prostor.gov.si/en/access-to-geodetic-data/",
+      "action": "Document exact RPE dataset state/date, GURS type + CC BY attribution, then check each edition-to-settlement link."
+    },
+    {
+      "source_domain": "www.hribi.net",
+      "edition_count": 12,
+      "edition_keys": [
+        "2026!261",
+        "2026!315",
+        "2027!64",
+        "2026!313",
+        "2027!61",
+        "2027!66",
+        "2026!312",
+        "2027!60",
+        "2027!65",
+        "2026!251",
+        "2026!275",
+        "2027!18"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "javnipodatki.si",
+      "edition_count": 6,
+      "edition_keys": [
+        "2026!269",
+        "2027!62",
+        "2027!67",
+        "2026!308",
+        "2027!6",
+        "2027!34"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "mapcarta.com",
+      "edition_count": 5,
+      "edition_keys": [
+        "2026!263",
+        "2026!305",
+        "2027!2",
+        "2027!7",
+        "2027!44"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "mapzs.pzs.si",
+      "edition_count": 3,
+      "edition_keys": [
+        "2026!311",
+        "2026!314",
+        "2027!63"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.geonames.org",
+      "edition_count": 2,
+      "edition_keys": [
+        "2026!262",
+        "2026!270"
+      ],
+      "rights_status": "OPEN_LICENSE_IDENTIFIED_GEONAMES",
+      "rights_evidence": "https://www.geonames.org/about.html",
+      "action": "CC attribution published; verify the actual feature ID and location/municipality before reuse."
+    },
+    {
+      "source_domain": "www.etno-muzej.si",
+      "edition_count": 2,
+      "edition_keys": [
+        "2026!271",
+        "2027!45"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "skd-hrusevica.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2026!266"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.terme-snovik.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2026!265"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.yoys.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2027!32"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    }
+  ]
+}

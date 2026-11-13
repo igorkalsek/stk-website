@@ -614,3 +614,32 @@ test('SL/EN copy indicates approximate distances, missing editions and 10 km unc
   assert.equal(nearbyDiscoveryCopy('sl',exact,10).approximateNotice,null);
   assert.equal(nearbyDiscoveryCopy('en',exact,10).coverageNotice,null);
 });
+
+test('license audit requires attribution and leaves every candidate non-runtime', () => {
+  const a=JSON.parse(readFileSync(new URL('../research/dev056-geodata-license.review.json',import.meta.url),'utf8'));
+  assert.equal(a.kind,'NON_RUNTIME_PROVENANCE_AND_LICENSE_AUDIT');
+  assert.equal(a.public_index_approved,false);
+  assert.equal(a.activation_forbidden,true);
+  assert.equal(a.counts.offline_candidate_editions,53);
+  assert.equal(a.counts.sample_eligible_editions,59);
+  assert.equal(a.counts.gurs_cc_by_4_0_source_editions,20);
+  assert.equal(a.counts.geonames_cc_attribution_source_editions,2);
+  assert.equal(a.counts.rights_unknown_or_secondary_source_editions,31);
+  assert.equal(a.counts.approved_runtime,0);
+  assert.equal(a.counts.rights_fully_cleared_for_runtime,0);
+  const sum=a.domains.reduce((n,x)=>n+x.edition_count,0);
+  assert.equal(sum,53);
+  const sets=a.domains.flatMap(x=>x.edition_keys);
+  assert.equal(new Set(sets).size,53);
+  assert.ok(a.domains.every(x=>x.edition_count===x.edition_keys.length));
+  const gurs=a.domains.find(x=>x.source_domain==='ipi.eprostor.gov.si');
+  assert.equal(gurs.rights_status,'OPEN_LICENSE_IDENTIFIED_GURS');
+  assert.ok(gurs.rights_evidence.startsWith('https://www.e-prostor.gov.si/'));
+  assert.ok(a.verified_license_notes.some(x=>x.publisher==='GURS'&&x.conclusion.includes('date/state')));
+  const files=a.source_files.map(x=>JSON.parse(readFileSync(new URL('../'+x,import.meta.url),'utf8')));
+  const records=files.flatMap(x=>x.entries);
+  assert.equal(records.length,53);
+  assert.ok(records.every(x=>x.reviewStatus==='review'&&x.approved_for_runtime===false));
+  const events=records.map(x=>event(x.year,x.masterRow));
+  assert.equal(summarizeNearbyCoverage(events,records).locatedEditions,0);
+});
