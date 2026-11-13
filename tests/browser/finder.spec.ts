@@ -1099,7 +1099,8 @@ test('nearby controls remain unavailable in public SL/EN Finder even with URL fl
     const panel=page.locator('[data-nearby-panel]');
     await expect(panel).toHaveCount(1);
     await expect(panel).toBeHidden();
-    await expect(panel.locator('[data-nearby-fields]')).toBeDisabled();
+    await expect(panel.locator('[data-nearby-fields]')).toHaveAttribute('disabled', '');
+    await expect(panel.locator('[data-nearby-apply]')).toBeDisabled();
     await expect(panel.locator('[data-nearby-radius] option')).toHaveText(['10 km','25 km','50 km','100 km']);
     await expect(page.locator('[data-search-results]')).toBeVisible();
     await expect(page).not.toHaveURL(/nearby=1.*year=/);
