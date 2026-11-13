@@ -437,5 +437,61 @@
     "2027!8 UTVV and 2027!3 Parenzana Ultra Trail are multi-start and not suitable for a single-point reference.",
     "2027!9 Wings for Life Slovenia has no fixed city start.",
     "GURS settlement candidates require authoritative temporal state/date citation not shown on live OGC features."
-  ]
+  ],
+  "review_qa_checks": [
+    {
+      "place_key": "kriz-sezana",
+      "edition_key": "2027!19",
+      "cross_check": "2027 organizer venue Vaški dom Križ 2; independent AED registry coordinates identify that same building, but AED coordinates are NOT copied to runtime.",
+      "independent_url": "https://www.dsz.si/index.php/sl/aed/949-aed-vaski-dom-kriz",
+      "distance_reference_km": 0.5,
+      "reuse_independent_coords": false,
+      "decision": "P0_FIRST_VENUE_REVIEW_APPROPRIATE; do not call town reference exact start."
+    },
+    {
+      "place_key": "sezana",
+      "edition_key": "2027!22",
+      "cross_check": "Official 2027 starts are parking in front of football stadium. Wikidata city point is about 1.4 km from Wikidata stadium item; alternative stadium sources differ 0.41 km. City-level point is too coarse for a close 10 km boundary unless conspicuously labeled.",
+      "independent_url": "https://www.wikidata.org/wiki/Q16632802",
+      "wikipedia_comparison_url": "https://en.wikipedia.org/wiki/Rajko_%C5%A0tolfa_Stadium",
+      "distance_reference_km": 1.4,
+      "venue_sources_disagree_km": 0.41,
+      "decision": "P0_DATE_VENUE_VERIFIED_POINT_NOT_VERIFIED; do not swap in stadium coordinates as race start."
+    },
+    {
+      "place_key": "markovci",
+      "edition_key": "2027!45",
+      "cross_check": "Wikidata Q8009642 carries multiple coordinate claims with ~2.25 km separation; prior selection is one claim not a reconciled reviewed point. No edition-specific numeric start.",
+      "independent_url": "https://www.wikidata.org/wiki/Q8009642",
+      "coordinate_claim_divergence_km": 2.25,
+      "decision": "HOLD_CONFLICTING_COORDINATE_CLAIMS; no runtime approval."
+    },
+    {
+      "place_key": "zalec",
+      "edition_key": "2027!51–56;2026!307/309/310",
+      "cross_check": "SZTL adult and child starts are at two separate named sites. One town centroid is at most a broad vicinity hint, not either start point.",
+      "independent_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "decision": "HOLD_MULTISTART_DISTANCE_BOUNDARY_REVIEW"
+    },
+    {
+      "place_key": "UNMAPPED_KZTL",
+      "edition_key": "2026/27 KZTL weekly repeats",
+      "cross_check": "Actual starts described near Mače, beneath Jošt, lower Krvavec gondola etc. Event title sometimes names uphill FINISH, not START; never geocode finish name as a start pin.",
+      "independent_url": "https://gorenjskiglas.si/aktualno/tekaska-liga-ki-zivi-ze-dvajset-let-418076/",
+      "decision": "HOLD_UNTIL_GROUNDED_START_REFERENCE_OR_OPENLY_COARSE_PROXIMITY"
+    }
+  ],
+  "quality_summary": {
+    "lead_candidate": "2027!19 Križ",
+    "has_2027_official_venue": true,
+    "source_CC0_settlement": true,
+    "independent_venue_distance_check_km": 0.5,
+    "still_not_approved_for_runtime": true,
+    "coarse_city_candidate": "2027!22 Sežana",
+    "stadium_city_point_displacement_km": 1.4,
+    "stadium_coordinate_source_disagreement_km": 0.41,
+    "point_ambiguity": "Wikidata Markovci Q8009642 has divergent P625 values; blocked",
+    "multi_start": "SZTL has distinct child/adult starting places; KZTL names can denote finish rather than start.",
+    "policy": "No production activation while location-level source quality is not signed off; straight-line/approximate/partial warnings remain mandatory."
+  }
 }

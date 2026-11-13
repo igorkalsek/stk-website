@@ -1029,3 +1029,47 @@ test('DEV-056 first production Wikidata CC0 candidate set remains REVIEW-only an
   assert.equal(coverage.locatedEditions,0);
   assert.equal(coverage.unlocatedEditionKeys.length,16);
 });
+
+
+test('DEV-056 real edition pilot dry run uses one explicitly simulated reviewed place, never publishes source fixture', () => {
+  const fixture=JSON.parse(readFileSync(new URL('../research/dev056-production-candidates.review.json',import.meta.url),'utf8'));
+  const pop=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  const candidate=fixture.edition_candidates.find(x=>x.edition_key==='2027!19');
+  const place=fixture.places.find(x=>x.place_key==='kriz-sezana');
+  assert.ok(candidate&&place);
+  assert.equal(candidate.review_status,'REVIEW');
+  assert.equal(candidate.approved_for_runtime,false);
+  assert.equal(place.approved_for_runtime,false);
+  assert.equal(fixture.review_qa_checks.length,5);
+  const full=pop.eligible_editions.map(e=>event(String(e.year),e.master_row));
+  assert.equal(full.length,59);
+  assert.ok(full.some(x=>editionKey(x)==='2027!19'));
+  const offlineOnly={year:'2027',masterRow:19,
+    latitude:place.latitude,longitude:place.longitude,
+    precision:'place-approximate',sourceKind:'documented-place-reference',
+    sourceUrl:place.wikidata_url,sourceCheckedOn:place.checked_on,
+    editionEvidenceUrl:candidate.edition_evidence_url,sourceEditionYear:2027,
+    referenceLocationVerified:true,reviewStatus:'approved',approved_for_runtime:true
+  };
+  // Explicitly synthesized approval is local to this test only. No runtime index or
+  // JSON fixture state can be changed as a consequence of calling these functions.
+  const origin={latitude:place.latitude,longitude:place.longitude};
+  const result=prepareNearbyFinderView(full,full,[offlineOnly],origin,10,'sl');
+  assert.equal(result.status,'partial');
+  assert.deepEqual(result.matches.map(m=>editionKey(m.event)),['2027!19']);
+  assert.equal(result.matches[0].approximate,true);
+  assert.equal(result.matches[0].distanceKm,0);
+  assert.equal(result.coverage.approximatePlaceEditions,1);
+  assert.equal(result.coverage.exactStartEditions,0);
+  assert.equal(result.coverage.unlocatedEditionKeys.length,58);
+  assert.match(result.copy.approximateNotice,/Približna/);
+  assert.match(result.copy.coverageNotice,/Za 58 od 59 tekov/);
+  assert.match(result.copy.radiusNotice,/10 km/);
+  const wrongEdition={...offlineOnly,sourceEditionYear:2026};
+  const rejected=prepareNearbyFinderView(full,full,[wrongEdition],origin,10,'sl');
+  assert.equal(rejected.matches.length,0);
+  assert.equal(rejected.coverage.locatedEditions,0);
+  // Even after simulation, all versioned source records remain unapproved.
+  assert.ok(fixture.edition_candidates.every(e=>e.approved_for_runtime===false));
+  assert.ok(fixture.places.every(e=>e.approved_for_runtime===false));
+});
