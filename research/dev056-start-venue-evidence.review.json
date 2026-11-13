@@ -1,6 +1,6 @@
 {
   "project": "STK DEV-056",
-  "evidence_checked_on": "2026-11-12",
+  "evidence_checked_on": "2026-11-13",
   "purpose": "OFFICIAL_2026_2027_EDITION_VENUE_RESEARCH_NOT_GEOCOORDINATES",
   "status": "REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION",
   "runtime_activation": false,
@@ -141,30 +141,94 @@
       "master_date": "2027-05-28",
       "master_name": "Kočevsko Outdoor Festival 2027",
       "role": "multiple_distinct_start_locations",
-      "venue_text": "Rudniško jezero (multiple routes); Kočevski Rog (30 km); MTB Trail center Kočevje (Friday vertical)",
-      "official_year_evidence_url": "https://kocevsko-outdoor.si/informacije/faq/",
-      "confirmation": "Official 2027 FAQ identifies separate start areas by distance, so a single 'race start' is misleading.",
+      "venue_text": "2027 route pages: 5/10/15/25/50 km Rudniško jezero; 35 km Wolf Trail Kočevski Rog (Skavtski dom); Friday vertical MTB Trail center Kočevje. These are venue labels, not GPS start points.",
+      "official_year_evidence_url": "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+      "confirmation": "Organizer's explicit 2027 route revision confirms 5/10/15/25/35/50 km. Direct 2027 distance pages put 35 km at Kočevski Rog / Skavtski dom, 50 km and 5/10/15/25 km at Rudniško jezero; Friday vertical starts in MTB Trail center. GPS coordinates of exact start lines remain unverified.",
       "review_status": "REVIEW",
       "approved_for_runtime": false,
       "start_coordinate": null,
       "per_distance_start_places": [
         {
-          "distance": "5, 10, 15, 60 km",
-          "venue": "Rudniško jezero / Kočevsko jezero"
+          "distance": "5, 10, 15, 25, 50 km",
+          "venue": "Rudniško jezero / Kočevsko jezero, Kočevje",
+          "evidence_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+          "note": "Each route should retain its own official 2027 venue evidence; no exact GPS."
         },
         {
-          "distance": "30 km",
-          "venue": "Kočevski Rog"
+          "distance": "35 km Wolf Trail",
+          "venue": "Kočevski Rog, Skavtski dom",
+          "evidence_url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+          "note": "Bus departs Kočevje at 07:30; never equate bus departure with race start."
         },
         {
           "distance": "Friday vertical",
-          "venue": "MTB Trail center Kočevje"
+          "venue": "MTB Trail center Kočevje",
+          "evidence_url": "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+          "note": "Separate festival discipline; not included in Master main-distance set."
         }
       ],
-      "source_conflict_review": "Master describes 35 and 50 km as part of its main event, while the current official FAQ and program use 30 and 60 km. This is a data-conflict/REVIEW signal, not an authorized Master change."
+      "source_conflict_review": "REVIEW: 2027 route revision and distance pages support Master 5/10/15/25/35/50; FAQ and combined program retain obsolete 30/60, and some pricing footnotes still mention 30. This is stale organizer copy, not evidence to change Master. Exact edition-bound GPS starts still missing; do not represent the entire multi-start festival by one point.",
+      "official_2027_evidence_urls": [
+        "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+        "https://kocevsko-outdoor.si/prijava/",
+        "https://kocevsko-outdoor.si/razdalje/35-km/",
+        "https://kocevsko-outdoor.si/razdalje/50-km/",
+        "https://kocevsko-outdoor.si/razdalje/25-km/",
+        "https://kocevsko-outdoor.si/razdalje/15-km/",
+        "https://kocevsko-outdoor.si/razdalje/10-km/",
+        "https://kocevsko-outdoor.si/razdalje/5-km/"
+      ]
     }
   ],
   "official_gps_records": 1,
   "start_or_venue_text_records": 10,
-  "organizer_contact_or_review_needed": true
+  "organizer_contact_or_review_needed": true,
+  "followup_review_records_2026_11_13": [
+    {
+      "edition_key": "2027!2",
+      "master_name": "Knap Trail 2027 – Slovenski zimski trail",
+      "role": "town_only_start_venue_unconfirmed",
+      "venue_text": "Trbovlje for 16, 30 and 50 km; bib pickup Dom Svobode is not a proven start",
+      "official_year_evidence_url": "https://www.knaptrail.si/razpis-tekmovanja-2027/",
+      "confirmation": "Edition-specific schedule and town, plus route GPX links, but no official numeric GPS start line in reviewed text.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!13",
+      "master_name": "Tek štirih srčnih mož 2027",
+      "role": "village_only_start_venue_unconfirmed",
+      "venue_text": "Bohinj – Ribčev Laz; finish at parkirišče Vegelj; starts not specified more precisely",
+      "official_year_evidence_url": "https://www.tek4src.si/razpis-tek-stirih-srcnih-moz-27/",
+      "confirmation": "2027 organizer rules confirm dates/distances and finish venue, but no exact start point/GPS; finish must not be substituted for start.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!20",
+      "master_name": "K24 Ultra Trail 2027",
+      "role": "discipline_start_venue_no_coordinates",
+      "venue_text": "10 km discipline: Kulturni dom Črna na Koroškem; other festival courses require separate verification",
+      "official_year_evidence_url": "https://k24trail.si/proge/k24-trail-10km/",
+      "confirmation": "Organizer's 2027 10 km page explicitly says start at Cultural Centre; GPX download is linked, but no organizer-published numeric start-line GPS checked.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!21",
+      "master_name": "Podbrdo Trail Running Festival 2027",
+      "role": "multiple_discipline_start_venues_no_coordinates",
+      "venue_text": "Adult UTP/GM4O/GT/RT starts in front of TIC, old village centre; Mini GM4O/Tek za palačinko at Bazen festival venue",
+      "official_year_evidence_url": "https://www.ptrf.si/program/",
+      "confirmation": "2027 organizer program distinguishes adult and children's start venues; no exact GPS of race lines in reviewed source.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    }
+  ],
+  "followup_review_text_only_count": 4,
+  "followup_review_numeric_gps_count": 0
 }
