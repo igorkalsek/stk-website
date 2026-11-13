@@ -14,7 +14,7 @@
   "public_runtime_enabled": 0,
   "region_coverage_before_release": "NOT_ASSESSED_FOR_PUBLICATION",
   "summaries": {
-    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 35,
+    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 32,
     "REVIEW_YEAR_VENUE_TEXT_PROVEN_CC0_APPROX_PENDING_DISPLACEMENT": 6,
     "HOLD_MULTI_P625_COORDINATES": 4,
     "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
@@ -22,12 +22,17 @@
     "HOLD_COARSE_P625_PRECISION": 2,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
     "HOLD_NO_DISAMBIGUATED_CC0_POINT": 1,
-    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 11,
-    "REVIEW_VENUE_SPECIFIC_SUBPLACE": 3,
-    "HOLD_CITY_POINT_MAY_MISPLACE_LAKE_START": 1,
+    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 10,
+    "HOLD_MULTISTART_CROSSBORDER_OFFICIAL_2027_VENUE_TEXT": 1,
+    "REVIEW_VENUE_SPECIFIC_SUBPLACE": 1,
+    "REVIEW_OFFICIAL_2027_LAKESIDE_START_GEOCODE_MISSING": 1,
     "HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT": 1,
+    "REVIEW_OFFICIAL_2027_RIVERBANK_START_GEOCODE_MISSING": 2,
+    "HOLD_OFFICIAL_2027_MULTISTART_AND_DISTANCE_CONTENT_CONFLICT": 1,
     "REVIEW_VENUE_AND_ROUTE_SPECIFIC_START": 1,
-    "REVIEW_CITY_CENTER_NOT_GRAJSKI_TRG": 1
+    "REVIEW_OFFICIAL_2027_CASTLE_SQUARE_START_GEOCODE_MISSING": 1,
+    "HOLD_OFFICIAL_2027_TRAIL_MARIBOR_MULTISTART_GEOCODE_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING": 1
   },
   "warnings": [
     "Markovci name returned Q749792 in municipality Šalovci; false positive. Correct Q8009642 has conflicting coordinates and is blocked.",
@@ -1501,14 +1506,28 @@
       "master_notice_url": "https://fatburn.si/parenzana-marathon/",
       "audit_route": "COMPOUND_OR_MULTISTART_SITE_REVIEW",
       "geographic_candidate": null,
-      "source2026_27": null,
-      "status": "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT",
+      "source2026_27": {
+        "url": "https://fatburn.si/tek-2/",
+        "type": "MULTIPLE_STARTS_2027",
+        "text": "Organizer 2027: starts at Bašanija, Kempinski/Crveni vrh, Kanegra and Croatia–Slovenia border by race distance; finish Kamp Lucija Portorož. No single starting point."
+      },
+      "status": "HOLD_MULTISTART_CROSSBORDER_OFFICIAL_2027_VENUE_TEXT",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": false,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Bašanija / Kempinski / Crveni vrh / Kanegra / CRO-SLO border",
+          "role": "distance-specific starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!43",
@@ -1679,14 +1698,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "HOLD_CITY_POINT_MAY_MISPLACE_LAKE_START",
+      "source2026_27": {
+        "url": "https://fatburn.si/tek-2/",
+        "type": "CURRENT_YEAR_START_SITE",
+        "text": "Official 2027 event 28 March: Celje, Šmartinsko jezero, Brkati som is stated start/finish. Do not use Celje city coordinate as exact site."
+      },
+      "status": "REVIEW_OFFICIAL_2027_LAKESIDE_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Brkati som, Šmartinsko jezero",
+          "role": "all advertised starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!57",
@@ -1930,14 +1963,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_VENUE_SPECIFIC_SUBPLACE",
+      "source2026_27": {
+        "url": "https://trailcelje.eu/",
+        "type": "CURRENT_YEAR_START_SITE",
+        "text": "Organizer explicitly says all 4/9/15/21/35/50 km 2027 start at SAVINJSKO NABREŽJE CELJE; WGS84 for riverbank spot not yet verified."
+      },
+      "status": "REVIEW_OFFICIAL_2027_RIVERBANK_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Savinjsko nabrežje Celje",
+          "role": "all distance starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!11",
@@ -1992,14 +2039,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_VENUE_SPECIFIC_SUBPLACE",
+      "source2026_27": {
+        "url": "https://fatburn.si/tek-2/",
+        "type": "CURRENT_YEAR_START_SITE",
+        "text": "2027 Nočni tek Celje 5/10 km starts and finishes Savinjsko nabrežje, 15 May 20:00; numerical start coordinate still unverified."
+      },
+      "status": "REVIEW_OFFICIAL_2027_RIVERBANK_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Savinjsko nabrežje Celje",
+          "role": "5km/10km starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!27",
@@ -2079,14 +2140,49 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://kocevsko-outdoor.si/program/",
+        "type": "MULTI_START_AND_CONFLICTING_OFFICIAL_YEAR_PAGES",
+        "text": "2027 program shows Vertikal start MTB Trail center Kočevje, Wolf start Kočevski Rog, shorter trails Rudniško jezero, hiking Reško jezero. Newer 2027 description gives Wolf 35km and Bear 50km, while older official FAQ/program refer to 30km and 60km. Do not assign single exact start or silently reconcile race distances."
+      },
+      "status": "HOLD_OFFICIAL_2027_MULTISTART_AND_DISTANCE_CONTENT_CONFLICT",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "MTB Trail center Kočevje",
+          "role": "vertical start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Kočevski Rog",
+          "role": "Wolf Trail start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Rudniško jezero Kočevje",
+          "role": "short trails and Bear (official FAQ, conflicting distances)",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Reško jezero",
+          "role": "hiking start only",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!33",
@@ -2224,14 +2320,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CITY_CENTER_NOT_GRAJSKI_TRG",
+      "source2026_27": {
+        "url": "https://fatburn.si/tek-2/",
+        "type": "CURRENT_YEAR_START_SITE",
+        "text": "2027 Nočni tek Maribor 5/10 km starts and finishes Grajski trg, 12 June 20:00. Wikidata Maribor city point is not exact Grajski trg."
+      },
+      "status": "REVIEW_OFFICIAL_2027_CASTLE_SQUARE_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Grajski trg, Maribor",
+          "role": "5km/10km starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!36",
@@ -2272,14 +2382,35 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://trailmaribor.eu/program/",
+        "type": "MULTI_START_ROLES_2027",
+        "text": "Official 2027 8km and 15km start Grajski trg, while 30/50/100km start Arena pod Pohorjem; weekend runs 11–13 June. Maribor city centroid cannot represent both starting areas."
+      },
+      "status": "HOLD_OFFICIAL_2027_TRAIL_MARIBOR_MULTISTART_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "Grajski trg Maribor",
+          "role": "8km/15km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Arena pod Pohorjem",
+          "role": "30km/50km/100km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!49",
@@ -2330,14 +2461,35 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://www.ptrf.si/program/",
+        "type": "MULTIPLE_START_ROLES_2027",
+        "text": "2027 adult 100+/70+/40+/20+/10+ km event starts before TIC Podbrdo old village center, while Mini GM4O and Tek za palačinko start at Bazen. Exact coordinates of these two event sites are not verified."
+      },
+      "status": "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "start_sites_checked": [
+        {
+          "name": "TIC Podbrdo",
+          "role": "adult long/short trails",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Bazen Podbrdo",
+          "role": "mini and children",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ]
     },
     {
       "edition_key": "2027!24",
@@ -2873,5 +3025,24 @@
     "three_kztl_rounds_each_route": true,
     "two_sztl_roles_each_edition": true,
     "numeric_geometry_missing": true
+  },
+  "official_2027_venue_review": {
+    "updated_on": "2026-11-13",
+    "edition_count": 8,
+    "source_policy": "Official organizer URLs current year; if old and new year 2027 pages disagree, HOLD and request same-year clarification",
+    "multistart_keys": [
+      "2027!5",
+      "2027!17",
+      "2027!21",
+      "2027!38"
+    ],
+    "venue_keys": [
+      "2027!6",
+      "2027!10",
+      "2027!14",
+      "2027!16"
+    ],
+    "master_change_note": "Do not overwrite Master distances from this research-only audit; 2027!17 official 2027 page itself contains internally stale FAQ distances 30/60 vs newer 35/50; separate Master review required.",
+    "publishable_numeric_new_locations": 0
   }
 }

@@ -1246,3 +1246,30 @@ test('DEV-056 official 2026/27 winter league starts: 24 editions, only 6 physica
  assert.equal(qa.records.filter(x=>x.approved_for_runtime).length,3);
  assert.equal(qa.records.filter(x=>x.public_enabled).length,0);
 });
+
+
+test('DEV-056 edition-specific 2027 organizer start sites block mis-geocoding', () => {
+ const data=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ assert.equal(data.official_2027_venue_review.edition_count,8);
+ assert.equal(data.official_2027_venue_review.publishable_numeric_new_locations,0);
+ const byKey=new Map(data.records.map(x=>[x.edition_key,x]));
+ assert.equal(data.records.length,93);
+ for(const key of ['2027!5','2027!6','2027!10','2027!14','2027!16','2027!17','2027!21','2027!38']) {
+   const x=byKey.get(key);
+   assert.ok(x);
+   assert.equal(x.approved_for_runtime,false);
+   assert.equal(x.public_enabled,false);
+   assert.ok(/^https:\/\//.test(x.source2026_27.url));
+   assert.ok(x.status.startsWith('HOLD_')||x.status.startsWith('REVIEW_'));
+   assert.ok(x.start_sites_checked.length>=1);
+   assert.ok(x.start_sites_checked.every(s=>s.latitude===null&&s.longitude===null&&s.approved_for_runtime===false));
+   assert.equal(x.numeric_location_status,'NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES');
+ }
+ assert.equal(byKey.get('2027!38').start_sites_checked.length,2);
+ assert.equal(byKey.get('2027!21').start_sites_checked.length,2);
+ assert.equal(byKey.get('2027!17').start_sites_checked.length,4);
+ assert.match(byKey.get('2027!17').source2026_27.text,/35km and Bear 50km/);
+ assert.match(byKey.get('2027!38').source2026_27.text,/Grajski trg/);
+ assert.match(byKey.get('2027!10').source2026_27.text,/SAVINJSKO NABREŽJE/);
+ assert.equal(data.records.filter(x=>x.approved_for_runtime).length,3);
+});
