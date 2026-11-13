@@ -46,14 +46,17 @@ for(const scenario of scenarios) {
     const cards=page.locator('[data-search-results] .search-event-card');
     const panel=page.locator('[data-nearby-panel]');
     await expect(cards).toHaveCount(2);
-    await expect(panel).toBeVisible();
-    await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
-
+    // Mobile Finder collapses the filters with <details>. Open the visible
+    // parent first; a properly enabled child panel is not itself visible
+    // while its parent details remains closed.
+    await expect(panel).not.toHaveAttribute('hidden', '');
     if(scenario.width<600) {
       const details=page.locator('[data-mobile-filter-panel]');
       if(!(await details.evaluate((e:HTMLDetailsElement)=>e.open)))
         await details.locator(':scope > summary').click();
     }
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
     const lat=panel.locator('[data-nearby-latitude]');
     const lng=panel.locator('[data-nearby-longitude]');
     const radius=panel.locator('[data-nearby-radius]');
