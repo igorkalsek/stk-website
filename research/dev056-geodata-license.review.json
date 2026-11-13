@@ -1,0 +1,410 @@
+{
+  "project": "STK DEV-056",
+  "kind": "NON_RUNTIME_PROVENANCE_AND_LICENSE_AUDIT",
+  "checked_on": "2026-11-13",
+  "period": {
+    "from_inclusive": "2026-11-13",
+    "to_exclusive": "2027-05-12",
+    "days": 180
+  },
+  "review_only": true,
+  "public_index_approved": false,
+  "activation_forbidden": true,
+  "source_files": [
+    "research/dev056-approximate-pilot.review.json",
+    "research/dev056-kztl-place-pilot.review.json",
+    "research/dev056-remaining-places.review.json"
+  ],
+  "counts": {
+    "sample_eligible_editions": 59,
+    "offline_candidate_editions": 53,
+    "without_candidate": 6,
+    "source_domains": 10,
+    "gurs_cc_by_4_0_source_editions": 20,
+    "geonames_cc_attribution_source_editions": 2,
+    "rights_unknown_or_secondary_source_editions": 31,
+    "rights_fully_cleared_for_runtime": 0,
+    "approved_runtime": 0
+  },
+  "verified_license_notes": [
+    {
+      "publisher": "GURS",
+      "scheme": "CC BY 4.0",
+      "link": "https://www.e-prostor.gov.si/en/access-to-geodetic-data/",
+      "conclusion": "Commercial and noncommercial reuse permitted with explicit source and dataset type and date/state attribution. Original record DATUM_SYS and the OPSI metadata update are not proven to be dataset snapshot dates."
+    },
+    {
+      "publisher": "GeoNames",
+      "scheme": "Creative Commons Attribution",
+      "link": "https://www.geonames.org/about.html",
+      "conclusion": "GeoNames states its geographical database is reusable under a Creative Commons attribution license. The 2 source entries are generic search pages rather than unique feature IDs; geographic identity has not been independently vetted."
+    },
+    {
+      "publisher": "Mapcarta and OSM data",
+      "scheme": "MIXED_UNRESOLVED",
+      "link": "https://mapcarta.com/About_Mapcarta",
+      "conclusion": "Mapcarta credits open data from OSM and other sources; its reuse instructions concern map images and underlying OSM/map tiles. No blanket coordinate-copy right asserted for STK. Confirm original source/ODbL attribution or replace with GURS."
+    }
+  ],
+  "rules": [
+    "Edition counts are not unique physical point counts: nine SZTL race editions share a single Žalec GURS feature, and KZTL reuses four documented place references across 15 races.",
+    "License identified does NOT imply that a reviewed coordinate is suitable as an exact start, correctly disambiguated, current or approved for public use.",
+    "All 53 source fixtures have reviewStatus=review and approved_for_runtime=false; do not flip flags in batch.",
+    "Require provenance, legal attribution/permission, dataset state/date where GURS requires it, start-vs-venue distinction and Master edition identity before any public activation.",
+    "Official organizer pages prove event/season information, not necessarily permission to redistribute third-party cartographic data.",
+    "Research-only flags and source status remain immutable; public 2027 Wings city correction in Master does not itself approve location coordinates.",
+    "Do not assert complete radius coverage for 53/59 candidates: six unlocated and 31 unresolved source-rights editions remain."
+  ],
+  "domains": [
+    {
+      "source_domain": "ipi.eprostor.gov.si",
+      "edition_count": 20,
+      "edition_keys": [
+        "2026!260",
+        "2026!264",
+        "2026!267",
+        "2026!268",
+        "2026!294",
+        "2026!303",
+        "2026!307",
+        "2026!309",
+        "2026!310",
+        "2027!19",
+        "2027!22",
+        "2027!23",
+        "2027!43",
+        "2027!51",
+        "2027!52",
+        "2027!53",
+        "2027!54",
+        "2027!55",
+        "2027!56",
+        "2027!57"
+      ],
+      "rights_status": "OPEN_LICENSE_IDENTIFIED_GURS",
+      "rights_evidence": "https://www.e-prostor.gov.si/en/access-to-geodetic-data/",
+      "action": "Document exact RPE dataset state/date, GURS type + CC BY attribution, then check each edition-to-settlement link."
+    },
+    {
+      "source_domain": "www.hribi.net",
+      "edition_count": 12,
+      "edition_keys": [
+        "2026!261",
+        "2026!315",
+        "2027!64",
+        "2026!313",
+        "2027!61",
+        "2027!66",
+        "2026!312",
+        "2027!60",
+        "2027!65",
+        "2026!251",
+        "2026!275",
+        "2027!18"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "javnipodatki.si",
+      "edition_count": 6,
+      "edition_keys": [
+        "2026!269",
+        "2027!62",
+        "2027!67",
+        "2026!308",
+        "2027!6",
+        "2027!34"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "mapcarta.com",
+      "edition_count": 5,
+      "edition_keys": [
+        "2026!263",
+        "2026!305",
+        "2027!2",
+        "2027!7",
+        "2027!44"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "mapzs.pzs.si",
+      "edition_count": 3,
+      "edition_keys": [
+        "2026!311",
+        "2026!314",
+        "2027!63"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.geonames.org",
+      "edition_count": 2,
+      "edition_keys": [
+        "2026!262",
+        "2026!270"
+      ],
+      "rights_status": "OPEN_LICENSE_IDENTIFIED_GEONAMES",
+      "rights_evidence": "https://www.geonames.org/about.html",
+      "action": "CC attribution published; verify the actual feature ID and location/municipality before reuse."
+    },
+    {
+      "source_domain": "www.etno-muzej.si",
+      "edition_count": 2,
+      "edition_keys": [
+        "2026!271",
+        "2027!45"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "skd-hrusevica.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2026!266"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.terme-snovik.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2026!265"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    },
+    {
+      "source_domain": "www.yoys.si",
+      "edition_count": 1,
+      "edition_keys": [
+        "2027!32"
+      ],
+      "rights_status": "REQUIRES_SOURCE_RIGHTS_REVIEW",
+      "rights_evidence": null,
+      "action": "Do not assert that a place coordinate may be republished; verify ownership, original database and licensing/permission or replace with official GURS reference."
+    }
+  ],
+  "offline_gurs_only_pilot": {
+    "status": "FIXED_ORIGIN_REVIEW_ONLY_TEST_NO_PUBLIC_APPROVAL",
+    "period": "2026-11-13_to_2027-05-11",
+    "population": {
+      "eligible_editions": 59,
+      "official_gurs_candidate_editions": 20,
+      "distinct_gurs_naselja_feature_ids": 12,
+      "unlocated_or_not_included_in_gurs_only_pilot": 39,
+      "approved_public_editions": 0
+    },
+    "reused_naselje_features": [
+      {
+        "name": "Žalec",
+        "feature_id": "110300000101473100",
+        "reused_across_edition_count": 9
+      }
+    ],
+    "origins": [
+      {
+        "label": "Zagorje ob Savi, nominal fixed test point (not a precise user location)",
+        "origin": {
+          "latitude": 46.1314,
+          "longitude": 14.9965
+        },
+        "radius_results": [
+          {
+            "radius_km": 10,
+            "matched_candidate_editions": 1,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 25,
+            "matched_candidate_editions": 10,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 50,
+            "matched_candidate_editions": 13,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 100,
+            "matched_candidate_editions": 17,
+            "boundary_2km_edition_keys": [
+              "2027!19",
+              "2027!22"
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Žalec, existing verified GURS settlement point",
+        "origin": {
+          "latitude": 46.2490358,
+          "longitude": 15.164716
+        },
+        "radius_results": [
+          {
+            "radius_km": 10,
+            "matched_candidate_editions": 9,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 25,
+            "matched_candidate_editions": 11,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 50,
+            "matched_candidate_editions": 13,
+            "boundary_2km_edition_keys": [
+              "2026!260"
+            ]
+          },
+          {
+            "radius_km": 100,
+            "matched_candidate_editions": 15,
+            "boundary_2km_edition_keys": []
+          }
+        ]
+      },
+      {
+        "label": "Kranj, nominal fixed test point (not a start location)",
+        "origin": {
+          "latitude": 46.2433,
+          "longitude": 14.3549
+        },
+        "radius_results": [
+          {
+            "radius_km": 10,
+            "matched_candidate_editions": 0,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 25,
+            "matched_candidate_editions": 1,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 50,
+            "matched_candidate_editions": 2,
+            "boundary_2km_edition_keys": []
+          },
+          {
+            "radius_km": 100,
+            "matched_candidate_editions": 17,
+            "boundary_2km_edition_keys": []
+          }
+        ]
+      }
+    ],
+    "constraints": [
+      "No event start or map marker is approved: every GURS record is REVIEW/approved_for_runtime=false.",
+      "Only unit tests temporarily clone the 20 GURS records with explicit approval; those ephemeral copies are NEVER committed as an index or exposed to the browser.",
+      "A 0-match result for Kranj at 10 km is NOT evidence that no nearby races exist: 39 editions have no candidate in this GURS-only test; multiple KZTL races use different, secondary place references.",
+      "Twenty located edition keys represent only twelve unique settlement polygons; coverage is NOT twenty verified race start points.",
+      "The 2km radius-boundary band is a QA diagnostic, not the estimated positional error of any settlement reference.",
+      "Official GURS license CC BY 4.0 does NOT resolve dataset state/date attribution; no verified original dataset snapshot is recorded.",
+      "Existing referenced GURS features were independently compared to the stored 2026-11-12 location-candidates records; this check does not make a new live fetch nor verify data changes since that date.",
+      "Fixed nominal origin coordinates are testing examples and do not originate from user's precise GPS; user positions must not be persisted.",
+      "No Master/Registry/public records are modified by these offline tests."
+    ]
+  },
+  "pilot_launch_readiness_2026_11_13": {
+    "decision": "NO_GO_PRODUCTION; CANDIDATE_PRIORITY_REVIEW_ONLY",
+    "as_of": "2026-11-13",
+    "period": "2026-11-13 to 2027-05-11",
+    "basis": "Canonical STK Master 2026 and 2027 read on 2026-11-13, edition keys in research/dev056-approximate-pilot.review.json",
+    "source_note": "GURS official CC BY 4.0 permits commercial reuse with source, kind and true dataset state/date attribution; OPSI metadata_modified, DATUM_SYS and our sourceCheckedOn do NOT independently establish that state/date.",
+    "gurs_service_status": "GURS reported some outages on 2026-11-06 and an electronic service restoration on 2026-11-11. A specific live feature URL remains inaccessible from this execution environment; this is NOT proof that the provider remains down.",
+    "official_restoration_notice": "https://www.e-prostor.gov.si/aktualne-novice/",
+    "official_gurs_terms": "https://www.e-prostor.gov.si/dostopi/javni-dostop/",
+    "official_rpe_metadata": "https://podatki.gov.si/dataset/register-prostorskih-enot",
+    "official_data_office": "https://www.e-prostor.gov.si/kontakt/",
+    "counts": {
+      "offline_gurs_editions": 20,
+      "distinct_official_naselje_features": 12,
+      "candidate_2027_city_reference_review_only": 4,
+      "ambiguous_2027_homonym": 1,
+      "multistart_repeated_zalec": 9,
+      "soon_2026": 6,
+      "publicly_approved": 0
+    },
+    "groups": [
+      {
+        "decision": "NEXT_2027_SETTLEMENT_PLACE_QA_ONLY",
+        "priority": 1,
+        "edition_keys": [
+          "2027!22",
+          "2027!23",
+          "2027!43",
+          "2027!57"
+        ],
+        "reason": "Distinct settlement references (Sežana, Ormož, Bukovci, Koper) and public/confirmed 2027 Master identities. A city/settlement reference is only approximate, not an organizer race start. Independent venue verification and GURS state/date attribution are still required.",
+        "next": "Verify official 2027 exact edition-to-settlement location, check sub-10km accuracy caution and provenance; require source-state attribution before considering any runtime approval."
+      },
+      {
+        "decision": "MANUAL_HOMONYM_DISAMBIGUATION",
+        "priority": 2,
+        "edition_keys": [
+          "2027!19"
+        ],
+        "reason": "Križ pri Sežani is named in Master; several Slovenian places share Križ and the GURS Križ polygon needs municipality/place verification. Official event venue address by itself is not precise race start GPS.",
+        "next": "Verify official municipality and GURS polygon ID 110300000101312191 without inferring start position."
+      },
+      {
+        "decision": "MULTISTART_DO_NOT_CLAIM_NASELJE_AS_START",
+        "priority": 3,
+        "edition_keys": [
+          "2026!307",
+          "2026!309",
+          "2026!310",
+          "2027!51",
+          "2027!52",
+          "2027!53",
+          "2027!54",
+          "2027!55",
+          "2027!56"
+        ],
+        "reason": "All nine SZTL editions share ONE GURS Žalec polygon reference (ID 110300000101473100); canonical Master notes describe adult departures at nadvoz Mavrica and children's runs at the athletic stadium. The shared administrative centroid is neither of those starts. Race courses vary by stage.",
+        "next": "Keep as review only; verify adult/youth start roles and edition-specific organiser evidence; do not interpret one centroid as nine verified race start points or unqualified 10km radius accuracy."
+      },
+      {
+        "decision": "SOON_OR_YEAR_2026_SECONDARY_PRIORITY",
+        "priority": 4,
+        "edition_keys": [
+          "2026!260",
+          "2026!264",
+          "2026!267",
+          "2026!268",
+          "2026!294",
+          "2026!303"
+        ],
+        "reason": "Six 2026 editions, including three taking place on 2026-11-14. Their short remaining lifetime makes them poor first-public-launch targets without evidence of near-term safe release. Some Masters already contain official specific venue text.",
+        "next": "Do not import, approve or reuse in 2027; if directly verified in time, only review for 2026 season. No copying old start information to a future year."
+      }
+    ],
+    "release_gates": [
+      "Written/official traceable dataset state/date or accepted attribution format for this OGC NASELJA source (none yet).",
+      "Organizer 2027 edition-and-location identity and likely displacement from settlement reference reviewed; 10 km boundaries labelled approximate.",
+      "All 9 SZTL repeats separated from simple city-only candidates, including distinct child and adult start roles; no automatic approval via shared GURS polygon.",
+      "Candidate-by-candidate approval must be explicit and edition-key bound; source URLs alone, Master kraj, or successful tests do not approve public index.",
+      "Show partial coverage for every user radius if any eligible events are unlocated, and never imply no races are nearby from a zero located-result subset.",
+      "Review GURS CC BY attribution in SL/EN user interface and date state, including transformed reference-point disclosure, before public website build.",
+      "No production merge/rebuild/deploy or STK Master/RACE_REGISTRY/PUBLIC_LS/CHANGE_LOG writes arise from this review."
+    ]
+  }
+}

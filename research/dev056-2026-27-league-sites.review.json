@@ -1,0 +1,402 @@
+{
+  "kind": "DEV056_SEASON_2026_27_OFFICIAL_LEAGUE_STARTS_NO_NUMERIC_GPS",
+  "checked_on": "2026-11-13",
+  "season": "2026/27",
+  "source_pages_are_current": true,
+  "source_pdf_note": "Read from Google Drive canonical PDF and visually inspected rendered pp. 2–3; official document header says 2026/27 although intro contains 2025/26 copy typo; dates table gives 2026/27.",
+  "totals": {
+    "kztl_editions": 15,
+    "sztl_editions": 9,
+    "all_editions": 24,
+    "kztl_site_count": 4,
+    "sztl_site_count": 2,
+    "total_physical_sites": 6
+  },
+  "sites": [
+    {
+      "id": "kztl-kalisce-mace",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Levi odcep poti nad Mačami",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "source_page": 2,
+      "source_current_season": true,
+      "exact_text": "Levi odcep poti približno 100 m pred mostičkom čez potok; 10–15 min peš od parkirišča nad vasjo Mače pri Preddvoru",
+      "source_venue_type": "start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    },
+    {
+      "id": "kztl-jost-mohor-foot",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Vznožje Jošta pod daljnovodi",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "source_page": 2,
+      "source_current_season": true,
+      "exact_text": "Pod daljnovodi, vznožje Jošta, orientacijska tabla; skupno izhodišče tekov Jošt in Mohor",
+      "source_venue_type": "start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    },
+    {
+      "id": "kztl-krvavec-lower-gondola",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Spodnja postaja gondole Krvavec",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "source_page": 3,
+      "source_current_season": true,
+      "exact_text": "Spodnja postaja gondole, NE zgornja postaja smučišča ali cilj",
+      "source_venue_type": "start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    },
+    {
+      "id": "kztl-brdo-exercise",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Razgibala pri posestvu Brdo",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "source_page": 3,
+      "source_current_season": true,
+      "exact_text": "Pri razgibalih, 9,7-km oval okoli posestva Brdo pri Kranju",
+      "source_venue_type": "start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    },
+    {
+      "id": "sztl-mavrica-adults",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Nadvoz Mavrica, Žalec",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "source_current_season": true,
+      "exact_text": "Štart odraslih pri nadvozu Mavrica v Žalcu",
+      "source_venue_type": "adult-start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    },
+    {
+      "id": "sztl-athletics-stadium-kids",
+      "seasons": [
+        "2026/27"
+      ],
+      "name": "Atletski stadion Žalec",
+      "precision": "described-start-area-no-coordinates",
+      "source_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "source_current_season": true,
+      "exact_text": "Otroško-mladinski teki na atletskem stadionu Žalec",
+      "source_venue_type": "kids-start",
+      "latitude": null,
+      "longitude": null,
+      "coordinate_source_status": "NOT_VERIFIED",
+      "approved_for_runtime": false
+    }
+  ],
+  "edition_mappings": [
+    {
+      "edition_key": "2026!311",
+      "expectedDate": "2026-11-15",
+      "expectedTitle": "KZTL 2026/27 – Kališče (1. krog)",
+      "site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!261",
+      "expectedDate": "2026-11-22",
+      "expectedTitle": "KZTL 2026/27 – Sv. Jošt nad Kranjem (1. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!307",
+      "expectedDate": "2026-11-22",
+      "expectedTitle": "SZTL 2026/2027 – 2. etapa: Mali krog",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2026!312",
+      "expectedDate": "2026-11-29",
+      "expectedTitle": "KZTL 2026/27 – Krvavec (1. krog)",
+      "site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!309",
+      "expectedDate": "2026-12-06",
+      "expectedTitle": "SZTL 2026/2027 – 3. etapa: Veliki krog",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2026!313",
+      "expectedDate": "2026-12-06",
+      "expectedTitle": "KZTL 2026/27 – Sv. Mohor (1. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!269",
+      "expectedDate": "2026-12-13",
+      "expectedTitle": "KZTL 2026/27 – Brdo pri Kranju (1. krog)",
+      "site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!310",
+      "expectedDate": "2026-12-20",
+      "expectedTitle": "SZTL 2026/2027 – 4. etapa: Bredina Rinka",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2026!314",
+      "expectedDate": "2026-12-20",
+      "expectedTitle": "KZTL 2026/27 – Kališče (2. krog)",
+      "site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2026!315",
+      "expectedDate": "2026-12-27",
+      "expectedTitle": "KZTL 2026/27 – Sv. Jošt nad Kranjem (2. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!51",
+      "expectedDate": "2027-01-03",
+      "expectedTitle": "SZTL 2026/2027 – 5. etapa: Plevno",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2027!60",
+      "expectedDate": "2027-01-03",
+      "expectedTitle": "KZTL 2026/27 – Krvavec (2. krog)",
+      "site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!61",
+      "expectedDate": "2027-01-10",
+      "expectedTitle": "KZTL 2026/27 – Sv. Mohor (2. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!52",
+      "expectedDate": "2027-01-17",
+      "expectedTitle": "SZTL 2026/2027 – 6. etapa: Mali krog kontra",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2027!62",
+      "expectedDate": "2027-01-17",
+      "expectedTitle": "KZTL 2026/27 – Brdo pri Kranju (2. krog)",
+      "site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!63",
+      "expectedDate": "2027-01-24",
+      "expectedTitle": "KZTL 2026/27 – Kališče (3. krog)",
+      "site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!64",
+      "expectedDate": "2027-01-31",
+      "expectedTitle": "KZTL 2026/27 – Sv. Jošt nad Kranjem (3. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!53",
+      "expectedDate": "2027-02-07",
+      "expectedTitle": "SZTL 2026/2027 – 7. etapa: Veliki krog kontra",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2027!65",
+      "expectedDate": "2027-02-07",
+      "expectedTitle": "KZTL 2026/27 – Krvavec (3. krog)",
+      "site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!66",
+      "expectedDate": "2027-02-14",
+      "expectedTitle": "KZTL 2026/27 – Sv. Mohor (3. krog)",
+      "site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!54",
+      "expectedDate": "2027-02-21",
+      "expectedTitle": "SZTL 2026/2027 – 8. etapa: Rinka kontra",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2027!67",
+      "expectedDate": "2027-02-21",
+      "expectedTitle": "KZTL 2026/27 – Brdo pri Kranju (3. krog)",
+      "site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "age_roles": [
+        "open"
+      ]
+    },
+    {
+      "edition_key": "2027!55",
+      "expectedDate": "2027-03-07",
+      "expectedTitle": "SZTL 2026/2027 – 9. etapa: Plevno kontra",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    },
+    {
+      "edition_key": "2027!56",
+      "expectedDate": "2027-03-21",
+      "expectedTitle": "SZTL 2026/2027 – 10. etapa: Vrbensko jezero kontra",
+      "site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "age_roles": [
+        "adult",
+        "kids"
+      ]
+    }
+  ],
+  "publishing_rule": "NOT_APPROVED - numeric WGS84 and source licensing/precision still unresolved for every site; repeat roles cannot be treated as exact single start; no automatic year transfer."
+}

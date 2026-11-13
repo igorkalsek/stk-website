@@ -1,0 +1,275 @@
+{
+  "project": "STK DEV-056",
+  "purpose": "SEASON_SCOPED_REPEATED_START_VENUE_EVIDENCE_NOT_COORDINATES",
+  "checked_on": "2026-11-13",
+  "season": "2026/2027",
+  "related_180d_snapshot": "research/dev056-pilot-180d.review.json",
+  "status": "REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION",
+  "runtime_activation": false,
+  "public_index_approved": false,
+  "coverage": {
+    "eligible_upcoming_in_window": 59,
+    "league_editions": 24,
+    "league_fraction_percent": 40.7,
+    "distinct_venue_profiles": 6,
+    "distinguishable_edition_venue_links": 33,
+    "edition_with_approved_numeric_gps": 0,
+    "comment": "24 distinct edition identities can share 6 described start areas (SZTL adult + youth differ; KZTL Jošt and Mohor share a venue) but zero league GPS coordinates are approved. They do NOT raise the runtime-approved denominator."
+  },
+  "cautions": [
+    "Venue descriptions from official 2026/27 organizer sources are not verified WGS84 pins and must never be converted to exact GPS without additional source proof.",
+    "Two SZTL start areas are tied to each edition (adult Mavrica, youth athletics stadium). Never silently represent all disciplines with one pin.",
+    "Jošt and Mohor share an explicitly described start but remain different races; edition identities are never collapsed.",
+    "2026/27 KZTL PDF has an introductory carry-over mention of 2025/26 although its title and competition table are 2026/27; use the actual 2026/27 table and source identity only.",
+    "Strava segments and linked tracks may guide human review but do not automatically prove an exact start-line coordinate or an edition-specific start.",
+    "Edition keys are year!Master_row and must be revalidated after Master changes; never bulk-approved."
+  ],
+  "venue_profiles": [
+    {
+      "venue_id": "sztl-2026-27-mavrica-adult",
+      "season": "2026/2027",
+      "title": "Savinjska zimska liga – odrasli",
+      "role": "adult_start",
+      "description": "Nadvoz Mavrica, Žalec",
+      "official_season_evidence_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "edition_keys": [
+        "2026!307",
+        "2026!309",
+        "2026!310",
+        "2027!51",
+        "2027!52",
+        "2027!53",
+        "2027!54",
+        "2027!55",
+        "2027!56"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "Same season start for adults across nine remaining stages. Event page also includes a distinct children's start. Do not assume municipal centroid.",
+      "reconstruction_review": {
+        "identity": "NADHOD_MAVRICA_ZALEC_ADULT_START",
+        "official_current_season_start_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+        "official_reconstruction_publication": "https://www.mojaobcina.si/zalec/novice/rekonstrukcija-nadhoda-mavrica.html",
+        "state_road_authority_source": "https://www.gov.si/novice/2025-10-17-popolna-zapora-regionalne-ceste-pri-zalcu/",
+        "opening_2026_source": "https://www.mojaobcina.si/zalec/novice/video-novica-zalski-nadhod-mavrica-tudi-formalno-odprt.html",
+        "actual_opening_date": "2026-02-02",
+        "reconstruction_notes": "2025 road authority works at R2-447/0367 Žalec–Šempeter km 0.545–0.605; old pedestrian bridge demolished, new structure formally opened on 2 Feb 2026. The current-season organizer's 'Mavrica' start designation is valid venue text, but old pre-2025 bridge mapping/design render cannot be accepted as start geometry. Event could begin near an approach to the replacement bridge, rather than at the structure midpoint.",
+        "historic_design_not_as_built_url": "https://www.ponting.si/si/projekti/nadhod-mavrica-v-zalcu-93.html",
+        "official_numeric_start_available": false,
+        "reusable_wgs84_source_confirmed": false,
+        "coordinate": null,
+        "review_status": "HOLD_REBUILT_BRIDGE_START_APPROACH_UNVERIFIED",
+        "approved_for_runtime": false,
+        "public_enabled": false
+      }
+    },
+    {
+      "venue_id": "sztl-2026-27-zalec-stadium-youth",
+      "season": "2026/2027",
+      "title": "Savinjska zimska liga – otroci",
+      "role": "youth_start",
+      "description": "Atletski stadion Žalec",
+      "official_season_evidence_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "edition_keys": [
+        "2026!307",
+        "2026!309",
+        "2026!310",
+        "2027!51",
+        "2027!52",
+        "2027!53",
+        "2027!54",
+        "2027!55",
+        "2027!56"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "Children run a distinct stadium course; never conflate with adult Mavrica reference point.",
+      "numeric_venue_candidate": {
+        "name": "Športni park Žalec / Športni center Žalec (complex, not athletics start)",
+        "type": "OSM_WAY_1416346175_SPORTS_CENTRE_REFERENCE",
+        "numeric_source_url": "https://mapcarta.com/W1416346175",
+        "source_osm_object_url": "https://www.openstreetmap.org/way/1416346175",
+        "observed_source_page_points": [
+          {
+            "context": "live opened map page observed 2026-11-13",
+            "latitude": 46.25526,
+            "longitude": 15.16313
+          },
+          {
+            "context": "indexed search result snippet observed 2026-11-13",
+            "latitude": 46.25526,
+            "longitude": 15.16327
+          }
+        ],
+        "coordinate_for_runtime": null,
+        "official_2026_27_organizer_start_url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+        "official_stadium_identity_source_url": "https://www.atletski-klub-zalec.si/",
+        "assessment": "Mapped OSM recreation-ground/sports-centre polygon is the SPORT COMPLEX, not an identified athletics track or youth start line. Two cached views of the same source disagree by about 11 metres in longitude; do not choose one silently or increase approved coverage. Current 2026/27 organizer says children run on the athletics stadium. This is not the adult Mavrica start.",
+        "legal_reuse_status": "OSM_ODBL_ATTRIBUTION_AND_DERIVED_DATABASE_OBLIGATIONS_NOT_EVALUATED_FOR_PUBLIC_INDEX",
+        "source_checked_on": "2026-11-13",
+        "review_status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false,
+        "verified_athletics_track_coordinate": false,
+        "verified_exact_child_start_line": false
+      }
+    },
+    {
+      "venue_id": "kztl-2026-27-kalisce",
+      "season": "2026/2027",
+      "title": "KZTL – Kališče",
+      "role": "race_start",
+      "description": "Levi odcep poti, približno 100 m pred mostičkom čez potok, nad Mačami pri Preddvoru",
+      "official_season_evidence_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "edition_keys": [
+        "2026!311",
+        "2026!314",
+        "2027!63"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "10–15 minutes on foot from upper Mače parking. Organizer links a Strava segment, but no numeric start coordinate verified."
+    },
+    {
+      "venue_id": "kztl-2026-27-jost-mohor",
+      "season": "2026/2027",
+      "title": "KZTL – Sv. Jošt / Sv. Mohor",
+      "role": "race_start",
+      "description": "Pod daljnovodi v vznožju Jošta pri orientacijski tabli, Kranj",
+      "official_season_evidence_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "edition_keys": [
+        "2026!261",
+        "2026!315",
+        "2027!64",
+        "2026!313",
+        "2027!61",
+        "2027!66"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "Same explicitly described start for two distinct routes (Jošt and Mohor), but distinct edition keys; cannot treat them as identical events or courses."
+    },
+    {
+      "venue_id": "kztl-2026-27-krvavec",
+      "season": "2026/2027",
+      "title": "KZTL – Krvavec",
+      "role": "race_start",
+      "description": "Spodnja postaja gondole Krvavec",
+      "official_season_evidence_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "edition_keys": [
+        "2026!312",
+        "2027!60",
+        "2027!65"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "Gondola lower station is officially designated start, not the hilltop finish; exact GPS of line unverified.",
+      "numeric_venue_candidate": {
+        "latitude": 46.2849,
+        "longitude": 14.4968,
+        "coordinate_role": "LOWER_GONDOLA_STATION_HIKING_TRAILHEAD_REFERENCE_NOT_VERIFIED_START_LINE",
+        "verification_level": "SECONDARY_NUMERIC_TRAILHEAD_AND_CURRENT_SEASON_ORGANIZER_SITE_DESCRIPTION_MATCH",
+        "official_current_season_start_source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+        "numeric_source_url": "https://www.hribi.net/izhodisce/spodnja_postaja_zicnice_na_krvavec/46.2849/14.4968",
+        "numeric_source_terms_url": "https://www.hribi.net/pogoji.asp",
+        "additional_official_destination_context": "https://www.rtc-krvavec.si/splosni-pogoji",
+        "legal_reuse_status": "NOT_CLEARED_HRIBI_NET_TERMS_PROTECT_TEXT_IMAGES_COORDINATE_REUSE_NOT_CERTIFIED",
+        "source_checked_on": "2026-11-13",
+        "status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false,
+        "verified_exact_race_start_line": false,
+        "rejected_nearby_not_start_references": [
+          {
+            "name": "Dom na Gospincu / Hotel Rozka destination from Visit Cerklje",
+            "latitude": 46.29583,
+            "longitude": 14.52243,
+            "distance_from_lower_station_km": 2.314,
+            "source_url": "https://www.visitcerklje.si/aktivnosti/pohodnistvo/dom-na-gospincu-hotel-rozka",
+            "reason": "MOUNTAIN_DESTINATION_NOT_LOWER_GONDOLA_START"
+          },
+          {
+            "name": "ARSO Krvavec weather station",
+            "latitude": 46.2973,
+            "longitude": 14.5333,
+            "distance_from_lower_station_km": 3.125,
+            "source_url": "https://meteo.arso.gov.si/uploads/probase/www/climate/table/sl/by_location/statistike_1950_2020/normale-3-Krvavec.html",
+            "reason": "MOUNTAIN_WEATHER_STATION_NOT_RACE_START"
+          }
+        ],
+        "note": "Only a venue reference, not race-start GPS. Do not copy it to runtime index, present exact distances or uplift coverage while licence and official start-line verification are unresolved."
+      }
+    },
+    {
+      "venue_id": "kztl-2026-27-brdo",
+      "season": "2026/2027",
+      "title": "KZTL – Brdo",
+      "role": "race_start",
+      "description": "Razgibala ob posestvu Brdo pri Kranju",
+      "official_season_evidence_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+      "edition_keys": [
+        "2026!269",
+        "2027!62",
+        "2027!67"
+      ],
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "coordinates": null,
+      "note": "Reference start venue for 9.7 km clockwise loop; no official numeric GPS verified."
+    }
+  ],
+  "krvavec_numeric_followup": {
+    "checked_on": "2026-11-13",
+    "venue_id": "kztl-2026-27-krvavec",
+    "impacted_edition_keys": [
+      "2026!312",
+      "2027!60",
+      "2027!65"
+    ],
+    "venue_profiles_total": 6,
+    "described_edition_count": 24,
+    "linked_edition_candidate_count": 3,
+    "runtime_approved_edition_count": 0,
+    "new_exact_start_approval_count": 0,
+    "status": "REVIEW_ONLY",
+    "source_provenance_note": "The official 2026/27 KZTL document identifies lower gondola station; the numeric point is from independent Hribi.net hiking trailhead, not organiser GPS; legal reuse unresolved."
+  },
+  "sztl_2026_27_followup": {
+    "checked_on": "2026-11-13",
+    "current_season": "2026/27",
+    "master_edition_keys": [
+      "2026!307",
+      "2026!309",
+      "2026!310",
+      "2027!51",
+      "2027!52",
+      "2027!53",
+      "2027!54",
+      "2027!55",
+      "2027!56"
+    ],
+    "actual_future_edition_count": 9,
+    "adult_start_venue": "rebuilt pedestrian overpass Mavrica, approach/start line not geocoded",
+    "child_start_venue": "athletics stadium Žalec, not the sports complex centroid",
+    "coordinate_reuse_blockers": [
+      "new bridge physical approach / start line not geocoded",
+      "sports complex OSM centroid not stadium racing line",
+      "ODbL public reuse compliance unresolved"
+    ],
+    "numeric_venue_candidates_observed": 1,
+    "exact_start_coordinate_approvals_added": 0,
+    "runtime_public_approvals_added": 0,
+    "master_modified": false,
+    "warning": "Two separate starts for each of 9 editions; do not map both roles to an arbitrary Žalec point. Never rely on unbuilt Ponting competition design render as a 2026 bridge map.",
+    "source_links": [
+      "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+      "https://www.gov.si/novice/2025-10-17-popolna-zapora-regionalne-ceste-pri-zalcu/",
+      "https://mapcarta.com/W1416346175"
+    ]
+  }
+}

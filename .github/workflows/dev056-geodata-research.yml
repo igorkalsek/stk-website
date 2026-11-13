@@ -1,0 +1,34 @@
+name: DEV-056 Wikidata Geo Research (read-only)
+
+on:
+  push:
+    branches:
+      - work/dev056-p1-nearby-core
+    paths:
+      - scripts/dev056-wikidata-probe.mjs
+      - research/dev056-all-upcoming-2026-2027.audit.review.json
+      - .github/workflows/dev056-geodata-research.yml
+
+permissions:
+  contents: read
+
+jobs:
+  wikidata-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout read-only project branch
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Collect source candidates without approvals or writes to Master
+        run: node scripts/dev056-wikidata-probe.mjs
+      - name: Save research-only candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-wikidata-research-not-approved
+          path: research/out/dev056-wikidata-probe.generated.json
+          if-no-files-found: warn

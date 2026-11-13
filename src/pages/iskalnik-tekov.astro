@@ -56,6 +56,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </label>
         </div>
 
+
+        <section class="finder-nearby-panel" data-nearby-panel hidden aria-labelledby="nearby-heading-sl">
+          <h3 id="nearby-heading-sl">Teki v bližini</h3>
+          <p class="muted-note" data-nearby-pilot-scope>Izberite kraj izhodišča ali uporabite lokacijo naprave. Teki brez preverjene lokacije niso vključeni v iskanje v radiju.</p>
+          <p>Približne zračne razdalje do naselja ali prizorišča, ne nujno do štarta.</p>
+          <p class="muted-note" data-nearby-sources>Lokacije so lahko povzete iz uradnih podatkov organizatorjev ali iz približnih krajevnih referenc <a href="https://www.wikidata.org/wiki/Wikidata:Licensing" rel="noopener noreferrer" target="_blank">Wikidata (CC0)</a>. Točke niso navodila za prihod do štarta.</p>
+          <fieldset data-nearby-fields disabled>
+            <legend>Izhodišče</legend>
+            <label class="field" data-nearby-origin-place-group hidden><span>Kraj izhodišča</span><select data-nearby-origin-place><option value="">Izberite kraj</option></select></label>
+            <button class="button button-small button-secondary-light" type="button" data-nearby-geolocate>Uporabite mojo lokacijo</button>
+            <details data-nearby-manual>
+              <summary>Ročni vnos koordinat (napredno)</summary>
+            <label class="field"><span>Zemljepisna širina</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-latitude placeholder="46,1314" /></label>
+            <label class="field"><span>Zemljepisna dolžina</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-longitude placeholder="14,9965" /></label>
+            </details>
+            <label class="field"><span>Radij</span><select data-nearby-radius><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label>
+            <button class="button button-small button-primary" type="button" data-nearby-apply>Prikažite teke</button>
+            <button class="button button-small button-secondary-light" type="button" data-nearby-clear>Počistite bližino</button>
+          </fieldset>
+          <p data-nearby-origin-summary class="muted-note" aria-live="polite"></p>
+          <p class="muted-note">Lokacija se uporablja samo v tem zavihku in se ne shranjuje.</p>
+          <p data-nearby-status role="status" aria-live="polite"></p>
+        </section>
+
         <div class="quick-picks" aria-label="Hitri izbori">
           <p>Hitri izbori</p>
           <div class="quick-picks-list">

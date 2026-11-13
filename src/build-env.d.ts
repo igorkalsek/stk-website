@@ -9,3 +9,4 @@ declare const process: {
 };
 
 declare const __STK_RELEASE_ID__: string;
+declare const __STK_NEARBY_ENABLED__: boolean;

@@ -1,0 +1,251 @@
+{
+  "checkedOn": "2026-11-13",
+  "source": [
+    {
+      "year": "2026",
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/"
+    },
+    {
+      "year": "2027",
+      "url": "https://stk-master-api.igor-kalsek.workers.dev/?year=2027"
+    }
+  ],
+  "catalogPlaces": 54,
+  "total": {
+    "status": "partial",
+    "totalEditions": 93,
+    "locatedEditions": 86,
+    "exactStartEditions": 1,
+    "approximateSettlementEditions": 80,
+    "approximatePlaceEditions": 5,
+    "coveragePercent": 92.5,
+    "unlocatedEditionKeys": [
+      "2026!263",
+      "2026!305",
+      "2027!2",
+      "2027!3",
+      "2027!4",
+      "2027!5",
+      "2027!50"
+    ]
+  },
+  "byYear": {
+    "2026": {
+      "status": "partial",
+      "totalEditions": 26,
+      "locatedEditions": 24,
+      "exactStartEditions": 1,
+      "approximateSettlementEditions": 22,
+      "approximatePlaceEditions": 1,
+      "coveragePercent": 92.3,
+      "unlocatedEditionKeys": [
+        "2026!263",
+        "2026!305"
+      ]
+    },
+    "2027": {
+      "status": "partial",
+      "totalEditions": 67,
+      "locatedEditions": 62,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 58,
+      "approximatePlaceEditions": 4,
+      "coveragePercent": 92.5,
+      "unlocatedEditionKeys": [
+        "2027!2",
+        "2027!3",
+        "2027!4",
+        "2027!5",
+        "2027!50"
+      ]
+    }
+  },
+  "byRegion": {
+    "Gorenjska": {
+      "status": "complete",
+      "totalEditions": 22,
+      "locatedEditions": 22,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 19,
+      "approximatePlaceEditions": 3,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Goriška": {
+      "status": "complete",
+      "totalEditions": 7,
+      "locatedEditions": 7,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 7,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Jugovzhodna": {
+      "status": "partial",
+      "totalEditions": 6,
+      "locatedEditions": 5,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 5,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 83.3,
+      "unlocatedEditionKeys": [
+        "2027!50"
+      ]
+    },
+    "Koroška": {
+      "status": "complete",
+      "totalEditions": 1,
+      "locatedEditions": 1,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 1,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Obalno-kraška": {
+      "status": "partial",
+      "totalEditions": 10,
+      "locatedEditions": 8,
+      "exactStartEditions": 1,
+      "approximateSettlementEditions": 7,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 80,
+      "unlocatedEditionKeys": [
+        "2027!3",
+        "2027!5"
+      ]
+    },
+    "Osrednjeslovenska": {
+      "status": "partial",
+      "totalEditions": 13,
+      "locatedEditions": 12,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 12,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 92.3,
+      "unlocatedEditionKeys": [
+        "2026!305"
+      ]
+    },
+    "Podravska": {
+      "status": "complete",
+      "totalEditions": 8,
+      "locatedEditions": 8,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 7,
+      "approximatePlaceEditions": 1,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Pomurska": {
+      "status": "complete",
+      "totalEditions": 1,
+      "locatedEditions": 1,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 1,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Primorsko-notranjska": {
+      "status": "complete",
+      "totalEditions": 3,
+      "locatedEditions": 3,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 2,
+      "approximatePlaceEditions": 1,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Savinjska": {
+      "status": "complete",
+      "totalEditions": 16,
+      "locatedEditions": 16,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 16,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 100,
+      "unlocatedEditionKeys": []
+    },
+    "Zasavska": {
+      "status": "partial",
+      "totalEditions": 6,
+      "locatedEditions": 3,
+      "exactStartEditions": 0,
+      "approximateSettlementEditions": 3,
+      "approximatePlaceEditions": 0,
+      "coveragePercent": 50,
+      "unlocatedEditionKeys": [
+        "2026!263",
+        "2027!2",
+        "2027!4"
+      ]
+    }
+  },
+  "missing": [
+    {
+      "key": "2026!263",
+      "date": "2026-11-28",
+      "title": "Zimski jamatlon",
+      "place": "Trbovlje",
+      "region": "Zasavska",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2026!305",
+      "date": "2026-12-19",
+      "title": "2. dobrodelni TriD Božičkov tek",
+      "place": "Brezovica pri Ljubljani",
+      "region": "Osrednjeslovenska",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2027!2",
+      "date": "2027-01-09",
+      "title": "Knap Trail 2027 – Slovenski zimski trail",
+      "place": "Trbovlje",
+      "region": "Zasavska",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2027!3",
+      "date": "2027-02-13",
+      "title": "5. Parenzana Ultra Trail",
+      "place": "Poreč–Livade–Grožnjan–Portorož",
+      "region": "Obalno-kraška",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2027!4",
+      "date": "2027-03-06",
+      "title": "Punce v jami 2027",
+      "place": "Trbovlje–Hrastnik",
+      "region": "Zasavska",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2027!5",
+      "date": "2027-03-14",
+      "title": "9. Parenzana Marathon",
+      "place": "Parenzana – Hrvaška–Slovenija",
+      "region": "Obalno-kraška",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    },
+    {
+      "key": "2027!50",
+      "date": "2027-07-03",
+      "title": "Gas na Gače trail 2027",
+      "place": "Smučišče Gače",
+      "region": "Jugovzhodna",
+      "reason": "No reviewed edition binding.",
+      "knownPlaceCandidates": []
+    }
+  ]
+}

@@ -69,6 +69,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </label>
         </div>
 
+
+        <section class="finder-nearby-panel" data-nearby-panel hidden aria-labelledby="nearby-heading-en">
+          <h3 id="nearby-heading-en">Races near you</h3>
+          <p class="muted-note" data-nearby-pilot-scope>Select an origin place or use your device location. Races without a verified location are excluded from radius results.</p>
+          <p>Approximate straight-line distances to a settlement or venue, not necessarily a race start.</p>
+          <p class="muted-note" data-nearby-sources>Locations may come from official organiser information or approximate place references from <a href="https://www.wikidata.org/wiki/Wikidata:Licensing" rel="noopener noreferrer" target="_blank">Wikidata (CC0)</a>. Reference points are not directions to a race start.</p>
+          <fieldset data-nearby-fields disabled>
+            <legend>Starting point</legend>
+            <label class="field" data-nearby-origin-place-group hidden><span>Origin town or place</span><select data-nearby-origin-place><option value="">Select a place</option></select></label>
+            <button class="button button-small button-secondary-light" type="button" data-nearby-geolocate>Use my location</button>
+            <details data-nearby-manual>
+              <summary>Manual coordinates (advanced)</summary>
+            <label class="field"><span>Latitude</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-latitude placeholder="46.1314" /></label>
+            <label class="field"><span>Longitude</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-longitude placeholder="14.9965" /></label>
+            </details>
+            <label class="field"><span>Radius</span><select data-nearby-radius><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label>
+            <button class="button button-small button-primary" type="button" data-nearby-apply>Show nearby races</button>
+            <button class="button button-small button-secondary-light" type="button" data-nearby-clear>Clear nearby search</button>
+          </fieldset>
+          <p data-nearby-origin-summary class="muted-note" aria-live="polite"></p>
+          <p class="muted-note">Location is used only in this tab and is not stored.</p>
+          <p data-nearby-status role="status" aria-live="polite"></p>
+        </section>
+
         <div class="quick-picks" aria-label="Quick picks">
           <p>Quick picks</p>
           <div class="quick-picks-list">

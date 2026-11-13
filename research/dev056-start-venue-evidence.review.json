@@ -1,0 +1,234 @@
+{
+  "project": "STK DEV-056",
+  "evidence_checked_on": "2026-11-13",
+  "purpose": "OFFICIAL_2026_2027_EDITION_VENUE_RESEARCH_NOT_GEOCOORDINATES",
+  "status": "REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION",
+  "runtime_activation": false,
+  "coordinate_warning": "Venue/place text is not GPS. Never geocode these names into exact race starts or activate in Finder without human review.",
+  "identity": "edition_key = year!Master row",
+  "records": [
+    {
+      "edition_key": "2026!266",
+      "master_date": "2026-12-05",
+      "master_name": "25. Štanjelski tek",
+      "role": "organizer_gps_start",
+      "venue_text": "Lovska koča Štanjel",
+      "official_year_evidence_url": "https://skd-hrusevica.si/25-stanjelski-tek/",
+      "confirmation": "Official 2026 organizer page explicitly publishes start and finish GPS as N 45 49.100; E 13 49.507 (degrees and decimal minutes).",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": {
+        "latitude": 45.8183333333,
+        "longitude": 13.8251166667
+      },
+      "source_edition_year": 2026,
+      "gps_raw": "N 45 49.100; E 13 49.507",
+      "gps_format": "degrees_and_decimal_minutes",
+      "coordinate_evidence": "exact organizer-published 2026 start/finish GPS, not surveyed timing-mat position"
+    },
+    {
+      "edition_key": "2026!260",
+      "master_date": "2026-11-14",
+      "master_name": "Novomeški polmaraton",
+      "role": "start_venue_no_coordinates",
+      "venue_text": "Novi trg, pod štartnim lokom NM21",
+      "official_year_evidence_url": "https://www.novomesto21.si/sl/o-maratonu/program-in-casovnica",
+      "confirmation": "Official 2026 program puts half marathon and 10/5 km start at Novi trg; start arch stated, no geocoordinate supplied.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2026!268",
+      "master_date": "2026-12-05",
+      "master_name": "14. Goricatlon",
+      "role": "event_venue_without_start_coordinate",
+      "venue_text": "Trg Evrope / Piazza Transalpina, Nova Gorica–Gorizia",
+      "official_year_evidence_url": "https://www.goricatlon.si/na_kratko_in_breve/",
+      "confirmation": "Official 2026 event location; first relay participant starts at 10:00, but no exact GPS of start line.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2026!267",
+      "master_date": "2026-12-05",
+      "master_name": "Velenje Trail 2026",
+      "role": "broad_start_area_no_coordinates",
+      "venue_text": "Ob Velenjskem jezeru (separate bib collection at Kamp Velenje)",
+      "official_year_evidence_url": "https://velenjetrail.si/razpis/",
+      "confirmation": "2026 official listing states 18/36/10 km starts by Velenje lake, not precise coordinate of each start.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null,
+      "caution": "Camp Velenje bib pickup address must not be used as exact start line."
+    },
+    {
+      "edition_key": "2026!264",
+      "master_date": "2026-12-06",
+      "master_name": "Tek na Kalanov hrib",
+      "role": "start_venue_from_organizer_in_master",
+      "venue_text": "Športni park Izlake",
+      "official_year_evidence_url": "https://sdizlake.si/atletika#dogodek-70",
+      "confirmation": "Master 2026 row 264 records organizer reply dated 2026-11-01 with start at Sports Park Izlake. No published start GPS in reviewed material.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null,
+      "master_note_provenance": "organizer reply recorded in canonical Master, email thread referenced there; live Gmail thread not re-read"
+    },
+    {
+      "edition_key": "2027!19",
+      "master_date": "2027-03-07",
+      "master_name": "4. Trail po kraških klancih 2027",
+      "role": "event_venue_not_proven_start",
+      "venue_text": "Vaški dom, Križ 2, občina Sežana",
+      "official_year_evidence_url": "https://www.srd-kras.si/trail-2027",
+      "confirmation": "Official 2027 race instructions identify Križ 2 as event venue/parking; not an explicit geocoded race start.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!22",
+      "master_date": "2027-03-21",
+      "master_name": "Mali kraški maraton 2027",
+      "role": "start_venue_no_coordinates",
+      "venue_text": "Parkirišče pred nogometnim stadionom v Sežani",
+      "official_year_evidence_url": "https://www.kraskimaraton.si/pravila-tekmovanja/",
+      "confirmation": "Official rules for 2027 explicitly place start and finish of three adult races in the stadium-front car park.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!11",
+      "master_date": "2027-05-15",
+      "master_name": "45. Maraton treh src",
+      "role": "event_venue_without_start_coordinate",
+      "venue_text": "Pred Hotelom Radin, Zdravilišče Radenci",
+      "official_year_evidence_url": "https://www.maraton-radenci.si/pogosta-vprasanja/",
+      "confirmation": "Official 2027 FAQ identifies main event venue in front of Hotel Radin, but not the exact surveyed line of each start.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!14",
+      "master_date": "2027-05-15",
+      "master_name": "18. Nočni tek Celje",
+      "role": "broad_start_area_no_coordinates",
+      "venue_text": "Savinjsko nabrežje, Celje",
+      "official_year_evidence_url": "https://fatburn.si/tek-2/",
+      "confirmation": "Official organizer 2027 program says start and finish on Savinja riverside; precise pin not given.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!10",
+      "master_date": "2027-05-15",
+      "master_name": "8. Trail Celje",
+      "role": "broad_start_area_no_coordinates",
+      "venue_text": "Savinjsko nabrežje, Celje",
+      "official_year_evidence_url": "https://trailcelje.eu/",
+      "confirmation": "Official 2027 program lists starts of all race distances on Savinja riverside, without a specific GPS point.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!17",
+      "master_date": "2027-05-28",
+      "master_name": "Kočevsko Outdoor Festival 2027",
+      "role": "multiple_distinct_start_locations",
+      "venue_text": "2027 route pages: 5/10/15/25/50 km Rudniško jezero; 35 km Wolf Trail Kočevski Rog (Skavtski dom); Friday vertical MTB Trail center Kočevje. These are venue labels, not GPS start points.",
+      "official_year_evidence_url": "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+      "confirmation": "Organizer's explicit 2027 route revision confirms 5/10/15/25/35/50 km. Direct 2027 distance pages put 35 km at Kočevski Rog / Skavtski dom, 50 km and 5/10/15/25 km at Rudniško jezero; Friday vertical starts in MTB Trail center. GPS coordinates of exact start lines remain unverified.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null,
+      "per_distance_start_places": [
+        {
+          "distance": "5, 10, 15, 25, 50 km",
+          "venue": "Rudniško jezero / Kočevsko jezero, Kočevje",
+          "evidence_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+          "note": "Each route should retain its own official 2027 venue evidence; no exact GPS."
+        },
+        {
+          "distance": "35 km Wolf Trail",
+          "venue": "Kočevski Rog, Skavtski dom",
+          "evidence_url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+          "note": "Bus departs Kočevje at 07:30; never equate bus departure with race start."
+        },
+        {
+          "distance": "Friday vertical",
+          "venue": "MTB Trail center Kočevje",
+          "evidence_url": "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+          "note": "Separate festival discipline; not included in Master main-distance set."
+        }
+      ],
+      "source_conflict_review": "REVIEW: 2027 route revision and distance pages support Master 5/10/15/25/35/50; FAQ and combined program retain obsolete 30/60, and some pricing footnotes still mention 30. This is stale organizer copy, not evidence to change Master. Exact edition-bound GPS starts still missing; do not represent the entire multi-start festival by one point.",
+      "official_2027_evidence_urls": [
+        "https://kocevsko-outdoor.si/nove-trase-in-se-vec-razlogov-za-obisk-kocevskega/",
+        "https://kocevsko-outdoor.si/prijava/",
+        "https://kocevsko-outdoor.si/razdalje/35-km/",
+        "https://kocevsko-outdoor.si/razdalje/50-km/",
+        "https://kocevsko-outdoor.si/razdalje/25-km/",
+        "https://kocevsko-outdoor.si/razdalje/15-km/",
+        "https://kocevsko-outdoor.si/razdalje/10-km/",
+        "https://kocevsko-outdoor.si/razdalje/5-km/"
+      ]
+    }
+  ],
+  "official_gps_records": 1,
+  "start_or_venue_text_records": 10,
+  "organizer_contact_or_review_needed": true,
+  "followup_review_records_2026_11_13": [
+    {
+      "edition_key": "2027!2",
+      "master_name": "Knap Trail 2027 – Slovenski zimski trail",
+      "role": "town_only_start_venue_unconfirmed",
+      "venue_text": "Trbovlje for 16, 30 and 50 km; bib pickup Dom Svobode is not a proven start",
+      "official_year_evidence_url": "https://www.knaptrail.si/razpis-tekmovanja-2027/",
+      "confirmation": "Edition-specific schedule and town, plus route GPX links, but no official numeric GPS start line in reviewed text.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!13",
+      "master_name": "Tek štirih srčnih mož 2027",
+      "role": "village_only_start_venue_unconfirmed",
+      "venue_text": "Bohinj – Ribčev Laz; finish at parkirišče Vegelj; starts not specified more precisely",
+      "official_year_evidence_url": "https://www.tek4src.si/razpis-tek-stirih-srcnih-moz-27/",
+      "confirmation": "2027 organizer rules confirm dates/distances and finish venue, but no exact start point/GPS; finish must not be substituted for start.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!20",
+      "master_name": "K24 Ultra Trail 2027",
+      "role": "discipline_start_venue_no_coordinates",
+      "venue_text": "10 km discipline: Kulturni dom Črna na Koroškem; other festival courses require separate verification",
+      "official_year_evidence_url": "https://k24trail.si/proge/k24-trail-10km/",
+      "confirmation": "Organizer's 2027 10 km page explicitly says start at Cultural Centre; GPX download is linked, but no organizer-published numeric start-line GPS checked.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    },
+    {
+      "edition_key": "2027!21",
+      "master_name": "Podbrdo Trail Running Festival 2027",
+      "role": "multiple_discipline_start_venues_no_coordinates",
+      "venue_text": "Adult UTP/GM4O/GT/RT starts in front of TIC, old village centre; Mini GM4O/Tek za palačinko at Bazen festival venue",
+      "official_year_evidence_url": "https://www.ptrf.si/program/",
+      "confirmation": "2027 organizer program distinguishes adult and children's start venues; no exact GPS of race lines in reviewed source.",
+      "review_status": "REVIEW",
+      "approved_for_runtime": false,
+      "start_coordinate": null
+    }
+  ],
+  "followup_review_text_only_count": 4,
+  "followup_review_numeric_gps_count": 0
+}

@@ -11,6 +11,7 @@ export default defineConfig({
   site: 'https://tekaski-koledar.si',
   vite: {
     define: {
+      __STK_NEARBY_ENABLED__: JSON.stringify(process.env.PUBLIC_STK_NEARBY_ENABLED === '1'),
       __STK_RELEASE_ID__: JSON.stringify(analyticsReleaseId)
     }
   }
