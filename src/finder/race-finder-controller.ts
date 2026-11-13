@@ -15,6 +15,8 @@ import { getRegistrationFeeBounds } from '../utils-registration-fees.js';
   import { buildMasterApiPath, getPublicYearFromSearchParams, isAdditionalDataEnabledForYear, DEFAULT_PUBLIC_YEAR, type PublicYear } from '../utils-public-year';
   import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
   import { formatActiveFinderFilterCount, formatFinderRecoveryAction, getActiveFinderFilters, getFinderRecoverySuggestions, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
+import { mountNearbyFinderUi, type NearbyUiSelection } from './race-finder-nearby-ui';
+import { editionKey, prepareNearbyFinderView, type NearbyEditionLocation } from '../utils-nearby-races';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
 
@@ -124,6 +126,14 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
+  // DEV-056: intentionally non-activatable in public builds until source rights,
+  // official date/state attribution and a reviewed edition-level index are ready.
+  const NEARBY_PUBLIC_ENABLED = false;
+  const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = [];
+  let nearbySelection: NearbyUiSelection | null = null;
+  let nearbyUi: ReturnType<typeof mountNearbyFinderUi> = null;
+  const nearbyDistances = new Map<string, { distanceKm: number; approximate: boolean }>();
+
   let directFinderState: FinderUrlState = stateForYear(initialUrlState, activeYear);
 
 
@@ -917,10 +927,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const renderEvent = (event: RaceEvent, analyticsPlacement: 'finder_results' | 'personalized_results') => {
     const preferenceMatch = preferenceMatches.get(event.id);
     const formattedSurface = formatSurface(event.surface);
+    const nearby = nearbyDistances.get(editionKey(event) ?? '');
+    const nearbyFact = nearby
+      ? `<span data-nearby-distance>${nearby.approximate ? '≈ ' : ''}${escapeHtml(new Intl.NumberFormat(locale.dateLocale, { maximumFractionDigits: 1 }).format(nearby.distanceKm))} km ${locale.language === 'en' ? 'straight-line' : 'zračno'}</span>`
+      : '';
     const metaItems = [
       formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
       event.distances && `<span>${escapeHtml(formatDistances(event.distances))}</span>`,
-      event.startTime && `<span>${locale.startLabel} ${escapeHtml(formatStartTime(event.startTime))}</span>`
+      event.startTime && `<span>${locale.startLabel} ${escapeHtml(formatStartTime(event.startTime))}</span>`,
+      nearbyFact
     ].filter(Boolean).join('');
 
 
@@ -1032,6 +1047,31 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       state.filtered = sortEvents(state.filtered, deferAdditionalSelection && additionalSorts.has(filters.sort) ? 'date' : filters.sort);
     }
 
+    nearbyDistances.clear();
+    if (nearbySelection) {
+      const view = prepareNearbyFinderView(
+        getEventsInScope(filters.past), state.filtered, APPROVED_NEARBY_LOCATIONS,
+        nearbySelection.origin, nearbySelection.radiusKm, locale.language
+      );
+      if (view.status === 'unavailable') {
+        state.filtered = [];
+        nearbyUi?.updateNotice(locale.language === 'en'
+          ? 'Nearby search is unavailable.' : 'Iskanje tekov v bližini ni na voljo.');
+      } else {
+        state.filtered = view.matches.map((match) => {
+          const key = editionKey(match.event);
+          if (key) nearbyDistances.set(key, { distanceKm: match.distanceKm, approximate: match.approximate });
+          return match.event;
+        });
+        nearbyUi?.updateNotice([
+          view.copy.distanceBasis,
+          view.copy.approximateNotice,
+          view.copy.coverageNotice,
+          view.copy.radiusNotice
+        ].filter(Boolean).join(' '));
+      }
+    }
+
     const count = state.filtered.length;
     const visibleEvents = state.filtered.slice(0, state.visibleCount);
     const visibleCount = visibleEvents.length;
@@ -1061,6 +1101,20 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         language: locale.language,
         placement: 'personalized_results'
       });
+    }
+
+    if (!count && nearbySelection) {
+      updateQuickPickStates();
+      renderEmptyState(
+        locale.language === 'en' ? 'No located races in the selected radius'
+          : 'V izbranem radiju ni zadetkov med teki z znano lokacijo',
+        locale.language === 'en'
+          ? 'Some races may not have a verified location yet.'
+          : 'Nekateri teki še nimajo preverjene lokacije.',
+        locale.language === 'en' ? 'Nearby races' : 'Teki v bližini'
+      );
+      if (moreElement) moreElement.hidden = true;
+      return;
     }
 
     if (!count) {
@@ -1237,12 +1291,14 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   });
 
   formElement?.addEventListener('input', (event) => {
+    if (event.target instanceof Element && event.target.closest('[data-nearby-panel]')) return;
     if (event.target === searchInput) return;
     if (event.target === pastInput) return;
     updateDirectFinderStateFromControl(event.target);
     resetVisibleResults();
   });
   formElement?.addEventListener('change', (event) => {
+    if (event.target instanceof Element && event.target.closest('[data-nearby-panel]')) return;
     if (event.target === searchInput) return;
     if (event.target === pastInput) return;
     updateDirectFinderStateFromControl(event.target);
@@ -1296,6 +1352,18 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   window.addEventListener('popstate', restoreFromCurrentUrl);
   window.addEventListener('pageshow', (event) => { if (event.persisted) restoreFromCurrentUrl(); });
   mobileFilterMedia.addEventListener('change', (event) => syncMobileFilterPanel(event.matches));
+
+  nearbyUi = mountNearbyFinderUi({
+    enabled: NEARBY_PUBLIC_ENABLED,
+    locale: locale.language,
+    locations: APPROVED_NEARBY_LOCATIONS,
+    root: document,
+    onChange: (selection) => {
+      nearbySelection = selection;
+      state.visibleCount = PAGE_SIZE;
+      renderResults();
+    }
+  });
 
   syncMobileFilterPanel();
   updateAdvancedFiltersSummary();

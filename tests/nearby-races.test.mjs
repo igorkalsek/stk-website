@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy, prepareNearbyFinderView
 } from '../.cache/dist-test/utils-nearby-races.js';
+import { parseNearbyOrigin, parseNearbyRadius, mountNearbyFinderUi } from '../.cache/dist-test/finder/race-finder-nearby-ui.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
   year, masterRow: row, latitude, longitude, precision,
@@ -717,4 +718,33 @@ test('adapter is fail-closed with live-shaped public year/row event fields', () 
   assert.equal(result.matches.length,0);
   assert.deepEqual(result.coverage.unlocatedEditionKeys,['2027!9','2027!34']);
   assert.match(result.copy.coverageNotice,/2 od 2/);
+});
+
+test('nearby hidden gate rejects both disabled and unapproved states without DOM access', () => {
+  const forbiddenRoot = new Proxy({}, { get() { throw new Error('DOM must not be accessed'); } });
+  assert.equal(mountNearbyFinderUi({
+    enabled:false, locale:'sl', locations:[checked('2027',51,46.2,14.5)],
+    root:forbiddenRoot, onChange:()=>{ throw new Error('must not notify'); }
+  }),null);
+  assert.equal(mountNearbyFinderUi({
+    enabled:true, locale:'en', locations:[{...checked('2027',51,46.2,14.5),approved_for_runtime:false}],
+    root:forbiddenRoot, onChange:()=>{ throw new Error('must not notify'); }
+  }),null);
+  assert.equal(mountNearbyFinderUi({
+    enabled:true, locale:'en', locations:[],
+    root:forbiddenRoot, onChange:()=>{ throw new Error('must not notify'); }
+  }),null);
+});
+
+test('manual origin parser accepts decimal commas but rejects empty and invalid coordinates', () => {
+  assert.deepEqual(parseNearbyOrigin('46,1314','14,9965'),{latitude:46.1314,longitude:14.9965});
+  assert.deepEqual(parseNearbyOrigin(' +46.25 ',' -15.8 '),{latitude:46.25,longitude:-15.8});
+  for(const pair of [['',''],[' ','14'],['abc','14'],['91','14'],['46','181'],['Infinity','0'],['46;3','14'],['46.2.4','14.5']]) {
+    assert.equal(parseNearbyOrigin(pair[0],pair[1]),null);
+  }
+  assert.equal(parseNearbyRadius('10'),10);
+  assert.equal(parseNearbyRadius('25'),25);
+  assert.equal(parseNearbyRadius('50'),50);
+  assert.equal(parseNearbyRadius('100'),100);
+  for(const radius of ['0','5','11','101','25.0','',' 25','Infinity']) assert.equal(parseNearbyRadius(radius),null);
 });
