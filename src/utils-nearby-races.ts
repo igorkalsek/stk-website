@@ -20,6 +20,8 @@ export type NearbyEditionLocation = NearbyPoint & {
   precision: NearbyPrecision;
   /** Requires explicit review; merely being present in an API is not approval. */
   reviewStatus: 'approved' | 'review';
+  /** Research fixtures must never become runtime matches merely by being imported. */
+  approved_for_runtime?: boolean;
   sourceUrl: string;
   sourceCheckedOn: string;   // ISO date, date of verification
   sourceKind: 'official-edition-start' | 'official-settlement';
@@ -83,7 +85,7 @@ export const editionKey = (event: NearbyEvent): string | null => {
 
 const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
   const key = editionKey({ year: location.year, row: String(location.masterRow) });
-  if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved') return false;
+  if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime === false) return false;
   if (location.precision !== 'start' && location.precision !== 'settlement-approximate') return false;
   if (!/^https:\/\//i.test(location.sourceUrl)) return false;
   if (!isRealIsoDate(location.sourceCheckedOn)) return false;

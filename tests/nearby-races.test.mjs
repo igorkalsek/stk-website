@@ -248,10 +248,17 @@ test('DEV-056 180-day pilot source snapshot is edition-bound, explicitly non-run
   assert.ok(Math.abs(start.latitude-(45+49.100/60))<1e-8);
   assert.ok(Math.abs(start.longitude-(13+49.507/60))<1e-8);
   const events=snapshot.eligible_editions.map(e=>event(String(e.year),e.master_row));
-  const audit=summarizeNearbyCoverage(events,snapshot.pilot_offline_index);
+  // Even accidental use of the offline pilot fixture cannot activate a public result.
+  const blocked=summarizeNearbyCoverage(events,snapshot.pilot_offline_index);
+  assert.equal(blocked.locatedEditions,0);
+  assert.equal(blocked.coveragePercent,0);
+  assert.equal(filterNearbyRaces(events,snapshot.pilot_offline_index,{latitude:start.latitude,longitude:start.longitude},10).matches.length,0);
+  // Only an explicit ephemeral offline-only test copy exercises calculation.
+  const verifiedOffline=[{...start,approved_for_runtime:undefined}];
+  const audit=summarizeNearbyCoverage(events,verifiedOffline);
   assert.deepEqual([audit.status,audit.totalEditions,audit.locatedEditions,audit.exactStartEditions,audit.approximateSettlementEditions,audit.coveragePercent],['partial',59,1,1,0,1.7]);
   assert.equal(audit.unlocatedEditionKeys.length,58);
-  const nearby=filterNearbyRaces(events,snapshot.pilot_offline_index,{latitude:start.latitude,longitude:start.longitude},10);
+  const nearby=filterNearbyRaces(events,verifiedOffline,{latitude:start.latitude,longitude:start.longitude},10);
   assert.equal(nearby.status,'partial');
   assert.deepEqual(nearby.matches.map(m=>editionKey(m.event)),['2026!266']);
   assert.equal(nearby.matches[0].approximate,false);
