@@ -19,16 +19,17 @@
     "HOLD_MULTI_P625_COORDINATES": 4,
     "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
     "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING": 9,
-    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 20,
+    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 18,
     "HOLD_COARSE_P625_PRECISION": 2,
     "HOLD_OFFICIAL_2026_MIKLAVZ_DISTINCT_CHILD_ADULT_STARTS_GPS_MISSING": 1,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
     "HOLD_NO_DISAMBIGUATED_CC0_POINT": 1,
-    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 9,
+    "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 8,
     "HOLD_MULTISTART_CROSSBORDER_OFFICIAL_2027_VENUE_TEXT": 1,
     "REVIEW_VENUE_SPECIFIC_SUBPLACE": 1,
     "HOLD_OFFICIAL_2027_KRAS_TRAIL_THREE_SEPARATE_START_SITES": 1,
     "REVIEW_OFFICIAL_2027_LAKESIDE_START_GEOCODE_MISSING": 1,
+    "HOLD_OFFICIAL_2027_ISTRSKI_MAIN_VENUE_NOT_RACE_START": 1,
     "REVIEW_OFFICIAL_2027_AJDOVSCINA_LAVRICEV_TRG_START_COORDS_MISSING": 1,
     "HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT": 1,
     "REVIEW_ORGANIZER_CONFIRMED_2027_CELJE_SPICA_VENUE_NOT_START": 1,
@@ -36,12 +37,14 @@
     "HOLD_OFFICIAL_2027_KRISKA_GORA_TWO_START_SITES_20K_YEAR_STALE": 1,
     "HOLD_OFFICIAL_2027_MULTISTART_AND_DISTANCE_CONTENT_CONFLICT": 1,
     "REVIEW_VENUE_AND_ROUTE_SPECIFIC_START": 1,
+    "HOLD_OFFICIAL_2027_BIZNIS_RUN_MARIBOR_DATE_CONFLICT_AND_START_MISSING": 1,
     "REVIEW_OFFICIAL_2027_CASTLE_SQUARE_START_GEOCODE_MISSING": 1,
     "HOLD_OFFICIAL_2027_TRAIL_MARIBOR_MULTISTART_GEOCODE_MISSING": 1,
     "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING": 1,
     "HOLD_OFFICIAL_2027_SOCA_OUTDOOR_TOLMIN_TWO_START_AREAS_GPS_MISSING": 1,
     "REVIEW_OFFICIAL_2027_K24_SHARED_CULTURAL_CENTRE_START_COORDS_MISSING": 1,
     "REVIEW_OFFICIAL_2027_SLOVENIAN_ALPINE_MUSEUM_START_COORDS_MISSING": 1,
+    "HOLD_OFFICIAL_2027_GOZDARSKI_TRAIL_ROGLA_AREH_TWO_START_AREAS": 1,
     "HOLD_OFFICIAL_2027_JULIAN_ALPS_MULTISTART_FOUR_REGIONS_GPS_MISSING": 1,
     "REVIEW_OFFICIAL_2027_FOUR_PONDS_GUESTHOUSE_START_COORDS_MISSING": 1,
     "REVIEW_OFFICIAL_2027_LJUBLJANA_SATURDAY_ADULT_CHILD_STARTS_COORDS_MISSING": 1,
@@ -1882,14 +1885,31 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://istrski-maraton.si/",
+        "type": "2027_MAIN_VENUE_WITH_2026_COURSE_DETAILS",
+        "text": "Official organiser landing page announces Izola as the MAIN 2027 event venue for 10–11 April 2027, while distance-specific Ankaran/Koper/Izola start sites and 2026 departure times on this same public page are explicitly 2026. Canonical Master identifies primary event date 11 Apr 2027 based on direct organiser update. Do not transfer 2026 starts, infer that all 2027 race starts are in Izola, or use Wikidata Izola city centre as race start. Request year-specific starts and GPX before precise radius approval.",
+        "supporting_urls": [
+          "https://istrski-maraton.si/koristne-informacije/parkirisca/"
+        ]
+      },
+      "status": "HOLD_OFFICIAL_2027_ISTRSKI_MAIN_VENUE_NOT_RACE_START",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Izola (2027 main event venue ONLY)",
+          "role": "Not verified as 2027 10 km, half-marathon or marathon start; separate 2026 starts explicitly stale",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!18",
@@ -2432,14 +2452,32 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://mbsportfest.eu/biznis-run/",
+        "type": "2027_OFFICIAL_DATE_CONFLICT_WITH_REGISTRATION_CALENDAR",
+        "text": "Primary 2027 organiser page and festival 2027 schedule both list Friday 11 June 2027 (same as canonical STK Master); Fatburn's mixed-year registration overview lists Saturday 12 June 2027 for Biznis Run Maribor. No exact 2027 start point verified; older festival site details and Wikidata Maribor city coordinate cannot certify a 2027 race start. Hold geocoding and route for organiser clarification without rewriting the Master date.",
+        "supporting_urls": [
+          "https://mbsportfest.eu/program/",
+          "https://fatburn.si/prijave/"
+        ]
+      },
+      "status": "HOLD_OFFICIAL_2027_BIZNIS_RUN_MARIBOR_DATE_CONFLICT_AND_START_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Maribor (2027 event city only)",
+          "role": "Date conflict 11 vs 12 June; precise 2027 start area not established",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!16",
@@ -2908,14 +2946,39 @@
       "master_notice_url": "https://gozdarski-trail.si/",
       "audit_route": "COMPOUND_OR_MULTISTART_SITE_REVIEW",
       "geographic_candidate": null,
-      "source2026_27": null,
-      "status": "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT",
+      "source2026_27": {
+        "url": "https://gozdarski-trail.si/obvestila/",
+        "type": "CANONICAL_2027_ORGANIZER_CONFIRMATION_AND_PUBLIC_2027_PREVIEW",
+        "text": "2027 STK Master row 41 records an explicit organiser response dated 20 Oct 2026 for 28 Aug 2027: 14 and 34 km both start AND finish at Športni park Rogla; the NEW 50 km ultra starts at Areh and finishes at Športni park Rogla. Organiser's public 2026 newsletter described Areh ultra as a plan and April 2026 recce ran from Areh to Rogla; those older public previews alone would not certify the final 2027 course. Distinct confirmed venue names but no numerical GPS; the Master value 'Rogla' cannot be used as a shared start pin.",
+        "supporting_urls": [
+          "https://gozdarski-trail.si/2026/04/17/ogledna-tura-nove-trase-za-slovenski-gozdarski-trail-2027/",
+          "https://gozdarski-trail.si/"
+        ]
+      },
+      "status": "HOLD_OFFICIAL_2027_GOZDARSKI_TRAIL_ROGLA_AREH_TWO_START_AREAS",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
-      "location_not_race_start": false,
+      "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Športni park Rogla",
+          "role": "14 km and 34 km 2027 race start and finish; 50 km finish only",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Areh",
+          "role": "50 km 2027 ultra race start; finish at Rogla",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!31",
@@ -3376,5 +3439,20 @@
     "new_numeric_start_points": 0,
     "new_runtime_approvals": 0,
     "note": "No CC0 settlement point promoted to start; distinct subrace start roles; 20km Kriška organizer page still 2026."
+  },
+  "official_final_2027_date_and_multistart_review": {
+    "checked_on": "2026-11-13",
+    "keys": [
+      "2027!7",
+      "2027!15",
+      "2027!41"
+    ],
+    "canonical_master_checked": "2027!A1:O49, STK Google Sheets, 2026-11-13",
+    "confirmed_multi_start_organizer_key": "2027!41",
+    "stale_prior_year_locations_key": "2027!7",
+    "conflicting_2027_date_key": "2027!15",
+    "source_year_specific_numeric_start_coordinates": 0,
+    "approved_public_locations": 0,
+    "scope": "Evidence triage only; no import or changes to event Master"
   }
 }

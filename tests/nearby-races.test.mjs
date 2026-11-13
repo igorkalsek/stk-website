@@ -1342,3 +1342,37 @@ test('DEV-056 additional official 2027 launch-site check never promotes approxim
   assert.ok(r.start_sites_checked.every(s=>s.latitude===null&&s.longitude===null&&s.approved_for_runtime===false));
  }
 });
+
+
+test('DEV-056 2027 Rogla-Areh multi-start, 2026 Istrski stale sites and Maribor date conflict stay non-public', () => {
+ const j=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ const keys=['2027!7','2027!15','2027!41'];
+ assert.deepEqual(j.official_final_2027_date_and_multistart_review.keys,keys);
+ assert.equal(j.records.length,93);
+ assert.equal(Object.values(j.summaries).reduce((sum,n)=>sum+n,0),93);
+ assert.equal(j.records.filter(x=>x.approved_for_runtime).length,3);
+ const get=(key)=>j.records.find(x=>x.edition_key===key);
+ const forest=get('2027!41');
+ assert.equal(forest.start_sites_checked.length,2);
+ assert.match(forest.start_sites_checked[0].name,/Rogla/);
+ assert.match(forest.start_sites_checked[1].name,/Areh/);
+ assert.match(forest.source2026_27.text,/20 Oct 2026/);
+ assert.match(forest.source2026_27.text,/50 km ultra/);
+ assert.equal(forest.expectedDate,'2027-08-28');
+ const coast=get('2027!7');
+ assert.match(coast.source2026_27.text,/explicitly 2026/);
+ assert.match(coast.start_sites_checked[0].role,/Not verified/);
+ const maribor=get('2027!15');
+ assert.match(maribor.source2026_27.text,/11 June 2027/);
+ assert.match(maribor.source2026_27.text,/12 June 2027/);
+ assert.equal(maribor.expectedDate,'2027-06-11');
+ for (const key of keys) {
+   const row=get(key);
+   assert.equal(row.public_enabled,false);
+   assert.equal(row.approved_for_runtime,false);
+   assert.equal(row.proof_is_start_coordinates,false);
+   assert.equal(row.reference_location_verified,false);
+   assert.match(row.status,/^HOLD_/);
+   assert.ok(row.start_sites_checked.every(s=>s.latitude===null&&s.longitude===null&&s.approved_for_runtime===false));
+ }
+});
