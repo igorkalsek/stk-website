@@ -2245,7 +2245,7 @@ main {
 
 @media (min-width: 720px) {
   .group-runs-filters {
-    grid-template-columns: minmax(220px, 1.6fr) repeat(3, minmax(150px, 1fr)) auto;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 
   .group-runs-filters .field-wide {
@@ -6265,10 +6265,16 @@ main {
 }
 
 .event-detail-my-race-heading a {
+  color: var(--deep-teal);
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   font-weight: 700;
+}
+
+.event-detail-my-race-heading a:focus-visible {
+  outline: 2px solid var(--deep-teal);
+  outline-offset: 3px;
 }
 
 #race-share {

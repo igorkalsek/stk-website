@@ -1,0 +1,19 @@
+{
+  "normal": {
+    "color": "rgb(255, 255, 255)",
+    "minimum": 1.7487447199851032
+  },
+  "hover": {
+    "color": "rgb(16, 64, 80)",
+    "minimum": 6.3553757290526525
+  },
+  "focus": {
+    "color": "rgb(255, 255, 255)",
+    "minimum": 1.7487447199851032
+  },
+  "outline": {
+    "style": "auto",
+    "width": "1px",
+    "color": "rgb(0, 95, 204)"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "clientWidth": 1440,
+  "scrollWidth": 1440,
+  "controls": [
+    {
+      "name": "search",
+      "left": 189,
+      "right": 494.03125,
+      "width": 305.03125,
+      "height": 46,
+      "clientWidth": 303,
+      "scrollWidth": 303
+    },
+    {
+      "name": "region",
+      "left": 508.03125,
+      "right": 698.6875,
+      "width": 190.65625,
+      "height": 46,
+      "clientWidth": 189,
+      "scrollWidth": 189
+    },
+    {
+      "name": "type",
+      "left": 712.6875,
+      "right": 903.34375,
+      "width": 190.65625,
+      "height": 46,
+      "clientWidth": 189,
+      "scrollWidth": 189
+    },
+    {
+      "name": "participation",
+      "left": 917.34375,
+      "right": 1108,
+      "width": 190.65625,
+      "height": 46,
+      "clientWidth": 189,
+      "scrollWidth": 189
+    },
+    {
+      "name": "reset",
+      "left": 1122,
+      "right": 1251,
+      "width": 129,
+      "height": 46,
+      "clientWidth": 129,
+      "scrollWidth": 129
+    }
+  ]
+}
