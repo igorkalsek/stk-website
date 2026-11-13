@@ -748,3 +748,90 @@ test('manual origin parser accepts decimal commas but rejects empty and invalid 
   assert.equal(parseNearbyRadius('100'),100);
   for(const radius of ['0','5','11','101','25.0','',' 25','Infinity']) assert.equal(parseNearbyRadius(radius),null);
 });
+
+test('nearby UI rejects a false gate or an unverified location BEFORE accessing the document', () => {
+  const location=checked('2027',51,46.1314,14.9965);
+  const mustNotTouch={querySelector:()=>{throw Error('closed gate must never read DOM');}};
+  const mounted=(locations,enabled)=>mountNearbyFinderUi({
+    enabled,locale:'sl',locations,root:mustNotTouch,onChange:()=>{throw Error('closed gate must not fire');}
+  });
+  assert.equal(mounted([location],false),null);
+  assert.equal(mounted([],true),null);
+  assert.equal(mounted([{...location,approved_for_runtime:false}],true),null);
+  assert.equal(mounted([{...location,reviewStatus:'review'}],true),null);
+  assert.equal(mounted([{...location,sourceUrl:'https://invalid.example.net/made-up'}],true),null);
+  assert.equal(mounted([{...location,sourceSnapshotOn:'not-a-date'}],true),null);
+});
+
+test('geolocation callback cannot override manually edited coordinates or a cleared selection', () => {
+  const listeners=(defaults={})=>({
+    value:'',disabled:true,textContent:'',hidden:true,
+    ...defaults,
+    callbacks:{},
+    addEventListener(type,fn){this.callbacks[type]=fn;},
+    fire(type){assert.ok(this.callbacks[type],type);this.callbacks[type]();}
+  });
+  const controls={
+    '[data-nearby-fields]':listeners(),
+    '[data-nearby-latitude]':listeners(),
+    '[data-nearby-longitude]':listeners(),
+    '[data-nearby-radius]':listeners({value:'25'}),
+    '[data-nearby-geolocate]':listeners(),
+    '[data-nearby-apply]':listeners(),
+    '[data-nearby-clear]':listeners(),
+    '[data-nearby-status]':listeners()
+  };
+  const panel={hidden:true,querySelector:(selector)=>controls[selector]||null};
+  const requested=[];
+  const geolocation={
+    getCurrentPosition(success,failure,settings){requested.push({success,failure,settings});}
+  };
+  const root={querySelector:(selector)=>selector==='[data-nearby-panel]'?panel:null,
+    defaultView:{navigator:{geolocation}}};
+  const changes=[];
+  const mounted=mountNearbyFinderUi({
+    enabled:true,locale:'sl',
+    locations:[checked('2027',51,46.1314,14.9965)],
+    root,onChange:(value)=>changes.push(value)
+  });
+  assert.ok(mounted);
+  assert.equal(panel.hidden,false);
+  assert.equal(controls['[data-nearby-fields]'].disabled,false);
+  assert.equal(requested.length,0); // permission never requested on mount
+  const lat=controls['[data-nearby-latitude]'];
+  const lon=controls['[data-nearby-longitude]'];
+  const radius=controls['[data-nearby-radius]'];
+  const geo=controls['[data-nearby-geolocate]'];
+  geo.fire('click');
+  assert.equal(requested.length,1);
+  assert.equal(requested[0].settings.enableHighAccuracy,false);
+  // After the browser permission prompt, a person types a preferred origin.
+  lat.value='46,1314';
+  lon.value='14,9965';
+  lat.fire('input');
+  lon.fire('input');
+  requested[0].success({coords:{latitude:47.2,longitude:15.2}});
+  assert.equal(lat.value,'46,1314');
+  assert.equal(changes.length,0);
+  controls['[data-nearby-apply]'].fire('click');
+  assert.deepEqual(changes.at(-1),{origin:{latitude:46.1314,longitude:14.9965},radiusKm:25});
+  radius.value='10';
+  radius.fire('change');
+  assert.equal(changes.at(-1).radiusKm,10);
+  // Another permission request must never resurrect a cleared selection.
+  geo.fire('click');
+  assert.equal(requested.length,2);
+  mounted.clear();
+  assert.equal(lat.value,'');
+  assert.equal(lon.value,'');
+  assert.equal(radius.value,'25');
+  assert.equal(changes.at(-1),null);
+  requested[1].success({coords:{latitude:47,longitude:15}});
+  assert.equal(changes.at(-1),null);
+  assert.equal(lat.value,'');
+  // Fresh permission request is honored only on the live sequence.
+  geo.fire('click');
+  requested[2].success({coords:{latitude:46.25,longitude:14.55}});
+  assert.deepEqual(changes.at(-1),{origin:{latitude:46.25,longitude:14.55},radiusKm:25});
+  assert.equal(requested.length,3);
+});

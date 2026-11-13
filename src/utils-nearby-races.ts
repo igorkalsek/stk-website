@@ -94,7 +94,7 @@ export const editionKey = (event: NearbyEvent): string | null => {
   return Number.isSafeInteger(n) && n > 1 ? `${year}!${n}` : null;
 };
 
-const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
+export const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
   const key = editionKey({ year: location.year, row: String(location.masterRow) });
   if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime !== true) return false;
   if (location.precision !== 'start' && location.precision !== 'settlement-approximate' && location.precision !== 'place-approximate') return false;

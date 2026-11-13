@@ -1,4 +1,4 @@
-import { isValidWgs84, NEARBY_RADII_KM, type NearbyEditionLocation, type NearbyPoint, type NearbyRadiusKm } from '../utils-nearby-races.js';
+import { isApprovedLocation, isValidWgs84, NEARBY_RADII_KM, type NearbyEditionLocation, type NearbyPoint, type NearbyRadiusKm } from '../utils-nearby-races.js';
 
 export type NearbyUiSelection = { origin: NearbyPoint; radiusKm: NearbyRadiusKm };
 export type NearbyUi = {
@@ -40,9 +40,7 @@ export function mountNearbyFinderUi(options: {
   onChange: (selection: NearbyUiSelection | null) => void;
   root: Document;
 }): NearbyUi | null {
-  if (!options.enabled || !options.locations.some((location) =>
-    location.reviewStatus === 'approved' && location.approved_for_runtime === true
-  )) return null;
+  if (!options.enabled || !options.locations.some(isApprovedLocation)) return null;
 
   const panel = options.root.querySelector<HTMLElement>('[data-nearby-panel]');
   const fields = panel?.querySelector<HTMLFieldSetElement>('[data-nearby-fields]');
@@ -67,12 +65,14 @@ export function mountNearbyFinderUi(options: {
     options.onChange(null);
   };
   const applySelection = () => {
+    pendingGeolocation++; // Cancel any earlier geolocation response on manual apply.
     const origin = parseNearbyOrigin(latitude.value, longitude.value);
     const radiusKm = parseNearbyRadius(radius.value);
     if (!origin || radiusKm === null) {
       setStatus(en ? 'Enter valid latitude and longitude.' : 'Vnesite veljavno zemljepisno širino in dolžino.');
       return;
     }
+    setStatus('');
     options.onChange({ origin, radiusKm });
   };
 
@@ -80,6 +80,9 @@ export function mountNearbyFinderUi(options: {
   // until future approved-index integration enables it.
   fields.disabled = false;
   panel.hidden = false;
+  // A person typing their own origin takes precedence over a pending location permission request.
+  latitude.addEventListener('input', () => { pendingGeolocation++; });
+  longitude.addEventListener('input', () => { pendingGeolocation++; });
   apply.addEventListener('click', applySelection);
   clear.addEventListener('click', clearSelection);
   radius.addEventListener('change', () => {
