@@ -79,6 +79,9 @@ for (const scenario of fixtures) {
     await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
     await expect(panel.locator('[data-nearby-latitude]')).toBeEnabled();
 
+    // Without a reviewed origins list, preserve the advanced manual path.
+    await expect(panel.locator('[data-nearby-origin-place-group]')).toBeHidden();
+    await panel.locator('[data-nearby-manual] > summary').click();
     // At ~10.12 km from the reference point, 10 km excludes it; larger radii include it.
     await panel.locator('[data-nearby-latitude]').fill(scenario.latitude);
     await panel.locator('[data-nearby-longitude]').fill(scenario.longitude);

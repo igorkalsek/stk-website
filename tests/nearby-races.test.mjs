@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import {
   NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy, prepareNearbyFinderView
 } from '../.cache/dist-test/utils-nearby-races.js';
-import { parseNearbyOrigin, parseNearbyRadius, mountNearbyFinderUi } from '../.cache/dist-test/finder/race-finder-nearby-ui.js';
+import { parseNearbyOrigin, parseNearbyRadius, mountNearbyFinderUi, isApprovedNearbyOrigin } from '../.cache/dist-test/finder/race-finder-nearby-ui.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
   year, masterRow: row, latitude, longitude, precision,
@@ -750,6 +750,21 @@ test('manual origin parser accepts decimal commas but rejects empty and invalid 
   assert.equal(parseNearbyRadius('50'),50);
   assert.equal(parseNearbyRadius('100'),100);
   for(const radius of ['0','5','11','101','25.0','',' 25','Infinity']) assert.equal(parseNearbyRadius(radius),null);
+});
+
+test('nearby origin catalog fails closed for unreviewed or invalid coordinate sources', () => {
+  const origin = {
+    id:'synthetic-test-origin', labelSl:'Testno izhodišče', labelEn:'Synthetic test origin',
+    latitude:46.34, longitude:15.164716, sourceUrl:'https://example.org/dev056-synthetic-origin',
+    sourceCheckedOn:'2026-11-13', reviewStatus:'approved', approved_for_runtime:true
+  };
+  assert.equal(isApprovedNearbyOrigin(origin), true);
+  for (const bad of [
+    { ...origin, reviewStatus:'review' }, { ...origin, approved_for_runtime:false },
+    { ...origin, latitude:91 }, { ...origin, id:'<script>' },
+    { ...origin, labelSl:' ' }, { ...origin, sourceUrl:'http://example.org/a' },
+    { ...origin, sourceCheckedOn:'2026-02-30' }
+  ]) assert.equal(isApprovedNearbyOrigin(bad),false);
 });
 
 test('nearby UI rejects a false gate or an unverified location BEFORE accessing the document', () => {

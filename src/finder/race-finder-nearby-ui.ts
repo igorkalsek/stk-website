@@ -1,5 +1,24 @@
 import { isApprovedLocation, isValidWgs84, NEARBY_RADII_KM, type NearbyEditionLocation, type NearbyPoint, type NearbyRadiusKm } from '../utils-nearby-races.js';
 
+// A reviewed origin catalog is independent of race-edition coordinates.
+// Production passes no origins; synthetic origins exist only in private tests.
+export type NearbyOriginPlace = {
+  id: string; labelSl: string; labelEn: string;
+  latitude: number; longitude: number;
+  sourceUrl: string; sourceCheckedOn: string;
+  reviewStatus: 'review' | 'approved'; approved_for_runtime: boolean;
+};
+export function isApprovedNearbyOrigin(place: NearbyOriginPlace): boolean {
+  if (!place || place.reviewStatus !== 'approved' || place.approved_for_runtime !== true ||
+      !/^[a-z0-9][a-z0-9_-]{0,63}$/i.test(place.id) ||
+      !place.labelSl?.trim() || !place.labelEn?.trim() ||
+      !isValidWgs84(place)) return false;
+  if (!/^https:\/\/[^\s]+$/i.test(place.sourceUrl) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(place.sourceCheckedOn)) return false;
+  const date = new Date(place.sourceCheckedOn + 'T00:00:00.000Z');
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0,10) === place.sourceCheckedOn;
+}
+
 export type NearbyUiSelection = { origin: NearbyPoint; radiusKm: NearbyRadiusKm };
 export type NearbyUi = {
   updateNotice: (message: string) => void;
@@ -37,6 +56,7 @@ export function mountNearbyFinderUi(options: {
   enabled: boolean;
   locale: 'sl' | 'en';
   locations: readonly NearbyEditionLocation[];
+  originPlaces?: readonly NearbyOriginPlace[];
   onChange: (selection: NearbyUiSelection | null) => void;
   root: Document;
 }): NearbyUi | null {
@@ -44,6 +64,8 @@ export function mountNearbyFinderUi(options: {
 
   const panel = options.root.querySelector<HTMLElement>('[data-nearby-panel]');
   const fields = panel?.querySelector<HTMLFieldSetElement>('[data-nearby-fields]');
+  const originGroup = panel?.querySelector<HTMLElement>('[data-nearby-origin-place-group]');
+  const originPlace = panel?.querySelector<HTMLSelectElement>('[data-nearby-origin-place]');
   const latitude = panel?.querySelector<HTMLInputElement>('[data-nearby-latitude]');
   const longitude = panel?.querySelector<HTMLInputElement>('[data-nearby-longitude]');
   const radius = panel?.querySelector<HTMLSelectElement>('[data-nearby-radius]');
@@ -56,10 +78,23 @@ export function mountNearbyFinderUi(options: {
   const en = options.locale === 'en';
   let pendingGeolocation = 0;
   const setStatus = (message: string) => { status.textContent = message; };
+  const candidates = options.originPlaces ?? [];
+  const origins = candidates.length && candidates.every(isApprovedNearbyOrigin) &&
+      new Set(candidates.map(place => place.id)).size === candidates.length ? candidates : [];
+  if (origins.length && originGroup && originPlace) {
+    for (const place of origins) {
+      const option = options.root.createElement('option');
+      option.value = place.id;
+      option.textContent = en ? place.labelEn : place.labelSl;
+      originPlace.append(option);
+    }
+    originGroup.hidden = false;
+  }
   const clearSelection = () => {
     pendingGeolocation++;
     latitude.value = '';
     longitude.value = '';
+    if (originPlace) originPlace.value = '';
     radius.value = '25';
     setStatus('');
     options.onChange(null);
@@ -83,9 +118,28 @@ export function mountNearbyFinderUi(options: {
   // until future approved-index integration enables it.
   fields.disabled = false;
   panel.hidden = false;
-  // A person typing their own origin takes precedence over a pending location permission request.
-  latitude.addEventListener('input', () => { pendingGeolocation++; });
-  longitude.addEventListener('input', () => { pendingGeolocation++; });
+  if (origins.length && originGroup && originPlace) {
+    originPlace.addEventListener('change', () => {
+      pendingGeolocation++;
+      const selected = origins.find(place => place.id === originPlace.value);
+      if (!selected) {
+        latitude.value = ''; longitude.value = ''; setStatus(''); options.onChange(null);
+        return;
+      }
+      latitude.value = String(selected.latitude);
+      longitude.value = String(selected.longitude);
+      applySelection(); // no geolocation permission or external service
+    });
+  }
+  // Manual typing takes precedence over the catalog and any pending GPS request.
+  latitude.addEventListener('input', () => {
+    pendingGeolocation++;
+    if (originPlace) originPlace.value = '';
+  });
+  longitude.addEventListener('input', () => {
+    pendingGeolocation++;
+    if (originPlace) originPlace.value = '';
+  });
   apply.addEventListener('click', applySelection);
   clear.addEventListener('click', clearSelection);
   // Changing the radius with invalid coordinates must also clear stale matches.
@@ -107,6 +161,7 @@ export function mountNearbyFinderUi(options: {
           setStatus(en ? 'Invalid location received.' : 'Prejeta lokacija ni veljavna.');
           return;
         }
+        if (originPlace) originPlace.value = '';
         latitude.value = String(point.latitude);
         longitude.value = String(point.longitude);
         applySelection();

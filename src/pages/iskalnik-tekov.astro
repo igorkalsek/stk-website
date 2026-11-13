@@ -62,9 +62,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p>Približne zračne razdalje do naselja ali prizorišča, ne nujno do štarta.</p>
           <fieldset data-nearby-fields disabled>
             <legend>Izhodišče</legend>
+            <label class="field" data-nearby-origin-place-group hidden><span>Kraj izhodišča</span><select data-nearby-origin-place><option value="">Izberite kraj</option></select></label>
             <button class="button button-small button-secondary-light" type="button" data-nearby-geolocate>Uporabite mojo lokacijo</button>
+            <details data-nearby-manual>
+              <summary>Ročni vnos koordinat (napredno)</summary>
             <label class="field"><span>Zemljepisna širina</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-latitude placeholder="46,1314" /></label>
             <label class="field"><span>Zemljepisna dolžina</span><input type="text" inputmode="decimal" autocomplete="off" data-nearby-longitude placeholder="14,9965" /></label>
+            </details>
             <label class="field"><span>Radij</span><select data-nearby-radius><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label>
             <button class="button button-small button-primary" type="button" data-nearby-apply>Prikažite teke</button>
             <button class="button button-small button-secondary-light" type="button" data-nearby-clear>Počistite bližino</button>

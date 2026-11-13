@@ -57,10 +57,19 @@ for(const scenario of scenarios) {
     }
     await expect(panel).toBeVisible();
     await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
+    const town=panel.locator('[data-nearby-origin-place]');
+    await expect(panel.locator('[data-nearby-origin-place-group]')).toBeVisible();
+    await expect(town.locator('option')).toHaveCount(2);
+    await town.selectOption('synthetic-test-origin');
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText('Synthetic Zalec Race');
+    await expect(panel.locator('[data-nearby-status]')).toContainText(scenario.missing);
+    await panel.locator('[data-nearby-manual] > summary').click();
     const lat=panel.locator('[data-nearby-latitude]');
     const lng=panel.locator('[data-nearby-longitude]');
     const radius=panel.locator('[data-nearby-radius]');
     await lat.fill(scenario.lat);
+    await expect(town).toHaveValue(''); // manual origin overrides selected place
     await lng.fill(scenario.lng);
     await panel.locator('[data-nearby-apply]').click();
     await expect(cards).toHaveCount(1);
@@ -116,6 +125,7 @@ for(const scenario of scenarios) {
     await expect(lat).toHaveValue('');
     await expect(lng).toHaveValue('');
     await expect(radius).toHaveValue('25');
+    await expect(town).toHaveValue('');
     expect(page.url()).not.toContain('lat=');
     expect(page.url()).not.toContain('lng=');
   });
