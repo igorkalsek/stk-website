@@ -101,6 +101,78 @@ const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
 };
 
 /**
+ * Read-only coverage is measured against the FULL caller-supplied set of upcoming,
+ * confirmed, publicly visible editions. This cannot establish how many races
+ * without known coordinates are inside any particular search radius.
+ *
+ * Do not interpret a zero-match radius result as "no races nearby" when the
+ * complete event population has partial coverage.
+ */
+export type NearbyCoverageSummary = {
+  status: 'complete' | 'partial' | 'empty' | 'unavailable';
+  totalEditions: number;
+  locatedEditions: number;
+  exactStartEditions: number;
+  approximateSettlementEditions: number;
+  coveragePercent: number | null;
+  unlocatedEditionKeys: string[];
+  reason?: 'invalid-or-duplicate-index';
+};
+
+const indexByEdition = (index: readonly NearbyEditionLocation[]): Map<string, NearbyEditionLocation> | null => {
+  const mapped = new Map<string, NearbyEditionLocation>();
+  for (const record of index) {
+    const key = editionKey({ year: record.year, row: String(record.masterRow) });
+    if (!key || mapped.has(key)) return null;
+    mapped.set(key, record);
+  }
+  return mapped;
+};
+
+export function summarizeNearbyCoverage<T extends NearbyEvent>(
+  events: readonly T[],
+  index: readonly NearbyEditionLocation[]
+): NearbyCoverageSummary {
+  const unavailable = (): NearbyCoverageSummary => ({
+    status: 'unavailable', totalEditions: 0, locatedEditions: 0,
+    exactStartEditions: 0, approximateSettlementEditions: 0,
+    coveragePercent: null, unlocatedEditionKeys: [],
+    reason: 'invalid-or-duplicate-index'
+  });
+  const mapped = indexByEdition(index);
+  if (!mapped) return unavailable();
+
+  const seen = new Set<string>();
+  const missing: string[] = [];
+  let exact = 0;
+  let approximate = 0;
+  for (const event of events) {
+    const key = editionKey(event);
+    if (!key || seen.has(key)) return unavailable();
+    seen.add(key);
+    const location = mapped.get(key);
+    if (!location || !isApprovedLocation(location)) {
+      missing.push(key);
+    } else if (location.precision === 'start') {
+      exact++;
+    } else {
+      approximate++;
+    }
+  }
+  const total = events.length;
+  const located = exact + approximate;
+  return {
+    status: total === 0 ? 'empty' : missing.length ? 'partial' : 'complete',
+    totalEditions: total,
+    locatedEditions: located,
+    exactStartEditions: exact,
+    approximateSettlementEditions: approximate,
+    coveragePercent: total === 0 ? null : Math.round(1000 * located / total) / 10,
+    unlocatedEditionKeys: missing
+  };
+}
+
+/**
  * No implicit activation: caller must give an explicitly reviewed index.
  * When any confirmed race lacks a usable location, result.status='partial' and
  * the caller MUST show coverage limitations instead of claiming completeness.
@@ -114,13 +186,9 @@ export function filterNearbyRaces<T extends NearbyEvent>(
   if (!isValidWgs84(origin) || !NEARBY_RADII_KM.includes(radiusKm as NearbyRadiusKm)) {
     return { status: 'unavailable', matches: [], unlocatedEditionKeys: [], reason: 'invalid-origin-or-radius' };
   }
-  const byEdition = new Map<string, NearbyEditionLocation>();
-  for (const record of index) {
-    const key = editionKey({ year: record.year, row: String(record.masterRow) });
-    if (!key || byEdition.has(key)) {
-      return { status: 'unavailable', matches: [], unlocatedEditionKeys: [], reason: 'invalid-or-duplicate-index' };
-    }
-    byEdition.set(key, record);
+  const byEdition = indexByEdition(index);
+  if (!byEdition) {
+    return { status: 'unavailable', matches: [], unlocatedEditionKeys: [], reason: 'invalid-or-duplicate-index' };
   }
 
   const seen = new Set<string>();

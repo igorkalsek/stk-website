@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
-  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84
+  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage
 } from '../.cache/dist-test/utils-nearby-races.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
@@ -178,4 +178,50 @@ test('P0j GURS edition candidates are review-only and cannot become search resul
   assert.equal(result.status,'partial');
   assert.equal(result.matches.length,0);
   assert.deepEqual(result.unlocatedEditionKeys,events.map(e=>editionKey(e)));
+});
+
+test('coverage summary counts only approved edition-bound points, by precision', () => {
+  const events = [event('2027',51),event('2027',52),event('2027',53),event('2027',54)];
+  const index = [
+    checked('2027',51,zagorje.latitude,zagorje.longitude,'start'),
+    checked('2027',52,zagorje.latitude+0.05,zagorje.longitude),
+    { ...checked('2027',53,zagorje.latitude,zagorje.longitude), reviewStatus: 'review' }
+  ];
+  const summary = summarizeNearbyCoverage(events,index);
+  assert.equal(summary.status,'partial');
+  assert.deepEqual([
+    summary.totalEditions, summary.locatedEditions,
+    summary.exactStartEditions, summary.approximateSettlementEditions,
+    summary.coveragePercent
+  ],[4,2,1,1,50]);
+  assert.deepEqual(summary.unlocatedEditionKeys,['2027!53','2027!54']);
+  // A zero-match radius query can still have unresolved nearby races.
+  const distantOrigin = { latitude: 45, longitude: 13 };
+  const nearby = filterNearbyRaces(events,index,distantOrigin,10);
+  assert.equal(nearby.matches.length,0);
+  assert.equal(nearby.status,'partial');
+  assert.deepEqual(events.map(x=>x.row),['51','52','53','54']);
+});
+
+test('coverage empty and invalid inputs fail closed; REVIEW-only GURS data remains zero coverage', () => {
+  const empty = summarizeNearbyCoverage([],[]);
+  assert.equal(empty.status,'empty');
+  assert.equal(empty.coveragePercent,null);
+  assert.equal(summarizeNearbyCoverage([event('2027',51),event('2027',51)],[]).status,'unavailable');
+  const duplicate = checked('2027',51,zagorje.latitude,zagorje.longitude);
+  assert.equal(summarizeNearbyCoverage([event('2027',51)],[duplicate,duplicate]).status,'unavailable');
+  const review=JSON.parse(readFileSync(new URL('../research/dev056-location-candidates.review.json', import.meta.url),'utf8'));
+  const reviewIndex=review.entries.map(x=>({
+    year: String(x.year), masterRow:x.master_row,
+    latitude:x.candidate_wgs84.latitude, longitude:x.candidate_wgs84.longitude,
+    precision:'settlement-approximate', reviewStatus:'review',
+    sourceKind:'official-settlement', sourceUrl:x.canonical_gurs.official_feature_url,
+    sourceCheckedOn:'2026-11-12'
+  }));
+  const covered=summarizeNearbyCoverage(review.entries.map(x=>event(String(x.year),x.master_row)),reviewIndex);
+  assert.equal(covered.status,'partial');
+  assert.equal(covered.totalEditions,16);
+  assert.equal(covered.locatedEditions,0);
+  assert.equal(covered.coveragePercent,0);
+  assert.equal(covered.unlocatedEditionKeys.length,16);
 });
