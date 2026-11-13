@@ -54,6 +54,9 @@ for (const scenario of [
       if(!(await mobile.evaluate((e:HTMLDetailsElement)=>e.open))) await mobile.locator(':scope > summary').click();
     }
     await expect(panel).toBeVisible();
+    await expect(panel.locator('[data-nearby-pilot-scope]')).toContainText(
+      scenario.language==='en'?'only selected races in the Karst region':'le izbrani teki na Krasu'
+    );
     await expect(panel.locator('[data-nearby-sources]')).toContainText('Wikidata (CC0)');
     const origin=panel.locator('[data-nearby-origin-place]');
     await expect(origin.locator('option')).toHaveCount(4);
