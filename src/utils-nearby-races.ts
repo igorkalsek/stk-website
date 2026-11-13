@@ -330,3 +330,64 @@ export function nearbyDiscoveryCopy(
     ) : null
   };
 }
+
+/**
+ * Future Finder integration bridge. Keep this pure and inert until an
+ * explicitly approved edition-level index and an origin selector exist.
+ *
+ * The full set must contain confirmed, publicly visible editions in scope
+ * (for example, the selected public year and its upcoming races). The subset
+ * is the result of the existing month/region/surface/fee/family filters.
+ * Count missing locations AGAINST THE FULL set, not just the selected subset.
+ * Join only by year + Master row, never by name, city or mutable race_key.
+ */
+export type NearbyFinderView<T> = {
+  status: 'ready' | 'partial' | 'unavailable';
+  matches: NearbyMatch<T>[];
+  coverage: NearbyCoverageSummary;
+  copy: ReturnType<typeof nearbyDiscoveryCopy>;
+  reason?: 'invalid-origin-or-radius' | 'invalid-or-duplicate-index' | 'invalid-subset';
+};
+
+export function prepareNearbyFinderView<T extends NearbyEvent>(
+  fullPublicEvents: readonly T[],
+  filteredEvents: readonly T[],
+  approvedLocations: readonly NearbyEditionLocation[],
+  origin: NearbyPoint,
+  radiusKm: number,
+  locale: 'sl' | 'en'
+): NearbyFinderView<T> {
+  const coverage = summarizeNearbyCoverage(fullPublicEvents, approvedLocations);
+  const copy = nearbyDiscoveryCopy(locale, coverage, radiusKm);
+
+  const unavailable = (reason: NonNullable<NearbyFinderView<T>['reason']>): NearbyFinderView<T> => ({
+    status: 'unavailable', matches: [], coverage, copy, reason
+  });
+  if (coverage.status === 'unavailable') return unavailable('invalid-or-duplicate-index');
+
+  const fullKeys = new Set(fullPublicEvents.map(editionKey));
+  const selected = new Map<string, T>();
+  for (const race of filteredEvents) {
+    const key = editionKey(race);
+    if (!key || !fullKeys.has(key) || selected.has(key)) {
+      return unavailable('invalid-subset');
+    }
+    selected.set(key, race);
+  }
+
+  // The original matcher performs the Haversine calculation, role validation,
+  // explicit runtime-approval check and source verification, once for all
+  // public editions. A zero-hit radius cannot claim complete coverage when
+  // another public edition still has an unreviewed location.
+  const result = filterNearbyRaces(fullPublicEvents, approvedLocations, origin, radiusKm);
+  if (result.status === 'unavailable') {
+    return unavailable(result.reason ?? 'invalid-or-duplicate-index');
+  }
+
+  const matches = result.matches.flatMap((match) => {
+    const key = editionKey(match.event);
+    const event = key ? selected.get(key) : undefined;
+    return event ? [{ ...match, event }] : [];
+  });
+  return { status: result.status, matches, coverage, copy };
+}

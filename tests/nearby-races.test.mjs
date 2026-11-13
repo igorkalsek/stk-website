@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
-  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy
+  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy, prepareNearbyFinderView
 } from '../.cache/dist-test/utils-nearby-races.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
@@ -642,4 +642,79 @@ test('license audit requires attribution and leaves every candidate non-runtime'
   assert.ok(records.every(x=>x.reviewStatus==='review'&&x.approved_for_runtime===false));
   const events=records.map(x=>event(x.year,x.masterRow));
   assert.equal(summarizeNearbyCoverage(events,records).locatedEditions,0);
+});
+
+test('adapter combines existing Finder filters with geographic proximity, keeping selected objects', () => {
+  const event2027a={...event('2027',51),familyFriendly:true,fee:12};
+  const event2027b={...event('2027',52),familyFriendly:false,fee:35};
+  const event2027c={...event('2027',53),familyFriendly:true,fee:0};
+  const full=Object.freeze([event2027a,event2027b,event2027c]);
+  const selected=Object.freeze([{...event2027a,extraLabel:'enriched-after-filter'},event2027c]);
+  const locations=Object.freeze([
+    Object.freeze(checked('2027',51,46.13,14.99)),
+    Object.freeze(checked('2027',52,46.14,15.01)),
+    Object.freeze(checked('2027',53,46.15,15.06))
+  ]);
+  const result=prepareNearbyFinderView(full,selected,locations,{latitude:46.13,longitude:14.99},25,'sl');
+  assert.equal(result.status,'ready');
+  assert.deepEqual(result.matches.map(x=>x.event.row),['51','53']);
+  assert.equal(result.matches[0].event.extraLabel,'enriched-after-filter');
+  assert.equal(result.matches[0].approximate,true);
+  assert.equal(result.coverage.totalEditions,3);
+  assert.equal(result.coverage.locatedEditions,3);
+  assert.equal(result.copy.distanceBasis,'Zračna razdalja');
+  assert.deepEqual(full.map(x=>x.row),['51','52','53']);
+  assert.deepEqual(selected.map(x=>x.row),['51','53']);
+});
+
+test('adapter never claims zero races nearby when full current-year coverage is partial', () => {
+  const full=[event('2027',51),event('2027',52),event('2027',53)];
+  const onlyDistant=checked('2027',51,45.81,13.82);
+  const result=prepareNearbyFinderView(full,[full[0],full[2]],[onlyDistant],
+    {latitude:46.13,longitude:14.99},10,'en');
+  assert.equal(result.status,'partial');
+  assert.equal(result.matches.length,0);
+  assert.deepEqual(result.coverage.unlocatedEditionKeys,['2027!52','2027!53']);
+  assert.equal(result.coverage.totalEditions,3);
+  assert.match(result.copy.coverageNotice,/2 of 3/);
+  assert.match(result.copy.radiusNotice,/10 km/);
+  // A user-selected subset cannot hide missing-location risk in other public races.
+  const subset=prepareNearbyFinderView(full,[],[onlyDistant],
+    {latitude:46.13,longitude:14.99},25,'sl');
+  assert.equal(subset.status,'partial');
+  assert.equal(subset.matches.length,0);
+  assert.match(subset.copy.coverageNotice,/2 od 3/);
+});
+
+test('adapter rejects stale, duplicate, wrong-year selected events and invalid location indexes', () => {
+  const full=[event('2026',51),event('2027',51)];
+  const a=checked('2026',51,46.1,14.5);
+  const b=checked('2027',51,46.2,14.4);
+  const at={latitude:46.2,longitude:14.4};
+  const valid=prepareNearbyFinderView(full,[full[1]],[a,b],at,25,'en');
+  assert.equal(valid.status,'ready');
+  assert.deepEqual(valid.matches.map(x=>editionKey(x.event)),['2027!51']);
+  for(const subset of [[event('2028',51)],[full[1],full[1]],[event('2027',0)]]) {
+    const result=prepareNearbyFinderView(full,subset,[a,b],at,25,'sl');
+    assert.equal(result.status,'unavailable');
+    assert.equal(result.reason,'invalid-subset');
+    assert.equal(result.matches.length,0);
+  }
+  assert.equal(prepareNearbyFinderView(full,[full[1]],[a,b],{latitude:91,longitude:14.4},25,'en').status,'unavailable');
+  assert.equal(prepareNearbyFinderView(full,[full[1]],[a,b],at,11,'en').reason,'invalid-origin-or-radius');
+  assert.equal(prepareNearbyFinderView(full,[full[1]],[a,a],at,25,'en').reason,'invalid-or-duplicate-index');
+  // Even a reviewed location is not useful without explicit runtime activation.
+  assert.equal(prepareNearbyFinderView(full,[full[1]],[a,{...b,approved_for_runtime:false}],at,25,'en').status,'partial');
+});
+
+test('adapter is fail-closed with live-shaped public year/row event fields', () => {
+  const fromApi=[
+    {year:'2027',row:'9',title:'Wings for Life World Run Slovenia 2027',place:'Ljubljana'},
+    {year:'2027',row:'34',title:'7 ur Slivnice 2027',place:'Slivnica (Cerknica)'}
+  ];
+  const result=prepareNearbyFinderView(fromApi,fromApi,[],{latitude:46.13,longitude:14.99},50,'sl');
+  assert.equal(result.status,'partial');
+  assert.equal(result.matches.length,0);
+  assert.deepEqual(result.coverage.unlocatedEditionKeys,['2027!9','2027!34']);
+  assert.match(result.copy.coverageNotice,/2 od 2/);
 });
