@@ -267,3 +267,30 @@ test('DEV-056 180-day pilot source snapshot is edition-bound, explicitly non-run
   assert.equal(invalid.locatedEditions,0);
   assert.equal(invalid.coveragePercent,0);
 });
+
+test('2026/27 repeated start venues remain non-coordinate, edition bound and review-only', () => {
+  const evidence=JSON.parse(readFileSync(new URL('../research/dev056-repeated-start-venues.review.json',import.meta.url),'utf8'));
+  const snapshot=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(evidence.status,'REVIEW_ONLY_NOT_FOR_IMPORT_OR_PUBLICATION');
+  assert.equal(evidence.runtime_activation,false);
+  assert.equal(evidence.public_index_approved,false);
+  assert.equal(evidence.venue_profiles.length,6);
+  const all=new Set(evidence.venue_profiles.flatMap(v=>v.edition_keys));
+  const confirmed=new Set(snapshot.eligible_editions.map(e=>e.edition_key));
+  assert.equal(all.size,24);
+  assert.ok([...all].every(k=>confirmed.has(k)));
+  assert.equal(evidence.coverage.eligible_upcoming_in_window,59);
+  assert.equal(evidence.coverage.league_fraction_percent,40.7);
+  assert.equal(evidence.coverage.edition_with_approved_numeric_gps,0);
+  assert.equal(evidence.venue_profiles.reduce((n,v)=>n+v.edition_keys.length,0),33);
+  assert.ok(evidence.venue_profiles.every(v=>v.season==='2026/2027'&&v.review_status==='REVIEW'&&v.approved_for_runtime===false&&v.coordinates===null&&v.official_season_evidence_url.startsWith('https://')));
+  const adult=evidence.venue_profiles.find(v=>v.venue_id==='sztl-2026-27-mavrica-adult');
+  const youth=evidence.venue_profiles.find(v=>v.venue_id==='sztl-2026-27-zalec-stadium-youth');
+  const shared=evidence.venue_profiles.find(v=>v.venue_id==='kztl-2026-27-jost-mohor');
+  assert.equal(adult.edition_keys.length,9);
+  assert.deepEqual(adult.edition_keys,youth.edition_keys);
+  assert.equal(shared.edition_keys.length,6);
+  assert.ok(shared.edition_keys.some(k=>k==='2026!261')&&shared.edition_keys.some(k=>k==='2026!313'));
+  // Venue evidence must not be silently passed as complete nearby coordinate coverage.
+  assert.equal(summarizeNearbyCoverage(snapshot.eligible_editions.map(e=>event(String(e.year),e.master_row)),[]).locatedEditions,0);
+});
