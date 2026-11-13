@@ -1376,3 +1376,31 @@ test('DEV-056 2027 Rogla-Areh multi-start, 2026 Istrski stale sites and Maribor 
    assert.ok(row.start_sites_checked.every(s=>s.latitude===null&&s.longitude===null&&s.approved_for_runtime===false));
  }
 });
+
+
+test('DEV-056 numeric 2027 landmark references remain blocked pending race-line approval', () => {
+ const j=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ assert.deepEqual(j.official_2027_numeric_landmark_review.keys,['2027!35','2027!42']);
+ const a=j.records.find(r=>r.edition_key==='2027!35');
+ const b=j.records.find(r=>r.edition_key==='2027!42');
+ assert.match(a.numeric_venue_reference.name,/Zavetišče v Gozdu/);
+ assert.equal(a.numeric_venue_reference.latitude,46.340808);
+ assert.equal(a.numeric_venue_reference.longitude,14.32851);
+ assert.ok(a.numeric_venue_reference.source_differences_m<1);
+ assert.equal(a.numeric_venue_reference.licence_status,'REUSE_RIGHTS_NOT_INDEPENDENTLY_CONFIRMED_FOR_ORGANIZER_POINT');
+ assert.match(b.numeric_venue_reference.name,/Slovenski planinski muzej/);
+ assert.ok(Math.abs(b.numeric_venue_reference.latitude-46.4579888889)<0.000001);
+ assert.ok(Math.abs(b.numeric_venue_reference.longitude-13.9360916667)<0.000001);
+ assert.ok(b.numeric_venue_reference.source_differences_m<25);
+ assert.equal(b.numeric_venue_reference.licence_status,'WIKIDATA_CC0_P625_WITH_PZS_CROSS_CHECK');
+ assert.ok(j.records.length===93 && j.records.filter(r=>r.approved_for_runtime).length===3);
+ for(const r of [a,b]){
+  assert.equal(r.approved_for_runtime,false);
+  assert.equal(r.public_enabled,false);
+  assert.equal(r.numeric_venue_reference.review_status,'REVIEW');
+  assert.equal(r.numeric_venue_reference.approved_for_runtime,false);
+  assert.equal(r.numeric_venue_reference.public_enabled,false);
+  assert.equal(r.numeric_location_status,'NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES');
+  assert.ok(r.start_sites_checked.every(x=>x.latitude===null && x.longitude===null && x.approved_for_runtime===false));
+ }
+});

@@ -2279,7 +2279,25 @@
           "approved_for_runtime": false
         }
       ],
-      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "numeric_venue_reference": {
+        "name": "Zavetišče v Gozdu",
+        "role": "2027 Gams 10 km organizer-named start 'pred Zavetiščem', not the exact start line",
+        "latitude": 46.340808,
+        "longitude": 14.32851,
+        "precision": "landmark-approximate",
+        "licence_status": "REUSE_RIGHTS_NOT_INDEPENDENTLY_CONFIRMED_FOR_ORGANIZER_POINT",
+        "primary_numeric_source_url": "https://www.pd-krize.si/nasi-koci/zavetisce-v-gozdu",
+        "secondary_numeric_cross_check_url": "https://planinska-zveza.si/koce/78/",
+        "secondary_latitude": 46.34080775,
+        "secondary_longitude": 14.32851019,
+        "source_differences_m": 0.03,
+        "organizer_2027_event_url": "https://www.kriskagora-trail.si/gams/",
+        "evidence_limit": "Published hut location, not race line; only Gams 10 km is confirmed at this venue for 2027. Košuta 50 km Tržič/Paviljon; 20 km start unresolved.",
+        "review_status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false
+      }
     },
     {
       "edition_key": "2027!17",
@@ -2915,7 +2933,25 @@
           "approved_for_runtime": false
         }
       ],
-      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES",
+      "numeric_venue_reference": {
+        "name": "Slovenski planinski muzej, Mojstrana",
+        "role": "2027 Vrata Valley 26 km and Slovenian Alpine Museum 14 km event venue",
+        "latitude": 46.4579888889,
+        "longitude": 13.9360916667,
+        "precision": "landmark-approximate",
+        "licence_status": "WIKIDATA_CC0_P625_WITH_PZS_CROSS_CHECK",
+        "primary_numeric_source_url": "https://www.wikidata.org/wiki/Q7541800",
+        "secondary_numeric_cross_check_url": "https://obhodnice.pzs.si/index.php?pid=1",
+        "secondary_latitude": 46.458079,
+        "secondary_longitude": 13.93602,
+        "source_differences_m": 11.43,
+        "organizer_2027_event_url": "https://www.triglavtrailrun.com/race/",
+        "evidence_limit": "Wikidata P625 point at museum, not certified 2027 start line. The 14/26 km routes name museum; 44/101 km need independent role-specific signoff. Homepage broadly calls the museum the event start/finish.",
+        "review_status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false
+      }
     },
     {
       "edition_key": "2027!30",
@@ -3454,5 +3490,18 @@
     "source_year_specific_numeric_start_coordinates": 0,
     "approved_public_locations": 0,
     "scope": "Evidence triage only; no import or changes to event Master"
+  },
+  "official_2027_numeric_landmark_review": {
+    "checked_on": "2026-11-13",
+    "keys": [
+      "2027!35",
+      "2027!42"
+    ],
+    "venue_points_verified": 2,
+    "race_start_lines_confirmed_numeric": 0,
+    "runtime_approvals": 0,
+    "museum_primary_source_cc0": true,
+    "hut_reuse_rights_review_pending": true,
+    "note": "Venue POI points only; not new edition-wide geocodes. All role start_sites_checked entries remain latitude/longitude null and Master untouched."
   }
 }
