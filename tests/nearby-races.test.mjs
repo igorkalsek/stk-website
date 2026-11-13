@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
-  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy, prepareNearbyFinderView
+  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isApprovedLocation, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy, prepareNearbyFinderView
 } from '../.cache/dist-test/utils-nearby-races.js';
 import { parseNearbyOrigin, parseNearbyRadius, mountNearbyFinderUi, isApprovedNearbyOrigin } from '../.cache/dist-test/finder/race-finder-nearby-ui.js';
+import { DEV056_PILOT_EDITION_LOCATIONS, DEV056_PILOT_ORIGIN_PLACES, DEV056_PILOT_AUDIT } from '../.cache/dist-test/finder/dev056-first-release-index.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
   year, masterRow: row, latitude, longitude, precision,
@@ -1072,4 +1073,52 @@ test('DEV-056 real edition pilot dry run uses one explicitly simulated reviewed 
   // Even after simulation, all versioned source records remain unapproved.
   assert.ok(fixture.edition_candidates.every(e=>e.approved_for_runtime===false));
   assert.ok(fixture.places.every(e=>e.approved_for_runtime===false));
+});
+
+test('DEV-056 staged index snapshot blocks row/date/name drift and keeps public activation separate', () => {
+  const index=DEV056_PILOT_EDITION_LOCATIONS;
+  const origins=DEV056_PILOT_ORIGIN_PLACES;
+  assert.equal(DEV056_PILOT_AUDIT.approvedEditionCount,3);
+  assert.equal(index.length,3);
+  assert.equal(origins.length,3);
+  assert.ok(index.every(isApprovedLocation));
+  assert.ok(origins.every(isApprovedNearbyOrigin));
+  assert.equal(new Set(index.map(x=>`${x.year}!${x.masterRow}`)).size,3);
+  assert.equal(new Set(origins.map(x=>x.id)).size,3);
+  const eligible=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8')).eligible_editions;
+  const live=eligible.map(r=>({year:String(r.year),row:String(r.master_row),date:r.datum,title:r.naziv_prireditve}));
+  assert.equal(live.length,59);
+  for(const x of index) {
+    const actual=eligible.find(e=>e.year===Number(x.year)&&e.master_row===x.masterRow);
+    assert.ok(actual);
+    assert.equal(actual.datum,x.expectedDate);
+    assert.equal(actual.naziv_prireditve,x.expectedTitle);
+    assert.equal(x.reviewStatus,'approved');
+    assert.equal(x.approved_for_runtime,true);
+    if(x.precision!=='start') assert.equal(x.sourceUrl.startsWith('https://www.wikidata.org/'),true);
+  }
+  const origin=origins[0];
+  const result=prepareNearbyFinderView(live,live,index,origin,100,'sl');
+  assert.equal(result.status,'partial');
+  assert.equal(result.coverage.locatedEditions,3);
+  assert.equal(result.coverage.exactStartEditions,1);
+  assert.equal(result.coverage.approximatePlaceEditions,2);
+  assert.equal(result.coverage.unlocatedEditionKeys.length,56);
+  assert.ok(result.matches.length>=2);
+  assert.ok(result.matches.some(x=>x.approximate===false));
+  assert.match(result.copy.coverageNotice,/Za 56 od 59/);
+  assert.match(result.copy.approximateNotice,/Približna/);
+  const stale=live.map(e=> e.year==='2027'&&e.row==='19' ? {...e,title:'Preimenovan tek'} : e);
+  const bad=prepareNearbyFinderView(stale,stale,index,origin,100,'sl');
+  assert.equal(bad.coverage.locatedEditions,2);
+  assert.equal(bad.coverage.unlocatedEditionKeys.length,57);
+  assert.ok(!bad.matches.some(m=>editionKey(m.event)==='2027!19'));
+  const missingSnapshot=live.map(e=>e.year==='2027'&&e.row==='19'? {...e,date:undefined}:e);
+  const absent=prepareNearbyFinderView(missingSnapshot,missingSnapshot,index,origin,100,'sl');
+  assert.ok(!absent.matches.some(m=>editionKey(m.event)==='2027!19'));
+  for(const invalid of [
+    {...index[1],expectedTitle:undefined},
+    {...index[1],expectedDate:'2027-02-30'},
+    {...index[1],expectedDate:'2026-03-07'}
+  ]) assert.equal(isApprovedLocation(invalid),false);
 });

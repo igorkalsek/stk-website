@@ -16,6 +16,7 @@ import { getRegistrationFeeBounds } from '../utils-registration-fees.js';
   import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
   import { formatActiveFinderFilterCount, formatFinderRecoveryAction, getActiveFinderFilters, getFinderRecoverySuggestions, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
 import { mountNearbyFinderUi, type NearbyUiSelection, type NearbyOriginPlace } from './race-finder-nearby-ui';
+import { DEV056_PILOT_EDITION_LOCATIONS, DEV056_PILOT_ORIGIN_PLACES } from './dev056-first-release-index';
 import { editionKey, prepareNearbyFinderView, type NearbyEditionLocation } from '../utils-nearby-races';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
@@ -129,8 +130,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   // DEV-056: intentionally non-activatable in public builds until source rights,
   // official date/state attribution and a reviewed edition-level index are ready.
   const NEARBY_PUBLIC_ENABLED = false;
-  const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = [];
-  const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = []; // no unreviewed public origin points
+  const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = DEV056_PILOT_EDITION_LOCATIONS;
+  const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = DEV056_PILOT_ORIGIN_PLACES; // inert until public flag enabled
   let nearbySelection: NearbyUiSelection | null = null;
   let nearbyUi: ReturnType<typeof mountNearbyFinderUi> = null;
   const nearbyDistances = new Map<string, { distanceKm: number; approximate: boolean }>();

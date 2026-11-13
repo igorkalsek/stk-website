@@ -8,8 +8,8 @@ if (process.env.DEV056_PRIVATE_BROWSER_TEST !== '1' || process.env.CF_PAGES) {
 }
 
 const PLACEHOLDER = 'const NEARBY_PUBLIC_ENABLED = false;';
-const INDEX = 'const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = [];';
-const ORIGINS = 'const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = []; // no unreviewed public origin points';
+const INDEX = 'const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = DEV056_PILOT_EDITION_LOCATIONS;';
+const ORIGINS = 'const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = DEV056_PILOT_ORIGIN_PLACES; // inert until public flag enabled';
 const PRIVATE_ORIGINS = `const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = [{
   id: 'synthetic-test-origin', labelSl: 'Testno izhodišče', labelEn: 'Synthetic test origin',
   latitude: 46.34, longitude: 15.164716,

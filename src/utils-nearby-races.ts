@@ -11,7 +11,13 @@
 export const NEARBY_RADII_KM = [10, 25, 50, 100] as const;
 export type NearbyRadiusKm = typeof NEARBY_RADII_KM[number];
 export type NearbyPoint = { latitude: number; longitude: number };
-export type NearbyEvent = { year: string; row: string; /** Required for distinct start lines. */ startRoles?: readonly string[] };
+export type NearbyEvent = {
+  year: string; row: string;
+  /** Optional live event fields; required for release records with an identity snapshot. */
+  date?: string; title?: string; naziv_prireditve?: string;
+  /** Required for distinct start lines. */
+  startRoles?: readonly string[];
+};
 export type NearbyPrecision = 'start' | 'settlement-approximate' | 'place-approximate';
 
 export type NearbyEditionLocation = NearbyPoint & {
@@ -27,6 +33,9 @@ export type NearbyEditionLocation = NearbyPoint & {
   approved_for_runtime: boolean;
   sourceUrl: string;
   sourceCheckedOn: string;   // ISO date, date of verification
+  /** Exact current-year Master identity snapshot. Never permit row reuse or silent renaming. */
+  expectedDate?: string;
+  expectedTitle?: string;
   sourceKind: 'official-edition-start' | 'official-settlement' | 'documented-place-reference';
   /** An organizer's 2026 start is not automatically valid for the 2027 edition. */
   sourceEditionYear?: number;
@@ -100,6 +109,11 @@ export const isApprovedLocation = (location: NearbyEditionLocation): boolean => 
   if (location.precision !== 'start' && location.precision !== 'settlement-approximate' && location.precision !== 'place-approximate') return false;
   if (!/^https:\/\//i.test(location.sourceUrl)) return false;
   if (!isRealIsoDate(location.sourceCheckedOn)) return false;
+  // When a release provides a snapshot, BOTH components must be present and valid.
+  const hasIdentity = location.expectedDate !== undefined || location.expectedTitle !== undefined;
+  if (hasIdentity && (!location.expectedDate || !isRealIsoDate(location.expectedDate) ||
+    location.expectedDate.slice(0, 4) !== location.year ||
+    typeof location.expectedTitle !== 'string' || !location.expectedTitle.trim())) return false;
   if (location.precision === 'start') {
     // Direct race-edition organizer GPS: no GURS snapshot date is applicable.
     return location.sourceKind === 'official-edition-start' &&
@@ -189,6 +203,13 @@ const indexByEdition = (index: readonly NearbyEditionLocation[]): Map<string, Ne
  */
 const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocation[] | undefined): NearbyEditionLocation[] | null => {
   if (!locations || !locations.length) return null;
+  // Snapshot-bound pilot entries must match the CURRENT event, not just a stale
+  // Master row. In particular, missing live title/date fail closed.
+  const liveTitle = event.naziv_prireditve || event.title;
+  if (locations.some(location =>
+    (location.expectedDate !== undefined || location.expectedTitle !== undefined) &&
+    (location.expectedDate !== event.date || location.expectedTitle !== liveTitle)
+  )) return null;
   if (event.startRoles === undefined) {
     return locations.length === 1 && locations[0].startRole === undefined &&
       isApprovedLocation(locations[0]) ? locations : null;
