@@ -1,4 +1,6 @@
 ---
+import { buildNearbyMapLink } from '../../../../utils-nearby-index';
+import { NEARBY_EDITION_LOCATIONS } from '../../../../finder/nearby-production-index';
 import { formatRaceDateStatus, getEventDatePhase } from '../../../../utils-date';
 import { getRegistrationFeeBounds } from '../../../../utils-registration-fees';
 import GpxLinks from '../../../../components/GpxLinks.astro';
@@ -83,8 +85,8 @@ const correctionUrl = event ? buildRaceCorrectionContextUrl(event, 'en', canonic
 const confirmationUrl = event ? buildRaceConfirmationContextUrl(event, 'en', canonicalPath) : '/en/add-or-correct-race/?mode=confirm';
 const slovenePath = event ? buildEventDetailPath(event) : searchPath;
 
-const locationQuery = event ? [event.place, event.region].filter(Boolean).join(', ') : '';
-const locationUrl = locationQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}` : '';
+const mapLink = event ? buildNearbyMapLink(event, NEARBY_EDITION_LOCATIONS, 'en') : null;
+const locationUrl = mapLink?.url ?? '';
 const isPastRace = event && getEventDatePhase(event.date) === 'past';
 const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
 const savedRaceEventId = event ? getStableEventId(event) : '';
@@ -355,6 +357,7 @@ const jsonLd = event ? {
                   <div class="event-detail-location-panel">
                     <h3><span class="action-icon" set:html={renderActionIcon('location')}></span> Location</h3>
                     <a class="button button-small button-secondary-light event-detail-icon-button event-detail-text-icon-button" href={locationUrl} target="_blank" rel="noopener noreferrer" data-analytics-link-type="map_click" aria-label="Open location"><span class="action-icon" set:html={renderActionIcon('location')}></span><span>Open map</span></a>
+                    <p class="muted-note event-detail-map-note" data-map-precision>{mapLink?.label}{mapLink?.notice && <> · {mapLink.notice}</>}</p>
                   </div>
                 )}
 

@@ -238,6 +238,18 @@ const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocatio
   return locations;
 };
 
+/** A profile can link one unambiguous point, using the same approval and identity checks as Finder. */
+export function resolveNearbyEditionLocation(
+  event: NearbyEvent, index: readonly NearbyEditionLocation[]
+): NearbyEditionLocation | null {
+  const key = editionKey(event);
+  const mapped = indexByEdition(index);
+  if (!key || !mapped || !hasValidStartRoles(event)) return null;
+  const locations = usableEditionStarts(event, mapped.get(key));
+  // Several distinct starts cannot be represented by one profile map link.
+  return locations?.length === 1 ? locations[0] : null;
+}
+
 export function summarizeNearbyCoverage<T extends NearbyEvent>(
   events: readonly T[],
   index: readonly NearbyEditionLocation[]

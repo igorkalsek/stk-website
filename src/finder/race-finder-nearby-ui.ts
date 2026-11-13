@@ -22,6 +22,7 @@ export function isApprovedNearbyOrigin(place: NearbyOriginPlace): boolean {
 export type NearbyUiSelection = { origin: NearbyPoint; radiusKm: NearbyRadiusKm };
 export type NearbyUi = {
   updateNotice: (message: string) => void;
+  updateUnlocated: (races: readonly { date: string; title: string; place: string; href: string }[]) => void;
   clear: () => void;
 };
 
@@ -75,6 +76,31 @@ export function mountNearbyFinderUi(options: {
   const status = panel?.querySelector<HTMLElement>('[data-nearby-status]');
   const originSummary = panel?.querySelector<HTMLElement>('[data-nearby-origin-summary]');
   if (!panel || !fields || !latitude || !longitude || !radius || !useLocation || !apply || !clear || !status || !originSummary) return null;
+
+  const unlocated = panel.querySelector<HTMLDetailsElement>('[data-nearby-unlocated]');
+  const unlocatedCount = panel.querySelector<HTMLElement>('[data-nearby-unlocated-count]');
+  const unlocatedList = panel.querySelector<HTMLElement>('[data-nearby-unlocated-list]');
+  const updateUnlocated: NearbyUi['updateUnlocated'] = (races) => {
+    if (!unlocated || !unlocatedCount || !unlocatedList) return;
+    const items = races.map(race => {
+      const li = options.root.createElement('li');
+      const date = options.root.createElement('time');
+      date.dateTime = race.date;
+      date.textContent = new Intl.DateTimeFormat(options.locale === 'en' ? 'en-GB' : 'sl-SI', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      }).format(new Date(`${race.date}T00:00:00`));
+      const link = options.root.createElement('a');
+      // Only existing, same-site race profiles are allowed in this list.
+      if (/^\/(?:tek|en\/races)\/(?:2026|2027)\/r[0-9]+-[a-z0-9-]+\/$/.test(race.href)) link.href = race.href;
+      link.textContent = race.title;
+      li.append(date, ' · ', link, race.place ? ` · ${race.place}` : '');
+      return li;
+    });
+    unlocatedList.replaceChildren(...items);
+    unlocatedCount.textContent = `(${races.length})`;
+    unlocated.hidden = races.length === 0;
+    if (!races.length) unlocated.open = false;
+  };
 
   const en = options.locale === 'en';
   let pendingGeolocation = 0;
@@ -204,5 +230,5 @@ export function mountNearbyFinderUi(options: {
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 }
     );
   });
-  return { updateNotice: setStatus, clear: clearSelection };
+  return { updateNotice: setStatus, updateUnlocated, clear: clearSelection };
 }
