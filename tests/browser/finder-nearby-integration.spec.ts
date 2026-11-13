@@ -56,6 +56,9 @@ for(const scenario of scenarios) {
         await details.locator(':scope > summary').click();
     }
     await expect(panel).toBeVisible();
+    await expect(panel.locator('[data-nearby-sources]')).toBeVisible();
+    await expect(panel.locator('[data-nearby-sources] a')).toHaveAttribute('href', 'https://www.wikidata.org/wiki/Wikidata:Licensing');
+    await expect(panel.locator('[data-nearby-sources]')).toContainText('Wikidata (CC0)');
     await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
     const town=panel.locator('[data-nearby-origin-place]');
     await expect(panel.locator('[data-nearby-origin-place-group]')).toBeVisible();
