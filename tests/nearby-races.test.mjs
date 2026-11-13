@@ -1317,3 +1317,28 @@ test('DEV-056 current-year UTVV and Kras Trail launch locations are not one same
  assert.equal(data.records.length,93);
  assert.equal(data.records.filter(x=>x.approved_for_runtime).length,3);
 });
+
+
+test('DEV-056 additional official 2027 launch-site check never promotes approximate city coordinates', () => {
+ const d=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ const keys=['2027!20','2027!35','2027!46','2027!47','2027!32'];
+ assert.deepEqual(d.official_followup_2027_site_review.keys,keys);
+ assert.equal(d.records.length,93);
+ assert.equal(Object.values(d.summaries).reduce((a,b)=>a+b,0),93);
+ assert.equal(d.records.filter(x=>x.approved_for_runtime).length,3);
+ const x=Object.fromEntries(keys.map(k=>[k,d.records.find(r=>r.edition_key===k)]));
+ assert.equal(x['2027!20'].start_sites_checked.length,1);
+ assert.match(x['2027!20'].start_sites_checked[0].name,/Kulturni dom/);
+ assert.equal(x['2027!35'].start_sites_checked.length,2);
+ assert.match(x['2027!35'].start_sites_checked[0].name,/Tržič/);
+ assert.match(x['2027!35'].source2026_27.text,/2026/);
+ assert.equal(x['2027!46'].start_sites_checked.length,2);
+ assert.equal(x['2027!47'].start_sites_checked.length,1);
+ assert.match(x['2027!47'].start_sites_checked[0].name,/Figovcu/);
+ assert.match(x['2027!32'].source2026_27.text,/2026/);
+ for(const r of Object.values(x)){
+  assert.equal(r.approved_for_runtime,false); assert.equal(r.public_enabled,false);
+  assert.equal(r.proof_is_start_coordinates,false); assert.equal(r.reference_location_verified,false);
+  assert.ok(r.start_sites_checked.every(s=>s.latitude===null&&s.longitude===null&&s.approved_for_runtime===false));
+ }
+});

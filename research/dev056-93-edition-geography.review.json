@@ -19,7 +19,7 @@
     "HOLD_MULTI_P625_COORDINATES": 4,
     "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
     "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING": 9,
-    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 25,
+    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 20,
     "HOLD_COARSE_P625_PRECISION": 2,
     "HOLD_OFFICIAL_2026_MIKLAVZ_DISTINCT_CHILD_ADULT_STARTS_GPS_MISSING": 1,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
@@ -31,16 +31,21 @@
     "REVIEW_OFFICIAL_2027_LAKESIDE_START_GEOCODE_MISSING": 1,
     "REVIEW_OFFICIAL_2027_AJDOVSCINA_LAVRICEV_TRG_START_COORDS_MISSING": 1,
     "HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT": 1,
+    "REVIEW_ORGANIZER_CONFIRMED_2027_CELJE_SPICA_VENUE_NOT_START": 1,
     "REVIEW_OFFICIAL_2027_RIVERBANK_START_GEOCODE_MISSING": 2,
+    "HOLD_OFFICIAL_2027_KRISKA_GORA_TWO_START_SITES_20K_YEAR_STALE": 1,
     "HOLD_OFFICIAL_2027_MULTISTART_AND_DISTANCE_CONTENT_CONFLICT": 1,
     "REVIEW_VENUE_AND_ROUTE_SPECIFIC_START": 1,
     "REVIEW_OFFICIAL_2027_CASTLE_SQUARE_START_GEOCODE_MISSING": 1,
     "HOLD_OFFICIAL_2027_TRAIL_MARIBOR_MULTISTART_GEOCODE_MISSING": 1,
     "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING": 1,
     "HOLD_OFFICIAL_2027_SOCA_OUTDOOR_TOLMIN_TWO_START_AREAS_GPS_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_K24_SHARED_CULTURAL_CENTRE_START_COORDS_MISSING": 1,
     "REVIEW_OFFICIAL_2027_SLOVENIAN_ALPINE_MUSEUM_START_COORDS_MISSING": 1,
     "HOLD_OFFICIAL_2027_JULIAN_ALPS_MULTISTART_FOUR_REGIONS_GPS_MISSING": 1,
-    "REVIEW_OFFICIAL_2027_FOUR_PONDS_GUESTHOUSE_START_COORDS_MISSING": 1
+    "REVIEW_OFFICIAL_2027_FOUR_PONDS_GUESTHOUSE_START_COORDS_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_LJUBLJANA_SATURDAY_ADULT_CHILD_STARTS_COORDS_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_LJUBLJANA_MARATHON_FIGOVEC_START_COORDS_MISSING": 1
   },
   "warnings": [
     "Markovci name returned Q749792 in municipality Šalovci; false positive. Correct Q8009642 has conflicting coordinates and is blocked.",
@@ -1997,14 +2002,31 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://fatburn.si/prijave/",
+        "type": "ORGANIZER_CONFIRMED_2027_VENUE_WITH_2026_START_PAGE",
+        "text": "Direct FATBURN EVENTS 2027 submission recorded in STK Master row 32 confirms Špica, Celje as venue and 7 May 2027 date. Fatburn public 2027 calendar corroborates date. Exact start at Kajak kanu center Špica is only in 2026 event page; cannot carry it forward as verified 2027 start.",
+        "supporting_urls": [
+          "https://fatburn.si/biznis-run-celje/"
+        ]
+      },
+      "status": "REVIEW_ORGANIZER_CONFIRMED_2027_CELJE_SPICA_VENUE_NOT_START",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Špica, Celje (venue only)",
+          "role": "2027 event venue confirmed by organizer; actual start not verified",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!9",
@@ -2203,14 +2225,41 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://www.kriskagora-trail.si/kosuta/",
+        "type": "OFFICIAL_2027_DISTINCT_50K_AND_10K_STARTS_WITH_20K_STALE",
+        "text": "Organizer 2027 Košuta 50 km starts in Tržič at Paviljon; Gams 10 km starts at Zavetišče v Gozdu. Muflon 20 km organizer page still shows May 2026 and cannot verify a 2027 start. Master Križe is not an exact start.",
+        "supporting_urls": [
+          "https://www.kriskagora-trail.si/gams/",
+          "https://www.kriskagora-trail.si/muflon/"
+        ]
+      },
+      "status": "HOLD_OFFICIAL_2027_KRISKA_GORA_TWO_START_SITES_20K_YEAR_STALE",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Tržič, pred Paviljonom",
+          "role": "50 km Košuta 2027 start",
+          "source_url": "https://www.kriskagora-trail.si/kosuta/",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Zavetišče v Gozdu",
+          "role": "10 km Gams 2027 start; 20 km 2027 start not verified (2026 source)",
+          "source_url": "https://www.kriskagora-trail.si/gams/",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!17",
@@ -2701,14 +2750,33 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://k24trail.si/proge/k24-trail-10km/",
+        "type": "OFFICIAL_2027_FOUR_DISTANCES_SHARED_START",
+        "text": "Official 2027 course pages: the 10, 24, 50 and 100 km courses start at Kulturni dom Črna na Koroškem on 6/7 Aug. Course times differ. No numeric organizer start coordinate verified. Wikidata settlement coordinate is not a start.",
+        "supporting_urls": [
+          "https://k24trail.si/proge/k24-trail-100km/",
+          "https://k24trail.si/proge/k24-trail-50km/",
+          "https://k24trail.si/proge/k24-trail-24km/"
+        ]
+      },
+      "status": "REVIEW_OFFICIAL_2027_K24_SHARED_CULTURAL_CENTRE_START_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Kulturni dom Črna na Koroškem",
+          "role": "10 km (6 Aug 17:00); 100 km (6 Aug 22:00); 50 km (7 Aug 07:00); 24 km (7 Aug 15:00)",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!48",
@@ -3152,14 +3220,40 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://ljubljanskimaraton.si/garmin-tek-10-km",
+        "type": "OFFICIAL_2027_TWO_SATURDAY_START_ROLES",
+        "text": "2027 GARMIN 10km start is Slovenska cesta near Figovec. 2027 VITA 200m children start at Slovenska cesta / Šubičeva ulica; distinct start zones/roles. City point is not their precise start, numeric GPS not verified.",
+        "supporting_urls": [
+          "https://ljubljanskimaraton.si/en/vita-kids-run"
+        ]
+      },
+      "status": "REVIEW_OFFICIAL_2027_LJUBLJANA_SATURDAY_ADULT_CHILD_STARTS_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Slovenska cesta pri Figovcu, Ljubljana",
+          "role": "GARMIN 10 km 16 Oct 2027",
+          "source_url": "https://ljubljanskimaraton.si/garmin-tek-10-km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Križišče Slovenska cesta / Šubičeva ulica, Ljubljana",
+          "role": "VITA children's 200m 16 Oct 2027",
+          "source_url": "https://ljubljanskimaraton.si/en/vita-kids-run",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!47",
@@ -3181,14 +3275,32 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://ljubljanskimaraton.si/maraton",
+        "type": "OFFICIAL_2027_MARATHON_HALF_SHARED_START",
+        "text": "Organizer 2027 marathon 42.195 km and half-marathon 21.098 km route texts both start on Slovenska cesta near Figovec/Ajdovščina, finish at Kongresni trg. No independent numeric GPS start verified.",
+        "supporting_urls": [
+          "https://ljubljanskimaraton.si/zavarovalnica-vita-polmaraton"
+        ]
+      },
+      "status": "REVIEW_OFFICIAL_2027_LJUBLJANA_MARATHON_FIGOVEC_START_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Slovenska cesta pri Figovcu na Ajdovščini, Ljubljana",
+          "role": "42.195 km + 21.098 km 17 Oct 2027",
+          "source_url": "https://ljubljanskimaraton.si/maraton",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     }
   ],
   "league_start_source_review": {
@@ -3243,5 +3355,26 @@
     ],
     "publishable_exact_new": 0,
     "caveat": "2027!8 source contains stale copy elsewhere; do not infer new date or costs; only explicit 2027 start-site claim."
+  },
+  "official_followup_2027_site_review": {
+    "checked_on": "2026-11-13",
+    "keys": [
+      "2027!20",
+      "2027!35",
+      "2027!46",
+      "2027!47",
+      "2027!32"
+    ],
+    "year_specific_start_site_keys": [
+      "2027!20",
+      "2027!35",
+      "2027!46",
+      "2027!47"
+    ],
+    "organizer_venue_only_key": "2027!32",
+    "stale_2026_source_warning_key": "2027!35",
+    "new_numeric_start_points": 0,
+    "new_runtime_approvals": 0,
+    "note": "No CC0 settlement point promoted to start; distinct subrace start roles; 20km Kriška organizer page still 2026."
   }
 }
