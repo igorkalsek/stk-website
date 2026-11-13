@@ -1122,3 +1122,35 @@ test('DEV-056 staged index snapshot blocks row/date/name drift and keeps public 
     {...index[1],expectedDate:'2026-03-07'}
   ]) assert.equal(isApprovedLocation(invalid),false);
 });
+
+
+test('DEV-056 future full Master audit queue stays publication-inert and edition-identified', () => {
+  const qa=JSON.parse(readFileSync(new URL('../research/dev056-all-upcoming-2026-2027.audit.review.json',import.meta.url),'utf8'));
+  const historical=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(qa.qa_level,'COMPLETE_IDENTITY_AND_EVIDENCE_TRIAGE; PER_RECORD_LOCATION_PROVENANCE_NOT_YET_VERIFIED');
+  assert.equal(qa.coverage.eligible_editions,93);
+  assert.deepEqual(qa.coverage.by_year,{'2026':26,'2027':67});
+  assert.equal(qa.candidates.length,93);
+  assert.equal(qa.coverage.already_staged_count,3);
+  assert.equal(qa.coverage.public_runtime_enabled_count,0);
+  assert.equal(qa.coverage.previous_180day_snapshot_count,59);
+  assert.equal(qa.coverage.previous_180day_snapshot_still_present,59);
+  assert.equal(qa.coverage.previous_180day_snapshot_missing.length,0);
+  assert.equal(qa.master_snapshot_api_check,'NOT_AVAILABLE_FROM_ENVIRONMENT');
+  const ids=new Set();
+  for(const record of qa.candidates) {
+    assert.equal(record.edition_key,`${record.year}!${record.master_row}`);
+    assert.ok(!ids.has(record.edition_key));
+    ids.add(record.edition_key);
+    assert.ok(record.date>='2026-11-13' && record.date<='2027-12-31');
+    assert.ok(record.title.trim()&&record.place.trim());
+    assert.equal(record.master_confirmed,true);
+    assert.equal(record.master_published,true);
+    assert.equal(record.runtime_addition_authorized,false);
+    assert.equal(record.official_2026_2027_venue_starts_checked_in_this_audit,false);
+    assert.ok(record.audit_route.startsWith('STAGED_')||record.audit_route.startsWith('LEAGUE_')||
+      record.audit_route==='COMPOUND_OR_MULTISTART_SITE_REVIEW'||
+      record.audit_route==='SINGLE_PLACE_VERIFY_EVENT_VENUE_AND_CC0_COORDINATE');
+  }
+  for(const entry of historical.eligible_editions)assert.ok(ids.has(entry.edition_key));
+});
