@@ -102,7 +102,7 @@ test('edition-specific organizer GPS does not require a geodata snapshot', () =>
  assert.equal(filterNearbyRaces([race],[misleadingSnapshot],start,10).matches.length,0);
 });
 
-test('settlement centroid cannot be approved without independently verified dataset snapshot', () => {
+test('settlement centroid needs a dated snapshot OR an explicitly checked official GURS feature', () => {
  const settlement=checked('2027',19,45.7373449,13.8576759);
  const race=event('2027',19);
  for (const invalid of [
@@ -342,4 +342,76 @@ test('multi-start index rejects duplicate roles and mixed scoped/unscoped record
     assert.equal(filterNearbyRaces([{...race,startRoles:invalidRoles}],[adult,youth],origin,10).status,'unavailable');
     assert.equal(summarizeNearbyCoverage([{...race,startRoles:invalidRoles}],[adult,youth]).status,'unavailable');
   }
+});
+
+test('multi-start edition can use a single verified settlement reference for approximate discovery', () => {
+  const race={...event('2027',51),startRoles:['adult_start','youth_start']};
+  const approximate={...checked('2027',51,46.2490358,15.164716),
+    sourceSnapshotOn:undefined, sourceFeatureVerified:true,
+    sourceUrl:'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101473100?f=json'};
+  const result=filterNearbyRaces([race],[approximate],{latitude:46.2490358,longitude:15.164716},25);
+  assert.equal(result.status,'ready');
+  assert.equal(result.matches.length,1);
+  assert.equal(result.matches[0].approximate,true);
+  assert.equal(result.matches[0].matchedRole,undefined);
+  assert.equal(summarizeNearbyCoverage([race],[approximate]).approximateSettlementEditions,1);
+  // A city-centre point never becomes an exact start, even if flagged as such.
+  assert.equal(filterNearbyRaces([race],[{...approximate,precision:'start'}],{latitude:46.2490358,longitude:15.164716},25).matches.length,0);
+  const unreviewed={...approximate,reviewStatus:'review'};
+  assert.equal(filterNearbyRaces([race],[unreviewed],{latitude:46.2490358,longitude:15.164716},25).matches.length,0);
+  const unpublished={...approximate,approved_for_runtime:false};
+  assert.equal(filterNearbyRaces([race],[unpublished],{latitude:46.2490358,longitude:15.164716},25).matches.length,0);
+});
+
+test('undated settlement reference rejects unknown or counterfeit provenance', () => {
+  const legitimate={...checked('2027',51,46.2490358,15.164716),
+    sourceSnapshotOn:undefined,sourceFeatureVerified:true,
+    sourceUrl:'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101473100?f=json'};
+  const race=event('2027',51);
+  const origin={latitude:46.2490358,longitude:15.164716};
+  assert.equal(filterNearbyRaces([race],[legitimate],origin,25).matches.length,1);
+  for(const bad of [
+    {...legitimate,sourceFeatureVerified:false},
+    {...legitimate,sourceFeatureVerified:undefined},
+    {...legitimate,sourceUrl:'https://example.org/not-gurs-feature'},
+    {...legitimate,sourceUrl:'https://ipi.eprostor.gov.si.evil.org/item/123?f=json'},
+    {...legitimate,sourceUrl:'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/not-a-feature?f=json'},
+    {...legitimate,sourceKind:'official-edition-start'},
+    {...legitimate,sourceSnapshotOn:'not-a-real-snapshot'}
+  ]){
+    assert.equal(filterNearbyRaces([race],[bad],origin,25).matches.length,0);
+  }
+});
+
+test('OFFLINE approximate pilot demonstrates 21 of 59 eligible editions, without activating any review data', () => {
+  const fixture=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
+  const full=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(fixture.kind,'OFFLINE_APPROXIMATE_DISCOVERY_REVIEW_FIXTURE');
+  assert.equal(fixture.runtime_activation,false);
+  assert.equal(fixture.public_index_approved,false);
+  assert.equal(fixture.not_for_import_or_publication,true);
+  assert.equal(fixture.entries.length,21);
+  assert.equal(new Set(fixture.entries.map(x=>editionKey({year:x.year,row:String(x.masterRow)}))).size,21);
+  assert.deepEqual([fixture.coverage.approximate_reference_settlements,fixture.coverage.exact_offline_start_candidates,fixture.coverage.not_located],[20,1,38]);
+  const events=full.eligible_editions.map(x=>({
+    ...event(String(x.year),x.master_row),
+    ...(x.naziv_prireditve.startsWith('SZTL 2026/2027')?{startRoles:['adult_start','youth_start']}:{})
+  }));
+  assert.equal(events.length,59);
+  const unavailable=summarizeNearbyCoverage(events,fixture.entries);
+  assert.deepEqual([unavailable.status,unavailable.locatedEditions,unavailable.coveragePercent],['partial',0,0]);
+  assert.equal(filterNearbyRaces(events,fixture.entries,{latitude:46.2490358,longitude:15.164716},25).matches.length,0);
+  // Deliberately isolated, non-persistent calculation: not an authorization to publish.
+  const ephemeral=fixture.entries.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const preview=summarizeNearbyCoverage(events,ephemeral);
+  assert.deepEqual([preview.status,preview.totalEditions,preview.locatedEditions,preview.exactStartEditions,preview.approximateSettlementEditions,preview.coveragePercent],
+    ['partial',59,21,1,20,35.6]);
+  assert.equal(preview.unlocatedEditionKeys.length,38);
+  const closeToZalec=filterNearbyRaces(events,ephemeral,{latitude:46.2490358,longitude:15.164716},10);
+  const sztl=closeToZalec.matches.filter(x=>x.event.label==='2027!51'||x.event.label==='2027!52');
+  assert.ok(sztl.length>=2);
+  assert.ok(sztl.every(x=>x.approximate===true&&x.matchedRole===undefined));
+  // The same settlement reference reused across editions must not conflate edition IDs.
+  assert.equal(new Set(closeToZalec.matches.map(x=>editionKey(x.event))).size,closeToZalec.matches.length);
+  assert.equal(closeToZalec.status,'partial');
 });

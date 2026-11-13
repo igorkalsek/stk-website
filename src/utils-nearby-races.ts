@@ -31,6 +31,8 @@ export type NearbyEditionLocation = NearbyPoint & {
   sourceEditionYear?: number;
   /** For official SETTLEMENT data only; record DATUM_SYS is not a dataset snapshot. */
   sourceSnapshotOn?: string;
+  /** Manually checked matching GURS settlement feature, when dataset snapshot date is not supplied. */
+  sourceFeatureVerified?: boolean;
 };
 
 export type NearbyMatch<T> = {
@@ -99,11 +101,18 @@ const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
       location.sourceEditionYear === Number(location.year) &&
       location.sourceSnapshotOn === undefined;
   }
-  // Settlement reference: require a separately verified source SNAPSHOT date.
-  return location.sourceKind === 'official-settlement' &&
-    typeof location.sourceSnapshotOn === 'string' &&
+  // Settlement approximation: prefer a dated dataset snapshot when known.
+  // GURS serves individual official settlement features without a published
+  // snapshot date here; a verified FEATURE ID is sufficient for a visibly
+  // approximate location, but never for an exact race-start pin.
+  const datedSnapshot = typeof location.sourceSnapshotOn === 'string' &&
     isRealIsoDate(location.sourceSnapshotOn) &&
     location.sourceSnapshotOn <= location.sourceCheckedOn;
+  const verifiedFeatureWithoutSnapshot = location.sourceSnapshotOn === undefined &&
+    location.sourceFeatureVerified === true &&
+    /^https:\/\/ipi\.eprostor\.gov\.si\/wfs-si-gurs-rpe\/ogc\/features\/collections\/SI\.GURS\.RPE(?:%3A|:)NASELJA\/items\/[0-9]+\?f=json$/i.test(location.sourceUrl);
+  return location.sourceKind === 'official-settlement' &&
+    (datedSnapshot || verifiedFeatureWithoutSnapshot);
 };
 
 /**
@@ -154,9 +163,10 @@ const indexByEdition = (index: readonly NearbyEditionLocation[]): Map<string, Ne
 };
 
 /**
- * Multi-start editions require every role to have its own approved exact start.
- * Partial adult-only or youth-only positions must not represent the edition.
- * A settlement reference point cannot substitute for multiple start lines.
+ * Multi-start editions may use ONE explicitly approximate, verified settlement
+ * reference for race discovery, or all approved exact start roles. A settlement
+ * point is NOT an individual adult/youth start and must be labeled approximate.
+ * Partial role-specific coordinates cannot substitute for missing roles.
  */
 const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocation[] | undefined): NearbyEditionLocation[] | null => {
   if (!locations || !locations.length) return null;
@@ -164,6 +174,11 @@ const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocatio
     return locations.length === 1 && locations[0].startRole === undefined &&
       isApprovedLocation(locations[0]) ? locations : null;
   }
+  // Discovery fallback applies to the whole edition, not a specific course.
+  // It remains approximate even if several disciplines have distinct starts.
+  if (locations.length === 1 && locations[0].startRole === undefined &&
+      locations[0].precision === 'settlement-approximate' &&
+      isApprovedLocation(locations[0])) return locations;
   if (locations.length !== event.startRoles.length) return null;
   if (locations.some(x => !x.startRole || !event.startRoles!.includes(x.startRole) ||
       x.precision !== 'start' || !isApprovedLocation(x))) return null;
