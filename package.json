@@ -17,7 +17,8 @@
     "test:browser:race-profiles": "playwright test tests/browser/race-profile-ux.spec.ts --project=chromium",
     "test:browser:home": "playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts tests/browser/public-get-dedup.spec.ts tests/browser/home-spotlight.spec.ts --project=chromium",
     "test:race-watch-contract": "node --test tests/race-watch-contract.test.mjs tests/race-watch-contract-review.test.mjs tests/race-watch-coverage.test.mjs",
-    "test:browser:nearby-private": "playwright test --config playwright.dev056.config.ts"
+    "test:browser:nearby-private": "playwright test --config playwright.dev056.config.ts",
+    "test:browser:nearby-release": "playwright test --config playwright.dev056-release.config.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

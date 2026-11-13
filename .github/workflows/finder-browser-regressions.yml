@@ -12,6 +12,9 @@ on:
       - 'tests/browser/finder-nearby-pilot.spec.ts'
       - 'tests/browser/finder-nearby-integration.spec.ts'
       - 'tests/dev056-private-astro.config.mjs'
+      - 'tests/browser/finder-nearby-release.spec.ts'
+      - 'playwright.dev056-release.config.ts'
+      - 'src/finder/dev056-first-release-index.ts'
       - 'playwright.dev056.config.ts'
       - 'src/finder/race-finder-controller.ts'
       - 'src/finder/race-finder-nearby-ui.ts'
@@ -45,6 +48,9 @@ jobs:
 
       - name: Run DEV-056 private card integration (never deploy)
         run: npm run test:browser:nearby-private
+
+      - name: Run DEV-056 actual reviewed pilot index privately (never deploy)
+        run: npm run test:browser:nearby-release
 
       - name: Upload Playwright report
         if: failure()
