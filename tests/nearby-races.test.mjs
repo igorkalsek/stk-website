@@ -759,7 +759,7 @@ test('nearby UI rejects a false gate or an unverified location BEFORE accessing 
   assert.equal(mounted([],true),null);
   assert.equal(mounted([{...location,approved_for_runtime:false}],true),null);
   assert.equal(mounted([{...location,reviewStatus:'review'}],true),null);
-  assert.equal(mounted([{...location,sourceUrl:'https://invalid.example.net/made-up'}],true),null);
+  assert.equal(mounted([{...location,sourceUrl:'http://invalid.example.net/made-up'}],true),null);
   assert.equal(mounted([{...location,sourceSnapshotOn:'not-a-date'}],true),null);
 });
 
