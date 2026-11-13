@@ -14,12 +14,14 @@
   "public_runtime_enabled": 0,
   "region_coverage_before_release": "NOT_ASSESSED_FOR_PUBLICATION",
   "summaries": {
-    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 32,
+    "REVIEW_OFFICIAL_2026_NOVO_MESTO_SQUARE_START_GEOCODE_MISSING": 1,
     "REVIEW_YEAR_VENUE_TEXT_PROVEN_CC0_APPROX_PENDING_DISPLACEMENT": 6,
     "HOLD_MULTI_P625_COORDINATES": 4,
     "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
     "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING": 9,
+    "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 26,
     "HOLD_COARSE_P625_PRECISION": 2,
+    "HOLD_OFFICIAL_2026_MIKLAVZ_DISTINCT_CHILD_ADULT_STARTS_GPS_MISSING": 1,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
     "HOLD_NO_DISAMBIGUATED_CC0_POINT": 1,
     "HOLD_COMPLEX_GEOGRAPHY_NO_ONE_POINT": 10,
@@ -32,7 +34,11 @@
     "REVIEW_VENUE_AND_ROUTE_SPECIFIC_START": 1,
     "REVIEW_OFFICIAL_2027_CASTLE_SQUARE_START_GEOCODE_MISSING": 1,
     "HOLD_OFFICIAL_2027_TRAIL_MARIBOR_MULTISTART_GEOCODE_MISSING": 1,
-    "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING": 1
+    "REVIEW_OFFICIAL_2027_TIC_PODBRDO_ADULT_AND_BAZEN_CHILD_START_GEOCODE_MISSING": 1,
+    "HOLD_OFFICIAL_2027_SOCA_OUTDOOR_TOLMIN_TWO_START_AREAS_GPS_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_SLOVENIAN_ALPINE_MUSEUM_START_COORDS_MISSING": 1,
+    "HOLD_OFFICIAL_2027_JULIAN_ALPS_MULTISTART_FOUR_REGIONS_GPS_MISSING": 1,
+    "REVIEW_OFFICIAL_2027_FOUR_PONDS_GUESTHOUSE_START_COORDS_MISSING": 1
   },
   "warnings": [
     "Markovci name returned Q749792 in municipality Šalovci; false positive. Correct Q8009642 has conflicting coordinates and is blocked.",
@@ -63,14 +69,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://www.novomesto21.si/sl/o-maratonu/program-in-casovnica",
+        "type": "CURRENT_YEAR_SHARED_2026_START_SQUARE",
+        "text": "Organizer 14 Nov 2026: half marathon, 5km, 10km main start together at Novi trg; children races also at Novi trg, no numerical square pin verified."
+      },
+      "status": "REVIEW_OFFICIAL_2026_NOVO_MESTO_SQUARE_START_GEOCODE_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Novi trg, Novo mesto",
+          "role": "adult half/10/5 km and children",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2026!294",
@@ -425,14 +445,42 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://sd-smartno.si/navodila-pred-tekom",
+        "type": "CURRENT_YEAR_MULTISTART_2026",
+        "text": "5 Dec 2026 adult race starts Terme Snovik; child 1.4km starts 1.4km before Sv. Miklavž finish at separate parking; preschool starts at another near-finish location. Never geocode the hilltop Sv. Miklavž as the adult start."
+      },
+      "status": "HOLD_OFFICIAL_2026_MIKLAVZ_DISTINCT_CHILD_ADULT_STARTS_GPS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Terme Snovik",
+          "role": "adult start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Separate parking 1.4km before finish",
+          "role": "child start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Approach to Sv. Miklavž finish",
+          "role": "preschool start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2026!266",
@@ -2540,14 +2588,35 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://soca-outdoor.com/za-tekace/",
+        "type": "MULTISTART_BY_DISTANCE_AND_DAY_2027",
+        "text": "2027 festival: most Sat/Sun 5,10,15,20,30,40km race starts at main event venue in Tolmin; 25 June vertical starts at Tolmin Mestni trg, separate start. Do not treat all as one exact GPS."
+      },
+      "status": "HOLD_OFFICIAL_2027_SOCA_OUTDOOR_TOLMIN_TWO_START_AREAS_GPS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Main Soča Outdoor festival venue, Tolmin",
+          "role": "5/10/15/20/30/40 km starts",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Mestni trg Tolmin",
+          "role": "vertical start 25 June 2027",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!50",
@@ -2675,14 +2744,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://www.triglavtrailrun.com/race/",
+        "type": "CURRENT_YEAR_NAMED_START_SITE",
+        "text": "21 Aug 2027 Vrata Valley Race starts at Slovenian Alpine Museum in Mojstrana. Mojstrana settlement point is not museum GPS."
+      },
+      "status": "REVIEW_OFFICIAL_2027_SLOVENIAN_ALPINE_MUSEUM_START_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Slovenian Alpine Museum, Mojstrana",
+          "role": "26km Vrata Valley trail start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!30",
@@ -2885,14 +2968,49 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://julianalps.utmb.world/races-runners/runners/event-schedule",
+        "type": "MULTISTART_BY_DISTANCE_2027",
+        "text": "2027 organizer: 10/15/25km plus Kids start Kranjska Gora in front of Vitranc Hall; 50km from Završnica Žirovnica; 80km from Mala Zaka Bled; 120km from Linhartov trg Radovljica. Kranjska Gora town reference cannot represent all four starts."
+      },
+      "status": "HOLD_OFFICIAL_2027_JULIAN_ALPS_MULTISTART_FOUR_REGIONS_GPS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Vitranc Hall Kranjska Gora",
+          "role": "10/15/25 km and kids",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Završnica Žirovnica",
+          "role": "50 km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Mala Zaka Bled",
+          "role": "80 km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        },
+        {
+          "name": "Linhartov trg Radovljica",
+          "role": "120 km",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!58",
@@ -2947,14 +3065,28 @@
         "source_checked_on": "2026-11-13",
         "precision": "place-approximate"
       },
-      "source2026_27": null,
-      "status": "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED",
+      "source2026_27": {
+        "url": "https://www.backyard.si/runner-guide",
+        "type": "CURRENT_YEAR_NAMED_START_SITE",
+        "text": "Official 8 Oct 2027 start corral at Gostišče Štirje Ribniki, Spodnje Gameljne; local town P625 coordinate is not automatically the guesthouse start."
+      },
+      "status": "REVIEW_OFFICIAL_2027_FOUR_PONDS_GUESTHOUSE_START_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "start_sites_checked": [
+        {
+          "name": "Gostišče Štirje Ribniki, Spodnje Gameljne",
+          "role": "single backyard race start",
+          "latitude": null,
+          "longitude": null,
+          "approved_for_runtime": false
+        }
+      ],
+      "numeric_location_status": "NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES"
     },
     {
       "edition_key": "2027!46",
@@ -3044,5 +3176,19 @@
     ],
     "master_change_note": "Do not overwrite Master distances from this research-only audit; 2027!17 official 2027 page itself contains internally stale FAQ distances 30/60 vs newer 35/50; separate Master review required.",
     "publishable_numeric_new_locations": 0
+  },
+  "official_additional_site_review": {
+    "checked_on": "2026-11-13",
+    "editions_checked": [
+      "2026!260",
+      "2026!265",
+      "2027!37",
+      "2027!42",
+      "2027!68",
+      "2027!69"
+    ],
+    "scope": "2026 Nov/Dec named start areas and 2027 named/multi starts validated against exact-year organizer pages",
+    "new_numeric_approvals": 0,
+    "note": "Adult/child and route-distance starts kept separate; P625 settlement/city point is not exact start."
   }
 }

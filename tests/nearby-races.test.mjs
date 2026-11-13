@@ -1273,3 +1273,27 @@ test('DEV-056 edition-specific 2027 organizer start sites block mis-geocoding', 
  assert.match(byKey.get('2027!10').source2026_27.text,/SAVINJSKO NABREŽJE/);
  assert.equal(data.records.filter(x=>x.approved_for_runtime).length,3);
 });
+
+
+test('DEV-056 additional official 2026/27 venue checks keep roles distinct and non-public', () => {
+ const j=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ assert.equal(j.official_additional_site_review.editions_checked.length,6);
+ const m=new Map(j.records.map(r=>[r.edition_key,r]));
+ for(const key of ['2026!260','2026!265','2027!37','2027!42','2027!68','2027!69']){
+  const r=m.get(key);
+  assert.ok(r);
+  assert.equal(r.approved_for_runtime,false);
+  assert.equal(r.public_enabled,false);
+  assert.equal(r.numeric_location_status,'NOT_VERIFIED_FOR_DOCUMENTED_START_VENUES');
+  assert.ok(r.start_sites_checked.length>0);
+  assert.ok(r.start_sites_checked.every(site=>site.latitude===null&&site.longitude===null&&site.approved_for_runtime===false));
+  assert.ok(/^https:\/\//.test(r.source2026_27.url));
+  assert.match(r.status,/^(REVIEW_|HOLD_)/);
+ }
+ assert.equal(m.get('2026!265').start_sites_checked.length,3);
+ assert.equal(m.get('2027!68').start_sites_checked.length,2);
+ assert.equal(m.get('2027!69').start_sites_checked.length,4);
+ assert.match(m.get('2027!69').source2026_27.text,/Završnica Žirovnica/);
+ assert.equal(j.records.length,93);
+ assert.equal(j.records.filter(r=>r.approved_for_runtime).length,3);
+});
