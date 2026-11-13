@@ -322,5 +322,89 @@
       "Fixed nominal origin coordinates are testing examples and do not originate from user's precise GPS; user positions must not be persisted.",
       "No Master/Registry/public records are modified by these offline tests."
     ]
+  },
+  "pilot_launch_readiness_2026_11_13": {
+    "decision": "NO_GO_PRODUCTION; CANDIDATE_PRIORITY_REVIEW_ONLY",
+    "as_of": "2026-11-13",
+    "period": "2026-11-13 to 2027-05-11",
+    "basis": "Canonical STK Master 2026 and 2027 read on 2026-11-13, edition keys in research/dev056-approximate-pilot.review.json",
+    "source_note": "GURS official CC BY 4.0 permits commercial reuse with source, kind and true dataset state/date attribution; OPSI metadata_modified, DATUM_SYS and our sourceCheckedOn do NOT independently establish that state/date.",
+    "gurs_service_status": "GURS reported some outages on 2026-11-06 and an electronic service restoration on 2026-11-11. A specific live feature URL remains inaccessible from this execution environment; this is NOT proof that the provider remains down.",
+    "official_restoration_notice": "https://www.e-prostor.gov.si/aktualne-novice/",
+    "official_gurs_terms": "https://www.e-prostor.gov.si/dostopi/javni-dostop/",
+    "official_rpe_metadata": "https://podatki.gov.si/dataset/register-prostorskih-enot",
+    "official_data_office": "https://www.e-prostor.gov.si/kontakt/",
+    "counts": {
+      "offline_gurs_editions": 20,
+      "distinct_official_naselje_features": 12,
+      "candidate_2027_city_reference_review_only": 4,
+      "ambiguous_2027_homonym": 1,
+      "multistart_repeated_zalec": 9,
+      "soon_2026": 6,
+      "publicly_approved": 0
+    },
+    "groups": [
+      {
+        "decision": "NEXT_2027_SETTLEMENT_PLACE_QA_ONLY",
+        "priority": 1,
+        "edition_keys": [
+          "2027!22",
+          "2027!23",
+          "2027!43",
+          "2027!57"
+        ],
+        "reason": "Distinct settlement references (Sežana, Ormož, Bukovci, Koper) and public/confirmed 2027 Master identities. A city/settlement reference is only approximate, not an organizer race start. Independent venue verification and GURS state/date attribution are still required.",
+        "next": "Verify official 2027 exact edition-to-settlement location, check sub-10km accuracy caution and provenance; require source-state attribution before considering any runtime approval."
+      },
+      {
+        "decision": "MANUAL_HOMONYM_DISAMBIGUATION",
+        "priority": 2,
+        "edition_keys": [
+          "2027!19"
+        ],
+        "reason": "Križ pri Sežani is named in Master; several Slovenian places share Križ and the GURS Križ polygon needs municipality/place verification. Official event venue address by itself is not precise race start GPS.",
+        "next": "Verify official municipality and GURS polygon ID 110300000101312191 without inferring start position."
+      },
+      {
+        "decision": "MULTISTART_DO_NOT_CLAIM_NASELJE_AS_START",
+        "priority": 3,
+        "edition_keys": [
+          "2026!307",
+          "2026!309",
+          "2026!310",
+          "2027!51",
+          "2027!52",
+          "2027!53",
+          "2027!54",
+          "2027!55",
+          "2027!56"
+        ],
+        "reason": "All nine SZTL editions share ONE GURS Žalec polygon reference (ID 110300000101473100); canonical Master notes describe adult departures at nadvoz Mavrica and children's runs at the athletic stadium. The shared administrative centroid is neither of those starts. Race courses vary by stage.",
+        "next": "Keep as review only; verify adult/youth start roles and edition-specific organiser evidence; do not interpret one centroid as nine verified race start points or unqualified 10km radius accuracy."
+      },
+      {
+        "decision": "SOON_OR_YEAR_2026_SECONDARY_PRIORITY",
+        "priority": 4,
+        "edition_keys": [
+          "2026!260",
+          "2026!264",
+          "2026!267",
+          "2026!268",
+          "2026!294",
+          "2026!303"
+        ],
+        "reason": "Six 2026 editions, including three taking place on 2026-11-14. Their short remaining lifetime makes them poor first-public-launch targets without evidence of near-term safe release. Some Masters already contain official specific venue text.",
+        "next": "Do not import, approve or reuse in 2027; if directly verified in time, only review for 2026 season. No copying old start information to a future year."
+      }
+    ],
+    "release_gates": [
+      "Written/official traceable dataset state/date or accepted attribution format for this OGC NASELJA source (none yet).",
+      "Organizer 2027 edition-and-location identity and likely displacement from settlement reference reviewed; 10 km boundaries labelled approximate.",
+      "All 9 SZTL repeats separated from simple city-only candidates, including distinct child and adult start roles; no automatic approval via shared GURS polygon.",
+      "Candidate-by-candidate approval must be explicit and edition-key bound; source URLs alone, Master kraj, or successful tests do not approve public index.",
+      "Show partial coverage for every user radius if any eligible events are unlocated, and never imply no races are nearby from a zero located-result subset.",
+      "Review GURS CC BY attribution in SL/EN user interface and date state, including transformed reference-point disclosure, before public website build.",
+      "No production merge/rebuild/deploy or STK Master/RACE_REGISTRY/PUBLIC_LS/CHANGE_LOG writes arise from this review."
+    ]
   }
 }

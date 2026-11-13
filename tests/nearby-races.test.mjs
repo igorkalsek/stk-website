@@ -928,3 +928,33 @@ test('dated GURS source rejects arbitrary HTTPS host even when approval and snap
     assert.equal(summarizeNearbyCoverage([event('2027',51)],[falseClaim]).locatedEditions,0);
   }
 });
+
+test('2026-11-13 GURS 2027 pilot triage stays strictly review-only', () => {
+  const a=JSON.parse(readFileSync(new URL('../research/dev056-geodata-license.review.json',import.meta.url),'utf8'));
+  const r=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
+  const q=a.pilot_launch_readiness_2026_11_13;
+  assert.equal(q.decision,'NO_GO_PRODUCTION; CANDIDATE_PRIORITY_REVIEW_ONLY');
+  assert.equal(a.public_index_approved,false);
+  assert.equal(a.activation_forbidden,true);
+  assert.equal(q.counts.publicly_approved,0);
+  assert.equal(q.counts.offline_gurs_editions,20);
+  assert.equal(q.counts.candidate_2027_city_reference_review_only,4);
+  assert.equal(q.counts.ambiguous_2027_homonym,1);
+  assert.equal(q.counts.multistart_repeated_zalec,9);
+  assert.equal(q.counts.soon_2026,6);
+  const groups=q.groups;
+  const actual=groups.flatMap(g=>g.edition_keys);
+  const expected=r.entries.filter(e=>e.sourceKind==='official-settlement')
+    .map(e=>e.year+'!'+e.masterRow);
+  assert.equal(new Set(actual).size,20);
+  assert.deepEqual(actual.slice().sort(),expected.slice().sort());
+  assert.ok(groups.every(g=>g.edition_keys.length&&g.reason&&g.next));
+  const zalec=groups.find(g=>g.decision==='MULTISTART_DO_NOT_CLAIM_NASELJE_AS_START');
+  assert.equal(zalec.edition_keys.length,9);
+  assert.ok(zalec.edition_keys.every(key=>{
+    const source=r.entries.find(e=>e.year+'!'+e.masterRow===key);
+    return source?.sourceUrl.includes('/110300000101473100?') &&
+      source.reviewStatus==='review' && source.approved_for_runtime===false;
+  }));
+  assert.ok(r.entries.every(e=>e.reviewStatus==='review'&&e.approved_for_runtime===false));
+});
