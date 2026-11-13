@@ -94,6 +94,24 @@ for (const scenario of fixtures) {
     }
     await expect(panel.locator('[data-nearby-status]')).toContainText(scenario.notice);
 
+    // An invalid new origin must not leave results from the old valid origin.
+    await panel.locator('[data-nearby-latitude]').fill('invalid-value');
+    await panel.locator('[data-nearby-apply]').click();
+    const invalid = await page.evaluate(() => (window as any).__dev056Pilot);
+    expect(invalid.selection).toBeNull();
+    expect(invalid.view).toBeNull();
+    await expect(panel.locator('[data-nearby-latitude]')).toHaveValue('invalid-value');
+    await expect(panel.locator('[data-nearby-status]')).toContainText(
+      scenario.locale === 'en' ? 'Enter valid latitude' : 'Vnesite veljavno zemljepisno'
+    );
+    await panel.locator('[data-nearby-radius]').selectOption('25');
+    const invalidRadius = await page.evaluate(() => (window as any).__dev056Pilot);
+    expect(invalidRadius.selection).toBeNull();
+    await panel.locator('[data-nearby-latitude]').fill(scenario.latitude);
+    await panel.locator('[data-nearby-apply]').click();
+    const corrected = await page.evaluate(() => (window as any).__dev056Pilot);
+    expect(corrected.view.matches).toHaveLength(1);
+
     // Manual origin and GPS coordinates are never added to URL, query or browser storage.
     const privacy = await page.evaluate(() => ({
       url: location.href,

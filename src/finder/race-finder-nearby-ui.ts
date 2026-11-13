@@ -69,6 +69,9 @@ export function mountNearbyFinderUi(options: {
     const origin = parseNearbyOrigin(latitude.value, longitude.value);
     const radiusKm = parseNearbyRadius(radius.value);
     if (!origin || radiusKm === null) {
+      // A failed new origin must never leave matches from a previous valid origin.
+      // Keep the text fields intact so the user can correct the input.
+      options.onChange(null);
       setStatus(en ? 'Enter valid latitude and longitude.' : 'Vnesite veljavno zemljepisno širino in dolžino.');
       return;
     }
@@ -85,9 +88,8 @@ export function mountNearbyFinderUi(options: {
   longitude.addEventListener('input', () => { pendingGeolocation++; });
   apply.addEventListener('click', applySelection);
   clear.addEventListener('click', clearSelection);
-  radius.addEventListener('change', () => {
-    if (parseNearbyOrigin(latitude.value, longitude.value)) applySelection();
-  });
+  // Changing the radius with invalid coordinates must also clear stale matches.
+  radius.addEventListener('change', applySelection);
   useLocation.addEventListener('click', () => {
     const sequence = ++pendingGeolocation;
     const geolocation = options.root.defaultView?.navigator.geolocation;

@@ -821,6 +821,22 @@ test('geolocation callback cannot override manually edited coordinates or a clea
   radius.value='10';
   radius.fire('change');
   assert.equal(changes.at(-1).radiusKm,10);
+  // Editing coordinates, then applying an invalid origin, must clear OLD results.
+  lat.value='not-valid';
+  lat.fire('input');
+  controls['[data-nearby-apply]'].fire('click');
+  assert.equal(changes.at(-1),null);
+  assert.equal(lat.value,'not-valid');
+  assert.match(controls['[data-nearby-status]'].textContent,/Vnesite veljavno/);
+  // A radius change must not revive the stale origin either.
+  radius.value='50';
+  radius.fire('change');
+  assert.equal(changes.at(-1),null);
+  assert.equal(lat.value,'not-valid');
+  lat.value='46,1314';
+  lat.fire('input');
+  controls['[data-nearby-apply]'].fire('click');
+  assert.deepEqual(changes.at(-1),{origin:{latitude:46.1314,longitude:14.9965},radiusKm:50});
   // Another permission request must never resurrect a cleared selection.
   geo.fire('click');
   assert.equal(requested.length,2);
