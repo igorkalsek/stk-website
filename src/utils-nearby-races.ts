@@ -1,12 +1,6 @@
 /**
- * STK DEV-056 P1 prototype: pure, non-networked distance matching.
- *
- * This module is deliberately not wired to the public Finder. In particular,
- * it does not geocode names, request browser geolocation, persist coordinates,
- * or convert a settlement reference point into an exact race start.
- *
- * Public integration needs an approved edition-specific index, origin selector,
- * honest partial-coverage UI, provenance/attribution and SL/EN regressions.
+ * STK DEV-056: pure distance matching and edition identity validation.
+ * No IO, geocoding or persistence. Approximate points never become exact starts.
  */
 export const NEARBY_RADII_KM = [10, 25, 50, 100] as const;
 export type NearbyRadiusKm = typeof NEARBY_RADII_KM[number];
@@ -15,12 +9,14 @@ export type NearbyEvent = {
   year: string; row: string;
   /** Optional live event fields; required for release records with an identity snapshot. */
   date?: string; title?: string; naziv_prireditve?: string;
+  place?: string; region?: string;
   /** Required for distinct start lines. */
   startRoles?: readonly string[];
 };
-export type NearbyPrecision = 'start' | 'settlement-approximate' | 'place-approximate';
+export type NearbyPrecision = 'start' | 'settlement-approximate' | 'place-approximate' | 'venue-approximate';
 
 export type NearbyEditionLocation = NearbyPoint & {
+  label?: string;
   year: string;
   masterRow: number;
   precision: NearbyPrecision;
@@ -36,7 +32,12 @@ export type NearbyEditionLocation = NearbyPoint & {
   /** Exact current-year Master identity snapshot. Never permit row reuse or silent renaming. */
   expectedDate?: string;
   expectedTitle?: string;
-  sourceKind: 'official-edition-start' | 'official-settlement' | 'documented-place-reference';
+  expectedPlace?: string;
+  expectedRegion?: string;
+  sourceKind: 'official-edition-start' | 'official-settlement' | 'documented-place-reference' | 'wikidata-place';
+  license?: 'CC0-1.0';
+  sourceRevision?: number;
+  sourceClaim?: string;
   /** An organizer's 2026 start is not automatically valid for the 2027 edition. */
   sourceEditionYear?: number;
   /** For official SETTLEMENT data only; record DATUM_SYS is not a dataset snapshot. */
@@ -50,6 +51,7 @@ export type NearbyEditionLocation = NearbyPoint & {
 };
 
 export type NearbyMatch<T> = {
+  referenceLabel?: string;
   event: T;
   distanceKm: number;
   approximate: boolean;
@@ -106,7 +108,7 @@ export const editionKey = (event: NearbyEvent): string | null => {
 export const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
   const key = editionKey({ year: location.year, row: String(location.masterRow) });
   if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime !== true) return false;
-  if (location.precision !== 'start' && location.precision !== 'settlement-approximate' && location.precision !== 'place-approximate') return false;
+  if (!['start', 'settlement-approximate', 'place-approximate', 'venue-approximate'].includes(location.precision)) return false;
   if (!/^https:\/\//i.test(location.sourceUrl)) return false;
   if (!isRealIsoDate(location.sourceCheckedOn)) return false;
   // When a release provides a snapshot, BOTH components must be present and valid.
@@ -119,6 +121,13 @@ export const isApprovedLocation = (location: NearbyEditionLocation): boolean => 
     return location.sourceKind === 'official-edition-start' &&
       location.sourceEditionYear === Number(location.year) &&
       location.sourceSnapshotOn === undefined;
+  }
+  if (location.sourceKind === 'wikidata-place') {
+    return /^https:\/\/www\.wikidata\.org\/wiki\/Q[1-9][0-9]*$/.test(location.sourceUrl) &&
+      location.license === 'CC0-1.0' && Number.isSafeInteger(location.sourceRevision) &&
+      location.sourceRevision! > 0 && typeof location.sourceClaim === 'string' &&
+      location.sourceClaim.toUpperCase().startsWith(location.sourceUrl.split('/').pop()! + '$') &&
+      !!location.expectedDate && !!location.expectedTitle && !!location.expectedPlace && !!location.expectedRegion;
   }
   // A documented landmark/hiking-route reference is suitable ONLY for coarse
   // race discovery, never as a start pin or as a GURS settlement centroid.
@@ -210,6 +219,10 @@ const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocatio
     (location.expectedDate !== undefined || location.expectedTitle !== undefined) &&
     (location.expectedDate !== event.date || location.expectedTitle !== liveTitle)
   )) return null;
+  if (locations.some(location =>
+    (location.expectedPlace !== undefined && location.expectedPlace !== event.place) ||
+    (location.expectedRegion !== undefined && location.expectedRegion !== event.region)
+  )) return null;
   if (event.startRoles === undefined) {
     return locations.length === 1 && locations[0].startRole === undefined &&
       isApprovedLocation(locations[0]) ? locations : null;
@@ -217,7 +230,7 @@ const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocatio
   // Discovery fallback applies to the whole edition, not a specific course.
   // It remains approximate even if several disciplines have distinct starts.
   if (locations.length === 1 && locations[0].startRole === undefined &&
-      (locations[0].precision === 'settlement-approximate' || locations[0].precision === 'place-approximate') &&
+      locations[0].precision !== 'start' &&
       isApprovedLocation(locations[0])) return locations;
   if (locations.length !== event.startRoles.length) return null;
   if (locations.some(x => !x.startRole || !event.startRoles!.includes(x.startRole) ||
@@ -252,7 +265,7 @@ export function summarizeNearbyCoverage<T extends NearbyEvent>(
       missing.push(key);
     } else if (locations.every(x => x.precision === 'start')) {
       exact++;
-    } else if (locations.some(x => x.precision === 'place-approximate')) {
+    } else if (locations.some(x => x.precision === 'place-approximate' || x.precision === 'venue-approximate')) {
       approximatePlace++;
     } else {
       approximate++;
@@ -307,10 +320,13 @@ export function filterNearbyRaces<T extends NearbyEvent>(
     }
     const nearest = locations.map(location => ({location, distanceKm: airDistanceKm(origin, location)}))
       .sort((a, b) => a.distanceKm - b.distanceKm)[0];
-    if (nearest.distanceKm <= radiusKm) {
+    // One micrometre of numerical tolerance keeps the mathematical boundary
+    // inclusive despite floating-point error. Display rounding is never used.
+    if (nearest.distanceKm <= radiusKm + 1e-9) {
       matches.push({
         event, distanceKm: nearest.distanceKm,
         approximate: nearest.location.precision !== 'start',
+        ...(nearest.location.label ? { referenceLabel: nearest.location.label } : {}),
         ...(nearest.location.startRole ? { matchedRole: nearest.location.startRole } : {})
       });
     }

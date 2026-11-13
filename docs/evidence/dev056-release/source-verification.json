@@ -1,0 +1,2070 @@
+{
+  "version": 1,
+  "checkedOn": "2026-11-13",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+  "source": "Live Wikidata Special:EntityData; P625, labels, P17, P131, immutable revision and claim identifiers. Existing review flags were not promoted.",
+  "places": [
+    {
+      "id": "Q2736866",
+      "label": "Lokavec",
+      "municipality": "Q331701",
+      "latitude": 45.901944,
+      "longitude": 13.877778,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2736866",
+      "sourceRevision": 2553428030,
+      "sourceClaim": "q2736866$49397B5C-8B42-4F45-92B1-792CCB8351BF",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Občini Ajdovščina",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q331701"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2736866&oldid=2553428030",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2736866$49397B5C-8B42-4F45-92B1-792CCB8351BF",
+          "rank": "normal",
+          "latitude": 45.901944,
+          "longitude": 13.877778,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q5266",
+      "label": "Novo mesto",
+      "municipality": "Q398116",
+      "latitude": 45.798055555556,
+      "longitude": 15.162777777778,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q5266",
+      "sourceRevision": 2568624013,
+      "sourceClaim": "q5266$96D0E321-B933-4A64-B5B0-534322DF3BE4",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215",
+        "Q83286"
+      ],
+      "administrativeIds": [
+        "Q398116"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q5266&oldid=2568624013",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q5266$96D0E321-B933-4A64-B5B0-534322DF3BE4",
+          "rank": "normal",
+          "latitude": 45.798055555556,
+          "longitude": 15.162777777778,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1021",
+      "label": "Kranj",
+      "municipality": "Q3441893",
+      "latitude": 46.23887,
+      "longitude": 14.35561,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1021",
+      "sourceRevision": 2563790783,
+      "sourceClaim": "Q1021$7086EF22-ACAF-4919-BDA5-D367ECAC3D5E",
+      "coordinatePrecisionDegrees": 1e-05,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215",
+        "Q131964",
+        "Q36704"
+      ],
+      "administrativeIds": [
+        "Q3441893",
+        "Q2360973"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1021&oldid=2563790783",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q1021$7086EF22-ACAF-4919-BDA5-D367ECAC3D5E",
+          "rank": "normal",
+          "latitude": 46.23887,
+          "longitude": 14.35561,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q437",
+      "label": "Ljubljana",
+      "municipality": "Q3434113",
+      "latitude": 46.05138888888889,
+      "longitude": 14.50611111111111,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q437",
+      "sourceRevision": 2562593999,
+      "sourceClaim": "q437$0C592384-E50B-445F-8A4D-B83A20BE3CE5",
+      "coordinatePrecisionDegrees": 0.0002777777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "glavno mesto Slovenije",
+      "countryIds": [
+        "Q215",
+        "Q83286",
+        "Q15102440",
+        "Q191077",
+        "Q28513",
+        "Q131964",
+        "Q153136"
+      ],
+      "administrativeIds": [
+        "Q3434113",
+        "Q2360973",
+        "Q718374",
+        "Q15102440",
+        "Q191077",
+        "Q211092"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q437&oldid=2562593999",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q437$0C592384-E50B-445F-8A4D-B83A20BE3CE5",
+          "rank": "normal",
+          "latitude": 46.05138888888889,
+          "longitude": 14.50611111111111,
+          "altitude": null,
+          "precision": 0.0002777777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1753813",
+      "label": "Izlake",
+      "municipality": "Q13378328",
+      "latitude": 46.152547222222,
+      "longitude": 14.893969444444,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1753813",
+      "sourceRevision": 2520797386,
+      "sourceClaim": "q1753813$5C6A5F58-F989-4842-907A-E5BBEFC85B82",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q13378328"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1753813&oldid=2520797386",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1753813$5C6A5F58-F989-4842-907A-E5BBEFC85B82",
+          "rank": "normal",
+          "latitude": 46.152547222222,
+          "longitude": 14.893969444444,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q7548123",
+      "label": "Snovik",
+      "municipality": "Q3503153",
+      "latitude": 46.233030555556,
+      "longitude": 14.709969444444,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q7548123",
+      "sourceRevision": 2520815783,
+      "sourceClaim": "q7548123$EF566C5D-1235-4C57-B814-F88167E32DCD",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3503153"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q7548123&oldid=2520815783",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q7548123$EF566C5D-1235-4C57-B814-F88167E32DCD",
+          "rank": "normal",
+          "latitude": 46.233030555556,
+          "longitude": 14.709969444444,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q392333",
+      "label": "Štanjel",
+      "municipality": "Q556210",
+      "latitude": 45.823403268,
+      "longitude": 13.84633215,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q392333",
+      "sourceRevision": 2558315179,
+      "sourceClaim": "Q392333$7991A5C0-6EC5-479A-BC5B-7C1E4B4A3929",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q556210"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q392333&oldid=2558315179",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q392333$7991A5C0-6EC5-479A-BC5B-7C1E4B4A3929",
+          "rank": "normal",
+          "latitude": 45.823403268,
+          "longitude": 13.84633215,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15928",
+      "label": "Velenje",
+      "municipality": "Q3441849",
+      "latitude": 46.366666666667,
+      "longitude": 15.116666666667,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15928",
+      "sourceRevision": 2550619040,
+      "sourceClaim": "q15928$DB894596-48C0-40E4-BEDD-CC959038AD05",
+      "coordinatePrecisionDegrees": 0.016666666666667,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3441849"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15928&oldid=2550619040",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q15928$DB894596-48C0-40E4-BEDD-CC959038AD05",
+          "rank": "normal",
+          "latitude": 46.366666666667,
+          "longitude": 15.116666666667,
+          "altitude": null,
+          "precision": 0.016666666666667,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1018",
+      "label": "Nova Gorica",
+      "municipality": "Q3435478",
+      "latitude": 45.966666666667,
+      "longitude": 13.65,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1018",
+      "sourceRevision": 2555836002,
+      "sourceClaim": "q1018$1D05AD6A-325D-49BE-AE89-CBB77915CB0B",
+      "coordinatePrecisionDegrees": 0.016666666666667,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3435478"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1018&oldid=2555836002",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1018$1D05AD6A-325D-49BE-AE89-CBB77915CB0B",
+          "rank": "normal",
+          "latitude": 45.966666666667,
+          "longitude": 13.65,
+          "altitude": null,
+          "precision": 0.016666666666667,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q903426",
+      "label": "Brdo pri Kranju (posestvo)",
+      "municipality": "Q3441893",
+      "latitude": 46.282175136,
+      "longitude": 14.390326881,
+      "precision": "venue-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q903426",
+      "sourceRevision": 2550093210,
+      "sourceClaim": "Q903426$48694D95-1233-4E9A-A84C-AE38EA098248",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "dvorec s parkom, drevored, ledenica, ribnik, botanični vrt, konjušnica, čebelnjak",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3441893"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q903426&oldid=2550093210",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q903426$48694D95-1233-4E9A-A84C-AE38EA098248",
+          "rank": "normal",
+          "latitude": 46.282175136,
+          "longitude": 14.390326881,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2113343",
+      "label": "Šmarjeta",
+      "municipality": "Q3509893",
+      "latitude": 45.886667,
+      "longitude": 15.250833,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2113343",
+      "sourceRevision": 2528884459,
+      "sourceClaim": "q2113343$B6B0CB2A-5E66-404C-BA9D-74E37D2E60D4",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3509893"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2113343&oldid=2528884459",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2113343$B6B0CB2A-5E66-404C-BA9D-74E37D2E60D4",
+          "rank": "normal",
+          "latitude": 45.886667,
+          "longitude": 15.250833,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3437450",
+      "label": "Stari trg pri Ložu",
+      "municipality": "Q999525",
+      "latitude": 45.714158333333,
+      "longitude": 14.469533333333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3437450",
+      "sourceRevision": 2520812344,
+      "sourceClaim": "q3437450$09AB9337-2B2E-44C6-9B47-F8CD72A4D823",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Občini Loška dolina",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q999525"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3437450&oldid=2520812344",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q3437450$09AB9337-2B2E-44C6-9B47-F8CD72A4D823",
+          "rank": "normal",
+          "latitude": 45.714158333333,
+          "longitude": 14.469533333333,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q565188",
+      "label": "Sečovlje",
+      "municipality": "Q565170",
+      "latitude": 45.475502777778,
+      "longitude": 13.616866666667,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q565188",
+      "sourceRevision": 2531738623,
+      "sourceClaim": "q565188$EE44B35D-CB70-4E08-9E60-D8BFA73BC42E",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q565170"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q565188&oldid=2531738623",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q565188$EE44B35D-CB70-4E08-9E60-D8BFA73BC42E",
+          "rank": "normal",
+          "latitude": 45.475502777778,
+          "longitude": 13.616866666667,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3499878",
+      "label": "Mengeš",
+      "municipality": "Q15895",
+      "latitude": 46.16258333,
+      "longitude": 14.56803056,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3499878",
+      "sourceRevision": 2528885904,
+      "sourceClaim": "Q3499878$F27FC999-2F40-4E98-98FC-678F0C03E73D",
+      "coordinatePrecisionDegrees": 2.77777777778e-06,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15895"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3499878&oldid=2528885904",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q3499878$F27FC999-2F40-4E98-98FC-678F0C03E73D",
+          "rank": "normal",
+          "latitude": 46.16258333,
+          "longitude": 14.56803056,
+          "altitude": null,
+          "precision": 2.77777777778e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q3499878$8933351A-E39D-42E1-80E7-C6020A6AA9FF",
+          "rank": "normal",
+          "latitude": 46.16694,
+          "longitude": 14.575,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q631387",
+      "label": "Žalec",
+      "municipality": "Q15931",
+      "latitude": 46.251564594,
+      "longitude": 15.167445787,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q631387",
+      "sourceRevision": 2527258897,
+      "sourceClaim": "Q631387$19D72F64-71D5-43ED-911B-367BB191942F",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15931"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q631387&oldid=2527258897",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q631387$19D72F64-71D5-43ED-911B-367BB191942F",
+          "rank": "normal",
+          "latitude": 46.251564594,
+          "longitude": 15.167445787,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q4779331",
+      "label": "Mače pri Preddvoru",
+      "municipality": "Q539864",
+      "latitude": 46.311805555556,
+      "longitude": 14.415858333333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q4779331",
+      "sourceRevision": 2520813913,
+      "sourceClaim": "q4779331$9A1178C4-E486-4DA2-938A-47BF9A5B4674",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q539864"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q4779331&oldid=2520813913",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q4779331$9A1178C4-E486-4DA2-938A-47BF9A5B4674",
+          "rank": "normal",
+          "latitude": 46.311805555556,
+          "longitude": 14.415858333333,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3660743",
+      "label": "Grad (Cerklje na Gorenjskem)",
+      "municipality": "Q859679",
+      "latitude": 46.262239,
+      "longitude": 14.493181,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3660743",
+      "sourceRevision": 2520813449,
+      "sourceClaim": "q3660743$171BF9B4-D3B0-4883-A861-3D98954CA241",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Občini Cerklje na Gorenskem",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q859679"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3660743&oldid=2520813449",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q3660743$171BF9B4-D3B0-4883-A861-3D98954CA241",
+          "rank": "normal",
+          "latitude": 46.262239,
+          "longitude": 14.493181,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1012",
+      "label": "Celje",
+      "municipality": "Q3441823",
+      "latitude": 46.22909194,
+      "longitude": 15.264128741,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1012",
+      "sourceRevision": 2555835813,
+      "sourceClaim": "Q1012$D7CAD2C0-4C38-405E-908A-5B18F0F02B8A",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3441823"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1012&oldid=2555835813",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q1012$D7CAD2C0-4C38-405E-908A-5B18F0F02B8A",
+          "rank": "normal",
+          "latitude": 46.22909194,
+          "longitude": 15.264128741,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15877",
+      "label": "Izola",
+      "municipality": "Q12042076",
+      "latitude": 45.539545223,
+      "longitude": 13.660405031,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15877",
+      "sourceRevision": 2563790804,
+      "sourceClaim": "Q15877$4BFF19BA-1A16-4DEB-8840-13C2ED6DBE00",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q12042076"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15877&oldid=2563790804",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q15877$4BFF19BA-1A16-4DEB-8840-13C2ED6DBE00",
+          "rank": "normal",
+          "latitude": 45.539545223,
+          "longitude": 13.660405031,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15854",
+      "label": "Ajdovščina",
+      "municipality": "Q331701",
+      "latitude": 45.888356136,
+      "longitude": 13.905237912,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15854",
+      "sourceRevision": 2562227485,
+      "sourceClaim": "Q15854$60740A7B-2B48-4630-982E-2187AE25686F",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q331701"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15854&oldid=2562227485",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q15854$60740A7B-2B48-4630-982E-2187AE25686F",
+          "rank": "normal",
+          "latitude": 45.888356136,
+          "longitude": 13.905237912,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3434276",
+      "label": "Radenci",
+      "municipality": "Q338743",
+      "latitude": 46.642778,
+      "longitude": 16.045,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3434276",
+      "sourceRevision": 2520812294,
+      "sourceClaim": "q3434276$8398AB83-0218-4D67-A37B-2EFA391444A8",
+      "coordinatePrecisionDegrees": 1e-05,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q338743"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3434276&oldid=2520812294",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q3434276$8398AB83-0218-4D67-A37B-2EFA391444A8",
+          "rank": "normal",
+          "latitude": 46.642778,
+          "longitude": 16.045,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q3434276$A25F2D71-7C03-4B1A-A3EC-125E26BD35DF",
+          "rank": "normal",
+          "latitude": 46.64201,
+          "longitude": 16.03781,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1005169",
+      "label": "Senožeče",
+      "municipality": "Q557216",
+      "latitude": 45.718611,
+      "longitude": 14.039444,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1005169",
+      "sourceRevision": 2549915525,
+      "sourceClaim": "q1005169$F7EBF6BD-7394-430E-9D19-C8440CB6D4E0",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q557216"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1005169&oldid=2549915525",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1005169$F7EBF6BD-7394-430E-9D19-C8440CB6D4E0",
+          "rank": "normal",
+          "latitude": 45.718611,
+          "longitude": 14.039444,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2689294",
+      "label": "Ribčev Laz",
+      "municipality": "Q3661628",
+      "latitude": 46.272933333333,
+      "longitude": 13.891441666667,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2689294",
+      "sourceRevision": 2520809206,
+      "sourceClaim": "q2689294$8082DD9A-D84D-441D-828F-467C4CAC807B",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3661628"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2689294&oldid=2520809206",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2689294$8082DD9A-D84D-441D-828F-467C4CAC807B",
+          "rank": "normal",
+          "latitude": 46.272933333333,
+          "longitude": 13.891441666667,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1010",
+      "label": "Maribor",
+      "municipality": "Q3435104",
+      "latitude": 46.55,
+      "longitude": 15.633333333333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1010",
+      "sourceRevision": 2555835790,
+      "sourceClaim": "q1010$8CA705AA-9882-49B3-B7FA-05484F179A31",
+      "coordinatePrecisionDegrees": 0.016666666666667,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3435104"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1010&oldid=2555835790",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1010$8CA705AA-9882-49B3-B7FA-05484F179A31",
+          "rank": "normal",
+          "latitude": 46.55,
+          "longitude": 15.633333333333,
+          "altitude": null,
+          "precision": 0.016666666666667,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q12958961",
+      "label": "Kočevje",
+      "municipality": "Kočevje",
+      "latitude": 45.642961111111,
+      "longitude": 14.859383333333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q12958961",
+      "sourceRevision": 2549934310,
+      "sourceClaim": "Q12958961$D7B42B63-79E3-4635-98EC-CDCF5EB3025B",
+      "coordinatePrecisionDegrees": 2.7777777777778e-06,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q12958961&oldid=2549934310",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q12958961$D7B42B63-79E3-4635-98EC-CDCF5EB3025B",
+          "rank": "normal",
+          "latitude": 45.642961111111,
+          "longitude": 14.859383333333,
+          "altitude": null,
+          "precision": 2.7777777777778e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15871",
+      "label": "Hrastnik",
+      "municipality": "Q13377780",
+      "latitude": 46.14611,
+      "longitude": 15.08139,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15871",
+      "sourceRevision": 2522972227,
+      "sourceClaim": "Q15871$57040DE1-D9DD-494D-87EC-421E7A647FA0",
+      "coordinatePrecisionDegrees": 1e-05,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q13377780"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15871&oldid=2522972227",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q15871$57040DE1-D9DD-494D-87EC-421E7A647FA0",
+          "rank": "normal",
+          "latitude": 46.14611,
+          "longitude": 15.08139,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q554106",
+      "label": "Križ pri Sežani",
+      "municipality": "Q554854",
+      "latitude": 45.745078,
+      "longitude": 13.86825,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q554106",
+      "sourceRevision": 2528884176,
+      "sourceClaim": "q554106$42314E57-7F0C-463B-988B-72C3A23C6B44",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Občini Sežana",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q554854"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q554106&oldid=2528884176",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q554106$42314E57-7F0C-463B-988B-72C3A23C6B44",
+          "rank": "normal",
+          "latitude": 45.745078,
+          "longitude": 13.86825,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2573748",
+      "label": "Črna na Koroškem",
+      "municipality": "Q279072",
+      "latitude": 46.470164089,
+      "longitude": 14.850258973,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2573748",
+      "sourceRevision": 2520808033,
+      "sourceClaim": "Q2573748$C342D087-3277-4975-A757-6F32CBF93D6A",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q279072"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2573748&oldid=2520808033",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q2573748$C342D087-3277-4975-A757-6F32CBF93D6A",
+          "rank": "normal",
+          "latitude": 46.470164089,
+          "longitude": 14.850258973,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1090849",
+      "label": "Podbrdo",
+      "municipality": "Q15924",
+      "latitude": 46.209722,
+      "longitude": 13.972778,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1090849",
+      "sourceRevision": 2528884704,
+      "sourceClaim": "q1090849$4BD0D255-D929-47ED-AE97-60EF00B46CCD",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15924"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1090849&oldid=2528884704",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1090849$4BD0D255-D929-47ED-AE97-60EF00B46CCD",
+          "rank": "normal",
+          "latitude": 46.209722,
+          "longitude": 13.972778,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15916",
+      "label": "Sežana",
+      "municipality": "Q554854",
+      "latitude": 45.7,
+      "longitude": 13.85,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15916",
+      "sourceRevision": 2525112179,
+      "sourceClaim": "q15916$F7A424EF-B745-4608-86F9-054B6E0F8FB2",
+      "coordinatePrecisionDegrees": 0.016666666666667,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q554854"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15916&oldid=2525112179",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q15916$F7A424EF-B745-4608-86F9-054B6E0F8FB2",
+          "rank": "normal",
+          "latitude": 45.7,
+          "longitude": 13.85,
+          "altitude": null,
+          "precision": 0.016666666666667,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1944509",
+      "label": "Ormož",
+      "municipality": "Q15900",
+      "latitude": 46.407125458,
+      "longitude": 16.150534332,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1944509",
+      "sourceRevision": 2546368040,
+      "sourceClaim": "Q1944509$47A9A32E-0CA5-4DBD-89E7-3994B1BC5E96",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15900"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1944509&oldid=2546368040",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q1944509$47A9A32E-0CA5-4DBD-89E7-3994B1BC5E96",
+          "rank": "normal",
+          "latitude": 46.407125458,
+          "longitude": 16.150534332,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3023218",
+      "label": "Spodnja Idrija",
+      "municipality": "Q3441842",
+      "latitude": 46.031389,
+      "longitude": 14.025556,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3023218",
+      "sourceRevision": 2528885656,
+      "sourceClaim": "q3023218$1ED460C9-0E83-486F-9EB8-6DFB19965D2B",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3441842"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3023218&oldid=2528885656",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q3023218$1ED460C9-0E83-486F-9EB8-6DFB19965D2B",
+          "rank": "normal",
+          "latitude": 46.031389,
+          "longitude": 14.025556,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q3437943",
+      "label": "Hotavlje",
+      "municipality": "Q1005224",
+      "latitude": 46.111725,
+      "longitude": 14.111314,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q3437943",
+      "sourceRevision": 2520812402,
+      "sourceClaim": "q3437943$EECC1955-231E-46D6-85A9-F78F48BFDE94",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q1005224"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q3437943&oldid=2520812402",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q3437943$EECC1955-231E-46D6-85A9-F78F48BFDE94",
+          "rank": "normal",
+          "latitude": 46.111725,
+          "longitude": 14.111314,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q12793311",
+      "label": "Kamniška Bistrica",
+      "municipality": "Q3503153",
+      "latitude": 46.326688888889,
+      "longitude": 14.590641666667,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q12793311",
+      "sourceRevision": 2520797103,
+      "sourceClaim": "q12793311$96C1DD5A-0B8E-4AD1-BFF8-D91E926452A6",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3503153"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q12793311&oldid=2520797103",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q12793311$96C1DD5A-0B8E-4AD1-BFF8-D91E926452A6",
+          "rank": "normal",
+          "latitude": 46.326688888889,
+          "longitude": 14.590641666667,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q19709766",
+      "label": "Velika Planina",
+      "municipality": "Q3503153",
+      "latitude": 46.296944444444,
+      "longitude": 14.651944444444,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q19709766",
+      "sourceRevision": 2520799069,
+      "sourceClaim": "Q19709766$20e5cf49-4f1d-49dd-76b3-815b57a4f93d",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3503153"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q19709766&oldid=2520799069",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q19709766$20e5cf49-4f1d-49dd-76b3-815b57a4f93d",
+          "rank": "normal",
+          "latitude": 46.296944444444,
+          "longitude": 14.651944444444,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15875",
+      "label": "Idrija",
+      "municipality": "Q3441842",
+      "latitude": 46.0025,
+      "longitude": 14.0275,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15875",
+      "sourceRevision": 2553312776,
+      "sourceClaim": "Q15875$5FBD7124-9ADA-4B57-A056-D1D88AFE8CE4",
+      "coordinatePrecisionDegrees": 0.0002777777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto in občinsko središče v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3441842"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15875&oldid=2553312776",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q15875$5FBD7124-9ADA-4B57-A056-D1D88AFE8CE4",
+          "rank": "normal",
+          "latitude": 46.0025,
+          "longitude": 14.0275,
+          "altitude": null,
+          "precision": 0.0002777777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q6290738",
+      "label": "Slivnica (Cerknica)",
+      "municipality": "Q13107298",
+      "latitude": 45.79027778,
+      "longitude": 14.40555556,
+      "precision": "venue-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q6290738",
+      "sourceRevision": 2346428765,
+      "sourceClaim": "Q6290738$04814F6B-F0C3-423C-AA92-DBD2DBC406B0",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "vzpetina v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q13107298"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q6290738&oldid=2346428765",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q6290738$04814F6B-F0C3-423C-AA92-DBD2DBC406B0",
+          "rank": "normal",
+          "latitude": 45.79027778,
+          "longitude": 14.40555556,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2198804",
+      "label": "Križe",
+      "municipality": "Q15927",
+      "latitude": 46.341222,
+      "longitude": 14.302008,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2198804",
+      "sourceRevision": 2528884518,
+      "sourceClaim": "q2198804$B790C7D0-42A2-4181-97BF-C23542C726B3",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v občini Tržič",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15927"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2198804&oldid=2528884518",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2198804$B790C7D0-42A2-4181-97BF-C23542C726B3",
+          "rank": "normal",
+          "latitude": 46.341222,
+          "longitude": 14.302008,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15876",
+      "label": "Ilirska Bistrica",
+      "municipality": "Q13377784",
+      "latitude": 45.565131677,
+      "longitude": 14.249259577,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15876",
+      "sourceRevision": 2522972231,
+      "sourceClaim": "Q15876$C002F1FC-D188-4430-B37B-B321F3EB4A8B",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q13377784"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15876&oldid=2522972231",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q15876$C002F1FC-D188-4430-B37B-B321F3EB4A8B",
+          "rank": "normal",
+          "latitude": 45.565131677,
+          "longitude": 14.249259577,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2137130",
+      "label": "Spodnje Gameljne",
+      "municipality": "Q3434113",
+      "latitude": 46.122778,
+      "longitude": 14.503056,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2137130",
+      "sourceRevision": 2528884636,
+      "sourceClaim": "q2137130$66F85512-7624-46A7-9A69-283AD0AF1E77",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3434113"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2137130&oldid=2528884636",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2137130$66F85512-7624-46A7-9A69-283AD0AF1E77",
+          "rank": "normal",
+          "latitude": 46.122778,
+          "longitude": 14.503056,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2094435",
+      "label": "Medvode",
+      "municipality": "Q15894",
+      "latitude": 46.1422,
+      "longitude": 14.41114,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2094435",
+      "sourceRevision": 2562231742,
+      "sourceClaim": "Q2094435$BDC957DB-32AC-4A21-A1B0-746D21FFC0BA",
+      "coordinatePrecisionDegrees": 1e-05,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15894"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2094435&oldid=2562231742",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q2094435$BDC957DB-32AC-4A21-A1B0-746D21FFC0BA",
+          "rank": "normal",
+          "latitude": 46.1422,
+          "longitude": 14.41114,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "q2094435$FD429AD4-4F25-43DE-B769-30111636A3B9",
+          "rank": "normal",
+          "latitude": 46.138242,
+          "longitude": 14.414714,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2596325",
+      "label": "Ribnica",
+      "municipality": "Q15912",
+      "latitude": 45.738607241,
+      "longitude": 14.727022808,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2596325",
+      "sourceRevision": 2520808301,
+      "sourceClaim": "Q2596325$6BA21D71-FA24-4799-A91C-A9574779A8F0",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Občini Ribnica",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15912"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2596325&oldid=2520808301",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q2596325$6BA21D71-FA24-4799-A91C-A9574779A8F0",
+          "rank": "normal",
+          "latitude": 45.738607241,
+          "longitude": 14.727022808,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q23925175",
+      "label": "Smučišče Rogla",
+      "municipality": "Slovenija",
+      "latitude": 46.45270278,
+      "longitude": 15.333775,
+      "precision": "venue-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q23925175",
+      "sourceRevision": 2172214232,
+      "sourceClaim": "Q23925175$4B2EC4BC-A41C-414B-9D10-0AD419526B45",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "smučarsko središče v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q23925175&oldid=2172214232",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q23925175$4B2EC4BC-A41C-414B-9D10-0AD419526B45",
+          "rank": "normal",
+          "latitude": 46.45270278,
+          "longitude": 15.333775,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2201568",
+      "label": "Mojstrana",
+      "municipality": "Q507051",
+      "latitude": 46.460833,
+      "longitude": 13.934722,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2201568",
+      "sourceRevision": 2528884530,
+      "sourceClaim": "q2201568$B1F773C4-0829-4D7A-B53F-FA647F633E80",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q507051"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2201568&oldid=2528884530",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2201568$B1F773C4-0829-4D7A-B53F-FA647F633E80",
+          "rank": "normal",
+          "latitude": 46.460833,
+          "longitude": 13.934722,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1833519",
+      "label": "Bukovci (Markovci)",
+      "municipality": "Q1008095",
+      "latitude": 46.388306,
+      "longitude": 15.962678,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1833519",
+      "sourceRevision": 2528885128,
+      "sourceClaim": "q1833519$6E32478B-143A-46D7-A704-EC9D73ACB16D",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q1008095"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1833519&oldid=2528885128",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q1833519$6E32478B-143A-46D7-A704-EC9D73ACB16D",
+          "rank": "normal",
+          "latitude": 46.388306,
+          "longitude": 15.962678,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2842447",
+      "label": "Sv. Andrej (Škofja Loka)",
+      "municipality": "Q2318898",
+      "latitude": 46.1332,
+      "longitude": 14.301786111111,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2842447",
+      "sourceRevision": 2520810667,
+      "sourceClaim": "q2842447$3D9B1683-C896-4ADD-BEF2-F50B03AD5DD5",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q2318898"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2842447&oldid=2520810667",
+      "coordinateSelection": "preferred-rank",
+      "coordinateClaims": [
+        {
+          "id": "q2842447$3D9B1683-C896-4ADD-BEF2-F50B03AD5DD5",
+          "rank": "preferred",
+          "latitude": 46.1332,
+          "longitude": 14.301786111111,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q2842447$36010E9E-8B61-4E18-A1D4-F5FB3DC0F16E",
+          "rank": "normal",
+          "latitude": 46.13097,
+          "longitude": 14.29855,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q8009642",
+      "label": "Markovci",
+      "municipality": "Q1008095",
+      "latitude": 46.39540556,
+      "longitude": 15.93133333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q8009642",
+      "sourceRevision": 2520816175,
+      "sourceClaim": "Q8009642$3EA2A9A5-ECAC-42AB-8E51-9CFD3581BFF3",
+      "coordinatePrecisionDegrees": 1e-06,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v istoimenski občini",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q1008095"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q8009642&oldid=2520816175",
+      "coordinateSelection": "preferred-rank",
+      "coordinateClaims": [
+        {
+          "id": "Q8009642$42A3D674-5C7B-48CB-81E2-C17BEC13E712",
+          "rank": "normal",
+          "latitude": 46.38805556,
+          "longitude": 15.95861111,
+          "altitude": null,
+          "precision": 1e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q8009642$3EA2A9A5-ECAC-42AB-8E51-9CFD3581BFF3",
+          "rank": "preferred",
+          "latitude": 46.39540556,
+          "longitude": 15.93133333,
+          "altitude": null,
+          "precision": 1e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q8009642$E1B2A962-207C-43C8-A9AA-5F760C2B5B1A",
+          "rank": "normal",
+          "latitude": 46.3954056,
+          "longitude": 15.931333,
+          "altitude": null,
+          "precision": 1e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q8009642$746378A3-5847-44CF-A443-0AC2D8C1FD91",
+          "rank": "normal",
+          "latitude": 46.395406,
+          "longitude": 15.931333,
+          "altitude": null,
+          "precision": 1e-06,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "Q8009642$DF27C92D-158D-4DB9-9C00-9A0D356EAEAF",
+          "rank": "normal",
+          "latitude": 46.39557,
+          "longitude": 15.92831,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q15930",
+      "label": "Zagorje ob Savi",
+      "municipality": "Q13378328",
+      "latitude": 46.134166666667,
+      "longitude": 14.994166666667,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q15930",
+      "sourceRevision": 2522972302,
+      "sourceClaim": "q15930$87989326-B518-4A77-AFFA-ACBB805DEF4A",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q13378328"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q15930&oldid=2522972302",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q15930$87989326-B518-4A77-AFFA-ACBB805DEF4A",
+          "rank": "normal",
+          "latitude": 46.134166666667,
+          "longitude": 14.994166666667,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q323375",
+      "label": "Šmarješke Toplice",
+      "municipality": "Q3509893",
+      "latitude": 45.862222222222,
+      "longitude": 15.221388888889,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q323375",
+      "sourceRevision": 2520811925,
+      "sourceClaim": "q323375$AE8CC5FD-C63D-4C78-BA64-91CE6BE62EBC",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q3509893"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q323375&oldid=2520811925",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q323375$AE8CC5FD-C63D-4C78-BA64-91CE6BE62EBC",
+          "rank": "normal",
+          "latitude": 45.862222222222,
+          "longitude": 15.221388888889,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q1015",
+      "label": "Koper",
+      "municipality": "Q556203",
+      "latitude": 45.547542728,
+      "longitude": 13.7306571,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q1015",
+      "sourceRevision": 2555835883,
+      "sourceClaim": "Q1015$D744E580-A16D-49D6-B899-C272A60ABCE0",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "mesto v jugozahodni Sloveniji",
+      "countryIds": [
+        "Q215",
+        "Q4948",
+        "Q36704"
+      ],
+      "administrativeIds": [
+        "Q556203"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q1015&oldid=2555835883",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q1015$D744E580-A16D-49D6-B899-C272A60ABCE0",
+          "rank": "normal",
+          "latitude": 45.547542728,
+          "longitude": 13.7306571,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q564988",
+      "label": "Portorož",
+      "municipality": "Q565170",
+      "latitude": 45.514166666667,
+      "longitude": 13.590833333333,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q564988",
+      "sourceRevision": 2567613438,
+      "sourceClaim": "q564988$F63E3699-5DDA-426C-AAC1-B4D6288C6546",
+      "coordinatePrecisionDegrees": 0.00027777777777778,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q565170",
+        "Q833534"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q564988&oldid=2567613438",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q564988$F63E3699-5DDA-426C-AAC1-B4D6288C6546",
+          "rank": "normal",
+          "latitude": 45.514166666667,
+          "longitude": 13.590833333333,
+          "altitude": null,
+          "precision": 0.00027777777777778,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2265297",
+      "label": "Podčetrtek",
+      "municipality": "Q999540",
+      "latitude": 46.15694,
+      "longitude": 15.59861,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2265297",
+      "sourceRevision": 2520803595,
+      "sourceClaim": "Q2265297$5327B8E4-E1E7-4130-9CF9-7F9C16802D8D",
+      "coordinatePrecisionDegrees": 1e-05,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q999540",
+        "Q549369"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2265297&oldid=2520803595",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q2265297$5327B8E4-E1E7-4130-9CF9-7F9C16802D8D",
+          "rank": "normal",
+          "latitude": 46.15694,
+          "longitude": 15.59861,
+          "altitude": null,
+          "precision": 1e-05,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        },
+        {
+          "id": "q2265297$14561B65-40A2-4447-89B1-DA0CEC2995B6",
+          "rank": "normal",
+          "latitude": 46.157222,
+          "longitude": 15.597222,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q8011223",
+      "label": "Tolmin",
+      "municipality": "Q15924",
+      "latitude": 46.183,
+      "longitude": 13.733,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q8011223",
+      "sourceRevision": 2562265933,
+      "sourceClaim": "Q8011223$23FEE416-4AA9-40C3-8BCD-2B0A97020BC0",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q15924"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q8011223&oldid=2562265933",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "Q8011223$23FEE416-4AA9-40C3-8BCD-2B0A97020BC0",
+          "rank": "normal",
+          "latitude": 46.183,
+          "longitude": 13.733,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    },
+    {
+      "id": "Q2139428",
+      "label": "Kranjska Gora",
+      "municipality": "Q507051",
+      "latitude": 46.485381,
+      "longitude": 13.787108,
+      "precision": "settlement-approximate",
+      "sourceUrl": "https://www.wikidata.org/wiki/Q2139428",
+      "sourceRevision": 2528884640,
+      "sourceClaim": "q2139428$E6F31FD7-47E2-4781-88DB-DF083EE0ABB3",
+      "coordinatePrecisionDegrees": 0.001,
+      "sourceCheckedOn": "2026-11-13",
+      "license": "CC0-1.0",
+      "description": "naselje v Sloveniji",
+      "countryIds": [
+        "Q215"
+      ],
+      "administrativeIds": [
+        "Q507051"
+      ],
+      "revisionUrl": "https://www.wikidata.org/w/index.php?title=Q2139428&oldid=2528884640",
+      "coordinateSelection": "finest stated P625 precision; then source count; then stable claim ID, only if all candidates within 1 km",
+      "coordinateClaims": [
+        {
+          "id": "q2139428$E6F31FD7-47E2-4781-88DB-DF083EE0ABB3",
+          "rank": "normal",
+          "latitude": 46.485381,
+          "longitude": 13.787108,
+          "altitude": null,
+          "precision": 0.001,
+          "globe": "http://www.wikidata.org/entity/Q2"
+        }
+      ],
+      "identityReview": "Country Q215; place label and municipality matched to Master locality/region and existing DEV-056 evidence. Place discovery reference only."
+    }
+  ],
+  "excluded": [
+    {
+      "year": "2026",
+      "row": "263",
+      "date": "2026-11-28",
+      "title": "Zimski jamatlon",
+      "place": "Trbovlje",
+      "region": "Zasavska",
+      "reason": "P625 ima deklarirano natančnost 0,1297 stopinje (približno 14 km); neprimerna za mali radij."
+    },
+    {
+      "year": "2026",
+      "row": "305",
+      "date": "2026-12-19",
+      "title": "2. dobrodelni TriD Božičkov tek",
+      "place": "Brezovica pri Ljubljani",
+      "region": "Osrednjeslovenska",
+      "reason": "Dve enakovredni koordinati istega kraja sta oddaljeni več kot 1 km; izbira reference še ni razrešena."
+    },
+    {
+      "year": "2027",
+      "row": "2",
+      "date": "2027-01-09",
+      "title": "Knap Trail 2027 – Slovenski zimski trail",
+      "place": "Trbovlje",
+      "region": "Zasavska",
+      "reason": "P625 ima deklarirano natančnost 0,1297 stopinje (približno 14 km); neprimerna za mali radij."
+    },
+    {
+      "year": "2027",
+      "row": "3",
+      "date": "2027-02-13",
+      "title": "5. Parenzana Ultra Trail",
+      "place": "Poreč–Livade–Grožnjan–Portorož",
+      "region": "Obalno-kraška",
+      "reason": "Več krajev in držav; skupna referenca še ni nedvoumno določena."
+    },
+    {
+      "year": "2027",
+      "row": "4",
+      "date": "2027-03-06",
+      "title": "Punce v jami 2027",
+      "place": "Trbovlje–Hrastnik",
+      "region": "Zasavska",
+      "reason": "Dva kraja in podzemna trasa; skupna referenca še ni določena."
+    },
+    {
+      "year": "2027",
+      "row": "5",
+      "date": "2027-03-14",
+      "title": "9. Parenzana Marathon",
+      "place": "Parenzana – Hrvaška–Slovenija",
+      "region": "Obalno-kraška",
+      "reason": "Več čezmejnih štartov; skupna referenca še ni nedvoumno določena."
+    },
+    {
+      "year": "2027",
+      "row": "50",
+      "date": "2027-07-03",
+      "title": "Gas na Gače trail 2027",
+      "place": "Smučišče Gače",
+      "region": "Jugovzhodna",
+      "reason": "Razpoložljivi Wikidata Q5529257 opisuje naselje Gače, ne smučišča; povezava ni potrjena."
+    }
+  ],
+  "exactStart": {
+    "editionKey": "2026!266",
+    "sourceUrl": "https://skd-hrusevica.si/25-stanjelski-tek/",
+    "sourceCheckedOn": "2026-11-13",
+    "sourceEditionYear": 2026,
+    "sourceCoordinates": "N 45 49.100; E 13 49.507",
+    "latitude": 45.8183333333,
+    "longitude": 13.8251166667,
+    "reuseBasis": "One publicly stated factual coordinate pair from the edition organizer; no page text or coordinate database copied. This is not a CC0 licence claim for the organizer website."
+  }
+}

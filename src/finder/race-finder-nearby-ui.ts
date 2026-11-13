@@ -1,7 +1,7 @@
 import { isApprovedLocation, isValidWgs84, NEARBY_RADII_KM, type NearbyEditionLocation, type NearbyPoint, type NearbyRadiusKm } from '../utils-nearby-races.js';
 
 // A reviewed origin catalog is independent of race-edition coordinates.
-// Production passes no origins; synthetic origins exist only in private tests.
+// Catalog coordinates stay local; selecting a place needs no permission or IO.
 export type NearbyOriginPlace = {
   id: string; labelSl: string; labelEn: string;
   latitude: number; longitude: number;
@@ -132,8 +132,7 @@ export function mountNearbyFinderUi(options: {
     options.onChange({ origin, radiusKm });
   };
 
-  // This panel is intentionally absent from the visible and focusable UI
-  // until future approved-index integration enables it.
+  // Keep the panel unfocusable until the explicit release flag is enabled.
   fields.disabled = false;
   panel.hidden = false;
   if (origins.length && originGroup && originPlace) {
@@ -177,8 +176,8 @@ export function mountNearbyFinderUi(options: {
     const sequence = ++pendingGeolocation;
     const geolocation = options.root.defaultView?.navigator.geolocation;
     if (!geolocation) {
-      setStatus(en ? 'Location access is unavailable. Enter coordinates instead.'
-        : 'Dostop do lokacije ni na voljo. Koordinate lahko vnesete ročno.');
+      setStatus(en ? 'Location access is unavailable. Select a place instead.'
+        : 'Dostop do lokacije ni na voljo. Izberite kraj izhodišča.');
       return;
     }
     setStatus(en ? 'Requesting location permission…' : 'Čakamo na dovoljenje za lokacijo …');
@@ -199,8 +198,8 @@ export function mountNearbyFinderUi(options: {
       },
       () => {
         if (sequence === pendingGeolocation) setStatus(en
-          ? 'Location permission denied or unavailable. Enter coordinates instead.'
-          : 'Lokacija ni dovoljena ali dosegljiva. Koordinate lahko vnesete ročno.');
+          ? 'Location permission denied or unavailable. Select a place instead.'
+          : 'Lokacija ni dovoljena ali dosegljiva. Izberite kraj izhodišča.');
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 }
     );

@@ -16,7 +16,7 @@ import { getRegistrationFeeBounds } from '../utils-registration-fees.js';
   import { buildDetailUrlWithFinderReturn, buildFinderUrl, buildFinderUrlForLanguage, buildFinderUrlForYear, clearFinderUrlState, parseFinderUrlState, stateForYear, type FinderUrlState } from '../utils-finder-url-state';
   import { formatActiveFinderFilterCount, formatFinderRecoveryAction, getActiveFinderFilters, getFinderRecoverySuggestions, isActiveFilterKind, removeActiveFinderFilter, type ActiveFilterLabelLookup } from '../utils-finder-active-filters';
 import { mountNearbyFinderUi, type NearbyUiSelection, type NearbyOriginPlace } from './race-finder-nearby-ui';
-import { DEV056_PILOT_EDITION_LOCATIONS, DEV056_PILOT_ORIGIN_PLACES } from './dev056-first-release-index';
+import { NEARBY_EDITION_LOCATIONS, NEARBY_ORIGINS } from './nearby-production-index';
 import { editionKey, prepareNearbyFinderView, type NearbyEditionLocation } from '../utils-nearby-races';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
@@ -127,14 +127,13 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
   const advancedFiltersSummary = document.querySelector<HTMLElement>('[data-advanced-filters-summary]');
   const quickPickButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-quick-pick]')];
   const selectedQuickPicks = new Set<string>();
-  // DEV-056: intentionally non-activatable in public builds until source rights,
-  // official date/state attribution and a reviewed edition-level index are ready.
-  const NEARBY_PUBLIC_ENABLED = false;
-  const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = DEV056_PILOT_EDITION_LOCATIONS;
-  const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = DEV056_PILOT_ORIGIN_PLACES; // inert until public flag enabled
+  // Build-time release switch; unset means off. No URL or storage can enable it.
+  const NEARBY_PUBLIC_ENABLED = __STK_NEARBY_ENABLED__;
+  const APPROVED_NEARBY_LOCATIONS: readonly NearbyEditionLocation[] = NEARBY_EDITION_LOCATIONS;
+  const NEARBY_ORIGIN_PLACES: readonly NearbyOriginPlace[] = NEARBY_ORIGINS;
   let nearbySelection: NearbyUiSelection | null = null;
   let nearbyUi: ReturnType<typeof mountNearbyFinderUi> = null;
-  const nearbyDistances = new Map<string, { distanceKm: number; approximate: boolean }>();
+  const nearbyDistances = new Map<string, { distanceKm: number; approximate: boolean; referenceLabel?: string }>();
 
   let directFinderState: FinderUrlState = stateForYear(initialUrlState, activeYear);
 
@@ -931,7 +930,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const formattedSurface = formatSurface(event.surface);
     const nearby = nearbyDistances.get(editionKey(event) ?? '');
     const nearbyFact = nearby
-      ? `<span data-nearby-distance>${nearby.approximate ? '≈ ' : ''}${escapeHtml(new Intl.NumberFormat(locale.dateLocale, { maximumFractionDigits: 1 }).format(nearby.distanceKm))} km ${locale.language === 'en' ? 'straight-line' : 'zračno'}</span>`
+      ? `<span data-nearby-distance>${nearby.approximate ? '≈ ' : ''}${escapeHtml(new Intl.NumberFormat(locale.dateLocale, { maximumFractionDigits: 1 }).format(nearby.distanceKm))} km ${locale.language === 'en' ? 'straight-line' : 'zračno'}${nearby.approximate ? (locale.language === 'en' ? ' to approximate event location' : ' do približne lokacije prireditve') : ''}${nearby.referenceLabel ? ` (${escapeHtml(nearby.referenceLabel)})` : ''}</span>`
       : '';
     const metaItems = [
       formattedSurface && `<span>${escapeHtml(formattedSurface)}</span>`,
@@ -1060,11 +1059,12 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         nearbyUi?.updateNotice(locale.language === 'en'
           ? 'Nearby search is unavailable.' : 'Iskanje tekov v bližini ni na voljo.');
       } else {
-        state.filtered = view.matches.map((match) => {
+        for (const match of view.matches) {
           const key = editionKey(match.event);
-          if (key) nearbyDistances.set(key, { distanceKm: match.distanceKm, approximate: match.approximate });
-          return match.event;
-        });
+          if (key) nearbyDistances.set(key, { distanceKm: match.distanceKm, approximate: match.approximate, referenceLabel: match.referenceLabel });
+        }
+        // Nearby is a filter. Preserve the user's date/fee/preference ordering.
+        state.filtered = state.filtered.filter(event => nearbyDistances.has(editionKey(event) ?? ''));
         nearbyUi?.updateNotice([
           view.copy.distanceBasis,
           view.copy.approximateNotice,
@@ -1092,8 +1092,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
           : statusMessage
     ));
     if (additionalNoteElement) additionalNoteElement.hidden = !additionalDataEnabled || !state.events.some((event) => (filters.past || !event.isPast) && hasRenderableAdditionalData(event.additionalData));
-    if (!deferAdditionalSelection) trackSearchResult(filters, count);
-    if (!deferAdditionalSelection && personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
+    if (!deferAdditionalSelection && !nearbySelection) trackSearchResult(filters, count);
+    if (!deferAdditionalSelection && !nearbySelection && personalizedResultsSignature && personalizedResultsSignature !== personalizedResultsLastSignature) {
       personalizedResultsLastSignature = personalizedResultsSignature;
       const { search, past, ...safePersonalizedFilters } = filters;
       trackStkEvent({
@@ -1218,6 +1218,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
 
   const clearFilters = () => {
     formElement?.reset();
+    nearbyUi?.clear();
     rebuildControlsFromFinderState(clearFinderUrlState(activeYear));
     syncUrlFromControls(clearFinderUrlState(activeYear));
     resetVisibleResults();
@@ -1362,6 +1363,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     originPlaces: NEARBY_ORIGIN_PLACES,
     root: document,
     onChange: (selection) => {
+      if (searchAnalyticsTimer) window.clearTimeout(searchAnalyticsTimer);
       nearbySelection = selection;
       state.visibleCount = PAGE_SIZE;
       renderResults();

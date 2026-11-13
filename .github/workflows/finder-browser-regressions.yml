@@ -15,6 +15,12 @@ on:
       - 'tests/browser/finder-nearby-release.spec.ts'
       - 'playwright.dev056-release.config.ts'
       - 'src/finder/dev056-first-release-index.ts'
+      - 'src/finder/nearby-production-index.ts'
+      - 'src/data/nearby-geography.ts'
+      - 'src/utils-nearby-index.ts'
+      - 'src/build-env.d.ts'
+      - 'astro.config.mjs'
+      - 'docs/evidence/dev056-release/public-events.json'
       - 'playwright.dev056.config.ts'
       - 'src/finder/race-finder-controller.ts'
       - 'src/finder/race-finder-nearby-ui.ts'
@@ -49,7 +55,7 @@ jobs:
       - name: Run DEV-056 private card integration (never deploy)
         run: npm run test:browser:nearby-private
 
-      - name: Run DEV-056 actual reviewed pilot index privately (never deploy)
+      - name: Run DEV-056 production switch with reviewed geographic index (never deploy)
         run: npm run test:browser:nearby-release
 
       - name: Upload Playwright report
@@ -66,30 +72,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-test-results
-          path: test-results/
+          path: |
+            test-results/
+            .cache/dev056-browser-results/
           if-no-files-found: ignore
           retention-days: 7
-
-  dev056-wikidata-research:
-    # Never executes on main/production; only development PR's non-production branch.
-    if: github.event_name == 'pull_request' && github.head_ref == 'work/dev056-p1-nearby-core'
-    runs-on: ubuntu-latest
-    timeout-minutes: 9
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout research branch
-        uses: actions/checkout@v4
-      - name: Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Probe Wikidata read-only (no public index writes)
-        run: node scripts/dev056-wikidata-probe.mjs
-      - name: Upload unapproved candidate evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dev056-wikidata-research-not-approved
-          path: research/out/dev056-wikidata-probe.generated.json
-          if-no-files-found: warn
