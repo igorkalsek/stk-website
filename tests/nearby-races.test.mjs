@@ -1404,3 +1404,34 @@ test('DEV-056 numeric 2027 landmark references remain blocked pending race-line 
   assert.ok(r.start_sites_checked.every(x=>x.latitude===null && x.longitude===null && x.approved_for_runtime===false));
  }
 });
+
+
+test('DEV-056 Krvavec 2026/27 reference is a lower-station REVIEW, never mountain destination or approved start', () => {
+ const j=JSON.parse(readFileSync(new URL('../research/dev056-repeated-start-venues.review.json',import.meta.url),'utf8'));
+ const k=j.venue_profiles.find(x=>x.venue_id==='kztl-2026-27-krvavec');
+ assert.ok(k);
+ assert.deepEqual(k.edition_keys,['2026!312','2027!60','2027!65']);
+ assert.deepEqual(j.krvavec_numeric_followup.impacted_edition_keys,k.edition_keys);
+ assert.equal(k.coordinates,null);
+ assert.equal(k.approved_for_runtime,false);
+ assert.equal(k.review_status,'REVIEW');
+ const p=k.numeric_venue_candidate;
+ assert.deepEqual([p.latitude,p.longitude],[46.2849,14.4968]);
+ assert.match(p.coordinate_role,/NOT_VERIFIED_START_LINE/);
+ assert.equal(p.verified_exact_race_start_line,false);
+ assert.equal(p.approved_for_runtime,false);
+ assert.equal(p.public_enabled,false);
+ assert.equal(p.status,'REVIEW');
+ assert.match(p.legal_reuse_status,/NOT_CLEARED/);
+ assert.ok(p.rejected_nearby_not_start_references.length===2);
+ const dest=p.rejected_nearby_not_start_references[0];
+ const arso=p.rejected_nearby_not_start_references[1];
+ assert.ok(dest.distance_from_lower_station_km>1.5);
+ assert.ok(arso.distance_from_lower_station_km>2.5);
+ assert.match(dest.reason,/NOT_LOWER_GONDOLA_START/);
+ assert.match(arso.reason,/NOT_RACE_START/);
+ assert.equal(j.coverage.edition_with_approved_numeric_gps,0);
+ assert.equal(j.krvavec_numeric_followup.runtime_approved_edition_count,0);
+ assert.equal(j.venue_profiles.length,6);
+ assert.equal(j.venue_profiles.filter(x=>x.coordinates!==null).length,0);
+});

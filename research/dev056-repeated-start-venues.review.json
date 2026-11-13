@@ -123,7 +123,42 @@
       "review_status": "REVIEW",
       "approved_for_runtime": false,
       "coordinates": null,
-      "note": "Gondola lower station is officially designated start, not the hilltop finish; exact GPS of line unverified."
+      "note": "Gondola lower station is officially designated start, not the hilltop finish; exact GPS of line unverified.",
+      "numeric_venue_candidate": {
+        "latitude": 46.2849,
+        "longitude": 14.4968,
+        "coordinate_role": "LOWER_GONDOLA_STATION_HIKING_TRAILHEAD_REFERENCE_NOT_VERIFIED_START_LINE",
+        "verification_level": "SECONDARY_NUMERIC_TRAILHEAD_AND_CURRENT_SEASON_ORGANIZER_SITE_DESCRIPTION_MATCH",
+        "official_current_season_start_source_url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+        "numeric_source_url": "https://www.hribi.net/izhodisce/spodnja_postaja_zicnice_na_krvavec/46.2849/14.4968",
+        "numeric_source_terms_url": "https://www.hribi.net/pogoji.asp",
+        "additional_official_destination_context": "https://www.rtc-krvavec.si/splosni-pogoji",
+        "legal_reuse_status": "NOT_CLEARED_HRIBI_NET_TERMS_PROTECT_TEXT_IMAGES_COORDINATE_REUSE_NOT_CERTIFIED",
+        "source_checked_on": "2026-11-13",
+        "status": "REVIEW",
+        "approved_for_runtime": false,
+        "public_enabled": false,
+        "verified_exact_race_start_line": false,
+        "rejected_nearby_not_start_references": [
+          {
+            "name": "Dom na Gospincu / Hotel Rozka destination from Visit Cerklje",
+            "latitude": 46.29583,
+            "longitude": 14.52243,
+            "distance_from_lower_station_km": 2.314,
+            "source_url": "https://www.visitcerklje.si/aktivnosti/pohodnistvo/dom-na-gospincu-hotel-rozka",
+            "reason": "MOUNTAIN_DESTINATION_NOT_LOWER_GONDOLA_START"
+          },
+          {
+            "name": "ARSO Krvavec weather station",
+            "latitude": 46.2973,
+            "longitude": 14.5333,
+            "distance_from_lower_station_km": 3.125,
+            "source_url": "https://meteo.arso.gov.si/uploads/probase/www/climate/table/sl/by_location/statistike_1950_2020/normale-3-Krvavec.html",
+            "reason": "MOUNTAIN_WEATHER_STATION_NOT_RACE_START"
+          }
+        ],
+        "note": "Only a venue reference, not race-start GPS. Do not copy it to runtime index, present exact distances or uplift coverage while licence and official start-line verification are unresolved."
+      }
     },
     {
       "venue_id": "kztl-2026-27-brdo",
@@ -142,5 +177,21 @@
       "coordinates": null,
       "note": "Reference start venue for 9.7 km clockwise loop; no official numeric GPS verified."
     }
-  ]
+  ],
+  "krvavec_numeric_followup": {
+    "checked_on": "2026-11-13",
+    "venue_id": "kztl-2026-27-krvavec",
+    "impacted_edition_keys": [
+      "2026!312",
+      "2027!60",
+      "2027!65"
+    ],
+    "venue_profiles_total": 6,
+    "described_edition_count": 24,
+    "linked_edition_candidate_count": 3,
+    "runtime_approved_edition_count": 0,
+    "new_exact_start_approval_count": 0,
+    "status": "REVIEW_ONLY",
+    "source_provenance_note": "The official 2026/27 KZTL document identifies lower gondola station; the numeric point is from independent Hribi.net hiking trailhead, not organiser GPS; legal reuse unresolved."
+  }
 }
