@@ -23,7 +23,8 @@ export type NearbyEditionLocation = NearbyPoint & {
   /** Optional discipline/start role for multi-start editions. */
   startRole?: string;
   /** Research fixtures must never become runtime matches merely by being imported. */
-  approved_for_runtime?: boolean;
+  /** Must be explicitly true after human review before runtime use. */
+  approved_for_runtime: boolean;
   sourceUrl: string;
   sourceCheckedOn: string;   // ISO date, date of verification
   sourceKind: 'official-edition-start' | 'official-settlement' | 'documented-place-reference';
@@ -95,7 +96,7 @@ export const editionKey = (event: NearbyEvent): string | null => {
 
 const isApprovedLocation = (location: NearbyEditionLocation): boolean => {
   const key = editionKey({ year: location.year, row: String(location.masterRow) });
-  if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime === false) return false;
+  if (!key || !isValidWgs84(location) || location.reviewStatus !== 'approved' || location.approved_for_runtime !== true) return false;
   if (location.precision !== 'start' && location.precision !== 'settlement-approximate' && location.precision !== 'place-approximate') return false;
   if (!/^https:\/\//i.test(location.sourceUrl)) return false;
   if (!isRealIsoDate(location.sourceCheckedOn)) return false;
@@ -296,5 +297,36 @@ export function filterNearbyRaces<T extends NearbyEvent>(
     status: unlocatedEditionKeys.length ? 'partial' : 'ready',
     matches,
     unlocatedEditionKeys
+  };
+}
+
+/** Non-UI SL/EN copy for future Nearby Finder integration. */
+export function nearbyDiscoveryCopy(
+  locale: 'sl' | 'en',
+  coverage: NearbyCoverageSummary,
+  radiusKm: number
+): {
+  distanceBasis: string;
+  approximateNotice: string | null;
+  coverageNotice: string | null;
+  radiusNotice: string | null;
+} {
+  const en = locale === 'en';
+  const approximate = coverage.approximateSettlementEditions + coverage.approximatePlaceEditions > 0;
+  const incomplete = coverage.status === 'partial';
+  return {
+    distanceBasis: en ? 'Straight-line distance' : 'Zračna razdalja',
+    approximateNotice: approximate ? (
+      en ? 'Approximate settlement or venue location, not a verified race start.'
+        : 'Približna lokacija naselja ali prizorišča, ne potrjenega štarta.'
+    ) : null,
+    coverageNotice: incomplete ? (
+      en ? `Locations are missing for ${coverage.unlocatedEditionKeys.length} of ${coverage.totalEditions} races. Results may be incomplete.`
+        : `Za ${coverage.unlocatedEditionKeys.length} od ${coverage.totalEditions} tekov lokacija ni preverjena. Rezultati so lahko nepopolni.`
+    ) : null,
+    radiusNotice: approximate && radiusKm === 10 ? (
+      en ? 'With a 10 km radius, an approximate point may fall on the wrong side of the boundary.'
+        : 'Pri radiju 10 km je lahko približna točka na napačni strani meje.'
+    ) : null
   };
 }

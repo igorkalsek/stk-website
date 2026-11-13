@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import {
-  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage
+  NEARBY_RADII_KM, airDistanceKm, editionKey, filterNearbyRaces, isValidWgs84, summarizeNearbyCoverage, nearbyDiscoveryCopy
 } from '../.cache/dist-test/utils-nearby-races.js';
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
   year, masterRow: row, latitude, longitude, precision,
-  reviewStatus: 'approved', sourceUrl: 'https://example.org/official',
+  reviewStatus: 'approved', approved_for_runtime:true, sourceUrl: 'https://example.org/official',
   sourceCheckedOn: '2026-11-12',
   sourceKind: precision === 'start' ? 'official-edition-start' : 'official-settlement',
   sourceEditionYear: precision === 'start' ? Number(year) : undefined,
@@ -254,7 +254,7 @@ test('DEV-056 180-day pilot source snapshot is edition-bound, explicitly non-run
   assert.equal(blocked.coveragePercent,0);
   assert.equal(filterNearbyRaces(events,snapshot.pilot_offline_index,{latitude:start.latitude,longitude:start.longitude},10).matches.length,0);
   // Only an explicit ephemeral offline-only test copy exercises calculation.
-  const verifiedOffline=[{...start,approved_for_runtime:undefined}];
+  const verifiedOffline=[{...start,approved_for_runtime:true}];
   const audit=summarizeNearbyCoverage(events,verifiedOffline);
   assert.deepEqual([audit.status,audit.totalEditions,audit.locatedEditions,audit.exactStartEditions,audit.approximateSettlementEditions,audit.coveragePercent],['partial',59,1,1,0,1.7]);
   assert.equal(audit.unlocatedEditionKeys.length,58);
@@ -402,7 +402,7 @@ test('OFFLINE approximate pilot demonstrates 21 of 59 eligible editions, without
   assert.deepEqual([unavailable.status,unavailable.locatedEditions,unavailable.coveragePercent],['partial',0,0]);
   assert.equal(filterNearbyRaces(events,fixture.entries,{latitude:46.2490358,longitude:15.164716},25).matches.length,0);
   // Deliberately isolated, non-persistent calculation: not an authorization to publish.
-  const ephemeral=fixture.entries.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const ephemeral=fixture.entries.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:true}));
   const preview=summarizeNearbyCoverage(events,ephemeral);
   assert.deepEqual([preview.status,preview.totalEditions,preview.locatedEditions,preview.exactStartEditions,preview.approximateSettlementEditions,preview.coveragePercent],
     ['partial',59,21,1,20,35.6]);
@@ -420,7 +420,7 @@ test('documented place reference matches only when manually validated and editio
   const race=event('2027',60);
   const place={
     year:'2027',masterRow:60,latitude:46.28490,longitude:14.49680,
-    precision:'place-approximate',reviewStatus:'approved',
+    precision:'place-approximate',reviewStatus:'approved',approved_for_runtime:true,
     sourceKind:'documented-place-reference',referenceLocationVerified:true,
     sourceEditionYear:2027,sourceUrl:'https://www.hribi.net/izhodisce/spodnja_postaja_zicnice_na_krvavec/46.2849/14.4968',
     sourceCheckedOn:'2026-11-13',
@@ -479,7 +479,7 @@ test('KZTL four place references cover 15 editions but remain review-only', () =
   const allEvents=pop.eligible_editions.map(x=>event(String(x.year),x.master_row));
   const allReview=[...prior.entries,...kztl.entries];
   assert.equal(summarizeNearbyCoverage(allEvents,allReview).locatedEditions,0);
-  const testCopy=allReview.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const testCopy=allReview.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:true}));
   const preview=summarizeNearbyCoverage(allEvents,testCopy);
   assert.deepEqual([preview.totalEditions,preview.locatedEditions,preview.exactStartEditions,
     preview.approximateSettlementEditions,preview.approximatePlaceEditions,preview.coveragePercent],
@@ -495,7 +495,7 @@ test('multistart event can be discovered by one documented approximate place, ne
   const place={
     year:'2027',masterRow:61,latitude:46.2348,longitude:14.3309,
     precision:'place-approximate',sourceKind:'documented-place-reference',
-    reviewStatus:'approved',referenceLocationVerified:true,sourceEditionYear:2027,
+    reviewStatus:'approved',approved_for_runtime:true,referenceLocationVerified:true,sourceEditionYear:2027,
     sourceUrl:'https://www.hribi.net/izlet/ticnica_sveti_jost_nad_kranjem_pot_prijateljev_sv_josta_na_klopca/21/186/6742',
     editionEvidenceUrl:'https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view',
     sourceCheckedOn:'2026-11-13'
@@ -536,7 +536,7 @@ test('offline remaining 17 place references build 53 of 59 without enabling publ
   const full=snapshot.eligible_editions.map(x=>event(String(x.year),x.master_row));
   const blocked=summarizeNearbyCoverage(full,every);
   assert.deepEqual([blocked.totalEditions,blocked.locatedEditions,blocked.coveragePercent],[59,0,0]);
-  const temporary=every.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const temporary=every.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:true}));
   const trial=summarizeNearbyCoverage(full,temporary);
   assert.deepEqual([trial.totalEditions,trial.locatedEditions,trial.exactStartEditions,trial.approximateSettlementEditions,
      trial.approximatePlaceEditions,trial.coveragePercent],
@@ -553,7 +553,7 @@ test('same place reference across different 2026/27 races never confuses edition
   const results=filterNearbyRaces([event('2026',263),event('2027',2)],[x,y],{latitude:x.latitude,longitude:x.longitude},10);
   assert.equal(results.status,'partial');
   assert.equal(results.matches.length,0); // REVIEW-only fixtures must remain blocked
-  const copy=[x,y].map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const copy=[x,y].map(x=>({...x,reviewStatus:'approved',approved_for_runtime:true}));
   const offline=filterNearbyRaces([event('2026',263),event('2027',2)],copy,{latitude:x.latitude,longitude:x.longitude},10);
   assert.equal(offline.status,'ready');
   assert.equal(offline.matches.length,2);
@@ -573,7 +573,44 @@ test('review-only 2027 Slivnica / Najnaj21 / Celje venue references retain sourc
   assert.ok([slivnica,najnaj,celje].every(x=>x.reviewStatus==='review'&&x.approved_for_runtime===false&&x.precision==='place-approximate'));
   const origin={latitude:46.13678,longitude:14.30301};
   assert.equal(filterNearbyRaces([event('2027',44)],[najnaj],origin,10).matches.length,0);
-  assert.equal(filterNearbyRaces([event('2027',44)],[{...najnaj,reviewStatus:'approved',approved_for_runtime:undefined,sourceEditionYear:2026}],origin,10).matches.length,0);
+  assert.equal(filterNearbyRaces([event('2027',44)],[{...najnaj,reviewStatus:'approved',approved_for_runtime:true,sourceEditionYear:2026}],origin,10).matches.length,0);
   const unlocated=new Set(d.unlocated_review.map(x=>x.edition_key));
   assert.deepEqual(unlocated,new Set(['2027!3','2027!4','2027!5','2027!12','2027!8','2027!9']));
+});
+
+test('runtime inclusion needs explicit true approval, not an omitted or false flag', () => {
+  const origin={latitude:46.1314,longitude:14.9965};
+  const valid=checked('2027',51,origin.latitude,origin.longitude);
+  assert.equal(filterNearbyRaces([event('2027',51)],[valid],origin,25).matches.length,1);
+  for(const invalid of [
+    {...valid,approved_for_runtime:undefined},
+    {...valid,approved_for_runtime:false},
+    {...valid,approved_for_runtime:null},
+    {...valid,approved_for_runtime:'true'},
+    {...valid,reviewStatus:'review'}
+  ]){
+    assert.equal(filterNearbyRaces([event('2027',51)],[invalid],origin,25).matches.length,0);
+    assert.equal(summarizeNearbyCoverage([event('2027',51)],[invalid]).locatedEditions,0);
+  }
+});
+
+test('SL/EN copy indicates approximate distances, missing editions and 10 km uncertainty', () => {
+  const origin={latitude:46.1314,longitude:14.9965};
+  const summary=summarizeNearbyCoverage([event('2027',51),event('2027',52)],[
+    checked('2027',51,origin.latitude,origin.longitude)
+  ]);
+  const sl=nearbyDiscoveryCopy('sl',summary,10);
+  const en=nearbyDiscoveryCopy('en',summary,10);
+  assert.equal(sl.distanceBasis,'Zračna razdalja');
+  assert.equal(en.distanceBasis,'Straight-line distance');
+  assert.match(sl.approximateNotice,/Približna lokacija/);
+  assert.match(en.approximateNotice,/Approximate settlement/);
+  assert.match(sl.coverageNotice,/1 od 2/);
+  assert.match(en.coverageNotice,/1 of 2/);
+  assert.match(sl.radiusNotice,/radiju 10 km/);
+  assert.match(en.radiusNotice,/10 km radius/);
+  assert.equal(nearbyDiscoveryCopy('sl',summary,25).radiusNotice,null);
+  const exact=summarizeNearbyCoverage([event('2027',51)],[checked('2027',51,origin.latitude,origin.longitude,'start')]);
+  assert.equal(nearbyDiscoveryCopy('sl',exact,10).approximateNotice,null);
+  assert.equal(nearbyDiscoveryCopy('en',exact,10).coverageNotice,null);
 });
