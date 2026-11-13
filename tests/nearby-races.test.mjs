@@ -978,3 +978,54 @@ test('2026-11-13 GURS 2027 pilot triage stays strictly review-only', () => {
   }));
   assert.ok(r.entries.every(e=>e.reviewStatus==='review'&&e.approved_for_runtime===false));
 });
+
+
+test('DEV-056 first production Wikidata CC0 candidate set remains REVIEW-only and correctly edition-scoped', () => {
+  const fixture=JSON.parse(readFileSync(new URL('../research/dev056-production-candidates.review.json',import.meta.url),'utf8'));
+  const pop=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  const eligible=new Set(pop.eligible_editions.map(x=>x.edition_key));
+  assert.equal(fixture.public_activation_allowed,false);
+  assert.equal(fixture.status,'REVIEW_ONLY_NOT_FOR_RUNTIME_OR_IMPORT');
+  assert.equal(fixture.approved_public_locations,0);
+  assert.equal(fixture.legal.wikidata_structured_data,'CC0');
+  assert.equal(fixture.places.length,8);
+  assert.equal(fixture.edition_candidates.length,16);
+  assert.equal(fixture.review_population.potential_union,17);
+  assert.equal(fixture.review_population.potential_coverage_percent,28.8);
+  const seen=new Set();
+  const sources=new Map(fixture.places.map(p=>[p.place_key,p]));
+  assert.equal(sources.size,8);
+  for(const point of fixture.places) {
+    assert.equal(point.review_status,'REVIEW');
+    assert.equal(point.approved_for_runtime,false);
+    assert.equal(point.can_be_race_start,false);
+    assert.ok(/^https:\/\/www\.wikidata\.org\/wiki\/Q[0-9]+$/.test(point.wikidata_url));
+    assert.ok(isValidWgs84(point));
+    assert.equal(point.source_license,'Wikidata structured data CC0');
+  }
+  for(const edition of fixture.edition_candidates) {
+    assert.ok(eligible.has(edition.edition_key));
+    assert.equal(edition.edition_key,`${edition.year}!${edition.master_row}`);
+    assert.ok(!seen.has(edition.edition_key));
+    seen.add(edition.edition_key);
+    assert.ok(sources.has(edition.place_key));
+    assert.equal(edition.review_status,'REVIEW');
+    assert.equal(edition.approved_for_runtime,false);
+    assert.equal(edition.referenceLocationVerified,false);
+    assert.equal(edition.precision,'place-approximate');
+    assert.equal(edition.sourceEditionYear,edition.year);
+  }
+  // Strong safety assertion: unapproved Wikidata-derived points stay invisible
+  // even when a synthetic caller attaches them to actual Master edition keys.
+  const indexes=fixture.edition_candidates.map(entry=>{
+    const point=sources.get(entry.place_key);
+    return {year:String(entry.year),masterRow:entry.master_row,latitude:point.latitude,longitude:point.longitude,
+      precision:'place-approximate',sourceKind:'documented-place-reference',reviewStatus:'review',approved_for_runtime:false,
+      sourceUrl:point.wikidata_url,sourceCheckedOn:point.checked_on,sourceEditionYear:entry.year,
+      editionEvidenceUrl:entry.edition_evidence_url,referenceLocationVerified:false};
+  });
+  const subset=fixture.edition_candidates.map(x=>event(String(x.year),x.master_row));
+  const coverage=summarizeNearbyCoverage(subset,indexes);
+  assert.equal(coverage.locatedEditions,0);
+  assert.equal(coverage.unlocatedEditionKeys.length,16);
+});
