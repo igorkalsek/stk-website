@@ -505,3 +505,57 @@ test('multistart event can be discovered by one documented approximate place, ne
   assert.equal(near.matches[0].approximate,true);
   assert.equal(near.matches[0].matchedRole,undefined);
 });
+
+test('offline remaining 14 place references build 50 of 59 without enabling public coordinates', () => {
+  const now=JSON.parse(readFileSync(new URL('../research/dev056-remaining-places.review.json',import.meta.url),'utf8'));
+  const prior=JSON.parse(readFileSync(new URL('../research/dev056-approximate-pilot.review.json',import.meta.url),'utf8'));
+  const kztl=JSON.parse(readFileSync(new URL('../research/dev056-kztl-place-pilot.review.json',import.meta.url),'utf8'));
+  const snapshot=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(now.kind,'ADDITIONAL_OFFLINE_PLACE_REFERENCES_2026_2027');
+  assert.equal(now.runtime_activation,false);
+  assert.equal(now.public_index_approved,false);
+  assert.equal(now.not_for_import_or_publication,true);
+  assert.equal(now.entries.length,14);
+  assert.equal(now.unlocated_review.length,9);
+  const every=[...prior.entries,...kztl.entries,...now.entries];
+  const ids=every.map(x=>editionKey({year:x.year,row:String(x.masterRow)}));
+  assert.equal(new Set(ids).size,50);
+  const eligible=new Set(snapshot.eligible_editions.map(x=>x.edition_key));
+  assert.ok(ids.every(x=>eligible.has(x)));
+  assert.equal(now.coverage.offline_candidate_total,50);
+  assert.equal(now.coverage.offline_potential_coverage_percent,84.7);
+  assert.ok(now.entries.every(x=>
+    x.approved_for_runtime===false && x.reviewStatus==='review' &&
+    x.precision==='place-approximate' && x.sourceKind==='documented-place-reference' &&
+    x.referenceLocationVerified===true && x.sourceEditionYear===Number(x.year) &&
+    x.sourceLicenseReviewRequired===true &&
+    /^https:\/\//.test(x.editionEvidenceUrl) && /^https:\/\//.test(x.sourceUrl) &&
+    x.qaIdentity.edition_key===editionKey({year:x.year,row:String(x.masterRow)}) &&
+    isValidWgs84(x)
+  ));
+  const full=snapshot.eligible_editions.map(x=>event(String(x.year),x.master_row));
+  const blocked=summarizeNearbyCoverage(full,every);
+  assert.deepEqual([blocked.totalEditions,blocked.locatedEditions,blocked.coveragePercent],[59,0,0]);
+  const temporary=every.map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const trial=summarizeNearbyCoverage(full,temporary);
+  assert.deepEqual([trial.totalEditions,trial.locatedEditions,trial.exactStartEditions,trial.approximateSettlementEditions,
+     trial.approximatePlaceEditions,trial.coveragePercent],
+     [59,50,1,20,29,84.7]);
+  assert.equal(trial.unlocatedEditionKeys.length,9);
+  assert.deepEqual(new Set(now.unlocated_review.map(x=>x.edition_key)),new Set(trial.unlocatedEditionKeys));
+});
+
+test('same place reference across different 2026/27 races never confuses edition or start', () => {
+  const doc=JSON.parse(readFileSync(new URL('../research/dev056-remaining-places.review.json',import.meta.url),'utf8'));
+  const x=doc.entries.find(x=>x.qaIdentity.edition_key==='2026!263');
+  const y=doc.entries.find(x=>x.qaIdentity.edition_key==='2027!2');
+  assert.deepEqual([x.latitude,x.longitude],[y.latitude,y.longitude]);
+  const results=filterNearbyRaces([event('2026',263),event('2027',2)],[x,y],{latitude:x.latitude,longitude:x.longitude},10);
+  assert.equal(results.status,'partial');
+  assert.equal(results.matches.length,0); // REVIEW-only fixtures must remain blocked
+  const copy=[x,y].map(x=>({...x,reviewStatus:'approved',approved_for_runtime:undefined}));
+  const offline=filterNearbyRaces([event('2026',263),event('2027',2)],copy,{latitude:x.latitude,longitude:x.longitude},10);
+  assert.equal(offline.status,'ready');
+  assert.equal(offline.matches.length,2);
+  assert.ok(offline.matches.every(x=>x.approximate && x.matchedRole===undefined));
+});
