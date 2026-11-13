@@ -53,7 +53,7 @@ export type DetailAdditionalData = {
 export type DetailEvent = PublicRaceEvent & { additionalData?: DetailAdditionalData | null };
 
 export type DetailAction = { kind: 'registration' | 'notice'; label: string; url: string; analyticsType: 'prijava' | 'razpis' };
-export type DetailRow = { label: string; value: string; url?: string; analyticsType?: string; ariaLabel?: string };
+export type DetailRow = { label: string; value: string; url?: string; analyticsType?: string; ariaLabel?: string; description?: string; sourceLanguage?: 'sl' };
 export type DetailHighlightIconKey = Extract<RaceActionIcon, 'ultra' | 'elevation' | 'family' | 'cup' | 'distances' | 'free' | 'race-day-registration'>;
 export type DetailHighlightCard = { key: string; label: string; value: string; iconKey: DetailHighlightIconKey };
 
@@ -237,13 +237,19 @@ export const buildRegistrationRows = (event: DetailEvent, language: DetailLangua
   const day = formatYesNo(data.dayOfRegistration, language);
   const feeDescription = data.registrationDescription?.trim() ?? '';
   const { min, max } = getRegistrationFeeBounds(data.registrationMinEur, data.registrationMaxEur, feeDescription);
-  const hasSingleBound = (min === null) !== (max === null);
   const feeAmount = min !== null || max !== null
     ? formatDetailMoneyRange(data.registrationMinEur, data.registrationMaxEur, language)
     : '';
-  const fee = hasSingleBound && feeDescription ? `${feeAmount} · ${feeDescription}` : feeAmount || feeDescription;
+  // Keep organizer wording as plain text, separate from the compact amount.
+  const description = feeDescription && normalizeNote(feeDescription) !== normalizeNote(feeAmount) ? feeDescription : '';
+  const feeRow: DetailRow = {
+    label: labels.fee,
+    value: feeAmount || description,
+    ...(feeAmount && description ? { description } : {}),
+    ...(description ? { sourceLanguage: 'sl' as const } : {})
+  };
   return [
-    { label: labels.fee, value: fee },
+    feeRow,
     { label: labels.deadline, value: data.registrationDeadline && !isIsoDate(data.registrationDeadline) ? fmtDate(data.registrationDeadline) : '' },
     { label: labels.early, value: data.earlyRegistrationDeadline && !isIsoDate(data.earlyRegistrationDeadline) ? fmtDate(data.earlyRegistrationDeadline) : '' },
     { label: labels.raceDay, value: day }

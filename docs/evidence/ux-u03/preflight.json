@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-14",
+  "main": "5ea048128a77c85075a19463089ad1598ea30522",
+  "productionSHA": "5ea048128a77c85075a19463089ad1598ea30522",
+  "deploymentId": "ad45c12f-6a6b-48da-9922-897842b06415",
+  "openPRs": [
+    266,
+    247,
+    237
+  ],
+  "source": "https://stk-master-api.igor-kalsek.workers.dev/additional",
+  "generatedAt": "2026-11-13T23:11:43.802Z",
+  "rows": [
+    {
+      "row": 119,
+      "master_row": "268",
+      "naziv_prireditve": "14. Goricatlon",
+      "prijavnina_min_eur": "50",
+      "prijavnina_max_eur": "",
+      "prijavnina_opis": "Ni klasične prijavnine; minimalna skupna donacija na ekipo 50 EUR oziroma najmanj 1 EUR na krog."
+    },
+    {
+      "row": 192,
+      "master_row": "267",
+      "naziv_prireditve": "Velenje Trail 2026",
+      "prijavnina_min_eur": "0",
+      "prijavnina_max_eur": "60",
+      "prijavnina_opis": "Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €."
+    }
+  ],
+  "productionURL": "https://tekaski-koledar.si/tek/2026/r000267-velenje-trail-2026/",
+  "productionFeeHTML": "<dt>Startnina</dt> <dd>0–60 €</dd>"
+}
