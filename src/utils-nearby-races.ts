@@ -11,7 +11,7 @@
 export const NEARBY_RADII_KM = [10, 25, 50, 100] as const;
 export type NearbyRadiusKm = typeof NEARBY_RADII_KM[number];
 export type NearbyPoint = { latitude: number; longitude: number };
-export type NearbyEvent = { year: string; row: string };
+export type NearbyEvent = { year: string; row: string; /** Required for distinct start lines. */ startRoles?: readonly string[] };
 export type NearbyPrecision = 'start' | 'settlement-approximate';
 
 export type NearbyEditionLocation = NearbyPoint & {
@@ -20,6 +20,8 @@ export type NearbyEditionLocation = NearbyPoint & {
   precision: NearbyPrecision;
   /** Requires explicit review; merely being present in an API is not approval. */
   reviewStatus: 'approved' | 'review';
+  /** Optional discipline/start role for multi-start editions. */
+  startRole?: string;
   /** Research fixtures must never become runtime matches merely by being imported. */
   approved_for_runtime?: boolean;
   sourceUrl: string;
@@ -35,6 +37,8 @@ export type NearbyMatch<T> = {
   event: T;
   distanceKm: number;
   approximate: boolean;
+  /** Start role used to calculate the distance, when multiple starts exist. */
+  matchedRole?: string;
 };
 
 export type NearbyFilterResult<T> = {
@@ -121,14 +125,49 @@ export type NearbyCoverageSummary = {
   reason?: 'invalid-or-duplicate-index';
 };
 
-const indexByEdition = (index: readonly NearbyEditionLocation[]): Map<string, NearbyEditionLocation> | null => {
-  const mapped = new Map<string, NearbyEditionLocation>();
+const startRolePattern = /^[a-z][a-z0-9_-]*$/;
+const hasValidStartRoles = (event: NearbyEvent): boolean => {
+  if (event.startRoles === undefined) return true;
+  const roles = event.startRoles;
+  return Array.isArray(roles) && roles.length >= 2 &&
+    roles.every(role => typeof role === 'string' && startRolePattern.test(role)) &&
+    new Set(roles).size === roles.length;
+};
+
+/** Legacy single-venue entries are unscoped; multi-venue entries need distinct roles. */
+const indexByEdition = (index: readonly NearbyEditionLocation[]): Map<string, NearbyEditionLocation[]> | null => {
+  const mapped = new Map<string, NearbyEditionLocation[]>();
   for (const record of index) {
     const key = editionKey({ year: record.year, row: String(record.masterRow) });
-    if (!key || mapped.has(key)) return null;
-    mapped.set(key, record);
+    if (!key) return null;
+    const existing = mapped.get(key) || [];
+    if (record.startRole !== undefined) {
+      if (typeof record.startRole !== 'string' || !startRolePattern.test(record.startRole) ||
+          existing.some(x => x.startRole === undefined || x.startRole === record.startRole)) return null;
+    } else if (existing.length) {
+      return null;
+    }
+    existing.push(record);
+    mapped.set(key, existing);
   }
   return mapped;
+};
+
+/**
+ * Multi-start editions require every role to have its own approved exact start.
+ * Partial adult-only or youth-only positions must not represent the edition.
+ * A settlement reference point cannot substitute for multiple start lines.
+ */
+const usableEditionStarts = (event: NearbyEvent, locations: NearbyEditionLocation[] | undefined): NearbyEditionLocation[] | null => {
+  if (!locations || !locations.length) return null;
+  if (event.startRoles === undefined) {
+    return locations.length === 1 && locations[0].startRole === undefined &&
+      isApprovedLocation(locations[0]) ? locations : null;
+  }
+  if (locations.length !== event.startRoles.length) return null;
+  if (locations.some(x => !x.startRole || !event.startRoles!.includes(x.startRole) ||
+      x.precision !== 'start' || !isApprovedLocation(x))) return null;
+  return locations;
 };
 
 export function summarizeNearbyCoverage<T extends NearbyEvent>(
@@ -150,12 +189,12 @@ export function summarizeNearbyCoverage<T extends NearbyEvent>(
   let approximate = 0;
   for (const event of events) {
     const key = editionKey(event);
-    if (!key || seen.has(key)) return unavailable();
+    if (!key || seen.has(key) || !hasValidStartRoles(event)) return unavailable();
     seen.add(key);
-    const location = mapped.get(key);
-    if (!location || !isApprovedLocation(location)) {
+    const locations = usableEditionStarts(event, mapped.get(key));
+    if (!locations) {
       missing.push(key);
-    } else if (location.precision === 'start') {
+    } else if (locations.every(x => x.precision === 'start')) {
       exact++;
     } else {
       approximate++;
@@ -198,18 +237,23 @@ export function filterNearbyRaces<T extends NearbyEvent>(
   const unlocatedEditionKeys: string[] = [];
   for (const event of events) {
     const key = editionKey(event);
-    if (key === null || seen.has(key)) {
+    if (key === null || seen.has(key) || !hasValidStartRoles(event)) {
       return { status: 'unavailable', matches: [], unlocatedEditionKeys: [], reason: 'invalid-or-duplicate-index' };
     }
     seen.add(key);
-    const location = byEdition.get(key);
-    if (!location || !isApprovedLocation(location)) {
+    const locations = usableEditionStarts(event, byEdition.get(key));
+    if (!locations) {
       unlocatedEditionKeys.push(key);
       continue;
     }
-    const distanceKm = airDistanceKm(origin, location);
-    if (distanceKm <= radiusKm) {
-      matches.push({ event, distanceKm, approximate: location.precision !== 'start' });
+    const nearest = locations.map(location => ({location, distanceKm: airDistanceKm(origin, location)}))
+      .sort((a, b) => a.distanceKm - b.distanceKm)[0];
+    if (nearest.distanceKm <= radiusKm) {
+      matches.push({
+        event, distanceKm: nearest.distanceKm,
+        approximate: nearest.location.precision !== 'start',
+        ...(nearest.location.startRole ? { matchedRole: nearest.location.startRole } : {})
+      });
     }
   }
   matches.sort((a, b) => a.distanceKm - b.distanceKm);

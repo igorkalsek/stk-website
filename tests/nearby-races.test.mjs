@@ -294,3 +294,52 @@ test('2026/27 repeated start venues remain non-coordinate, edition bound and rev
   // Venue evidence must not be silently passed as complete nearby coordinate coverage.
   assert.equal(summarizeNearbyCoverage(snapshot.eligible_editions.map(e=>event(String(e.year),e.master_row)),[]).locatedEditions,0);
 });
+
+test('multi-start edition requires fully reviewed roles and resolves nearest start once', () => {
+  const adult={...checked('2027',51,46.100,15.100,'start'),startRole:'adult_start'};
+  const youth={...checked('2027',51,46.110,15.110,'start'),startRole:'youth_start'};
+  const race={...event('2027',51),startRoles:['adult_start','youth_start']};
+  const nearby=filterNearbyRaces([race],[adult,youth],{latitude:46.110,longitude:15.110},10);
+  assert.equal(nearby.status,'ready');
+  assert.equal(nearby.matches.length,1);
+  assert.equal(nearby.matches[0].matchedRole,'youth_start');
+  assert.equal(nearby.matches[0].distanceKm,0);
+  const audited=summarizeNearbyCoverage([race],[adult,youth]);
+  assert.deepEqual([audited.totalEditions,audited.locatedEditions,audited.exactStartEditions,audited.coveragePercent],[1,1,1,100]);
+  const other=filterNearbyRaces([race],[adult,youth],{latitude:46.100,longitude:15.100},10);
+  assert.equal(other.matches[0].matchedRole,'adult_start');
+});
+
+test('adult-only or youth-only positions never silently represent multi-start edition', () => {
+  const race={...event('2027',51),startRoles:['adult_start','youth_start']};
+  const adult={...checked('2027',51,46.100,15.100,'start'),startRole:'adult_start'};
+  const youth={...checked('2027',51,46.110,15.110,'start'),startRole:'youth_start'};
+  for(const partial of [[adult],[youth],[adult,{...youth,reviewStatus:'review'}],
+    [adult,{...youth,approved_for_runtime:false}],
+    [adult,{...youth,sourceEditionYear:2026}],
+    [adult,{...youth,precision:'settlement-approximate',sourceKind:'official-settlement',sourceSnapshotOn:'2026-11-01'}]]){
+    const nearby=filterNearbyRaces([race],partial,{latitude:46.100,longitude:15.100},10);
+    assert.equal(nearby.status,'partial');
+    assert.equal(nearby.matches.length,0);
+    assert.deepEqual(nearby.unlocatedEditionKeys,['2027!51']);
+    assert.equal(summarizeNearbyCoverage([race],partial).locatedEditions,0);
+  }
+  assert.equal(filterNearbyRaces([event('2027',51)],[adult,youth],{latitude:46.100,longitude:15.100},10).status,'partial');
+  assert.equal(summarizeNearbyCoverage([event('2027',51)],[adult,youth]).locatedEditions,0);
+});
+
+test('multi-start index rejects duplicate roles and mixed scoped/unscoped records', () => {
+  const race={...event('2027',51),startRoles:['adult_start','youth_start']};
+  const adult={...checked('2027',51,46.100,15.100,'start'),startRole:'adult_start'};
+  const youth={...checked('2027',51,46.110,15.110,'start'),startRole:'youth_start'};
+  const origin={latitude:46.100,longitude:15.100};
+  for(const bad of [[adult,adult],[adult,{...adult,latitude:46.102}],
+    [adult,{...youth,startRole:undefined}],[adult,{...youth,startRole:'adult start'}]]){
+    assert.equal(filterNearbyRaces([race],bad,origin,10).status,'unavailable');
+    assert.equal(summarizeNearbyCoverage([race],bad).status,'unavailable');
+  }
+  for(const invalidRoles of [['adult_start','adult_start'],['adult_start'],['adult start','youth_start']]){
+    assert.equal(filterNearbyRaces([{...race,startRoles:invalidRoles}],[adult,youth],origin,10).status,'unavailable');
+    assert.equal(summarizeNearbyCoverage([{...race,startRoles:invalidRoles}],[adult,youth]).status,'unavailable');
+  }
+});
