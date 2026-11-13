@@ -73,7 +73,7 @@ for (const scenario of fixtures) {
     expect(ready).toBe(true);
     if (scenario.width < 600) {
       const mobile = page.locator('[data-mobile-filter-panel]');
-      if (!(await mobile.evaluate((element: HTMLDetailsElement) => element.open))) await mobile.locator('summary').click();
+      if (!(await mobile.evaluate((element: HTMLDetailsElement) => element.open))) await mobile.locator('summary').first().click();
     }
     await expect(panel).toBeVisible();
     await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
