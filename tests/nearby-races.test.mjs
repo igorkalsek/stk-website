@@ -1195,8 +1195,8 @@ test('DEV-056 enriched full-year per-edition geocoding review prevents false pos
   assert.equal(markovci.status,'HOLD_WRONG_WIKIDATA_NAMESAKE_AND_P625_CONFLICT');
   assert.ok(markovci.geographic_candidate.coordinate_disambiguation.includes('Q749792'));
   assert.notEqual(markovci.geographic_candidate.qid,'Q749792');
-  assert.equal(full.records.filter(x=>x.status==='HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC').length,15);
-  assert.equal(full.records.filter(x=>x.status==='HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC').length,9);
+  assert.equal(full.records.filter(x=>x.status==='HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING').length,15);
+  assert.equal(full.records.filter(x=>x.status==='HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING').length,9);
   const lokavec=full.records.find(x=>x.edition_key==='2026!251');
   assert.equal(lokavec.geographic_candidate.qid,'Q2736866');
   assert.equal(lokavec.source2026_27.type,'START_VENUE_2026');
