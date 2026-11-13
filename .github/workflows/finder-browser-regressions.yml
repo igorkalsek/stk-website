@@ -69,3 +69,27 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7
+
+  dev056-wikidata-research:
+    # Never executes on main/production; only development PR's non-production branch.
+    if: github.event_name == 'pull_request' && github.head_ref == 'work/dev056-p1-nearby-core'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probe Wikidata read-only (no public index writes)
+        run: node scripts/dev056-wikidata-probe.mjs
+      - name: Upload unapproved candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev056-wikidata-research-not-approved
+          path: research/out/dev056-wikidata-probe.generated.json
+          if-no-files-found: warn
