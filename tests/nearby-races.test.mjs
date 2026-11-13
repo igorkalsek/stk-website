@@ -225,3 +225,38 @@ test('coverage empty and invalid inputs fail closed; REVIEW-only GURS data remai
   assert.equal(covered.coveragePercent,0);
   assert.equal(covered.unlocatedEditionKeys.length,16);
 });
+
+test('DEV-056 180-day pilot source snapshot is edition-bound, explicitly non-runtime and genuinely partial', () => {
+  const snapshot=JSON.parse(readFileSync(new URL('../research/dev056-pilot-180d.review.json',import.meta.url),'utf8'));
+  assert.equal(snapshot.kind,'NON_RUNTIME_PILOT_SNAPSHOT');
+  assert.equal(snapshot.runtime_activation,false);
+  assert.equal(snapshot.public_index_approved,false);
+  assert.deepEqual(snapshot.period,{from_inclusive:'2026-11-13',to_exclusive:'2027-05-12',days:180});
+  assert.equal(snapshot.coverage_audit.eligible_total,59);
+  assert.equal(snapshot.coverage_audit.eligible_2026,26);
+  assert.equal(snapshot.coverage_audit.eligible_2027,33);
+  assert.equal(new Set(snapshot.eligible_editions.map(e=>e.edition_key)).size,59);
+  assert.ok(snapshot.eligible_editions.every(e=>e.datum>=snapshot.period.from_inclusive&&e.datum<snapshot.period.to_exclusive));
+  assert.equal(snapshot.coverage_audit.review_only_settlement_candidates_in_population,13);
+  assert.equal(snapshot.pilot_offline_index.length,1);
+  const start=snapshot.pilot_offline_index[0];
+  assert.equal(start.master_edition_key,'2026!266');
+  assert.equal(start.approval_scope,'OFFLINE_TEST_ONLY');
+  assert.equal(start.approved_for_runtime,false);
+  assert.equal(start.sourceEditionYear,2026);
+  assert.equal(start.source_coordinates_raw,'N 45 49.100; E 13 49.507');
+  assert.ok(Math.abs(start.latitude-(45+49.100/60))<1e-8);
+  assert.ok(Math.abs(start.longitude-(13+49.507/60))<1e-8);
+  const events=snapshot.eligible_editions.map(e=>event(String(e.year),e.master_row));
+  const audit=summarizeNearbyCoverage(events,snapshot.pilot_offline_index);
+  assert.deepEqual([audit.status,audit.totalEditions,audit.locatedEditions,audit.exactStartEditions,audit.approximateSettlementEditions,audit.coveragePercent],['partial',59,1,1,0,1.7]);
+  assert.equal(audit.unlocatedEditionKeys.length,58);
+  const nearby=filterNearbyRaces(events,snapshot.pilot_offline_index,{latitude:start.latitude,longitude:start.longitude},10);
+  assert.equal(nearby.status,'partial');
+  assert.deepEqual(nearby.matches.map(m=>editionKey(m.event)),['2026!266']);
+  assert.equal(nearby.matches[0].approximate,false);
+  const wrongEdition={...start,sourceEditionYear:2027};
+  const invalid=summarizeNearbyCoverage(events,[wrongEdition]);
+  assert.equal(invalid.locatedEditions,0);
+  assert.equal(invalid.coveragePercent,0);
+});

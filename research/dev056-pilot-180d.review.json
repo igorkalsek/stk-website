@@ -1,0 +1,563 @@
+{
+  "project": "STK DEV-056",
+  "kind": "NON_RUNTIME_PILOT_SNAPSHOT",
+  "checked_on": "2026-11-13",
+  "period": {
+    "from_inclusive": "2026-11-13",
+    "to_exclusive": "2027-05-12",
+    "days": 180
+  },
+  "master": {
+    "spreadsheet_id": "1xmuX8CvUNIW60-TE9i2CzExy7Abo3wVjIMnhHhaX7B0",
+    "sheets": [
+      "2026",
+      "2027"
+    ],
+    "filter": "status_dogodka=potrjeno AND vidno_v_javnem_koledarju=DA AND datum>=from AND datum<to",
+    "rows_checked": {
+      "2026": "2-420",
+      "2027": "2-220"
+    }
+  },
+  "runtime_activation": false,
+  "public_index_approved": false,
+  "requires_fresh_master_read_before_runtime": true,
+  "coverage_audit": {
+    "eligible_total": 59,
+    "eligible_2026": 26,
+    "eligible_2027": 33,
+    "by_region": {
+      "Jugovzhodna": 2,
+      "Obalno-kraška": 9,
+      "Osrednjeslovenska": 5,
+      "Gorenjska": 16,
+      "Goriška": 3,
+      "Savinjska": 13,
+      "Zasavska": 5,
+      "Primorsko-notranjska": 2,
+      "Podravska": 3,
+      "NEZNANA": 1
+    },
+    "review_only_settlement_candidates_in_population": 13,
+    "review_only_candidate_keys": [
+      "2027!51",
+      "2027!19",
+      "2026!266",
+      "2026!260",
+      "2026!294",
+      "2026!303",
+      "2026!268",
+      "2026!264",
+      "2026!267",
+      "2027!22",
+      "2027!23",
+      "2027!43",
+      "2027!57"
+    ],
+    "pilot_offline_approved_starts": 1,
+    "strict_pilot_coverage_percent": 1.7
+  },
+  "eligible_editions": [
+    {
+      "year": 2026,
+      "master_row": 260,
+      "edition_key": "2026!260",
+      "datum": "2026-11-14",
+      "naziv_prireditve": "Novomeški polmaraton",
+      "regija": "Jugovzhodna"
+    },
+    {
+      "year": 2026,
+      "master_row": 294,
+      "edition_key": "2026!294",
+      "datum": "2026-11-14",
+      "naziv_prireditve": "Martinov tek Sečovlje 2026",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2026,
+      "master_row": 303,
+      "edition_key": "2026!303",
+      "datum": "2026-11-14",
+      "naziv_prireditve": "11. Tek občine Mengeš 2026",
+      "regija": "Osrednjeslovenska"
+    },
+    {
+      "year": 2026,
+      "master_row": 311,
+      "edition_key": "2026!311",
+      "datum": "2026-11-15",
+      "naziv_prireditve": "KZTL 2026/27 – Kališče (1. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 251,
+      "edition_key": "2026!251",
+      "datum": "2026-11-21",
+      "naziv_prireditve": "Čaven Vertikal & Trail",
+      "regija": "Goriška"
+    },
+    {
+      "year": 2026,
+      "master_row": 261,
+      "edition_key": "2026!261",
+      "datum": "2026-11-22",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Jošt nad Kranjem (1. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 307,
+      "edition_key": "2026!307",
+      "datum": "2026-11-22",
+      "naziv_prireditve": "SZTL 2026/2027 – 2. etapa: Mali krog",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 262,
+      "edition_key": "2026!262",
+      "datum": "2026-11-28",
+      "naziv_prireditve": "Movember tek",
+      "regija": "Osrednjeslovenska"
+    },
+    {
+      "year": 2026,
+      "master_row": 263,
+      "edition_key": "2026!263",
+      "datum": "2026-11-28",
+      "naziv_prireditve": "Zimski jamatlon",
+      "regija": "Zasavska"
+    },
+    {
+      "year": 2026,
+      "master_row": 308,
+      "edition_key": "2026!308",
+      "datum": "2026-11-29",
+      "naziv_prireditve": "20. Štafetni tek Sv. Barbare",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 312,
+      "edition_key": "2026!312",
+      "datum": "2026-11-29",
+      "naziv_prireditve": "KZTL 2026/27 – Krvavec (1. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 265,
+      "edition_key": "2026!265",
+      "datum": "2026-12-05",
+      "naziv_prireditve": "23. Miklavžev tek 2026",
+      "regija": "Osrednjeslovenska"
+    },
+    {
+      "year": 2026,
+      "master_row": 266,
+      "edition_key": "2026!266",
+      "datum": "2026-12-05",
+      "naziv_prireditve": "25. Štanjelski tek",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2026,
+      "master_row": 267,
+      "edition_key": "2026!267",
+      "datum": "2026-12-05",
+      "naziv_prireditve": "Velenje Trail 2026",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 268,
+      "edition_key": "2026!268",
+      "datum": "2026-12-05",
+      "naziv_prireditve": "14. Goricatlon",
+      "regija": "Goriška"
+    },
+    {
+      "year": 2026,
+      "master_row": 264,
+      "edition_key": "2026!264",
+      "datum": "2026-12-06",
+      "naziv_prireditve": "Tek na Kalanov hrib",
+      "regija": "Zasavska"
+    },
+    {
+      "year": 2026,
+      "master_row": 309,
+      "edition_key": "2026!309",
+      "datum": "2026-12-06",
+      "naziv_prireditve": "SZTL 2026/2027 – 3. etapa: Veliki krog",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 313,
+      "edition_key": "2026!313",
+      "datum": "2026-12-06",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Mohor (1. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 269,
+      "edition_key": "2026!269",
+      "datum": "2026-12-13",
+      "naziv_prireditve": "KZTL 2026/27 – Brdo pri Kranju (1. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 270,
+      "edition_key": "2026!270",
+      "datum": "2026-12-17",
+      "naziv_prireditve": "Božičkov tek",
+      "regija": "Osrednjeslovenska"
+    },
+    {
+      "year": 2026,
+      "master_row": 271,
+      "edition_key": "2026!271",
+      "datum": "2026-12-18",
+      "naziv_prireditve": "Dobrodelni tek ob baklah",
+      "regija": "Jugovzhodna"
+    },
+    {
+      "year": 2026,
+      "master_row": 305,
+      "edition_key": "2026!305",
+      "datum": "2026-12-19",
+      "naziv_prireditve": "2. dobrodelni TriD Božičkov tek",
+      "regija": "Osrednjeslovenska"
+    },
+    {
+      "year": 2026,
+      "master_row": 310,
+      "edition_key": "2026!310",
+      "datum": "2026-12-20",
+      "naziv_prireditve": "SZTL 2026/2027 – 4. etapa: Bredina Rinka",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 314,
+      "edition_key": "2026!314",
+      "datum": "2026-12-20",
+      "naziv_prireditve": "KZTL 2026/27 – Kališče (2. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 275,
+      "edition_key": "2026!275",
+      "datum": "2026-12-26",
+      "naziv_prireditve": "Dobrodelni novoletni tek in hoja",
+      "regija": "Primorsko-notranjska"
+    },
+    {
+      "year": 2026,
+      "master_row": 315,
+      "edition_key": "2026!315",
+      "datum": "2026-12-27",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Jošt nad Kranjem (2. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 51,
+      "edition_key": "2027!51",
+      "datum": "2027-01-03",
+      "naziv_prireditve": "SZTL 2026/2027 – 5. etapa: Plevno",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 60,
+      "edition_key": "2027!60",
+      "datum": "2027-01-03",
+      "naziv_prireditve": "KZTL 2026/27 – Krvavec (2. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 2,
+      "edition_key": "2027!2",
+      "datum": "2027-01-09",
+      "naziv_prireditve": "Knap Trail 2027 – Slovenski zimski trail",
+      "regija": "Zasavska"
+    },
+    {
+      "year": 2027,
+      "master_row": 61,
+      "edition_key": "2027!61",
+      "datum": "2027-01-10",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Mohor (2. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 52,
+      "edition_key": "2027!52",
+      "datum": "2027-01-17",
+      "naziv_prireditve": "SZTL 2026/2027 – 6. etapa: Mali krog kontra",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 62,
+      "edition_key": "2027!62",
+      "datum": "2027-01-17",
+      "naziv_prireditve": "KZTL 2026/27 – Brdo pri Kranju (2. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 63,
+      "edition_key": "2027!63",
+      "datum": "2027-01-24",
+      "naziv_prireditve": "KZTL 2026/27 – Kališče (3. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 64,
+      "edition_key": "2027!64",
+      "datum": "2027-01-31",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Jošt nad Kranjem (3. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 53,
+      "edition_key": "2027!53",
+      "datum": "2027-02-07",
+      "naziv_prireditve": "SZTL 2026/2027 – 7. etapa: Veliki krog kontra",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 65,
+      "edition_key": "2027!65",
+      "datum": "2027-02-07",
+      "naziv_prireditve": "KZTL 2026/27 – Krvavec (3. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 3,
+      "edition_key": "2027!3",
+      "datum": "2027-02-13",
+      "naziv_prireditve": "5. Parenzana Ultra Trail",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 66,
+      "edition_key": "2027!66",
+      "datum": "2027-02-14",
+      "naziv_prireditve": "KZTL 2026/27 – Sv. Mohor (3. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 34,
+      "edition_key": "2027!34",
+      "datum": "2027-02-20",
+      "naziv_prireditve": "7 ur Slivnice 2027",
+      "regija": "Primorsko-notranjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 54,
+      "edition_key": "2027!54",
+      "datum": "2027-02-21",
+      "naziv_prireditve": "SZTL 2026/2027 – 8. etapa: Rinka kontra",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 67,
+      "edition_key": "2027!67",
+      "datum": "2027-02-21",
+      "naziv_prireditve": "KZTL 2026/27 – Brdo pri Kranju (3. krog)",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 4,
+      "edition_key": "2027!4",
+      "datum": "2027-03-06",
+      "naziv_prireditve": "Punce v jami 2027",
+      "regija": "Zasavska"
+    },
+    {
+      "year": 2027,
+      "master_row": 19,
+      "edition_key": "2027!19",
+      "datum": "2027-03-07",
+      "naziv_prireditve": "4. Trail po kraških klancih 2027",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 55,
+      "edition_key": "2027!55",
+      "datum": "2027-03-07",
+      "naziv_prireditve": "SZTL 2026/2027 – 9. etapa: Plevno kontra",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 5,
+      "edition_key": "2027!5",
+      "datum": "2027-03-14",
+      "naziv_prireditve": "9. Parenzana Marathon",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 43,
+      "edition_key": "2027!43",
+      "datum": "2027-03-19",
+      "naziv_prireditve": "Markoton Backyard Ultra 2027",
+      "regija": "Podravska"
+    },
+    {
+      "year": 2027,
+      "master_row": 22,
+      "edition_key": "2027!22",
+      "datum": "2027-03-21",
+      "naziv_prireditve": "Mali kraški maraton 2027",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 56,
+      "edition_key": "2027!56",
+      "datum": "2027-03-21",
+      "naziv_prireditve": "SZTL 2026/2027 – 10. etapa: Vrbensko jezero kontra",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 12,
+      "edition_key": "2027!12",
+      "datum": "2027-03-27",
+      "naziv_prireditve": "Kras Trail 2027",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 44,
+      "edition_key": "2027!44",
+      "datum": "2027-03-27",
+      "naziv_prireditve": "Najnaj21 2027",
+      "regija": "Gorenjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 6,
+      "edition_key": "2027!6",
+      "datum": "2027-03-28",
+      "naziv_prireditve": "AC Frimobil 16. Velikonočni tek okrog Šmartinskega jezera",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 57,
+      "edition_key": "2027!57",
+      "datum": "2027-04-03",
+      "naziv_prireditve": "SLO 24",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 23,
+      "edition_key": "2027!23",
+      "datum": "2027-04-04",
+      "naziv_prireditve": "Ormoški polmaraton 2027",
+      "regija": "Podravska"
+    },
+    {
+      "year": 2027,
+      "master_row": 7,
+      "edition_key": "2027!7",
+      "datum": "2027-04-11",
+      "naziv_prireditve": "Luka Koper 13. Istrski maraton",
+      "regija": "Obalno-kraška"
+    },
+    {
+      "year": 2027,
+      "master_row": 18,
+      "edition_key": "2027!18",
+      "datum": "2027-04-17",
+      "naziv_prireditve": "Hrastnik Trail 2027",
+      "regija": "Zasavska"
+    },
+    {
+      "year": 2027,
+      "master_row": 8,
+      "edition_key": "2027!8",
+      "datum": "2027-04-23",
+      "naziv_prireditve": "UTVV I Feel Slovenia 2027",
+      "regija": "Goriška"
+    },
+    {
+      "year": 2027,
+      "master_row": 45,
+      "edition_key": "2027!45",
+      "datum": "2027-04-27",
+      "naziv_prireditve": "Markoton 2027",
+      "regija": "Podravska"
+    },
+    {
+      "year": 2027,
+      "master_row": 32,
+      "edition_key": "2027!32",
+      "datum": "2027-05-07",
+      "naziv_prireditve": "Biznis run Celje 2027",
+      "regija": "Savinjska"
+    },
+    {
+      "year": 2027,
+      "master_row": 9,
+      "edition_key": "2027!9",
+      "datum": "2027-05-09",
+      "naziv_prireditve": "Wings for Life World Run Slovenia 2027",
+      "regija": "NEZNANA"
+    }
+  ],
+  "pilot_offline_index": [
+    {
+      "year": "2026",
+      "masterRow": 266,
+      "latitude": 45.8183333333,
+      "longitude": 13.8251166667,
+      "precision": "start",
+      "reviewStatus": "approved",
+      "sourceUrl": "https://skd-hrusevica.si/25-stanjelski-tek/",
+      "sourceCheckedOn": "2026-11-13",
+      "sourceKind": "official-edition-start",
+      "sourceEditionYear": 2026,
+      "approved_for_runtime": false,
+      "approval_scope": "OFFLINE_TEST_ONLY",
+      "source_coordinates_raw": "N 45 49.100; E 13 49.507",
+      "source_coordinates_format": "degrees_and_decimal_minutes",
+      "master_edition_key": "2026!266",
+      "venue": "Lovska koča Štanjel",
+      "evidence_note": "Official organizer's 25th edition page explicitly identifies start and finish here on 2026-12-05. Manual review 2026-11-13. Not a surveyed timing mat point; do not reuse for 2027."
+    }
+  ],
+  "caveats": [
+    "One source-checked organizer start is approved only for isolated offline testing. No public index or runtime code imports this file.",
+    "GURS settlement candidates remain REVIEW; the record's DATUM_SYS is not a verified dataset snapshot date.",
+    "Edition identity is year!Master row; different starts of a multi-distance event require separate modeling.",
+    "Coverage denominator is all upcoming confirmed visible editions in the selected window, not only geocoded or within a radius.",
+    "Partial coverage means no-match cannot be read as no nearby races.",
+    "Snapshot becomes stale as Master changes. Do not ship to public Finder or persist user's origin."
+  ]
+}
