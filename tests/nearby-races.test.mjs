@@ -8,7 +8,10 @@ import { parseNearbyOrigin, parseNearbyRadius, mountNearbyFinderUi } from '../.c
 
 const checked = (year, row, latitude, longitude, precision = 'settlement-approximate') => ({
   year, masterRow: row, latitude, longitude, precision,
-  reviewStatus: 'approved', approved_for_runtime:true, sourceUrl: 'https://example.org/official',
+  reviewStatus: 'approved', approved_for_runtime:true,
+  sourceUrl: precision === 'start'
+    ? 'https://example.org/official'
+    : 'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101473100?f=json',
   sourceCheckedOn: '2026-11-12',
   sourceKind: precision === 'start' ? 'official-edition-start' : 'official-settlement',
   sourceEditionYear: precision === 'start' ? Number(year) : undefined,
@@ -759,7 +762,7 @@ test('nearby UI rejects a false gate or an unverified location BEFORE accessing 
   assert.equal(mounted([],true),null);
   assert.equal(mounted([{...location,approved_for_runtime:false}],true),null);
   assert.equal(mounted([{...location,reviewStatus:'review'}],true),null);
-  assert.equal(mounted([{...location,sourceUrl:'http://invalid.example.net/made-up'}],true),null);
+  assert.equal(mounted([{...location,sourceUrl:'https://invalid.example.net/made-up'}],true),null);
   assert.equal(mounted([{...location,sourceSnapshotOn:'not-a-date'}],true),null);
 });
 
@@ -892,4 +895,20 @@ test('offline GURS-only 20-edition smoke test on 12 unique official features', (
   const note=nearbyDiscoveryCopy('sl',coverage,10);
   assert.match(note.coverageNotice,/39 od 59/);
   assert.match(note.radiusNotice,/radiju 10 km/);
+});
+
+test('dated GURS source rejects arbitrary HTTPS host even when approval and snapshot are present', () => {
+  const origin={latitude:46.2490358,longitude:15.164716};
+  const valid=checked('2027',51,origin.latitude,origin.longitude);
+  const suspicious=[
+    'https://example.org/official',
+    'https://ipi.eprostor.gov.si.evil.example.org/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/110300000101473100?f=json',
+    'https://ipi.eprostor.gov.si/wfs-si-gurs-rpe/ogc/features/collections/SI.GURS.RPE%3ANASELJA/items/not-valid?f=json'
+  ];
+  assert.equal(filterNearbyRaces([event('2027',51)],[valid],origin,10).matches.length,1);
+  for(const sourceUrl of suspicious){
+    const falseClaim={...valid,sourceUrl,sourceSnapshotOn:'2026-10-01',reviewStatus:'approved',approved_for_runtime:true};
+    assert.equal(filterNearbyRaces([event('2027',51)],[falseClaim],origin,10).matches.length,0);
+    assert.equal(summarizeNearbyCoverage([event('2027',51)],[falseClaim]).locatedEditions,0);
+  }
 });

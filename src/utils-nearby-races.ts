@@ -124,10 +124,12 @@ export const isApprovedLocation = (location: NearbyEditionLocation): boolean => 
   const datedSnapshot = typeof location.sourceSnapshotOn === 'string' &&
     isRealIsoDate(location.sourceSnapshotOn) &&
     location.sourceSnapshotOn <= location.sourceCheckedOn;
+  // A declared snapshot date never authorizes a non-GURS URL to masquerade as
+  // an official settlement reference. This check applies to BOTH branches.
+  const officialGursFeature = /^https:\/\/ipi\.eprostor\.gov\.si\/wfs-si-gurs-rpe\/ogc\/features\/collections\/SI\.GURS\.RPE(?:%3A|:)NASELJA\/items\/[0-9]+\?f=json$/i.test(location.sourceUrl);
   const verifiedFeatureWithoutSnapshot = location.sourceSnapshotOn === undefined &&
-    location.sourceFeatureVerified === true &&
-    /^https:\/\/ipi\.eprostor\.gov\.si\/wfs-si-gurs-rpe\/ogc\/features\/collections\/SI\.GURS\.RPE(?:%3A|:)NASELJA\/items\/[0-9]+\?f=json$/i.test(location.sourceUrl);
-  return location.sourceKind === 'official-settlement' &&
+    location.sourceFeatureVerified === true;
+  return location.sourceKind === 'official-settlement' && officialGursFeature &&
     (datedSnapshot || verifiedFeatureWithoutSnapshot);
 };
 
