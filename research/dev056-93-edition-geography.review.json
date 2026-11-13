@@ -17,8 +17,8 @@
     "REVIEW_CC0_PLACE_ONLY_OFFICIAL_START_UNVERIFIED": 35,
     "REVIEW_YEAR_VENUE_TEXT_PROVEN_CC0_APPROX_PENDING_DISPLACEMENT": 6,
     "HOLD_MULTI_P625_COORDINATES": 4,
-    "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC": 15,
-    "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC": 9,
+    "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING": 15,
+    "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING": 9,
     "HOLD_COARSE_P625_PRECISION": 2,
     "STAGED_EDITION_REFERENCE_PREPUBLICATION_RECHECK": 3,
     "HOLD_NO_DISAMBIGUATED_CC0_POINT": 1,
@@ -155,16 +155,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!251",
@@ -221,16 +226,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!307",
@@ -254,16 +264,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!262",
@@ -368,16 +384,21 @@
       "geographic_candidate": null,
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": false,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!265",
@@ -554,16 +575,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!313",
@@ -587,16 +614,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!269",
@@ -620,16 +652,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!270",
@@ -730,16 +767,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!314",
@@ -763,16 +806,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2026!275",
@@ -825,16 +873,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!51",
@@ -858,16 +911,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!60",
@@ -881,16 +940,21 @@
       "geographic_candidate": null,
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": false,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!2",
@@ -947,16 +1011,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!52",
@@ -980,16 +1049,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!62",
@@ -1013,16 +1088,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!63",
@@ -1046,16 +1126,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-kalisce-mace"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!64",
@@ -1079,16 +1164,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!53",
@@ -1112,16 +1202,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!65",
@@ -1135,16 +1231,21 @@
       "geographic_candidate": null,
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": false,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-krvavec-lower-gondola"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!3",
@@ -1187,16 +1288,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-jost-mohor-foot"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!34",
@@ -1239,16 +1345,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!67",
@@ -1272,16 +1384,21 @@
       },
       "source2026_27": {
         "url": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
-        "type": "2026_2027_SEASON_LINK_NOT_GEOPOINT_VERIFIED",
-        "text": "KZTL 2026/27 official programme. Actual start differs from hill named in the race title; need edition-year site pins"
+        "type": "START_AREAS_2026_2027_SOURCE_PDF",
+        "text": "Official 2026/27 KZTL instructions pp. 2–3 verify all four actual start areas; Jošt and Mohor start together under powerlines. No legally reusable numeric GPS in document."
       },
-      "status": "HOLD_KZTL_START_SITE_NOT_CONFIRMED_NUMERIC",
+      "status": "HOLD_KZTL_START_SITE_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "kztl-brdo-exercise"
+      ],
+      "site_role": "one start of 5 route variants; 4 physically distinct start locations",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!4",
@@ -1357,16 +1474,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!5",
@@ -1471,16 +1594,22 @@
       },
       "source2026_27": {
         "url": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
-        "type": "SPLIT_STARTS_SEASON_2026_2027",
-        "text": "Adult nadvoz Mavrica; children Žalec athletic stadium; no numeric points"
+        "type": "TWO_START_AREAS_2026_2027",
+        "text": "Official 2026/27 season event names adult start at nadvoz Mavrica and children at athletics stadium Žalec; no numeric GPS verified."
       },
-      "status": "HOLD_MULTISTART_ADULT_CHILD_LOCATION_NOT_NUMERIC",
+      "status": "HOLD_SZTL_ADULT_CHILD_STARTS_TEXT_VERIFIED_COORDS_MISSING",
       "reference_location_verified": false,
       "approved_for_runtime": false,
       "public_enabled": false,
       "location_not_race_start": true,
       "proof_is_start_coordinates": false,
-      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
+      "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE",
+      "verified_site_ids": [
+        "sztl-mavrica-adults",
+        "sztl-athletics-stadium-kids"
+      ],
+      "site_role": "distinct adult and children starts; do not collapse into exact one point",
+      "coordinate_source_status": "NOT_VERIFIED"
     },
     {
       "edition_key": "2027!12",
@@ -2733,5 +2862,16 @@
       "proof_is_start_coordinates": false,
       "outcome": "NO_NEW_APPROVAL_FROM_BULK_PROBE"
     }
-  ]
+  ],
+  "league_start_source_review": {
+    "source_2026_27_kztl": "https://drive.google.com/file/d/1Ieuq4KUH2XX_syESuXEORzXyPqrkB8mD/view",
+    "source_2026_27_sztl": "https://www.atdsavinjcan.eu/events/12-savinjska-zimska-tekaska-liga-2026-2027/",
+    "checked_on": "2026-11-13",
+    "league_edition_count": 24,
+    "physical_start_area_count": 6,
+    "five_kztl_routes_four_site_count": true,
+    "three_kztl_rounds_each_route": true,
+    "two_sztl_roles_each_edition": true,
+    "numeric_geometry_missing": true
+  }
 }

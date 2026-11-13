@@ -1207,3 +1207,42 @@ test('DEV-056 enriched full-year per-edition geocoding review prevents false pos
   assert.equal(karst.approved_for_runtime,true);
   assert.equal(karst.public_enabled,false);
 });
+
+test('DEV-056 official 2026/27 winter league starts: 24 editions, only 6 physical site descriptors, no numeric GPS', () => {
+ const f=JSON.parse(readFileSync(new URL('../research/dev056-2026-27-league-sites.review.json',import.meta.url),'utf8'));
+ const qa=JSON.parse(readFileSync(new URL('../research/dev056-93-edition-geography.review.json',import.meta.url),'utf8'));
+ assert.equal(f.kind,'DEV056_SEASON_2026_27_OFFICIAL_LEAGUE_STARTS_NO_NUMERIC_GPS');
+ assert.equal(f.totals.kztl_editions,15);
+ assert.equal(f.totals.sztl_editions,9);
+ assert.equal(f.totals.all_editions,24);
+ assert.equal(f.totals.total_physical_sites,6);
+ assert.equal(f.sites.length,6);
+ const siteNames=new Set();
+ for(const site of f.sites){
+   assert.ok(!siteNames.has(site.id));siteNames.add(site.id);
+   assert.equal(site.latitude,null);
+   assert.equal(site.longitude,null);
+   assert.equal(site.approved_for_runtime,false);
+   assert.equal(site.coordinate_source_status,'NOT_VERIFIED');
+   assert.ok(/^https:\/\//.test(site.source_url));
+ }
+ const expected=new Map(qa.records.map(e=>[e.edition_key,e]));
+ const kztl=f.edition_mappings.filter(e=>e.site_ids[0].startsWith('kztl'));
+ assert.equal(new Set(kztl.map(e=>e.site_ids[0])).size,4);
+ assert.equal(kztl.filter(e=>e.site_ids[0]==='kztl-jost-mohor-foot').length,6);
+ assert.equal(f.edition_mappings.filter(e=>e.site_ids[0].startsWith('sztl')).length,9);
+ const identity=new Set();
+ for(const edition of f.edition_mappings){
+   assert.ok(!identity.has(edition.edition_key));identity.add(edition.edition_key);
+   const current=expected.get(edition.edition_key);
+   assert.ok(current);
+   assert.equal(current.expectedDate,edition.expectedDate);
+   assert.equal(current.expectedTitle,edition.expectedTitle);
+   assert.deepEqual(current.verified_site_ids,edition.site_ids);
+   assert.ok(current.status.includes('TEXT_VERIFIED_COORDS_MISSING'));
+   assert.ok(edition.site_ids.every(id=>siteNames.has(id)));
+ }
+ assert.equal(qa.records.length,93);
+ assert.equal(qa.records.filter(x=>x.approved_for_runtime).length,3);
+ assert.equal(qa.records.filter(x=>x.public_enabled).length,0);
+});
