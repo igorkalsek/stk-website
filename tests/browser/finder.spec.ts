@@ -1106,3 +1106,64 @@ test('nearby controls remain unavailable in public SL/EN Finder even with URL fl
     await expect(page).not.toHaveURL(/nearby=1.*year=/);
   }
 });
+
+for (const language of ['sl', 'en'] as const) for (const width of [390, 768, 1440]) {
+  test(`U14 ${language} card hierarchy, deadlines and keyboard at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const fixtures = [
+      { ...races2026[1], naziv_prireditve: 'U14 open' },
+      { ...races2026[0], naziv_prireditve: 'U14 expired deadline' },
+      { ...races2026[2], naziv_prireditve: 'U14 notice only', povezava_prijava: '' },
+      { ...races2026[3], naziv_prireditve: 'U14 no links', povezava_prijava: '', povezava_razpis: '' },
+      { ...races2026[2], row: '105', naziv_prireditve: 'U14 invalid', povezava_prijava: 'javascript:alert(1)' },
+      { ...races2026[2], row: '106', naziv_prireditve: 'U14 combined', povezava_prijava: 'https://example.com/notice' },
+      { ...races2026[2], row: '107', datum: '2026-06-01', naziv_prireditve: 'U14 past' }
+    ];
+    const analytics = await mockFinderApis(page, { '2026': fixtures, '2027': races2027 });
+    await page.route(`${API_HOST}/additional**`, route => route.fulfill({ json: { data: [
+      additional('101', '2026-08-15', 'U14 expired deadline', '', '', '2026-07-24', '', '', '', ''),
+      // A cheaper-registration deadline must not demote a still-available registration link.
+      additional('102', '2026-09-20', 'U14 open', '', '', '', '2026-07-24', '', '', '')
+    ] } }));
+    const path = language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/';
+    await page.goto(`${path}?past=1`);
+    const card = (name: string) => page.locator('.search-event-card').filter({ has: page.getByRole('heading', { name, exact: true }) });
+    const open = card('U14 open');
+    await expect(open.locator('[data-analytics-link-type="prijava"]')).toHaveClass(/button-primary/);
+    await expect(card('U14 expired deadline').locator('[data-analytics-link-type="prijava"]')).not.toHaveClass(/button-primary/);
+    await expect(card('U14 expired deadline')).toContainText(language === 'en' ? /deadline/i : 'Rok');
+    for (const name of ['U14 notice only', 'U14 no links', 'U14 invalid', 'U14 past']) {
+      await expect(card(name)).toBeVisible();
+      await expect(card(name).locator('.button-primary')).toHaveCount(0);
+      await expect(card(name).locator('[data-analytics-link-type="prijava"]')).toHaveCount(0);
+    }
+    await expect(card('U14 combined').locator('[data-analytics-link-type="prijava"]')).toHaveText(language === 'en' ? 'Official info and registration' : 'Razpis in prijava');
+    const details = open.locator('.search-detail-cta');
+    await expect(details).toHaveText(language === 'en' ? 'Details' : 'Podrobnosti');
+    await expect(details).not.toHaveClass(/button-primary/);
+    await expect(details).toHaveAttribute('href', new RegExp(language === 'en' ? '^/en/races/2026/r000102-' : '^/tek/2026/r000102-'));
+    for (const control of await open.locator('.search-event-row-actions :is(a,button,summary):visible').all()) {
+      const size = await control.boundingBox();
+      expect(size!.height).toBeGreaterThanOrEqual(44);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const registration = open.locator('[data-analytics-link-type="prijava"]');
+    expect((await details.boundingBox())!.y).toBe((await registration.boundingBox())!.y);
+    expect((await open.locator('[data-saved-race-button]').boundingBox())!.y).toBe((await open.locator('.search-event-more-menu summary').boundingBox())!.y);
+    await registration.focus();
+    await page.keyboard.press('Tab');
+    await expect(details).toBeFocused();
+    expect(await details.evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
+    await page.keyboard.press('Tab');
+    const save = open.locator('[data-saved-race-button]');
+    await expect(save).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(save).toHaveAttribute('aria-pressed', 'true');
+    await expect.poll(() => analytics.some((event: any) => event.event_type === 'race_saved')).toBe(true);
+    await open.screenshot({ path: `/tmp/stk-u14-${language}-${width}.png` });
+    await page.reload();
+    await expect(card('U14 open').locator('[data-saved-race-button]')).toHaveAttribute('aria-pressed', 'true');
+    await card('U14 notice only').locator('.search-event-more-menu summary').press('Enter');
+    await expect(card('U14 notice only').locator('[data-analytics-link-type="razpis"]')).toBeVisible();
+  });
+}

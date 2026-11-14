@@ -51,8 +51,11 @@ const renderCalendarOptions = (event: PublicRaceEvent) => {
 const cardsHtml = events.map((event) => {
   const formattedDate = dateFormatter.format(new Date(event.date));
   const summary = [event.place, event.region].filter(Boolean).join(' · ');
+  const actions = buildPrimaryActions({ registrationUrl: event.registrationUrl, noticeUrl: event.noticeUrl }, lang);
   const links = [
-    ...buildPrimaryActions({ registrationUrl: event.registrationUrl, noticeUrl: event.noticeUrl }, lang).map(renderPrimaryActionLink),
+    ...actions.filter((action) => action.kind === 'registration').map(renderPrimaryActionLink),
+    `<a class="button button-small button-secondary-light race-card-details" href="${escapeHtml(detailPath(event))}">${lang === 'en' ? 'Details' : 'Podrobnosti'}</a>`,
+    ...actions.filter((action) => action.kind !== 'registration').map(renderPrimaryActionLink),
     renderCalendarOptions(event),
     renderSavedRaceButton(event)
   ].filter(Boolean).join('');
