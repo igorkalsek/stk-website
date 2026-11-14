@@ -27,14 +27,16 @@ const dateLabel = initialRace
   aria-label={en ? 'STK race spotlight' : 'Tek v ospredju STK'}
   hidden
 >
-  <span class="home-spotlight-kicker" data-spotlight-label>{en ? 'STK EDITORIAL PICK' : 'UREDNIŠKI IZBOR STK'}</span>
-  <h2>{en ? 'In the spotlight' : 'V ospredju'}</h2>
+  <div class="home-spotlight-heading">
+    <h2>{en ? 'In the spotlight' : 'V ospredju'}</h2>
+    <span class="home-spotlight-kicker" data-spotlight-label>{en ? 'STK EDITORIAL PICK' : 'UREDNIŠKI IZBOR STK'}</span>
+  </div>
+  <h3><a data-spotlight-title href={detailHref}>{initialRace?.displayTitle ?? ''}</a></h3>
   <div class="home-spotlight-meta">
     <time data-spotlight-date datetime={initialRace?.date ?? ''}>{dateLabel}</time>
     <span data-spotlight-place hidden={!initialRace?.place}>{initialRace?.place ?? ''}</span>
+    <span class="home-spotlight-surface" data-spotlight-surface hidden={!initialRace?.surface}>{en ? formatEnglishSurface(initialRace?.surface ?? '') : initialRace?.surface ?? ''}</span>
   </div>
-  <h3><a data-spotlight-title href={detailHref}>{initialRace?.displayTitle ?? ''}</a></h3>
-  <span class="home-spotlight-surface" data-spotlight-surface hidden={!initialRace?.surface}>{en ? formatEnglishSurface(initialRace?.surface ?? '') : initialRace?.surface ?? ''}</span>
   <a class="home-spotlight-cta" data-spotlight-cta href={detailHref}>
     <span>{en ? 'Explore this race' : 'Oglejte si tek'}</span><span aria-hidden="true">↗</span>
   </a>

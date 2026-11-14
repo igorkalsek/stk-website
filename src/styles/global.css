@@ -4649,21 +4649,6 @@ main {
   padding: clamp(20px, 4vw, 34px);
 }
 
-.home-current-heading {
-  gap: 2px;
-  margin-bottom: 12px;
-}
-
-.home-current-heading .eyebrow {
-  background: transparent;
-  color: #5c765f;
-  padding: 0;
-}
-
-.home-current-heading h2 {
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
-}
-
 .home-current-layout {
   display: grid;
   gap: 24px;
@@ -4984,8 +4969,9 @@ main {
   }
 
   .home-current-sections {
+    margin-top: 12px;
     border-radius: 0;
-    padding: 16px;
+    padding: 12px 16px 16px;
   }
 
   .home-primary-section .event-card {
@@ -6314,10 +6300,10 @@ main {
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
   min-width: 0;
   margin: 0 16px 16px;
-  padding: clamp(20px, 2.5vw, 30px);
+  padding: 16px;
   color: #103b42;
   background: linear-gradient(150deg, #f7f8ee 0%, #edf6e8 66%, #d9eddb 100%);
   border: 1px solid rgba(255,255,255,.78);
@@ -6337,30 +6323,28 @@ main {
   border-radius: 50%;
   content: "";
 }
+.home-spotlight-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
 .home-spotlight-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
   width: fit-content;
-  padding: 7px 11px;
+  padding: 5px 6px;
   border-radius: 999px;
   color: #183c39;
   background: #f5c468;
   font-size: .72rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: .075em;
-}
-.home-spotlight-kicker::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #104050;
+  letter-spacing: .02em;
 }
 .home-spotlight-card h2 {
   margin: 0;
-  color: #497269;
+  color: #315e59;
   font-size: .98rem;
   line-height: 1.25;
   font-weight: 800;
@@ -6373,6 +6357,9 @@ main {
   overflow-wrap: anywhere;
 }
 .home-spotlight-card h3 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: #123d47;
   text-decoration: none;
 }
@@ -6382,16 +6369,15 @@ main {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 5px 12px;
+  gap: 4px 10px;
   color: #315e59;
-  font-size: .93rem;
+  font-size: .9rem;
   font-weight: 650;
 }
 .home-spotlight-meta time { font-weight: 850; }
 .home-spotlight-surface {
-  align-self: flex-start;
   width: fit-content;
-  padding: 5px 9px;
+  padding: 2px 7px;
   border-radius: 7px;
   background: rgba(16,64,80,.09);
   color: #315851;
@@ -6404,8 +6390,8 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  min-height: 48px;
-  padding: 12px 15px;
+  min-height: 44px;
+  padding: 9px 12px;
   border-radius: 11px;
   background: #104050;
   color: #fff;
@@ -6423,14 +6409,33 @@ main {
   .home-hero-with-featured .home-hero-copy.hero-content {
     padding-right: clamp(18px, 3vw, 42px);
   }
-  .home-spotlight-card { margin: 22px 22px 22px 0; }
+  .home-spotlight-card { align-self: center; margin: 22px 22px 22px 0; }
 }
 @media (max-width: 959px) {
   .home-spotlight-card { margin-top: 0; }
 }
 @media (max-width: 520px) {
-  .home-spotlight-card { gap: 11px; margin: 0 14px 14px; padding: 19px; }
+  .home-spotlight-card { margin: 0 14px 8px; }
   .home-spotlight-card h3 { font-size: 1.55rem; }
+}
+
+/* DEV-059 U05: a single, compact heading directly above the chronological list. */
+.home-current-sections .home-primary-section > .section-heading-with-action {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.home-current-sections .home-primary-section > .section-heading h2 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+/* Keep both existing hero paths on one row when the spotlight is visible. */
+@media (min-width: 360px) and (max-width: 520px) {
+  .home-hero-with-featured .home-hero-actions .hero-primary-cta { grid-column: auto; }
+}
+@media (max-width: 520px) {
+  .home-page .home-current-sections { margin-top: 12px; }
 }
 
 /* Nearby discovery shares the existing Finder filter panel. */
