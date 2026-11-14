@@ -266,7 +266,9 @@ export const buildCourseRows = (event: DetailEvent, language: DetailLanguage): D
   const routeIsNotice = areSameDetailResources(data.routeUrl, event.noticeUrl);
   const rows: Array<DetailRow | null> = [
     routeUrl ? { label: labels.route, value: routeIsNotice ? labels.routeIncluded : labels.routeOpen, url: routeUrl, analyticsType: 'trasa', ariaLabel: routeIsNotice ? labels.ariaIncluded : labels.aria } : null,
-    data.elevationGain ? { label: labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
+    data.elevationGain ? { label: uniqueDistances(event.distances).length > 1
+      ? (language === 'en' ? 'Elevation gain (course unspecified)' : 'Višinski vzpon (trasa ni določena)')
+      : labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
   ];
   return rows.filter((item): item is DetailRow => Boolean(item && hasText(item.value)));
 };
@@ -355,6 +357,12 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
   }
   return highlights.length >= 2 ? highlights : [];
 };
+
+// The profile already shows distance, elevation, family, cup and race-day registration
+// in its primary facts or dedicated sections. Keep only distinct secondary insights.
+const redundantProfileHighlightKeys = new Set(['elevation', 'family', 'cup', 'distances', 'race-day-registration']);
+export const buildProfileHighlights = (event: DetailEvent, language: DetailLanguage): DetailHighlightCard[] =>
+  buildRaceHighlightCards(event, language).filter((card) => !redundantProfileHighlightKeys.has(card.key));
 
 export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage): string[] => buildRaceHighlightCards(event, language).map((highlight) => `${highlight.label}: ${highlight.value}`);
 
