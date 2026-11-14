@@ -20,6 +20,7 @@ import { NEARBY_EDITION_LOCATIONS, NEARBY_ORIGINS } from './nearby-production-in
 import { editionKey, prepareNearbyFinderView, type NearbyEditionLocation } from '../utils-nearby-races';
 import { buildPreferenceRegionInputId, buildRaceFinderCalendarEventInput } from './race-finder-locales';
 import type { RaceFinderLocale } from './race-finder-types';
+import { buildRegistrationDeadlineViews } from '../utils-registration-deadlines';
 
   type ApiRecord = Record<string, unknown>;
   type RaceEvent = PublicRaceEvent & {
@@ -366,8 +367,8 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     });
   };
 
-  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number]) =>
-    `<a class="button button-small ${action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
+  const renderPrimaryActionLink = (action: ReturnType<typeof buildPrimaryActions>[number], primary = true) =>
+    `<a class="button button-small ${primary && action.kind === 'registration' ? 'button-primary' : 'button-secondary-light'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer" data-analytics-link-type="${escapeHtml(action.analyticsType)}"><span class="action-icon" aria-hidden="true">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span><span>${escapeHtml(action.label)}</span></a>`;
 
   type SecondaryMenuAction = { url: string; html: string; priority: number };
   const normalizeSecondaryDestination = (value: string) => {
@@ -964,10 +965,15 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
     const organizerActions = buildPrimaryActions(event, locale.language);
     const registrationActions = event.isPast ? [] : organizerActions.filter((action) => action.kind === 'registration');
     const noticeActions = organizerActions.filter((action) => action.kind !== 'registration');
+    // An expired generic deadline does not prove all channels are closed.
+    // Retain the official link and existing deadline warning, without promoting it.
+    const registrationDeadlinePassed = buildRegistrationDeadlineViews({
+      todayIso: todayIsoDateInLjubljana(), eventDate: event.date,
+      registrationDeadline: event.additionalData?.registrationDeadline
+    }).some((deadline) => deadline.state === 'past');
     const primaryLinks = [
-      `<a class="button button-small button-primary search-detail-cta" href="${escapeHtml(detailPath)}">${locale.detailLabel}</a>`,
-      ...registrationActions.map(renderPrimaryActionLink),
-      `<button class="button button-small button-secondary-light saved-race-button saved-race-button-compact" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="saved-race-star" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`,
+      ...registrationActions.map((action) => renderPrimaryActionLink(action, !registrationDeadlinePassed)),
+      `<a class="button button-small button-secondary-light search-detail-cta" href="${escapeHtml(detailPath)}">${locale.detailLabel}</a>`,
     ].filter(Boolean).join('');
     const primaryDestinationKeys = new Set(registrationActions.map((action) => normalizeSecondaryDestination(action.url)).filter(Boolean));
     const secondaryActionCandidates: SecondaryMenuAction[] = [
@@ -987,9 +993,10 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
       })
       .map((action) => action.html)
       .join('');
-    const secondaryLinks = moreOptions
+    const savedRaceButton = `<button class="button button-small button-secondary-light saved-race-button saved-race-button-compact" type="button" data-saved-race-button data-event-id="${escapeHtml(getStableEventId(event))}" data-event-year="${escapeHtml(activeYear)}" data-event-date="${escapeHtml(event.date)}" data-event-title="${escapeHtml(event.title)}" data-language="${locale.language}" aria-pressed="false" aria-label="${locale.saveRaceLabel}"><span class="saved-race-star" aria-hidden="true">☆</span><span data-saved-race-label>${locale.saveRaceLabel}</span></button>`;
+    const secondaryLinks = savedRaceButton + (moreOptions
       ? `<details class="search-event-more-menu"><summary class="button button-small button-secondary-light">${locale.moreMenuLabel}</summary><div class="search-event-more-menu-options">${moreOptions}</div></details>`
-      : '';
+      : '');
 
     return `
       <article class="event-card search-event-card search-event-row" data-analytics-placement="${analyticsPlacement}" data-event-row="${escapeHtml(event.row)}" data-analytics-event-id="${escapeHtml(event.id)}" data-analytics-event-name="${escapeHtml(event.title)}" data-analytics-event-date="${escapeHtml(event.date)}" data-analytics-event-year="${escapeHtml(activeYear)}">
@@ -1006,6 +1013,7 @@ export const initializeRaceFinder = (locale: RaceFinderLocale) => {
         ${preferenceReasons}
         </div>
         <div class="search-event-row-actions">
+        ${registrationDeadlinePassed && registrationActions.length ? `<p class="card-registration-warning">${locale.language === 'en' ? 'The registration deadline has passed. Check options with the organiser.' : 'Rok prijave je potekel. Preverite možnosti pri organizatorju.'}</p>` : ''}
         ${primaryLinks ? `<div class="search-event-primary-actions">${primaryLinks}</div>` : ''}
         ${secondaryLinks ? `<div class="search-event-secondary-actions">${secondaryLinks}</div>` : ''}
         </div>

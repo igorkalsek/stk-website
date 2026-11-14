@@ -1125,8 +1125,11 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
         const registrationUrl = safeUrl(getEventField(event, 'povezava_prijava', ['registration_url', 'prijava_url']));
         const calendarOptions = renderCalendarOptions({ title, date: dateValue, location, noticeUrl, registrationUrl });
         const summary = joinParts([location, region]);
+        const actions = buildPrimaryActions({ registrationUrl, noticeUrl }, 'sl');
         const links = [
-          ...buildPrimaryActions({ registrationUrl, noticeUrl }, 'sl').map((action) => renderPrimaryActionLink(action)),
+          ...actions.filter((action) => action.kind === 'registration').map((action) => renderPrimaryActionLink(action)),
+          `<a class="button button-small button-secondary-light race-card-details" href="${escapeHtml(eventDetailPath(event))}">Podrobnosti</a>`,
+          ...actions.filter((action) => action.kind !== 'registration').map((action) => renderPrimaryActionLink(action)),
           calendarOptions,
           renderSavedRaceButton(event, title, dateValue, location)
         ].filter(Boolean).join('');
