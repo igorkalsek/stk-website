@@ -56,19 +56,14 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
       <HomeYearStats lang="en" />
     </section>
 
-    <section class="section container home-current-sections" aria-labelledby="current-title">
-      <div class="section-heading home-current-heading">
-        <span class="eyebrow">At a glance</span>
-        <h2 id="current-title">Current races</h2>
-      </div>
+    <div class="section container home-current-sections">
       <div class="home-current-layout">
       <section class="home-primary-section" aria-labelledby="nearest-title">
         <div class="section-heading section-heading-with-action">
           <div>
             <h2 id="nearest-title">Upcoming races</h2>
-            <p>The nearest confirmed races from the Slovenian Race Calendar.</p>
           </div>
-          <a class="button button-secondary-light" href="/en/find-races/">View all races</a>
+          <a class="button button-secondary-light" href="/en/find-races/">All races</a>
         </div>
         <div class="card-grid" data-nearest-events>
           <HomeUpcomingRaces events={initialUpcomingEvents} lang="en" />
@@ -90,7 +85,7 @@ const initialSpotlightRace = selectHomepageSpotlightRace(
       </section>
 
       </div>
-    </section>
+    </div>
 
     <section class="section container home-secondary-section" aria-labelledby="voted-title">
       <div class="section-heading section-heading-with-action">

@@ -32,6 +32,8 @@ for (const lang of ['sl', 'en']) {
       await expect(current.locator('[data-stat]')).toHaveText(['281', '138', '22']);
       await expect(page.locator('[data-my-stk-global-stats] [data-stat]')).toHaveText(['281', '138', '22']);
       await expect(future.locator('[data-year-stat]')).toHaveText(['4', '2']);
+      // Count initial concurrent reads before keyboard focus can legitimately refresh DEV-037.
+      expect([yearRequests, statsRequests, groupRequests]).toEqual([1, 1, 1]);
       await expect(future).toContainText(lang === 'sl' ? 'Koledar se dopolnjuje' : 'Calendar in progress');
       await expect(future).toContainText(lang === 'sl' ? 'družinam prijaznih' : 'family-friendly');
       await expect(future.locator('[data-stat="group_runs_total"]')).toHaveCount(0);
@@ -64,7 +66,6 @@ for (const lang of ['sl', 'en']) {
       });
       expect(overlaps).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      expect([yearRequests, statsRequests, groupRequests]).toEqual([1, 1, 1]);
       await page.screenshot({ path: `/tmp/stk-home-${lang}-${width}.png`, fullPage: false });
     });
   }

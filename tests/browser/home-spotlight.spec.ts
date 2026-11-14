@@ -194,6 +194,7 @@ test('refresh failure clears a previously visible manual promotion and timeout i
   await page.goto('/');
   const card = page.locator('[data-home-spotlight]');
   await expect(card).toHaveAttribute('data-selection-mode','editorial');
+  await expect.poll(() => impressions(state).length).toBe(1);
   state.configError = true;
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(card).toHaveAttribute('data-selection-mode','automatic');
@@ -216,3 +217,95 @@ test('refresh failure clears a previously visible manual promotion and timeout i
   await expect(card).toHaveAttribute('data-selection-mode','automatic');
   expect(impressions(state).filter(e => e.event_id === 'R000263')).toHaveLength(1);
 });
+
+// DEV-059 / U05: measure the complete home, including the first chronological card.
+for (const home of homes) for (const width of [390, 768, 1440]) {
+  for (const scenario of ['automatic', 'manual', 'long', 'missing', 'empty'] as const) {
+    test(`U05 compact spotlight ${home.path} ${width}px ${scenario}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      const closest = ['2026-11-15', '2026-11-16', '2026-11-17', '2026-11-18'].map((date, i) => event(i + 1, date, 'Nearby race ' + i));
+      const title = scenario === 'long'
+        ? (home.path === '/' ? 'Mednarodni dobrodelni gorski ultramaraton po slovenskih poteh z družinskim spremljevalnim programom in dolgim neprekinjenim nazivom ' : 'International charity mountain ultramarathon along Slovenian trails with a family programme and an exceptionally long unbroken name ') + 'Trail'.repeat(35)
+        : 'Miklavžev tek';
+      const selected = { ...event(5, '2026-12-06', title), ...(scenario === 'missing' ? { kraj: '', regija: '', tip_podlage: '' } : {}) };
+      const state = await mock(page, scenario === 'empty' ? closest : [...closest, selected], [], '2026-11-14');
+      if (scenario === 'manual') state.selection = { ...manual, master_row: '5', expected_event_name: title, expected_event_date: selected.datum, end_date: selected.datum };
+      await page.goto(home.path);
+      const card = page.locator('[data-home-spotlight]');
+      const first = page.locator('[data-nearest-events] .event-card').first();
+      await expect(first.locator('h3')).toHaveText('Nearby race 0');
+      await page.waitForLoadState('networkidle');
+      if (scenario === 'empty') {
+        await expect(card).toBeHidden();
+        await expect(page.locator('.home-hero-card')).not.toHaveClass(/home-hero-with-featured/);
+      } else {
+        await expect(card).toBeVisible();
+        await expect(card).toHaveAttribute('data-selection-mode', scenario === 'manual' ? 'editorial' : 'automatic');
+        await expect(card).toHaveAttribute('data-analytics-placement', 'home_featured');
+        await expect(card).toHaveAttribute('data-analytics-featured-impression', 'true');
+        await expect(card).toHaveAttribute('data-analytics-event-id', 'r000005');
+        await expect(card).toHaveAttribute('data-analytics-event-name', title);
+        await expect(card).toHaveAttribute('data-analytics-event-date', selected.datum);
+        await expect(card).toHaveAttribute('data-analytics-event-year', '2026');
+        await expect(card.locator('h3')).toHaveText(title);
+        await expect(card.locator('time')).toHaveAttribute('datetime', selected.datum);
+        const titleLink = card.locator('[data-spotlight-title]');
+        const cta = card.locator('[data-spotlight-cta]');
+        await expect(titleLink).toHaveAttribute('href', new RegExp('^' + home.yearPath + '2026/r000005-'));
+        expect(await cta.getAttribute('href')).toBe(await titleLink.getAttribute('href'));
+        if (scenario === 'missing') {
+          await expect(card.locator('[data-spotlight-place]')).toBeHidden();
+          await expect(card.locator('[data-spotlight-surface]')).toBeHidden();
+        } else {
+          await expect(card.locator('[data-spotlight-place]')).toHaveText('Ljubljana');
+          await expect(card.locator('[data-spotlight-surface]')).toHaveText(home.path === '/' ? 'cesta' : 'Road');
+        }
+        if (scenario === 'automatic') {
+          const contrasts = await card.evaluate(el => {
+            const rgb = (value: string) => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+            const luminance = (channels: number[]) => channels.map(n => { const c = n / 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((sum, c, i) => sum + c * [.2126, .7152, .0722][i], 0);
+            const ratio = (a: number[], b: number[]) => { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+            const backgrounds = getComputedStyle(el).backgroundImage.match(/rgb\([^)]+\)/g)!.map(rgb);
+            const text = ['h2', '[data-spotlight-title]', '[data-spotlight-date]', '[data-spotlight-place]'].map(selector => Math.min(...backgrounds.map(bg => ratio(rgb(getComputedStyle(el.querySelector(selector)!).color), bg))));
+            const buttons = ['[data-spotlight-label]', '[data-spotlight-cta]'].map(selector => { const style = getComputedStyle(el.querySelector(selector)!); return ratio(rgb(style.color), rgb(style.backgroundColor)); });
+            return [...text, ...buttons];
+          });
+          for (const ratio of contrasts) expect(ratio).toBeGreaterThanOrEqual(4.5);
+        }
+        expect(await card.locator('h3').evaluate(el => el.scrollHeight <= el.clientHeight && el.scrollWidth <= el.clientWidth)).toBe(true);
+        if (width === 390 && scenario !== 'long') expect((await card.boundingBox())!.height).toBeLessThanOrEqual(205);
+        if (width === 390) {
+          const actions = await page.locator('.home-hero-actions a').evaluateAll(links => links.map(link => link.getBoundingClientRect().toJSON()));
+          expect(actions).toHaveLength(2);
+          expect(actions[0].top).toBe(actions[1].top);
+          for (const rect of actions) { expect(rect.height).toBeGreaterThanOrEqual(44); expect(rect.width).toBeGreaterThanOrEqual(44); }
+        }
+        // Real sequential keyboard movement, with visible focus and >=44px touch targets.
+        await titleLink.focus();
+        await page.keyboard.press('Shift+Tab');
+        await page.keyboard.press('Tab');
+        await expect(titleLink).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(cta).toBeFocused();
+        for (const link of [titleLink, cta]) {
+          const rect = (await link.boundingBox())!;
+          expect(rect.height).toBeGreaterThanOrEqual(44);
+          expect(rect.width).toBeGreaterThanOrEqual(44);
+        }
+        expect(await cta.evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
+      }
+      if (width === 390 && scenario === 'automatic') {
+        // Linux system fonts can put the unchanged hero title on two lines
+        // and its lead on three. Exercise both on macOS without loosening the target.
+        await page.addStyleTag({ content: '.home-hero-copy h1 { max-width: 250px; } .home-hero-copy .hero-lead { max-width: 265px; }' });
+      }
+      // Read document coordinates in a single frame; keyboard focus may scroll the viewport.
+      const position = await first.evaluate(el => el.getBoundingClientRect().top + scrollY);
+      if (width === 390 && scenario !== 'long') expect(position).toBeLessThanOrEqual(900);
+      const stable = await page.locator('.home-current-sections').evaluate(el => el.getBoundingClientRect().top + scrollY);
+      await page.waitForTimeout(200);
+      expect(await page.locator('.home-current-sections').evaluate(el => el.getBoundingClientRect().top + scrollY)).toBe(stable);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    });
+  }
+}

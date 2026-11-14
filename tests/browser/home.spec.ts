@@ -12,7 +12,6 @@ const homes = [
     myRaces: 'Moji teki',
     myRacesHref: '/moji-teki/',
     tekobotHref: '/stk-tekobot/',
-    current: 'Aktualno',
     upcoming: 'Naslednji teki',
     interest: 'Največ zanimanja',
     interestDescription: 'Aktivno zanimanje pomenijo kliki na razpise in prijavne povezave, shranitve ter koledarske akcije. Ogledi profilov niso merilo aktivnega zanimanja.',
@@ -29,7 +28,6 @@ const homes = [
     myRaces: 'My races',
     myRacesHref: '/en/my-races/',
     tekobotHref: '/en/stk-tekobot/',
-    current: 'Current races',
     upcoming: 'Upcoming races',
     interest: 'Races attracting the most interest',
     interestDescription: 'Active interest includes official information and registration link clicks, saves and calendar actions. Profile views do not count as active interest.',
@@ -227,7 +225,7 @@ for (const home of homes) {
     await expect(page.locator('.home-entry-grid')).toHaveCount(0);
     await expect(page.locator('.hero-preview')).toHaveCount(0);
 
-    for (const heading of [home.current, home.upcoming, home.interest, home.updates]) {
+    for (const heading of [home.upcoming, home.interest, home.updates]) {
       await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
     }
     await expect(page.locator('.home-stats-strip [data-stat="confirmed_public_events_total"]')).toHaveText('0');
@@ -235,7 +233,7 @@ for (const home of homes) {
     await expect(page.getByRole('link', { name: home.calendar, exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: home.organisers, exact: true })).toBeVisible();
 
-    const tops = await page.locator('#current-title, #voted-title, #updates-title, #my-stk-title, #trust-title, #utility-title')
+    const tops = await page.locator('#nearest-title, #voted-title, #updates-title, #my-stk-title, #trust-title, #utility-title')
       .evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().top + window.scrollY)));
     expect(tops).toEqual([...tops].sort((a, b) => a - b));
   });

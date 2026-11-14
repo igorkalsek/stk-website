@@ -1,0 +1,110 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "spotlightHeight": 260.61,
+    "firstRaceY": 1128.7,
+    "documentWidth": 390,
+    "viewportWidth": 390,
+    "selectionMode": "automatic",
+    "profile": "/tek/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "spotlightHeight": 276.69,
+    "firstRaceY": 1107.61,
+    "documentWidth": 768,
+    "viewportWidth": 768,
+    "selectionMode": "automatic",
+    "profile": "/tek/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "spotlightHeight": 308.86,
+    "firstRaceY": 846.44,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "selectionMode": "automatic",
+    "profile": "/tek/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "spotlightHeight": 260.61,
+    "firstRaceY": 1128.7,
+    "documentWidth": 390,
+    "viewportWidth": 390,
+    "selectionMode": "automatic",
+    "profile": "/en/races/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "spotlightHeight": 276.69,
+    "firstRaceY": 1107.61,
+    "documentWidth": 768,
+    "viewportWidth": 768,
+    "selectionMode": "automatic",
+    "profile": "/en/races/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "spotlightHeight": 358.75,
+    "firstRaceY": 896.33,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "selectionMode": "automatic",
+    "profile": "/en/races/2026/r000005-miklavzev-tek/",
+    "analytics": {
+      "analyticsFeaturedImpression": "true",
+      "analyticsPlacement": "home_featured",
+      "analyticsEventId": "r000005",
+      "analyticsEventName": "Miklavžev tek",
+      "analyticsEventDate": "2026-12-06",
+      "analyticsEventYear": "2026"
+    }
+  }
+]
