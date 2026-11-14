@@ -6469,15 +6469,17 @@ main {
   .home-page .home-current-sections { margin-top: 12px; }
 }
 
-/* Nearby discovery shares the existing Finder filter panel. */
+/* DEV-059 U06: compact nearby controls, with native advanced disclosure. */
 .finder-nearby-panel {
-  margin-block: 1rem;
-  padding: 1rem;
+  margin: 0;
+  padding: 0.75rem;
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: #f8fbf7;
 }
-.finder-nearby-panel h3 { margin-top: 0; }
+.finder-nearby-panel h3 { margin: 0 0 0.25rem; }
+.finder-nearby-panel p { margin-block: 0.5rem; }
+.finder-nearby-panel .finder-nearby-hint { margin-block: 0 0.75rem; }
 .finder-nearby-panel fieldset {
   display: grid;
   gap: 0.75rem;
@@ -6485,9 +6487,37 @@ main {
   padding: 0;
   border: 0;
 }
-.finder-nearby-panel legend { font-weight: 700; margin-bottom: 0.5rem; }
 .finder-nearby-panel select { width: 100%; min-width: 0; }
-.finder-nearby-panel details .field { margin-top: 0.75rem; }
+.finder-nearby-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6rem;
+  align-items: end;
+  gap: 0.5rem;
+}
+.finder-nearby-controls [data-nearby-geolocate] { grid-column: 1 / -1; }
+.finder-nearby-panel .field { min-width: 0; }
+.finder-nearby-panel .field select,
+.finder-nearby-panel .field input,
+.finder-nearby-panel .button { min-height: 44px; }
+.finder-nearby-panel summary {
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+  color: var(--deep-teal);
+  overflow-wrap: anywhere;
+}
+.finder-nearby-panel summary:focus-visible {
+  outline: 2px solid var(--deep-teal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.finder-nearby-manual-content { display: grid; gap: 0.5rem; margin-block: 0.5rem; }
+@media (min-width: 600px) and (max-width: 959px) {
+  .finder-nearby-controls { grid-template-columns: minmax(0, 1fr) 6rem minmax(0, 1fr); }
+  .finder-nearby-controls [data-nearby-geolocate] { grid-column: auto; }
+  .finder-nearby-manual-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .finder-nearby-manual-content .button { grid-column: 1 / -1; }
+}
 .finder-nearby-panel [data-nearby-status]:empty,
 .finder-nearby-panel [data-nearby-origin-summary]:empty { display: none; }
 [data-nearby-distance] { overflow-wrap: anywhere; }

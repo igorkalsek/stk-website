@@ -10,7 +10,7 @@ import { filterNearbyRaces, summarizeNearbyCoverage } from '../../src/utils-near
 // No synthetic approval or geography transform is used by this suite.
 const snapshot = JSON.parse(readFileSync(new URL('../../docs/evidence/dev056-release/public-events.json', import.meta.url), 'utf8'));
 const API = 'https://stk-master-api.igor-kalsek.workers.dev';
-for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const width of [390,1280]) {
+for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const width of [390,768,1440]) {
   test(`production nearby ${year}/${lang}/${width}: real index, all radii, privacy, GPS and other filters`, async ({page}, testInfo) => {
     await page.clock.setFixedTime(new Date('2026-11-13T09:00:00Z'));
     await page.setViewportSize({width,height:844});
@@ -49,7 +49,7 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     const full = snapshot.events.filter((e:any)=>e.year === year);
     // The normal Finder initially renders a page of results.
     await expect(cards.first()).toBeVisible();
-    if (width < 600) await page.locator('[data-mobile-filter-panel] > summary').click();
+    if (width < 960) await page.locator('[data-mobile-filter-panel] > summary').click();
     await expect(panel).toBeVisible();
     await expect(panel.locator('[data-nearby-sources]')).toContainText('Wikidata (CC0)');
     expect(await page.evaluate(()=>(window as any).__geo.calls)).toBe(0);
@@ -73,6 +73,29 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
         await expect(cards.first().locator('[data-nearby-distance]')).toContainText('≈');
         await expect(cards.first().locator('[data-nearby-distance]')).toContainText(lang === 'en' ? 'Approximate location' : 'Približna lokacija');
       }
+    }
+    // U06: native disclosure is keyboard accessible and never changes selection.
+    const advanced = panel.locator('[data-nearby-manual]');
+    const advancedSummary = advanced.locator(':scope > summary');
+    const currentCards = await cards.allTextContents();
+    const currentOrigin = await origin.inputValue();
+    await expect(advanced).not.toHaveAttribute('open', '');
+    await expect(panel.locator('[data-nearby-latitude]')).toBeHidden();
+    await advancedSummary.focus();
+    await page.keyboard.press('Enter');
+    await expect(panel.locator('[data-nearby-latitude]')).toBeVisible();
+    await expect(panel.locator('[data-nearby-sources]')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.keyboard.press('Tab');
+    await expect(panel.locator('[data-nearby-latitude]')).toBeFocused();
+    await advancedSummary.focus();
+    await page.keyboard.press('Space');
+    await expect(panel.locator('[data-nearby-latitude]')).toBeHidden();
+    await expect(origin).toHaveValue(currentOrigin);
+    await expect(radius).toHaveValue('100');
+    expect(await cards.allTextContents()).toEqual(currentCards);
+    for (const control of ['[data-nearby-origin-place]', '[data-nearby-radius]', '[data-nearby-geolocate]', '[data-nearby-clear]']) {
+      expect((await panel.locator(control).boundingBox())!.height).toBeGreaterThanOrEqual(44);
     }
     if (year === '2026') {
       await origin.selectOption('Q392333'); // Štanjel: edition-specific organizer start
@@ -153,6 +176,11 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     await panel.locator('[data-nearby-manual] > summary').click();
     const latitude = panel.locator('[data-nearby-latitude]');
     await latitude.fill('invalid');
+    await advancedSummary.click();
+    await expect(latitude).toBeHidden();
+    await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
+    await advancedSummary.click();
+    await expect(latitude).toHaveValue('invalid');
     await panel.locator('[data-nearby-apply]').click();
     await expect(panel.locator('[data-nearby-status]')).toContainText(lang === 'en' ? 'Enter valid' : 'Vnesite veljavno');
     await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
@@ -180,7 +208,7 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     await page.locator(`[data-year-link="${otherYear}"]`).click();
     await expect(cards.first()).toBeVisible();
     await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
-    if (width < 600) await page.locator('[data-mobile-filter-panel] > summary').click();
+    if (width < 960) await page.locator('[data-mobile-filter-panel] > summary').click();
     await origin.selectOption('Q15930');
     const otherFull = snapshot.events.filter((e:any) => e.year === otherYear);
     const otherMissing = summarizeNearbyCoverage(otherFull, NEARBY_EDITION_LOCATIONS).unlocatedEditionKeys.length;

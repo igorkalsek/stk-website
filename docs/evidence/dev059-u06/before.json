@@ -1,0 +1,110 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 2028.71875,
+    "panelHeight": 702.28125,
+    "overflow": false
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 2156.71875,
+    "panelHeight": 841.28125,
+    "overflow": false
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 2093.96875,
+    "panelHeight": 604.28125,
+    "overflow": false
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 2196.96875,
+    "panelHeight": 707.28125,
+    "overflow": false
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 683.484375,
+    "panelHeight": 694.28125,
+    "overflow": false
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 683.484375,
+    "panelHeight": 851.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 2114.71875,
+    "panelHeight": 738.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 2260.71875,
+    "panelHeight": 895.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 2111.96875,
+    "panelHeight": 604.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 2214.96875,
+    "panelHeight": 707.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "inactive",
+    "count": 30,
+    "firstResultY": 683.484375,
+    "panelHeight": 730.28125,
+    "overflow": false
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "active",
+    "count": 12,
+    "firstResultY": 683.484375,
+    "panelHeight": 887.28125,
+    "overflow": false
+  }
+]

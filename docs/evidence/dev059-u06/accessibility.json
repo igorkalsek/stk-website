@@ -1,0 +1,83 @@
+{
+  "tool": "axe-core 4.10.3",
+  "scope": "[data-nearby-panel]",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21aa"
+  ],
+  "checks": [
+    {
+      "lang": "sl",
+      "width": 390,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "sl",
+      "width": 390,
+      "expanded": true,
+      "violations": []
+    },
+    {
+      "lang": "sl",
+      "width": 768,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "sl",
+      "width": 768,
+      "expanded": true,
+      "violations": []
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "sl",
+      "width": 1440,
+      "expanded": true,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "expanded": true,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 768,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 768,
+      "expanded": true,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "expanded": false,
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "expanded": true,
+      "violations": []
+    }
+  ]
+}

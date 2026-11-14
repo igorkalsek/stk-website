@@ -56,10 +56,13 @@ for(const scenario of scenarios) {
         await details.locator(':scope > summary').click();
     }
     await expect(panel).toBeVisible();
+    await expect(panel.locator('[data-nearby-sources]')).toBeHidden();
+    await panel.locator('[data-nearby-manual] > summary').click();
     await expect(panel.locator('[data-nearby-sources]')).toBeVisible();
     await expect(panel.locator('[data-nearby-sources] a')).toHaveAttribute('href', 'https://www.wikidata.org/wiki/Wikidata:Licensing');
     await expect(panel.locator('[data-nearby-sources]')).toContainText('Wikidata (CC0)');
     await expect(panel.locator('[data-nearby-apply]')).toBeEnabled();
+    await panel.locator('[data-nearby-manual] > summary').click();
     const town=panel.locator('[data-nearby-origin-place]');
     await expect(panel.locator('[data-nearby-origin-place-group]')).toBeVisible();
     await expect(town.locator('option')).toHaveCount(2);
@@ -90,6 +93,15 @@ for(const scenario of scenarios) {
     await expect(cards.first().locator('[data-nearby-distance]')).toContainText(scenario.km);
     await expect(cards.first().locator('[data-nearby-distance]')).toContainText('≈');
     await expect(panel.locator('[data-nearby-status]')).toContainText(scenario.missing);
+
+    // Applied manual origin survives closing and reopening its controls.
+    await panel.locator('[data-nearby-manual] > summary').click();
+    await expect(lat).toBeHidden();
+    await expect(cards).toHaveCount(1);
+    await panel.locator('[data-nearby-manual] > summary').click();
+    await expect(lat).toHaveValue(scenario.lat);
+    await expect(lng).toHaveValue(scenario.lng);
+    await expect(cards).toHaveCount(1);
 
     await radius.selectOption('10');
     await expect(cards).toHaveCount(0);
