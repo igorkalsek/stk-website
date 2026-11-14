@@ -11,6 +11,7 @@ import {
   buildOrganizerView,
   buildRaceHighlights,
   buildRaceHighlightCards,
+  buildProfileHighlights,
   buildPublicNotes,
   buildRegistrationRows,
   formatDetailMoneyRange,
@@ -525,4 +526,55 @@ describe('race detail view model', () => {
       'Distances: From 5 km to 21.1 km'
     ]);
   });
+  it('puts registration details ahead of saved-race tools and optional highlights in both profile languages', () => {
+    for (const [path, language] of [
+      ['src/pages/tek/[year]/[slug].astro', 'sl'],
+      ['src/pages/en/races/[year]/[slug].astro', 'en']
+    ]) {
+      const source = readFileSync(path, 'utf8');
+      const start = source.indexOf('class="event-detail-main-column"');
+      const official = source.indexOf('class="event-detail-official-actions event-detail-action-list"');
+      const registration = source.indexOf("renderActionIcon('ticket')", start);
+      const saved = source.indexOf('class="event-detail-my-race-panel"', start);
+      const highlights = source.indexOf('class="info-card event-detail-panel event-detail-highlights"', start);
+      assert.ok(official >= 0 && official < start, 'Official registration and notice links remain near the title');
+      assert.ok(start >= 0 && registration > start && saved > registration && highlights > saved, 'Secondary panels follow fees and deadlines');
+      assert.equal(source.match(/class="event-detail-my-race-panel"/g)?.length, 1, 'Save/status controls are not duplicated');
+      assert.match(source, new RegExp(`buildProfileHighlights\\(event, '${language}'\\)`));
+      assert.match(source, /data-race-status-control/);
+      assert.match(source, /data-saved-race-button/);
+      assert.match(source, /data-race-archive-only/);
+    }
+  });
+
+  it('keeps only genuinely distinct profile highlights without losing the original facts', () => {
+    const crowded = { ...baseEvent, distances: '5;10;85', cup: 'PGT Pokal', kidsRaces: true, familyFriendly: true, additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
+    assert.deepEqual(buildRaceHighlightCards(crowded, 'en').map(({ key }) => key), ['ultra', 'elevation', 'family', 'cup']);
+    assert.deepEqual(buildProfileHighlights(crowded, 'en').map(({ key }) => key), ['ultra', 'free-fee']);
+    const partlyFree = { ...baseEvent, distances: '0.5;5;10', familyFriendly: true, additionalData: { ...richAdditional, elevationGain: '', dayOfRegistration: '', registrationMinEur: '0', registrationMaxEur: '60' } };
+    assert.deepEqual(buildProfileHighlights(partlyFree, 'sl').map(({ key }) => key), ['free-fee']);
+  });
+
+  it('preserves a single distinct highlight and keeps family details in the dedicated section', () => {
+    for (const language of ['sl', 'en']) {
+      const free = { ...baseEvent, distances: '5', cup: '', kidsRaces: false, familyFriendly: false,
+        additionalData: { ...richAdditional, elevationGain: '', dayOfRegistration: '', registrationMinEur: '0', registrationMaxEur: '20' } };
+      assert.deepEqual(buildProfileHighlights(free, language).map(({ key }) => key), ['free-fee']);
+      const children = { ...free, kidsRaces: true, publicNotes: 'Otroški teki 300 m/600 m. Otroški teki brezplačni.' };
+      assert.ok(buildFamilyInfo(children, language).join(' ').includes('300 m'));
+      assert.ok(buildFamilyInfo(children, language).join(' ').includes('600 m'));
+      assert.equal(buildProfileHighlights(children, language).some(({ key }) => key === 'family'), false);
+      assert.equal(buildCourseRows({ ...free, additionalData: { ...free.additionalData, routeUrl: '', elevationGain: '  ' } }, language).length, 0);
+    }
+  });
+
+  it('does not attribute a single elevation value to all listed race distances', () => {
+    const multiple = { ...baseEvent, distances: '5;10;25', additionalData: { ...richAdditional, elevationGain: '2200', routeUrl: '' } };
+    const single = { ...multiple, distances: '25' };
+    assert.equal(buildCourseRows(multiple, 'sl')[0].label, 'Višinski vzpon (razdalja ni navedena)');
+    assert.equal(buildCourseRows(multiple, 'en')[0].label, 'Elevation gain (distance unspecified)');
+    assert.equal(buildCourseRows(single, 'sl')[0].label, 'Višinska razlika');
+    assert.equal(buildCourseRows(multiple, 'en')[0].value, '2200 m+');
+  });
+
 });

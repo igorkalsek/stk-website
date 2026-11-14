@@ -266,7 +266,9 @@ export const buildCourseRows = (event: DetailEvent, language: DetailLanguage): D
   const routeIsNotice = areSameDetailResources(data.routeUrl, event.noticeUrl);
   const rows: Array<DetailRow | null> = [
     routeUrl ? { label: labels.route, value: routeIsNotice ? labels.routeIncluded : labels.routeOpen, url: routeUrl, analyticsType: 'trasa', ariaLabel: routeIsNotice ? labels.ariaIncluded : labels.aria } : null,
-    data.elevationGain ? { label: labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
+    hasText(data.elevationGain) ? { label: uniqueDistances(event.distances).length > 1
+      ? (language === 'en' ? 'Elevation gain (distance unspecified)' : 'Višinski vzpon (razdalja ni navedena)')
+      : labels.elevation, value: `${data.elevationGain.trim()} m+` } : null
   ];
   return rows.filter((item): item is DetailRow => Boolean(item && hasText(item.value)));
 };
@@ -299,7 +301,9 @@ export const buildFamilyInfo = (event: DetailEvent, language: DetailLanguage): s
   return [];
 };
 
-export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLanguage): DetailHighlightCard[] => {
+// Exclude profile duplicates before applying the card limit, so distinct insights survive.
+const redundantProfileHighlightKeys = new Set(['elevation', 'family', 'cup', 'distances', 'race-day-registration']);
+const collectRaceHighlightCards = (event: DetailEvent, language: DetailLanguage, profile = false): DetailHighlightCard[] => {
   const distances = uniqueDistances(event.distances);
   const longestDistance = distances.length ? distances[distances.length - 1] : null;
   const shortestDistance = distances.length ? distances[0] : null;
@@ -321,7 +325,7 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
     };
   const highlights: DetailHighlightCard[] = [];
   const add = (card: DetailHighlightCard) => {
-    if (highlights.length >= 4 || highlights.some((item) => item.key === card.key)) return;
+    if ((profile && redundantProfileHighlightKeys.has(card.key)) || highlights.length >= 4 || highlights.some((item) => item.key === card.key)) return;
     highlights.push(card);
   };
 
@@ -353,8 +357,13 @@ export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLang
   if (hasRaceDayRegistration) {
     add({ key: 'race-day-registration', label: labels.raceDay, value: labels.yes, iconKey: 'race-day-registration' });
   }
-  return highlights.length >= 2 ? highlights : [];
+  return highlights.length >= (profile ? 1 : 2) ? highlights : [];
 };
+
+export const buildRaceHighlightCards = (event: DetailEvent, language: DetailLanguage): DetailHighlightCard[] =>
+  collectRaceHighlightCards(event, language);
+export const buildProfileHighlights = (event: DetailEvent, language: DetailLanguage): DetailHighlightCard[] =>
+  collectRaceHighlightCards(event, language, true);
 
 export const buildRaceHighlights = (event: DetailEvent, language: DetailLanguage): string[] => buildRaceHighlightCards(event, language).map((highlight) => `${highlight.label}: ${highlight.value}`);
 

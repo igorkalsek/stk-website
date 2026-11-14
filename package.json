@@ -14,7 +14,7 @@
     "test:browser:finder:smoke": "playwright test tests/browser/finder.spec.ts --project=chromium --grep @smoke",
     "test:browser:proposal-form": "playwright test tests/browser/proposal-form.spec.ts --project=chromium",
     "test:browser:my-races": "playwright test tests/browser/my-races-statuses.spec.ts --project=chromium",
-    "test:browser:race-profiles": "playwright test tests/browser/race-profile-ux.spec.ts --project=chromium",
+    "test:browser:race-profiles": "playwright test tests/browser/race-profile-ux.spec.ts tests/browser/race-profile-hierarchy.spec.ts --project=chromium",
     "test:browser:home": "playwright test tests/browser/home.spec.ts tests/browser/home-stats.spec.ts tests/browser/public-get-dedup.spec.ts tests/browser/home-spotlight.spec.ts --project=chromium",
     "test:race-watch-contract": "node --test tests/race-watch-contract.test.mjs tests/race-watch-contract-review.test.mjs tests/race-watch-coverage.test.mjs",
     "test:browser:nearby-private": "playwright test --config playwright.dev056.config.ts",
