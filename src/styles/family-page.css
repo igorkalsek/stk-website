@@ -1,0 +1,87 @@
+/* U07: used only by the two family pages; card styles stay in the design system. */
+.family-page .page-hero {
+  gap: 10px;
+  padding: 24px 0 0;
+}
+
+.family-page .year-switcher {
+  margin-top: 4px;
+}
+
+.family-page .section {
+  padding-top: 24px;
+}
+
+.family-page .family-criteria {
+  color: var(--muted);
+  max-width: 780px;
+}
+
+.family-page .family-criteria summary {
+  color: var(--deep-teal);
+  cursor: pointer;
+  font-weight: 800;
+  min-height: 44px;
+  align-content: center;
+}
+
+.family-page .family-criteria summary:focus-visible {
+  outline: 3px solid var(--deep-teal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.family-page .family-criteria p {
+  margin: 8px 0 12px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.family-page .search-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+
+.family-page .filters-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 12px;
+}
+
+.family-page .field-wide {
+  grid-column: 1 / -1;
+}
+
+.family-page .field,
+.family-page .field input,
+.family-page .field select {
+  min-width: 0;
+}
+
+.family-page .clear-filters-button {
+  min-height: 46px;
+}
+
+@media (min-width: 720px) {
+  .family-page .filters-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .family-page .field-wide {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1100px) {
+  .family-page .filters-grid {
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto;
+  }
+
+  .family-page .field-wide {
+    grid-column: auto;
+  }
+}
