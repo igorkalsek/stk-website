@@ -1,4 +1,5 @@
 ---
+import { getSlovenianSourceLanguage } from '../../../../utils-english';
 import RegistrationFeeValue from '../../../../components/RegistrationFeeValue.astro';
 import { buildNearbyMapLink } from '../../../../utils-nearby-index';
 import { NEARBY_EDITION_LOCATIONS } from '../../../../finder/nearby-production-index';
@@ -114,8 +115,11 @@ const deadlineCalendarOptions = event ? registrationDeadlineViews.toSorted((a, b
 
 const routeItems = event ? buildCourseRows(event, 'en') : [];
 const courseHeading = event ? buildCourseHeading(event, 'en') : '';
-const familyInfo = event ? buildFamilyInfo(event, 'en') : [];
-const publicNotes = event ? buildPublicNotes(event, 'en', familyInfo) : '';
+// Keep Slovenian source conditions together, without partial word-by-word translation.
+const sourceNotesLanguage = getSlovenianSourceLanguage(event?.publicNotes ?? '');
+const notesLanguage = sourceNotesLanguage ?? 'en';
+const familyInfo = event ? buildFamilyInfo(event, notesLanguage) : [];
+const publicNotes = event ? buildPublicNotes(event, notesLanguage, familyInfo) : '';
 const organizer = event ? buildOrganizerView(event) : null;
 const { registrationMinEur, registrationMaxEur, registrationDescription } = event?.additionalData ?? {};
 const feeBounds = getRegistrationFeeBounds(registrationMinEur, registrationMaxEur, registrationDescription);
@@ -325,15 +329,15 @@ const jsonLd = event ? {
 
               {familyInfo.length > 0 && (
                 <article class="info-card event-detail-panel event-detail-family-callout">
-                  <h2><span class="action-icon" set:html={renderActionIcon('family')}></span> Families and children</h2>
-                  {familyInfo.map((text) => <p>{text}</p>)}
+                  <h2><span class="action-icon" set:html={renderActionIcon('family')}></span> Families and children{sourceNotesLanguage && ' (Slovenian)'}</h2>
+                  {familyInfo.map((text) => <p lang={sourceNotesLanguage} style="overflow-wrap: anywhere">{text}</p>)}
                 </article>
               )}
 
               {publicNotes && (
                 <article class="info-card event-detail-panel">
-                  <h2><span class="action-icon" set:html={renderActionIcon('notes')}></span> <span data-race-upcoming-only>Notes</span><span data-race-archive-only>Archive notes</span></h2>
-                  <p>{publicNotes}</p>
+                  <h2><span class="action-icon" set:html={renderActionIcon('notes')}></span> <span data-race-upcoming-only>Notes</span><span data-race-archive-only>Archive notes</span>{sourceNotesLanguage && ' (Slovenian)'}</h2>
+                  <p lang={sourceNotesLanguage} style="overflow-wrap: anywhere">{publicNotes}</p>
                 </article>
               )}
 

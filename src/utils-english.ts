@@ -77,3 +77,8 @@ export const formatEnglishRegion = (value: string) => {
 
   return labels[trimmed] ?? trimmed;
 };
+
+// Conservative language hint for public source text; numbers and names alone are not evidence.
+// Unrecognised text keeps the page language rather than receiving a guessed language tag.
+export const getSlovenianSourceLanguage = (value: string): 'sl' | undefined =>
+  /(?:^|[^\p{L}])(?:družinam|družinski|družinska|otroški|otroške|otroci|brezplačno|brezplačni|prijave|predprijave|štarta|štartna|tekače|najmanj|udeležba)(?=$|[^\p{L}])/iu.test(value) ? 'sl' : undefined;
