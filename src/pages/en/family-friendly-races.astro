@@ -22,10 +22,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <main class="family-page">
     <section class="page-hero container" aria-labelledby="family-title">
       <h1 id="family-title">Family-friendly races</h1>
-      <p class="hero-subtitle">Races with explicit children’s or family activities.</p>
+      <p class="hero-subtitle">Races with children’s runs, family categories or activities.</p>
       <details class="family-criteria">
         <summary>Which races are included?</summary>
-        <p>The source must explicitly mention children’s runs, family categories, children’s activities or other family offers. A short distance or general suitability alone is not enough.</p>
+        <p>The source must explicitly mention children’s runs, family categories, children’s activities or other options for families. A short distance or general suitability alone is not enough.</p>
         <p>For all races, entry fees, race-day registration and elevation gain, use <a href="/en/find-races/">Find races</a>.</p>
       </details>
       <nav class="year-switcher" aria-label="Calendar year">
@@ -110,7 +110,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   import { buildPrimaryActions } from '../../utils-race-detail-view';
   import { renderActionIcon } from '../../utils-action-icons';
   import { filtersToAnalyticsJson, trackStkEvent } from '../../lib/stkAnalytics';
-  import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface } from '../../utils-english';
+  import { formatEnglishDateBadge, formatEnglishMonthLabel, formatEnglishSurface, getSlovenianSourceLanguage } from '../../utils-english';
   import { buildEnglishEventDetailPath, getStableEventId } from '../../utils-event-detail';
   import { initSavedRaceButtons } from '../../saved-races-client';
   import { hasExplicitFamilyOffer } from '../../utils-home-stats';
@@ -163,7 +163,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const TOP_API_URL = 'https://stk-master-api.igor-kalsek.workers.dev/top?scope=upcoming&limit=1000';
   const ARRAY_KEYS = ['data', 'events', 'items', 'rows', 'results', 'top'];
   const PAGE_SIZE = 30;
-  const FAMILY_NOTE_MAX_LENGTH = 160;
   const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   const state: { events: FamilyEvent[]; filtered: FamilyEvent[]; apiAvailable: boolean; visibleCount: number; usedPastFallback: boolean; userInteracted: boolean; lastLoggedSearchSignature: string } = {
@@ -336,18 +335,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     return note;
   };
 
-  const trimFamilyNote = (value: string) => {
-    if (value.length <= FAMILY_NOTE_MAX_LENGTH) return value;
-
-    const candidate = value.slice(0, FAMILY_NOTE_MAX_LENGTH + 1);
-    const lastSpace = candidate.lastIndexOf(' ');
-    const trimmed = (lastSpace > 120 ? candidate.slice(0, lastSpace) : candidate.slice(0, FAMILY_NOTE_MAX_LENGTH))
-      .replace(/[\s,.;:!?-]+$/u, '')
-      .trim();
-
-    return `${trimmed}…`;
-  };
-
   const normalizeFamilyNoteTimes = (value: string) => value
     .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.(\d{2})\.\s*(?:uri|uro|h)?\b/giu, (_match, hour: string, minute: string) => `${hour.padStart(2, '0')}:${minute}`)
     .replace(/\b(?:ob\s*)?([01]?\d|2[0-3])\.\s*(?:uri|uro|h)\b/giu, (_match, hour: string) => `${hour.padStart(2, '0')}:00`)
@@ -389,10 +376,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       addFamilySummarySignal(signals, 'Children’s races available.');
     }
 
-    if (/brezplac(?:na\s+udelezba|no|ni|na|ne)/iu.test(searchableNote)) {
-      addFamilySummarySignal(signals, 'Free participation for children or selected categories.');
-    }
-
     if (/druzinski\s+tek/iu.test(searchableNote)) {
       addFamilySummarySignal(signals, 'Family run available.');
     }
@@ -420,14 +403,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const sourceNote = getFamilySourceNote(value);
     if (!sourceNote) return null;
 
-    const summary = summarizeFamilyNoteInEnglish(sourceNote) || 'Family-friendly information is available in the source.';
-    const usefulSourceNote = summary === 'Family-friendly information is available in the source.'
-      ? trimFamilyNote(sourceNote)
-      : '';
-
+    const summary = summarizeFamilyNoteInEnglish(sourceNote);
     return {
       summary,
-      sourceNote: usefulSourceNote
+      // Conditions and category-specific times must remain available even when a summary exists.
+      sourceNote: value.trim(),
+      sourceLanguage: getSlovenianSourceLanguage(value)
     };
   };
 
@@ -588,7 +569,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <time class="event-card-date" datetime="${escapeHtml(event.date)}" aria-label="${escapeHtml(formatDate(event.date))}">${escapeHtml(formatDateBadge(event.date))}</time>
         </div>
         <h3 class="search-event-title">${titleHtml}</h3>
-        ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Family info</strong></div><p>${escapeHtml(familyNote.summary)}</p>${familyNote.sourceNote ? `<details class="family-source-note"><summary>Source note:</summary><p>${escapeHtml(familyNote.sourceNote)}</p></details>` : ''}</div>` : ''}
+        ${familyNote ? `<div class="family-note-row"><div class="family-note-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span><strong>Family info</strong></div>${familyNote.summary ? `<p>${escapeHtml(familyNote.summary)}</p>` : ''}${familyNote.sourceNote ? `<details class="family-source-note"><summary>Source note${familyNote.sourceLanguage ? ' (Slovenian)' : ''}</summary><p${familyNote.sourceLanguage ? ' lang="sl"' : ''}>${escapeHtml(familyNote.sourceNote)}</p></details>` : ''}</div>` : ''}
         ${metaItems ? `<div class="event-details">${metaItems}</div>` : ''}
         ${additionalDataBlock}
         ${links ? `<div class="event-actions">${links}</div>` : ''}

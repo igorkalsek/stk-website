@@ -40,7 +40,7 @@ const promoPaidHref = `mailto:${promoEmail}?subject=${encodeURIComponent(promoPa
     <div>
       <span class="eyebrow">{en ? 'AVAILABLE NOW' : 'NA VOLJO ZDAJ'}</span>
       <h2 id="organizer-confirmation-title">{en ? 'Confirm your race information' : 'Potrdite podatke svojega teka'}</h2>
-      <p>{en ? 'On your race profile, choose “Confirm race information”. Once the correct edition and your confirmation are verified, the profile may display “Data confirmed by organizer”. Email verification alone does not count.' : 'Na profilu izberite »Potrdite pravilnost podatkov«. Po preverjeni potrditvi prave izvedbe lahko tek prejme oznako »Podatke potrdil organizator«. Samo potrjen e-naslov ne zadostuje.'}</p>
+      <p>{en ? 'On your race profile, choose “Confirm race information”. Once the correct edition and your confirmation are verified, the profile may display “Data confirmed by organizer”. Verifying your email address alone does not confirm the race information.' : 'Na profilu izberite »Potrdite pravilnost podatkov«. Po preverjeni potrditvi prave izvedbe lahko tek prejme oznako »Podatke potrdil organizator«. Samo potrjen e-naslov ne zadostuje.'}</p>
       <p>{en ? 'Verified organisers may request a free basic overview of interest in their race on STK over the last 30 days, where sufficient data is available.' : 'Potrjeni organizatorji lahko ob zadostnih podatkih prejmejo brezplačen osnovni pregled zanimanja za tek na STK v zadnjih 30 dneh.'}</p>
     </div>
     <div class="cta-row"><a class="button button-primary" href={finderHref} data-organizer-action="find_race" data-organizer-placement="confirmation">{en ? 'Find and confirm your race' : 'Poiščite in potrdite svoj tek'}</a></div>
