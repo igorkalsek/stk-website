@@ -1,0 +1,1514 @@
+[
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 361,
+      "height": 150
+    },
+    "export": null,
+    "scrollWidth": 390,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "6aa67da6ce88b9c46d835781c381789ffc576af2c7df468458f4d8d7fbb537bf",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 797,
+      "height": 498
+    },
+    "firstTitle": {
+      "y": 881,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 1455,
+      "height": 330
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": {
+      "y": 450,
+      "height": 105
+    },
+    "filters": {
+      "y": 571,
+      "height": 150
+    },
+    "export": {
+      "y": 1327,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 1,
+    "cardsHash": "4a8d0223e6a55d6e043eac7f7fb8e544fa2f2de3b5f5f75dc74219982d777a76",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 814,
+      "height": 498
+    },
+    "firstTitle": {
+      "y": 898,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 3496,
+      "height": 529
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": {
+      "y": 450,
+      "height": 122
+    },
+    "filters": {
+      "y": 588,
+      "height": 150
+    },
+    "export": {
+      "y": 3368,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "d2f94b6ad6b23084683749e51913144af15c93b0deaaa8ead609b15d489dcf9a",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 615,
+      "height": 489
+    },
+    "firstTitle": {
+      "y": 670,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 1696,
+      "height": 221
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 361,
+      "height": 150
+    },
+    "export": null,
+    "scrollWidth": 390,
+    "cards": 2,
+    "cardsHash": "fea127d740dba76c68484077eebc5a6b447a7d85bdbdd42c67d86061cb63b530",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 684,
+      "height": 366
+    },
+    "firstTitle": {
+      "y": 767,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 3671,
+      "height": 221
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 458,
+      "height": 150
+    },
+    "export": {
+      "y": 1459,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "b559073bd80b4e96c61e5d61a2813a8ea5395296f2b029e1508ac93ea5792797",
+    "seasonHash": "986d1889efeb96b7d1ae09947700e8b83790cad7c1ebd4fa74aaa814376070e8",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 390,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 866,
+      "height": 498
+    },
+    "firstTitle": {
+      "y": 950,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 320,
+      "height": 36
+    },
+    "watch": {
+      "y": 3387,
+      "height": 474
+    },
+    "next": {
+      "y": 409,
+      "height": 85
+    },
+    "deadline": {
+      "y": 502,
+      "height": 122
+    },
+    "filters": {
+      "y": 640,
+      "height": 150
+    },
+    "export": {
+      "y": 2665,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "7047a153eb646c4aeb6fd91bdeb07a129403d3707bee47ba42fefb7ed5ba990e",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 348,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 768,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "6aa67da6ce88b9c46d835781c381789ffc576af2c7df468458f4d8d7fbb537bf",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 586,
+      "height": 338
+    },
+    "firstTitle": {
+      "y": 632,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 1066,
+      "height": 240
+    },
+    "next": {
+      "y": 344,
+      "height": 105
+    },
+    "deadline": {
+      "y": 344,
+      "height": 105
+    },
+    "filters": {
+      "y": 465,
+      "height": 44
+    },
+    "export": {
+      "y": 956,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 1,
+    "cardsHash": "4a8d0223e6a55d6e043eac7f7fb8e544fa2f2de3b5f5f75dc74219982d777a76",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 603,
+      "height": 338
+    },
+    "firstTitle": {
+      "y": 649,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 2472,
+      "height": 423
+    },
+    "next": {
+      "y": 344,
+      "height": 122
+    },
+    "deadline": {
+      "y": 344,
+      "height": 122
+    },
+    "filters": {
+      "y": 482,
+      "height": 44
+    },
+    "export": {
+      "y": 2361,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "d2f94b6ad6b23084683749e51913144af15c93b0deaaa8ead609b15d489dcf9a",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 469,
+      "height": 335
+    },
+    "firstTitle": {
+      "y": 486,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 1191,
+      "height": 167
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 348,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 768,
+    "cards": 2,
+    "cardsHash": "fea127d740dba76c68484077eebc5a6b447a7d85bdbdd42c67d86061cb63b530",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 566,
+      "height": 246
+    },
+    "firstTitle": {
+      "y": 612,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 2669,
+      "height": 167
+    },
+    "next": {
+      "y": 344,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 445,
+      "height": 44
+    },
+    "export": {
+      "y": 1103,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "b559073bd80b4e96c61e5d61a2813a8ea5395296f2b029e1508ac93ea5792797",
+    "seasonHash": "986d1889efeb96b7d1ae09947700e8b83790cad7c1ebd4fa74aaa814376070e8",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 768,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 637,
+      "height": 338
+    },
+    "firstTitle": {
+      "y": 683,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 325,
+      "height": 18
+    },
+    "watch": {
+      "y": 2545,
+      "height": 350
+    },
+    "next": {
+      "y": 378,
+      "height": 122
+    },
+    "deadline": {
+      "y": 378,
+      "height": 122
+    },
+    "filters": {
+      "y": 516,
+      "height": 44
+    },
+    "export": {
+      "y": 1879,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "7047a153eb646c4aeb6fd91bdeb07a129403d3707bee47ba42fefb7ed5ba990e",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 350,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 1440,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "6aa67da6ce88b9c46d835781c381789ffc576af2c7df468458f4d8d7fbb537bf",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 588,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 628,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 1004,
+      "height": 222
+    },
+    "next": {
+      "y": 346,
+      "height": 105
+    },
+    "deadline": {
+      "y": 346,
+      "height": 105
+    },
+    "filters": {
+      "y": 467,
+      "height": 44
+    },
+    "export": {
+      "y": 894,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 1,
+    "cardsHash": "4a8d0223e6a55d6e043eac7f7fb8e544fa2f2de3b5f5f75dc74219982d777a76",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 588,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 628,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 2045,
+      "height": 405
+    },
+    "next": {
+      "y": 346,
+      "height": 105
+    },
+    "deadline": {
+      "y": 346,
+      "height": 105
+    },
+    "filters": {
+      "y": 467,
+      "height": 44
+    },
+    "export": {
+      "y": 1934,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "d2f94b6ad6b23084683749e51913144af15c93b0deaaa8ead609b15d489dcf9a",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 471,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 486,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 1072,
+      "height": 167
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 350,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 1440,
+    "cards": 2,
+    "cardsHash": "fea127d740dba76c68484077eebc5a6b447a7d85bdbdd42c67d86061cb63b530",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 568,
+      "height": 183
+    },
+    "firstTitle": {
+      "y": 608,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 2276,
+      "height": 167
+    },
+    "next": {
+      "y": 346,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 447,
+      "height": 44
+    },
+    "export": {
+      "y": 984,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "b559073bd80b4e96c61e5d61a2813a8ea5395296f2b029e1508ac93ea5792797",
+    "seasonHash": "986d1889efeb96b7d1ae09947700e8b83790cad7c1ebd4fa74aaa814376070e8",
+    "errors": []
+  },
+  {
+    "lang": "sl",
+    "width": 1440,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 622,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 662,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 327,
+      "height": 18
+    },
+    "watch": {
+      "y": 2175,
+      "height": 332
+    },
+    "next": {
+      "y": 380,
+      "height": 105
+    },
+    "deadline": {
+      "y": 380,
+      "height": 105
+    },
+    "filters": {
+      "y": 501,
+      "height": 44
+    },
+    "export": {
+      "y": 1569,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "7047a153eb646c4aeb6fd91bdeb07a129403d3707bee47ba42fefb7ed5ba990e",
+    "seasonHash": "01f1374452da75751574332d6befa6d9e00f5046a6d2945b8ec6fda1a02dc6a4",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 361,
+      "height": 97
+    },
+    "export": null,
+    "scrollWidth": 390,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "456851dc13cb51fdee0b9d617af7b7b6960fded0877ab78f99e1cbf6d5d8f010",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 762,
+      "height": 521
+    },
+    "firstTitle": {
+      "y": 845,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 1442,
+      "height": 348
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": {
+      "y": 450,
+      "height": 122
+    },
+    "filters": {
+      "y": 588,
+      "height": 97
+    },
+    "export": {
+      "y": 1315,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 1,
+    "cardsHash": "fc8021a15f9d3b12bb91c1cb83e292c0cc9fda59ae832578cbf94ab8b4df9ec9",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 762,
+      "height": 521
+    },
+    "firstTitle": {
+      "y": 845,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 3506,
+      "height": 547
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": {
+      "y": 450,
+      "height": 122
+    },
+    "filters": {
+      "y": 588,
+      "height": 97
+    },
+    "export": {
+      "y": 3379,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "a8644b0172fbbc60a4a62af22e55678a01a9db856131eeb56835d1aae669822f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 562,
+      "height": 489
+    },
+    "firstTitle": {
+      "y": 617,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 1643,
+      "height": 221
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 361,
+      "height": 97
+    },
+    "export": null,
+    "scrollWidth": 390,
+    "cards": 2,
+    "cardsHash": "939571bb8f8a27db87f2b909ad6a2a5c9bc1cf85831a947fa978137b38ec044f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 631,
+      "height": 366
+    },
+    "firstTitle": {
+      "y": 715,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 268,
+      "height": 36
+    },
+    "watch": {
+      "y": 3618,
+      "height": 221
+    },
+    "next": {
+      "y": 357,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 458,
+      "height": 97
+    },
+    "export": {
+      "y": 1407,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "3227b0cd6eb841bae15a88a32f437814cf3a6a511d44d4a17c3b3dc08edd8e66",
+    "seasonHash": "68e5dc704c102435eae6ae2d78896f275d4619ca52cd5da90d90fcd6466b4aa3",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 390,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 814,
+      "height": 521
+    },
+    "firstTitle": {
+      "y": 897,
+      "height": 22
+    },
+    "tabs": {
+      "y": 196,
+      "height": 56
+    },
+    "local": {
+      "y": 320,
+      "height": 36
+    },
+    "watch": {
+      "y": 3398,
+      "height": 474
+    },
+    "next": {
+      "y": 409,
+      "height": 85
+    },
+    "deadline": {
+      "y": 502,
+      "height": 122
+    },
+    "filters": {
+      "y": 640,
+      "height": 97
+    },
+    "export": {
+      "y": 2675,
+      "height": 108
+    },
+    "scrollWidth": 390,
+    "cards": 6,
+    "cardsHash": "9a393c775f7e3ae708b293a85f96e7852e045fbe863f821dee92221113b2dfad",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 348,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 768,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "456851dc13cb51fdee0b9d617af7b7b6960fded0877ab78f99e1cbf6d5d8f010",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 603,
+      "height": 361
+    },
+    "firstTitle": {
+      "y": 649,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 1107,
+      "height": 258
+    },
+    "next": {
+      "y": 344,
+      "height": 122
+    },
+    "deadline": {
+      "y": 344,
+      "height": 122
+    },
+    "filters": {
+      "y": 482,
+      "height": 44
+    },
+    "export": {
+      "y": 996,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 1,
+    "cardsHash": "fc8021a15f9d3b12bb91c1cb83e292c0cc9fda59ae832578cbf94ab8b4df9ec9",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 603,
+      "height": 361
+    },
+    "firstTitle": {
+      "y": 649,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 2464,
+      "height": 441
+    },
+    "next": {
+      "y": 344,
+      "height": 122
+    },
+    "deadline": {
+      "y": 344,
+      "height": 122
+    },
+    "filters": {
+      "y": 482,
+      "height": 44
+    },
+    "export": {
+      "y": 2354,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "a8644b0172fbbc60a4a62af22e55678a01a9db856131eeb56835d1aae669822f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 469,
+      "height": 335
+    },
+    "firstTitle": {
+      "y": 486,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 1191,
+      "height": 185
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 348,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 768,
+    "cards": 2,
+    "cardsHash": "939571bb8f8a27db87f2b909ad6a2a5c9bc1cf85831a947fa978137b38ec044f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 566,
+      "height": 246
+    },
+    "firstTitle": {
+      "y": 612,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 291,
+      "height": 18
+    },
+    "watch": {
+      "y": 2637,
+      "height": 185
+    },
+    "next": {
+      "y": 344,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 445,
+      "height": 44
+    },
+    "export": {
+      "y": 1103,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "3227b0cd6eb841bae15a88a32f437814cf3a6a511d44d4a17c3b3dc08edd8e66",
+    "seasonHash": "68e5dc704c102435eae6ae2d78896f275d4619ca52cd5da90d90fcd6466b4aa3",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 768,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 637,
+      "height": 361
+    },
+    "firstTitle": {
+      "y": 683,
+      "height": 22
+    },
+    "tabs": {
+      "y": 216,
+      "height": 56
+    },
+    "local": {
+      "y": 325,
+      "height": 18
+    },
+    "watch": {
+      "y": 2537,
+      "height": 368
+    },
+    "next": {
+      "y": 378,
+      "height": 122
+    },
+    "deadline": {
+      "y": 378,
+      "height": 122
+    },
+    "filters": {
+      "y": 516,
+      "height": 44
+    },
+    "export": {
+      "y": 1871,
+      "height": 91
+    },
+    "scrollWidth": 768,
+    "cards": 6,
+    "cardsHash": "9a393c775f7e3ae708b293a85f96e7852e045fbe863f821dee92221113b2dfad",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "empty",
+    "status": 200,
+    "firstCard": null,
+    "firstTitle": null,
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": null,
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 350,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 1440,
+    "cards": 0,
+    "cardsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seasonHash": "456851dc13cb51fdee0b9d617af7b7b6960fded0877ab78f99e1cbf6d5d8f010",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "one",
+    "status": 200,
+    "firstCard": {
+      "y": 588,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 628,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 1004,
+      "height": 222
+    },
+    "next": {
+      "y": 346,
+      "height": 105
+    },
+    "deadline": {
+      "y": 346,
+      "height": 105
+    },
+    "filters": {
+      "y": 467,
+      "height": 44
+    },
+    "export": {
+      "y": 894,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 1,
+    "cardsHash": "fc8021a15f9d3b12bb91c1cb83e292c0cc9fda59ae832578cbf94ab8b4df9ec9",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "multiple",
+    "status": 200,
+    "firstCard": {
+      "y": 605,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 645,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 2060,
+      "height": 405
+    },
+    "next": {
+      "y": 346,
+      "height": 122
+    },
+    "deadline": {
+      "y": 346,
+      "height": 122
+    },
+    "filters": {
+      "y": 484,
+      "height": 44
+    },
+    "export": {
+      "y": 1949,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "a8644b0172fbbc60a4a62af22e55678a01a9db856131eeb56835d1aae669822f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "past",
+    "status": 200,
+    "firstCard": {
+      "y": 471,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 486,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 1072,
+      "height": 167
+    },
+    "next": null,
+    "deadline": null,
+    "filters": {
+      "y": 350,
+      "height": 44
+    },
+    "export": null,
+    "scrollWidth": 1440,
+    "cards": 2,
+    "cardsHash": "939571bb8f8a27db87f2b909ad6a2a5c9bc1cf85831a947fa978137b38ec044f",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "statuses",
+    "status": 200,
+    "firstCard": {
+      "y": 568,
+      "height": 183
+    },
+    "firstTitle": {
+      "y": 608,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 293,
+      "height": 18
+    },
+    "watch": {
+      "y": 2274,
+      "height": 167
+    },
+    "next": {
+      "y": 346,
+      "height": 85
+    },
+    "deadline": null,
+    "filters": {
+      "y": 447,
+      "height": 44
+    },
+    "export": {
+      "y": 982,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "3227b0cd6eb841bae15a88a32f437814cf3a6a511d44d4a17c3b3dc08edd8e66",
+    "seasonHash": "68e5dc704c102435eae6ae2d78896f275d4619ca52cd5da90d90fcd6466b4aa3",
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "state": "partial",
+    "status": 200,
+    "firstCard": {
+      "y": 639,
+      "height": 274
+    },
+    "firstTitle": {
+      "y": 679,
+      "height": 22
+    },
+    "tabs": {
+      "y": 218,
+      "height": 56
+    },
+    "local": {
+      "y": 327,
+      "height": 18
+    },
+    "watch": {
+      "y": 2192,
+      "height": 332
+    },
+    "next": {
+      "y": 380,
+      "height": 122
+    },
+    "deadline": {
+      "y": 380,
+      "height": 122
+    },
+    "filters": {
+      "y": 518,
+      "height": 44
+    },
+    "export": {
+      "y": 1586,
+      "height": 91
+    },
+    "scrollWidth": 1440,
+    "cards": 6,
+    "cardsHash": "9a393c775f7e3ae708b293a85f96e7852e045fbe863f821dee92221113b2dfad",
+    "seasonHash": "18495b59ffe2f75cf8a24fdd7c67185ee08bee3ca4fd50e8d8cb83b99373d131",
+    "errors": []
+  }
+]

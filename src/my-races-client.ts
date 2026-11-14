@@ -78,7 +78,7 @@ export const getStorage = (): MinimalStorage | null => {
   try { return window.localStorage; } catch { return null; }
 };
 
-const renderLocalNotice = (labels: Labels) => `<p class="muted-note my-races-local-note"><span class="action-icon">${renderActionIcon('notes')}</span> ${escapeHtml(labels.local)}</p>`;
+const renderLocalNotice = (labels: Labels, language: 'sl' | 'en') => `<div class="my-races-notices"><p class="muted-note my-races-local-note"><span class="action-icon">${renderActionIcon('notes')}</span> ${escapeHtml(labels.local)}</p><p class="muted-note my-races-registration-note">${language === 'en' ? 'Saving a race does not register you. Register with the organizer.' : 'Shranjen tek še ni prijava. Prijavite se pri organizatorju.'}</p></div>`;
 
 export const renderPrimaryActionLinks = (event: Parameters<typeof buildPrimaryActions>[0], language: 'sl' | 'en') => buildPrimaryActions(event, language)
   .map((action) => `<a class="button button-small ${action.kind === 'registration' ? 'my-race-action-registration' : 'button-secondary-light my-race-action-notice'}" href="${escapeHtml(action.url)}" target="_blank" rel="noopener noreferrer"><span class="action-icon">${renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}</span> ${escapeHtml(action.label)}</a>`)
@@ -158,17 +158,14 @@ const renderRaceCalendarMenu = (event: { title: string; date: string; noticeUrl?
 
 
 const getRaceCardId = (key: string) => `my-race-${key.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
-const renderNextStepSummary = (items: ReturnType<typeof getUpcomingSavedRaceDeadlines>, races: ReturnType<typeof resolveSavedRaces>, labels: Labels, language: 'sl' | 'en', todayIso: string) => {
+const renderNextStepSummary = (items: ReturnType<typeof getUpcomingSavedRaceDeadlines>, races: ReturnType<typeof resolveSavedRaces>, labels: Labels, language: 'sl' | 'en') => {
+  const race = getNextSavedRace(races);
+  const next = race?.event ? `<section class="next-registration-deadline next-race-step" data-next-race-step><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.nextRace)}</p><p class="next-registration-deadline-race"><a href="#${escapeHtml(getRaceCardId(race.key))}">${escapeHtml(race.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(formatDate(race.event.date, language))}</p></section>` : '';
   const item = items[0];
-  if (!item) {
-    const race = getNextSavedRace(races);
-    if (!race?.event) return '';
-    const days = Math.max(0, Math.round((new Date(`${race.event.date}T00:00:00`).getTime() - new Date(`${todayIso}T00:00:00`).getTime()) / 86400000));
-    return `<section class="next-registration-deadline next-race-step" data-next-race-step><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${language === 'en' ? 'Next race' : 'Naslednji tek'}</p><p class="next-registration-deadline-race"><a href="#${escapeHtml(getRaceCardId(race.key))}">${escapeHtml(race.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(formatDate(race.event.date, language))} · ${days === 0 ? labels.today : language === 'en' ? `${days} days to go` : `še ${days} dni`}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(race.key))}">${escapeHtml(labels.viewRace)}</a></section>`;
-  }
+  if (!item) return next;
   const detailUrl = getSavedRaceDetailPath(item.event, language);
   const verified = item.event.verifiedDeadlines?.find(candidate => candidate.deadline.date === item.deadline.date);
-  return `<section class="next-registration-deadline" data-next-registration-deadline><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.nextDeadline)}</p><p class="next-registration-deadline-race"><a href="${escapeHtml(detailUrl)}">${escapeHtml(item.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(verified?.label ?? deadlineLabel(item.deadline, labels))} ${escapeHtml(formatDeadlineDateAfterUntil(item.deadline.date, language))} · ${escapeHtml(conciseRelative(item.deadline, labels, language))}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(item.key))}">${escapeHtml(labels.viewRace)}</a></section>`;
+  return `<div class="my-races-overview">${next}<section class="next-registration-deadline" data-next-registration-deadline><p class="next-registration-deadline-title"><span class="action-icon">${renderActionIcon('calendar')}</span> ${escapeHtml(labels.nextDeadline)}</p><p class="next-registration-deadline-race"><a href="${escapeHtml(detailUrl)}">${escapeHtml(item.event.title)}</a></p><p class="next-registration-deadline-copy">${escapeHtml(verified?.label ?? deadlineLabel(item.deadline, labels))} ${escapeHtml(formatDeadlineDateAfterUntil(item.deadline.date, language))} · ${escapeHtml(conciseRelative(item.deadline, labels, language))}</p><a class="next-registration-deadline-jump" href="#${escapeHtml(getRaceCardId(item.key))}">${escapeHtml(labels.viewRace)}</a></section></div>`;
 };
 
 export const renderRaceWatch = (watch: RaceWatchResult, savedCount: number, language: 'sl' | 'en', loading = false) => {
@@ -373,7 +370,7 @@ export const initMyRacesPage = async (root = document, refreshWatch = false) => 
   const storage = getStorage();
   if (!storage) {
     trackStkPageLoadEventOnce(`my_races_viewed:${language}`, { event_type: 'my_races_viewed', language, placement: 'my_races' });
-    mount.innerHTML = `<p class="notice warning">${labels.storageError}</p>${renderLocalNotice(labels)}`;
+    mount.innerHTML = `<p class="notice warning">${labels.storageError}</p>${renderLocalNotice(labels, language)}`;
     updateSeasonMount(root, [], [], language);
     return;
   }
@@ -494,7 +491,7 @@ export const initMyRacesPage = async (root = document, refreshWatch = false) => 
     const updateStatusMount = root.querySelector<HTMLElement>('[data-my-races-update-status-mount]');
     if (updateStatusMount) updateStatusMount.innerHTML = pendingRequiredRequests.size ? `<p class="muted-note" role="status" aria-live="polite" data-my-races-update-status>${escapeHtml(labels.updating)}</p>` : '';
     const hasRequiredMasterFailure = requiredYears.some((year) => failedMasterYears.has(year));
-    mount.innerHTML = `${hasRequiredMasterFailure ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels)}${renderRaceWatch(watch, saved.length, language, watchCache.recent === undefined || watchCache.deadlines === undefined)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language, todayIso)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderExportToolbar(exportableUpcoming, labels)}${renderRaceAgenda(upcoming, labels, language, todayIso, true)}</section>` : (!filtered.length && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}`;
+    mount.innerHTML = `${hasRequiredMasterFailure ? `<p class="notice warning">${labels.apiError}</p>` : ''}${renderLocalNotice(labels, language)}${renderNextStepSummary(getUpcomingSavedRaceDeadlines({ items: filtered as any, todayIso, windowDays: Number.MAX_SAFE_INTEGER, limit: 1 }), filtered, labels, language)}${renderStatusFilters(counts, activeFilter, resolved.length, language)}${emptyFiltered ? `<p>${labels.emptyFilter}</p>` : ''}${upcoming.length ? `<section><h2>${labels.upcoming}</h2>${renderRaceAgenda(upcoming, labels, language, todayIso, true)}${renderExportToolbar(exportableUpcoming, labels)}</section>` : (!filtered.length && activeFilter === 'all' ? `<p>${labels.empty} <a href="${language === 'en' ? '/en/find-races/' : '/iskalnik-tekov/'}">${labels.search}</a>.</p>` : '')}${other.length ? `<section class="my-races-secondary"><h2>${labels.other}</h2>${renderRaceAgenda(other, labels, language, todayIso)}</section>` : ''}${renderRaceWatch(watch, saved.length, language, watchCache.recent === undefined || watchCache.deadlines === undefined)}`;
     mount.closest<HTMLElement>('[data-my-races-panel="plan"]')?.removeAttribute('aria-busy');
     mount.querySelector<HTMLButtonElement>('[data-download-upcoming-races-ics]')?.addEventListener('click', () => downloadUpcomingRacesIcs(exportableUpcoming, labels, language === 'en' ? 'my-races.ics' : 'moji-teki.ics', mount.querySelector<HTMLElement>('[data-calendar-export-status]')));
     mount.querySelectorAll<HTMLButtonElement>('[data-my-races-status-filter]').forEach((button) => button.addEventListener('click', () => { mount.dataset.activeStatusFilter = button.dataset.myRacesStatusFilter || 'all'; initMyRacesPage(root); }));
