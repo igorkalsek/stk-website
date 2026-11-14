@@ -401,7 +401,7 @@ describe('frontend analytics v3 contract', () => {
     assert.match(enFinder, /import \{ getStableEventId, mapPublicRaceEvent/);
     assert.match(enFinder, /const detailPath = buildDetailUrlWithFinderReturn\([\s\S]*locale\.buildDetailPath\(event\)/);
     assert.match(enFinder, /<h3 class="search-event-title"><a class="search-event-title-link" href="\$\{escapeHtml\(detailPath\)\}">\$\{escapeHtml\(event\.title\)\}<\/a><\/h3>/);
-    assert.match(enFinder, /<a class="button button-small button-primary search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}">\$\{locale.detailLabel\}<\/a>/);
+    assert.match(enFinder, /<a class="button button-small button-secondary-light search-detail-cta" href="\$\{escapeHtml\(detailPath\)\}">\$\{locale.detailLabel\}<\/a>/);
     assert.doesNotMatch(enFinder, /search-detail-cta[\s\S]{0,140}target="_blank"/);
     assert.doesNotMatch(enFinder, /search-event-title-link[\s\S]{0,140}target="_blank"/);
   });

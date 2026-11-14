@@ -493,3 +493,32 @@ for (const home of homes) for (const width of [390, 1440]) {
     await expect(page.locator('[data-top-events] .event-card')).toHaveCount(2);
   });
 }
+
+for (const home of homes) for (const width of [390, 768, 1440]) {
+  test(`U14 ${home.path} upcoming card actions at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const events = await mockHomepageApis(page, false, true);
+    events[0].povezava_prijava = '';
+    await page.goto(home.path);
+    const cards = page.locator('[data-nearest-events] .event-card');
+    await expect(cards).toHaveCount(4);
+    const missing = cards.filter({ hasText: 'Fallback race' }).first();
+    await expect(missing.locator('.button-primary')).toHaveCount(0);
+    for (const card of await cards.all()) {
+      const detail = card.locator('.race-card-details');
+      await expect(detail).toHaveText(home.path === '/' ? 'Podrobnosti' : 'Details');
+      expect(await detail.getAttribute('href')).toBe(await card.locator('h3 a').getAttribute('href'));
+      await expect(detail).not.toHaveClass(/button-primary/);
+      for (const control of await card.locator('.event-actions :is(a,button,summary):visible').all()) {
+        expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      }
+    }
+    const registered = cards.filter({ hasText: 'Second fallback race' });
+    await expect(registered.locator('.event-actions > a').first()).toHaveAttribute('data-analytics-link-type', 'prijava');
+    await expect(registered.locator('.button-primary')).toHaveCount(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await registered.locator('.race-card-details').focus();
+    await page.keyboard.press('Tab');
+    await expect(registered.locator('.calendar-menu summary')).toBeFocused();
+  });
+}

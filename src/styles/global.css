@@ -2372,7 +2372,7 @@ main {
 }
 
 .search-detail-cta {
-  box-shadow: 0 0.45rem 1rem rgba(16, 64, 80, 0.18);
+  box-shadow: none;
 }
 
 .search-event-card .search-detail-cta {
@@ -5454,20 +5454,54 @@ main {
   gap: 6px;
 }
 
-.search-event-primary-actions {
+.search-event-primary-actions,
+.search-event-secondary-actions {
   gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  max-width: 100%;
+}
+
+.search-event-row .search-detail-cta {
+  flex: 0 1 auto;
+}
+
+.search-event-row .search-event-more-menu {
+  width: fit-content;
+}
+
+.card-registration-warning {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--deep-teal);
+  font-size: 0.875rem;
 }
 
 .search-event-primary-actions .button,
 .search-event-secondary-actions .button,
 .search-event-more-menu summary {
-  min-height: 34px;
+  min-height: 44px;
   padding: 6px 10px;
 }
 
 .saved-race-button-compact {
   width: auto;
   gap: 0.25rem;
+}
+
+/* U14: keep personal utilities quieter than registration and profile links. */
+.search-event-row-actions .saved-race-button,
+.search-event-more-menu > summary {
+  background: transparent;
+  border-color: transparent;
+  color: var(--deep-teal);
+  box-shadow: none;
+}
+
+.search-event-row-actions :is(a, button, summary):focus-visible,
+.home-primary-section .event-actions :is(a, button, summary):focus-visible {
+  outline: 3px solid var(--deep-teal);
+  outline-offset: 3px;
 }
 
 .saved-race-star {
@@ -5568,10 +5602,6 @@ main {
 
   .search-event-primary-actions .button {
     max-width: 100%;
-  }
-
-  .search-event-row .search-detail-cta {
-    flex: 0 1 auto;
   }
 
   .search-event-row .search-event-more-menu-options {
