@@ -3262,7 +3262,7 @@ main {
 }
 
 .my-races-app {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 
@@ -3913,6 +3913,26 @@ main {
   align-items: center;
   gap: 0.4rem;
   margin: 0;
+}
+
+/* U10: surface the next race and deadline before the saved list. */
+.my-races-notices { margin-bottom: .75rem; }
+.my-races-notices p { margin: 0; }
+.my-races-notices .my-races-registration-note { margin-top: .3rem; }
+.my-races-overview { display: grid; gap: .5rem; margin: .75rem 0; }
+.my-races-overview .next-registration-deadline { margin: 0; }
+.my-races-app .my-races-toolbar { margin: 1rem 0; }
+.my-races-app > section > h2 { margin: .75rem 0; }
+.my-races-app .my-races-status-filter { min-height: 44px; }
+
+@media (min-width: 720px) {
+  .my-races-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .my-races-page { padding-top: 1.5rem; }
+  .my-races-page h1 { margin-bottom: .5rem; }
+  .my-races-page .lead { margin-bottom: .75rem; }
+  .my-races-page .my-races-tabs { margin: .75rem 0; }
 }
 
 .my-race-location {

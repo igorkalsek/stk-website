@@ -292,3 +292,44 @@ test('a same-day visit refreshes successful cached data once, with no polling', 
   await page.clock.runFor(60_000);
   expect(calls).toEqual({ recent: 2, deadlines: 2 });
 });
+
+for (const language of ['sl', 'en'] as const) for (const width of [390, 768, 1440]) {
+  test(`U10 ${language} ${width}: next race and deadline precede the saved list`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    const { initial, errors } = await setup(page);
+    await page.goto(language === 'sl' ? '/moji-teki/' : '/en/my-races/');
+    const next = page.locator('[data-next-race-step]');
+    const deadline = page.locator('[data-next-registration-deadline]');
+    const first = page.locator('[data-next-race]');
+    await expect(next).toContainText('4. Lahinja Trail');
+    await expect(deadline).toContainText('Go4trail');
+    await expect(page.locator('.my-races-local-note')).toBeVisible();
+    await expect(page.locator('.my-races-registration-note')).toHaveText(language === 'sl'
+      ? 'Shranjen tek še ni prijava. Prijavite se pri organizatorju.'
+      : 'Saving a race does not register you. Register with the organizer.');
+    await expect(first.locator('[data-my-race-status-select]')).toHaveValue('following');
+    const layout = await page.evaluate(() => {
+      const y = (selector: string) => document.querySelector(selector)!.getBoundingClientRect().top + scrollY;
+      return { next: y('[data-next-race-step]'), deadline: y('[data-next-registration-deadline]'), first: y('[data-next-race]'), title: y('[data-next-race] h3'), watch: y('[data-race-watch]'), export: y('.my-races-toolbar'), overflow: document.documentElement.scrollWidth > innerWidth };
+    });
+    expect(layout.next).toBeLessThanOrEqual(layout.deadline);
+    expect(layout.deadline).toBeLessThan(layout.first);
+    expect(layout.first).toBeLessThan(layout.export);
+    expect(layout.first).toBeLessThan(layout.watch);
+    expect(layout.overflow).toBe(false);
+    if (width === 390) expect(layout.title).toBeLessThanOrEqual(1000);
+    await next.getByRole('link').click();
+    await expect(first).toBeInViewport();
+    const tabs = page.getByRole('tab');
+    await tabs.first().focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(tabs.nth(1)).toBeFocused();
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('[data-my-races-panel="season"]')).toBeVisible();
+    await page.keyboard.press('Home');
+    await expect(tabs.first()).toBeFocused();
+    await expect(page.locator('[data-my-races-panel="plan"]')).toBeVisible();
+    expect(await page.evaluate(key => localStorage.getItem(key), KEY)).toBe(initial);
+    expect(errors).toEqual([]);
+  });
+}

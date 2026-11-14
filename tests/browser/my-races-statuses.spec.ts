@@ -296,7 +296,7 @@ test('skips a completed race today and keeps the next-race summary aligned with 
   await expect(page.locator('[data-next-race="true"]')).toHaveCount(1);
   const summary = page.locator('[data-next-race-step]');
   await expect(summary).toContainText('Maribor Test Trail');
-  await expect(summary.locator('a[href="#my-race-2026-r000102"]')).toHaveCount(2);
+  await expect(summary.locator('a[href="#my-race-2026-r000102"]')).toHaveCount(1);
   await expectNoUnexpectedErrors(pageErrors);
 });
 
