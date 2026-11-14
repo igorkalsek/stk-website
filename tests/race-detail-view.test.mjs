@@ -550,16 +550,29 @@ describe('race detail view model', () => {
   it('keeps only genuinely distinct profile highlights without losing the original facts', () => {
     const crowded = { ...baseEvent, distances: '5;10;85', cup: 'PGT Pokal', kidsRaces: true, familyFriendly: true, additionalData: { ...richAdditional, elevationGain: '2500', registrationMinEur: '0', dayOfRegistration: 'DA' } };
     assert.deepEqual(buildRaceHighlightCards(crowded, 'en').map(({ key }) => key), ['ultra', 'elevation', 'family', 'cup']);
-    assert.deepEqual(buildProfileHighlights(crowded, 'en').map(({ key }) => key), ['ultra']);
+    assert.deepEqual(buildProfileHighlights(crowded, 'en').map(({ key }) => key), ['ultra', 'free-fee']);
     const partlyFree = { ...baseEvent, distances: '0.5;5;10', familyFriendly: true, additionalData: { ...richAdditional, elevationGain: '', dayOfRegistration: '', registrationMinEur: '0', registrationMaxEur: '60' } };
     assert.deepEqual(buildProfileHighlights(partlyFree, 'sl').map(({ key }) => key), ['free-fee']);
+  });
+
+  it('preserves a single distinct highlight and keeps family details in the dedicated section', () => {
+    for (const language of ['sl', 'en']) {
+      const free = { ...baseEvent, distances: '5', cup: '', kidsRaces: false, familyFriendly: false,
+        additionalData: { ...richAdditional, elevationGain: '', dayOfRegistration: '', registrationMinEur: '0', registrationMaxEur: '20' } };
+      assert.deepEqual(buildProfileHighlights(free, language).map(({ key }) => key), ['free-fee']);
+      const children = { ...free, kidsRaces: true, publicNotes: 'Otroški teki 300 m/600 m. Otroški teki brezplačni.' };
+      assert.ok(buildFamilyInfo(children, language).join(' ').includes('300 m'));
+      assert.ok(buildFamilyInfo(children, language).join(' ').includes('600 m'));
+      assert.equal(buildProfileHighlights(children, language).some(({ key }) => key === 'family'), false);
+      assert.equal(buildCourseRows({ ...free, additionalData: { ...free.additionalData, routeUrl: '', elevationGain: '  ' } }, language).length, 0);
+    }
   });
 
   it('does not attribute a single elevation value to all listed race distances', () => {
     const multiple = { ...baseEvent, distances: '5;10;25', additionalData: { ...richAdditional, elevationGain: '2200', routeUrl: '' } };
     const single = { ...multiple, distances: '25' };
-    assert.equal(buildCourseRows(multiple, 'sl')[0].label, 'Višinski vzpon (trasa ni določena)');
-    assert.equal(buildCourseRows(multiple, 'en')[0].label, 'Elevation gain (course unspecified)');
+    assert.equal(buildCourseRows(multiple, 'sl')[0].label, 'Višinski vzpon (razdalja ni navedena)');
+    assert.equal(buildCourseRows(multiple, 'en')[0].label, 'Elevation gain (distance unspecified)');
     assert.equal(buildCourseRows(single, 'sl')[0].label, 'Višinska razlika');
     assert.equal(buildCourseRows(multiple, 'en')[0].value, '2200 m+');
   });

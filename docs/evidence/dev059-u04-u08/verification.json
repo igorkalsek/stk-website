@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-14",
+  "baseline": "f8d992ffc7341276e67befd6dcbbaceb30ffa593",
+  "initialDraft": "ae85c9821726fe12de688147eaa844f5371b95d0",
+  "unit": {
+    "passed": 978,
+    "failed": 0
+  },
+  "build": {
+    "pages": 749,
+    "verifiedProfiles": 722,
+    "passed": true
+  },
+  "existingBrowserSuites": {
+    "gpx-links.spec.ts": 5,
+    "race-detail-contrast.spec.ts": 70,
+    "race-profile-ux.spec.ts": 8,
+    "registration-fees.spec.ts": 6
+  },
+  "finalAffectedSuites": {
+    "race-profile-hierarchy.spec.ts": 6,
+    "registration-fees.spec.ts": 6,
+    "failed": 0
+  },
+  "existingProfileMapTests": 4,
+  "preservationComparisons": 48,
+  "diffCheck": "PASS",
+  "linuxFontFollowup": {
+    "observedDeadlineBottom": 834,
+    "layoutFix": "wider location column, compact official button padding and mobile spacing",
+    "affectedBrowserChecksPassed": 36,
+    "secondDeadlineBottom": 808,
+    "acceptanceMetric": "Top of visible value, consistent with the audit and before/after table"
+  },
+  "ciFinal": "See PR #271 description for results on the corrective commit",
+  "limits": [
+    "Chromium desktop viewport emulation; no physical iPhone or Safari",
+    "No full WCAG audit",
+    "No production deployment or read-back"
+  ]
+}

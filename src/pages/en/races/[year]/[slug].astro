@@ -99,8 +99,7 @@ const heroFacts: HeroFact[] = event ? [
   ...(event.surface ? [{ label: 'Surface', value: formatDetailSurface(event.surface, 'en') }] : [])
 ] : [];
 const heroBadges = event ? [
-  event.cup ? { label: 'Cup or series', value: event.cup } : null,
-  event.familyFriendly ? { label: 'Families', value: 'Family-friendly' } : null
+  event.cup ? { label: 'Cup or series', value: event.cup } : null
 ].filter((item): item is { label: string; value: string; featured?: boolean } => Boolean(item)) : [];
 const detailItems = event ? buildKeyFacts(event, 'en') : [];
 const raceHighlights = event ? buildProfileHighlights(event, 'en') : [];
@@ -108,7 +107,7 @@ const registrationItems = event ? buildRegistrationRows(event, 'en', formatDate)
 const registrationDeadlineViews = event ? buildRegistrationDeadlineViews({ todayIso: event.date, eventDate: event.date, registrationDeadline: event.additionalData?.registrationDeadline, earlyRegistrationDeadline: event.additionalData?.earlyRegistrationDeadline }) : [];
 const deadlineCalendarLabels = { add: 'Add deadline to calendar', google: 'Google Calendar', apple: 'Apple/iCal', outlook: 'Outlook' };
 const deadlineKindLabels = { early: 'Cheaper registration', registration: 'Registration deadline' };
-const deadlineCalendarOptions = event ? registrationDeadlineViews.map((deadline) => {
+const deadlineCalendarOptions = event ? registrationDeadlineViews.toSorted((a, b) => Number(b.kind === 'registration') - Number(a.kind === 'registration')).map((deadline) => {
   const input = buildRegistrationDeadlineCalendarInput({ eventId: getStableEventId(event), eventYear: event.year, eventTitle: event.title, deadlineKind: deadline.kind, deadlineDate: deadline.date, detailUrl: canonicalPath, registrationUrl: event.registrationUrl, language: 'en' });
   return { deadline, googleUrl: buildGoogleCalendarEventUrl(input), icsUrl: buildIcsDataUrl(input), icsFilename: buildIcsFilename(input), outlookUrl: buildOutlookCalendarEventUrl(input) };
 }) : [];
@@ -233,9 +232,9 @@ const jsonLd = event ? {
               )}
 
 
-              {(registrationItems.length > 0 || routeItems.length > 0) && (
+              {(registrationItems.length > 0 || deadlineCalendarOptions.length > 0 || routeItems.length > 0) && (
                 <div class="event-detail-info-card-grid">
-              {registrationItems.length > 0 && (
+              {(registrationItems.length > 0 || deadlineCalendarOptions.length > 0) && (
                     <article class="info-card event-detail-panel">
                       <h2><span class="action-icon" set:html={renderActionIcon('ticket')}></span> <span data-race-upcoming-only>Registration and participation</span><span data-race-archive-only>Registration archive</span></h2>
                       <dl class="event-detail-list">
@@ -284,33 +283,33 @@ const jsonLd = event ? {
                 </div>
               )}
 
-              <div class="event-detail-my-race-panel">
+              <section class="event-detail-my-race-panel" aria-labelledby="race-my-tools-title">
                 <div class="event-detail-my-race-heading">
-                  <h2>My race</h2>
+                  <h2 id="race-my-tools-title">My race</h2>
                   {shareLinks && <a href="#race-share">Share race</a>}
                 </div>
                 <div class="event-detail-my-race-actions">
                   <button class="button button-secondary-light saved-race-button" type="button" data-saved-race-button data-analytics-placement="race_detail" data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="en" aria-pressed="false" aria-label="Save race"><span class="action-icon" aria-hidden="true">☆</span><span data-saved-race-label>Save race</span></button>
 
                   <div class="race-status-control" data-analytics-placement="race_detail">
-                <label for="race-detail-status-select">My status</label>
-                <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="en" aria-describedby="race-detail-status-helper">
-                  <option value="">Not in My races</option>
-                  <option value="following">Following</option>
-                  <option value="planning">Planning</option>
-                  <option value="registered">Registered</option>
-                  <option value="completed">Completed</option>
-                </select>
-                <p id="race-detail-status-helper" class="muted-note">The data is stored only in this browser.</p>
+                    <label for="race-detail-status-select">My status</label>
+                    <select id="race-detail-status-select" data-race-status-control data-event-id={savedRaceEventId} data-event-year={event.year} data-event-date={event.date} data-event-title={event.title} data-event-place={event.place} data-event-region={event.region} data-event-surface={event.surface} data-language="en" aria-describedby="race-detail-status-helper">
+                      <option value="">Not in My races</option>
+                      <option value="following">Following</option>
+                      <option value="planning">Planning</option>
+                      <option value="registered">Registered</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                    <p id="race-detail-status-helper" class="muted-note">The data is stored only in this browser.</p>
                   </div>
                 </div>
-              </div>
+              </section>
               {raceHighlights.length > 0 && (
-                <article class="info-card event-detail-panel event-detail-highlights" aria-labelledby="race-highlights-title">
+                <article class="info-card event-detail-panel event-detail-highlights" data-race-upcoming-only={raceHighlights.every((highlight) => highlight.key === 'free-fee') ? true : undefined} aria-labelledby="race-highlights-title">
                   <h2 id="race-highlights-title">What stands out about this race</h2>
                   <div class="event-detail-highlight-grid">
                     {raceHighlights.map((highlight) => (
-                      <div class="event-detail-highlight-card" data-race-upcoming-only={highlight.key === 'free' || highlight.key === 'race-day-registration' ? true : undefined}>
+                      <div class="event-detail-highlight-card" data-race-upcoming-only={highlight.key === 'free-fee' ? true : undefined}>
                         <span class="event-detail-highlight-icon" set:html={renderActionIcon(highlight.iconKey)}></span>
                         <span class="event-detail-highlight-text">
                           <strong>{highlight.label}</strong>

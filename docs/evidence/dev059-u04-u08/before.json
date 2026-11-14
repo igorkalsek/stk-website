@@ -1,0 +1,800 @@
+[
+  {
+    "language": "sl",
+    "width": 390,
+    "title": {
+      "top": 289,
+      "bottom": 320,
+      "left": 32,
+      "right": 358
+    },
+    "date": {
+      "top": 237,
+      "bottom": 277,
+      "left": 32,
+      "right": 167
+    },
+    "facts": {
+      "top": 332,
+      "bottom": 447,
+      "left": 32,
+      "right": 358
+    },
+    "official": {
+      "top": 542,
+      "bottom": 590,
+      "left": 32,
+      "right": 358
+    },
+    "fee": {
+      "top": 1290,
+      "bottom": 1308,
+      "left": 38,
+      "right": 94
+    },
+    "deadline": {
+      "top": 1447,
+      "bottom": 1519,
+      "left": 38,
+      "right": 352
+    },
+    "deadlineDate": {
+      "top": 1465,
+      "bottom": 1483,
+      "left": 38,
+      "right": 352
+    },
+    "myRace": {
+      "top": 600,
+      "bottom": 748,
+      "left": 32,
+      "right": 358
+    },
+    "highlights": "Kaj izstopa pri tem teku?\nVIŠINSKA RAZLIKA\n2200 m+\nOTROŠKI TEKI\nNavedeni pri organizatorju\nRAZDALJE\nOd 10 km do 36 km\nBREZPLAČNA MOŽNOST\nZa del programa",
+    "scrollWidth": 390,
+    "critical": [
+      "Prijava in udeležbaArhiv prijav   Startnina 0–60 €  Podrobnosti prijavnine  Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cenejša prijava  31. oktober 2026 Rok cenejše prijave je potekel     Rok prijave  20. november 2026 Rok prijave je čez 6 dni Preverite pogoje prijave pri organizatorju",
+      "Višinski podatki   Višinska razlika 2200 m+",
+      "GPX-sledi in traseDružinskiArhivska GPX-sled 2024 · Vir organizatorjaOdpri GPXPozojArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXMastodontArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXPrikazane sledi so lahko iz preteklih izvedb. Njihova veljavnost za aktualno prireditev ni potrjena. Pred uporabo preverite informacije organizatorja.",
+      "Približna lokacija · Krajevna referenca, ne potrjen štart ali točka prihoda."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "language": "sl",
+    "width": 768,
+    "title": {
+      "top": 422,
+      "bottom": 467,
+      "left": 47,
+      "right": 721
+    },
+    "date": {
+      "top": 245,
+      "bottom": 368,
+      "left": 47,
+      "right": 721
+    },
+    "facts": {
+      "top": 487,
+      "bottom": 586,
+      "left": 47,
+      "right": 721
+    },
+    "official": {
+      "top": 702,
+      "bottom": 750,
+      "left": 47,
+      "right": 721
+    },
+    "fee": {
+      "top": 1429,
+      "bottom": 1447,
+      "left": 38,
+      "right": 94
+    },
+    "deadline": {
+      "top": 1585,
+      "bottom": 1657,
+      "left": 38,
+      "right": 354
+    },
+    "deadlineDate": {
+      "top": 1603,
+      "bottom": 1621,
+      "left": 38,
+      "right": 354
+    },
+    "myRace": {
+      "top": 763,
+      "bottom": 1022,
+      "left": 47,
+      "right": 721
+    },
+    "highlights": "Kaj izstopa pri tem teku?\nVIŠINSKA RAZLIKA\n2200 m+\nOTROŠKI TEKI\nNavedeni pri organizatorju\nRAZDALJE\nOd 10 km do 36 km\nBREZPLAČNA MOŽNOST\nZa del programa",
+    "scrollWidth": 768,
+    "critical": [
+      "Prijava in udeležbaArhiv prijav   Startnina 0–60 €  Podrobnosti prijavnine  Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cenejša prijava  31. oktober 2026 Rok cenejše prijave je potekel     Rok prijave  20. november 2026 Rok prijave je čez 6 dni Preverite pogoje prijave pri organizatorju",
+      "Višinski podatki   Višinska razlika 2200 m+",
+      "GPX-sledi in traseDružinskiArhivska GPX-sled 2024 · Vir organizatorjaOdpri GPXPozojArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXMastodontArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXPrikazane sledi so lahko iz preteklih izvedb. Njihova veljavnost za aktualno prireditev ni potrjena. Pred uporabo preverite informacije organizatorja.",
+      "Približna lokacija · Krajevna referenca, ne potrjen štart ali točka prihoda."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "language": "sl",
+    "width": 1440,
+    "title": {
+      "top": 304,
+      "bottom": 373,
+      "left": 368,
+      "right": 1240
+    },
+    "date": {
+      "top": 257,
+      "bottom": 396,
+      "left": 200,
+      "right": 344
+    },
+    "facts": {
+      "top": 393,
+      "bottom": 435,
+      "left": 368,
+      "right": 1240
+    },
+    "official": {
+      "top": 551,
+      "bottom": 599,
+      "left": 200,
+      "right": 1240
+    },
+    "fee": {
+      "top": 1229,
+      "bottom": 1247,
+      "left": 182,
+      "right": 238
+    },
+    "deadline": {
+      "top": 1386,
+      "bottom": 1458,
+      "left": 182,
+      "right": 504
+    },
+    "deadlineDate": {
+      "top": 1404,
+      "bottom": 1422,
+      "left": 182,
+      "right": 504
+    },
+    "myRace": {
+      "top": 612,
+      "bottom": 814,
+      "left": 200,
+      "right": 1240
+    },
+    "highlights": "Kaj izstopa pri tem teku?\nVIŠINSKA RAZLIKA\n2200 m+\nOTROŠKI TEKI\nNavedeni pri organizatorju\nRAZDALJE\nOd 10 km do 36 km\nBREZPLAČNA MOŽNOST\nZa del programa",
+    "scrollWidth": 1440,
+    "critical": [
+      "Prijava in udeležbaArhiv prijav   Startnina 0–60 €  Podrobnosti prijavnine  Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cenejša prijava  31. oktober 2026 Rok cenejše prijave je potekel     Rok prijave  20. november 2026 Rok prijave je čez 6 dni Preverite pogoje prijave pri organizatorju",
+      "Višinski podatki   Višinska razlika 2200 m+",
+      "GPX-sledi in traseDružinskiArhivska GPX-sled 2024 · Vir organizatorjaOdpri GPXPozojArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXMastodontArhivska GPX-sled 2025 · Vir organizatorjaOdpri GPXPrikazane sledi so lahko iz preteklih izvedb. Njihova veljavnost za aktualno prireditev ni potrjena. Pred uporabo preverite informacije organizatorja.",
+      "Približna lokacija · Krajevna referenca, ne potrjen štart ali točka prihoda."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "width": 390,
+    "title": {
+      "top": 289,
+      "bottom": 320,
+      "left": 32,
+      "right": 358
+    },
+    "date": {
+      "top": 237,
+      "bottom": 277,
+      "left": 32,
+      "right": 161
+    },
+    "facts": {
+      "top": 332,
+      "bottom": 447,
+      "left": 32,
+      "right": 358
+    },
+    "official": {
+      "top": 542,
+      "bottom": 590,
+      "left": 32,
+      "right": 358
+    },
+    "fee": {
+      "top": 1354,
+      "bottom": 1372,
+      "left": 38,
+      "right": 94
+    },
+    "deadline": {
+      "top": 1528,
+      "bottom": 1600,
+      "left": 38,
+      "right": 352
+    },
+    "deadlineDate": {
+      "top": 1546,
+      "bottom": 1564,
+      "left": 38,
+      "right": 352
+    },
+    "myRace": {
+      "top": 600,
+      "bottom": 748,
+      "left": 32,
+      "right": 358
+    },
+    "highlights": "What stands out about this race\nELEVATION GAIN\n2200 m+\nCHILDREN’S RACES\nListed by the organizer\nDISTANCES\nFrom 10 km to 36 km\nFREE OPTION\nListed for part of the programme",
+    "scrollWidth": 390,
+    "critical": [
+      "Registration and participationRegistration archive   Entry fee 0–60 €  Entry fee details Organizer information in Slovenian Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cheaper registration  31 October 2026 The cheaper-registration deadline has passed     Registration deadline  20 November 2026 Registration deadline in 6 days Check registration terms with the organiser",
+      "Elevation   Elevation gain 2200 m+",
+      "GPX tracks and routesDružinskiArchived GPX track 2024 · Organizer sourceOpen GPXPozojArchived GPX track 2025 · Organizer sourceOpen GPXMastodontArchived GPX track 2025 · Organizer sourceOpen GPXThese tracks may be from past editions. Their validity for the current event is unconfirmed. Check the organizer’s information before use.",
+      "Approximate location · Place reference, not a verified start or arrival point."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "width": 768,
+    "title": {
+      "top": 422,
+      "bottom": 467,
+      "left": 47,
+      "right": 721
+    },
+    "date": {
+      "top": 245,
+      "bottom": 368,
+      "left": 47,
+      "right": 721
+    },
+    "facts": {
+      "top": 487,
+      "bottom": 586,
+      "left": 47,
+      "right": 721
+    },
+    "official": {
+      "top": 702,
+      "bottom": 750,
+      "left": 47,
+      "right": 721
+    },
+    "fee": {
+      "top": 1462,
+      "bottom": 1480,
+      "left": 38,
+      "right": 94
+    },
+    "deadline": {
+      "top": 1636,
+      "bottom": 1708,
+      "left": 38,
+      "right": 354
+    },
+    "deadlineDate": {
+      "top": 1654,
+      "bottom": 1672,
+      "left": 38,
+      "right": 354
+    },
+    "myRace": {
+      "top": 763,
+      "bottom": 1022,
+      "left": 47,
+      "right": 721
+    },
+    "highlights": "What stands out about this race\nELEVATION GAIN\n2200 m+\nCHILDREN’S RACES\nListed by the organizer\nDISTANCES\nFrom 10 km to 36 km\nFREE OPTION\nListed for part of the programme",
+    "scrollWidth": 768,
+    "critical": [
+      "Registration and participationRegistration archive   Entry fee 0–60 €  Entry fee details Organizer information in Slovenian Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cheaper registration  31 October 2026 The cheaper-registration deadline has passed     Registration deadline  20 November 2026 Registration deadline in 6 days Check registration terms with the organiser",
+      "Elevation   Elevation gain 2200 m+",
+      "GPX tracks and routesDružinskiArchived GPX track 2024 · Organizer sourceOpen GPXPozojArchived GPX track 2025 · Organizer sourceOpen GPXMastodontArchived GPX track 2025 · Organizer sourceOpen GPXThese tracks may be from past editions. Their validity for the current event is unconfirmed. Check the organizer’s information before use.",
+      "Approximate location · Place reference, not a verified start or arrival point."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "language": "en",
+    "width": 1440,
+    "title": {
+      "top": 304,
+      "bottom": 373,
+      "left": 368,
+      "right": 1240
+    },
+    "date": {
+      "top": 257,
+      "bottom": 396,
+      "left": 200,
+      "right": 344
+    },
+    "facts": {
+      "top": 393,
+      "bottom": 435,
+      "left": 368,
+      "right": 1240
+    },
+    "official": {
+      "top": 551,
+      "bottom": 599,
+      "left": 200,
+      "right": 1240
+    },
+    "fee": {
+      "top": 1262,
+      "bottom": 1280,
+      "left": 182,
+      "right": 238
+    },
+    "deadline": {
+      "top": 1437,
+      "bottom": 1509,
+      "left": 182,
+      "right": 504
+    },
+    "deadlineDate": {
+      "top": 1455,
+      "bottom": 1473,
+      "left": 182,
+      "right": 504
+    },
+    "myRace": {
+      "top": 612,
+      "bottom": 814,
+      "left": 200,
+      "right": 1240
+    },
+    "highlights": "What stands out about this race\nELEVATION GAIN\n2200 m+\nCHILDREN’S RACES\nListed by the organizer\nDISTANCES\nFrom 10 km to 36 km\nFREE OPTION\nListed for part of the programme",
+    "scrollWidth": 1440,
+    "critical": [
+      "Registration and participationRegistration archive   Entry fee 0–60 €  Entry fee details Organizer information in Slovenian Družinski trail: otroci brezplačno, odrasli 20 € do 31. 10. oziroma 25 € od 1.–20. 11.; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.     Cheaper registration  31 October 2026 The cheaper-registration deadline has passed     Registration deadline  20 November 2026 Registration deadline in 6 days Check registration terms with the organiser",
+      "Elevation   Elevation gain 2200 m+",
+      "GPX tracks and routesDružinskiArchived GPX track 2024 · Organizer sourceOpen GPXPozojArchived GPX track 2025 · Organizer sourceOpen GPXMastodontArchived GPX track 2025 · Organizer sourceOpen GPXThese tracks may be from past editions. Their validity for the current event is unconfirmed. Check the organizer’s information before use.",
+      "Approximate location · Place reference, not a verified start or arrival point."
+    ],
+    "links": [
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-upcoming-only",
+            "true"
+          ],
+          [
+            "data-analytics-link-type",
+            "prijava"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      },
+      {
+        "href": "https://protime.si/dogodek/velenje-trail-2026/",
+        "attributes": [
+          [
+            "data-race-archive-only",
+            ""
+          ]
+        ]
+      },
+      {
+        "href": "https://velenjetrail.si/razpis/",
+        "attributes": [
+          [
+            "data-analytics-link-type",
+            "razpis"
+          ],
+          [
+            "data-stk-event-id",
+            "R000267"
+          ],
+          [
+            "data-stk-event-name",
+            "Velenje Trail 2026"
+          ],
+          [
+            "data-stk-event-date",
+            "2026-12-05"
+          ],
+          [
+            "data-stk-event-year",
+            "2026"
+          ],
+          [
+            "data-analytics-placement",
+            "race_detail"
+          ]
+        ]
+      }
+    ]
+  }
+]
