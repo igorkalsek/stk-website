@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 // Public Worker snapshot, 2026-11-04; no live API dependency in regressions.
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -23,9 +23,49 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('stkAnalyticsOptOut', 'true'));
 });
 
+// U07: keep the first real title reachable without hiding any filter.
+async function checkCompactLayout(page: Page, width: number, lang: string) {
+  const title = page.locator('.search-event-card h3').first();
+  await page.evaluate(() => document.fonts.ready);
+  if (width === 390) {
+    expect(await title.evaluate(el => el.getBoundingClientRect().top + scrollY)).toBeLessThanOrEqual(1000);
+  }
+  const controls = page.locator('[data-search-form] input, [data-search-form] select, [data-search-form] button');
+  const boxes = [];
+  for (const control of await controls.all()) {
+    await expect(control).toBeVisible();
+    const box = await control.boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+    boxes.push(box!);
+  }
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const a = boxes[i], b = boxes[j];
+    expect(a.x >= b.x + b.width || b.x >= a.x + a.width || a.y >= b.y + b.height || b.y >= a.y + a.height).toBe(true);
+  }
+  const criteria = page.locator('.family-criteria');
+  const summary = criteria.locator('summary');
+  await expect(criteria).not.toHaveAttribute('open', '');
+  await summary.focus();
+  await summary.press('Enter');
+  await expect(criteria).toHaveAttribute('open', '');
+  await expect(criteria.locator('p').first()).toContainText(lang === 'sl' ? 'Kratka razdalja' : 'A short distance');
+  const finder = criteria.getByRole('link');
+  await expect(finder).toHaveAttribute('href', lang === 'sl' ? '/iskalnik-tekov/' : '/en/find-races/');
+  await summary.press('Tab');
+  await expect(finder).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  await summary.focus();
+  await summary.press('Space');
+  await expect(criteria).not.toHaveAttribute('open', '');
+  await summary.press('Tab');
+  await expect(page.locator('[data-year-link="2026"]')).toBeFocused();
+}
+
 for (const lang of ['sl', 'en']) {
   const path = lang === 'sl' ? '/druzinam-prijazni-teki/' : '/en/family-friendly-races/';
-  for (const width of [390, 1440]) {
+  for (const width of [390, 768, 1440]) {
     for (const past of [false, true]) {
       test(`${lang} explicit family offers, filters and links at ${width}px (${past ? 'past fallback' : 'upcoming'})`, async ({ page }) => {
         await page.setViewportSize({ width, height: 1000 });
@@ -40,6 +80,8 @@ for (const lang of ['sl', 'en']) {
         await page.goto(path);
         const cards = page.locator('.search-event-card');
         await expect(cards.locator('h3')).toHaveText([menges.naziv_prireditve, velenje.naziv_prireditve]);
+        await checkCompactLayout(page, width, lang);
+        if (past) await expect(page.locator('[data-search-status]')).toContainText(lang === 'sl' ? 'Prikazani so pretekli' : 'Past confirmed public races are shown');
         const card = cards.filter({ hasText: velenje.naziv_prireditve });
         await expect(card.locator('.family-note-row')).toBeVisible();
         await expect(card.locator('h3 a')).toHaveAttribute('href', new RegExp(`^${lang === 'sl' ? '/tek' : '/en/races'}/2026/`));
@@ -102,7 +144,7 @@ const invalid2027 = [
 
 for (const lang of ['sl', 'en']) {
   const path = lang === 'sl' ? '/druzinam-prijazni-teki/' : '/en/family-friendly-races/';
-  for (const width of [390, 1440]) {
+  for (const width of [390, 768, 1440]) {
     test(`${lang} 2027 snapshot, filters, year and language at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1000 });
       await page.clock.install({ time: new Date('2026-11-04T12:00:00+01:00') });
@@ -116,6 +158,7 @@ for (const lang of ['sl', 'en']) {
       await page.goto(`${path}?year=2027`);
       const cards = page.locator('.search-event-card');
       await expect(cards.locator('h3')).toHaveText(family2027.map(r => r.naziv_prireditve));
+      await checkCompactLayout(page, width, lang);
       await expect(page.locator('[data-year-link="2027"]')).toHaveAttribute('aria-current', 'page');
       await expect(page.locator('[data-search-status]')).toContainText('2027');
       expect(requests).toContain('/?year=2027');

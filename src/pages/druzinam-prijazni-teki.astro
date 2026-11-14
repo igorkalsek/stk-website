@@ -1,22 +1,22 @@
 ---
+import '../styles/family-page.css';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout languageSwitchHref="/en/family-friendly-races/" title="Družinam prijazni teki" description="Pregled tekaških prireditev, ki so v javnem viru označene kot družinam prijazne.">
-  <main>
+  <main class="family-page">
     <section class="page-hero container" aria-labelledby="family-title">
-      <span class="eyebrow">Za družine</span>
       <h1 id="family-title">Družinam prijazni teki</h1>
-      <p class="hero-subtitle">Poiščite teke z otroškimi in družinskimi vsebinami</p>
-      <p>
-        Pregled vključuje samo prireditve, pri katerih vir jasno omenja otroške teke, družinske kategorije,
-        otroške aktivnosti ali druge informacije za družine. Kratka razdalja sama po sebi še ne pomeni, da je tek družinam prijazen.
-      </p>
+      <p class="hero-subtitle">Teki z izrecno otroško ali družinsko ponudbo.</p>
+      <details class="family-criteria">
+        <summary>Kateri teki so vključeni?</summary>
+        <p>Vir mora jasno omenjati otroške teke, družinske kategorije, otroške aktivnosti ali drugo ponudbo za družine. Kratka razdalja ali splošna primernost sami po sebi nista dovolj.</p>
+        <p>Za vse teke, prijavnine, prijave na dan in višinske metre odprite <a href="/iskalnik-tekov/">iskalnik tekov</a>.</p>
+      </details>
       <nav class="year-switcher" aria-label="Izbira leta koledarja">
         <a class="year-switcher-link" href="/druzinam-prijazni-teki/?year=2026" data-year-link="2026">Koledar 2026</a>
         <a class="year-switcher-link" href="/druzinam-prijazni-teki/?year=2027" data-year-link="2027">Koledar 2027</a>
       </nav>
-      <a class="hero-secondary-link" href="/iskalnik-tekov/">Iščete vse teke? Odprite iskalnik tekov.</a>
     </section>
 
     <section class="section container" aria-labelledby="family-filters-title">
@@ -24,8 +24,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="family-filters-title">Filtri</h2>
-            <p>Vpišite ime teka ali kraj, nato izberite mesec, regijo ali podlago.</p>
-            <p class="additional-data-note">Za iskanje po prijavnini, prijavah na dan ali višinskih metrih uporabite <a href="/iskalnik-tekov/">napredni iskalnik</a>.</p>
           </div>
           <p class="result-count" data-result-count>Dogodke nalagamo …</p>
         </div>
@@ -690,8 +688,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Prikazanih je ${visibleCount} od ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(
       state.usedPastFallback
-        ? `Prikazani so potrjeni javni dogodki za leto ${selectedYear} z otroškimi ali družinskimi ponudbami; prihodnjih dogodkov s takšno ponudbo trenutno ni.`
-        : `Prikazani so potrjeni javni dogodki za leto ${selectedYear} od danes naprej z otroškimi ali družinskimi ponudbami, privzeto urejeni po datumu.`
+        ? `Za leto ${selectedYear} ni prihodnjih družinskih tekov. Prikazani so pretekli potrjeni javni teki, urejeni po datumu.`
+        : `Potrjeni javni teki ${selectedYear} od danes naprej, urejeni po datumu.`
     );
 
     if (!count) {

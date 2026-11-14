@@ -1,4 +1,5 @@
 ---
+import '../../styles/family-page.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 ---
@@ -18,19 +19,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   navLabel="Main navigation"
   menuLabel="Menu"
 >
-  <main>
+  <main class="family-page">
     <section class="page-hero container" aria-labelledby="family-title">
-      <span class="eyebrow">For families</span>
       <h1 id="family-title">Family-friendly races</h1>
-      <p class="hero-subtitle">Find races with children’s runs, family categories or family-friendly information</p>
-      <p>
-        Races with children’s runs, family categories or other family-friendly information. A short distance alone does not make a race family-friendly.
-      </p>
+      <p class="hero-subtitle">Races with explicit children’s or family activities.</p>
+      <details class="family-criteria">
+        <summary>Which races are included?</summary>
+        <p>The source must explicitly mention children’s runs, family categories, children’s activities or other family offers. A short distance or general suitability alone is not enough.</p>
+        <p>For all races, entry fees, race-day registration and elevation gain, use <a href="/en/find-races/">Find races</a>.</p>
+      </details>
       <nav class="year-switcher" aria-label="Calendar year">
         <a class="year-switcher-link" href="/en/family-friendly-races/?year=2026" data-year-link="2026">Calendar 2026</a>
         <a class="year-switcher-link" href="/en/family-friendly-races/?year=2027" data-year-link="2027">Calendar 2027</a>
       </nav>
-      <a class="hero-secondary-link" href="/en/find-races/">Looking for all races? Open Find races.</a>
     </section>
 
     <section class="section container" aria-labelledby="family-filters-title">
@@ -38,8 +39,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="section-heading search-heading">
           <div>
             <h2 id="family-filters-title">Filters</h2>
-            <p>Search by race name or town, then choose a month, region or surface.</p>
-            <p class="additional-data-note">For entry fees, race-day registration and elevation gain, use <a href="/en/find-races/">Find races</a>.</p>
           </div>
           <p class="result-count" data-result-count>Loading races …</p>
         </div>
@@ -670,8 +669,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     setCount(count > visibleCount ? `Showing ${visibleCount} of ${pluralizeEvents(count)}` : pluralizeEvents(count));
     setStatus(
       state.usedPastFallback
-        ? `Confirmed public ${selectedYear} races with children’s or family activities are shown; there are currently no upcoming races with such activities.`
-        : `Confirmed public ${selectedYear} races from today onward with children’s or family activities are shown, sorted by date by default.`
+        ? `No upcoming family races for ${selectedYear}. Past confirmed public races are shown in date order.`
+        : `Confirmed public ${selectedYear} races from today onward, in date order.`
     );
 
     if (!count) {
