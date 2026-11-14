@@ -5611,7 +5611,8 @@ main {
 
 @media (min-width: 1200px) {
   .search-event-row {
-    grid-template-columns: 82px minmax(0, 1fr) 240px;
+    /* Fit short SL/EN action pairs across system fonts; longer labels still wrap. */
+    grid-template-columns: 82px minmax(0, 1fr) 18rem;
   }
 
   .search-event-row-actions {
