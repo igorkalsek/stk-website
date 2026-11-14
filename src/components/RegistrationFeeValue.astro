@@ -1,0 +1,45 @@
+---
+import type { DetailLanguage, DetailRow } from '../utils-race-detail-view';
+interface Props { item: DetailRow; language: DetailLanguage }
+const { item, language } = Astro.props;
+const sourceLabel = language === 'en' && item.sourceLanguage === 'sl'
+  ? 'Organizer information in Slovenian'
+  : '';
+---
+<span class:list={['registration-fee-value', { 'registration-fee-amount': Boolean(item.description) }]} lang={!item.description ? item.sourceLanguage : undefined}>{item.value}</span>
+{item.description ? (
+  <details class="registration-fee-details">
+    <summary>{language === 'en' ? 'Entry fee details' : 'Podrobnosti prijavnine'}</summary>
+    {sourceLabel && <small class="registration-fee-source">{sourceLabel}</small>}
+    <p lang={item.sourceLanguage}>{item.description}</p>
+  </details>
+) : sourceLabel && <small class="registration-fee-source">{sourceLabel}</small>}
+
+<style>
+  .registration-fee-value { white-space: pre-line; overflow-wrap: anywhere; }
+  .registration-fee-amount { font-weight: 700; }
+  .registration-fee-details { margin-top: 0.25rem; }
+  .registration-fee-details summary {
+    color: var(--deep-teal);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding-block: 0.5rem;
+  }
+  .registration-fee-details summary:focus-visible {
+    outline: 2px solid var(--deep-teal);
+    outline-offset: 2px;
+    border-radius: 0.2rem;
+  }
+  .registration-fee-details p {
+    margin: 0.25rem 0 0;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+  }
+  .registration-fee-source {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+</style>

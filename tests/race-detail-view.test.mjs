@@ -102,10 +102,10 @@ describe('race detail view model', () => {
       });
       const event = { ...baseEvent, additionalData };
       assert.deepEqual(buildRegistrationRows(event, 'sl', fmt), [
-        { label: 'Startnina', value: `${sl} · ${description}` }
+        { label: 'Startnina', value: sl, description, sourceLanguage: 'sl' }
       ], id);
       assert.deepEqual(buildRegistrationRows(event, 'en', fmt), [
-        { label: 'Entry fee', value: `${en} · ${description}` }
+        { label: 'Entry fee', value: en, description, sourceLanguage: 'sl' }
       ], id);
     }
   });
@@ -123,10 +123,61 @@ describe('race detail view model', () => {
       const event = { ...baseEvent, additionalData };
       for (const lang of ['sl', 'en']) {
         assert.deepEqual(buildRegistrationRows(event, lang, fmt), [
-          { label: lang === 'sl' ? 'Startnina' : 'Entry fee', value: description }
+          { label: lang === 'sl' ? 'Startnina' : 'Entry fee', value: description, sourceLanguage: 'sl' }
         ]);
         assert.equal(renderAdditionalDataChips(additionalData, String, { language: lang }), '');
         assert.equal(buildRaceHighlightCards(event, lang).some(({ key }) => key === 'free-fee'), false);
+      }
+    }
+  });
+
+  it('retains full-range, fixed, free and conditional organizer descriptions verbatim', () => {
+    const cases = [
+      ['0', '60', 'Družinski trail: otroci brezplačno, odrasli 20/25 €; Poskok 20/25 €, Pozoj 40/45 €, Mastodont 55/60 €.', '0–60 €'],
+      ['15', '25', '15 € do 1. 5.; nato 25 €; plačilo ob prevzemu številke.', '15–25 €'],
+      ['20', '20', '20 € na ekipo, plačilo na dan dogodka.', '20 €'],
+      ['0', '0', 'Brezplačno za vse udeležence.', '0 €'],
+      ['10', '30', '<img src=x onerror=alert(1)>\nOtroci < 10 let: 10 € & odrasli 30 €.', '10–30 €']
+    ];
+    for (const [min, max, description, amount] of cases) {
+      const additionalData = mapAdditionalRow({ prijavnina_min_eur: min, prijavnina_max_eur: max, prijavnina_opis: description });
+      for (const language of ['sl', 'en']) {
+        const event = { ...baseEvent, additionalData };
+        const [row] = buildRegistrationRows(event, language, fmt);
+        assert.deepEqual(row, { label: language === 'sl' ? 'Startnina' : 'Entry fee', value: amount, description, sourceLanguage: 'sl' });
+        assert.equal(buildRegistrationRows({ ...event, date: '2020-01-01' }, language, fmt)[0].description, description);
+      }
+    }
+  });
+
+  it('does not repeat an identical amount or invent missing fee data', () => {
+    for (const language of ['sl', 'en']) {
+      for (const [min, max, description, expected] of [
+        ['20', '20', '20 €', '20 €'], ['10', '30', '10–30 €', '10–30 €'],
+        ['0', '0', '', '0 €'], ['20', '', '', language === 'sl' ? 'Od 20 €' : 'From 20 €'],
+        ['', '20', '', language === 'sl' ? 'Do 20 €' : 'Up to 20 €'],
+        ['', '', '', ''], ['?', '?', '', '']
+      ]) {
+        const additionalData = mapAdditionalRow({ prijavnina_min_eur: min, prijavnina_max_eur: max, prijavnina_opis: description });
+        assert.deepEqual(buildRegistrationRows({ ...baseEvent, additionalData }, language, fmt), expected
+          ? [{ label: language === 'sl' ? 'Startnina' : 'Entry fee', value: expected }] : []);
+      }
+    }
+  });
+
+  it('keeps description-only conditions and Goricatlon team/lap units without translation', () => {
+    for (const description of [
+      'Ni klasične prijavnine; minimalna skupna donacija na ekipo 50 EUR oziroma najmanj 1 EUR na krog.',
+      'Prostovoljni prispevki; otroci brezplačno.',
+      'Plačilo po dogovoru z organizatorjem do 20. 11.'
+    ]) {
+      const additionalData = mapAdditionalRow({ prijavnina_min_eur: '50', prijavnina_opis: description });
+      if (!description.startsWith('Plačilo')) additionalData.registrationMaxEur = '50';
+      else additionalData.registrationMinEur = '';
+      for (const language of ['sl', 'en']) {
+        assert.deepEqual(buildRegistrationRows({ ...baseEvent, additionalData }, language, fmt), [
+          { label: language === 'sl' ? 'Startnina' : 'Entry fee', value: description, sourceLanguage: 'sl' }
+        ]);
       }
     }
   });

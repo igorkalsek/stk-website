@@ -1,4 +1,5 @@
 ---
+import RegistrationFeeValue from '../../../components/RegistrationFeeValue.astro';
 import { buildNearbyMapLink } from '../../../utils-nearby-index';
 import { NEARBY_EDITION_LOCATIONS } from '../../../finder/nearby-production-index';
 import { formatRaceDateStatus, getEventDatePhase } from '../../../utils-date';
@@ -278,7 +279,7 @@ const jsonLd = event ? {
                         {registrationItems.map((item) => (
                           <div>
                             <dt>{item.label}</dt>
-                            <dd>{item.value}</dd>
+                            <dd><RegistrationFeeValue item={item} language="sl" /></dd>
                           </div>
                         ))}
                         {deadlineCalendarOptions.map(({ deadline, googleUrl, icsUrl, icsFilename, outlookUrl }) => (
