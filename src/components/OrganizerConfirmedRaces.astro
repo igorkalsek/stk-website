@@ -18,9 +18,9 @@ try {
 <section class="section container confirmed-races" data-confirmed-races data-lang={lang} aria-labelledby="confirmed-races-title" hidden>
   <div class="section-heading">
     <span class="eyebrow">2027</span>
-    <h2 id="confirmed-races-title">{en ? 'Races with organizer-confirmed information' : 'Teki s podatki, ki so jih potrdili organizatorji'}</h2>
+    <h2 id="confirmed-races-title">{en ? 'Races with organiser-verified information' : 'Teki z organizatorsko verifikacijo podatkov'}</h2>
   </div>
-  <p>{en ? 'An officially confirmed race date and an organizer’s confirmation of race information are separate. These organizers reviewed and confirmed the currently published information for their 2027 race edition. This does not mean STK independently verified every detail.' : 'Uradno potrjen datum teka in organizatorjeva potrditev podatkov sta ločeni oznaki. Ti organizatorji so pregledali in potrdili trenutno objavljene podatke svoje izvedbe za leto 2027. To ne pomeni, da je STK neodvisno preveril vsako podrobnost.'}</p>
+  <p>{en ? 'STK confirms public race listings using official sources. For the races below, organisers have also reviewed and confirmed the published information. Not having this label does not mean a race is unconfirmed.' : 'Teke v STK potrjujemo na podlagi uradnih virov. Pri spodnjih so objavljene podatke dodatno pregledali in potrdili organizatorji. Odsotnost oznake ne pomeni, da tek ni potrjen.'}</p>
   <ul data-confirmed-race-list></ul>
   <script is:inline type="application/json" data-confirmed-profile-links set:html={JSON.stringify(profileLinks).replace(/</g, '\u003c')} />
   <template data-confirmed-race-template>
