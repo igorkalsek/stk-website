@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { selectPublicPlacePhoto } from '../src/utils-place-photo.ts';
+import { selectPublicPlacePhoto } from '../.cache/dist-test/utils-place-photo.js';
 
 const catalogue = JSON.parse(readFileSync(new URL('../src/data/place-photo-candidates.json', import.meta.url), 'utf8'));
 const approved = {
