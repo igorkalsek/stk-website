@@ -1,3 +1,4 @@
+import { getEventDatePhase } from './utils-date.js';
 import { getRegistrationFeeBounds } from './utils-registration-fees.js';
 import type { RaceActionIcon } from './utils-action-icons';
 import type { PublicRaceEvent } from './utils-event-detail';
@@ -221,6 +222,55 @@ export const buildPrimaryActions = (event: Pick<DetailEvent, 'registrationUrl' |
     registrationUrl ? { kind: 'registration', label: labels.registration, url: registrationUrl, analyticsType: 'prijava' } : null,
     noticeUrl ? { kind: 'notice', label: labels.notice, url: noticeUrl, analyticsType: 'razpis' } : null
   ].filter((item): item is DetailAction => Boolean(item));
+};
+
+const ahotuPilot = {
+  year: '2027',
+  row: '11',
+  date: '2027-05-15',
+  naziv_prireditve: '45. Maraton treh src',
+  place: 'Radenci',
+  url: 'https://www.ahotu.com/event/maraton-treh-src?linkId=lp_509155&sourceId=stk&tenantId=ahotu'
+};
+
+type ProfileAction = DetailAction & { sponsored?: true; archiveLabel?: string };
+type ProfileActionEvent = Pick<DetailEvent, 'registrationUrl' | 'noticeUrl' | 'year' | 'row' | 'date' | 'naziv_prireditve' | 'place'>;
+
+export const buildProfileActions = (event: ProfileActionEvent, language: DetailLanguage, todayIso?: string): {
+  actions: ProfileAction[];
+  affiliateDisclosure: string;
+} => {
+  const actions = buildPrimaryActions(event, language);
+  const pilot = ahotuPilot;
+  if (
+    event.year !== pilot.year || event.row !== pilot.row || event.date !== pilot.date ||
+    event.naziv_prireditve !== pilot.naziv_prireditve || event.place !== pilot.place ||
+    !actions.some((action) => action.kind === 'registration') ||
+    getEventDatePhase(event.date, todayIso) === 'past' ||
+    !/^https:\/\/www\.ahotu\.com\/event\/maraton-treh-src\?linkId=lp_[0-9]+&sourceId=stk&tenantId=ahotu$/.test(pilot.url)
+  ) return { actions, affiliateDisclosure: '' };
+
+  const labels = language === 'en'
+    ? {
+      affiliate: 'Register via Ahotu',
+      organiser: 'Register with organiser',
+      disclosure: 'Affiliate link: STK may earn a commission if you register through Ahotu. Check the final price and registration terms before paying.'
+    }
+    : {
+      affiliate: 'Prijava prek Ahotu',
+      organiser: 'Prijava pri organizatorju',
+      disclosure: 'Partnerska povezava: če se prijavite prek Ahotu, lahko STK prejme provizijo. Pred plačilom preverite končno ceno in pogoje prijave.'
+    };
+
+  return {
+    actions: [
+      { kind: 'registration', label: labels.affiliate, url: pilot.url, analyticsType: 'prijava', sponsored: true },
+      ...actions.map((action) => action.kind === 'registration'
+        ? { ...action, label: labels.organiser, archiveLabel: action.label }
+        : action)
+    ],
+    affiliateDisclosure: labels.disclosure
+  };
 };
 
 export const buildKeyFacts = (_event: DetailEvent, _language: DetailLanguage): DetailRow[] => [];
