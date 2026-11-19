@@ -844,7 +844,7 @@ export const NEARBY_EDITION_BINDINGS: readonly NearbyEditionBinding[] = [
   {
     "year": "2026",
     "masterRow": 268,
-    "expectedDate": "2026-12-05",
+    "expectedDate": "2026-12-12",
     "expectedTitle": "14. Goricatlon",
     "expectedPlace": "Nova Gorica",
     "expectedRegion": "Goriška",

@@ -9,6 +9,12 @@ import { filterNearbyRaces, summarizeNearbyCoverage } from '../../src/utils-near
 // Production build and production catalog, with the captured Worker population.
 // No synthetic approval or geography transform is used by this suite.
 const snapshot = JSON.parse(readFileSync(new URL('../../docs/evidence/dev056-release/public-events.json', import.meta.url), 'utf8'));
+// Preserve the Nov 13 audit fixture; apply only the officially confirmed Nov 18
+// Goricatlon edition date correction when testing the current production binding.
+const currentEvents = snapshot.events.map((e:any) =>
+  e.year === '2026' && e.row === '268' && e.date === '2026-12-05'
+    ? {...e, date:'2026-12-12'} : e
+);
 const API = 'https://stk-master-api.igor-kalsek.workers.dev';
 for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const width of [390,768,1440]) {
   test(`production nearby ${year}/${lang}/${width}: real index, all radii, privacy, GPS and other filters`, async ({page}, testInfo) => {
@@ -31,7 +37,7 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
       const url = new URL(route.request().url());
       if (url.pathname === '/additional' || url.pathname === '/top') return route.fulfill({json:{data:[]}});
       const selectedYear = url.searchParams.get('year') === '2027' ? '2027' : '2026';
-      const data = snapshot.events.filter((e:any)=>e.year === selectedYear).map((e:any)=>({
+      const data = currentEvents.filter((e:any)=>e.year === selectedYear).map((e:any)=>({
         row:e.row,datum:e.date,naziv_prireditve:e.naziv_prireditve,kraj:e.place,regija:e.region,
         tip_podlage:e.surface,razdalje_km:e.distances,povezava_razpis:e.noticeUrl,
         status_dogodka:'potrjeno',vidno_v_javnem_koledarju:'DA'
@@ -46,7 +52,7 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     await page.goto(path);
     const cards = page.locator('[data-search-results] .search-event-card');
     const panel = page.locator('[data-nearby-panel]');
-    const full = snapshot.events.filter((e:any)=>e.year === year);
+    const full = currentEvents.filter((e:any)=>e.year === year);
     // The normal Finder initially renders a page of results.
     await expect(cards.first()).toBeVisible();
     if (width < 960) await page.locator('[data-mobile-filter-panel] > summary').click();
@@ -210,7 +216,7 @@ for (const year of ['2026','2027']) for (const lang of ['sl','en']) for (const w
     await expect(page.locator('[data-nearby-distance]')).toHaveCount(0);
     if (width < 960) await page.locator('[data-mobile-filter-panel] > summary').click();
     await origin.selectOption('Q15930');
-    const otherFull = snapshot.events.filter((e:any) => e.year === otherYear);
+    const otherFull = currentEvents.filter((e:any) => e.year === otherYear);
     const otherMissing = summarizeNearbyCoverage(otherFull, NEARBY_EDITION_LOCATIONS).unlocatedEditionKeys.length;
     await expect(summary).toContainText(`(${otherMissing})`);
     expect(errors).toEqual([]);
@@ -221,7 +227,7 @@ for (const lang of ['sl', 'en'] as const) for (const width of [390, 1280]) {
   test(`profile maps ${lang}/${width}: verified start, approximation and text fallback`, async ({page}, testInfo) => {
     await page.setViewportSize({width, height:844});
     for (const [row, precision] of [['266', 'start'], ['260', 'approximate'], ['263', 'missing']]) {
-      const event = snapshot.events.find((e:any) => e.year === '2026' && e.row === row);
+      const event = currentEvents.find((e:any) => e.year === '2026' && e.row === row);
       const path = lang === 'en' ? buildEnglishEventDetailPath(event) : buildEventDetailPath(event);
       await page.goto(path);
       const map = page.locator('[data-analytics-link-type="map_click"]');
@@ -242,9 +248,9 @@ for (const lang of ['sl','en']) {
   test(`live unlocated data ${lang}: changed identity, new race, safe text and empty year`, async ({page}) => {
     await page.clock.setFixedTime(new Date('2026-11-13T09:00:00Z'));
     let empty = false;
-    const original = snapshot.events.find((e:any) => e.year === '2027' && e.row === '51');
+    const original = currentEvents.find((e:any) => e.year === '2027' && e.row === '51');
     const unsafeTitle = '<img src=x onerror=alert(1)> New race';
-    const full = snapshot.events.filter((e:any) => e.year === '2027').map((e:any) => e.row === '51'
+    const full = currentEvents.filter((e:any) => e.year === '2027').map((e:any) => e.row === '51'
       ? {...e, date:'2027-01-10'} : e).concat({...original, row:'999', naziv_prireditve:unsafeTitle});
     await page.route(`${API}/**`, async route => {
       const url = new URL(route.request().url());
