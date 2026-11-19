@@ -1,16 +1,16 @@
-# DEV-061 — omejen fotografski pilot (pregled 19. 11. 2026)
+# DEV-061 — omejen fotografski pilot (pregled 19.–20. 11. 2026)
 
 ## Meja in stanje
-Uredniški izbor **ni odobritev objave**. Vsi zapisi ostanejo `CANDIDATE / PENDING`, `assetPath: null`. Trije optimizirani lokalni WebP so pripravljeni **samo na Draft veji #284**; dokler manifest ni odobren, jih komponenta ne prikaže. Katalog in DEV-056 identiteta sta v PR-stacku #280 → #281 → #284. Brez novih polj Master/API, backenda ali produkcijskih sprememb.
+Lastnik je 20. 11. 2026 vizualno odobril fotografije **Kranja, Štanjela in Celja**, fotografijo Ljubljane pa izločil zaradi slabše kakovosti oziroma meglenega videza. Samo ti trije vnosi so v Draft veji #284 označeni `PUBLISHED / APPROVED` in povezani z lokalnim WebP. To omogoči prikaz **na PR predogledu**, ne pomeni združitve ali produkcijske objave. Preostalih 10 zapisov ostaja `CANDIDATE / PENDING`, `assetPath: null`. Brez novih polj Master/API, backenda ali produkcijskih sprememb.
 
-Pregled temelji na konkretnih Wikimedia Commons straneh (avtorstvo, opis kraja, deklarirana licenca in velikost), DEV-056 `NEARBY_EDITION_BINDINGS` ter lokalnem vizualnem pregledu izvirnika in panoramskih izrezov za tri kraje. **Kuratorska odobritev za objavo ostaja PENDING.**
+Pregled temelji na konkretnih Wikimedia Commons straneh (avtorstvo, opis kraja, deklarirana licenca in velikost), DEV-056 `NEARBY_EDITION_BINDINGS` ter lokalnem vizualnem pregledu izvirnika in panoramskih izrezov za tri kraje. Kuratorska odobritev teh treh motivov je **opravljena**; tehnični predogled in odobritev združitve ostajata ločena koraka.
 
 | Prednost | Kraj / identiteta | Izvirnik in avtor | Licenca in ločljivost | Zadevne preverjene vezi | Kuratorsko tveganje |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Kranj, Q1021 | [Kranj - panorama 02.jpg](https://commons.wikimedia.org/wiki/File:Kranj_-_panorama_02.jpg), Mihael Grmek | CC BY-SA 4.0; 7104 × 2441 | 6 izdaj v DEV-056 (2026/2027) | Zelo dober panoramski kandidat; pri 16:7 preveriti horizontalni izrez in prepoznavnost mesta |
 | 2 | Štanjel, Q392333 | [Štanjel 2020.jpg](https://commons.wikimedia.org/wiki/File:%C5%A0tanjel_2020.jpg), ModriDirkac | CC BY-SA 4.0; 1172 × 447 | 1 izdaja (2026!266, 25. Štanjelski tek) | Primeren format, vendar omejena ločljivost za večje/retina zaslone |
 | 3, pogojno | Celje, Q1012 | [View over Celje from the Old town.JPG](https://commons.wikimedia.org/wiki/File:View_over_Celje_from_the_Old_town.JPG), Boris Maric | CC0 1.0; 4928 × 3264 | 4 izdaje 2027 | Izvirnik je 3:2; izrez 16:5 lahko odstrani ključen del mesta; preveriti kompozicijo |
-| 4, pogojno | Ljubljana, Q437 | [Panorama Ljubljane.jpg](https://commons.wikimedia.org/wiki/File:Panorama_Ljubljane.jpg), August Dominus | CC BY-SA 4.0; 5152 × 3864 | 7 izdaj (2026/2027) | Izvirnik 4:3, zato lahko panoramski izrez izgubi pomemben motiv; v primeru slabega izreza izločiti |
+| Izločena iz pilota | Ljubljana, Q437 | [Panorama Ljubljane.jpg](https://commons.wikimedia.org/wiki/File:Panorama_Ljubljane.jpg), August Dominus | CC BY-SA 4.0; 5152 × 3864 | 7 izdaj (2026/2027) | Lastnik je 20. 11. zavrnil megleno/slabše kakovostno fotografijo; ob morebitnem nadaljevanju izberi drug motiv |
 
 Število vezi pomeni *kandidate za prikaz na točno preverjenih izdajah*, ne števila potrjenih javnih fotografij, štartov ali aktualnih tekmovanj. Slika kraja se ne sme opisovati kot slika štarta/trase. Tudi za dogodke, ki imajo v polju kraj širši opis, velja samo vezana DEV-056 identiteta in jasna oznaka ilustrativnosti.
 
@@ -27,7 +27,7 @@ Pregled temelji na konkretnih Wikimedia Commons straneh (avtorstvo, opis kraja, 
 
 Vse tri datoteke imajo veljaven WebP podpis in so pod mejo 512 KiB. Naslovne fotografije ponazarjajo kraj, **ne štarta ali trase**. Priznanje avtorja, povezava do izvora, licenca in oznaka izreza so že predvideni v manifestu/komponenti; podatki ob odobritvi ostanejo nespremenjeni. Izvirni JPG so bili preneseni prek uradnega uporabniškega vmesnika Commons; na končni veji so le WebP, začasni JPG se odstranijo.
 
-### Vizualni predogled kandidatov (samo Draft, brez javne objave)
+### Vizualni predogled odobrenih motivov (samo Draft, brez produkcijske objave)
 
 Kranj — Mihael Grmek, CC BY-SA 4.0; panorama mesta in gora:
 
@@ -41,14 +41,14 @@ Celje — Boris Maric, CC0; izrez z gradom in mestom:
 
 ![Panoramski kandidat: Celje](../public/images/places/celje-old-castle-view.webp)
 
-### Lokalni testni izris (izolirana simulacija, ni commitan)
+### Predhodni lokalni testni izris (izolirana simulacija, 19. 11.)
 
-Ločeno lokalno testno drevo je **začasno** nastavilo te tri vnose na odobrene samo med QA-gradnjo; javni manifest na PR ostaja nespremenjen. Gradnja je uspela (754 SL/EN profilov). Fotografiji Štanjela in Celja sta se pravilno vključili v izhodni HTML za obe jezikovni različici. Kranj **ni bil izrisan**, ker je trenutni naziv vsaj enega teka iz Kranja v Masterju zapisan z navadnim vezajem (`-`), DEV-056 `expectedTitle` pa z dolgim pomišljajem (`–`). Strogo ujemanje zato varno blokira prikaz; popravek identitete je ločena, preverjena naloga DEV-056, ne tiha sprememba DEV-061. Lokalni Chromium se ni mogel zagnati zaradi sistemske omejitve (`socket() ... Operation not permitted`), zato končni render/UX pri 390/768/1440 ostaja nepreverjen. Statični namizni in mobilni izrezi so bili pregledani posebej.
+Ločeno lokalno testno drevo je **začasno** nastavilo te tri vnose na odobrene samo med QA-gradnjo; ta simulacija je bila po preizkusu odstranjena. Gradnja je uspela (754 SL/EN profilov). Fotografiji Štanjela in Celja sta se pravilno vključili v izhodni HTML za obe jezikovni različici. Kranj **ni bil izrisan**, ker je trenutni naziv vsaj enega teka iz Kranja v Masterju zapisan z navadnim vezajem (`-`), DEV-056 `expectedTitle` pa z dolgim pomišljajem (`–`). Strogo ujemanje zato varno blokira prikaz; popravek identitete je ločena, preverjena naloga DEV-056, ne tiha sprememba DEV-061. Lokalni Chromium se ni mogel zagnati zaradi sistemske omejitve (`socket() ... Operation not permitted`), zato končni render/UX pri 390/768/1440 ostaja nepreverjen. Statični namizni in mobilni izrezi so bili pregledani posebej.
 
-## Naslednji korak po pripravi datotek
-1. Izrecen vizualni/kuratorski izbor Kranj, Štanjel in Celje (vsak posebej), zlasti potrditev širšega izreza Celja. Izdelava datoteke **ni** njena avtomatska objava.
-2. Samo za odobrene vnose nastavi `PUBLISHED / APPROVED` in lokalni `assetPath`. Ostali ostanejo skriti. Pri CC BY-SA ohrani izvorno licenco, avtorja in jasno oznako predelave.
-3. Šele s prikazanimi dejanskimi slikami preveri SL/EN profil na 390/768/1440 px: glavni CTA nad sliko, napisi/povezave, ALT, tipkovnica, izrez, brez horizontalnega overflow, prenosne bajte in LCP. Zgolj test statičnih izrezov tega ne nadomesti. Kranj zahteva še preverjeno uskladitev naziva z DEV-056, preden se bo prikazal.
+## Naslednji korak po odobritvi motivov
+1. Preveri dejanski novi Cloudflare PR predogled za Štanjel/Celje v SL/EN na 390/768/1440 px: glavni CTA nad sliko, napisi/povezave, ALT, tipkovnica, izrez, brez horizontalnega overflow, prenosne bajte in LCP.
+2. Kranj ostane odobren v katalogu, vendar strogo ujemanje trenutno preprečuje prikaz. Morebitno uskladitev DEV-056 naziva izpelji ločeno, brez sproščanja varoval DEV-061.
+3. Pred vsakim merge ponovno preveri aktualni `main`, CI in odvisnosti PR #280 → #281 → #284. Merge in produkcijski deploy samo po izrecni ločeni odobritvi lastnika.
 
 ## Git/Ahotu preflight — 19. 11. 2026
 - `main = 16b4b90`; #280 in #281 sta Draft; #284 je bil vrnjen v Draft. Vsi PR-ji ostajajo odprti in nezdruženi.

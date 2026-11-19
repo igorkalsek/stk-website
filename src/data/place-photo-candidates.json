@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "checkedOn": "2026-11-18",
-  "purpose": "DEV-061 editorial candidate catalogue; no image is approved for public display",
+  "purpose": "DEV-061 curated catalogue; three owner-approved images for the review-only profile pilot",
   "entries": [
     {
       "placeId": "Q15928",
@@ -41,9 +41,9 @@
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "altSl": "Panorama Kranja s Šmarjetne gore",
       "altEn": "Panorama of Kranj from Šmarjetna gora",
-      "status": "CANDIDATE",
-      "visualReview": "PENDING",
-      "assetPath": null
+      "status": "PUBLISHED",
+      "visualReview": "APPROVED",
+      "assetPath": "/images/places/kranj-panorama.webp"
     },
     {
       "placeId": "Q15854",
@@ -69,9 +69,9 @@
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "altSl": "Pogled na Celje s starega gradu",
       "altEn": "View of Celje from the old castle",
-      "status": "CANDIDATE",
-      "visualReview": "PENDING",
-      "assetPath": null
+      "status": "PUBLISHED",
+      "visualReview": "APPROVED",
+      "assetPath": "/images/places/celje-old-castle-view.webp"
     },
     {
       "placeId": "Q15875",
@@ -181,9 +181,9 @@
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "altSl": "Pogled na Štanjel",
       "altEn": "View of Štanjel",
-      "status": "CANDIDATE",
-      "visualReview": "PENDING",
-      "assetPath": null
+      "status": "PUBLISHED",
+      "visualReview": "APPROVED",
+      "assetPath": "/images/places/stanjel-2020.webp"
     }
   ]
 }
