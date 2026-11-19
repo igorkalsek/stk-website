@@ -27,10 +27,28 @@ Pregled temelji na konkretnih Wikimedia Commons straneh (avtorstvo, opis kraja, 
 
 Vse tri datoteke imajo veljaven WebP podpis in so pod mejo 512 KiB. Naslovne fotografije ponazarjajo kraj, **ne štarta ali trase**. Priznanje avtorja, povezava do izvora, licenca in oznaka izreza so že predvideni v manifestu/komponenti; podatki ob odobritvi ostanejo nespremenjeni. Izvirni JPG so bili preneseni prek uradnega uporabniškega vmesnika Commons; na končni veji so le WebP, začasni JPG se odstranijo.
 
+### Vizualni predogled kandidatov (samo Draft, brez javne objave)
+
+Kranj — Mihael Grmek, CC BY-SA 4.0; panorama mesta in gora:
+
+![Panoramski kandidat: Kranj](../public/images/places/kranj-panorama.webp)
+
+Štanjel — ModriDirkac, CC BY-SA 4.0; pogled na vas:
+
+![Panoramski kandidat: Štanjel](../public/images/places/stanjel-2020.webp)
+
+Celje — Boris Maric, CC0; izrez z gradom in mestom:
+
+![Panoramski kandidat: Celje](../public/images/places/celje-old-castle-view.webp)
+
+### Lokalni testni izris (izolirana simulacija, ni commitan)
+
+Ločeno lokalno testno drevo je **začasno** nastavilo te tri vnose na odobrene samo med QA-gradnjo; javni manifest na PR ostaja nespremenjen. Gradnja je uspela (754 SL/EN profilov). Fotografiji Štanjela in Celja sta se pravilno vključili v izhodni HTML za obe jezikovni različici. Kranj **ni bil izrisan**, ker je trenutni naziv vsaj enega teka iz Kranja v Masterju zapisan z navadnim vezajem (`-`), DEV-056 `expectedTitle` pa z dolgim pomišljajem (`–`). Strogo ujemanje zato varno blokira prikaz; popravek identitete je ločena, preverjena naloga DEV-056, ne tiha sprememba DEV-061. Lokalni Chromium se ni mogel zagnati zaradi sistemske omejitve (`socket() ... Operation not permitted`), zato končni render/UX pri 390/768/1440 ostaja nepreverjen. Statični namizni in mobilni izrezi so bili pregledani posebej.
+
 ## Naslednji korak po pripravi datotek
 1. Izrecen vizualni/kuratorski izbor Kranj, Štanjel in Celje (vsak posebej), zlasti potrditev širšega izreza Celja. Izdelava datoteke **ni** njena avtomatska objava.
 2. Samo za odobrene vnose nastavi `PUBLISHED / APPROVED` in lokalni `assetPath`. Ostali ostanejo skriti. Pri CC BY-SA ohrani izvorno licenco, avtorja in jasno oznako predelave.
-3. Šele s prikazanimi dejanskimi slikami preveri SL/EN profil na 390/768/1440 px: glavni CTA nad sliko, napisi/povezave, ALT, tipkovnica, izrez, brez horizontalnega overflow, prenosne bajte in LCP. Zgolj test statičnih izrezov tega ne nadomesti.
+3. Šele s prikazanimi dejanskimi slikami preveri SL/EN profil na 390/768/1440 px: glavni CTA nad sliko, napisi/povezave, ALT, tipkovnica, izrez, brez horizontalnega overflow, prenosne bajte in LCP. Zgolj test statičnih izrezov tega ne nadomesti. Kranj zahteva še preverjeno uskladitev naziva z DEV-056, preden se bo prikazal.
 
 ## Git/Ahotu preflight — 19. 11. 2026
 - `main = 16b4b90`; #280 in #281 sta Draft; #284 je bil vrnjen v Draft. Vsi PR-ji ostajajo odprti in nezdruženi.
