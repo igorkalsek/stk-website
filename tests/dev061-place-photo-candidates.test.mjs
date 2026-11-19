@@ -4,6 +4,13 @@ import { readFileSync } from 'node:fs';
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const catalogue = JSON.parse(read('../src/data/place-photo-candidates.json'));
+const licenseTerms = {
+  'CC-BY-4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'CC-BY-SA-4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
+  'CC-BY-SA-3.0': 'https://creativecommons.org/licenses/by-sa/3.0/',
+  'CC0-1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
+  'PD-self': 'https://commons.wikimedia.org/wiki/Template:PD-self'
+};
 
 function validatePublicationState(entry) {
   assert.ok(['CANDIDATE', 'PUBLISHED'].includes(entry.status), `invalid status for ${entry.place}`);
@@ -11,7 +18,7 @@ function validatePublicationState(entry) {
   if (entry.status === 'PUBLISHED') {
     assert.equal(entry.visualReview, 'APPROVED', `${entry.place} was published without visual approval`);
     assert.notEqual(entry.assetPath, null, `${entry.place} was published without a local image`);
-    assert.match(entry.licenseUrl, /^https:\/\/creativecommons\.org\//, `${entry.place} has no supported licence link`);
+    assert.equal(entry.licenseUrl, licenseTerms[entry.license], `${entry.place} has mismatched licence terms`);
   }
   if (entry.assetPath === null) return;
 
@@ -36,8 +43,8 @@ test('DEV-061 catalogue has 10–15 unique, fully attributed place records', () 
     assert.ok(entry.place && entry.file && entry.author);
     assert.equal(new URL(entry.source).host, 'commons.wikimedia.org');
     assert.equal(new URL(entry.source).pathname.startsWith('/wiki/File:'), true);
-    assert.ok(['CC-BY-4.0', 'CC-BY-SA-4.0', 'CC-BY-SA-3.0', 'CC0-1.0', 'PD-self'].includes(entry.license));
-    assert.equal(new URL(entry.licenseUrl).protocol, 'https:');
+    assert.ok(Object.hasOwn(licenseTerms, entry.license));
+    assert.equal(entry.licenseUrl, licenseTerms[entry.license], `incorrect licence link for ${entry.place}`);
     assert.ok(entry.altSl && entry.altEn);
     validatePublicationState(entry);
   }
