@@ -2,6 +2,11 @@
 import RegistrationFeeValue from '../../../components/RegistrationFeeValue.astro';
 import { buildNearbyMapLink } from '../../../utils-nearby-index';
 import { NEARBY_EDITION_LOCATIONS } from '../../../finder/nearby-production-index';
+import { NEARBY_EDITION_BINDINGS } from '../../../data/nearby-geography';
+import placePhotoCatalogue from '../../../data/place-photo-candidates.json';
+import PlacePhoto from '../../../components/PlacePhoto.astro';
+import { resolveNearbyEditionLocation } from '../../../utils-nearby-races';
+import { selectPublicPlacePhoto } from '../../../utils-place-photo';
 import { formatRaceDateStatus, getEventDatePhase } from '../../../utils-date';
 import { getRegistrationFeeBounds } from '../../../utils-registration-fees';
 import GpxLinks from '../../../components/GpxLinks.astro';
@@ -88,6 +93,14 @@ const englishPath = event ? buildEnglishEventDetailPath(event) : (year === '2027
 
 const mapLink = event ? buildNearbyMapLink(event, NEARBY_EDITION_LOCATIONS, 'sl') : null;
 const locationUrl = mapLink?.url ?? '';
+// Reuse DEV-056's current-edition identity guard before resolving illustrative place imagery.
+const locationForPhoto = event ? resolveNearbyEditionLocation(event, NEARBY_EDITION_LOCATIONS) : null;
+const photoBinding = event && locationForPhoto ? NEARBY_EDITION_BINDINGS.find(binding =>
+  binding.year === event.year && binding.masterRow === Number(event.row) &&
+  binding.expectedDate === event.date && binding.expectedTitle === event.title &&
+  binding.expectedPlace === event.place && binding.expectedRegion === event.region
+) : null;
+const placePhoto = selectPublicPlacePhoto(photoBinding?.placeId, placePhotoCatalogue.entries, 'sl');
 const isPastRace = event && getEventDatePhase(event.date) === 'past';
 const { actions: primaryActions, affiliateDisclosure } = event
   ? buildProfileActions(event, 'sl')
@@ -212,6 +225,7 @@ const jsonLd = event ? {
               </div>
               {affiliateDisclosure && <p class="event-detail-affiliate-disclosure" data-race-upcoming-only>{affiliateDisclosure}</p>}
             </div>
+            <PlacePhoto photo={placePhoto} lang="sl" />
           </div>
         </section>
 

@@ -1,0 +1,62 @@
+---
+import type { PublicPlacePhoto } from '../utils-place-photo';
+
+interface Props {
+  photo: PublicPlacePhoto | null;
+  lang: 'sl' | 'en';
+}
+
+const { photo, lang } = Astro.props;
+const placeLabel = lang === 'sl' ? 'Fotografija kraja, ne nujno štarta teka' : 'Photo of the place, not necessarily the race start';
+const creditLabel = lang === 'sl' ? 'Foto' : 'Photo';
+const cropLabel = lang === 'sl' ? 'Izrez za prikaz' : 'Cropped for display';
+---
+{photo && (
+  <figure class="stk-place-photo" data-stk-place-photo>
+    <div class="stk-place-photo-frame">
+      <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
+    </div>
+    <figcaption>
+      <span>{placeLabel}</span>
+      <span>{creditLabel}: <a href={photo.source} target="_blank" rel="noopener noreferrer">{photo.author}</a> · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a> · {cropLabel}</span>
+    </figcaption>
+  </figure>
+)}
+
+<style>
+  .stk-place-photo {
+    margin: 1rem 0 0;
+    width: 100%;
+    min-width: 0;
+  }
+  .stk-place-photo-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 5;
+    max-height: 220px;
+    overflow: hidden;
+    border-radius: 0.85rem;
+    background: #e8eef0;
+  }
+  .stk-place-photo-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .stk-place-photo figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.3rem 1rem;
+    margin-top: 0.35rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: #f2f8fa;
+  }
+  .stk-place-photo figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  @media (max-width: 640px) {
+    .stk-place-photo-frame { aspect-ratio: 16 / 7; max-height: 160px; }
+    .stk-place-photo figcaption { font-size: 0.73rem; }
+  }
+</style>

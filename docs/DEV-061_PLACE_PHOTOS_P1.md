@@ -1,9 +1,11 @@
 # DEV-061 P1 — publishing gate for place photographs
 
-P0 candidates stay `CANDIDATE` and `visualReview=PENDING`; they are not
-displayed on STK. The new pure selector rejects every P0 record by design.
+This document describes the original P1a guard (#281). The downstream Draft
+pilot (#284) now marks **Kranj, Štanjel and Celje** as `PUBLISHED / APPROVED`
+after the owner's visual selection on 20 November 2026; all other candidates
+remain hidden. The selector still rejects every unapproved record.
 
-## Activation checklist (not yet completed)
+## Activation checklist (completed for the three selected assets; preview QA pending)
 
 1. Visually inspect the original photo at its Commons page and the 390 px / 768 px /
    1440 px crop. Confirm the subject is the exact Slovenian place; do not present
@@ -20,4 +22,6 @@ displayed on STK. The new pure selector rejects every P0 record by design.
    Preserve H1, date, event actions and existing fallback; check mobile/desktop,
    accessibility and performance in a deployment preview.
 
-No images are fetched or published by this PR. No public site layout is changed.
+The guard-only PR #281 does not publish images by itself. Assets and the optional
+SL/EN layout live in its dependent Draft PR #284. Neither PR is merged or deployed
+to production.
