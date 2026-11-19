@@ -49,6 +49,7 @@ Ločeno lokalno testno drevo je **začasno** nastavilo te tri vnose na odobrene 
 Prvi Cloudflare predogled odobrenih slik (`75fe93d6`, commit `b73a39b`) je 20. 11. pokazal pravilne fotografije Štanjela in Celja pod glavnimi CTA. Opažen je bil slab kontrast napisa pod sliko na temni podlagi; na razvojni veji je pripravljen popravek na svetel napis in podčrtani povezavi. Ponovni pregled s popravkom ostaja obvezen.
 
 1. Preveri dejanski novi Cloudflare PR predogled za Štanjel/Celje v SL/EN na 390/768/1440 px: glavni CTA nad sliko, napisi/povezave, ALT, tipkovnica, izrez, brez horizontalnega overflow, prenosne bajte in LCP.
+   V PR #284 je dodan namenski `tests/browser/dev061-place-photo.spec.ts` (13 scenarijev), ki ob CI za oba kraja na teh širinah preveri nalaganje slik, lokalizacijo, položaj CTA, napis in horizontalni pomik; rezultat CI je treba še prebrati, LCP ostaja ločen pregled.
 2. Kranj ostane odobren v katalogu, vendar strogo ujemanje trenutno preprečuje prikaz. Morebitno uskladitev DEV-056 naziva izpelji ločeno, brez sproščanja varoval DEV-061.
 3. Pred vsakim merge ponovno preveri aktualni `main`, CI in odvisnosti PR #280 → #281 → #284. Merge in produkcijski deploy samo po izrecni ločeni odobritvi lastnika.
 
