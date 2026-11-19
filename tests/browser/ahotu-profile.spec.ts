@@ -9,13 +9,13 @@ const profiles = [
     language: 'sl', prefix: '/tek',
     actions: ['Prijava prek Ahotu', 'Prijava pri organizatorju', 'Razpis'],
     archive: 'Prijava (arhiv)',
-    disclosure: 'Partnerska povezava: če se prijavite prek Ahotu, lahko STK prejme provizijo. Pred plačilom preverite končno ceno in pogoje prijave.'
+    disclosure: 'Partnerska povezava'
   },
   {
     language: 'en', prefix: '/en/races',
     actions: ['Register via Ahotu', 'Register with organiser', 'Official info'],
     archive: 'Registration (archive)',
-    disclosure: 'Affiliate link: STK may earn a commission if you register through Ahotu. Check the final price and registration terms before paying.'
+    disclosure: 'Affiliate link'
   }
 ];
 

@@ -254,12 +254,12 @@ export const buildProfileActions = (event: ProfileActionEvent, language: DetailL
     ? {
       affiliate: 'Register via Ahotu',
       organiser: 'Register with organiser',
-      disclosure: 'Affiliate link: STK may earn a commission if you register through Ahotu. Check the final price and registration terms before paying.'
+      disclosure: 'Affiliate link'
     }
     : {
       affiliate: 'Prijava prek Ahotu',
       organiser: 'Prijava pri organizatorju',
-      disclosure: 'Partnerska povezava: če se prijavite prek Ahotu, lahko STK prejme provizijo. Pred plačilom preverite končno ceno in pogoje prijave.'
+      disclosure: 'Partnerska povezava'
     };
 
   return {

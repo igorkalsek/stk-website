@@ -18,9 +18,9 @@ const marathon = mapPublicRaceEventForDetail({
 }, '2027');
 const today = '2026-11-18';
 
-for (const [lang, affiliate, organiser, notice, archiveLabel] of [
-  ['sl', 'Prijava prek Ahotu', 'Prijava pri organizatorju', 'Razpis', 'Prijava'],
-  ['en', 'Register via Ahotu', 'Register with organiser', 'Official info', 'Registration']
+for (const [lang, affiliate, organiser, notice, archiveLabel, disclosureLabel] of [
+  ['sl', 'Prijava prek Ahotu', 'Prijava pri organizatorju', 'Razpis', 'Prijava', 'Partnerska povezava'],
+  ['en', 'Register via Ahotu', 'Register with organiser', 'Official info', 'Registration', 'Affiliate link']
 ]) {
   test(`Ahotu pilot shows the three localized actions in order (${lang})`, () => {
     const { actions, affiliateDisclosure } = buildProfileActions(marathon, lang, today);
@@ -29,7 +29,7 @@ for (const [lang, affiliate, organiser, notice, archiveLabel] of [
       { kind: 'registration', label: organiser, url: registrationUrl, analyticsType: 'prijava', archiveLabel },
       { kind: 'notice', label: notice, url: noticeUrl, analyticsType: 'razpis' }
     ]);
-    assert.ok(affiliateDisclosure);
+    assert.equal(affiliateDisclosure, disclosureLabel);
     assert.deepEqual(buildPrimaryActions(marathon, lang).map(action => action.url), [registrationUrl, noticeUrl]);
   });
 
