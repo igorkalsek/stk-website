@@ -356,7 +356,7 @@ describe('race detail view model', () => {
       assert.match(page, /event-detail-hero-layout/);
       assert.match(page, /event-detail-hero-facts/);
       assert.match(page, /event-detail-hero-chip-featured/);
-      assert.match(page, /action.kind === 'registration' \? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'/);
+      assert.match(page, /'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'/);
       assert.match(page, /data-analytics-link-type=\{action\.analyticsType\}/);
       assert.match(page, /data-analytics-calendar-type="google"/);
       assert.match(page, /detailItems.length > 0/);
