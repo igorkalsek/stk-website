@@ -9,6 +9,7 @@ interface Props {
 const { photo, lang } = Astro.props;
 const placeLabel = lang === 'sl' ? 'Fotografija kraja, ne nujno štarta teka' : 'Photo of the place, not necessarily the race start';
 const creditLabel = lang === 'sl' ? 'Foto' : 'Photo';
+const cropLabel = lang === 'sl' ? 'Izrez za prikaz' : 'Cropped for display';
 ---
 {photo && (
   <figure class="stk-place-photo" data-stk-place-photo>
@@ -17,7 +18,7 @@ const creditLabel = lang === 'sl' ? 'Foto' : 'Photo';
     </div>
     <figcaption>
       <span>{placeLabel}</span>
-      <span>{creditLabel}: <a href={photo.source} target="_blank" rel="noopener noreferrer">{photo.author}</a> · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a></span>
+      <span>{creditLabel}: <a href={photo.source} target="_blank" rel="noopener noreferrer">{photo.author}</a> · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a> · {cropLabel}</span>
     </figcaption>
   </figure>
 )}

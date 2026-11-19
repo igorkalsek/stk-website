@@ -32,4 +32,7 @@ test('photo component is lazy, responsive, attributed, and has no decorative fal
   assert.match(source, /photo\.source/);
   assert.match(source, /photo\.licenseUrl/);
   assert.match(source, /photo\.alt/);
+  assert.match(source, /Izrez za prikaz/);
+  assert.match(source, /Cropped for display/);
+  assert.match(source, /\{cropLabel\}/);
 });
