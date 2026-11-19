@@ -28,7 +28,7 @@ import { buildRaceConfirmationContextUrl, buildRaceCorrectionContextUrl } from '
 import { getProfileDeadlineEdition } from '../../../../profile-deadline-v2';
 import { buildRegistrationDeadlineViews, formatRegistrationDeadlineRelative, getRegistrationDeadlineCssState } from '../../../../utils-registration-deadlines';
 import { renderActionIcon } from '../../../../utils-action-icons';
-import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildOrganizerView, buildPrimaryActions, buildProfileHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
+import { buildCourseHeading, buildCourseRows, buildFamilyInfo, buildKeyFacts, buildOrganizerView, buildProfileActions, buildProfileHighlights, buildPublicNotes, buildRegistrationRows, formatDetailSurface } from '../../../../utils-race-detail-view';
 
 type DetailEvent = PublicRaceEvent & { additionalData?: AdditionalEventData | null };
 type HeroFact = { label: string; value: string; datetime?: string; isDate?: boolean };
@@ -103,7 +103,9 @@ const photoBinding = event && locationForPhoto ? NEARBY_EDITION_BINDINGS.find(bi
 ) : null;
 const placePhoto = selectPublicPlacePhoto(photoBinding?.placeId, placePhotoCatalogue.entries, 'en');
 const isPastRace = event && getEventDatePhase(event.date) === 'past';
-const primaryActions = event ? buildPrimaryActions(event, 'en') : [];
+const { actions: primaryActions, affiliateDisclosure } = event
+  ? buildProfileActions(event, 'en')
+  : { actions: [], affiliateDisclosure: '' };
 const savedRaceEventId = event ? getStableEventId(event) : '';
 const heroDateParts = event ? formatDateParts(event.date) : null;
 const heroFacts: HeroFact[] = event ? [
@@ -218,13 +220,14 @@ const jsonLd = event ? {
               <div class="event-detail-official-actions event-detail-action-list">
                 {primaryActions.map((action) => (
                   <Fragment>
-                    <a class={action.kind === 'registration' ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} data-race-upcoming-only={action.kind === 'registration' ? true : undefined} href={action.url} target="_blank" rel="noopener noreferrer" data-analytics-link-type={action.analyticsType} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail"><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
-                    {action.kind === 'registration' && (
-                      <a class="button button-secondary-light event-detail-top-action" data-race-archive-only href={action.url} target="_blank" rel="noopener noreferrer">{action.label} (archive)</a>
+                    <a class={action.kind === 'registration' && (action.sponsored || !affiliateDisclosure) ? 'button button-primary event-detail-top-action' : 'button button-secondary-light event-detail-top-action'} data-race-upcoming-only={action.kind === 'registration' ? true : undefined} href={action.url} target="_blank" rel={action.sponsored ? 'noopener noreferrer sponsored' : 'noopener noreferrer'} data-analytics-link-type={action.analyticsType} data-stk-event-id={event.row ? 'R' + event.row.padStart(6, '0') : ''} data-stk-event-name={event.title} data-stk-event-date={event.date} data-stk-event-year={event.year} data-analytics-placement="race_detail"><span class="action-icon" set:html={renderActionIcon(action.kind === 'registration' ? 'registration' : 'notice')}></span><span>{action.label}</span></a>
+                    {action.kind === 'registration' && !action.sponsored && (
+                      <a class="button button-secondary-light event-detail-top-action" data-race-archive-only href={action.url} target="_blank" rel="noopener noreferrer">{action.archiveLabel ?? action.label} (archive)</a>
                     )}
                   </Fragment>
                 ))}
               </div>
+              {affiliateDisclosure && <p class="event-detail-affiliate-disclosure" data-race-upcoming-only>{affiliateDisclosure}</p>}
             </div>
             <PlacePhoto photo={placePhoto} lang="en" />
           </div>

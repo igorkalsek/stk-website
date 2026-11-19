@@ -6,7 +6,12 @@ import { NEARBY_EDITION_LOCATIONS, NEARBY_ORIGINS } from '../.cache/dist-test/fi
 import { buildNearbyLocationIndex } from '../.cache/dist-test/utils-nearby-index.js';
 import { summarizeNearbyCoverage, filterNearbyRaces, airDistanceKm, isApprovedLocation } from '../.cache/dist-test/utils-nearby-races.js';
 const read = name => JSON.parse(readFileSync(new URL(`../docs/evidence/dev056-release/${name}.json`, import.meta.url)));
-const events = read('public-events').events;
+// Original DEV-056 evidence is an immutable 13 Nov snapshot. Project only the independently
+// verified 18 Nov 2026 Goricatlon schedule correction into the current test population.
+const events = read('public-events').events.map(e =>
+  e.year === '2026' && e.row === '268' && e.date === '2026-12-05'
+    ? {...e, date: '2026-12-12'} : e
+);
 const sources = read('source-verification');
 
 test('release index covers the actual public population with independently evidenced CC0 references', () => {
