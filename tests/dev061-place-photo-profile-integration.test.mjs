@@ -35,4 +35,6 @@ test('photo component is lazy, responsive, attributed, and has no decorative fal
   assert.match(source, /Izrez za prikaz/);
   assert.match(source, /Cropped for display/);
   assert.match(source, /\{cropLabel\}/);
+  assert.match(source, /color:\s*#f2f8fa;/);
+  assert.match(source, /text-decoration:\s*underline;/);
 });
