@@ -1,0 +1,25 @@
+{
+  "http": {
+    "url": "https://www.ptrf.si/wp-content/uploads/2025/05/PTRF-GM4O-Prvenstvo-Slovenije-clani_ce-2025.pdf",
+    "checked_at": "2026-11-03T07:53:19.047847+00:00",
+    "redirects": [],
+    "status": 200,
+    "final_url": "https://www.ptrf.si/wp-content/uploads/2025/05/PTRF-GM4O-Prvenstvo-Slovenije-clani_ce-2025.pdf",
+    "content_type": "application/pdf",
+    "content_disposition": null,
+    "bytes": 974563,
+    "sha256": "4d3e23d44d8d0919860cd44d8870b348c77499cc906b4eef65e61a2166236462"
+  },
+  "links": [
+    "https://tracedetrail.fr/en/trace/297547",
+    "https://tracedetrail.fr/en/trace/297547",
+    "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2025-gm4o-40-km.gpx",
+    "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2025-gm4o-40-km.gpx"
+  ],
+  "excerpts": [
+    "21. 6. 2025",
+    "40,6 km",
+    "GPX je na dosegljiv na povezavi:"
+  ],
+  "assessment": "The PDF explicitly links the 2025 GM4O GPX URL; minor day/date inconsistencies in the PDF remain."
+}

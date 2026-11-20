@@ -1,0 +1,6 @@
+P0D: all 26 files byte-for-byte unchanged from 47547c3
+XLSX: all 15 P0D sheets preserve every nonblank value and formula
+XLSX: original table names/ranges/columns/styles and frozen panes preserved
+CSV: all 139 P0D rows/columns preserved; 33 new research/category/course IDs
+Evidence: 12/12 initial targets valid; shared JAT categories counted once; 50 + 41 = 91 SHA, 26 families
+Payloads: all 41 new GPX hashes/bytes/XML/distance/fingerprints reproduced offline; ZIP safety rechecked

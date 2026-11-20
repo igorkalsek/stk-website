@@ -1,0 +1,4 @@
+Command: python3 -m unittest discover -s docs/dev048-gpx -p 'test_*.py' -v
+Result observed 2026-11-03: 33 tests in 0.012s, OK.
+Coverage: 17 original GPX/provenance tests, 15 ZIP/geometry tests, one new Unicode URL encoding regression.
+No network requests in the test suite.

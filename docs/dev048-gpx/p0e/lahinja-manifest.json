@@ -1,0 +1,32 @@
+[
+  {
+    "id": "P0E-034",
+    "event": "Lahinja Trail",
+    "route": "Duma",
+    "expected_km": 10,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_duma_-_dragatuski_plac.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254
+  },
+  {
+    "id": "P0E-035",
+    "event": "Lahinja Trail",
+    "route": "Velikobukovska",
+    "expected_km": 18,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_velikobukovska_-_dragatuski_plac.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254
+  },
+  {
+    "id": "P0E-036",
+    "event": "Lahinja Trail",
+    "route": "Republikanka",
+    "expected_km": 30,
+    "source_url": "https://www.belakrajina.si/sl/outdoor/lahinja-trail/",
+    "target_url": "https://www.belakrajina.si/site/assets/files/5460/lahinja_trail_republikanka_-_dragatuski_plac-1.gpx",
+    "kind": "GPX",
+    "master_2026_row": 254
+  }
+]

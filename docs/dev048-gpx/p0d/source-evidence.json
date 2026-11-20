@@ -1,0 +1,1873 @@
+[
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/5-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/5-km/",
+      "checked_at": "2026-11-03T07:53:53.298825+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/5-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 242520,
+      "sha256": "2ced6ec51a67f9ac3748fb12ac900e95cfcc099668f4d201689f71774ad91388"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2025/11/KOF_5_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2007",
+      "2009",
+      "2010",
+      "2012",
+      "2013",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/10-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/10-km/",
+      "checked_at": "2026-11-03T07:53:54.542774+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/10-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 248230,
+      "sha256": "6bd0ae1448cf06dba596ebebcd91c012d5e849093143bd12fcbf1a6cc97a3c40"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_10_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+      "checked_at": "2026-11-03T07:54:44.758746+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 244563,
+      "sha256": "689a69fbfdcf1eb66a8e94fb15bb6ef28d56bbe3f0098c42871dbbcfd493631f"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/30-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/30-km/",
+      "checked_at": "2026-11-03T07:53:56.670499+00:00",
+      "redirects": [
+        {
+          "from": "https://kocevsko-outdoor.si/razdalje/30-km/",
+          "status": 301,
+          "to": "https://kocevsko-outdoor.si/razdalje/35-km/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 250518,
+      "sha256": "a359cbc0451d401a9deefe955f089326464c5dd0ad22c60374451047138fc255"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2025/11/KOF_30_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/60-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/60-km/",
+      "checked_at": "2026-11-03T07:54:44.894975+00:00",
+      "redirects": [
+        {
+          "from": "https://kocevsko-outdoor.si/razdalje/60-km/",
+          "status": 301,
+          "to": "https://kocevsko-outdoor.si/razdalje/50-km/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 247451,
+      "sha256": "584bdb052e0dad890d811c7cfef97dd694dbad69fa06f627c3a4118fe4c141e4"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip"
+    ],
+    "visible_year_tokens": [
+      "2000",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+      "checked_at": "2026-11-03T07:54:46.985753+00:00",
+      "redirects": [
+        {
+          "from": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+          "status": 301,
+          "to": "https://kocevsko-outdoor.si/razdalje/vertikal"
+        },
+        {
+          "from": "https://kocevsko-outdoor.si/razdalje/vertikal",
+          "status": 301,
+          "to": "https://kocevsko-outdoor.si/razdalje/vertikal/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/vertikal/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 229833,
+      "sha256": "5c496a889eb427e3bf79161ae959470f6e30dc1458ba3babab879061fe81b6b9"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2026/09/KOF_Vertikal.zip"
+    ],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://soca-outdoor.com/faq/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://soca-outdoor.com/robots.txt",
+        "checked_at": "2026-11-03T07:54:50.151196+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://soca-outdoor.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 117,
+        "sha256": "85f80ab3f84370a4dbb987c25c55633a9c8ca96e2197a5df89664cd0efdf2ae7"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://soca-outdoor.com/faq/",
+      "checked_at": "2026-11-03T07:54:50.754378+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://soca-outdoor.com/faq/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 169258,
+      "sha256": "4394d5ce6bac6ba42a3a03913ef1b47726fd1034f15ee620659f06fb21d99a1c"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+      "checked_at": "2026-11-03T07:54:52.113323+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 246821,
+      "sha256": "dc64f03ae8b3f918a707d6c678e577255624d2c0117238f5bbed9607c97b0044"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+      "checked_at": "2026-11-03T07:54:52.227367+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/35-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 250518,
+      "sha256": "a359cbc0451d401a9deefe955f089326464c5dd0ad22c60374451047138fc255"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2025/11/KOF_30_km.zip"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+      "checked_at": "2026-11-03T07:54:53.293390+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+      "content_type": "text/html",
+      "content_disposition": null,
+      "bytes": 247451,
+      "sha256": "584bdb052e0dad890d811c7cfef97dd694dbad69fa06f627c3a4118fe4c141e4"
+    },
+    "file_links": [
+      "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip"
+    ],
+    "visible_year_tokens": [
+      "2000",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.kriskagora-trail.si/kosuta/",
+    "http": {
+      "url": "https://www.kriskagora-trail.si/kosuta/",
+      "checked_at": "2026-11-03T07:53:44.609513+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/kosuta/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 262952,
+      "sha256": "c10e7041a51e14cddd9be9d107e6a57071f909bba61a7a8c8f33aa637b8348cc"
+    },
+    "file_links": [
+      "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Kosuta2025.gpx"
+    ],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.kriskagora-trail.si/gams/",
+    "http": {
+      "url": "https://www.kriskagora-trail.si/gams/",
+      "checked_at": "2026-11-03T07:54:54.348224+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/gams/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 262596,
+      "sha256": "15cd1c1cf832bcc2149c461ec15ce54014d3d7c6cc639888928ac730da98c3a4"
+    },
+    "file_links": [
+      "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Gams2025.gpx"
+    ],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.kriskagora-trail.si/muflon/",
+    "http": {
+      "url": "https://www.kriskagora-trail.si/muflon/",
+      "checked_at": "2026-11-03T07:54:59.210276+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/muflon/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 262659,
+      "sha256": "d6e0621ab40630b4b37bb5b540899fd0c3329b73b733666e13d33223e02dbc64"
+    },
+    "file_links": [
+      "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx"
+    ],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+    "http": {
+      "url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+      "checked_at": "2026-11-03T07:55:00.582966+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 257593,
+      "sha256": "88dbe17b2bde8fb7debcfa1c35afd27fc02a3db936bd12454bc6cefbb0a3db96"
+    },
+    "file_links": [
+      "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx"
+    ],
+    "visible_year_tokens": [
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/zelena-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/zelena-trasa/",
+      "checked_at": "2026-11-03T07:55:03.300810+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/zelena-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 126615,
+      "sha256": "5ca546053633dbd7aef6803314d20f4f19226d7a1cdc8f2a727bf39b6e22cc65"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/rjava-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/rjava-trasa/",
+      "checked_at": "2026-11-03T07:55:03.742843+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/rjava-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 126205,
+      "sha256": "e8f1f11799fdc78400273239f6cbfcdf600a840b1a42b63d67cc03e71530c1c5"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/oranzna-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/oranzna-trasa/",
+      "checked_at": "2026-11-03T07:55:04.647069+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/oranzna-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 126579,
+      "sha256": "0a959cad8aace2a50e1c9a9f835fad206f3b1734472a66c39f9f62a56758d046"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/modra-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/modra-trasa/",
+      "checked_at": "2026-11-03T07:55:05.713835+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/modra-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 124275,
+      "sha256": "329ce019dbf98f9d4dc3f40a2f6986881f9d3b0682d355e76f39b7ab88e1f9c3"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/rumena-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/rumena-trasa/",
+      "checked_at": "2026-11-03T07:55:06.758871+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/rumena-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 124111,
+      "sha256": "5ebd75ea82fa339ae46be0813ac536f4dae2373a60fcf6f78912cd7012c0e5fc"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trailcelje.eu/bela-trasa/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trailcelje.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:02.275535+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trailcelje.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 114,
+        "sha256": "eec358baf140472c9a9ca9eabb148a3ab08b2dce3fcd794736eeddb4a85fc9ae"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trailcelje.eu/bela-trasa/",
+      "checked_at": "2026-11-03T07:55:07.815869+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trailcelje.eu/bela-trasa/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 123762,
+      "sha256": "73d3d95587ab188e1e6466837c036d36d83b897079de0e4a69949221f5dfe25e"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2019",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k24trail.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k24trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:08.859692+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "http": {
+      "url": "https://k24trail.si/",
+      "checked_at": "2026-11-03T07:55:08.934178+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 205752,
+      "sha256": "1d14ff3f6c121b0219d377caa8075c34f035fb2e775c25efdfa76b2700bf9f23"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://hgtrail-idrija.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://hgtrail-idrija.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:10.149009+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 167,
+        "sha256": "1e49c4a7a38b9070f63ef33a6f8191d29f237b91853d2f4fbfbab562cd849a29"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://hgtrail-idrija.si/",
+      "checked_at": "2026-11-03T07:55:11.792753+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 288494,
+      "sha256": "7a9d5c05820c138ad0a11d53cc38ebbc254851e77750a376e3d49a4a2e40f113"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k6trail.eu/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k6trail.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:13.015754+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k6trail.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 168,
+        "sha256": "648c7822455997d3e6b89f1bd19a39b0cc3a9b3c72ab968a590c6801d7457b13"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://k6trail.eu/",
+      "checked_at": "2026-11-03T07:55:14.071728+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k6trail.eu/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 101922,
+      "sha256": "bacc526ab988c2561af53d9d068d776fd4ce82cb901b834eac71831ef51e6a0f"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2000",
+      "2021",
+      "2024",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ponikva4trail.si/razdalje-tek/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://ponikva4trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:14.012591+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ponikva4trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 444,
+        "sha256": "4eae83344d0bac87e0b690cba16a0cac7051ffb7748e78a0cb695c3cc9235768"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://ponikva4trail.si/razdalje-tek/",
+      "checked_at": "2026-11-03T07:55:14.508851+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ponikva4trail.si/razdalje-tek/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 127071,
+      "sha256": "0ea12b631e4ce2b4051aa1e0626beae3494f7af7fd5a130baf49d6704a175dbe"
+    },
+    "file_links": [
+      "https://ponikva4trail.si/wp-content/uploads/gpx/nekategorizirano/Ponikva4trail_2024.gpx"
+    ],
+    "visible_year_tokens": [
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://ultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:45.807368+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 310,
+        "sha256": "97a20bd6ea0202894999fad5ba055fcab13a58d2ac04cf9c75e07bd9334592f5"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://ultratrail.si/sl/",
+      "checked_at": "2026-11-03T07:55:14.606432+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 415949,
+      "sha256": "c85f2ea0debb833915f7fb817bea7873962c1e4242d631876c5207f1514a4800"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2000",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.sportoroz.eu/parenzana-ultra-trail/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.sportoroz.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:14.775898+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sportoroz.eu/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 30,
+        "sha256": "2cab8bf44662a27a49e35c520f3e54e00cf392e7a159a44367685af9cdf0a58b"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "http": {
+      "url": "https://www.sportoroz.eu/parenzana-ultra-trail/",
+      "checked_at": "2026-11-03T07:55:14.863479+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.sportoroz.eu/parenzana-ultra-trail/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 85305,
+      "sha256": "bee3955d4af5af92155e9d85da3e935ec3f77aa43680eadd71b823df152124ff"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://soca-outdoor.com/razdalje/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://soca-outdoor.com/robots.txt",
+        "checked_at": "2026-11-03T07:54:50.151196+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://soca-outdoor.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 117,
+        "sha256": "85f80ab3f84370a4dbb987c25c55633a9c8ca96e2197a5df89664cd0efdf2ae7"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://soca-outdoor.com/razdalje/",
+      "checked_at": "2026-11-03T07:55:43.422512+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://soca-outdoor.com/razdalje/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 121540,
+      "sha256": "943a5f705695dd58cbb37bc01b26b609e861d1d62be8b1c14ed79539e27d19fc"
+    },
+    "file_links": [],
+    "visible_year_tokens": [],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k24trail.si/proge/k24-trail-100km/",
+    "http": {
+      "url": "https://k24trail.si/proge/k24-trail-100km/",
+      "checked_at": "2026-11-03T07:55:44.213031+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/proge/k24-trail-100km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 208734,
+      "sha256": "bb5f4b40f8950d54c654adf38a285ed9283759e35312ed8b718659b7a7076ee4"
+    },
+    "file_links": [
+      "https://k24trail.si/wp-content/uploads/2024/02/gpx-100k.gpx"
+    ],
+    "visible_year_tokens": [
+      "2000",
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k24trail.si/proge/k24-trail-50km/",
+    "http": {
+      "url": "https://k24trail.si/proge/k24-trail-50km/",
+      "checked_at": "2026-11-03T07:55:44.426732+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/proge/k24-trail-50km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 206476,
+      "sha256": "d223232d7b0a73bdbeda5bd94edc809eb09abef6e50e3d7aca86a2aa1498c461"
+    },
+    "file_links": [
+      "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx"
+    ],
+    "visible_year_tokens": [
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k24trail.si/proge/k24-trail-24km/",
+    "http": {
+      "url": "https://k24trail.si/proge/k24-trail-24km/",
+      "checked_at": "2026-11-03T07:55:45.477273+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/proge/k24-trail-24km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 203875,
+      "sha256": "6d4dd2da8b84c9abe8b2117fa43185f9511155a9bff24de183b24cbe3f88f659"
+    },
+    "file_links": [
+      "https://k24trail.si/wp-content/uploads/2024/02/K24_24km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://k24trail.si/proge/k24-trail-10km/",
+    "http": {
+      "url": "https://k24trail.si/proge/k24-trail-10km/",
+      "checked_at": "2026-11-03T07:55:46.541845+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/proge/k24-trail-10km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 193328,
+      "sha256": "181f775688f29039a47106718bf690ca9a8a1fd483a9493fd778f1c20bc6c2f1"
+    },
+    "file_links": [
+      "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx"
+    ],
+    "visible_year_tokens": [
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/legionar",
+    "http": {
+      "url": "https://ultratrail.si/sl/legionar",
+      "checked_at": "2026-11-03T07:55:47.624407+00:00",
+      "redirects": [
+        {
+          "from": "https://ultratrail.si/sl/legionar",
+          "status": 301,
+          "to": "https://ultratrail.si/sl/legionar/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/legionar/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 328226,
+      "sha256": "762ef23119a15f9e80780840b5bbf5ae0b86214499908271dee8cf97a3179264"
+    },
+    "file_links": [
+      "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip"
+    ],
+    "visible_year_tokens": [
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/asterix",
+    "http": {
+      "url": "https://ultratrail.si/sl/asterix",
+      "checked_at": "2026-11-03T07:55:49.444208+00:00",
+      "redirects": [
+        {
+          "from": "https://ultratrail.si/sl/asterix",
+          "status": 301,
+          "to": "https://ultratrail.si/sl/asterix/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/asterix/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 328978,
+      "sha256": "137c06b1826c577894cbca2b12fa65749479641dd11895c898c1c92712e414f3"
+    },
+    "file_links": [
+      "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip"
+    ],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://hgtrail-idrija.si/laufar/",
+    "http": {
+      "url": "https://hgtrail-idrija.si/laufar/",
+      "checked_at": "2026-11-03T07:56:00.982919+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/laufar/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 137299,
+      "sha256": "6b34df00fc57a93b39c01949a9e2611e593affed8413e526bfb789437306d7eb"
+    },
+    "file_links": [
+      "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+    "http": {
+      "url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+      "checked_at": "2026-11-03T07:56:01.757437+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 137462,
+      "sha256": "9c66f28afe4acbf7592c808d5fc293c538461216ff6990900bde9af4f52f573e"
+    },
+    "file_links": [
+      "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://hgtrail-idrija.si/cipka-trail/",
+    "http": {
+      "url": "https://hgtrail-idrija.si/cipka-trail/",
+      "checked_at": "2026-11-03T07:56:02.650925+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/cipka-trail/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 137103,
+      "sha256": "8ad43268f888bdf3cb1a1efaf5ec3aeb9004ac900e66b48bc8ba81f987fcc584"
+    },
+    "file_links": [
+      "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.sportoroz.eu/trase-courses-ultra-trail/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.sportoroz.eu/robots.txt",
+        "checked_at": "2026-11-03T07:55:14.775898+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.sportoroz.eu/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 30,
+        "sha256": "2cab8bf44662a27a49e35c520f3e54e00cf392e7a159a44367685af9cdf0a58b"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "http": {
+      "url": "https://www.sportoroz.eu/trase-courses-ultra-trail/",
+      "checked_at": "2026-11-03T07:56:03.633772+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.sportoroz.eu/trase-courses-ultra-trail/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 84041,
+      "sha256": "60bca97778b0856492b1af0bcd134f9baca0ece49f7b502ef25b8d95306331dd"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://soca-outdoor.com/za-tekace",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://soca-outdoor.com/robots.txt",
+        "checked_at": "2026-11-03T07:54:50.151196+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://soca-outdoor.com/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 117,
+        "sha256": "85f80ab3f84370a4dbb987c25c55633a9c8ca96e2197a5df89664cd0efdf2ae7"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://soca-outdoor.com/za-tekace",
+      "checked_at": "2026-11-03T07:56:04.144300+00:00",
+      "redirects": [
+        {
+          "from": "https://soca-outdoor.com/za-tekace",
+          "status": 301,
+          "to": "https://soca-outdoor.com/za-tekace/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://soca-outdoor.com/za-tekace/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 137366,
+      "sha256": "fa45a59fc32c9bde3612c6c30dce06ea9cb87fc7fb06cb961c40309bc1c45529"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://obalaultratrail.si/",
+      "checked_at": "2026-11-03T07:56:34.046541+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 289296,
+      "sha256": "adbb6fcb199be8e9c7e00a1fa551a4c86a716685f34c16e7d6c177dd9527db17"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2000",
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+    "http": {
+      "url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+      "checked_at": "2026-11-03T07:56:34.654095+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 234370,
+      "sha256": "d5b62bd34c0d1bd603de074794d510bfa966552507d5545db31806c5cfbe1782"
+    },
+    "file_links": [
+      "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2094"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.caven.run/sl/roadbook2026/",
+    "http": {
+      "url": "https://www.caven.run/sl/roadbook2026/",
+      "checked_at": "2026-11-03T07:56:35.872552+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.caven.run/sl/roadbook2026/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 202954,
+      "sha256": "e25b03d025c8d368a51381bab71ca968a84b36ce808e34cf2b41e34013f3c450"
+    },
+    "file_links": [
+      "https://www.caven.run/gpx/caven-trail-2026.gpx",
+      "https://www.caven.run/gpx/caven-vertikal-2026.gpx"
+    ],
+    "visible_year_tokens": [
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trail-ljubljana.eu/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trail-ljubljana.eu/robots.txt",
+        "checked_at": "2026-11-03T07:56:46.358292+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trail-ljubljana.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 119,
+        "sha256": "19485ccd8bf4b68fc89d90d932146f517f6c01f31183941b4d78d15c9be5fc9e"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trail-ljubljana.eu/",
+      "checked_at": "2026-11-03T07:56:47.259354+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trail-ljubljana.eu/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 148640,
+      "sha256": "ced6ab9726a0063833e64fe6b70de9e497abac8eaed0bf6abe91839822956c7f"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/",
+      "checked_at": "2026-11-03T07:56:49.412310+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://krastrail.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 267346,
+      "sha256": "2b1e6c6e42ab02c78dcab0f347469b7861761f06735f6c5f2f8f71a366bb3e44"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2000",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+    "http": {
+      "url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+      "checked_at": "2026-11-03T07:57:44.192819+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/razdalje/obala-trail-11-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 230753,
+      "sha256": "9ba5cc704d741e6f12139409e22d7a7944bb88ecc4544bc19c64d1ee17ddbcad"
+    },
+    "file_links": [
+      "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-11-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+    "http": {
+      "url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+      "checked_at": "2026-11-03T07:57:44.321745+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/razdalje/obala-trail-17-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 231547,
+      "sha256": "a67b044672243a70e62f6a14495c4be438788045b938f73cbfd3def6c0bca36c"
+    },
+    "file_links": [
+      "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-17-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+    "http": {
+      "url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+      "checked_at": "2026-11-03T07:57:45.391778+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/razdalje/obala-trail-35-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 235170,
+      "sha256": "f906e47e05f60c884c66a5ab7b8814fd23e7fa838d137deadaff0bd5903df304"
+    },
+    "file_links": [
+      "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-35-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+    "http": {
+      "url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+      "checked_at": "2026-11-03T07:57:46.458514+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-64-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 232674,
+      "sha256": "b8f65b210e9bfeb46f7bcc72ca6c929b9410ced1d3f0d8610bf9179b66407580"
+    },
+    "file_links": [
+      "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-64-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2000",
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/razdalje/kratka-razdalja-kras-trail-10-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/razdalje/kratka-razdalja-kras-trail-10-km/",
+      "checked_at": "2026-11-03T07:57:47.520941+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://krastrail.si/razdalje/kratka-razdalja-kras-trail-10-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 273478,
+      "sha256": "6ea81db0d36298d41df8a593bea51ccd4fef1ec310ea3663edd2c04c07d2aec6"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/razdalje/srednja-razdalja-trail-29-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/razdalje/srednja-razdalja-trail-29-km/",
+      "checked_at": "2026-11-03T07:57:47.691449+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://krastrail.si/razdalje/srednja-razdalja-trail-29-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 283980,
+      "sha256": "21b3c91c37e8e1b2c46befc860cd5ce97f3ccd4114550ac73da89f8ec4442805"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/razdalje/dolga-razdalja-trail-52-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/razdalje/dolga-razdalja-trail-52-km/",
+      "checked_at": "2026-11-03T07:57:51.033637+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://krastrail.si/razdalje/dolga-razdalja-trail-52-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 307036,
+      "sha256": "6344970e65ee66b0de08de5237be5ddf2df9a62ce29cb5174adf88d93cffadc1"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2000",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/razdalje/srednja-razdalja-trail-15-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/razdalje/srednja-razdalja-trail-15-km/",
+      "checked_at": "2026-11-03T07:57:51.178770+00:00",
+      "redirects": [],
+      "status": 404,
+      "final_url": "https://krastrail.si/razdalje/srednja-razdalja-trail-15-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 124359,
+      "sha256": "15f8c417a7c4dbd9699e16cc69bdd5115e3e249078d23353bb28970a4944980f"
+    },
+    "file_links": [],
+    "visible_year_tokens": [],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://krastrail.si/razdalje/dolga-razdalja-trail-32-km/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://krastrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:48.024373+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://krastrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 110,
+        "sha256": "fc010d46633f745c7fe733fab3ac47fcbf18d32cabd2dca68092b6c5f8e7c31f"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://krastrail.si/razdalje/dolga-razdalja-trail-32-km/",
+      "checked_at": "2026-11-03T07:57:53.959972+00:00",
+      "redirects": [],
+      "status": 404,
+      "final_url": "https://krastrail.si/razdalje/dolga-razdalja-trail-32-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 124359,
+      "sha256": "15f8c417a7c4dbd9699e16cc69bdd5115e3e249078d23353bb28970a4944980f"
+    },
+    "file_links": [],
+    "visible_year_tokens": [],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://trail-ljubljana.eu/trase/",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://trail-ljubljana.eu/robots.txt",
+        "checked_at": "2026-11-03T07:56:46.358292+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://trail-ljubljana.eu/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 119,
+        "sha256": "19485ccd8bf4b68fc89d90d932146f517f6c01f31183941b4d78d15c9be5fc9e"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "http": {
+      "url": "https://trail-ljubljana.eu/trase/",
+      "checked_at": "2026-11-03T07:57:56.216085+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://trail-ljubljana.eu/trase/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 163800,
+      "sha256": "8a625cc1a8001b467e6694765defd15ea55a18effe5c86ee9f2a14b89781baad"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2024",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ponikva4trail.si/razdalje/",
+    "http": {
+      "url": "https://ponikva4trail.si/razdalje/",
+      "checked_at": "2026-11-03T07:53:14.083529+00:00",
+      "redirects": [
+        {
+          "from": "https://ponikva4trail.si/razdalje/",
+          "status": 301,
+          "to": "https://ponikva4trail.si/razdalje-pohod/"
+        }
+      ],
+      "status": 200,
+      "final_url": "https://ponikva4trail.si/razdalje-pohod/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 125731,
+      "sha256": "b76a757f3ab56215722d6011298bfc22a538847cdf220f5f6c48729b5b1e91bf"
+    },
+    "file_links": [
+      "https://ponikva4trail.si/wp-content/uploads/gpx/nekategorizirano/pohod_Ponikva4trail_2026.gpx"
+    ],
+    "visible_year_tokens": [
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.ptrf.si/wp-content/uploads/2025/05/PTRF-GM4O-Prvenstvo-Slovenije-clani_ce-2025.pdf",
+    "http": {
+      "url": "https://www.ptrf.si/wp-content/uploads/2025/05/PTRF-GM4O-Prvenstvo-Slovenije-clani_ce-2025.pdf",
+      "checked_at": "2026-11-03T07:53:19.047847+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.ptrf.si/wp-content/uploads/2025/05/PTRF-GM4O-Prvenstvo-Slovenije-clani_ce-2025.pdf",
+      "content_type": "application/pdf",
+      "content_disposition": null,
+      "bytes": 974563,
+      "sha256": "4d3e23d44d8d0919860cd44d8870b348c77499cc906b4eef65e61a2166236462"
+    },
+    "file_links": [],
+    "visible_year_tokens": [],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ribncatrail.si/",
+    "http": {
+      "url": "https://ribncatrail.si/",
+      "checked_at": "2026-11-03T07:53:21.637580+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ribncatrail.si/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 197821,
+      "sha256": "46b12efde384e1862b717240b78cb0810ff5d1f4051cdeeaf9e747d0fa022c6c"
+    },
+    "file_links": [
+      "https://ribncatrail.si/downloads/KUHAVNCA.gpx",
+      "https://ribncatrail.si/downloads/CEBULARCA.gpx",
+      "https://ribncatrail.si/downloads/RIBEZN.gpx"
+    ],
+    "visible_year_tokens": [
+      "2019",
+      "2020",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://gozdarski-trail.si/bukev/",
+    "http": {
+      "url": "https://gozdarski-trail.si/bukev/",
+      "checked_at": "2026-11-03T07:53:28.189997+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://gozdarski-trail.si/bukev/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 103507,
+      "sha256": "2d417a845c1c3fd54ca5912f1c676013ffa8977d2fb564d26fa5819a84369028"
+    },
+    "file_links": [
+      "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx"
+    ],
+    "visible_year_tokens": [
+      "2008",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://gozdarski-trail.si/jelka/",
+    "http": {
+      "url": "https://gozdarski-trail.si/jelka/",
+      "checked_at": "2026-11-03T07:53:29.737696+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://gozdarski-trail.si/jelka/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 103687,
+      "sha256": "ff9a28034f5c3a5ea3f1457fcb72ad33ebeda59f1a0e45af8aa478dcbfd1b1ec"
+    },
+    "file_links": [
+      "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx"
+    ],
+    "visible_year_tokens": [
+      "2008",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.atdsavinjcan.eu/savinjski-k6-trail-2024/",
+    "http": {
+      "url": "https://www.atdsavinjcan.eu/savinjski-k6-trail-2024/",
+      "checked_at": "2026-11-03T07:53:31.804681+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.atdsavinjcan.eu/savinjski-k6-trail-2024/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 101532,
+      "sha256": "4f8797c97f92b0a6194b09c6a91f76c48e5f426325d782fd0f1b730456929979"
+    },
+    "file_links": [],
+    "visible_year_tokens": [
+      "2021",
+      "2024",
+      "2026"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence.",
+    "public_embedded_gpx_reference": "https://www.atdsavinjcan.eu/wp-content/uploads/gpx/savinjska-trail-28km.gpx",
+    "reference_kind": "Visible unexpanded sgpx shortcode in organizer HTML"
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/emperor/",
+    "http": {
+      "url": "https://ultratrail.si/sl/emperor/",
+      "checked_at": "2026-11-03T07:53:45.875358+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/emperor/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 335140,
+      "sha256": "ca1b0fe23bcd35aa176a42cc292c22c703d31643f90bf6a684a53e0b63994084"
+    },
+    "file_links": [
+      "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-emperor-160-km_100420206.zip"
+    ],
+    "visible_year_tokens": [
+      "2019",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/centurion/",
+    "http": {
+      "url": "https://ultratrail.si/sl/centurion/",
+      "checked_at": "2026-11-03T07:53:48.214663+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/centurion/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 334693,
+      "sha256": "b8896321fc7be57ad3f6f825f542432a31901547d201351791c89da872e2308d"
+    },
+    "file_links": [
+      "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip"
+    ],
+    "visible_year_tokens": [
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://ultratrail.si/sl/gladiator/",
+    "http": {
+      "url": "https://ultratrail.si/sl/gladiator/",
+      "checked_at": "2026-11-03T07:53:50.234028+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/sl/gladiator/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 332655,
+      "sha256": "6ef448be4ef43fded63bf07ed4f8c6de20eda312e59163b50b38d5d89d31a3c9"
+    },
+    "file_links": [
+      "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-gladiator-60-km_10042026.zip"
+    ],
+    "visible_year_tokens": [
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  },
+  {
+    "source_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+    "http": {
+      "url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+      "checked_at": "2026-11-03T07:59:20.631934+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.ptrf.si/razdalje/gm4o-40-km/",
+      "content_type": "text/html; charset=UTF-8",
+      "content_disposition": null,
+      "bytes": 84187,
+      "sha256": "bb3da5b5c7fcd9e28f5760bad3b285de361bbab95f730821536a88ad0f87d57d"
+    },
+    "file_links": [
+      "https://www.ptrf.si/wp-content/uploads/gpx/uncategorized/podbrdo-trail-running-festival-2026-gm4o-40-km.gpx"
+    ],
+    "visible_year_tokens": [
+      "2009",
+      "2027"
+    ],
+    "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+  }
+]

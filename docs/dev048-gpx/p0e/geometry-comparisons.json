@@ -1,0 +1,74 @@
+[
+  {
+    "left": "P0E-F001",
+    "right": "P0E-F026",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 2143.4,
+    "max_separation_m": 5066.7,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F002",
+    "right": "P0E-F027",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 191.9,
+    "max_separation_m": 968.2,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F003",
+    "right": "P0E-F028",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 1545.6,
+    "max_separation_m": 1738.3,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F004",
+    "right": "P0E-F029",
+    "status": "POSSIBLE_GEOMETRY_DUPLICATE",
+    "p95_separation_m": 8.7,
+    "max_separation_m": 489.2,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F005",
+    "right": "P0E-F030",
+    "status": "POSSIBLE_GEOMETRY_DUPLICATE",
+    "p95_separation_m": 27.7,
+    "max_separation_m": 480.9,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F006",
+    "right": "P0E-F031",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 146.3,
+    "max_separation_m": 478.5,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F011",
+    "right": "P0E-F032",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 709.3,
+    "max_separation_m": 1145.9,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  },
+  {
+    "left": "P0E-F012",
+    "right": "P0E-F033",
+    "status": "GEOMETRY_DIFFERS_IN_SAMPLED_COMPARISON",
+    "p95_separation_m": 4218.7,
+    "max_separation_m": 4288.8,
+    "samples": 256,
+    "method": "P0D method: normalized cumulative within-segment distance, linear interpolation, forward/reverse; no cyclic alignment. Screening only."
+  }
+]

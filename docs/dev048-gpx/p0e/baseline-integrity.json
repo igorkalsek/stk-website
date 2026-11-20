@@ -1,0 +1,110 @@
+{
+  "commit": "47547c37b3b8058ffc68da006dd26e4ca5a1c495",
+  "status": "UNCHANGED",
+  "files": [
+    {
+      "path": "docs/dev048-gpx/p0d/.gitignore",
+      "sha256": "d5b82d523d20f9b88bf9200e290e619aebc0b5a542cecb89be125b5babdb862c"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/REPORT.md",
+      "sha256": "a1a318f84d53a9b2395287ce6b07b5b192b43509775deec218f7c710bb8a7261"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/SHA256SUMS",
+      "sha256": "05f6d4ea7ce3a84e4246254cfaeb187d82168c0e6b21bbf3294bb90f3a7f2b2e"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/assemble.py",
+      "sha256": "d920823c054a9e34db7f23b1bc3cf54653e976bd050c4d6b544c96d134518c7d"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/backlog-snapshot.txt",
+      "sha256": "4cbb1661a9f2893594d7b06b786ff54d56e3ed81655e7cfa5f8b8c77f402e53e"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/catalog.csv",
+      "sha256": "f594ae2c2b0731025d7465a73f0f7b216b517d00af75d0d0c3798a6696d44012"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/comparison-manifest.json",
+      "sha256": "3e6d4906fe84305731e4a70c93b4f0d3e1434db309e3d9003f15c218a3702c3e"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/comparison-results.json",
+      "sha256": "6663e1a8169633c9cb235a883011554b693d9548002dda724731e461788f252e"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/first15-manifest.json",
+      "sha256": "7c00bd1e655b6e10e887eadbb0ef4e885b9b4375880c50b4faeba26bdf64fcf4"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/first15-results.json",
+      "sha256": "ca8975207cdb8cd13c3ef02dafb59edd8f3c97bddfb6762788536d2a33e54704"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/geometry-comparisons.json",
+      "sha256": "188408b89e451a464d550caff8523f735dd40c397d7e49b7cc8878c98f6ad0e2"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/input-fingerprints.json",
+      "sha256": "a4e7c9496541ddfe93e5137de4b54d5ba06e9c89a9a57a832742095b58cecb53"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/master-snapshot.json",
+      "sha256": "5ee4294b45d69dda0242362138631c046c4e78b14beccb7963610fdc3444977e"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/original134.csv",
+      "sha256": "0ad74d49bb021356dbd6c53c8809bc96e14c3bd0962d8636453b0a6c08c9fbb7"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/outputs/dev048-p0d/STK_GPX_P0D_2026-11-03.xlsx",
+      "sha256": "69a0defb787002f886b42d2af57d77d89210baeeb99ca1b034b8a60a82463c88"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/ptrf2025-pdf-evidence.json",
+      "sha256": "8348a7880fbe3b9d681747fdebe842ed70db2920e229113a85ad28983a74d199"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/research.py",
+      "sha256": "8326f36c9f89bbeff2ed8beca9d66fb6a7d4fc140e460f65884109bc1fbe7cab"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/series2-manifest.json",
+      "sha256": "80f1f03a50a2cf900f5c8a6a6cfb6cec3f13462cf5a0a18274adcd9155534804"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/series2-results.json",
+      "sha256": "bff9d1265ac33a5d3a4bf3f31ac3581a8544a90fda6f5ee03c93fcd1307e6796"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/series3-manifest.json",
+      "sha256": "637019df0ea3255949c07a725349ec330b5ebfb5585486441a1e5422553db096"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/series3-results.json",
+      "sha256": "e6938b41db04b58a1575c54827b73a9f50c6215ae935c3c73e883288b0ced63f"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/source-evidence.json",
+      "sha256": "8b5f6381f9f97405deeb29cfcc6face8d2f1354428a899438f9d2e776e8a4861"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/summary.json",
+      "sha256": "567f9c412c0fae91a3169f08372aa1664a2f3e4afe0e638c71eee7ff539b8639"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/technical-results.csv",
+      "sha256": "e9f096fc29e9202f02101567ec5c59dc93d046e9d6f1a9e34dfdce51ed94b7a6"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/technical-results.json",
+      "sha256": "5f5f9d18acd190afabb1687bcc36bf140cbaf326e9281512545233bb0d71b877"
+    },
+    {
+      "path": "docs/dev048-gpx/p0d/verification-results.txt",
+      "sha256": "f87a9ebc0ff56a66c1bdde80b9edf5f61857ecadb6350c9a7bcfa07941d269c4"
+    }
+  ]
+}

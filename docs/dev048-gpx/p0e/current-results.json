@@ -1,0 +1,1150 @@
+[
+  {
+    "id": "P0E-001-CURRENT",
+    "input_ids": [
+      "P0E-001"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 120 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/120k",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191449/julianalps/2026%20GPX%20FILES/JA_125k_6000_581c090f9f.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/120k",
+        "checked_at": "2026-11-03T08:50:03.492662+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/120k",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 643654,
+        "sha256": "d1d79c92f7dfbdbf74b6668488d560378f831c5cfc7aa2db690b188a9680a6bf"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx",
+      "checked_at": "2026-11-03T08:55:02.274310+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JAT_120_km_2026_nova_1_4c78df4442.gpx\"",
+      "bytes": 427520,
+      "sha256": "4367c2780b11a5f0ff0cc91f7eaff662d971583dc23ef0e3aa91b40001e60a65"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "4367c2780b11a5f0ff0cc91f7eaff662d971583dc23ef0e3aa91b40001e60a65",
+        "bytes": 427520,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 5067,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 120.338,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.322,
+            13.7846,
+            46.49297,
+            14.218293
+          ],
+          "first_time": "2026-07-30T13:53:14Z",
+          "last_time": "2026-07-30T13:53:14Z",
+          "geometry_sha256_6dp": "8cdaf109a6546b8e028b1e4b72a07fe9a366a7d26436db47d933ccd62e96090d",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JAT 120 km 2026 nova",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/120k",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-002-CURRENT",
+    "input_ids": [
+      "P0E-002"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 80 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/80K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191446/julianalps/2026%20GPX%20FILES/JA_79k_3900_40399a0777.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/80K",
+        "checked_at": "2026-11-03T08:50:05.404878+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/80K",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 638594,
+        "sha256": "673045bd786dbf905b641c0dd5e0128838e2c8380b4f6a94c3dbfb607256c821"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx",
+      "checked_at": "2026-11-03T08:55:03.448836+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JAT_80_km_2026_17_9_fb8965ea8f.gpx\"",
+      "bytes": 281659,
+      "sha256": "a94e45eefe803fbf5d36809d173e29a4c684a5336b0a7a9b39c3a44aff951e8a"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "a94e45eefe803fbf5d36809d173e29a4c684a5336b0a7a9b39c3a44aff951e8a",
+        "bytes": 281659,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 3331,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 78.049,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.36248,
+            13.78473,
+            46.49297,
+            14.21831
+          ],
+          "first_time": "2026-06-19T09:09:10Z",
+          "last_time": "2026-06-19T09:09:10Z",
+          "geometry_sha256_6dp": "59248a18451cba0132af74088527c88d5a140f8a33b503dbcff007be6185dca1",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JAT 80 km 2026",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/80K",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-003-CURRENT",
+    "input_ids": [
+      "P0E-003"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 50 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/50K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_52k_2600_fa9166e549.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/50K",
+        "checked_at": "2026-11-03T08:50:06.790923+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/50K",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 634912,
+        "sha256": "f173048ba7515a619221e651eb99a2d2fe2b16c589cabb25bb138dd281824ee4"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx",
+      "checked_at": "2026-11-03T08:55:04.360334+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JAT_50_km_17_9_2026_7b23cc6123.gpx\"",
+      "bytes": 190603,
+      "sha256": "d3c264e6b6e00b7a3a04167a9beb192af490781de584a51211ae365e2c148753"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "d3c264e6b6e00b7a3a04167a9beb192af490781de584a51211ae365e2c148753",
+        "bytes": 190603,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 2252,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 54.141,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.40733,
+            13.78462,
+            46.49297,
+            14.15844
+          ],
+          "first_time": "2026-06-19T09:07:57Z",
+          "last_time": "2026-06-19T09:07:57Z",
+          "geometry_sha256_6dp": "b261e9862c6d5a9af2b2329eda5859d29e1974d08324f10cbeaae562169ac26f",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JAT 50 km 2026",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/50K",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-004-CURRENT",
+    "input_ids": [
+      "P0E-004"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 25 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/25k",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1758086072/julianalps/GPX%20FILES%202025%20%2817.9.%29/JAT_25_km_2025_e7cc8ea06a.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/25k",
+        "checked_at": "2026-11-03T08:50:07.616773+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/25k",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 629617,
+        "sha256": "1c15d716ab9487a6d6e3d33dc202cccac7e4b3d4c0d1dc260ff2447fab51a94d"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx",
+      "checked_at": "2026-11-03T08:55:05.409020+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JAT_25_km_2026_26eeaf6594.gpx\"",
+      "bytes": 104944,
+      "sha256": "f5fe2d56c782ad4f4b7d5b0a040fda0631b28dcf92881aefcfc6b5d63c1c46d3"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "f5fe2d56c782ad4f4b7d5b0a040fda0631b28dcf92881aefcfc6b5d63c1c46d3",
+        "bytes": 104944,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1237,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 24.235,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.4738,
+            13.75194,
+            46.49597,
+            13.84061
+          ],
+          "first_time": "2026-06-16T11:08:47Z",
+          "last_time": "2026-06-16T11:08:47Z",
+          "geometry_sha256_6dp": "bd9786ca4c4263e764614c81b932cf98b0b8b7d2e4c84d36dd84ad9492a40bd7",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JAT 25 km 2026",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/25k",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-005-CURRENT",
+    "input_ids": [
+      "P0E-005"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 15 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/15K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_17k_600_5bc4622285.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/15K",
+        "checked_at": "2026-11-03T08:50:08.749058+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/15K",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 628114,
+        "sha256": "51ec0597d47f1310e5499863dc00d5347a5ef927ca6bfb8f096cfa4869c5cc2b"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx",
+      "checked_at": "2026-11-03T08:55:06.419862+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JAT_15_km_2026_2a78512f89.gpx\"",
+      "bytes": 61420,
+      "sha256": "b1caeb1ea88a2363cb5d39daa809302d8a3c729ef8b1ceb341685b0929a56f8e"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "b1caeb1ea88a2363cb5d39daa809302d8a3c729ef8b1ceb341685b0929a56f8e",
+        "bytes": 61420,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 712,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 17.13,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.4738,
+            13.781115,
+            46.49057,
+            13.84061
+          ],
+          "first_time": "2026-06-16T11:07:20Z",
+          "last_time": "2026-06-16T11:07:20Z",
+          "geometry_sha256_6dp": "40ce42c648627d760a26beee9a9beef7569814cf899cf27f4474f4e213bc5cc2",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JAT 15 km 2026",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/15K",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-006-CURRENT",
+    "input_ids": [
+      "P0E-006",
+      "P0E-007"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT Funny 10 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/10K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191444/julianalps/2026%20GPX%20FILES/JA_11k_300_64741ae914.gpx",
+    "master_2026_row": "217",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://pdf.utmb.world/robots.txt",
+        "checked_at": "2026-11-03T08:55:01.841452+00:00",
+        "redirects": [],
+        "status": 404,
+        "final_url": "https://pdf.utmb.world/robots.txt",
+        "content_type": "application/octet-stream",
+        "content_disposition": "inline",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": true
+    },
+    "source": {
+      "http": {
+        "url": "https://julianalps.utmb.world/sl/races/10K",
+        "checked_at": "2026-11-03T08:50:09.842640+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://julianalps.utmb.world/sl/races/10K",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 621305,
+        "sha256": "a5f413301c806e5fea5e9e101d076c69333fb968a778f8d0735a12147603dbdd"
+      },
+      "download_links": [
+        "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx",
+      "checked_at": "2026-11-03T08:55:07.419103+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx",
+      "content_type": "application/octet-stream",
+      "content_disposition": "attachment; filename=\"JA_Tral_10_km_2026_5cf5530af4.gpx\"",
+      "bytes": 42894,
+      "sha256": "56b16d0b732ea30036aea4305ab22eac48263d1876347f2b4e3dfdefd33e844b"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "56b16d0b732ea30036aea4305ab22eac48263d1876347f2b4e3dfdefd33e844b",
+        "bytes": 42894,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 503,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 11.108,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.4738,
+            13.78114,
+            46.48713,
+            13.82679
+          ],
+          "first_time": "2026-06-16T11:04:53Z",
+          "last_time": "2026-06-16T11:04:53Z",
+          "geometry_sha256_6dp": "3d2de35a9f41421dcd5c5f4edb1643c35c0b1663cb319049446e467fa678e61c",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "f5f9fa0092e272f87482796e7ad57ea0e3a4c52b1e2b47ccb543d9456d0219ec",
+          "route_label": "JATral 10 km 2026",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://julianalps.utmb.world/sl/races/10K",
+        "robots_http": {
+          "url": "https://julianalps.utmb.world/robots.txt",
+          "checked_at": "2026-11-03T08:50:03.070400+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://julianalps.utmb.world/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 88,
+          "sha256": "154827eddf47749b5224aefd7cb5159fe142b9e5e36dbefc141e22b10975cae5"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-012-CURRENT",
+    "input_ids": [
+      "P0E-012"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Ultra 64 km",
+    "source_url": "https://go4trail.si/sl/proge/go-ultra",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://go4trail.si/sites/default/files/go4trail_ultra_november_6_2025.gpx",
+    "master_2026_row": "256",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://go4trail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:17.199789+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 2189,
+        "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://go4trail.si/sl/proge/go-ultra",
+        "checked_at": "2026-11-03T08:50:20.150631+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-ultra",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 146166,
+        "sha256": "dc361a437d22b7943b02540f78aba2bb8dfd9a4203d4164edce11f8afd7bb894"
+      },
+      "download_links": [
+        "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2008",
+        "2019",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+      "checked_at": "2026-11-03T08:55:08.484748+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 466493,
+      "sha256": "ef79f4f44dda241aedf2fded53696836064a10002a17f6af30b8fcfd7afcfb42"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "ef79f4f44dda241aedf2fded53696836064a10002a17f6af30b8fcfd7afcfb42",
+        "bytes": 466493,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 3619,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 63.179,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.96849,
+            13.58486,
+            46.05718,
+            13.70953
+          ],
+          "first_time": "2026-10-01T06:08:16+00:00",
+          "last_time": "2026-10-01T09:09:10+00:00",
+          "geometry_sha256_6dp": "cffc371fd8fd17674c83f8c7798148599f639a9d4fc3c9755f451f797710a4f5",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "eae7770c40a16b73a26574c7316d487e431a2f80bb5b6027f592659b12b40c3b",
+          "route_label": "GO4trail 2026 - Ultra 64km",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://go4trail.si/sl/proge/go-ultra",
+        "robots_http": {
+          "url": "https://go4trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:17.199789+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://go4trail.si/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 2189,
+          "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+        },
+        "allowed": true,
+        "crawl_delay": 10
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-013-CURRENT",
+    "input_ids": [
+      "P0E-013"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Trim 10 km",
+    "source_url": "https://go4trail.si/sl/proge/go-trim",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://go4trail.si/sites/default/files/go4trailgosabotin2023.gpx",
+    "master_2026_row": "256",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://go4trail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:17.199789+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 2189,
+        "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://go4trail.si/sl/proge/go-trim",
+        "checked_at": "2026-11-03T08:50:30.369028+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-trim",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 142576,
+        "sha256": "2c5a74d8f1e6c4a40809cf5f018f2e46a606540e81eacb6ce3b76760d54baaf2"
+      },
+      "download_links": [
+        "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2008",
+        "2009",
+        "2019",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+      "checked_at": "2026-11-03T08:55:08.729919+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 143669,
+      "sha256": "cd8eacf12242fef275f8c823e7418e0e396d95f593036f567ff53c19351a3bbb"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "cd8eacf12242fef275f8c823e7418e0e396d95f593036f567ff53c19351a3bbb",
+        "bytes": 143669,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1112,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.925,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.96843,
+            13.64261,
+            45.99186,
+            13.68845
+          ],
+          "first_time": "2026-09-28T10:22:00+00:00",
+          "last_time": "2026-09-28T11:17:33+00:00",
+          "geometry_sha256_6dp": "01e2cc84d962fc1b4162e2c35caffe485a54ea57b4dfb43070638a6de5a3c935",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "eae7770c40a16b73a26574c7316d487e431a2f80bb5b6027f592659b12b40c3b",
+          "route_label": "GO4trail 2026 - GOTrim 13km",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://go4trail.si/sl/proge/go-trim",
+        "robots_http": {
+          "url": "https://go4trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:17.199789+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://go4trail.si/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 2189,
+          "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+        },
+        "allowed": true,
+        "crawl_delay": 10
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-037",
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Up/down senior",
+    "expected_km": 13.1,
+    "source_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 125,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.offroadrunning2026.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:11.545451+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 183,
+        "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "checked_at": "2026-11-03T08:53:59.441765+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 55533,
+        "sha256": "aa4771edcd82541837867fcf5a77e254f8bb29f388c4c384dcdec3e02451b3c7"
+      },
+      "download_links": [
+        "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+        "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+      "checked_at": "2026-11-03T08:55:18.646393+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 109329,
+      "sha256": "d00002a873450fb84c5ec722d128f870961ffc5a7a1837e7f0c9d963b9ef3c39"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "d00002a873450fb84c5ec722d128f870961ffc5a7a1837e7f0c9d963b9ef3c39",
+        "bytes": 109329,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1285,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 13.097,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.213662181,
+            14.608276763,
+            46.227067929,
+            14.641942208
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "bf9c4b712eaff288e07eecc041432ef1eaf17000f2271d7af18a6ea9c4ba9b66",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "0c3685fcb74bc4a0f48bb0d9bf9311905dc6f0dfb7968fa4f1312f0669947f42",
+          "route_label": "Up-down - člani CELA 13,0km-815m",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "robots_http": {
+          "url": "https://www.offroadrunning2026.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:11.545451+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.offroadrunning2026.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 183,
+          "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-038",
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Up/down U20",
+    "expected_km": 5.7,
+    "source_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 125,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.offroadrunning2026.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:11.545451+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 183,
+        "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "checked_at": "2026-11-03T08:53:59.441765+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 55533,
+        "sha256": "aa4771edcd82541837867fcf5a77e254f8bb29f388c4c384dcdec3e02451b3c7"
+      },
+      "download_links": [
+        "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+        "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx",
+      "checked_at": "2026-11-03T08:55:18.761292+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 45179,
+      "sha256": "689aa8adef7665303fd8bd919ecdbe421a2f7d92f6a3a893f48323bcbe633dca"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "689aa8adef7665303fd8bd919ecdbe421a2f7d92f6a3a893f48323bcbe633dca",
+        "bytes": 45179,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 549,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 5.713,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.217834435,
+            14.60827396,
+            46.225716454,
+            14.62713
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "7025c1f2aa7b840f8bf3a70a0280b8bee4e7621f18a1351396d39aaee402d271",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "0c3685fcb74bc4a0f48bb0d9bf9311905dc6f0dfb7968fa4f1312f0669947f42",
+          "route_label": "Up-down - mladinci 5,9km-320m",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+        "robots_http": {
+          "url": "https://www.offroadrunning2026.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:11.545451+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://www.offroadrunning2026.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 183,
+          "sha256": "c89af3d6076d4796f3ad62ab1aea1352f659ee17137696b2c22b03a6ee8753c4"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

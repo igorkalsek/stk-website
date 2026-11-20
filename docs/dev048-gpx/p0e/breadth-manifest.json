@@ -1,0 +1,46 @@
+[
+  {
+    "id": "P0E-030",
+    "event": "Hrastnik Trail",
+    "route": "Razglednih 12",
+    "source_url": "https://hrastnik-trail.si/",
+    "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Razglednih-12.gpx",
+    "kind": "GPX",
+    "expected_km": 12,
+    "master_2026_row": 68,
+    "master_2027_row": 18
+  },
+  {
+    "id": "P0E-031",
+    "event": "Hrastnik Trail",
+    "route": "Turističnih 6",
+    "source_url": "https://hrastnik-trail.si/",
+    "target_url": "https://dogodki.mch.si/wp-content/gpx/HrastnikTrail-Turisticnih-6.gpx",
+    "kind": "GPX",
+    "expected_km": 6,
+    "master_2026_row": 68,
+    "master_2027_row": 18
+  },
+  {
+    "id": "P0E-032",
+    "event": "Haloze Trail",
+    "route": "Dolga 2025",
+    "source_url": "https://www.majsperk.si/objava/1122708",
+    "target_url": "https://www.majsperk.si/DownloadFile?id=814211",
+    "kind": "GPX",
+    "expected_km": 22,
+    "master_2026_row": 185,
+    "historical_year": 2025
+  },
+  {
+    "id": "P0E-033",
+    "event": "Haloze Trail",
+    "route": "Kratka 2025",
+    "source_url": "https://www.majsperk.si/objava/1122708",
+    "target_url": "https://www.majsperk.si/DownloadFile?id=814212",
+    "kind": "GPX",
+    "expected_km": 14,
+    "master_2026_row": 185,
+    "historical_year": 2025
+  }
+]

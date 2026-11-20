@@ -1,0 +1,5 @@
+*.gpx
+*.zip
+*.body
+*.inspect.ndjson
+workbook-data.json

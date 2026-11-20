@@ -1,0 +1,62 @@
+[
+  {
+    "id": "P0E-039",
+    "event": "Svinjskih E7 Trail",
+    "route": "Svinjskih E7",
+    "source_url": "https://svinjskihe7trail.com/",
+    "target_url": "https://drive.google.com/file/d/1evOp6gEdAh35eqNiPmUojOVb-U1HJZwe/view?usp=drive_link",
+    "target_http": {
+      "url": "https://drive.google.com/file/d/1evOp6gEdAh35eqNiPmUojOVb-U1HJZwe/view?usp=drive_link",
+      "status": null,
+      "checked_at": "2026-11-03T08:55:53.069011+00:00",
+      "bytes": 437917,
+      "sha256": "5d83476d2e9d175058501c1d1c2a80e1b699055a47fe52dc74a83b130cbf61f1",
+      "content_type": "application/gpx+xml",
+      "method": "Google Drive connector raw-file materialization; origin HTTP not exposed"
+    },
+    "metadata": {
+      "id": "1evOp6gEdAh35eqNiPmUojOVb-U1HJZwe",
+      "title": "Svinjskih_E7_Trail.gpx",
+      "size": "437917",
+      "mime_type": "application/gpx+xml"
+    },
+    "linked_from_live_source": true,
+    "public_access": "NOT_INDEPENDENTLY_VERIFIED",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "master_2026_row": 199,
+    "status": "VALID",
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "bytes": 437917,
+        "sha256": "5d83476d2e9d175058501c1d1c2a80e1b699055a47fe52dc74a83b130cbf61f1",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1721,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 3.075,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.157514,
+            15.570738,
+            46.166808,
+            15.593615
+          ],
+          "first_time": "2024-10-22T18:01:14Z",
+          "last_time": "2024-10-22T18:29:56Z",
+          "geometry_sha256_6dp": "18368c00ca59d53abc4a0ba894ca3e4a76fe0da81413cc2326d9129c555e82cb",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "Svinjskih E7-Nočna",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "P0E-014",
+    "event": "Go4Trail",
+    "route": "GO 3V",
+    "expected_km": 28,
+    "source_url": "https://go4trail.si/sl/proge/go-v3",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+    "kind": "GPX"
+  },
+  {
+    "id": "P0E-015",
+    "event": "Sabotin Trail Evening",
+    "route": "13,3 km",
+    "expected_km": 13.3,
+    "source_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+    "target_url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+    "kind": "GPX"
+  },
+  {
+    "id": "P0E-016",
+    "event": "Velenje Trail",
+    "route": "Družinski",
+    "expected_km": 10,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+    "kind": "GPX"
+  },
+  {
+    "id": "P0E-017",
+    "event": "Velenje Trail",
+    "route": "Pozoj",
+    "expected_km": 18,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+    "kind": "GPX"
+  },
+  {
+    "id": "P0E-018",
+    "event": "Velenje Trail",
+    "route": "Mastodont",
+    "expected_km": 37,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+    "kind": "GPX"
+  }
+]

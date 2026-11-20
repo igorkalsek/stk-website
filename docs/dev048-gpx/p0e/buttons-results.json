@@ -1,0 +1,580 @@
+[
+  {
+    "id": "P0E-014",
+    "event": "Go4Trail",
+    "route": "GO 3V",
+    "expected_km": 28,
+    "source_url": "https://go4trail.si/sl/proge/go-v3",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+    "kind": "GPX",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://go4trail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:17.199789+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 2189,
+        "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://go4trail.si/sl/proge/go-v3",
+        "checked_at": "2026-11-03T08:50:17.276222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/proge/go-v3",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 154527,
+        "sha256": "60b03d3d1c03a8bdde88246cf19dc2f0b94467503d66863e3c3705ae9b9068e6"
+      },
+      "download_links": [
+        "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2008",
+        "2019",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+      "checked_at": "2026-11-03T08:51:17.590394+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sites/default/files/go4trail-2026-go3v-28kmitra.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 210814,
+      "sha256": "93cecea1e43e1a98ff24f0b8da1c9532664ba4a71056055b9bfd11650aecb040"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "93cecea1e43e1a98ff24f0b8da1c9532664ba4a71056055b9bfd11650aecb040",
+        "bytes": 210814,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1634,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 27.637,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.96848,
+            13.63129,
+            46.00936,
+            13.68844
+          ],
+          "first_time": "2026-09-28T10:21:44+00:00",
+          "last_time": "2026-09-28T11:43:23+00:00",
+          "geometry_sha256_6dp": "71e0a3c99565104c08f925b9f588e0c8c648711a6295f0b5377eb88a629ee3d7",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "eae7770c40a16b73a26574c7316d487e431a2f80bb5b6027f592659b12b40c3b",
+          "route_label": "GO4trail 2026 - GO3V 28km",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://go4trail.si/sl/proge/go-v3",
+        "robots_http": {
+          "url": "https://go4trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:17.199789+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://go4trail.si/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 2189,
+          "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+        },
+        "allowed": true,
+        "crawl_delay": 10
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-015",
+    "event": "Sabotin Trail Evening",
+    "route": "13,3 km",
+    "expected_km": 13.3,
+    "source_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+    "target_url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+    "kind": "GPX",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://go4trail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:17.199789+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 2189,
+        "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+        "checked_at": "2026-11-03T08:50:28.440488+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+        "content_type": "text/html; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 150087,
+        "sha256": "99707532491329bbee483700726b96202890ee7952b4e30638f52c93635d04d0"
+      },
+      "download_links": [
+        "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2006",
+        "2007",
+        "2010",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+      "checked_at": "2026-11-03T08:51:17.731509+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://go4trail.si/sites/default/files/sabotino_trail_2026_2.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 308886,
+      "sha256": "8e8dd5f7622fe8dd1f8cb436e8e22cd55d53f9635d5291e4ac729f9563d94937"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "8e8dd5f7622fe8dd1f8cb436e8e22cd55d53f9635d5291e4ac729f9563d94937",
+        "bytes": 308886,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1158,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.936,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.97442524507642,
+            13.617134280502796,
+            45.992568880319595,
+            13.643642384558916
+          ],
+          "first_time": "2026-09-06T10:10:44.000Z",
+          "last_time": "2026-09-06T13:04:59.000Z",
+          "geometry_sha256_6dp": "bfd4d6808e65609647c91cce4254c1fe8fa56d86eb3f046258b8615a62fbcf9e",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "88df70564eac5160eede4dc4c0a91fb292687fa1436a2ef85a3ab1614aa225da",
+          "route_label": "Brda Altro",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://go4trail.si/sl/sabotin-trail-evening-17102026",
+        "robots_http": {
+          "url": "https://go4trail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:17.199789+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://go4trail.si/robots.txt",
+          "content_type": "text/plain",
+          "content_disposition": null,
+          "bytes": 2189,
+          "sha256": "278e83bcf567badfebcdea4d5d20ca9898e4449fe4eb2e3b5a08227b4ca9b762"
+        },
+        "allowed": true,
+        "crawl_delay": 10
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-016",
+    "event": "Velenje Trail",
+    "route": "Družinski",
+    "expected_km": 10,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+    "kind": "GPX",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://velenjetrail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:38.256897+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 318,
+        "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://velenjetrail.si/trase/",
+        "checked_at": "2026-11-03T08:50:38.620937+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 177008,
+        "sha256": "f31e1bdc82a0f3ff581fa1a90af7ae8517fc467aaaa91c5ce5e129407745f9c3"
+      },
+      "download_links": [
+        "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+      "checked_at": "2026-11-03T08:53:02.362390+00:00",
+      "redirects": [],
+      "request_url": "https://velenjetrail.si/wp-content/uploads/GPX/Dru%C5%BEinski%20trail%202024.gpx",
+      "status": 200,
+      "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Dru%C5%BEinski%20trail%202024.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 59334,
+      "sha256": "b10f8128c46864e88ab8649059d39aa5d34195f4f925f91ed7aa6ec875bebf02"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "b10f8128c46864e88ab8649059d39aa5d34195f4f925f91ed7aa6ec875bebf02",
+        "bytes": 59334,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 455,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 10.301,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.35479,
+            15.08529,
+            46.37472,
+            15.11784
+          ],
+          "first_time": "2024-12-03T21:24:33+00:00",
+          "last_time": "2024-12-03T21:47:15+00:00",
+          "geometry_sha256_6dp": "7688dc9348c142c2dbceef5d56f1ee6ea8c1bafe3eeabd7394dd5b5f896d7d45",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "eae7770c40a16b73a26574c7316d487e431a2f80bb5b6027f592659b12b40c3b",
+          "route_label": "Velenje trail 2024 - Druzinski trail",
+          "copyright_metadata_present": false
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://velenjetrail.si/trase/",
+        "robots_http": {
+          "url": "https://velenjetrail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:38.256897+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://velenjetrail.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 318,
+          "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-017",
+    "event": "Velenje Trail",
+    "route": "Pozoj",
+    "expected_km": 18,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+    "kind": "GPX",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://velenjetrail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:38.256897+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 318,
+        "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://velenjetrail.si/trase/",
+        "checked_at": "2026-11-03T08:50:38.620937+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 177008,
+        "sha256": "f31e1bdc82a0f3ff581fa1a90af7ae8517fc467aaaa91c5ce5e129407745f9c3"
+      },
+      "download_links": [
+        "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+      "checked_at": "2026-11-03T08:51:27.786582+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 64576,
+      "sha256": "b6a43c4981b4a9d8ceb3a49eb4f55831ebe06f90718ced09c58cae201cb804ca"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "b6a43c4981b4a9d8ceb3a49eb4f55831ebe06f90718ced09c58cae201cb804ca",
+        "bytes": 64576,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 681,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 18.408,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.36661,
+            15.086680000000001,
+            46.40113,
+            15.139690000000002
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "3f6372bd5ca3999f09233d897c221123f822e7281e588ed3518abce16b97e920",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "Velenje trail - Pozoj 2025",
+          "copyright_metadata_present": true
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://velenjetrail.si/trase/",
+        "robots_http": {
+          "url": "https://velenjetrail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:38.256897+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://velenjetrail.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 318,
+          "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  },
+  {
+    "id": "P0E-018",
+    "event": "Velenje Trail",
+    "route": "Mastodont",
+    "expected_km": 37,
+    "source_url": "https://velenjetrail.si/trase/",
+    "target_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+    "kind": "GPX",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://velenjetrail.si/robots.txt",
+        "checked_at": "2026-11-03T08:50:38.256897+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 318,
+        "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://velenjetrail.si/trase/",
+        "checked_at": "2026-11-03T08:50:38.620937+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://velenjetrail.si/trase/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 177008,
+        "sha256": "f31e1bdc82a0f3ff581fa1a90af7ae8517fc467aaaa91c5ce5e129407745f9c3"
+      },
+      "download_links": [
+        "https://velenjetrail.si/wp-content/uploads/GPX/Družinski%20trail%202024.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Pozoj_2025.gpx",
+        "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx"
+      ],
+      "map_links": [],
+      "visible_year_tokens": [
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ]
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+      "checked_at": "2026-11-03T08:51:28.946827+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://velenjetrail.si/wp-content/uploads/GPX/Velenjetrail_Mastodont_2025.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 132189,
+      "sha256": "caa70b969ae6c566068eb88a10edac2e4039d1edaf1561387dc83d58187850c9"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "caa70b969ae6c566068eb88a10edac2e4039d1edaf1561387dc83d58187850c9",
+        "bytes": 132189,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "track_points": 1417,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 36.57,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.337480000000006,
+            15.085280000000001,
+            46.391110000000005,
+            15.197980000000001
+          ],
+          "first_time": null,
+          "last_time": null,
+          "geometry_sha256_6dp": "2e63ac5033994956084155cb81a6fa35e4630cd4394ab39e0d47065f2c2af06f",
+          "warnings": [],
+          "creator_present": true,
+          "creator_sha256": "972461ace5c7e5002053b35e9bfe93004ceafb5cb468be1d95bbdbf713cd0ccf",
+          "route_label": "Velenje trail - Mastodont 2025",
+          "copyright_metadata_present": true
+        }
+      }
+    ],
+    "status": "VALID",
+    "source_policies": [
+      {
+        "url": "https://velenjetrail.si/trase/",
+        "robots_http": {
+          "url": "https://velenjetrail.si/robots.txt",
+          "checked_at": "2026-11-03T08:50:38.256897+00:00",
+          "redirects": [],
+          "status": 200,
+          "final_url": "https://velenjetrail.si/robots.txt",
+          "content_type": "text/plain; charset=utf-8",
+          "content_disposition": null,
+          "bytes": 318,
+          "sha256": "4b70a456b756f17112320db35ebd0295af09b3ba74086ce85cb7689bb0e73ab4"
+        },
+        "allowed": true,
+        "crawl_delay": null
+      }
+    ],
+    "additional_source_evidence": []
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "original_candidates": 134,
+  "new_candidates": 5,
+  "catalog_rows": 139,
+  "previous_valid_unique_files": 10,
+  "previous_pr247_files": 7,
+  "previous_workbook_only_files": 3,
+  "new_valid_unique_files": 40,
+  "total_valid_unique_files": 50,
+  "valid_files_with_p0d_byte_evidence": 41,
+  "first15_statuses": {
+    "VALID": 15
+  },
+  "unique_p0d_target_urls": 42,
+  "duplicate_target_attempts": 1,
+  "invalid_files": 1,
+  "events_with_valid_files": 14,
+  "valid_files_by_event": {
+    "Knap Trail": 2,
+    "Podbrdo Trail Running Festival": 6,
+    "Snežnik Trails": 3,
+    "Ponikva4trail": 1,
+    "RIBN’CA Trail": 3,
+    "Slovenski gozdarski trail": 4,
+    "Savinjski K6 Trail": 1,
+    "Kriška gora Trail": 4,
+    "Ultra Trail Vipava Valley (UTVV)": 6,
+    "Kočevsko Outdoor Festival": 6,
+    "K24 Ultra Trail": 4,
+    "Hg Trail": 3,
+    "OBALA Ultra Trail": 5,
+    "Caven Run": 2
+  },
+  "possible_geometry_duplicate_pairs": 2,
+  "geometry_pairs_compared": 4,
+  "byte_duplicate_groups": 0,
+  "organizer_2027_file_labels_supported": 2,
+  "edition_registry_confirmed": 0,
+  "estimated_current_official_external_file_links": 36,
+  "p0d_zip_archives": 13,
+  "p0d_http_errors": 0,
+  "p0d_environment_unavailable": 0
+}

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "P0E-001-CURRENT",
+    "input_ids": [
+      "P0E-001"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 120 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/120k",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342878/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_120_km_2026_nova_1_4c78df4442.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191449/julianalps/2026%20GPX%20FILES/JA_125k_6000_581c090f9f.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-002-CURRENT",
+    "input_ids": [
+      "P0E-002"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 80 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/80K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1789631605/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_80_km_2026_17_9_fb8965ea8f.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191446/julianalps/2026%20GPX%20FILES/JA_79k_3900_40399a0777.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-003-CURRENT",
+    "input_ids": [
+      "P0E-003"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 50 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/50K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1789635752/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/17-9/JAT_50_km_17_9_2026_7b23cc6123.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_52k_2600_fa9166e549.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-004-CURRENT",
+    "input_ids": [
+      "P0E-004"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 25 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/25k",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342858/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_25_km_2026_26eeaf6594.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1758086072/julianalps/GPX%20FILES%202025%20%2817.9.%29/JAT_25_km_2025_e7cc8ea06a.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-005-CURRENT",
+    "input_ids": [
+      "P0E-005"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT 15 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/15K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342857/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JAT_15_km_2026_2a78512f89.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191445/julianalps/2026%20GPX%20FILES/JA_17k_600_5bc4622285.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-006-CURRENT",
+    "input_ids": [
+      "P0E-006",
+      "P0E-007"
+    ],
+    "event": "Julian Alps Trail Run by UTMB",
+    "route": "JAT Funny 10 km",
+    "source_url": "https://julianalps.utmb.world/sl/races/10K",
+    "target_url": "https://pdf.utmb.world/raw/upload/v1788342876/julianalps/2026%20GPX%20FILES/SEPTEMBER%202026/JA_Tral_10_km_2026_5cf5530af4.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://res.cloudinary.com/utmb-world/raw/upload/v1765191444/julianalps/2026%20GPX%20FILES/JA_11k_300_64741ae914.gpx",
+    "master_2026_row": "217"
+  },
+  {
+    "id": "P0E-012-CURRENT",
+    "input_ids": [
+      "P0E-012"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Ultra 64 km",
+    "source_url": "https://go4trail.si/sl/proge/go-ultra",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-ultra-64km.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://go4trail.si/sites/default/files/go4trail_ultra_november_6_2025.gpx",
+    "master_2026_row": "256"
+  },
+  {
+    "id": "P0E-013-CURRENT",
+    "input_ids": [
+      "P0E-013"
+    ],
+    "event": "Go4Trail",
+    "route": "GO Trim 10 km",
+    "source_url": "https://go4trail.si/sl/proge/go-trim",
+    "target_url": "https://go4trail.si/sites/default/files/go4trail-2026-gotrim-13kmitra.gpx",
+    "kind": "GPX",
+    "previous_variant": "https://go4trail.si/sites/default/files/go4trailgosabotin2023.gpx",
+    "master_2026_row": "256"
+  },
+  {
+    "id": "P0E-037",
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Up/down senior",
+    "expected_km": 13.1,
+    "source_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-sen-131km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 125
+  },
+  {
+    "id": "P0E-038",
+    "event": "EAORC Kamnik 2026 – odprti teki",
+    "route": "Up/down U20",
+    "expected_km": 5.7,
+    "source_url": "https://www.offroadrunning2026.si/courses/up-downhill-race/",
+    "target_url": "https://www.offroadrunning2026.si/wp-content/uploads/2025/05/ECh-2026-Up-down-jun-57km.gpx",
+    "kind": "GPX",
+    "master_2026_row": 125
+  }
+]

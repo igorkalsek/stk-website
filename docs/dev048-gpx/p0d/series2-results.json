@@ -1,0 +1,2419 @@
+[
+  {
+    "id": "GPX-0021",
+    "event": "Kočevsko Outdoor Festival",
+    "route": "15 km",
+    "source_url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+    "target_url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip",
+    "kind": "ZIP",
+    "expected_km": 15.0,
+    "master_year": "2027",
+    "master_row": "17",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+        "checked_at": "2026-11-03T07:54:44.758746+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/razdalje/15-km/",
+        "content_type": "text/html",
+        "content_disposition": null,
+        "bytes": 244563,
+        "sha256": "689a69fbfdcf1eb66a8e94fb15bb6ef28d56bbe3f0098c42871dbbcfd493631f"
+      },
+      "file_links": [
+        "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip"
+      ],
+      "visible_year_tokens": [
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip",
+      "checked_at": "2026-11-03T07:57:27.179077+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 8988,
+      "sha256": "1699eda63f1510f1270e60a5e9ba7989e11b0789d1db77667804f0dd41905d98"
+    },
+    "zip": {
+      "archive_sha256": "1699eda63f1510f1270e60a5e9ba7989e11b0789d1db77667804f0dd41905d98",
+      "archive_bytes": 8988,
+      "member_count": 1,
+      "expanded_bytes": 86184,
+      "files": [
+        {
+          "member": "KOF_15_km.gpx",
+          "bytes": 86184,
+          "sha256": "1e87f60dde17b42675db624add52fe186390a9e6f4a1df694a5c8e210f514e7e",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "http://ridewithgps.com/",
+            "track_points": 1018,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 14.096,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.63961,
+              14.87203,
+              45.65411,
+              14.9326
+            ],
+            "names_and_descriptions": [
+              "KOF 15 km",
+              "KOF 15 km"
+            ],
+            "first_time": "2025-05-16T09:40:45Z",
+            "last_time": "2025-05-16T09:40:45Z",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "4c4df861901fea738f7af255f0c8eb9997f73970df50ac004e1d98f332ebab08",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "KOF_15_km.gpx",
+        "bytes": 86184,
+        "sha256": "1e87f60dde17b42675db624add52fe186390a9e6f4a1df694a5c8e210f514e7e",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "http://ridewithgps.com/",
+          "track_points": 1018,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 14.096,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.63961,
+            14.87203,
+            45.65411,
+            14.9326
+          ],
+          "names_and_descriptions": [
+            "KOF 15 km",
+            "KOF 15 km"
+          ],
+          "first_time": "2025-05-16T09:40:45Z",
+          "last_time": "2025-05-16T09:40:45Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "4c4df861901fea738f7af255f0c8eb9997f73970df50ac004e1d98f332ebab08",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0107",
+    "event": "Kočevsko Outdoor Festival",
+    "route": "50 km",
+    "source_url": "https://kocevsko-outdoor.si/razdalje/60-km/",
+    "target_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip",
+    "kind": "ZIP",
+    "expected_km": 50.0,
+    "master_year": "2027",
+    "master_row": "17",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://kocevsko-outdoor.si/razdalje/60-km/",
+        "checked_at": "2026-11-03T07:54:44.894975+00:00",
+        "redirects": [
+          {
+            "from": "https://kocevsko-outdoor.si/razdalje/60-km/",
+            "status": 301,
+            "to": "https://kocevsko-outdoor.si/razdalje/50-km/"
+          }
+        ],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/razdalje/50-km/",
+        "content_type": "text/html",
+        "content_disposition": null,
+        "bytes": 247451,
+        "sha256": "584bdb052e0dad890d811c7cfef97dd694dbad69fa06f627c3a4118fe4c141e4"
+      },
+      "file_links": [
+        "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip"
+      ],
+      "visible_year_tokens": [
+        "2000",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip",
+      "checked_at": "2026-11-03T07:57:27.269772+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 20704,
+      "sha256": "5d56da3b22a751ea67afb0609278e24a12d3d26995fa29890e1dea36144a074e"
+    },
+    "zip": {
+      "archive_sha256": "5d56da3b22a751ea67afb0609278e24a12d3d26995fa29890e1dea36144a074e",
+      "archive_bytes": 20704,
+      "member_count": 1,
+      "expanded_bytes": 193915,
+      "files": [
+        {
+          "member": "KOF_50_km_2027.gpx",
+          "bytes": 193915,
+          "sha256": "9ca20fb6c887d7d1d843a64ab72dfd6b224981014dc532b0980adaa09af72659",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "http://ridewithgps.com/",
+            "track_points": 2297,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 50.851,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.61729,
+              14.87199,
+              45.70573,
+              15.019985
+            ],
+            "names_and_descriptions": [
+              "KOF 50 km 2027",
+              "KOF 50 km 2027"
+            ],
+            "first_time": "2026-08-14T10:33:00Z",
+            "last_time": "2026-08-14T10:33:00Z",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "ab12bd3b309cebe735d966b34c064548cd951120113efbcd77db12baf70f2a01",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "KOF_50_km_2027.gpx",
+        "bytes": 193915,
+        "sha256": "9ca20fb6c887d7d1d843a64ab72dfd6b224981014dc532b0980adaa09af72659",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "http://ridewithgps.com/",
+          "track_points": 2297,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 50.851,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.61729,
+            14.87199,
+            45.70573,
+            15.019985
+          ],
+          "names_and_descriptions": [
+            "KOF 50 km 2027",
+            "KOF 50 km 2027"
+          ],
+          "first_time": "2026-08-14T10:33:00Z",
+          "last_time": "2026-08-14T10:33:00Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "ab12bd3b309cebe735d966b34c064548cd951120113efbcd77db12baf70f2a01",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0024",
+    "event": "Kočevsko Outdoor Festival",
+    "route": "Vertikal Fridrihštajn",
+    "source_url": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+    "target_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/09/KOF_Vertikal.zip",
+    "kind": "ZIP",
+    "expected_km": 1.0,
+    "master_year": "2027",
+    "master_row": "17",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+        "checked_at": "2026-11-03T07:54:46.985753+00:00",
+        "redirects": [
+          {
+            "from": "https://kocevsko-outdoor.si/razdalje/vertikal-fridrihstajn/",
+            "status": 301,
+            "to": "https://kocevsko-outdoor.si/razdalje/vertikal"
+          },
+          {
+            "from": "https://kocevsko-outdoor.si/razdalje/vertikal",
+            "status": 301,
+            "to": "https://kocevsko-outdoor.si/razdalje/vertikal/"
+          }
+        ],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/razdalje/vertikal/",
+        "content_type": "text/html",
+        "content_disposition": null,
+        "bytes": 229833,
+        "sha256": "5c496a889eb427e3bf79161ae959470f6e30dc1458ba3babab879061fe81b6b9"
+      },
+      "file_links": [
+        "https://kocevsko-outdoor.si/wp-content/uploads/2026/09/KOF_Vertikal.zip"
+      ],
+      "visible_year_tokens": [
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/09/KOF_Vertikal.zip",
+      "checked_at": "2026-11-03T07:57:28.327701+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/09/KOF_Vertikal.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 526,
+      "sha256": "423931e4212e9b9057dbc3264616a18aa907fe29046178de1b7387d9eaefecfd"
+    },
+    "zip": {
+      "archive_sha256": "423931e4212e9b9057dbc3264616a18aa907fe29046178de1b7387d9eaefecfd",
+      "archive_bytes": 526,
+      "member_count": 1,
+      "expanded_bytes": 682,
+      "files": [
+        {
+          "member": "KOF_Vertikal.gpx",
+          "bytes": 682,
+          "sha256": "d93cae8a537135c22796d8c44f164ffcd8d48ebc5b41ab08b1d1ad4f83ee9f1b",
+          "file_status": "INVALID",
+          "error": "At least two track or route points in one segment are required"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "KOF_Vertikal.gpx",
+        "bytes": 682,
+        "sha256": "d93cae8a537135c22796d8c44f164ffcd8d48ebc5b41ab08b1d1ad4f83ee9f1b",
+        "file_status": "INVALID",
+        "error": "At least two track or route points in one segment are required"
+      }
+    ],
+    "status": "INVALID"
+  },
+  {
+    "id": "GPX-0105",
+    "event": "Kočevsko Outdoor Festival",
+    "route": "25 km Deer Trail",
+    "source_url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+    "target_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip",
+    "kind": "ZIP",
+    "expected_km": 25.0,
+    "master_year": "2027",
+    "master_row": "17",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://kocevsko-outdoor.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:52.340777+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 123,
+        "sha256": "134932f8f4d9217f673e805b447f6045d80b3ea357a3598f7bde14d93f53c1ad"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+        "checked_at": "2026-11-03T07:54:52.113323+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://kocevsko-outdoor.si/razdalje/25-km/",
+        "content_type": "text/html",
+        "content_disposition": null,
+        "bytes": 246821,
+        "sha256": "dc64f03ae8b3f918a707d6c678e577255624d2c0117238f5bbed9607c97b0044"
+      },
+      "file_links": [
+        "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip",
+      "checked_at": "2026-11-03T07:57:29.396546+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 12343,
+      "sha256": "74427573649f4ba535645d57252b5c252084a661cecdd4f8bdbaefda3727b494"
+    },
+    "zip": {
+      "archive_sha256": "74427573649f4ba535645d57252b5c252084a661cecdd4f8bdbaefda3727b494",
+      "archive_bytes": 12343,
+      "member_count": 1,
+      "expanded_bytes": 132321,
+      "files": [
+        {
+          "member": "KOF_25_km.gpx",
+          "bytes": 132321,
+          "sha256": "83e66bfed0cafb4e3f7cf6f2d788c3fb7a00326c158a2c3ecd716dd90c3b35ae",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "http://ridewithgps.com/",
+            "track_points": 1558,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 24.279,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.61727,
+              14.87172,
+              45.65412,
+              14.96707
+            ],
+            "names_and_descriptions": [
+              "KOF 25 km",
+              "KOF 25 km"
+            ],
+            "first_time": "2026-05-13T15:31:44Z",
+            "last_time": "2026-05-13T15:31:44Z",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "fc8fb04807b83a79f8db46a1f2d636a1dce26709f66fabb2543c8cfe30a89ca6",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "KOF_25_km.gpx",
+        "bytes": 132321,
+        "sha256": "83e66bfed0cafb4e3f7cf6f2d788c3fb7a00326c158a2c3ecd716dd90c3b35ae",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "http://ridewithgps.com/",
+          "track_points": 1558,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 24.279,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.61727,
+            14.87172,
+            45.65412,
+            14.96707
+          ],
+          "names_and_descriptions": [
+            "KOF 25 km",
+            "KOF 25 km"
+          ],
+          "first_time": "2026-05-13T15:31:44Z",
+          "last_time": "2026-05-13T15:31:44Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "fc8fb04807b83a79f8db46a1f2d636a1dce26709f66fabb2543c8cfe30a89ca6",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0123",
+    "event": "Kriška gora Trail",
+    "route": "Gams 10 km",
+    "source_url": "https://www.kriskagora-trail.si/gams/",
+    "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Gams2025.gpx",
+    "kind": "GPX",
+    "expected_km": 10.0,
+    "master_year": "2027",
+    "master_row": "35",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.kriskagora-trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:34.193263+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 451,
+        "sha256": "f0578b502f3b9eb1cd82c722a56dc3c7815bdffc09e71cfdc3aa42ee4cbcbedf"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.kriskagora-trail.si/gams/",
+        "checked_at": "2026-11-03T07:54:54.348224+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/gams/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 262596,
+        "sha256": "15cd1c1cf832bcc2149c461ec15ce54014d3d7c6cc639888928ac730da98c3a4"
+      },
+      "file_links": [
+        "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Gams2025.gpx"
+      ],
+      "visible_year_tokens": [
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Gams2025.gpx",
+      "checked_at": "2026-11-03T07:57:30.458494+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Gams2025.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 133636,
+      "sha256": "55ea90a8481bac932719a680eb114279b736760bc66d91c404d0f9f958d6d68a"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "55ea90a8481bac932719a680eb114279b736760bc66d91c404d0f9f958d6d68a",
+        "bytes": 133636,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "FATMAP.com; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+          "track_points": 1417,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 11.447,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.339839999999995,
+            14.32442,
+            46.35327999999996,
+            14.373109999999999
+          ],
+          "names_and_descriptions": [
+            "Gams trail 2025",
+            "1 track segments, original data of track points"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "78030b4ac606a848405d714425d696b9ef1be5169d288eedbd3388ba57c2ea98",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0124",
+    "event": "Kriška gora Trail",
+    "route": "Muflon 20 km",
+    "source_url": "https://www.kriskagora-trail.si/muflon/",
+    "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx",
+    "kind": "GPX",
+    "expected_km": 20.0,
+    "master_year": "2026",
+    "master_row": "106",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.kriskagora-trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:34.193263+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 451,
+        "sha256": "f0578b502f3b9eb1cd82c722a56dc3c7815bdffc09e71cfdc3aa42ee4cbcbedf"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.kriskagora-trail.si/muflon/",
+        "checked_at": "2026-11-03T07:54:59.210276+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/muflon/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 262659,
+        "sha256": "d6e0621ab40630b4b37bb5b540899fd0c3329b73b733666e13d33223e02dbc64"
+      },
+      "file_links": [
+        "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx"
+      ],
+      "visible_year_tokens": [
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx",
+      "checked_at": "2026-11-03T07:57:30.564418+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/gpx/uncategorized/Muflon2025.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 240055,
+      "sha256": "f551a114ccb3ef5b7ddcf1bbfe940dfa528a73e3a6bd2293c79fae4c6918c7d6"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "f551a114ccb3ef5b7ddcf1bbfe940dfa528a73e3a6bd2293c79fae4c6918c7d6",
+        "bytes": 240055,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "FATMAP.com; modified by GPX Track Cleaner from GPX Viewer plugin (WordPress) ",
+          "track_points": 2558,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 20.346,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.32900000000001,
+            14.32442,
+            46.35327999999996,
+            14.399459999999998
+          ],
+          "names_and_descriptions": [
+            "Muflon trail 2025",
+            "1 track segments, original data of track points"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "d68ab99f3d0e53b3732ba84b621781eec48ba277a7146f948642ee4d2a13dd18",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0125",
+    "event": "Kriška gora Trail",
+    "route": "Vertikala 4 km",
+    "source_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+    "target_url": "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx",
+    "kind": "GPX",
+    "expected_km": 4.0,
+    "master_year": "2026",
+    "master_row": "106",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.kriskagora-trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:34.193263+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 451,
+        "sha256": "f0578b502f3b9eb1cd82c722a56dc3c7815bdffc09e71cfdc3aa42ee4cbcbedf"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+        "checked_at": "2026-11-03T07:55:00.582966+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.kriskagora-trail.si/vertikala-4-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 257593,
+        "sha256": "88dbe17b2bde8fb7debcfa1c35afd27fc02a3db936bd12454bc6cefbb0a3db96"
+      },
+      "file_links": [
+        "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx"
+      ],
+      "visible_year_tokens": [
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx",
+      "checked_at": "2026-11-03T07:57:31.673235+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.kriskagora-trail.si/wp-content/uploads/2025/08/Vertikal-KM.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 11438,
+      "sha256": "1a73b3c2f3206715c4c38c39f85f6136c12582c4f017b4fd4bea16080be1fcb6"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "1a73b3c2f3206715c4c38c39f85f6136c12582c4f017b4fd4bea16080be1fcb6",
+        "bytes": 11438,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "StravaGPX",
+          "track_points": 117,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 3.737,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.3509,
+            14.304730000000001,
+            46.36211,
+            14.332310000000001
+          ],
+          "names_and_descriptions": [
+            "Vertikal KM",
+            "Tržič - Kriška",
+            "Eva Urbanc",
+            "Vertikal KM",
+            "Tržič - Kriška"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [
+            "<ns0:copyright xmlns:ns0=\"http://www.topografix.com/GPX/1/1\" author=\"OpenStreetMap contributors\">\n   <ns0:year>2020</ns0:year>\n   <ns0:license>https://www.openstreetmap.org/copyright</ns0:license>\n  </ns0:copyright>\n  "
+          ],
+          "geometry_sha256_6dp": "adf13ceec3bf95f093945f74848a95e024cd621b5045ca00463f5908ee99a018",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0069",
+    "event": "K24 Ultra Trail",
+    "route": "100 km",
+    "source_url": "https://k24trail.si/proge/k24-trail-100km/",
+    "target_url": "https://k24trail.si/wp-content/uploads/2024/02/gpx-100k.gpx",
+    "kind": "GPX",
+    "expected_km": 100,
+    "master_year": "2026",
+    "master_row": "178",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k24trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:08.859692+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "source": {
+      "http": {
+        "url": "https://k24trail.si/proge/k24-trail-100km/",
+        "checked_at": "2026-11-03T07:55:44.213031+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-100km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 208734,
+        "sha256": "bb5f4b40f8950d54c654adf38a285ed9283759e35312ed8b718659b7a7076ee4"
+      },
+      "file_links": [
+        "https://k24trail.si/wp-content/uploads/2024/02/gpx-100k.gpx"
+      ],
+      "visible_year_tokens": [
+        "2000",
+        "2024",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://k24trail.si/wp-content/uploads/2024/02/gpx-100k.gpx",
+      "checked_at": "2026-11-03T07:57:32.689981+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/wp-content/uploads/2024/02/gpx-100k.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 1186158,
+      "sha256": "795834625186f35dd0426baab68b199f3e61dfe4e0ce35111e38ae71ffb80b2a"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "795834625186f35dd0426baab68b199f3e61dfe4e0ce35111e38ae71ffb80b2a",
+        "bytes": 1186158,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "StravaGPX",
+          "track_points": 15044,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 94.928,
+          "jumps_over_1km": 1,
+          "bbox": [
+            46.408266,
+            14.689504,
+            46.508455,
+            14.969255
+          ],
+          "names_and_descriptions": [
+            "Night Run K24 Trail Race"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "bd62fc1ff14e4886194f5a9653e294cade8def57773bed3373007fcaf58de56e",
+          "warnings": [
+            "JUMPS_OVER_1_KM"
+          ]
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0070",
+    "event": "K24 Ultra Trail",
+    "route": "50 km",
+    "source_url": "https://k24trail.si/proge/k24-trail-50km/",
+    "target_url": "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx",
+    "kind": "GPX",
+    "expected_km": 50,
+    "master_year": "2026",
+    "master_row": "178",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k24trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:08.859692+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "source": {
+      "http": {
+        "url": "https://k24trail.si/proge/k24-trail-50km/",
+        "checked_at": "2026-11-03T07:55:44.426732+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-50km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 206476,
+        "sha256": "d223232d7b0a73bdbeda5bd94edc809eb09abef6e50e3d7aca86a2aa1498c461"
+      },
+      "file_links": [
+        "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx"
+      ],
+      "visible_year_tokens": [
+        "2024",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx",
+      "checked_at": "2026-11-03T07:57:32.929613+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/wp-content/uploads/2024/02/Morning_Run.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 1455287,
+      "sha256": "80f4c21957e9bc188de4417cd71b120f105a4edb4ea7ebeef8b679193bbcf7c0"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "80f4c21957e9bc188de4417cd71b120f105a4edb4ea7ebeef8b679193bbcf7c0",
+        "bytes": 1455287,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "StravaGPX",
+          "track_points": 17809,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 47.795,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.411405,
+            14.846245,
+            46.490602,
+            14.96924
+          ],
+          "names_and_descriptions": [
+            "Morning Run"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "0a5d20b1969c3d54bdca75d3dc7b0c55240e71a71793a084668ebfb3c401490f",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0135",
+    "event": "K24 Ultra Trail",
+    "route": "24 km",
+    "source_url": "https://k24trail.si/proge/k24-trail-24km/",
+    "target_url": "https://k24trail.si/wp-content/uploads/2024/02/K24_24km.gpx",
+    "kind": "GPX",
+    "expected_km": 24,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k24trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:08.859692+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "source": {
+      "http": {
+        "url": "https://k24trail.si/proge/k24-trail-24km/",
+        "checked_at": "2026-11-03T07:55:45.477273+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-24km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 203875,
+        "sha256": "6d4dd2da8b84c9abe8b2117fa43185f9511155a9bff24de183b24cbe3f88f659"
+      },
+      "file_links": [
+        "https://k24trail.si/wp-content/uploads/2024/02/K24_24km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2024",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://k24trail.si/wp-content/uploads/2024/02/K24_24km.gpx",
+      "checked_at": "2026-11-03T07:57:34.027569+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/wp-content/uploads/2024/02/K24_24km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 3878948,
+      "sha256": "c9d01834478660bc591ccc54e60f4e276c1108f58d56f25933f7e54f1fc7b5d6"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "c9d01834478660bc591ccc54e60f4e276c1108f58d56f25933f7e54f1fc7b5d6",
+        "bytes": 3878948,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "StravaGPX",
+          "track_points": 13271,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 20.429,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.46699,
+            14.802001,
+            46.508345,
+            14.85378
+          ],
+          "names_and_descriptions": [
+            "K24 24km"
+          ],
+          "first_time": "2019-11-10T08:20:35Z",
+          "last_time": "2019-11-10T12:01:58Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "1522d0be5b4f41a16e28df79701e645af1e02a173980879f944ca1ed41d65eda",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0136",
+    "event": "K24 Ultra Trail",
+    "route": "10 km",
+    "source_url": "https://k24trail.si/proge/k24-trail-10km/",
+    "target_url": "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx",
+    "kind": "GPX",
+    "expected_km": 10,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://k24trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:08.859692+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "allowed": null,
+      "reason": "ROBOTS_UNAVAILABLE"
+    },
+    "source": {
+      "http": {
+        "url": "https://k24trail.si/proge/k24-trail-10km/",
+        "checked_at": "2026-11-03T07:55:46.541845+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://k24trail.si/proge/k24-trail-10km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 193328,
+        "sha256": "181f775688f29039a47106718bf690ca9a8a1fd483a9493fd778f1c20bc6c2f1"
+      },
+      "file_links": [
+        "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx"
+      ],
+      "visible_year_tokens": [
+        "2024",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx",
+      "checked_at": "2026-11-03T07:57:35.250440+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://k24trail.si/wp-content/uploads/2025/09/Morning_Trail_Run.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 591424,
+      "sha256": "edda3be6ae9f8f580c1973d0bbaed4074530b310f63675148ff2e4b8b5ea9808"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "edda3be6ae9f8f580c1973d0bbaed4074530b310f63675148ff2e4b8b5ea9808",
+        "bytes": 591424,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "StravaGPX",
+          "track_points": 7563,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 10.464,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.467017,
+            14.827179,
+            46.492274,
+            14.855325
+          ],
+          "names_and_descriptions": [
+            "Morning Trail Run"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "aa4841fde8b7f8eb99c6d3926576c737f62084fd598f769a75463480b7edbcf7",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0028",
+    "event": "Ultra Trail Vipava Valley (UTVV)",
+    "route": "Legionar",
+    "source_url": "https://ultratrail.si/sl/legionar",
+    "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+    "kind": "ZIP",
+    "expected_km": 30.0,
+    "master_year": "2027",
+    "master_row": "8",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://ultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:45.807368+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 310,
+        "sha256": "97a20bd6ea0202894999fad5ba055fcab13a58d2ac04cf9c75e07bd9334592f5"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://ultratrail.si/sl/legionar",
+        "checked_at": "2026-11-03T07:55:47.624407+00:00",
+        "redirects": [
+          {
+            "from": "https://ultratrail.si/sl/legionar",
+            "status": 301,
+            "to": "https://ultratrail.si/sl/legionar/"
+          }
+        ],
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/legionar/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 328226,
+        "sha256": "762ef23119a15f9e80780840b5bbf5ae0b86214499908271dee8cf97a3179264"
+      },
+      "file_links": [
+        "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip"
+      ],
+      "visible_year_tokens": [
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+      "checked_at": "2026-11-03T07:57:36.073958+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 60459,
+      "sha256": "8d3a6c0862c3eea7724a82fe02d22a59af23df60c91bfd2dc3d3c320ab157243"
+    },
+    "zip": {
+      "archive_sha256": "8d3a6c0862c3eea7724a82fe02d22a59af23df60c91bfd2dc3d3c320ab157243",
+      "archive_bytes": 60459,
+      "member_count": 1,
+      "expanded_bytes": 919790,
+      "files": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.gpx",
+          "bytes": 919790,
+          "sha256": "e4f0fdae8d5d840fcf1c3efb324239cd94d5f34b46b14aae95c323c6558e24e3",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "Trace de Trail",
+            "track_points": 7129,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 29.9,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.88703,
+              13.84299,
+              45.94644,
+              13.94788
+            ],
+            "names_and_descriptions": [
+              "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - LEGIONAR - 30 km",
+              "Parcours créé sur Trace de Trail",
+              "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - LEGIONAR - 30 km sur TraceDeTrail.fr"
+            ],
+            "first_time": "2026-04-10T16:43:46+00:00",
+            "last_time": "2026-04-10T22:40:10+00:00",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "6871f656730cba979b374dd2803efbe716a8312ed6e9fb8b9625a0a8b34fa12d",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.gpx",
+        "bytes": 919790,
+        "sha256": "e4f0fdae8d5d840fcf1c3efb324239cd94d5f34b46b14aae95c323c6558e24e3",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 7129,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 29.9,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.88703,
+            13.84299,
+            45.94644,
+            13.94788
+          ],
+          "names_and_descriptions": [
+            "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - LEGIONAR - 30 km",
+            "Parcours créé sur Trace de Trail",
+            "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - LEGIONAR - 30 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-04-10T16:43:46+00:00",
+          "last_time": "2026-04-10T22:40:10+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "6871f656730cba979b374dd2803efbe716a8312ed6e9fb8b9625a0a8b34fa12d",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0029",
+    "event": "Ultra Trail Vipava Valley (UTVV)",
+    "route": "Asterix",
+    "source_url": "https://ultratrail.si/sl/asterix",
+    "target_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+    "kind": "ZIP",
+    "expected_km": 15.0,
+    "master_year": "2027",
+    "master_row": "8",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://ultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:45.807368+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 310,
+        "sha256": "97a20bd6ea0202894999fad5ba055fcab13a58d2ac04cf9c75e07bd9334592f5"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://ultratrail.si/sl/asterix",
+        "checked_at": "2026-11-03T07:55:49.444208+00:00",
+        "redirects": [
+          {
+            "from": "https://ultratrail.si/sl/asterix",
+            "status": 301,
+            "to": "https://ultratrail.si/sl/asterix/"
+          }
+        ],
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/asterix/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 328978,
+        "sha256": "137c06b1826c577894cbca2b12fa65749479641dd11895c898c1c92712e414f3"
+      },
+      "file_links": [
+        "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip"
+      ],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+      "checked_at": "2026-11-03T07:57:36.200455+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 12254,
+      "sha256": "1b58e24d334ffc2e81af45b6553b258be760133c49c8811f67c894bfc9b8c936"
+    },
+    "zip": {
+      "archive_sha256": "1b58e24d334ffc2e81af45b6553b258be760133c49c8811f67c894bfc9b8c936",
+      "archive_bytes": 12254,
+      "member_count": 1,
+      "expanded_bytes": 165859,
+      "files": [
+        {
+          "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.gpx",
+          "bytes": 165859,
+          "sha256": "1ba6bfd7d6055ec785e14ef5551a5b8fdccf2f140d1bc2b932671fa424f30a0e",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "Trace de Trail",
+            "track_points": 1285,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 14.592,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.85519,
+              13.87897,
+              45.88888,
+              13.90989
+            ],
+            "names_and_descriptions": [
+              "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - ASTERIX 15 km",
+              "Parcours créé sur Trace de Trail",
+              "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - ASTERIX 15 km  sur TraceDeTrail.fr"
+            ],
+            "first_time": "2026-04-10T16:43:44+00:00",
+            "last_time": "2026-04-10T17:47:56+00:00",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "191dbee4e27cc5dc95ebf914f445c6ea2c4c99e95cd337e24ed931a39d6811aa",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.gpx",
+        "bytes": 165859,
+        "sha256": "1ba6bfd7d6055ec785e14ef5551a5b8fdccf2f140d1bc2b932671fa424f30a0e",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 1285,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 14.592,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.85519,
+            13.87897,
+            45.88888,
+            13.90989
+          ],
+          "names_and_descriptions": [
+            "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - ASTERIX 15 km",
+            "Parcours créé sur Trace de Trail",
+            "ULTRA TRAIL VIPAVA VALLEY I FEEL SLOVENIA 2026 - ASTERIX 15 km  sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-04-10T16:43:44+00:00",
+          "last_time": "2026-04-10T17:47:56+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "191dbee4e27cc5dc95ebf914f445c6ea2c4c99e95cd337e24ed931a39d6811aa",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0137",
+    "event": "Hg Trail",
+    "route": "Laufar",
+    "source_url": "https://hgtrail-idrija.si/laufar/",
+    "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx",
+    "kind": "GPX",
+    "expected_km": 50,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://hgtrail-idrija.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:10.149009+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 167,
+        "sha256": "1e49c4a7a38b9070f63ef33a6f8191d29f237b91853d2f4fbfbab562cd849a29"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://hgtrail-idrija.si/laufar/",
+        "checked_at": "2026-11-03T07:56:00.982919+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/laufar/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 137299,
+        "sha256": "6b34df00fc57a93b39c01949a9e2611e593affed8413e526bfb789437306d7eb"
+      },
+      "file_links": [
+        "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx",
+      "checked_at": "2026-11-03T07:57:37.220200+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2025/04/2025-04-05_2139515750_Laufar-50km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 264286,
+      "sha256": "47f238e1d25cbfe650b30aad16f29f88b983e0f50d5a0594cff94683401c5ad1"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "47f238e1d25cbfe650b30aad16f29f88b983e0f50d5a0594cff94683401c5ad1",
+        "bytes": 264286,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "https://www.komoot.de",
+          "track_points": 1925,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 48.504,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.962575,
+            13.953971,
+            46.027785,
+            14.076403
+          ],
+          "names_and_descriptions": [
+            "Laufar 50km",
+            "Laufar 50km"
+          ],
+          "first_time": "2025-04-05T12:46:21.900Z",
+          "last_time": "2025-04-05T20:01:20.342Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "227800a07bfc8e2fa6a2eada1169ecc681f6efedae99b3dabdd630cc118a1dfc",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0138",
+    "event": "Hg Trail",
+    "route": "Berkmandlc",
+    "source_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+    "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx",
+    "kind": "GPX",
+    "expected_km": 27,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://hgtrail-idrija.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:10.149009+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 167,
+        "sha256": "1e49c4a7a38b9070f63ef33a6f8191d29f237b91853d2f4fbfbab562cd849a29"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+        "checked_at": "2026-11-03T07:56:01.757437+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/berkmandlc-trail/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 137462,
+        "sha256": "9c66f28afe4acbf7592c808d5fc293c538461216ff6990900bde9af4f52f573e"
+      },
+      "file_links": [
+        "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx",
+      "checked_at": "2026-11-03T07:57:37.352993+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/berkmandlc-trail-27km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 138250,
+      "sha256": "a6f00d9f80cae3fd7c087226633cb55cb4c8ec61e0575e37d8bc39594e645050"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "a6f00d9f80cae3fd7c087226633cb55cb4c8ec61e0575e37d8bc39594e645050",
+        "bytes": 138250,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "AllTrails.com",
+          "track_points": 1625,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 27.12,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.96879,
+            13.95351,
+            46.02135,
+            14.03489
+          ],
+          "names_and_descriptions": [
+            "Berkmandlc Trail 27km",
+            "Berkmandlc Trail 27km"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "063f1d7d164c10fc9d9be35f859c7c6c7d93297985f24cd74a84b0964c496362",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0139",
+    "event": "Hg Trail",
+    "route": "Čipka",
+    "source_url": "https://hgtrail-idrija.si/cipka-trail/",
+    "target_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx",
+    "kind": "GPX",
+    "expected_km": 14,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://hgtrail-idrija.si/robots.txt",
+        "checked_at": "2026-11-03T07:55:10.149009+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 167,
+        "sha256": "1e49c4a7a38b9070f63ef33a6f8191d29f237b91853d2f4fbfbab562cd849a29"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://hgtrail-idrija.si/cipka-trail/",
+        "checked_at": "2026-11-03T07:56:02.650925+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://hgtrail-idrija.si/cipka-trail/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 137103,
+        "sha256": "8ad43268f888bdf3cb1a1efaf5ec3aeb9004ac900e66b48bc8ba81f987fcc584"
+      },
+      "file_links": [
+        "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx",
+      "checked_at": "2026-11-03T07:57:38.405432+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://hgtrail-idrija.si/wp-content/uploads/2022/02/cipka-trail-14km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 69340,
+      "sha256": "ccd2cad92c3fcf397a6c1d4a42caabee3b8fbabc664340694a5796482af418d8"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "ccd2cad92c3fcf397a6c1d4a42caabee3b8fbabc664340694a5796482af418d8",
+        "bytes": 69340,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "AllTrails.com",
+          "track_points": 811,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 14.016,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.96874,
+            13.996,
+            46.00085,
+            14.03484
+          ],
+          "names_and_descriptions": [
+            "Čipka trail 14km",
+            "Čipka trail 14km"
+          ],
+          "first_time": null,
+          "last_time": null,
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "ad7f7bfbe9f80bb5ec64eb087632e7fdad7fd058c06c08808747f0e3ab545491",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0043",
+    "event": "OBALA Ultra Trail",
+    "route": "108 km",
+    "source_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+    "target_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+    "kind": "GPX",
+    "expected_km": 108,
+    "master_year": "2026",
+    "master_row": "255",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://obalaultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:56:33.426222+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 116,
+        "sha256": "55cd26f2809d0a5d26e1e73fca7287cb96b9aad569c8b053f308c9904eff5232"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+        "checked_at": "2026-11-03T07:56:34.654095+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://obalaultratrail.si/razdalje/obala-ultra-trail-108-km/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 234370,
+        "sha256": "d5b62bd34c0d1bd603de074794d510bfa966552507d5545db31806c5cfbe1782"
+      },
+      "file_links": [
+        "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx"
+      ],
+      "visible_year_tokens": [
+        "2025",
+        "2026",
+        "2094"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+      "checked_at": "2026-11-03T07:57:39.464473+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://obalaultratrail.si/wp-content/uploads/2026/08/obala-ultra-trail-powered-by-i-feel-slovenia-2026-obala-ultra-trail-108-km.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 564525,
+      "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "8ed1c6260265342dcf882161c6e09700805fbc4b10040c18d7e1a64d10f159d5",
+        "bytes": 564525,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 4383,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 107.511,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.46697,
+            13.60172,
+            45.58958,
+            13.98223
+          ],
+          "names_and_descriptions": [
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - OBALA Ultra Trail 108 km",
+            "Parcours créé sur Trace de Trail",
+            "OBALA Ultra Trail powered by I FEEL SLOVENIA 2026 - OBALA Ultra Trail 108 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-20T10:32:33+00:00",
+          "last_time": "2026-08-20T14:11:39+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "33c682e86064e4c4dbf88d11084165231cfd27e4b7b547da45683909fe8dc428",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0074",
+    "event": "Caven Run",
+    "route": "Čaven Trail",
+    "source_url": "https://www.caven.run/sl/roadbook2026/",
+    "target_url": "https://www.caven.run/gpx/caven-trail-2026.gpx",
+    "kind": "GPX",
+    "expected_km": 17,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.caven.run/robots.txt",
+        "checked_at": "2026-11-03T07:56:35.696945+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.caven.run/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 757,
+        "sha256": "e18500b215a1827fd63dff3c68b7b1f1a58c6c171e1b9e1574752d97f197b407"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://www.caven.run/sl/roadbook2026/",
+        "checked_at": "2026-11-03T07:56:35.872552+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.caven.run/sl/roadbook2026/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 202954,
+        "sha256": "e25b03d025c8d368a51381bab71ca968a84b36ce808e34cf2b41e34013f3c450"
+      },
+      "file_links": [
+        "https://www.caven.run/gpx/caven-trail-2026.gpx",
+        "https://www.caven.run/gpx/caven-vertikal-2026.gpx"
+      ],
+      "visible_year_tokens": [
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.caven.run/gpx/caven-trail-2026.gpx",
+      "checked_at": "2026-11-03T07:57:39.676440+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.caven.run/gpx/caven-trail-2026.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": "attachment",
+      "bytes": 141430,
+      "sha256": "38356c73cf82dff98d34589133465867fd315570c2b5cdb7ae2bd0ee799c2ad6"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "38356c73cf82dff98d34589133465867fd315570c2b5cdb7ae2bd0ee799c2ad6",
+        "bytes": 141430,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Čaven Run 2026 — www.caven.run",
+          "track_points": 2188,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 16.402,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.901981,
+            13.8178093,
+            45.9288825,
+            13.8815825
+          ],
+          "names_and_descriptions": [
+            "Čaven Trail 2026 — 17 km",
+            "Start — Lokavec",
+            "Potok (km 2,4)",
+            "Koča Antona Bavčerja (km 4,5)",
+            "Kucelj (km 7,5)",
+            "Finish — Lokavec",
+            "Čaven Trail 2026 — 17 km"
+          ],
+          "first_time": "2026-10-18T18:00:00Z",
+          "last_time": "2026-10-18T18:00:00Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "eb357732fb32aa896e37adfd54fc48788dba8b68c7884439be5857c307c6c9b3",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0075",
+    "event": "Caven Run",
+    "route": "Čaven Vertikal",
+    "source_url": "https://www.caven.run/sl/roadbook2026/",
+    "target_url": "https://www.caven.run/gpx/caven-vertikal-2026.gpx",
+    "kind": "GPX",
+    "expected_km": 4.3,
+    "master_year": null,
+    "master_row": null,
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://www.caven.run/robots.txt",
+        "checked_at": "2026-11-03T07:56:35.696945+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.caven.run/robots.txt",
+        "content_type": "text/plain",
+        "content_disposition": null,
+        "bytes": 757,
+        "sha256": "e18500b215a1827fd63dff3c68b7b1f1a58c6c171e1b9e1574752d97f197b407"
+      },
+      "allowed": true,
+      "crawl_delay": 10
+    },
+    "source": {
+      "http": {
+        "url": "https://www.caven.run/sl/roadbook2026/",
+        "checked_at": "2026-11-03T07:56:35.872552+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://www.caven.run/sl/roadbook2026/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 202954,
+        "sha256": "e25b03d025c8d368a51381bab71ca968a84b36ce808e34cf2b41e34013f3c450"
+      },
+      "file_links": [
+        "https://www.caven.run/gpx/caven-trail-2026.gpx",
+        "https://www.caven.run/gpx/caven-vertikal-2026.gpx"
+      ],
+      "visible_year_tokens": [
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://www.caven.run/gpx/caven-vertikal-2026.gpx",
+      "checked_at": "2026-11-03T07:57:40.044561+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://www.caven.run/gpx/caven-vertikal-2026.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": "attachment",
+      "bytes": 34497,
+      "sha256": "19554d5c176717d917c20a7f428c734cc967438a002bced837dcdb839387b700"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "19554d5c176717d917c20a7f428c734cc967438a002bced837dcdb839387b700",
+        "bytes": 34497,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Čaven Run 2026 — www.caven.run",
+          "track_points": 527,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 4.29,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.9020485,
+            13.8531284,
+            45.92887,
+            13.8815825
+          ],
+          "names_and_descriptions": [
+            "Čaven Vertikal 2026 — 4,3 km",
+            "Start — Lokavec",
+            "Potok (km 2,4)",
+            "Finish — Koča Antona Bavčerja",
+            "Čaven Vertikal 2026 — 4,3 km"
+          ],
+          "first_time": "2026-10-18T18:00:00Z",
+          "last_time": "2026-10-18T18:00:00Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "6a7d5f7924641e620bb093255e8de7c0bbd1c8e5841e2cdbdedf1e98c2d41b85",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0132",
+    "event": "Slovenski gozdarski trail",
+    "route": "Bukev 34 km",
+    "source_url": "https://gozdarski-trail.si/bukev/",
+    "target_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx",
+    "kind": "GPX",
+    "expected_km": 34.0,
+    "master_year": "2026",
+    "master_row": "192",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://gozdarski-trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:26.252999+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 176,
+        "sha256": "996723983d7dd8e6432a10b40630a15802b112b80c66764afad222646fa01a2e"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://gozdarski-trail.si/bukev/",
+        "checked_at": "2026-11-03T07:53:28.189997+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/bukev/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103507,
+        "sha256": "2d417a845c1c3fd54ca5912f1c676013ffa8977d2fb564d26fa5819a84369028"
+      },
+      "file_links": [
+        "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx"
+      ],
+      "visible_year_tokens": [
+        "2008",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx",
+      "checked_at": "2026-11-03T07:57:49.919182+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Bukev_34.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 260977,
+      "sha256": "ee07f9ee943b389b4c0fe6714a4ab64eca312b65007c7a26923b01bdcd219ba0"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "ee07f9ee943b389b4c0fe6714a4ab64eca312b65007c7a26923b01bdcd219ba0",
+        "bytes": 260977,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "https://www.komoot.de",
+          "track_points": 1887,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 33.324,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.453636,
+            15.263688,
+            46.509929,
+            15.346723
+          ],
+          "names_and_descriptions": [
+            "BUKEV",
+            "BUKEV"
+          ],
+          "first_time": "2026-08-24T13:29:21.408Z",
+          "last_time": "2026-08-24T23:14:17.190Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "9459a444cde4eadc6dedd99d68f3f5c6ed56de0334822dc0b3928f7954355323",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0133",
+    "event": "Slovenski gozdarski trail",
+    "route": "Jelka 14 km",
+    "source_url": "https://gozdarski-trail.si/jelka/",
+    "target_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx",
+    "kind": "GPX",
+    "expected_km": 14.0,
+    "master_year": "2026",
+    "master_row": "192",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://gozdarski-trail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:26.252999+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 176,
+        "sha256": "996723983d7dd8e6432a10b40630a15802b112b80c66764afad222646fa01a2e"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://gozdarski-trail.si/jelka/",
+        "checked_at": "2026-11-03T07:53:29.737696+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://gozdarski-trail.si/jelka/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 103687,
+        "sha256": "ff9a28034f5c3a5ea3f1457fcb72ad33ebeda59f1a0e45af8aa478dcbfd1b1ec"
+      },
+      "file_links": [
+        "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx"
+      ],
+      "visible_year_tokens": [
+        "2008",
+        "2026"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx",
+      "checked_at": "2026-11-03T07:57:50.054043+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://gozdarski-trail.si/wp-content/uploads/2026/08/Jelka_14.gpx",
+      "content_type": "application/gpx+xml",
+      "content_disposition": null,
+      "bytes": 86959,
+      "sha256": "3391aa2a3f51959ec36312aa906407cdadd36f8d9d65409cd35a69d09e03f04c"
+    },
+    "files": [
+      {
+        "file_status": "FILE_VALID",
+        "sha256": "3391aa2a3f51959ec36312aa906407cdadd36f8d9d65409cd35a69d09e03f04c",
+        "bytes": 86959,
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "https://www.komoot.de",
+          "track_points": 626,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 12.829,
+          "jumps_over_1km": 0,
+          "bbox": [
+            46.452329,
+            15.332607,
+            46.489901,
+            15.358321
+          ],
+          "names_and_descriptions": [
+            "JELKA",
+            "JELKA"
+          ],
+          "first_time": "2026-08-24T13:31:05.310Z",
+          "last_time": "2026-08-24T17:06:35.782Z",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "43b13ddc1532e593d89575252a26abb576472945afd8d97bf640e2b5c5ff8847",
+          "warnings": []
+        }
+      }
+    ],
+    "status": "VALID"
+  },
+  {
+    "id": "GPX-0026",
+    "event": "Ultra Trail Vipava Valley (UTVV)",
+    "route": "Centurion",
+    "source_url": "https://ultratrail.si/sl/centurion/",
+    "target_url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
+    "kind": "ZIP",
+    "expected_km": 100,
+    "master_year": "2027",
+    "master_row": "8",
+    "rehost_permission": "NOT_ESTABLISHED",
+    "edition_status": "NOT_CONFIRMED",
+    "access_policy": {
+      "robots_http": {
+        "url": "https://ultratrail.si/robots.txt",
+        "checked_at": "2026-11-03T07:53:45.807368+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ultratrail.si/robots.txt",
+        "content_type": "text/plain; charset=utf-8",
+        "content_disposition": null,
+        "bytes": 310,
+        "sha256": "97a20bd6ea0202894999fad5ba055fcab13a58d2ac04cf9c75e07bd9334592f5"
+      },
+      "allowed": true,
+      "crawl_delay": null
+    },
+    "source": {
+      "http": {
+        "url": "https://ultratrail.si/sl/centurion/",
+        "checked_at": "2026-11-03T07:53:48.214663+00:00",
+        "redirects": [],
+        "status": 200,
+        "final_url": "https://ultratrail.si/sl/centurion/",
+        "content_type": "text/html; charset=UTF-8",
+        "content_disposition": null,
+        "bytes": 334693,
+        "sha256": "b8896321fc7be57ad3f6f825f542432a31901547d201351791c89da872e2308d"
+      },
+      "file_links": [
+        "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip"
+      ],
+      "visible_year_tokens": [
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+        "2027"
+      ],
+      "note": "Year tokens are discovery hints only; exact edition requires file-specific evidence."
+    },
+    "linked_from_live_source": true,
+    "target_http": {
+      "url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
+      "checked_at": "2026-11-03T07:57:51.079494+00:00",
+      "redirects": [],
+      "status": 200,
+      "final_url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
+      "content_type": "application/zip",
+      "content_disposition": null,
+      "bytes": 100163,
+      "sha256": "0ba1d0c0e517b6cbfd29d017abdd97cff5e9152bd2c5ae61765c45c77e973c52"
+    },
+    "zip": {
+      "archive_sha256": "0ba1d0c0e517b6cbfd29d017abdd97cff5e9152bd2c5ae61765c45c77e973c52",
+      "archive_bytes": 100163,
+      "member_count": 1,
+      "expanded_bytes": 1182272,
+      "files": [
+        {
+          "member": "utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.gpx",
+          "bytes": 1182272,
+          "sha256": "3926f6aa2efaddc4d6c2a15e2e3f02b8f6a25c7f9fdc91c50fe6750936b21e28",
+          "gpx": {
+            "structural_check": "PASS",
+            "xsd_validation": "NOT_PERFORMED",
+            "version": "1.1",
+            "creator": "Trace de Trail",
+            "track_points": 9176,
+            "route_points": 0,
+            "segments": 1,
+            "distance_km": 99.19,
+            "jumps_over_1km": 0,
+            "bbox": [
+              45.77163,
+              13.80971,
+              45.94644,
+              14.05302
+            ],
+            "names_and_descriptions": [
+              "UTVV I FEEL SLOVENIA 12th edition 2027 - CENTURION - 100 km",
+              "Parcours créé sur Trace de Trail",
+              "UTVV I FEEL SLOVENIA 12th edition 2027 - CENTURION - 100 km sur TraceDeTrail.fr"
+            ],
+            "first_time": "2026-08-06T14:54:19+00:00",
+            "last_time": "2026-08-06T22:33:04+00:00",
+            "copyright_metadata": [],
+            "geometry_sha256_6dp": "a2b4bd1e1cc2549ff6eb6dd8c3cc3ceee97e1a82500c0e8d12350d7c2da7121d",
+            "warnings": []
+          },
+          "file_status": "FILE_VALID"
+        }
+      ]
+    },
+    "files": [
+      {
+        "member": "utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.gpx",
+        "bytes": 1182272,
+        "sha256": "3926f6aa2efaddc4d6c2a15e2e3f02b8f6a25c7f9fdc91c50fe6750936b21e28",
+        "gpx": {
+          "structural_check": "PASS",
+          "xsd_validation": "NOT_PERFORMED",
+          "version": "1.1",
+          "creator": "Trace de Trail",
+          "track_points": 9176,
+          "route_points": 0,
+          "segments": 1,
+          "distance_km": 99.19,
+          "jumps_over_1km": 0,
+          "bbox": [
+            45.77163,
+            13.80971,
+            45.94644,
+            14.05302
+          ],
+          "names_and_descriptions": [
+            "UTVV I FEEL SLOVENIA 12th edition 2027 - CENTURION - 100 km",
+            "Parcours créé sur Trace de Trail",
+            "UTVV I FEEL SLOVENIA 12th edition 2027 - CENTURION - 100 km sur TraceDeTrail.fr"
+          ],
+          "first_time": "2026-08-06T14:54:19+00:00",
+          "last_time": "2026-08-06T22:33:04+00:00",
+          "copyright_metadata": [],
+          "geometry_sha256_6dp": "a2b4bd1e1cc2549ff6eb6dd8c3cc3ceee97e1a82500c0e8d12350d7c2da7121d",
+          "warnings": []
+        },
+        "file_status": "FILE_VALID"
+      }
+    ],
+    "status": "VALID"
+  }
+]

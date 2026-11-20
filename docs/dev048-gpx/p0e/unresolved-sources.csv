@@ -1,0 +1,12 @@
+﻿event,source_url,result,reason
+Haloze Trail,https://www.majsperk.si/objava/1122708,SOURCE_RESTRICTED,robots disallows both DownloadFile targets; no bytes requested
+Fara Trail,https://katurn.si/files/razpis_trail_2026--003-.pdf,PAGE_ONLY,"Official PDF points to Garmin courses, not a proven GPX export"
+Zaplana Trail,https://www.kinmet.si/zaplana-trail/,PAGE_ONLY,Garmin course references; no direct authorized GPX established
+Triglav Trail Run,https://www.triglavtrailrun.com/sl/tekmovanje/,PAGE_ONLY,Final GPX instructions announced before edition; no direct file found
+Gas na Gače,https://scgace.si/dogodki,NO_DIRECT_TARGET_FOUND,No race GPX identified in examined organizer pages; cycling GPX excluded
+Zimski trail Bohinj,https://tsf.bohinj.si/tekme/zimski-trail-tek-bohinj/,NO_DIRECT_TARGET_FOUND,No explicit direct GPX in examined official page
+Sršenji trail,https://stopicetrailtek.webflow.io/,NO_DIRECT_TARGET_FOUND,No explicit direct GPX in examined official page
+Trail Velika Planina,https://trailvelikaplanina.eu/trase/,PAGE_ONLY,"Route descriptions/images, no direct GPX identified"
+Gorski tek na Lisco,https://gorskiteknalisco.si/,SOURCE_HTTP_500,"Actual source HTTP 500, not a GPX file status"
+Velikonočni tek / Trail Maribor,https://www.plotaroute.com/TermsOfUse.html,PAGE_ONLY_EXPORT_RIGHTS_REVIEW,No project export permission established; no export attempted
+Trail po kraških klancih,https://www.viewgpx.com/route/dG9nJZrm,PAGE_ONLY_EXPORT_NOT_COMPLETED,No usable public download control observed; browser rendering limited
