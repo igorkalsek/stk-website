@@ -6,6 +6,52 @@ export const GPX_LINKS: readonly GpxEvent[] = [
   {
     "edition": {
       "year": "2027",
+      "row": "17",
+      "date": "2027-05-28",
+      "name": "Kočevsko Outdoor Festival 2027",
+      "place": "Kočevje"
+    },
+    "links": [
+      {
+        "route": "5 km",
+        "year": null,
+        "kind": "ZIP",
+        "url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/11/KOF_5_km.zip",
+        "sourceUrl": "https://kocevsko-outdoor.si/razdalje/5-km/"
+      },
+      {
+        "route": "10 km",
+        "year": null,
+        "kind": "ZIP",
+        "url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_10_km.zip",
+        "sourceUrl": "https://kocevsko-outdoor.si/razdalje/10-km/"
+      },
+      {
+        "route": "15 km",
+        "year": null,
+        "kind": "ZIP",
+        "url": "https://kocevsko-outdoor.si/wp-content/uploads/2025/05/KOF_15_km.zip",
+        "sourceUrl": "https://kocevsko-outdoor.si/razdalje/15-km/"
+      },
+      {
+        "route": "50 km",
+        "year": 2027,
+        "kind": "ZIP",
+        "url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_50_km_2027.zip",
+        "sourceUrl": "https://kocevsko-outdoor.si/razdalje/50-km/"
+      },
+      {
+        "route": "25 km Deer Trail",
+        "year": null,
+        "kind": "ZIP",
+        "url": "https://kocevsko-outdoor.si/wp-content/uploads/2026/08/KOF_25_km.zip",
+        "sourceUrl": "https://kocevsko-outdoor.si/razdalje/25-km/"
+      }
+    ]
+  },
+  {
+    "edition": {
+      "year": "2027",
       "row": "40",
       "date": "2027-09-04",
       "name": "RIBN’CA Trail",
@@ -96,6 +142,20 @@ export const GPX_LINKS: readonly GpxEvent[] = [
         "kind": "ZIP",
         "url": "https://ultratrail.si/wp-content/uploads/2026/08/utvv-i-feel-slovenia-12th-edition-2027-centurion-100-km.zip",
         "sourceUrl": "https://ultratrail.si/sl/centurion/"
+      },
+      {
+        "route": "Legionar",
+        "year": 2026,
+        "kind": "ZIP",
+        "url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-legionar-30-km_10042026.zip",
+        "sourceUrl": "https://ultratrail.si/sl/legionar/"
+      },
+      {
+        "route": "Asterix",
+        "year": 2026,
+        "kind": "ZIP",
+        "url": "https://ultratrail.si/wp-content/uploads/2026/04/ultra-trail-vipava-valley-i-feel-slovenia-2026-asterix-15-k_10042026.zip",
+        "sourceUrl": "https://ultratrail.si/sl/asterix/"
       }
     ]
   },
